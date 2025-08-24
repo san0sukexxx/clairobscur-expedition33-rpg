@@ -16,7 +16,7 @@ export default function UserTypeSelect() {
           <span className="opacity-0 w-1">.</span>
         </Link>
 
-        <Link to="/player" className="btn btn-secondary btn-lg w-full flex items-center justify-center gap-3">
+        <Link to="/campaign-list" className="btn btn-secondary btn-lg w-full flex items-center justify-center gap-3">
           <FaUser size={22} />
           Jogador
           <span className="opacity-0 w-1">.</span>

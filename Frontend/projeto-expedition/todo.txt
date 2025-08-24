@@ -1,3 +1,0 @@
-  cd projeto-expedition
-  npm install
-  npm run dev
