@@ -1,0 +1,588 @@
+[
+  {
+    "name": "Baguette",
+    "attributes": {
+      "power": 1200,
+      "element": "Void",
+      "scaling": {
+        "defense": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Kill self on battle start."
+      },
+      {
+        "level": 10,
+        "effect": "Revive with 100% Health. Once per battle."
+      },
+      {
+        "level": 20,
+        "effect": "Play first."
+      }
+    ]
+  },
+  {
+    "name": "Barrier Breaker",
+    "attributes": {
+      "power": 1345,
+      "element": "Void",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Steal Shields removed by hitting enemies."
+      },
+      {
+        "level": 10,
+        "effect": "Switch to Virtuose Stance on breaking any Shield."
+      },
+      {
+        "level": 20,
+        "effect": "Hitting a Marked enemy breaks all its Shields."
+      }
+    ]
+  },
+  {
+    "name": "Battlum",
+    "attributes": {
+      "power": 1140,
+      "element": "Physical",
+      "scaling": {
+        "defense": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Double Gradient generation while in Defensive Stance."
+      },
+      {
+        "level": 10,
+        "effect": "If Stanceless, Base Attack switches to Defensive Stance."
+      },
+      {
+        "level": 20,
+        "effect": "+5% of a Gradient Charge on Parry."
+      }
+    ]
+  },
+  {
+    "name": "Brulerum",
+    "attributes": {
+      "power": 1020,
+      "element": "Fire",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Critical hits apply Burn."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack applies 2 Burn."
+      },
+      {
+        "level": 20,
+        "effect": "100% Critical Chance while Stanceless."
+      }
+    ]
+  },
+  {
+    "name": "Chalium",
+    "attributes": {
+      "power": 1272,
+      "element": "Light",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "On Defensive Stance, gain 1 Shield per Parry. Lose all Shields on turn start."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Light damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "50% increased Counter damage per Shield."
+      }
+    ]
+  },
+  {
+    "name": "Chantenum",
+    "attributes": {
+      "power": 1056,
+      "element": "Fire",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "On turn start, if Stanceless, switch to Offensive Stance."
+      },
+      {
+        "level": 10,
+        "effect": "Fire Skills cost 1 less AP."
+      },
+      {
+        "level": 20,
+        "effect": "+1 Shield on switching to Offensive Stance."
+      }
+    ]
+  },
+  {
+    "name": "Clierum",
+    "attributes": {
+      "power": 1188,
+      "element": "Lightning",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Critical hits with Skills give 2 AP. Once per turn."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Lightning damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "+50% Critical Chance while in Offensive Stance."
+      }
+    ]
+  },
+  {
+    "name": "Coldum",
+    "attributes": {
+      "power": 960,
+      "element": "Ice",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Self-Heal by 2% Health on dealing a Critical hit."
+      },
+      {
+        "level": 10,
+        "effect": "+50% Critical Chance while in Defensive Stance."
+      },
+      {
+        "level": 20,
+        "effect": "If Stanceless, Base Attack switches to Defensive Stance."
+      }
+    ]
+  },
+  {
+    "name": "Duenum",
+    "attributes": {
+      "power": 900,
+      "element": "Physical",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "In Defensive Stance, gaining AP also gives 1 AP to allies."
+      },
+      {
+        "level": 10,
+        "effect": "If Stanceless, Base Attack switches to Defensive Stance."
+      },
+      {
+        "level": 20,
+        "effect": "+1 AP on Stance switch."
+      }
+    ]
+  },
+  {
+    "name": "Facesum",
+    "attributes": {
+      "power": 1308,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "In Offensive Stance, double the amount of Burn applied."
+      },
+      {
+        "level": 10,
+        "effect": "50% increased Burn damage."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack propagates Burn."
+      }
+    ]
+  },
+  {
+    "name": "Glaisum",
+    "attributes": {
+      "power": 1380,
+      "element": "Physical",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Allies recover 20% Health on switching to Virtuose Stance."
+      },
+      {
+        "level": 10,
+        "effect": "Gain Shell when switching out of Virtuose Stance."
+      },
+      {
+        "level": 20,
+        "effect": "Cleanse self Status Effects when switching to Virtuose Stance."
+      }
+    ]
+  },
+  {
+    "name": "Jarum",
+    "attributes": {
+      "power": 960,
+      "element": "Physical",
+      "scaling": {
+        "defense": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Switch to Virtuose Stance on Counterattack."
+      },
+      {
+        "level": 10,
+        "effect": "Apply 5 Burn on Counterattack."
+      },
+      {
+        "level": 20,
+        "effect": "50% increased Counter damage per Shield."
+      }
+    ]
+  },
+  {
+    "name": "Lithum",
+    "attributes": {
+      "power": 1200,
+      "element": "Void",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "In Virtuose Stance, hitting a Marked enemy doesn't remove Mark."
+      },
+      {
+        "level": 10,
+        "effect": "Switch to Virtuose Stance on Counterattack."
+      },
+      {
+        "level": 20,
+        "effect": "Gain Shell when switching out of Virtuose Stance."
+      }
+    ]
+  },
+  {
+    "name": "Maellum",
+    "attributes": {
+      "power": 1200,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A"
+      }
+    },
+    "passives": []
+  },
+  {
+    "name": "Medalum",
+    "attributes": {
+      "power": 1080,
+      "element": "Physical",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Start in Virtuose Stance."
+      },
+      {
+        "level": 10,
+        "effect": "In Virtuose Stance, every Burn applied is doubled."
+      },
+      {
+        "level": 20,
+        "effect": "In Virtuose Stance, Burn deals double damage."
+      }
+    ]
+  },
+  {
+    "name": "Melarum",
+    "attributes": {
+      "power": 1333,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Allies recover 20% Health on switching to Virtuose Stance."
+      },
+      {
+        "level": 10,
+        "effect": "Applies Shell when Health is above 80%."
+      },
+      {
+        "level": 20,
+        "effect": "Switch to Virtuose Stance when Health falls below 50%."
+      }
+    ]
+  },
+  {
+    "name": "Plenum",
+    "attributes": {
+      "power": 1128,
+      "element": "Ice",
+      "scaling": {
+        "defense": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "On turn start, if Stanceless, switch to Defensive Stance."
+      },
+      {
+        "level": 10,
+        "effect": "In Defensive Stance, double Break damage."
+      },
+      {
+        "level": 20,
+        "effect": "Support Skills cost 1 less AP."
+      }
+    ]
+  },
+  {
+    "name": "Seashelum",
+    "attributes": {
+      "power": 1116,
+      "element": "Fire",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "+1 Shield on switching to Offensive Stance."
+      },
+      {
+        "level": 10,
+        "effect": "If Stanceless, Base Attack switches to Offensive Stance."
+      },
+      {
+        "level": 20,
+        "effect": "+50% Critical Chance while in Offensive Stance."
+      }
+    ]
+  },
+  {
+    "name": "Sekarum",
+    "attributes": {
+      "power": 1260,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Switch to Virtuose Stance on breaking any Shield."
+      },
+      {
+        "level": 10,
+        "effect": "Free Aim shots break 2 Shields."
+      },
+      {
+        "level": 20,
+        "effect": "In Virtuose Stance, all damage pierce Shields."
+      }
+    ]
+  },
+  {
+    "name": "Stalum",
+    "attributes": {
+      "power": 1200,
+      "element": "Fire",
+      "scaling": {
+        "defense": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Apply Burn on self on turn start. 10% increased damage for each self Burn stack."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack applies 2 Burn."
+      },
+      {
+        "level": 20,
+        "effect": "While in Defensive Stance, receive Heal instead of Burn damage."
+      }
+    ]
+  },
+  {
+    "name": "Tissenum",
+    "attributes": {
+      "power": 1440,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "In Defensive Stance, double Break damage."
+      },
+      {
+        "level": 10,
+        "effect": "Gain 9 AP on Breaking an enemy."
+      },
+      {
+        "level": 20,
+        "effect": "Breaking an enemy deals a high amount of Earth damage."
+      }
+    ]
+  },
+  {
+    "name": "Veremum",
+    "attributes": {
+      "power": 1224,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "If Stanceless, Base Attack switches to Offensive Stance."
+      },
+      {
+        "level": 10,
+        "effect": "Counterattacks apply Defenceless."
+      },
+      {
+        "level": 20,
+        "effect": "+50% Critical Chance while in Offensive Stance."
+      }
+    ]
+  },
+  {
+    "name": "Volesterum",
+    "attributes": {
+      "power": 1224,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "+1 AP on Stance switch."
+      },
+      {
+        "level": 10,
+        "effect": "If Stanceless, Base Attack switches to Defensive Stance."
+      },
+      {
+        "level": 20,
+        "effect": "Recover 5% Health on Stance switch."
+      }
+    ]
+  },
+  {
+    "name": "Yeverum",
+    "attributes": {
+      "power": 1248,
+      "element": "Physical",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Applying Shell also applies 1 Shield."
+      },
+      {
+        "level": 10,
+        "effect": "On applying Shields, also give 1 AP."
+      },
+      {
+        "level": 20,
+        "effect": "On switching to Virtuose Stance, double all Shields on allies."
+      }
+    ]
+  }
+]

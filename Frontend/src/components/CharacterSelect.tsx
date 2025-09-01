@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 const characters = [
     { id: "gustave", label: "Gustave" },
@@ -9,13 +9,18 @@ const characters = [
     { id: "monoco", label: "Monoco" },
 ];
 
-export default function CharacterSelect() {
-    const [selected, setSelected] = useState(characters[0]);
+interface CharacterSelectProps {
+    selected: string;
+    onSelect: (id: string) => void;
+}
+
+export default function CharacterSelect({ selected, onSelect }: CharacterSelectProps) {
     const detailsRef = useRef<HTMLDetailsElement>(null);
 
-    function handleSelect(c: typeof characters[number]) {
-        setSelected(c);
-        // fecha o dropdown imediatamente
+    const current = characters.find(c => c.id === selected) ?? characters[0];
+
+    function handleSelect(id: string) {
+        onSelect(id);
         detailsRef.current?.removeAttribute("open");
     }
 
@@ -24,11 +29,11 @@ export default function CharacterSelect() {
             {/* Botão gatilho */}
             <summary className="btn btn-xl w-full justify-start gap-5 text-xl h-20">
                 <img
-                    src={`/${selected.id}.webp`}
-                    alt={selected.label}
+                    src={`/characters/${current.id}.webp`}
+                    alt={current.label}
                     className="w-14 h-14 rounded-full"
                 />
-                {selected.label}
+                {current.label}
             </summary>
 
             {/* Opções */}
@@ -38,9 +43,9 @@ export default function CharacterSelect() {
                         <button
                             type="button"
                             className="flex items-center gap-5 py-4 text-xl w-full text-left"
-                            onClick={() => handleSelect(c)}
+                            onClick={() => handleSelect(c.id)}
                         >
-                            <img src={`/${c.id}.webp`} alt={c.label} className="w-14 h-14 rounded-full" />
+                            <img src={`/characters/${c.id}.webp`} alt={c.label} className="w-14 h-14 rounded-full" />
                             {c.label}
                         </button>
                     </li>

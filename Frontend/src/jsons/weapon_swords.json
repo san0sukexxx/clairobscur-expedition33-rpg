@@ -1,0 +1,649 @@
+[
+  {
+    "name": "Abysseram",
+    "attributes": {
+      "power": 1200,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "50% increased damage on Rank D. No damage increase on other ranks."
+      },
+      {
+        "level": 10,
+        "effect": "50% increased Base Attack damage."
+      },
+      {
+        "level": 20,
+        "effect": "On Rank D, recover 20% Health with Base Attack."
+      }
+    ]
+  },
+  {
+    "name": "Baguette",
+    "attributes": {
+      "power": 1200,
+      "element": "Void",
+      "scaling": {
+        "agility": "B",
+        "defense": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Kill self on battle start."
+      },
+      {
+        "level": 10,
+        "effect": "Revive with 100% Health. Once per battle."
+      },
+      {
+        "level": 20,
+        "effect": "Play first."
+      }
+    ]
+  },
+  {
+    "name": "Blodam",
+    "attributes": {
+      "power": 1296,
+      "element": "Light",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Perfection is now based on current Health. Gain 1 Rank every 20% missing Health."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Light damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "+1 AP on Rank Up."
+      }
+    ]
+  },
+  {
+    "name": "Chevalam",
+    "attributes": {
+      "power": 1140,
+      "element": "Physical",
+      "scaling": {
+        "agility": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Start battle at Rank S, but can't be Healed or gain Shields."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
+      },
+      {
+        "level": 20,
+        "effect": "Apply Rush on Rank S."
+      }
+    ]
+  },
+  {
+    "name": "Confuso",
+    "attributes": {
+      "power": 1140,
+      "element": "Light",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Light damage can Burn on Critical hits."
+      },
+      {
+        "level": 10,
+        "effect": "Apply 3 Burn instead of Mark."
+      },
+      {
+        "level": 20,
+        "effect": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
+      }
+    ]
+  },
+  {
+    "name": "Contorso",
+    "attributes": {
+      "power": 1056,
+      "element": "Lightning",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Switch to Rank S on Break. Base Attack can Break."
+      },
+      {
+        "level": 10,
+        "effect": "100% Critical Chance on Rank S."
+      },
+      {
+        "level": 20,
+        "effect": "Triggers a lightning strike on Critical hits."
+      }
+    ]
+  },
+  {
+    "name": "Corpeso",
+    "attributes": {
+      "power": 1356,
+      "element": "Fire",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Base Attack applies 2 Burn stack per Rank."
+      },
+      {
+        "level": 10,
+        "effect": "+1 AP on Rank Up."
+      },
+      {
+        "level": 20,
+        "effect": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
+      }
+    ]
+  },
+  {
+    "name": "Cruleram",
+    "attributes": {
+      "power": 1284,
+      "element": "Ice",
+      "scaling": {
+        "defense": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Don't lose Rank when taking damage from Powerless enemies."
+      },
+      {
+        "level": 10,
+        "effect": "+1 Perfection on hitting a Powerless enemy."
+      },
+      {
+        "level": 20,
+        "effect": "Apply Powerless on Counterattack."
+      }
+    ]
+  },
+  {
+    "name": "Cultam",
+    "attributes": {
+      "power": 1164,
+      "element": "Dark",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "No Perfection loss on damage taken. Perfection is instead lost on being Healed."
+      },
+      {
+        "level": 10,
+        "effect": "Gain 2 AP on Counterattack."
+      },
+      {
+        "level": 20,
+        "effect": "Gain 1 Rank on Counterattack."
+      }
+    ]
+  },
+  {
+    "name": "Danseso",
+    "attributes": {
+      "power": 1104,
+      "element": "Fire",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Base attack gives 1 Perfection per Burn on target."
+      },
+      {
+        "level": 10,
+        "effect": "While Powerful, 20% chance to Burn on hit."
+      },
+      {
+        "level": 20,
+        "effect": "+1 AP on Rank Up."
+      }
+    ]
+  },
+  {
+    "name": "Delaram",
+    "attributes": {
+      "power": 1260,
+      "element": "Light",
+      "scaling": {
+        "vitality": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Start battle on Rank B, but 50% Health."
+      },
+      {
+        "level": 10,
+        "effect": "Recover 15% Health on Base Attack."
+      },
+      {
+        "level": 20,
+        "effect": "Apply Powerful on Rank B."
+      }
+    ]
+  },
+  {
+    "name": "Demonam",
+    "attributes": {
+      "power": 1044,
+      "element": "Light",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Casting a Light Skill increases damage of next Physical Skill cast by 50% and vice versa."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Physical damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "Dealing Light damage with a Skill recovers 3% Health."
+      }
+    ]
+  },
+  {
+    "name": "Dreameso",
+    "attributes": {
+      "power": 1140,
+      "element": "Physical",
+      "scaling": {
+        "agility": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Gain 1 Rank on Counterattack."
+      },
+      {
+        "level": 10,
+        "effect": "50% increased Counterattack damage."
+      },
+      {
+        "level": 20,
+        "effect": "Gain 2 AP on Counterattack."
+      }
+    ]
+  },
+  {
+    "name": "Dualiso",
+    "attributes": {
+      "power": 660,
+      "element": "Lightning",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Play again after a Base Attack."
+      },
+      {
+        "level": 10,
+        "effect": "50% increased Base Attack damage."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack gives 4 Perfection."
+      }
+    ]
+  },
+  {
+    "name": "Gaultaram",
+    "attributes": {
+      "power": 1212,
+      "element": "Earth",
+      "scaling": {
+        "agility": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "When hit, lose 1 Perfection instead of 1 Rank."
+      },
+      {
+        "level": 10,
+        "effect": "Apply Rush on Rank S."
+      },
+      {
+        "level": 20,
+        "effect": "Gain 2 Perfection on turn start."
+      }
+    ]
+  },
+  {
+    "name": "Gesam",
+    "attributes": {
+      "power": 1200,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Convert Light damage from Skills to Physical damage."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Physical damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "-1 AP cost for Physical Skills."
+      }
+    ]
+  },
+  {
+    "name": "Glaceso",
+    "attributes": {
+      "power": 1068,
+      "element": "Ice",
+      "scaling": {
+        "defense": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "+1 Perfection on Critical hit."
+      },
+      {
+        "level": 10,
+        "effect": "Self-Heal by 2% Health on dealing a Critical hit."
+      },
+      {
+        "level": 20,
+        "effect": "Counterattack is always a Critical hit."
+      }
+    ]
+  },
+  {
+    "name": "Lanceram",
+    "attributes": {
+      "power": 1380,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Rank can't be lower than C."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack gives 4 Perfection."
+      },
+      {
+        "level": 20,
+        "effect": "Parrying gives 2 Perfection instead of 1."
+      }
+    ]
+  },
+  {
+    "name": "Liteso",
+    "attributes": {
+      "power": 1320,
+      "element": "Physical",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Base Attack consumes all Shields to deal 100% increased damage per Shield."
+      },
+      {
+        "level": 10,
+        "effect": "+1 Shield on Counterattack."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack gives 4 Perfection."
+      }
+    ]
+  },
+  {
+    "name": "Noahram",
+    "attributes": {
+      "power": 840,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A"
+      }
+    },
+    "passives": []
+  },
+  {
+    "name": "Nosaram",
+    "attributes": {
+      "power": 1320,
+      "element": "Physical",
+      "scaling": {
+        "agility": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Double Perfection gained on Free Aim shots."
+      },
+      {
+        "level": 10,
+        "effect": "Free Aim shots break 2 Shields."
+      },
+      {
+        "level": 20,
+        "effect": "50% increased Free Aim damage."
+      }
+    ]
+  },
+  {
+    "name": "Sakaram",
+    "attributes": {
+      "power": 1092,
+      "element": "Physical",
+      "scaling": {
+        "agility": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Can't lose Perfection. No damage increase from Rank."
+      },
+      {
+        "level": 10,
+        "effect": "50% increased Base Attack damage."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack gives 4 Perfection."
+      }
+    ]
+  },
+  {
+    "name": "Seeram",
+    "attributes": {
+      "power": 1380,
+      "element": "Light",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "+1 to all Perfection gain but can't reach Rank S."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack gives 4 Perfection."
+      },
+      {
+        "level": 20,
+        "effect": "20% increased Light damage with Skills."
+      }
+    ]
+  },
+  {
+    "name": "Simoso",
+    "attributes": {
+      "power": 1200,
+      "element": "Light",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "An ethereal Sword deals Light damage on any damage dealt with Skills."
+      },
+      {
+        "level": 10,
+        "effect": "20% chance to apply Burn on dealing Light damage."
+      },
+      {
+        "level": 20,
+        "effect": "Can't die if at least Rank A."
+      }
+    ]
+  },
+  {
+    "name": "Sireso",
+    "attributes": {
+      "power": 960,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Bonus damage from Perfection applies to all allies at half value. Bonus damage no longer applies to Verso."
+      },
+      {
+        "level": 10,
+        "effect": "Perfection gained is increased by 1 while Powerful."
+      },
+      {
+        "level": 20,
+        "effect": "Support Skills cost 1 less AP."
+      }
+    ]
+  },
+  {
+    "name": "Tireso",
+    "attributes": {
+      "power": 1380,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Gain 1 Rank on applying Mark."
+      },
+      {
+        "level": 10,
+        "effect": "Mark an enemy on Base Attack."
+      },
+      {
+        "level": 20,
+        "effect": "Apply Powerless on Marking an enemy."
+      }
+    ]
+  },
+  {
+    "name": "Verleso",
+    "attributes": {
+      "power": 1284,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A"
+      }
+    },
+    "passives": []
+  }
+]

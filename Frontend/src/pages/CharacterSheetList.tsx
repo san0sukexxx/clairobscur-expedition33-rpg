@@ -1,27 +1,18 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import FloatingButton from "../components/FloatingButton";
-
-// Modelo simples (pode vir de API)
-type ListItem = {
-  id: string;
-  name: string;
-  character: string;
-};
-
-const MOCK: ListItem[] = [
-  { id: "c1", name: "Juliano", character: "Verso" },
-  { id: "c2", name: "Julia", character: "Sciel" },
-  { id: "c3", name: "Tamara", character: "Lune" },
-];
+import { APICharacter, type ListCharacter } from "../api/APICharacter";
+import { useApiList } from "../api/UseApiList";
 
 export default function CharacterSheetList() {
-  const [items] = useState<ListItem[]>(MOCK);
   const { campaign } = useParams<{ campaign: string }>();
   const navigate = useNavigate();
+
+  const { items, loading, error, reload } = useApiList<ListCharacter>(() =>
+    APICharacter.list(campaign)
+  );
 
   function handleAddCharacter() {
     navigate(`/campaign-player/${campaign}`);
@@ -41,7 +32,13 @@ export default function CharacterSheetList() {
 
       {/* Conteúdo */}
       <main className="p-4 space-y-4 max-w-md mx-auto">
-        {items.length === 0 ? (
+        {loading && <div className="text-center opacity-70 py-16">Carregando…</div>}
+
+        {error && !loading && (
+          <div className="text-center text-error py-16">{error}</div>
+        )}
+
+        {!loading && !error && (items.length === 0 ? (
           <div className="text-center opacity-70 py-16">
             Nenhuma ficha de personagem disponível.
           </div>
@@ -73,7 +70,7 @@ export default function CharacterSheetList() {
               </li>
             ))}
           </ul>
-        )}
+        ))}
       </main>
 
       <FloatingButton onClick={handleAddCharacter} />

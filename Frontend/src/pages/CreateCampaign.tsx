@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { APICampaign } from "../api/APICampaign"; // ajuste o caminho conforme seu projeto
 
 type Item = { id: string; label: string; checked: boolean };
 
@@ -12,34 +13,55 @@ const DEFAULT_ITEMS: Item[] = [
     { id: "monoco", label: "Monoco", checked: false },
 ];
 
+type CampaignForm = {
+    name: string;
+    active: boolean;
+    characters: Item[];
+};
+
 export default function CreateCampaign() {
     const navigate = useNavigate();
-    const [name, setName] = useState("");
-    const [items, setItems] = useState<Item[]>(DEFAULT_ITEMS);
+
+    const [campaign, setCampaign] = useState<CampaignForm>({
+        name: "",
+        active: true,
+        characters: DEFAULT_ITEMS,
+    });
+
     const [submitting, setSubmitting] = useState(false);
     const [touched, setTouched] = useState(false);
 
-    const selectedCount = items.filter(i => i.checked).length;
+    const selectedCount = useMemo(
+        () => campaign.characters.filter((i) => i.checked).length,
+        [campaign.characters]
+    );
 
     const nameError = useMemo(() => {
         if (!touched) return undefined;
-        if (name.trim().length < 3) return "O nome deve ter pelo menos 3 caracteres.";
+        if (campaign.name.trim().length < 3)
+            return "O nome deve ter pelo menos 3 caracteres.";
         return undefined;
-    }, [name, touched]);
+    }, [campaign.name, touched]);
 
-    const canSubmit = name.trim().length >= 3 && selectedCount > 0 && !submitting;
+    const canSubmit =
+        campaign.name.trim().length >= 3 && selectedCount > 0 && !submitting;
 
     function toggleItem(id: string) {
-        setItems(prev =>
-            prev.map(i => (i.id === id ? { ...i, checked: !i.checked } : i))
-        );
+        setCampaign((prev) => ({
+            ...prev,
+            characters: prev.characters.map((i) =>
+                i.id === id ? { ...i, checked: !i.checked } : i
+            ),
+        }));
     }
 
     function toggleAll(checked: boolean) {
-        setItems(prev => prev.map(i => ({ ...i, checked })));
+        setCampaign((prev) => ({
+            ...prev,
+            characters: prev.characters.map((i) => ({ ...i, checked })),
+        }));
     }
 
-    // TODO: implement after backend
     async function onSubmit(e: React.FormEvent) {
         e.preventDefault();
         setTouched(true);
@@ -47,10 +69,16 @@ export default function CreateCampaign() {
 
         setSubmitting(true);
         try {
-            // simula chamada de API
-            await new Promise(r => setTimeout(r, 600));
-            // redireciona (ajuste a rota como preferir)
-            navigate("/campaign-admin");
+            const response = await APICampaign.create({
+                name: campaign.name.trim(),
+                active: campaign.active,
+                characters: campaign.characters.filter((c) => c.checked).map((c) => c.id),
+            });
+
+            navigate(`/campaign-admin/${response.data.id}`);
+        } catch (e) {
+            console.error(e);
+            // opcional: exibir toast/alert
         } finally {
             setSubmitting(false);
         }
@@ -68,18 +96,23 @@ export default function CreateCampaign() {
                         <input
                             className="input input-bordered"
                             placeholder="Expedition 33"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={campaign.name}
+                            onChange={(e) =>
+                                setCampaign((prev) => ({ ...prev, name: e.target.value }))
+                            }
                         />
                         {nameError && (
-                            <span className="text-error text-sm mt-1 block w-full">{nameError}</span>
+                            <span className="text-error text-sm mt-1 block w-full">
+                                {nameError}
+                            </span>
                         )}
                     </label>
 
                     {/* Ações de seleção */}
                     <div className="flex items-center justify-between mt-2">
                         <span className="text-sm opacity-70">
-                            Personagens iniciais permitidos: <b>{selectedCount}</b> / {items.length}
+                            Personagens iniciais permitidos: <b>{selectedCount}</b> /{" "}
+                            {campaign.characters.length}
                         </span>
                         <div className="join">
                             <button
@@ -101,11 +134,14 @@ export default function CreateCampaign() {
 
                     {/* Lista com checkboxes */}
                     <ul className="menu bg-base-200 rounded-box p-2 w-full">
-                        {items.map((item) => (
+                        {campaign.characters.map((item) => (
                             <li key={item.id}>
                                 <label className="flex items-center gap-3 py-2">
-                                    <img src={`/${item.id}.webp`} alt={item.label} className="max-h-32 w-auto" />
-
+                                    <img
+                                        src={`/characters/${item.id}.webp`}
+                                        alt={item.label}
+                                        className="max-h-32 w-auto"
+                                    />
                                     <input
                                         type="checkbox"
                                         className="checkbox checkbox-primary"
@@ -128,11 +164,7 @@ export default function CreateCampaign() {
                         >
                             Cancelar
                         </button>
-                        <button
-                            type="submit"
-                            className="btn btn-primary"
-                            disabled={!canSubmit}
-                        >
+                        <button type="submit" className="btn btn-primary" disabled={!canSubmit}>
                             {submitting ? (
                                 <span className="loading loading-spinner loading-sm" />
                             ) : (

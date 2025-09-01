@@ -11,10 +11,10 @@ type Character = {
 };
 
 const PARTY: Character[] = [
-    { id: "c1", name: "Gustave", avatar: "/gustave.webp", hp: 722, hpMax: 722, mp: 3, mpMax: 5 },
-    { id: "c2", name: "Maelle", avatar: "/maelle.webp", hp: 574, hpMax: 574, mp: 4, mpMax: 5 },
-    { id: "c3", name: "Lune", avatar: "/lune.webp", hp: 677, hpMax: 677, mp: 2, mpMax: 4 },
-    { id: "c4", name: "Verso", avatar: "/verso.webp", hp: 610, hpMax: 680, mp: 1, mpMax: 5 },
+    { id: "c1", name: "Gustave", avatar: "/characters/gustave.webp", hp: 722, hpMax: 722, mp: 3, mpMax: 5 },
+    { id: "c2", name: "Maelle", avatar: "/characters/maelle.webp", hp: 574, hpMax: 574, mp: 4, mpMax: 5 },
+    { id: "c3", name: "Lune", avatar: "/characters/lune.webp", hp: 677, hpMax: 677, mp: 2, mpMax: 4 },
+    { id: "c4", name: "Verso", avatar: "/characters/verso.webp", hp: 610, hpMax: 680, mp: 1, mpMax: 5 },
 ];
 
 function pct(cur: number, max: number) {

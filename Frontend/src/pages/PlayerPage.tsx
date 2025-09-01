@@ -1,31 +1,87 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
-import CharacterSelect from "../components/CharacterSelect";
 import WeaponSection from "../components/WeaponSection";
+import PlayerSheet from "../components/PlayerSheet";
 import PictosTab from "../components/PictosTab";
 import LuminasSection from "../components/LuminasSection";
 import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
+import { APIPlayer, type CreatePlayerInput, type Player } from "../api/APIPlayer";
+
 
 type Skill = { id: string; name: string; learned: boolean };
 type Item = { id: string; name: string; equipped: boolean };
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
+  const alreadyRan = useRef(false);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [player, setPlayer] = useState<Player | null>(null);
 
   const { campaign, character } = useParams<{
     campaign: string;
     character: string;
   }>();
 
+  useEffect(() => {
+    if (!player) return;
+
+    const savePlayer = async () => {
+      try {
+        await APIPlayer.save(player);
+      } catch (e) {
+        console.error("Erro ao salvar player:", e);
+      }
+    };
+
+    savePlayer();
+  }, [player]);
+
+  useEffect(() => {
+    if (alreadyRan.current) return;
+    alreadyRan.current = true;
+
+    if (character == undefined) {
+      const createSheet = async () => {
+        try {
+          const input: CreatePlayerInput = { campaign: campaign! };
+          const response = await APIPlayer.create(input);
+
+          navigate(`/campaign-player/${campaign}/${response.playerID}`, { replace: false });
+          setLoading(false);
+        } catch (e: any) {
+          setError("Erro ao carregar dados: " + e?.message);
+        }
+      };
+
+      createSheet();
+    } else {
+      const fetchInfo = async () => {
+        try {
+          const response = await APIPlayer.getInfo(character);
+          console.log("Info do player:", response);
+
+          setPlayer(response.player);
+
+          setLoading(false);
+        } catch (e: any) {
+          console.error("Erro ao carregar player:", e);
+          setError("Erro ao carregar player: " + e?.message);
+        }
+      };
+
+      fetchInfo();
+    }
+  }, []);
+
   // mock simples
-  const [hp, setHp] = useState(20);
-  const [mp, setMp] = useState(8);
   const [skills, setSkills] = useState<Skill[]>([
     { id: "s1", name: "Investigar", learned: true },
     { id: "s2", name: "Furtividade", learned: false },
@@ -75,121 +131,27 @@ export default function PlayerPage() {
 
       {/* Conteúdo (deixa espaço para a btm-nav) */}
       <main className="p-4 max-w-md mx-auto pb-24">
+        {loading && <div className="text-center opacity-70 py-16">Carregando…</div>}
+
+        {error && !loading && (
+          <div className="text-center text-error py-16">{error}</div>
+        )}
+
         {/* Conteúdo da aba */}
         <section className="space-y-4">
-          {tab === "ficha" && (
-            <div className="card bg-base-100 shadow">
-              <div className="card-body">
-                <h2 className="card-title">Ficha</h2>
-
-                <div className="grid grid-cols-1 gap-3">
-                  <label className="form-control flex flex-col items-start gap-1">
-                    <span className="label-text">Nome</span>
-                    <input
-                      className="input input-bordered w-full"
-                      placeholder="Nome"
-                    />
-                  </label>
-
-                  <CharacterSelect />
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <label className="form-control">
-                      <span className="label-text">Total de pontos</span>
-                      <input className="input input-bordered" placeholder="Ex.: 10" type="number" />
-                    </label>
-                    <label className="form-control">
-                      <span className="label-text">XP</span>
-                      <input className="input input-bordered" placeholder="Ex.: 10" type="number" />
-                    </label>
-                  </div>
-
-                  <div className="card bg-base-200 shadow">
-                    <div className="card-body">
-                      <div className="grid grid-cols-2 gap-3">
-                        <label className="form-control">
-                          <span className="label-text">Poder</span>
-                          <input
-                            type="number"
-                            className="input input-bordered"
-                            value={hp}
-                            onChange={(e) => setHp(Number(e.target.value))}
-                          />
-                        </label>
-                        <label className="form-control">
-                          <span className="label-text">PA</span> <span className="pl-1 text-sm text-gray-500">máx. 5</span>
-                          <input
-                            type="number"
-                            className="input input-bordered"
-                            value={mp}
-                            onChange={(e) => setMp(Number(e.target.value))}
-                          />
-                        </label>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <label className="form-control">
-                          <span className="label-text">Habilidade</span>
-                          <input
-                            type="number"
-                            className="input input-bordered"
-                            value={hp}
-                            onChange={(e) => setHp(Number(e.target.value))}
-                          />
-                        </label>
-                        <label className="form-control">
-                          <span className="label-text">PM</span> <span className="pl-1 text-sm text-gray-500">máx. 15</span>
-                          <input
-                            type="number"
-                            className="input input-bordered"
-                            value={mp}
-                            onChange={(e) => setMp(Number(e.target.value))}
-                          />
-                        </label>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <label className="form-control">
-                          <span className="label-text">Resistência</span>
-                          <input
-                            type="number"
-                            className="input input-bordered"
-                            value={hp}
-                            onChange={(e) => setHp(Number(e.target.value))}
-                          />
-                        </label>
-                        <label className="form-control">
-                          <span className="label-text">PV</span> <span className="pl-1 text-sm text-gray-500">máx. 10</span>
-                          <input
-                            type="number"
-                            className="input input-bordered"
-                            value={mp}
-                            onChange={(e) => setMp(Number(e.target.value))}
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <label className="form-control flex flex-col items-start gap-1">
-                    <span className="label-text">Anotações</span>
-                    <textarea
-                      className="textarea textarea-bordered w-full h-48 rounded-md"
-                      placeholder="Anotações"
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
+          {!loading && !error && tab === "ficha" && (
+            <PlayerSheet player={player} setPlayer={setPlayer} />
           )}
 
-          {tab === "arma" && (
+          {!loading && !error && tab === "arma" && (
             <WeaponSection />
           )}
 
-          {tab === "pictos" && (
+          {!loading && !error && tab === "pictos" && (
             <PictosTab />
           )}
 
-          {tab === "luminas" && (
+          {!loading && !error && tab === "luminas" && (
             <LuminasSection />
           )}
 
@@ -220,11 +182,11 @@ export default function PlayerPage() {
           )}
 
 
-          {tab === "combate" && (
+          {!loading && !error && tab === "combate" && (
             <CombatSection onMenuAction={handleCombatMenuAction} />
           )}
 
-          {tab === "habilidades" && (
+          {!loading && !error && tab === "habilidades" && (
             <div className="card bg-base-100 shadow">
               <div className="card-body">
                 <h2 className="card-title">Habilidades</h2>
@@ -314,6 +276,6 @@ export default function PlayerPage() {
       </div>
 
 
-    </div>
+    </div >
   );
 }

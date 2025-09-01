@@ -1,0 +1,577 @@
+[
+  {
+    "name": "Angerim",
+    "attributes": {
+      "power": 1224,
+      "element": "Fire",
+      "scaling": {
+        "defense": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Base Attack applies 2 Burn per Fire Stain."
+      },
+      {
+        "level": 10,
+        "effect": "Generate one Fire Stain at the beginning of each turn."
+      },
+      {
+        "level": 20,
+        "effect": "30% increased Burn damage per Fire Stain."
+      }
+    ]
+  },
+  {
+    "name": "Baguette",
+    "attributes": {
+      "power": 1200,
+      "element": "Dark",
+      "scaling": {
+        "vitality": "B",
+        "defense": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Kill self on battle start."
+      },
+      {
+        "level": 10,
+        "effect": "Revive with 100% Health. Once per battle."
+      },
+      {
+        "level": 20,
+        "effect": "Play first."
+      }
+    ]
+  },
+  {
+    "name": "Benisim",
+    "attributes": {
+      "power": 1020,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Healing Skills cost 1 less AP."
+      },
+      {
+        "level": 10,
+        "effect": "Generate one Earth Stain at the beginning of each turn."
+      },
+      {
+        "level": 20,
+        "effect": "Replay instantly on consuming Stains with a Healing Skill."
+      }
+    ]
+  },
+  {
+    "name": "Betelim",
+    "attributes": {
+      "power": 1200,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Using a Skill that consumes Stains increases damage by 20%. Can stack up to 5 times. Resets on using a Skill without consuming Stains."
+      },
+      {
+        "level": 10,
+        "effect": "On turn start, if no Stains, 2 random Stains are generated."
+      },
+      {
+        "level": 20,
+        "effect": "+1 AP when Stains are consumed."
+      }
+    ]
+  },
+  {
+    "name": "Braselim",
+    "attributes": {
+      "power": 1260,
+      "element": "Fire",
+      "scaling": {
+        "vitality": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "30% increased Critical Chance per Ice Stain."
+      },
+      {
+        "level": 10,
+        "effect": "+5% of a Gradient Charge on Critical hit."
+      },
+      {
+        "level": 20,
+        "effect": "20% increased Fire damage with Skills."
+      }
+    ]
+  },
+  {
+    "name": "Chapelim",
+    "attributes": {
+      "power": 1176,
+      "element": "Earth",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "30% increased Break damage per Earth Stain."
+      },
+      {
+        "level": 10,
+        "effect": "Gain 9 AP on Breaking an enemy."
+      },
+      {
+        "level": 20,
+        "effect": "Generate one Earth Stain at the beginning of each turn."
+      }
+    ]
+  },
+  {
+    "name": "Choralim",
+    "attributes": {
+      "power": 1320,
+      "element": "Fire",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "100% Critical Chance when 4 Stains are simultaneously active."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
+      },
+      {
+        "level": 20,
+        "effect": "Critical hits apply Burn."
+      }
+    ]
+  },
+  {
+    "name": "Colim",
+    "attributes": {
+      "power": 960,
+      "element": "Light",
+      "scaling": {
+        "vitality": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "50% chance to generate a Light Stain when consuming Stains."
+      },
+      {
+        "level": 10,
+        "effect": "+1 AP on consuming a Light Stain."
+      },
+      {
+        "level": 20,
+        "effect": "20% increased damage with Skills per active Light Stain."
+      }
+    ]
+  },
+  {
+    "name": "Coralim",
+    "attributes": {
+      "power": 1020,
+      "element": "Ice",
+      "scaling": {
+        "vitality": "B",
+        "defense": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Ice Skills cost 1 less AP."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Ice damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "Start battle with 1 Earth Stain."
+      }
+    ]
+  },
+  {
+    "name": "Deminirim",
+    "attributes": {
+      "power": 1020,
+      "element": "Lightning",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Lightning Skills cost 1 less AP."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Lightning damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "Start battle with 1 Fire Stain."
+      }
+    ]
+  },
+  {
+    "name": "Elerim",
+    "attributes": {
+      "power": 1320,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Consuming an Earth Stain applies 1 Shield to self."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Earth damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack generates an Earth Stain."
+      }
+    ]
+  },
+  {
+    "name": "Kralim",
+    "attributes": {
+      "power": 1260,
+      "element": "Lightning",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Casting a Skill increases the Skill damage of all other elements by 20%. Resets when casting a Skill of a previous element."
+      },
+      {
+        "level": 10,
+        "effect": "On turn start, if no Stains, 2 random Stains are generated."
+      },
+      {
+        "level": 20,
+        "effect": "+1 AP when Stains are consumed."
+      }
+    ]
+  },
+  {
+    "name": "Lighterim",
+    "attributes": {
+      "power": 1020,
+      "element": "Fire",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Fire Skills cost 1 less AP."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Fire damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "Start battle with 1 Ice Stain."
+      }
+    ]
+  },
+  {
+    "name": "Lithelim",
+    "attributes": {
+      "power": 1152,
+      "element": "Dark",
+      "scaling": {
+        "vitality": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "50% chance to generate a Dark or Light Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain."
+      },
+      {
+        "level": 10,
+        "effect": "+1 AP on consuming a Light Stain."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attacks can consume one Dark Stain to deal 200% more damage."
+      }
+    ]
+  },
+  {
+    "name": "Lunerim",
+    "attributes": {
+      "power": 900,
+      "element": "Fire",
+      "scaling": {
+        "vitality": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Fire Skills cost 1 less AP."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Fire damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "Start battle with 1 Ice Stain."
+      }
+    ]
+  },
+  {
+    "name": "Painerim",
+    "attributes": {
+      "power": 1020,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Earth Skills cost 1 less AP."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Earth damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "Start battle with 1 Lightning Stain."
+      }
+    ]
+  },
+  {
+    "name": "Potierim",
+    "attributes": {
+      "power": 1080,
+      "element": "Ice",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Healing Skills generate one additional Light stain."
+      },
+      {
+        "level": 10,
+        "effect": "Consuming a Light Stain applies Slow to a random enemy."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack generates a Light Stain."
+      }
+    ]
+  },
+  {
+    "name": "Redalim",
+    "attributes": {
+      "power": 960,
+      "element": "Ice",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Healing Skills generate one additional Light stain."
+      },
+      {
+        "level": 10,
+        "effect": "Generate one Ice Stain at the beginning of each turn."
+      },
+      {
+        "level": 20,
+        "effect": "Replay instantly on consuming Stains with a Healing Skill."
+      }
+    ]
+  },
+  {
+    "name": "Saperim",
+    "attributes": {
+      "power": 1140,
+      "element": "Lightning",
+      "scaling": {
+        "defense": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Using a Gradient Attack generates 1 additional Light Stain."
+      },
+      {
+        "level": 10,
+        "effect": "When a Fire Stain is generated, a Lightning Stain is also generated. Once per turn."
+      },
+      {
+        "level": 20,
+        "effect": "Gradient Attacks and Gradient Counters deal 50% more damage."
+      }
+    ]
+  },
+  {
+    "name": "Scaverim",
+    "attributes": {
+      "power": 1560,
+      "element": "Dark",
+      "scaling": {
+        "vitality": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "50% chance to generate a Dark Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attacks can consume one Dark Stain to deal 200% more damage."
+      },
+      {
+        "level": 20,
+        "effect": "With 4 active Dark Stains, any Skill can consume them to deal 300% more damage."
+      }
+    ]
+  },
+  {
+    "name": "Snowim",
+    "attributes": {
+      "power": 1440,
+      "element": "Ice",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Freeze self when falling below 30% health. Prevent the next instance of damage while Frozen."
+      },
+      {
+        "level": 10,
+        "effect": "On turn start, if Frozen, remove Freeze and recover 60% Health."
+      },
+      {
+        "level": 20,
+        "effect": "Gain 2 Ice Stains and 3 AP when Frozen."
+      }
+    ]
+  },
+  {
+    "name": "Trebuchim",
+    "attributes": {
+      "power": 1140,
+      "element": "Lightning",
+      "scaling": {
+        "vitality": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Generate a random Stain on Free Aim shot."
+      },
+      {
+        "level": 10,
+        "effect": "+1 AP when Stains are consumed."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack generates 2 random Stains."
+      }
+    ]
+  },
+  {
+    "name": "Troubadim",
+    "attributes": {
+      "power": 1140,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "B",
+        "defense": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Free Aim Shots deal damage to an additional random target."
+      },
+      {
+        "level": 10,
+        "effect": "50% increased Free Aim damage."
+      },
+      {
+        "level": 20,
+        "effect": "Generate a random Stain on Free Aim shot."
+      }
+    ]
+  }
+]
