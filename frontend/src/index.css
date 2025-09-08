@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Overrides globais === */
+@media (orientation: landscape) {
+  .mobile-dialog {
+    max-height: 90dvh;
+  }
+}

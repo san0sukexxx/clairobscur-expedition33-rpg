@@ -1,0 +1,314 @@
+[
+  {
+    "name": "Baguette",
+    "attributes": {
+      "power": 1200,
+      "element": "Dark",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Kill self on battle start."
+      },
+      {
+        "level": 10,
+        "effect": "Revive with 100% Health. Once per battle."
+      },
+      {
+        "level": 20,
+        "effect": "Play first."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Ballaro",
+    "attributes": {
+      "power": 1140,
+      "element": "Light",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Reverse Bestial Wheel order."
+      },
+      {
+        "level": 10,
+        "effect": "Using an Upgraded Skill gives 1 AP to all other allies."
+      },
+      {
+        "level": 20,
+        "effect": "Almighty Mask gives 2 AP to all allies."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Boucharo",
+    "attributes": {
+      "power": 1200,
+      "element": "Fire",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Start battle in Agile Mask."
+      },
+      {
+        "level": 10,
+        "effect": "Agile Mask applies Rush for 3 turns."
+      },
+      {
+        "level": 20,
+        "effect": "+50% Critical Chance while in Agile Mask."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Brumaro",
+    "attributes": {
+      "power": 1260,
+      "element": "Sword",
+      "scaling": {
+        "vitality": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Replay instantly when in Almighty Mask."
+      },
+      {
+        "level": 10,
+        "effect": "+3 AP when in Almighty Mask."
+      },
+      {
+        "level": 20,
+        "effect": "Revive instantly with full Health if dead while in Almighty Mask. Once per Battle."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Chromaro",
+    "attributes": {
+      "power": 1260,
+      "element": "Ice",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Start battle in Caster Mask."
+      },
+      {
+        "level": 10,
+        "effect": "Caster Mask applies Regen for 3 turns."
+      },
+      {
+        "level": 20,
+        "effect": "Skills cost 1 less AP while in Caster Mask."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Fragaro",
+    "attributes": {
+      "power": 1560,
+      "element": "Lightning",
+      "scaling": {
+        "defense": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Free Aim shots spin the Bestial Wheel to a random value."
+      },
+      {
+        "level": 10,
+        "effect": "Free Aim shots deal 100% more damage with all Masks except Almighty."
+      },
+      {
+        "level": 20,
+        "effect": "100% Critical Chance while in Almighty Mask."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Grandaro",
+    "attributes": {
+      "power": 1320,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Start battle in Heavy Mask."
+      },
+      {
+        "level": 10,
+        "effect": "Heavy Mask applies Shell for 3 turns."
+      },
+      {
+        "level": 20,
+        "effect": "+1 AP per hit taken."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Joyaro",
+    "attributes": {
+      "power": 1380,
+      "element": "Lightning",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Start battle in Almighty Mask."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
+      },
+      {
+        "level": 20,
+        "effect": "Break damage is doubled while in Almighty Mask."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Monocaro",
+    "attributes": {
+      "power": 1020,
+      "element": "Sword",
+      "scaling": {
+        "agility": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Start battle in Balanced Mask."
+      },
+      {
+        "level": 10,
+        "effect": "Balanced Mask applies Powerful for 3 turns."
+      },
+      {
+        "level": 20,
+        "effect": "Critical hits deal 30% more damage while in Balanced Mask."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Nusaro",
+    "attributes": {
+      "power": 1560,
+      "element": "Dark",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Parries increase the Bestial Wheel by 1. Taking damage resets the Bestial Wheel."
+      },
+      {
+        "level": 10,
+        "effect": "Upgraded Skills deal 30% more damage."
+      },
+      {
+        "level": 20,
+        "effect": "+1 AP on Mask change."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Sidaro",
+    "attributes": {
+      "power": 1128,
+      "element": "Dark",
+      "scaling": {
+        "might": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "30% increased damage per Upgraded Skill used. Resets on using a non-Upgraded Skill."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack spins the Bestial Wheel to a random value."
+      },
+      {
+        "level": 20,
+        "effect": "Using an Upgraded Skill gives 1 AP to all other allies."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Urnaro",
+    "attributes": {
+      "power": 1272,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Switch to Almighty Mask on Breaking an enemy."
+      },
+      {
+        "level": 10,
+        "effect": "Almighty Mask gives 2 AP to all allies."
+      },
+      {
+        "level": 20,
+        "effect": "50% increased Break damage."
+      }
+    ],
+    "rotation": -125
+  }
+]

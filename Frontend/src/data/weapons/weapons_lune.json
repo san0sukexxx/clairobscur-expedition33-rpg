@@ -22,7 +22,8 @@
         "level": 20,
         "effect": "30% increased Burn damage per Fire Stain."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Baguette",
@@ -47,7 +48,8 @@
         "level": 20,
         "effect": "Play first."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Benisim",
@@ -72,7 +74,8 @@
         "level": 20,
         "effect": "Replay instantly on consuming Stains with a Healing Skill."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Betelim",
@@ -97,7 +100,8 @@
         "level": 20,
         "effect": "+1 AP when Stains are consumed."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Braselim",
@@ -122,7 +126,8 @@
         "level": 20,
         "effect": "20% increased Fire damage with Skills."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Chapelim",
@@ -147,7 +152,8 @@
         "level": 20,
         "effect": "Generate one Earth Stain at the beginning of each turn."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Choralim",
@@ -172,7 +178,8 @@
         "level": 20,
         "effect": "Critical hits apply Burn."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Colim",
@@ -197,7 +204,8 @@
         "level": 20,
         "effect": "20% increased damage with Skills per active Light Stain."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Coralim",
@@ -222,10 +230,11 @@
         "level": 20,
         "effect": "Start battle with 1 Earth Stain."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
-    "name": "Deminirim",
+    "name": "Deminrim",
     "attributes": {
       "power": 1020,
       "element": "Lightning",
@@ -247,7 +256,8 @@
         "level": 20,
         "effect": "Start battle with 1 Fire Stain."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Elerim",
@@ -272,7 +282,8 @@
         "level": 20,
         "effect": "Base Attack generates an Earth Stain."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Kralim",
@@ -297,7 +308,8 @@
         "level": 20,
         "effect": "+1 AP when Stains are consumed."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Lighterim",
@@ -322,7 +334,8 @@
         "level": 20,
         "effect": "Start battle with 1 Ice Stain."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Lithelim",
@@ -347,7 +360,8 @@
         "level": 20,
         "effect": "Base Attacks can consume one Dark Stain to deal 200% more damage."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Lunerim",
@@ -359,20 +373,8 @@
         "luck": "A"
       }
     },
-    "passives": [
-      {
-        "level": 4,
-        "effect": "Fire Skills cost 1 less AP."
-      },
-      {
-        "level": 10,
-        "effect": "20% increased Fire damage with Skills."
-      },
-      {
-        "level": 20,
-        "effect": "Start battle with 1 Ice Stain."
-      }
-    ]
+    "passives": [],
+    "rotation": -125
   },
   {
     "name": "Painerim",
@@ -397,7 +399,8 @@
         "level": 20,
         "effect": "Start battle with 1 Lightning Stain."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Potierim",
@@ -412,7 +415,7 @@
     "passives": [
       {
         "level": 4,
-        "effect": "Healing Skills generate one additional Light stain."
+        "effect": "Healing Skills generate one additional Light Stain."
       },
       {
         "level": 10,
@@ -422,7 +425,8 @@
         "level": 20,
         "effect": "Base Attack generates a Light Stain."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Redalim",
@@ -437,7 +441,7 @@
     "passives": [
       {
         "level": 4,
-        "effect": "Healing Skills generate one additional Light stain."
+        "effect": "Healing Skills generate one additional Light Stain."
       },
       {
         "level": 10,
@@ -447,7 +451,8 @@
         "level": 20,
         "effect": "Replay instantly on consuming Stains with a Healing Skill."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Saperim",
@@ -472,7 +477,8 @@
         "level": 20,
         "effect": "Gradient Attacks and Gradient Counters deal 50% more damage."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Scaverim",
@@ -497,7 +503,8 @@
         "level": 20,
         "effect": "With 4 active Dark Stains, any Skill can consume them to deal 300% more damage."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Snowim",
@@ -522,7 +529,8 @@
         "level": 20,
         "effect": "Gain 2 Ice Stains and 3 AP when Frozen."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Trebuchim",
@@ -547,13 +555,14 @@
         "level": 20,
         "effect": "Base Attack generates 2 random Stains."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Troubadim",
     "attributes": {
       "power": 1140,
-      "element": "Physical",
+      "element": "Sword",
       "scaling": {
         "vitality": "B",
         "defense": "A"
@@ -572,6 +581,7 @@
         "level": 20,
         "effect": "Generate a random Stain on Free Aim shot."
       }
-    ]
+    ],
+    "rotation": -125
   }
 ]

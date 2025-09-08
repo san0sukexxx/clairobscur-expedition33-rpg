@@ -22,7 +22,8 @@
         "level": 20,
         "effect": "Play first."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Barrier Breaker",
@@ -47,7 +48,8 @@
         "level": 20,
         "effect": "Hitting a Marked enemy breaks all its Shields."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Battlum",
@@ -72,7 +74,8 @@
         "level": 20,
         "effect": "+5% of a Gradient Charge on Parry."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Brulerum",
@@ -97,7 +100,8 @@
         "level": 20,
         "effect": "100% Critical Chance while Stanceless."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Chalium",
@@ -122,7 +126,8 @@
         "level": 20,
         "effect": "50% increased Counter damage per Shield."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Chantenum",
@@ -147,7 +152,8 @@
         "level": 20,
         "effect": "+1 Shield on switching to Offensive Stance."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Clierum",
@@ -172,7 +178,8 @@
         "level": 20,
         "effect": "+50% Critical Chance while in Offensive Stance."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Coldum",
@@ -197,7 +204,8 @@
         "level": 20,
         "effect": "If Stanceless, Base Attack switches to Defensive Stance."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Duenum",
@@ -222,7 +230,8 @@
         "level": 20,
         "effect": "+1 AP on Stance switch."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Facesum",
@@ -247,7 +256,8 @@
         "level": 20,
         "effect": "Base Attack propagates Burn."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Glaisum",
@@ -272,7 +282,8 @@
         "level": 20,
         "effect": "Cleanse self Status Effects when switching to Virtuose Stance."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Jarum",
@@ -297,7 +308,8 @@
         "level": 20,
         "effect": "50% increased Counter damage per Shield."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Lithum",
@@ -322,7 +334,8 @@
         "level": 20,
         "effect": "Gain Shell when switching out of Virtuose Stance."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Maellum",
@@ -333,7 +346,8 @@
         "vitality": "A"
       }
     },
-    "passives": []
+    "passives": [],
+    "rotation": -125
   },
   {
     "name": "Medalum",
@@ -358,7 +372,8 @@
         "level": 20,
         "effect": "In Virtuose Stance, Burn deals double damage."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Melarum",
@@ -383,7 +398,8 @@
         "level": 20,
         "effect": "Switch to Virtuose Stance when Health falls below 50%."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Plenum",
@@ -408,7 +424,8 @@
         "level": 20,
         "effect": "Support Skills cost 1 less AP."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Seashelum",
@@ -433,7 +450,8 @@
         "level": 20,
         "effect": "+50% Critical Chance while in Offensive Stance."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Sekarum",
@@ -458,7 +476,8 @@
         "level": 20,
         "effect": "In Virtuose Stance, all damage pierce Shields."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Stalum",
@@ -483,7 +502,8 @@
         "level": 20,
         "effect": "While in Defensive Stance, receive Heal instead of Burn damage."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Tissenum",
@@ -508,7 +528,8 @@
         "level": 20,
         "effect": "Breaking an enemy deals a high amount of Earth damage."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Veremum",
@@ -533,7 +554,8 @@
         "level": 20,
         "effect": "+50% Critical Chance while in Offensive Stance."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Volesterum",
@@ -558,7 +580,8 @@
         "level": 20,
         "effect": "Recover 5% Health on Stance switch."
       }
-    ]
+    ],
+    "rotation": -125
   },
   {
     "name": "Yeverum",
@@ -583,6 +606,7 @@
         "level": 20,
         "effect": "On switching to Virtuose Stance, double all Shields on allies."
       }
-    ]
+    ],
+    "rotation": -125
   }
 ]

@@ -13,8 +13,7 @@ export default function CombatSection({ onMenuAction }: CombatsSectionProps) {
     const [tab, setTab] = useState<"enemies" | "team">("enemies");
 
     function handleMenuAction(action: CombatMenuAction) {
-        console.log(action);
-        
+    
         switch (action) {
             case COMBAT_MENU_ACTIONS.Team:
                 setTab("team");

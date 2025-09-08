@@ -1,44 +1,44 @@
 import { APIService } from "./APIService";
 
-export interface Player {
+export interface PlayerResponse {
   id: string;
-  playerSheet?: PlayerSheet;
-  weapons?: Weapon[];
-  pictos?: Picto[];
-  items?: Item[];
-  skills?: Skill[];
-  fightInfo?: FightInfo;
-  actions?: Action[];
-  status?: Status[];
+  playerSheet?: PlayerSheetResponse;
+  weapons?: WeaponResponse[];
+  pictos?: PictoResponse[];
+  items?: ItemResponse[];
+  skills?: SkillResponse[];
+  fightInfo?: FightInfoResponse;
+  actions?: ActionResponse[];
+  status?: StatusResponse[];
 }
 
-export interface Weapon {
+export interface WeaponResponse {
   id: string;
   inUse: boolean;
   level: number;
 }
 
-export interface Picto {
+export interface PictoResponse {
   id: string;
   level: number;
   slot: number;
 }
 
-export interface Item {
+export interface ItemResponse {
   description: string;
 }
 
-export interface Skill {
+export interface SkillResponse {
   id: string;
   slot?: number;
 }
 
-export interface FightInfo {
+export interface FightInfoResponse {
   initiatives?: string[]; // enemies ids or team member id
   characters?: BattleCharacterInfo[]; // enemies and allies
 }
 
-export interface Action {
+export interface ActionResponse {
   type: string; // TODO: create enum. Ex: skill, item, attack, free shot
   identifier: string;
   targetsID: string[];
@@ -56,17 +56,17 @@ export interface BattleCharacterInfo {
   id: string; // known NPC ID or Player ID. Ex.: ice-golem
   healthPoints: number;
   magicPoints?: number;
-  status?: Status[];
+  status?: StatusResponse[];
   type: string; // player or npc
   isEnemy: boolean;
 }
 
-export interface Status {
+export interface StatusResponse {
   id: string;
   ammount: number; // Ex.: 3 burn
 }
 
-export interface PlayerSheet {
+export interface PlayerSheetResponse {
   name?: string;
   character?: string;
   totalPoints?: number;
@@ -89,7 +89,7 @@ export interface CreatePlayerResponse {
 }
 
 export interface GetPlayerResponse {
-  player: Player;
+  player: PlayerResponse;
 }
 
 export class APIPlayer {
@@ -108,7 +108,7 @@ export class APIPlayer {
 
   static async getInfo(playerId: string): Promise<GetPlayerResponse> {
     // Aqui você pode mockar dados iniciais de um Player
-    const mock: Player = {
+    const mock: PlayerResponse = {
       id: playerId,
       playerSheet: {
         name: "Mock Player",
@@ -124,7 +124,12 @@ export class APIPlayer {
         notes: "Notes"
       },
       weapons: [
-        { id: "sword-1", inUse: true, level: 1 }
+        { id: "Abysseram", inUse: false, level: 3 },
+        { id: "Baguette", inUse: false, level: 6 },
+        { id: "Chevalam", inUse: false, level: 21 },
+        { id: "Kralim", inUse: false, level: 8 },
+        { id: "Scieleson", inUse: true, level: 8 },
+      
       ],
       pictos: [],
       items: [{ description: "Potion of Healing" }],
@@ -147,8 +152,7 @@ export class APIPlayer {
     // return APIService.get<GetPlayerResponse>(`/players/${playerId}`);
   }
 
-  static async save(player: Player): Promise<void> {
-    console.log("Saving");
+  static async save(player: PlayerResponse): Promise<void> {
     // Se fosse uma API real:
     // await APIService.put(`/players/${player.id}`, player);
 

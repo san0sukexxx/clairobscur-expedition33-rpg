@@ -1,0 +1,561 @@
+[
+  {
+    "name": "Algueron",
+    "attributes": {
+      "power": 1200,
+      "element": "Ice",
+      "scaling": {
+        "vitality": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Free Aim shots can consume 1 Foretell to deal 100% more damage."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack applies 3 Foretell."
+      },
+      {
+        "level": 20,
+        "effect": "During Twilight, Free Aim shots deal double damage."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Baguette",
+    "attributes": {
+      "power": 1200,
+      "element": "Dark",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Kill self on battle start."
+      },
+      {
+        "level": 10,
+        "effect": "Revive with 100% Health. Once per battle."
+      },
+      {
+        "level": 20,
+        "effect": "Play first."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Blizzon",
+    "attributes": {
+      "power": 1560,
+      "element": "Ice",
+      "scaling": {
+        "luck": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "While having at least 1 active Moon charge, Moon Skills are always Critical but damage taken is doubled."
+      },
+      {
+        "level": 10,
+        "effect": "25% increased damage per Moon charge."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack gives 1 Moon charge."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Bourgelon",
+    "attributes": {
+      "power": 1152,
+      "element": "Light",
+      "scaling": {
+        "vitality": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Consuming Foretell applies 2 Burn on target per Sun Charge."
+      },
+      {
+        "level": 10,
+        "effect": "100% increased Burn damage in Twilight state."
+      },
+      {
+        "level": 20,
+        "effect": "Sun Skills give one more charge."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Charnon",
+    "attributes": {
+      "power": 1104,
+      "element": "Dark",
+      "scaling": {
+        "defense": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "100% Critical Chance during Twilight."
+      },
+      {
+        "level": 10,
+        "effect": "Apply 1 Foretell on Critical hit."
+      },
+      {
+        "level": 20,
+        "effect": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Chaton",
+    "attributes": {
+      "power": 1320,
+      "element": "Dark",
+      "scaling": {
+        "vitality": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Sun Skills always apply 10 Foretell, but all damage taken is doubled."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack gives 1 Moon charge and consumes all Foretell to apply Burn."
+      },
+      {
+        "level": 20,
+        "effect": "100% increased Burn damage in Twilight state."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Corderon",
+    "attributes": {
+      "power": 1020,
+      "element": "Dark",
+      "scaling": {
+        "defense": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Curse self on battle start. Deal 50% more damage while Cursed."
+      },
+      {
+        "level": 10,
+        "effect": "Reset Curse duration when entering Twilight state."
+      },
+      {
+        "level": 20,
+        "effect": "Play again when entering Twilight state."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Direton",
+    "attributes": {
+      "power": 1500,
+      "element": "Earth",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "+1 AP per Moon charge on turn start."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack gives 1 Moon charge."
+      },
+      {
+        "level": 20,
+        "effect": "During Twilight, Base Attack consumes all AP. Base Attack applies 1 Foretell and deals 50% increased damage per AP consumed."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Garganon",
+    "attributes": {
+      "power": 1164,
+      "element": "Fire",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "While having at least 1 active Sun charge, apply one Burn stack per hit taken."
+      },
+      {
+        "level": 10,
+        "effect": "Counterattacks apply 1 Burn per active Sun charge."
+      },
+      {
+        "level": 20,
+        "effect": "Base attack can consume 1 Sun charge to apply 5 Foretell."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Gobluson",
+    "attributes": {
+      "power": 1248,
+      "element": "Fire",
+      "scaling": {
+        "defense": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "During Twilight, every time Foretell is applied it also affects another random enemy."
+      },
+      {
+        "level": 10,
+        "effect": "Apply 1 Burn every 3 Foretell applied with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "20% increased Fire damage with Skills."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Guleson",
+    "attributes": {
+      "power": 1164,
+      "element": "Lightning",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "On Twilight Start, apply Mark to all enemies."
+      },
+      {
+        "level": 10,
+        "effect": "Hitting a Marked enemy during Twilight doesn't remove Mark."
+      },
+      {
+        "level": 20,
+        "effect": "Apply 3 Foretell on applying Mark."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Hevason",
+    "attributes": {
+      "power": 1284,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "A",
+        "defense": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Free Aim shots can consume a Sun charge to apply 5 Foretell and consume a Moon charge to deal 400% more damage."
+      },
+      {
+        "level": 10,
+        "effect": "Consuming a Sun or Moon charge gives 1 AP."
+      },
+      {
+        "level": 20,
+        "effect": "Base Attack gives 1 Moon charge."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Litheson",
+    "attributes": {
+      "power": 1044,
+      "element": "Physical",
+      "scaling": {
+        "agility": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "During Moon, all allies have Greater Rush. During Sun, all enemies have Greater Slow."
+      },
+      {
+        "level": 10,
+        "effect": "During Twilight, all allies have Greater Rush and all enemies have Greater Slow."
+      },
+      {
+        "level": 20,
+        "effect": "+3 AP on applying a Buff or Debuff. Once per turn."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Lusteson",
+    "attributes": {
+      "power": 1272,
+      "element": "Dark",
+      "scaling": {
+        "vitality": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Killing an enemy with Foretell applies its Foretell to another random enemy."
+      },
+      {
+        "level": 10,
+        "effect": "Apply Mark on consuming Foretell."
+      },
+      {
+        "level": 20,
+        "effect": "20% increased Dark damage with Skills."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Martenon",
+    "attributes": {
+      "power": 1440,
+      "element": "Earth",
+      "scaling": {
+        "vitality": "A",
+        "agility": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "On Twilight Start, deal damage to all enemies based on the amount of charges."
+      },
+      {
+        "level": 10,
+        "effect": "On Twilight Start, apply 2 Foretell per charge to all enemies."
+      },
+      {
+        "level": 20,
+        "effect": "Double Sun and Moon charge generation."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Minason",
+    "attributes": {
+      "power": 1044,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Sun Skills have increased damage for each Foretell on the target. Moon Skills don't generate Moon charges anymore."
+      },
+      {
+        "level": 10,
+        "effect": "With at least 1 active Sun charge, gain one additional AP per Foretell consumed."
+      },
+      {
+        "level": 20,
+        "effect": "Base attack can consume 1 Sun charge to apply 5 Foretell."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Moisson",
+    "attributes": {
+      "power": 1236,
+      "element": "Physical",
+      "scaling": {
+        "agility": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "During Twilight, all damage dealt is converted to Dark damage."
+      },
+      {
+        "level": 10,
+        "effect": "20% increased Dark damage with Skills."
+      },
+      {
+        "level": 20,
+        "effect": "Apply Shell during Moon, Powerful during Sun, and Rush during Twilight."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Ramasson",
+    "attributes": {
+      "power": 1308,
+      "element": "Physical",
+      "scaling": {
+        "vitality": "B",
+        "luck": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Can consume 1 Moon charge on turn start to recover 20% of each ally's Health."
+      },
+      {
+        "level": 10,
+        "effect": "Base Attack gives 1 Moon charge."
+      },
+      {
+        "level": 20,
+        "effect": "Moon Skills give one more charge."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Rangeson",
+    "attributes": {
+      "power": 1164,
+      "element": "Dark",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Recover 5% Health per Foretell applied."
+      },
+      {
+        "level": 10,
+        "effect": "Healing Skills cost 1 less AP."
+      },
+      {
+        "level": 20,
+        "effect": "30% increased Heal efficiency per Moon charge. Base Attack gives 1 Moon charge."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Sadon",
+    "attributes": {
+      "power": 960,
+      "element": "Light",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "On turn start, gain 1 Shield if at least 1 Sun charge is active."
+      },
+      {
+        "level": 10,
+        "effect": "Apply 5 Foretell on enemies that break Shields."
+      },
+      {
+        "level": 20,
+        "effect": "+2 Sun charges on Counterattack."
+      }
+    ],
+    "rotation": -125
+  },
+  {
+    "name": "Scieleson",
+    "attributes": {
+      "power": 1284,
+      "element": "Physical",
+      "scaling": {
+        "agility": "A",
+        "luck": "B"
+      }
+    },
+    "passives": [],
+    "rotation": -125
+  },
+  {
+    "name": "Tisseron",
+    "attributes": {
+      "power": 1140,
+      "element": "Lightning",
+      "scaling": {
+        "defense": "B",
+        "agility": "A"
+      }
+    },
+    "passives": [
+      {
+        "level": 4,
+        "effect": "Extend Twilight by one turn on using a Moon Skill. +50% Twilight damage increase on using a Sun Skill."
+      },
+      {
+        "level": 10,
+        "effect": "Twilight duration is increased by 1."
+      },
+      {
+        "level": 20,
+        "effect": "Play again when entering Twilight state."
+      }
+    ],
+    "rotation": -125
+  }
+]

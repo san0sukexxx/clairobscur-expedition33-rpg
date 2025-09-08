@@ -1,9 +1,9 @@
-import { type Player } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
 
 interface PlayerSheetProps {
-    player: Player | null;
-    setPlayer: React.Dispatch<React.SetStateAction<Player | null>>;
+    player: PlayerResponse | null;
+    setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
 }
 
 export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
@@ -48,6 +48,9 @@ export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
                                             ...prev.playerSheet,
                                             character: id,
                                         },
+                                        weapons: prev.weapons
+                                            ? prev.weapons.map((w) => ({ ...w, inUse: false }))
+                                            : prev.weapons,
                                     }
                                     : prev
                             )
