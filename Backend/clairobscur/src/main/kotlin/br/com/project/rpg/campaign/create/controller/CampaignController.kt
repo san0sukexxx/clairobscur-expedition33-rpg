@@ -11,7 +11,7 @@ class CampaignController(
     private val campaignService: CampaignService
 ) {
     @PostMapping
-    fun criarCampanha(@RequestBody request: CreateCampaignRequest): Campaign {
+    fun createCmpaingnController(@RequestBody request: CreateCampaignRequest): Campaign {
         return campaignService.createCampaign(request)
     }
 }

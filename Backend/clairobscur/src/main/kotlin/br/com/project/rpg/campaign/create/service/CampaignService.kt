@@ -9,8 +9,8 @@ class CampaignService {
     fun createCampaign(request: CreateCampaignRequest): Campaign {
         return Campaign(
             id = 1L,
-            nome = request.nome,
-            personagemIds = request.personagemIds
+            name = request.name,
+            characterIds = request.characterIds
         )
     }
 }
