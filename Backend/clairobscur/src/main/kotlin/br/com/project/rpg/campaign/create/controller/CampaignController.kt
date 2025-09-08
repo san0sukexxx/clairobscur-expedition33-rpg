@@ -6,7 +6,7 @@ import br.com.project.rpg.model.Campaign
 import br.com.project.rpg.service.CampaignService
 
 @RestController
-@RequestMapping("/campanhas")
+@RequestMapping("/campaing/create")
 class CampaignController(
     private val campaignService: CampaignService
 ) {

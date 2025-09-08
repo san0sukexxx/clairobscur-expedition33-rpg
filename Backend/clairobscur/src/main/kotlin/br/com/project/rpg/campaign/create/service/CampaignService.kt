@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service
 @Service
 class CampaignService {
     fun createCampaign(request: CreateCampaignRequest): Campaign {
-        // Exemplo simples, substitua pela lógica real
         return Campaign(
             id = 1L,
             nome = request.nome,
