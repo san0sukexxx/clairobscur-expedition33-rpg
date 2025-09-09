@@ -1,4 +1,4 @@
-package br.com.project.rpg
+package br.com.project.rpg.campaign
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

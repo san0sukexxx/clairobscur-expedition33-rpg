@@ -1,4 +1,4 @@
-package br.com.project.rpg.model
+package br.com.project.rpg.campaign.create.model
 
 data class Campaign(
     val id: Long,

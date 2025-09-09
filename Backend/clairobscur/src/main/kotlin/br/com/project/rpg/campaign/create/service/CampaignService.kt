@@ -1,7 +1,7 @@
-package br.com.project.rpg.service
+package br.com.project.rpg.campaign.create.service
 
-import br.com.project.rpg.dto.CreateCampaignRequest
-import br.com.project.rpg.model.Campaign
+import br.com.project.rpg.campaign.create.dto.CreateCampaignRequest
+import br.com.project.rpg.campaign.create.model.Campaign
 import org.springframework.stereotype.Service
 
 @Service

@@ -1,9 +1,13 @@
-package br.com.project.rpg.campanha.criar.controller
+package br.com.project.rpg.campaign.create.controller
 
-import org.springframework.web.bind.annotation.*
-import br.com.project.rpg.dto.CreateCampaignRequest
-import br.com.project.rpg.model.Campaign
-import br.com.project.rpg.service.CampaignService
+import br.com.project.rpg.campaign.create.dto.CreateCampaignRequest
+import br.com.project.rpg.campaign.create.model.Campaign
+import br.com.project.rpg.campaign.create.service.CampaignService
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
 
 @RestController
 @RequestMapping("/campaing/create")
