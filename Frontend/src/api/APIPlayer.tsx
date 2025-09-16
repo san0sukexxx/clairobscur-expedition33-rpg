@@ -1,5 +1,18 @@
 import { APIService } from "./APIService";
 
+
+export type StatusType = 
+  "Hastened" | "Empowered" | "Protected" | "Regeneration" | 
+  "Unprotected" | "Slowed" | "Weakened" | "Cursed" | 
+  "Stunned" | "Confused" | "Frozen" | "Entangled" | 
+  "Shielded" | "Exhausted" | "Frenzy" | "Rage" | 
+  "Inverted" | "Marked" | "Plagued" | "Burning" | 
+  "Silenced" | "Dizzy";
+
+export type BattleStatus = "starting" | "started" | "finished";
+export type BattleCharacterType = "player" | "npc";
+
+
 export interface PlayerResponse {
   id: string;
   playerSheet?: PlayerSheetResponse;
@@ -8,7 +21,6 @@ export interface PlayerResponse {
   items?: ItemResponse[];
   skills?: SkillResponse[];
   fightInfo?: FightInfoResponse;
-  actions?: ActionResponse[];
   status?: StatusResponse[];
 }
 
@@ -34,36 +46,28 @@ export interface SkillResponse {
 }
 
 export interface FightInfoResponse {
-  initiatives?: string[]; // enemies ids or team member id
+  playerBattleID?: number;
+  initiativesBattleIDs?: number[]; // battleID
   characters?: BattleCharacterInfo[]; // enemies and allies
-}
-
-export interface ActionResponse {
-  type: string; // TODO: create enum. Ex: skill, item, attack, free shot
-  identifier: string;
-  targetsID: string[];
-  ammount: number;
-  origin: ActionOrigin;
-}
-
-export interface ActionOrigin {
-  type: string; // TODO: create enum. Ex: enemy, player
-  identifier: string;
+  battleStatus: BattleStatus;
 }
 
 export interface BattleCharacterInfo {
-  battleID: string;
+  battleID: number;
   id: string; // known NPC ID or Player ID. Ex.: ice-golem
+  name: string;
   healthPoints: number;
+  maxHealthPoints: number;
   magicPoints?: number;
+  maxMagicPoints?: number;
   status?: StatusResponse[];
-  type: string; // player or npc
+  type: BattleCharacterType;
   isEnemy: boolean;
 }
 
 export interface StatusResponse {
-  id: string;
-  ammount: number; // Ex.: 3 burn
+  type: StatusType;
+  ammount: number; // Ex.: Burning 3
 }
 
 export interface PlayerSheetResponse {
@@ -128,17 +132,51 @@ export class APIPlayer {
         { id: "Baguette", inUse: false, level: 6 },
         { id: "Chevalam", inUse: false, level: 21 },
         { id: "Kralim", inUse: false, level: 8 },
-        { id: "Scieleson", inUse: true, level: 8 },
-      
+        { id: "Sadon", inUse: true, level: 8 },
       ],
       pictos: [],
       items: [{ description: "Potion of Healing" }],
       skills: [{ id: "skill-1", slot: 0 }],
       fightInfo: {
-        initiatives: [],
-        characters: [],
+        // playerBattleID: 4,
+        initiativesBattleIDs: [],
+        characters: [
+          {
+            battleID: 1,
+            id: "golem",
+            name: "Golem",
+            healthPoints: 32,
+            maxHealthPoints: 45,
+            status: [],
+            type: "npc",
+            isEnemy: true
+          },
+          {
+            battleID: 2,
+            id: "grosse-tete",
+            name: "Grosse Tête",
+            healthPoints: 40,
+            maxHealthPoints: 45,
+            status: [],
+            type: "npc",
+            isEnemy: true
+          },
+          {
+            battleID: 3,
+            id: "gustave",
+            name: "Gustave",
+            healthPoints: 50,
+            maxHealthPoints: 60,
+            magicPoints: 30,
+            maxMagicPoints: 36,
+            status: [],
+            type: "player",
+            isEnemy: false
+          }
+        ],
+        battleStatus: "starting"
+        // battleStatus: "started"
       },
-      actions: [],
       status: [],
     };
 
@@ -153,10 +191,10 @@ export class APIPlayer {
   }
 
   static async save(player: PlayerResponse): Promise<void> {
-    // Se fosse uma API real:
-    // await APIService.put(`/players/${player.id}`, player);
+    await APIService.respond<null>(null, 600);
+  }
 
-    // Mock: apenas simula latência e erro eventual
+  static async callRollInitiative(player: PlayerResponse): Promise<void> {
     await APIService.respond<null>(null, 600);
   }
 }

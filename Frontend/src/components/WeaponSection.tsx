@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useRef, useMemo } from "react";
 import { FaChevronLeft, FaChevronRight, FaList } from "react-icons/fa";
-import { type PlayerResponse, type WeaponResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/APIPlayer";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPower, displayWeaponAttributeRank } from "../utils/WeaponUtils";
+import { displayWeaponPower, displayWeaponAttributePower, displayWeaponAttributeRank } from "../utils/WeaponUtils";
 
 const ELEMENT_EMOTE: Record<string, string> = {
   Physical: "⚔️",
@@ -23,6 +23,7 @@ type SelectorWeapon = {
   level: number;
   power: number;
   element: string;
+  elementName: string;
   scaling: Record<string, Rank>;
   rotation: number;
   passives: PassiveDTO[];
@@ -58,6 +59,7 @@ function useActiveWeapon(weaponList: WeaponDTO[], player?: PlayerResponse | null
       level: playerWeapon.level,
       power: weaponData.attributes.power,
       element: elementEmote,
+      elementName: rawElement,
       scaling: weaponData.attributes.scaling,
       rotation: weaponData.rotation,
       passives: weaponData.passives,
@@ -215,11 +217,13 @@ export default function WeaponSection({ player, setPlayer, weaponList }: WeaponS
           <div className="grid grid-cols-4 gap-4 text-center mt-6">
             <div>
               <span className="block text-xs uppercase opacity-70">Poder</span>
-              <span className="block text-2xl font-bold">{displayWeaponPower(activeWeapon.power, activeWeapon.level)}</span>
+              <span className="block text-2xl font-bold">{displayWeaponAttributePower(activeWeapon.power, activeWeapon.level)}</span>
+              <span className="block text-s">({displayWeaponPower(activeWeapon.power, activeWeapon.level)})</span>
             </div>
             <div>
               <span className="block text-xs uppercase opacity-70">Elemento</span>
               <span className="block text-2xl">{activeWeapon.element}</span>
+              <span className="block text-s">({activeWeapon.elementName})</span>
             </div>
             {/* Scaling stats */}
             {(
@@ -241,7 +245,7 @@ export default function WeaponSection({ player, setPlayer, weaponList }: WeaponS
 
           {/* Passivas ocupando 100% */}
           <ul className="mt-4 w-full space-y-1 text-sm md:col-span-2">
-            {(activeWeapon?.passives ?? []).map((p: any) => (
+            {(activeWeapon.passives ?? []).map((p: any) => (
               <li key={p.level} className="flex w-full gap-2">
                 <span className={`font-semibold ${levelColor(p.level)}`}>Level {p.level}</span>
                 <span className="flex-1 opacity-90">: {p.effect}</span>

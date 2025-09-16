@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
+import { type PlayerResponse } from "../api/APIPlayer";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 
 interface CombatMenuProps {
+  player: PlayerResponse | null;
   onAction: (action: CombatMenuAction) => void;
+  tab: String;
 }
 
-export default function CombatMenu({ onAction }: CombatMenuProps) {
+export default function CombatMenu({ player, onAction, tab }: CombatMenuProps) {
   const [open, setOpen] = useState(false);
 
   function handleAction(action: CombatMenuAction) {
@@ -33,24 +36,40 @@ export default function CombatMenu({ onAction }: CombatMenuProps) {
             flex flex-col gap-2
           "
         >
-          <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
-            Equipe
-          </button>
-          <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
-            Inimigos
-          </button>
-          <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
-            Itens
-          </button>
-          <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
-            Habilidades
-          </button>
-          <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
-            Tiro livre
-          </button>
-          <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
-            Atacar
-          </button>
+          {tab == "enemies" && (
+            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
+              Equipe
+            </button>
+          )}
+          
+          {tab == "team" && (
+            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
+              Inimigos
+            </button>
+          )}
+
+          {player?.fightInfo?.battleStatus == "starting" && (
+            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Initiative)}>
+              Rolar Iniciativa
+            </button>
+          )}
+
+          {player?.fightInfo?.battleStatus == "started" && (
+            <>
+              <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
+                Itens
+              </button>
+              <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
+                Habilidades
+              </button>
+              <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
+                Tiro livre
+              </button>
+              <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
+                Atacar
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>

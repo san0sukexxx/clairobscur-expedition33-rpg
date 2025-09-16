@@ -2,6 +2,8 @@
 
 // Ranks possíveis
 export type Rank = "S" | "A" | "B" | "C" | "D" | "E";
+export type AttributeType = "vitality" | "agility" | "defense" | "luck";
+export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 
 // Estrutura de uma passiva
 export interface PassiveDTO {
@@ -12,9 +14,8 @@ export interface PassiveDTO {
 // Estrutura dos atributos
 export interface AttributesDTO {
   power: number;
-  element: string; // exemplo: "Dark", "Physical"
-  scaling: Record<string, Rank>;
-  // se quiser limitar, podemos criar um type fixo com chaves: vitality, agility, defense, etc.
+  element: Element;
+  scaling: Record<AttributeType, Rank>;
 }
 
 // Estrutura de uma arma

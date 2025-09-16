@@ -2,7 +2,10 @@ export function calculateWeaponPower(power: number, level: number): number {
     return power / 20 * level;
 }
 export function displayWeaponPower(power: number, level: number): number {
-    return Math.round((power / 20) * level);
+    return Math.round((power / 5) * level);
+}
+export function displayWeaponAttributePower(power: number, level: number): string {
+    return "+" + roundDownOneDecimal((power / 5) * level / 1000);
 }
 export function displayWeaponAttributeRank(rank: string, level: number): string { 
   const ranks = ["S", "A", "B", "C", "D"];
@@ -23,4 +26,7 @@ export function displayWeaponAttributeRank(rank: string, level: number): string 
   }
 
   return rank;
+}
+function roundDownOneDecimal(num: number) {
+  return Math.floor(num * 10) / 10;
 }

@@ -1,15 +1,16 @@
 import { useState } from "react";
-
-import PartyStatus from "./PartyStatus";
-import EnemiesStatus from "./EnemiesStatus";
+import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
+import { type PlayerResponse } from "../api/APIPlayer";
 
 interface CombatsSectionProps {
   onMenuAction: (action: CombatMenuAction) => void;
+  player: PlayerResponse | null;
+  setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
 }
 
-export default function CombatSection({ onMenuAction }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, setPlayer }: CombatsSectionProps) {
     const [tab, setTab] = useState<"enemies" | "team">("enemies");
 
     function handleMenuAction(action: CombatMenuAction) {
@@ -24,11 +25,11 @@ export default function CombatSection({ onMenuAction }: CombatsSectionProps) {
                 break;
 
             case COMBAT_MENU_ACTIONS.Inventory:
-                onMenuAction("Inventory");
+                onMenuAction(COMBAT_MENU_ACTIONS.Inventory);
                 break;
 
             case COMBAT_MENU_ACTIONS.Skills:
-                onMenuAction("Skills");
+                onMenuAction(COMBAT_MENU_ACTIONS.Skills);
                 break;
 
             case COMBAT_MENU_ACTIONS.FreeShot:
@@ -47,14 +48,14 @@ export default function CombatSection({ onMenuAction }: CombatsSectionProps) {
     return (
         <div>
             {tab === "enemies" && (
-                <EnemiesStatus />
+                <BattleGroupStatus player={player} setPlayer={setPlayer} isEnemies={true} />
             )}
 
             {tab === "team" && (
-                <PartyStatus />
+                <BattleGroupStatus player={player} setPlayer={setPlayer} isEnemies={false} />
             )}
 
-            <CombatMenu onAction={handleMenuAction} />
+            <CombatMenu player={player} onAction={handleMenuAction} tab={tab} />
         </div>
     );
 }

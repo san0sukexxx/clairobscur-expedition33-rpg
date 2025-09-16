@@ -14,7 +14,6 @@ import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuA
 import { APIPlayer, type CreatePlayerInput, type PlayerResponse } from "../api/APIPlayer";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 
-
 type Skill = { id: string; name: string; learned: boolean };
 type Item = { id: string; name: string; equipped: boolean };
 
@@ -27,7 +26,6 @@ export default function PlayerPage() {
   const [player, setPlayer] = useState<PlayerResponse | null>(null);
 
   const weaponList = useMemo(() => {
-    console.log(WeaponsDataLoader.fileForCharacter(player?.playerSheet?.character));
     return WeaponsDataLoader.getByFile(
       WeaponsDataLoader.fileForCharacter(player?.playerSheet?.character)
     );
@@ -79,6 +77,9 @@ export default function PlayerPage() {
         break;
       case COMBAT_MENU_ACTIONS.Skills:
         setTab("habilidades");
+        break;
+      case COMBAT_MENU_ACTIONS.Initiative:
+        rollInitiative();
         break;
       default:
         break;
@@ -151,7 +152,7 @@ export default function PlayerPage() {
 
 
           {!loading && !error && tab === "combate" && (
-            <CombatSection onMenuAction={handleCombatMenuAction} />
+            <CombatSection onMenuAction={handleCombatMenuAction} player={player} setPlayer={setPlayer} />
           )}
 
           {!loading && !error && tab === "habilidades" && (
@@ -266,19 +267,19 @@ export default function PlayerPage() {
 
       createSheet();
     } else {
-      const fetchInfo = async () => {
-        try {
-          const response = await APIPlayer.getInfo(character);
-          setPlayer(response.player);
+      fetchInfo(character);
+    }
+  }
 
-          setLoading(false);
-        } catch (e: any) {
-          console.error("Erro ao carregar player:", e);
-          setError("Erro ao carregar player: " + e?.message);
-        }
-      };
+  async function fetchInfo(character: string) {
+    try {
+      const response = await APIPlayer.getInfo(character);
+      setPlayer(response.player);
 
-      fetchInfo();
+      setLoading(false);
+    } catch (e: any) {
+      console.error("Erro ao carregar player:", e);
+      setError("Erro ao carregar player: " + e?.message);
     }
   }
 
@@ -288,6 +289,20 @@ export default function PlayerPage() {
     const savePlayer = async () => {
       try {
         await APIPlayer.save(player);
+      } catch (e) {
+        console.error("Erro ao salvar player:", e);
+      }
+    };
+
+    savePlayer();
+  }
+
+  function rollInitiative() {
+    if (!player) return;
+
+    const savePlayer = async () => {
+      try {
+        await APIPlayer.callRollInitiative(player);
       } catch (e) {
         console.error("Erro ao salvar player:", e);
       }

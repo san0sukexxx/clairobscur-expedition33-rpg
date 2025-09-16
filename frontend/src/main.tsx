@@ -11,6 +11,7 @@ import CreateCampaign from "./pages/CreateCampaign.tsx";
 import CampaignAdmin from "./pages/CampaignAdmin.tsx";
 import CampaignList from "./pages/CampaignList.tsx";
 import CharacterSheetList from "./pages/CharacterSheetList.tsx";
+import DiceExample from "./pages/DiceExample.tsx";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: "/campaign-list", element: <CampaignList /> },
       { path: "/load-campaign", element: <CampaignList /> },
       { path: "/character-sheet-list/:campaign", element: <CharacterSheetList /> },
+      { path: "/dice-test", element: <DiceExample /> },
     ],
   },
 ]);

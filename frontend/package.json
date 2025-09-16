@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@3d-dice/dice-box": "^1.1.4",
+    "@3d-dice/dice-ui": "^0.5.2",
     "daisyui": "^5.0.50",
     "framer-motion": "^12.23.12",
     "nanoid": "^5.1.5",

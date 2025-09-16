@@ -4,7 +4,8 @@ export const COMBAT_MENU_ACTIONS = {
   Inventory: "Inventory",
   Skills: "Skills",
   FreeShot: "FreeShot",
-  Attack: "Attack"
+  Attack: "Attack",
+  Initiative: "Initiative"
 } as const;
 
 export type CombatMenuAction = typeof COMBAT_MENU_ACTIONS[keyof typeof COMBAT_MENU_ACTIONS];
