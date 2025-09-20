@@ -50,6 +50,7 @@ export interface FightInfoResponse {
   initiativesBattleIDs?: number[]; // battleID
   characters?: BattleCharacterInfo[]; // enemies and allies
   battleStatus: BattleStatus;
+  canRollInitiative: boolean;
 }
 
 export interface BattleCharacterInfo {
@@ -174,6 +175,7 @@ export class APIPlayer {
             isEnemy: false
           }
         ],
+        canRollInitiative: true,
         battleStatus: "starting"
         // battleStatus: "started"
       },
@@ -194,7 +196,8 @@ export class APIPlayer {
     await APIService.respond<null>(null, 600);
   }
 
-  static async callRollInitiative(player: PlayerResponse): Promise<void> {
+  static async saveRollInitiative(player: PlayerResponse, total: number): Promise<void> {
+    console.log(total);
     await APIService.respond<null>(null, 600);
   }
 }

@@ -48,7 +48,7 @@ export default function CombatMenu({ player, onAction, tab }: CombatMenuProps) {
             </button>
           )}
 
-          {player?.fightInfo?.battleStatus == "starting" && (
+          {player?.fightInfo?.battleStatus == "starting" && player?.fightInfo?.canRollInitiative && (
             <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Initiative)}>
               Rolar Iniciativa
             </button>

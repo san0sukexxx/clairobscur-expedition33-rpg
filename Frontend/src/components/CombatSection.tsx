@@ -32,6 +32,10 @@ export default function CombatSection({ onMenuAction, player, setPlayer }: Comba
                 onMenuAction(COMBAT_MENU_ACTIONS.Skills);
                 break;
 
+            case COMBAT_MENU_ACTIONS.Initiative:
+                onMenuAction(COMBAT_MENU_ACTIONS.Initiative);
+                break;
+
             case COMBAT_MENU_ACTIONS.FreeShot:
                 setTab("enemies");
                 break;

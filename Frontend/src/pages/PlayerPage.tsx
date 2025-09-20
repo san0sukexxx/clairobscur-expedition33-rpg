@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaSkull, FaCheckCircle } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
@@ -13,6 +13,16 @@ import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput, type PlayerResponse } from "../api/APIPlayer";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
+import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard"
+import {
+  rollCommandForInitiative,
+  initiativeTotal,
+  countCriticalRolls,
+  calculateCriticalMulti,
+  diceTotal,
+  isCriticalFailureRoll
+} from "../utils/PlayerCalculator"
+import PanelModal from "../components/PanelModal";
 
 type Skill = { id: string; name: string; learned: boolean };
 type Item = { id: string; name: string; equipped: boolean };
@@ -24,6 +34,10 @@ export default function PlayerPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<PlayerResponse | null>(null);
+  const diceBoardRef = useRef<DiceBoardRef>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState<string | undefined>(undefined);
+  const [modalBody, setModalBody] = useState<React.ReactNode>(null);
 
   const weaponList = useMemo(() => {
     return WeaponsDataLoader.getByFile(
@@ -88,6 +102,18 @@ export default function PlayerPage() {
 
   return (
     <div className="min-h-dvh bg-base-200">
+      <DiceBoard ref={diceBoardRef} />
+
+      <PanelModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalTitle}
+        size="md"
+        showClose={false}
+      >
+        {modalBody}
+      </PanelModal>
+
       {/* Navbar topo */}
       <div className="navbar bg-base-100 shadow sticky top-0 z-10">
         <div className="flex-1">
@@ -243,9 +269,7 @@ export default function PlayerPage() {
           </button>
         </nav>
       </div>
-
-
-    </div >
+    </div>
   );
 
   function setup() {
@@ -300,14 +324,65 @@ export default function PlayerPage() {
   function rollInitiative() {
     if (!player) return;
 
-    const savePlayer = async () => {
+    if (player.fightInfo) {
+        player.fightInfo.canRollInitiative = false;
+        setPlayer(player);
+    }
+
+    const rollCall = async (total: number) => {
       try {
-        await APIPlayer.callRollInitiative(player);
+        await APIPlayer.saveRollInitiative(player, total);
       } catch (e) {
         console.error("Erro ao salvar player:", e);
       }
     };
 
-    savePlayer();
+    diceBoardRef.current?.roll(rollCommandForInitiative(player), (result) => {
+      const criticalRolls = countCriticalRolls(result);
+      const criticalMulti = calculateCriticalMulti(result);
+      const rollTotal = diceTotal(result);
+      const total = initiativeTotal(player, result);
+      const isCriticalFailure = isCriticalFailureRoll(result);
+
+      setModalTitle("Resultado da rolagem");
+
+      if (isCriticalFailure) {
+        setModalBody(
+          <div className="space-y-2">
+            <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
+              <FaSkull className="w-6 h-6" />
+              Falha crítica
+            </h3>
+            <p>Total: {total}</p>
+          </div>
+        );
+      } else {
+        setModalBody(
+          <div className="space-y-2">
+            <p>Rolagem: {rollTotal}</p>
+            {criticalRolls > 0 && (
+              <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
+                <FaCheckCircle className="w-6 h-6" />
+                Críticos: <b>{criticalRolls}</b>
+              </h3>
+            )}
+            <p>Habilidade: <b>{(player.playerSheet?.hability ?? 0)}</b>
+              {criticalRolls > 0 && (
+                <b> (x{criticalMulti})</b>
+              )}
+            </p>
+            <p>Total: {total}</p>
+          </div>
+        );
+      }
+
+      setModalOpen(true);
+
+      rollCall(result);
+
+      setTimeout(() => {
+        diceBoardRef.current?.hideBoard();
+      }, 3000);
+    });
   }
 }
