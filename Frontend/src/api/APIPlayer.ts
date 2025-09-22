@@ -1,17 +1,7 @@
 import { APIService } from "./APIService";
-
-
-export type StatusType = 
-  "Hastened" | "Empowered" | "Protected" | "Regeneration" | 
-  "Unprotected" | "Slowed" | "Weakened" | "Cursed" | 
-  "Stunned" | "Confused" | "Frozen" | "Entangled" | 
-  "Shielded" | "Exhausted" | "Frenzy" | "Rage" | 
-  "Inverted" | "Marked" | "Plagued" | "Burning" | 
-  "Silenced" | "Dizzy";
+import { type InitiativeResponse, type StatusResponse, type BattleCharacterInfo } from "./ResponseModel";
 
 export type BattleStatus = "starting" | "started" | "finished";
-export type BattleCharacterType = "player" | "npc";
-
 
 export interface PlayerResponse {
   id: string;
@@ -47,28 +37,10 @@ export interface SkillResponse {
 
 export interface FightInfoResponse {
   playerBattleID?: number;
-  initiativesBattleIDs?: number[]; // battleID
+  initiatives?: InitiativeResponse[];
   characters?: BattleCharacterInfo[]; // enemies and allies
   battleStatus: BattleStatus;
   canRollInitiative: boolean;
-}
-
-export interface BattleCharacterInfo {
-  battleID: number;
-  id: string; // known NPC ID or Player ID. Ex.: ice-golem
-  name: string;
-  healthPoints: number;
-  maxHealthPoints: number;
-  magicPoints?: number;
-  maxMagicPoints?: number;
-  status?: StatusResponse[];
-  type: BattleCharacterType;
-  isEnemy: boolean;
-}
-
-export interface StatusResponse {
-  type: StatusType;
-  ammount: number; // Ex.: Burning 3
 }
 
 export interface PlayerSheetResponse {
@@ -140,7 +112,25 @@ export class APIPlayer {
       skills: [{ id: "skill-1", slot: 0 }],
       fightInfo: {
         // playerBattleID: 4,
-        initiativesBattleIDs: [],
+        initiatives: [
+          {
+            playFirst: false,
+            battleID: 1,
+            value: 11,
+            hability: 3
+          },
+          {
+            playFirst: false,
+            battleID: 2,
+            value: 11,
+            hability: 4
+          },
+          {
+            playFirst: false,
+            battleID: 3,
+            value: 15,
+            hability: 3
+          }],
         characters: [
           {
             battleID: 1,

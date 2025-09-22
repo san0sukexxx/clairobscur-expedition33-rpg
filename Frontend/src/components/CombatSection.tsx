@@ -3,12 +3,20 @@ import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { type PlayerResponse } from "../api/APIPlayer";
+import InitiativesQueue from "./InitiativesQueue";
+import { CgSandClock } from "react-icons/cg";
 
 interface CombatsSectionProps {
   onMenuAction: (action: CombatMenuAction) => void;
   player: PlayerResponse | null;
   setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
 }
+
+const characters = [
+  { id: 1, name: "Gustave", imageUrl: "/characters/gustave.webp" },
+  { id: 2, name: "Golem", imageUrl: "/enemies/golem.png" },
+  { id: 3, name: "Grosse Tetê", imageUrl: "/enemies/grosse-tete.png" },
+]
 
 export default function CombatSection({ onMenuAction, player, setPlayer }: CombatsSectionProps) {
     const [tab, setTab] = useState<"enemies" | "team">("enemies");
@@ -51,12 +59,21 @@ export default function CombatSection({ onMenuAction, player, setPlayer }: Comba
 
     return (
         <div>
+            {player?.fightInfo?.battleStatus == "starting" && (
+                <div className="alert alert-info shadow-lg mt-1 mb-5 gap-1">
+                    <CgSandClock className="h-6 w-6" />
+                    <span className="font-semibold">Aguardando jogadores...</span>
+                </div>
+            )}
+
+            <InitiativesQueue player={player} isStarted={player?.fightInfo?.battleStatus == "started"} />
+
             {tab === "enemies" && (
-                <BattleGroupStatus player={player} setPlayer={setPlayer} isEnemies={true} />
+                <BattleGroupStatus player={player} isEnemies={true} />
             )}
 
             {tab === "team" && (
-                <BattleGroupStatus player={player} setPlayer={setPlayer} isEnemies={false} />
+                <BattleGroupStatus player={player} isEnemies={false} />
             )}
 
             <CombatMenu player={player} onAction={handleMenuAction} tab={tab} />

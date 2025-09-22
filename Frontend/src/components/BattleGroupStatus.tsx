@@ -1,10 +1,8 @@
 import React from "react";
 import { type PlayerResponse } from "../api/APIPlayer";
-import { CgSandClock } from "react-icons/cg";
 
 interface EnemiesStatusProps {
     player: PlayerResponse | null;
-    setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
     isEnemies: Boolean;
 }
 
@@ -12,20 +10,13 @@ function pct(cur: number, max: number) {
     return Math.max(0, Math.min(100, Math.round((cur / max) * 100)));
 }
 
-export default function EnemiesStatus({ player, setPlayer, isEnemies }: EnemiesStatusProps) {
+export default function EnemiesStatus({ player, isEnemies }: EnemiesStatusProps) {
     if (player?.fightInfo?.characters == undefined) { return; }
 
     const characters = player?.fightInfo?.characters?.filter(ch => ch.isEnemy == isEnemies);
 
     return (
         <div>
-            {player.fightInfo.battleStatus == "starting" && (
-                <div className="alert alert-info shadow-lg mt-1 mb-5 gap-1">
-                    <CgSandClock className="h-6 w-6" />
-                    <span className="font-semibold">Aguardando jogadores...</span>
-                </div>
-            )}
-
             <div className="card bg-base-100 shadow">
                 <div className="card-body">
                     <h2 className="card-title justify-center">
