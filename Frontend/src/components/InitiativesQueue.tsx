@@ -42,23 +42,11 @@ export default function InitiativesQueue({ player, isStarted }: InitiativesQueue
                                 title={ch.name}
                             >
                                 <img
-                                    src={
-                                        ch.type == "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`
-                                    }
+                                    src={ch.type == "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`}
                                     alt={ch.name}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            {/* {isActive && (
-                                <div
-                                    className="mt-1 w-0 h-0"
-                                    style={{
-                                        borderLeft: "8px solid transparent",
-                                        borderRight: "8px solid transparent",
-                                        borderBottom: "10px solid #facc15",
-                                    }}
-                                />
-                            )} */}
                         </div>
                     )
                 })}

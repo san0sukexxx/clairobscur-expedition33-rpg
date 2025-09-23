@@ -13,7 +13,7 @@ import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput, type PlayerResponse } from "../api/APIPlayer";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
-import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard"
+import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
   rollCommandForInitiative,
   initiativeTotal,
@@ -21,8 +21,9 @@ import {
   calculateCriticalMulti,
   diceTotal,
   isCriticalFailureRoll
-} from "../utils/PlayerCalculator"
+} from "../utils/PlayerCalculator";
 import PanelModal from "../components/PanelModal";
+import { RefreshHelper } from "../utils/RefreshHelper";
 
 type Skill = { id: string; name: string; learned: boolean };
 type Item = { id: string; name: string; equipped: boolean };
@@ -38,6 +39,7 @@ export default function PlayerPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string | undefined>(undefined);
   const [modalBody, setModalBody] = useState<React.ReactNode>(null);
+  const refreshHelper = new RefreshHelper();
 
   const weaponList = useMemo(() => {
     return WeaponsDataLoader.getByFile(
@@ -293,6 +295,7 @@ export default function PlayerPage() {
     } else {
       fetchInfo(character);
     }
+
   }
 
   async function fetchInfo(character: string) {
@@ -301,6 +304,8 @@ export default function PlayerPage() {
       setPlayer(response.player);
 
       setLoading(false);
+      refreshHelper.init(character, response.player, setPlayer)
+      refreshHelper.refreshInfoLoop();
     } catch (e: any) {
       console.error("Erro ao carregar player:", e);
       setError("Erro ao carregar player: " + e?.message);
@@ -325,8 +330,13 @@ export default function PlayerPage() {
     if (!player) return;
 
     if (player.fightInfo) {
-        player.fightInfo.canRollInitiative = false;
-        setPlayer(player);
+      setPlayer({
+        ...player,
+        fightInfo: {
+          ...player.fightInfo,
+          canRollInitiative: false
+        }
+      });
     }
 
     const rollCall = async (total: number) => {

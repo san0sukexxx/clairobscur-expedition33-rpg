@@ -12,12 +12,6 @@ interface CombatsSectionProps {
   setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
 }
 
-const characters = [
-  { id: 1, name: "Gustave", imageUrl: "/characters/gustave.webp" },
-  { id: 2, name: "Golem", imageUrl: "/enemies/golem.png" },
-  { id: 3, name: "Grosse Tetê", imageUrl: "/enemies/grosse-tete.png" },
-]
-
 export default function CombatSection({ onMenuAction, player, setPlayer }: CombatsSectionProps) {
     const [tab, setTab] = useState<"enemies" | "team">("enemies");
 

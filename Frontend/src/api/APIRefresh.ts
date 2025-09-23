@@ -3,6 +3,7 @@ import { type InitiativeResponse, type BattleCharacterInfo } from "./ResponseMod
 
 export type ActionsType =
   | "character-joined-battle"
+  | "battle-started"
   | "skill-used"
   | "item-used"
   | "attack"
@@ -41,8 +42,8 @@ function makeMockActions(playerId: string): ActionResponse[] {
         initiative: {
             playFirst: false,
             battleID: 4,
-            value: 15,
-            hability: 4
+            value: 11,
+            hability: 5
         },
         character: {
             battleID: 4,
@@ -56,6 +57,9 @@ function makeMockActions(playerId: string): ActionResponse[] {
             isEnemy: false
         }
       },
+    },
+    {
+      type: "battle-started"
     },
   ];
 
