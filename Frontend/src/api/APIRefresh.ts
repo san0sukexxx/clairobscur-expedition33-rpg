@@ -4,9 +4,9 @@ import { type InitiativeResponse, type BattleCharacterInfo } from "./ResponseMod
 export type ActionsType =
   | "character-joined-battle"
   | "battle-started"
+  | "attack"
   | "skill-used"
   | "item-used"
-  | "attack"
   | "free-shot";
 
 export interface CharacterJoinedBattleResponse {
@@ -14,9 +14,19 @@ export interface CharacterJoinedBattleResponse {
   character: BattleCharacterInfo;
 }
 
+export interface AttackResponse {
+  // TODO
+  originBattleIds: number[];
+  targetBattleIds: number[];
+  damage: number;
+  element: string;
+}
+
+// TODO: animate actions
 export interface ActionResponse {
   type: ActionsType;
   characterJoinedBattle?: CharacterJoinedBattleResponse;
+  attack?: AttackResponse;
   // TODO
 }
 
@@ -60,6 +70,9 @@ function makeMockActions(playerId: string): ActionResponse[] {
     },
     {
       type: "battle-started"
+    },
+    {
+      type: "attack"
     },
   ];
 

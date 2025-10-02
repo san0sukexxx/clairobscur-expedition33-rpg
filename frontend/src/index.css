@@ -23,3 +23,40 @@
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
 }
+
+/* toast.css */
+.toast-container {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;           /* não bloqueia cliques no app */
+  z-index: 9999;
+}
+
+.toast-message {
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: clamp(24px, 4vw, 48px); /* grande e responsivo */
+  padding: 24px 40px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: min(90vw, 900px);
+  animation: toastFade 350ms ease-out, toastStay var(--stay, 1s) linear 350ms,
+             toastOut 300ms ease-in forwards calc(var(--stay, 1s) + 350ms);
+  will-change: transform, opacity;
+}
+
+/* Animações suaves de entrada/saída */
+@keyframes toastFade {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes toastStay {
+  from { opacity: 1; }
+  to   { opacity: 1; }
+}
+@keyframes toastOut {
+  to { opacity: 0; transform: translateY(-6px) scale(0.995); }
+}
