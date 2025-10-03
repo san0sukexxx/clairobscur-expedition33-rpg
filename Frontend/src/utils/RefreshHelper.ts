@@ -61,8 +61,8 @@ export class RefreshHelper {
                     this.handleBattleStarted();
                     break;
                 case "attack":
-                    this.showToast("Senhor Batatas atacou Monstro do Queijo");
-                    
+                    this.handleAttack(action);
+                    break;
                 default:
                     break;
             }
@@ -88,4 +88,25 @@ export class RefreshHelper {
             this.player.fightInfo.battleStatus = "started";
         }
     }
+
+    private handleAttack(action: ActionResponse) {
+        const attack = action.attack;
+        if (attack == undefined || attack.damage == undefined) { return; }
+
+        attack.targetBattleIds.forEach((battleID) => {
+            this.updateCharacterHP(battleID, attack.damage);
+        });
+    }
+
+    private updateCharacterHP(battleID: number, damage: number) {
+        if (!this.player?.fightInfo?.characters || !this.setPlayer) return;
+
+        const character = this.player.fightInfo.characters.find(ch => ch.battleID === battleID);
+        if (!character) return;
+
+        character.healthPoints = Math.max(0, Math.min(character.healthPoints - damage, character.maxHealthPoints));
+
+        this.setPlayer({ ...this.player });
+    }
+
 }

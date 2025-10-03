@@ -1,5 +1,6 @@
 import React from "react";
 import { type PlayerResponse } from "../api/APIPlayer";
+import AnimatedStatBar from "./AnimatedStatBar";
 
 interface EnemiesStatusProps {
     player: PlayerResponse | null;
@@ -60,6 +61,13 @@ export default function EnemiesStatus({ player, isEnemies }: EnemiesStatusProps)
                                             max={100}
                                             aria-label="HP"
                                         />
+                                        <AnimatedStatBar
+                                            value={pct(ch.healthPoints, ch.maxHealthPoints)}
+                                            label="HP"
+                                            fillClass="bg-error"
+                                            ghostClass="bg-error/30"
+                                        />
+
                                     </div>
                                     {ch.magicPoints !== undefined && ch.maxMagicPoints !== undefined && (
                                         <div>
@@ -72,6 +80,12 @@ export default function EnemiesStatus({ player, isEnemies }: EnemiesStatusProps)
                                                 value={pct(ch.magicPoints, ch.maxMagicPoints)}
                                                 max={100}
                                                 aria-label="MP"
+                                            />
+                                            <AnimatedStatBar
+                                                value={pct(ch.magicPoints!, ch.maxMagicPoints!)}
+                                                label="MP"
+                                                fillClass="bg-info"
+                                                ghostClass="bg-info/30"
                                             />
                                         </div>
                                     )}

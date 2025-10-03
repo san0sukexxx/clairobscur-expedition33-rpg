@@ -1,5 +1,6 @@
 import { APIService } from "./APIService";
 import { type InitiativeResponse, type BattleCharacterInfo } from "./ResponseModel"
+import { type Element } from "../types/WeaponDTO"
 
 export type ActionsType =
   | "character-joined-battle"
@@ -15,14 +16,12 @@ export interface CharacterJoinedBattleResponse {
 }
 
 export interface AttackResponse {
-  // TODO
   originBattleIds: number[];
   targetBattleIds: number[];
   damage: number;
-  element: string;
+  element: Element;
 }
 
-// TODO: animate actions
 export interface ActionResponse {
   type: ActionsType;
   characterJoinedBattle?: CharacterJoinedBattleResponse;
@@ -50,21 +49,21 @@ function makeMockActions(playerId: string): ActionResponse[] {
       type: "character-joined-battle",
       characterJoinedBattle: {
         initiative: {
-            playFirst: false,
-            battleID: 4,
-            value: 11,
-            hability: 5
+          playFirst: false,
+          battleID: 4,
+          value: 11,
+          hability: 5
         },
         character: {
-            battleID: 4,
-            id: "sciel",
-            name: "Sciel",
-            healthPoints: 40,
-            maxHealthPoints: 45,
-            magicPoints: 30,
-            maxMagicPoints: 32,
-            type: "player",
-            isEnemy: false
+          battleID: 4,
+          id: "sciel",
+          name: "Sciel",
+          healthPoints: 40,
+          maxHealthPoints: 45,
+          magicPoints: 30,
+          maxMagicPoints: 32,
+          type: "player",
+          isEnemy: false
         }
       },
     },
@@ -72,7 +71,13 @@ function makeMockActions(playerId: string): ActionResponse[] {
       type: "battle-started"
     },
     {
-      type: "attack"
+      type: "attack",
+      attack: {
+        originBattleIds: [3],
+        targetBattleIds: [1, 2],
+        damage: 30,
+        element: "Physical"
+      }
     },
   ];
 
