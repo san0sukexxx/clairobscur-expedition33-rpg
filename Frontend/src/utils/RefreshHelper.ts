@@ -65,6 +65,12 @@ export class RefreshHelper {
                 case "attack":
                     this.handleAttack(action);
                     break;
+                case "magic-points-changed":
+                    this.handleMPChanged(action);
+                    break;
+                case "health-points-changed":
+                    this.handleHPChanged(action);
+                    break;
                 default:
                     break;
             }
@@ -97,7 +103,6 @@ export class RefreshHelper {
         const attack = action.attack;
         if (attack == undefined || attack.damage == undefined || this.player == undefined) { return; }
 
-
         attack.targetBattleIds.forEach((battleID) => {
             this.updateCharacterHP(battleID, attack.damage);
         });
@@ -107,6 +112,24 @@ export class RefreshHelper {
         );
     }
 
+    private handleHPChanged(action: ActionResponse) {
+        const healthPointsChanged = action.healthPointsChanged;
+        if (!healthPointsChanged) return;
+
+        healthPointsChanged.battleIds.forEach((battleID) => {
+            this.updateCharacterHP(battleID, -healthPointsChanged.totalChange);
+        });
+    }
+
+    private handleMPChanged(action: ActionResponse) {
+        const magicPointsChanged = action.magicPointsChanged;
+        if (!magicPointsChanged) return;
+
+        magicPointsChanged.battleIds.forEach((battleID) => {
+            this.updateCharacterMP(battleID, -magicPointsChanged.totalChange);
+        });
+    }
+
     private updateCharacterHP(battleID: number, damage: number) {
         if (!this.player?.fightInfo?.characters || !this.setPlayer) return;
 
@@ -114,6 +137,19 @@ export class RefreshHelper {
         if (!character) return;
 
         character.healthPoints = Math.max(0, Math.min(character.healthPoints - damage, character.maxHealthPoints));
+
+        this.setPlayer({ ...this.player });
+    }
+
+    private updateCharacterMP(battleID: number, damage: number) {
+        if (!this.player?.fightInfo?.characters || !this.setPlayer) return;
+
+        const character = this.player.fightInfo.characters.find(ch => ch.battleID === battleID);
+        if (!character) return;
+
+        if (character.maxMagicPoints == undefined || character.magicPoints == undefined) { return; }
+
+        character.magicPoints = Math.max(0, Math.min(character.magicPoints - damage, character.maxMagicPoints));
 
         this.setPlayer({ ...this.player });
     }
@@ -165,7 +201,7 @@ function describeAttackPT(
     const sujeito = joinNamesPtBR(originNames);
     const objetos = joinNamesPtBR(targetNames);
 
-    // Ajuste aqui se quiser incluir dano/elemento:
-    // ex.: `${sujeito} atacou ${objetos} (${attack.element}, ${attack.damage} de dano)`
-    return `${sujeito} atacou ${objetos}`;
+    const verbo = originNames.length > 1 ? "atacaram" : "atacou";
+
+    return `${sujeito} ${verbo} ${objetos}\n ${attack.damage} de dano`;
 }

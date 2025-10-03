@@ -25,7 +25,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     const item: ToastItem = {
       id: idRef.current++,
       message,
-      duration: opts?.duration ?? 3000,
+      duration: opts?.duration ?? 1500,
     };
     setQueue((q) => [...q, item]);
   }, []);

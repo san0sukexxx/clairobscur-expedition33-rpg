@@ -55,12 +55,7 @@ export default function EnemiesStatus({ player, isEnemies }: EnemiesStatusProps)
                                             <span className="opacity-70">HP</span>
                                             <span className="font-mono">{ch.healthPoints}/{ch.maxHealthPoints}</span>
                                         </div>
-                                        <progress
-                                            className="progress progress-error w-full"
-                                            value={pct(ch.healthPoints, ch.maxHealthPoints)}
-                                            max={100}
-                                            aria-label="HP"
-                                        />
+                                        
                                         <AnimatedStatBar
                                             value={pct(ch.healthPoints, ch.maxHealthPoints)}
                                             label="HP"
@@ -75,12 +70,7 @@ export default function EnemiesStatus({ player, isEnemies }: EnemiesStatusProps)
                                                 <span className="opacity-70">MP</span>
                                                 <span className="font-mono">{ch.magicPoints}/{ch.maxMagicPoints}</span>
                                             </div>
-                                            <progress
-                                                className="progress progress-info w-full"
-                                                value={pct(ch.magicPoints, ch.maxMagicPoints)}
-                                                max={100}
-                                                aria-label="MP"
-                                            />
+                                            
                                             <AnimatedStatBar
                                                 value={pct(ch.magicPoints!, ch.maxMagicPoints!)}
                                                 label="MP"

@@ -9,8 +9,17 @@
   }
 }
 
-#dice-box { width: 100%; height: 100%; }
-#dice-box canvas, #dice-board canvas { width: 100% !important; height: 100% !important; display: block; }
+#dice-box {
+  width: 100%;
+  height: 100%;
+}
+
+#dice-box canvas,
+#dice-board canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
 
 .fullscreen-div {
   position: fixed;
@@ -25,38 +34,70 @@
 }
 
 /* toast.css */
+/* Ocupa toda a largura do topo e centraliza o conteúdo */
 .toast-container {
   position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  pointer-events: none;           /* não bloqueia cliques no app */
+  top: 12px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  /* centraliza horizontalmente */
+  pointer-events: none;
   z-index: 9999;
+  gap: 8px;
 }
 
 .toast-message {
   pointer-events: auto;
   background: rgba(0, 0, 0, 0.85);
   color: #fff;
-  font-size: clamp(24px, 4vw, 48px); /* grande e responsivo */
+  font-size: clamp(24px, 4vw, 48px);
   padding: 24px 40px;
   border-radius: 16px;
   text-align: center;
-  max-width: min(90vw, 900px);
-  animation: toastFade 350ms ease-out, toastStay var(--stay, 1s) linear 350ms,
-             toastOut 300ms ease-in forwards calc(var(--stay, 1s) + 350ms);
+  white-space: pre-line;
+
+  /* largura controlada, com margens */
+  width: 100%;
+  max-width: 800px;
+  /* ajuste aqui conforme preferir */
+  margin: 0 16px;
+  /* margem lateral fixa */
+
+  animation: toastFade 350ms ease-out,
+    toastStay var(--stay, 1s) linear 350ms,
+    toastOut 300ms ease-in forwards calc(var(--stay, 1s) + 350ms);
   will-change: transform, opacity;
 }
 
-/* Animações suaves de entrada/saída */
+
+/* animações (opcional manter a versão topo) */
 @keyframes toastFade {
-  from { opacity: 0; transform: translateY(10px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
-@keyframes toastStay {
-  from { opacity: 1; }
-  to   { opacity: 1; }
-}
+
 @keyframes toastOut {
-  to { opacity: 0; transform: translateY(-6px) scale(0.995); }
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.995);
+  }
+}
+
+@keyframes toastStay {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
