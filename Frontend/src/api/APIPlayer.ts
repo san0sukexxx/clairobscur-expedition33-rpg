@@ -167,7 +167,6 @@ export class APIPlayer {
         ],
         canRollInitiative: true,
         battleStatus: "starting"
-        // battleStatus: "started"
       },
       status: [],
     };

@@ -1,5 +1,7 @@
 import { APIRefresh, type GetRefreshResponse, type ActionResponse } from "../api/APIRefresh";
 import { type PlayerResponse } from "../api/APIPlayer";
+import { type BattleCharacterInfo } from "../api/ResponseModel";
+import { type AttackResponse } from "../api/APIRefresh";
 
 type ToastOptions = { duration?: number };
 type ShowToastFn = (msg: string, opts?: ToastOptions) => void;
@@ -90,12 +92,19 @@ export class RefreshHelper {
     }
 
     private handleAttack(action: ActionResponse) {
+        if (this.showToast == undefined) { return }
+
         const attack = action.attack;
-        if (attack == undefined || attack.damage == undefined) { return; }
+        if (attack == undefined || attack.damage == undefined || this.player == undefined) { return; }
+
 
         attack.targetBattleIds.forEach((battleID) => {
             this.updateCharacterHP(battleID, attack.damage);
         });
+
+        this.showToast(
+            describeAttackPT(this.player, attack)
+        );
     }
 
     private updateCharacterHP(battleID: number, damage: number) {
@@ -108,5 +117,55 @@ export class RefreshHelper {
 
         this.setPlayer({ ...this.player });
     }
+}
 
+
+function buildIdToNameMap(chars: BattleCharacterInfo[]): Map<number, string> {
+    const map = new Map<number, string>();
+    for (const c of chars) map.set(c.battleID, c.name);
+    return map;
+}
+
+function uniqueInOrder<T>(arr: T[]): T[] {
+    const seen = new Set<T>();
+    const out: T[] = [];
+    for (const x of arr) {
+        if (!seen.has(x)) {
+            seen.add(x);
+            out.push(x);
+        }
+    }
+    return out;
+}
+
+/** Junta nomes em PT-BR: "A", "A e B", "A, B e C" */
+function joinNamesPtBR(names: string[]): string {
+    if (names.length === 0) return "";
+    if (names.length === 1) return names[0];
+    if (names.length === 2) return `${names[0]} e ${names[1]}`;
+    return `${names.slice(0, -1).join(", ")} e ${names[names.length - 1]}`;
+}
+
+function namesFromIds(ids: number[], idToName: Map<number, string>): string[] {
+    return ids
+        .map(id => idToName.get(id))
+        .filter((n): n is string => !!n);
+}
+
+function describeAttackPT(
+    player: PlayerResponse,
+    attack: AttackResponse
+): string {
+    const chars = player.fightInfo?.characters ?? [];
+    const idToName = buildIdToNameMap(chars);
+
+    const originNames = uniqueInOrder(namesFromIds(attack.originBattleIds, idToName));
+    const targetNames = uniqueInOrder(namesFromIds(attack.targetBattleIds, idToName));
+
+    const sujeito = joinNamesPtBR(originNames);
+    const objetos = joinNamesPtBR(targetNames);
+
+    // Ajuste aqui se quiser incluir dano/elemento:
+    // ex.: `${sujeito} atacou ${objetos} (${attack.element}, ${attack.damage} de dano)`
+    return `${sujeito} atacou ${objetos}`;
 }
