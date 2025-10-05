@@ -12,6 +12,7 @@ import LuminasSection from "../components/LuminasSection";
 import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput, type PlayerResponse } from "../api/APIPlayer";
+import { APIPictos, type PictoResponse } from "../api/APIPictos";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -36,6 +37,7 @@ export default function PlayerPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<PlayerResponse | null>(null);
+  const [pictos, setPictos] = useState<PictoResponse[] | null>(null);
   const diceBoardRef = useRef<DiceBoardRef>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string | undefined>(undefined);
@@ -147,14 +149,14 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "pictos" && (
-            <PictosTab />
+            <PictosTab pictos={pictos} player={player} setPlayer={setPlayer} />
           )}
 
           {!loading && !error && tab === "luminas" && (
             <LuminasSection />
           )}
 
-          {tab === "inventario" && (
+          {!loading && !error && tab === "inventario" && (
             <div className="card bg-base-100 shadow">
               <div className="card-body">
                 <h2 className="card-title">Inventário</h2>
@@ -287,7 +289,6 @@ export default function PlayerPage() {
           const response = await APIPlayer.create(input);
 
           navigate(`/campaign-player/${campaign}/${response.playerID}`, { replace: false });
-          setLoading(false);
         } catch (e: any) {
           setError("Erro ao carregar dados: " + e?.message);
         }
@@ -302,11 +303,16 @@ export default function PlayerPage() {
 
   async function fetchInfo(character: string) {
     try {
-      const response = await APIPlayer.getInfo(character);
-      setPlayer(response.player);
+      const [playerResponse, pictosListResponse] = await Promise.all([
+        APIPlayer.getInfo(character),
+        APIPictos.getPictosList(),
+      ]);
+
+      setPlayer(playerResponse.player);
+      setPictos(pictosListResponse.pictos);
 
       setLoading(false);
-      refreshHelper.init(character, response.player, setPlayer, showToast);
+      refreshHelper.init(character, playerResponse.player, setPlayer, showToast);
       refreshHelper.refreshInfoLoop();
     } catch (e: any) {
       console.error("Erro ao carregar player:", e);

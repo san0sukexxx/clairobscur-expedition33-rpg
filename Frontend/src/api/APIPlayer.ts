@@ -1,5 +1,5 @@
 import { APIService } from "./APIService";
-import { type InitiativeResponse, type StatusResponse, type BattleCharacterInfo } from "./ResponseModel";
+import { type InitiativeResponse, type StatusResponse, type BattleCharacterInfo, type PictoResponse } from "./ResponseModel";
 
 export type BattleStatus = "starting" | "started" | "finished";
 
@@ -18,12 +18,6 @@ export interface WeaponResponse {
   id: string;
   inUse: boolean;
   level: number;
-}
-
-export interface PictoResponse {
-  id: string;
-  level: number;
-  slot: number;
 }
 
 export interface ItemResponse {

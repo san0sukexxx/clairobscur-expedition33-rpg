@@ -1,52 +1,16 @@
 import { useMemo, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa";
+import { type PictoResponse } from "../api/ResponseModel";
+import { type PlayerResponse } from "../api/APIPlayer";
 
-type Picto = {
-  id: string;
-  name: string;
-  icon: string;       // caminho da imagem (ex.: /pictos/energy.png)
-  statLeftLabel: string;
-  statLeftValue: number | string;
-  statMidLabel?: string;
-  statMidValue?: number | string;
-  description: string;
-};
+interface PictosTabProps {
+    pictos: PictoResponse[] | null;
+    player: PlayerResponse | null;
+    setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+}
 
-const ALL_PICTOS: Picto[] = [
-  {
-    id: "energy-master",
-    name: "Energy Master",
-    icon: "/pictos/energy.png",
-    statLeftLabel: "Health",
-    statLeftValue: 2245,
-    description: "Every AP gain is increased by 1.",
-  },
-  {
-    id: "aug-first-strike",
-    name: "Augmented First Strike",
-    icon: "/pictos/strike.png",
-    statLeftLabel: "Speed",
-    statLeftValue: 420,
-    statMidLabel: "C. Rate",
-    statMidValue: 12,
-    description: "50% increased damage on the first hit. Once per battle.",
-  },
-  {
-    id: "survivor",
-    name: "Survivor",
-    icon: "/pictos/survivor.png",
-    statLeftLabel: "Speed",
-    statLeftValue: 399,
-    statMidLabel: "C. Rate",
-    statMidValue: 11,
-    description: "Survive fatal damage with 1 Health. Once per battle.",
-  },
-];
-
-type Slot = { picto?: Picto; level: number };
-
-export default function PictosTab() {
-  const [slots, setSlots] = useState<Slot[]>([{ level: 20 }, { level: 20 }, { level: 20 }]);
+export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps) {
+  const [slots, setSlots] = useState<PictoResponse[]>([]);
   const [pickerOpen, setPickerOpen] = useState<{ open: boolean; slotIndex: number | null }>({
     open: false,
     slotIndex: null,
@@ -54,29 +18,30 @@ export default function PictosTab() {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
+    if (pictos == null) return [];
     const q = query.trim().toLowerCase();
-    if (!q) return ALL_PICTOS;
-    return ALL_PICTOS.filter(p => p.name.toLowerCase().includes(q));
+    if (!q) return pictos;
+    return pictos.filter(p => p.name.toLowerCase().includes(q));
   }, [query]);
 
   function openPicker(i: number) {
     setPickerOpen({ open: true, slotIndex: i });
   }
 
-  function selectPicto(p: Picto) {
+  function selectPicto(p: PictoResponse) {
     if (pickerOpen.slotIndex == null) return;
     setSlots(prev => prev.map((s, i) => (i === pickerOpen.slotIndex ? { ...s, picto: p } : s)));
     setPickerOpen({ open: false, slotIndex: null });
   }
 
   function clearSlot(i: number) {
-    setSlots(prev => prev.map((s, idx) => (idx === i ? { level: 20 } : s)));
+    // setSlots(prev => prev.map((s, idx) => (idx === i ? { level: 20 } : s)));
   }
 
   function bumpLevel(i: number, delta: number) {
-    setSlots(prev =>
-      prev.map((s, idx) => (idx === i ? { ...s, level: Math.max(1, Math.min(20, s.level + delta)) } : s)),
-    );
+    // setSlots(prev =>
+    //   prev.map((s, idx) => (idx === i ? { ...s, level: Math.max(1, Math.min(20, s.level + delta)) } : s)),
+    // );
   }
 
   return (
@@ -86,7 +51,7 @@ export default function PictosTab() {
 
         <div className="space-y-4">
           {slots.map((slot, i) =>
-            !slot.picto ? (
+            pictos ? (
               // --- Slot vazio -------------------------------------------------
               <button
                 key={i}
@@ -106,12 +71,12 @@ export default function PictosTab() {
                 <div className="p-4">
                   <div className="flex items-start gap-4">
                     {/* Ícone lateral */}
-                    <img src={slot.picto.icon} alt="" className="w-12 h-12 rounded-md object-contain" />
+                    <img src={`/pictos/${slot.name}.webp`} alt="" className="w-12 h-12 rounded-md object-contain" />
 
                     {/* Nome + stats */}
                     <div className="flex-1">
                       <div className="flex items-start">
-                        <h3 className="text-lg font-semibold flex-1">{slot.picto.name}</h3>
+                        <h3 className="text-lg font-semibold flex-1">{slot.name}</h3>
                         <button className="btn btn-xs btn-ghost gap-2" onClick={() => clearSlot(i)}>
                           <FaTimes /> Clear
                         </button>
@@ -120,12 +85,12 @@ export default function PictosTab() {
                       <div className="divider my-2" />
 
                       <div className="grid grid-cols-3 gap-3 items-end">
-                        <Stat label={slot.picto.statLeftLabel} value={slot.picto.statLeftValue} />
+                        {/* <Stat label={slot.picto.statLeftLabel} value={slot.picto.statLeftValue} />
                         {slot.picto.statMidLabel ? (
                           <Stat label={slot.picto.statMidLabel} value={slot.picto.statMidValue ?? "-"} />
                         ) : (
                           <div />
-                        )}
+                        )} */}
 
                         {/* Level */}
                         <div className="text-right">
@@ -134,7 +99,7 @@ export default function PictosTab() {
                             <button className="btn btn-xs btn-ghost" onClick={() => bumpLevel(i, -1)}>
                               <FaChevronLeft />
                             </button>
-                            <span className="text-2xl font-bold text-primary">{slot.level}</span>
+                            {/* <span className="text-2xl font-bold text-primary">{slot.level}</span> */}
                             <button className="btn btn-xs btn-ghost" onClick={() => bumpLevel(i, +1)}>
                               <FaChevronRight />
                             </button>
@@ -143,7 +108,7 @@ export default function PictosTab() {
                       </div>
 
                       <div className="divider my-2" />
-                      <p className="text-sm text-base-content/70">{slot.picto.description}</p>
+                      <p className="text-sm text-base-content/70">{slot.description}</p>
                     </div>
                   </div>
                 </div>
@@ -169,9 +134,9 @@ export default function PictosTab() {
 
           <ul className="menu bg-base-200 rounded-box p-2 max-h-80 overflow-auto">
             {filtered.map((p) => (
-              <li key={p.id}>
+              <li key={p.name}>
                 <button className="flex items-center gap-3 py-2" onClick={() => selectPicto(p)}>
-                  <img src={p.icon} alt="" className="w-8 h-8 rounded-md object-contain" />
+                  <img src={`/pictos/${p.name}.webp`} alt="" className="w-8 h-8 rounded-md object-contain" />
                   <span>{p.name}</span>
                 </button>
               </li>

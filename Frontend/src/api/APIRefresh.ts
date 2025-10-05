@@ -83,15 +83,15 @@ function makeMockActions(playerId: string): ActionResponse[] {
     // {
     //   type: "battle-started"
     // },
-    {
-      type: "attack",
-      attack: {
-        originBattleIds: [3],
-        targetBattleIds: [1],
-        damage: 30,
-        element: "Physical"
-      }
-    },
+    // {
+    //   type: "attack",
+    //   attack: {
+    //     originBattleIds: [3],
+    //     targetBattleIds: [1],
+    //     damage: 30,
+    //     element: "Physical"
+    //   }
+    // },
     // {
     //   type: "health-points-changed",
     //   healthPointsChanged: {

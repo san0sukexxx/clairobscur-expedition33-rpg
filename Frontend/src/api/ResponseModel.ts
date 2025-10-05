@@ -6,6 +6,7 @@ export type StatusType =
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy";
 
+export type PictoColor = "green" | "red" | "blue";
 export type BattleCharacterType = "player" | "npc";
 
 export interface InitiativeResponse {
@@ -31,4 +32,20 @@ export interface BattleCharacterInfo {
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;
+}
+
+export interface PictoResponse {
+    name: string;
+    status: PictoStatusResponse;
+    description: string;
+    color: PictoColor;
+    level?: number;
+    slot?: number;
+}
+
+export interface PictoStatusResponse {
+    speed?: number;
+    criticalRate?: number;
+    health?: number;
+    defense?: number;
 }
