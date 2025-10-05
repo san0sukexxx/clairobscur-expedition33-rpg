@@ -1,3 +1,5 @@
+import { roundDownOneDecimal } from "./MathUtils";
+
 export function calculateWeaponPower(power: number, level: number): number {
     return power / 20 * level;
 }
@@ -26,7 +28,4 @@ export function displayWeaponAttributeRank(rank: string, level: number): string 
   }
 
   return rank;
-}
-function roundDownOneDecimal(num: number) {
-  return Math.floor(num * 10) / 10;
 }

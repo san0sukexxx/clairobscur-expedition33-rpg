@@ -101,7 +101,29 @@ export class APIPlayer {
         { id: "Kralim", inUse: false, level: 8 },
         { id: "Sadon", inUse: true, level: 8 },
       ],
-      pictos: [],
+      pictos: [
+        {
+          "name": "Energy Master",
+          "status": {
+            "health": 2245
+          },
+          "description": "Every AP gain is increased by 1.",
+          "color": "green",
+          level: 5,
+          slot: 0
+        },
+        {
+          "name": "Augmented First Strike",
+          "status": {
+            "speed": 420,
+            "criticalRate": 12
+          },
+          "description": "50% increased damage on the first hit. Once per battle.",
+          "color": "red",
+          level: 15,
+          slot: 2
+        },
+      ],
       items: [{ description: "Potion of Healing" }],
       skills: [{ id: "skill-1", slot: 0 }],
       fightInfo: {

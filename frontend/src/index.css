@@ -101,3 +101,49 @@
     opacity: 1;
   }
 }
+
+/* Contêiner do ícone tintado */
+.TintedImage {
+  position: relative;
+  display: inline-block;
+  width: 70px;   /* ajuste conforme necessário */
+  height: 70px;  /* ajuste conforme necessário */
+  flex: 0 0 70px;
+}
+
+/* A imagem base (visível ao fundo) */
+.TintedImage__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Camada de tinta com máscara */
+.TintedImage__layer {
+  position: absolute;
+  inset: 0;
+  /* máscara */
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+
+  /* se quiser transições suaves ao trocar de cor */
+  transition: background-color 120ms ease;
+}
+
+/* ====== VARIANTE 1: via classes por cor ====== */
+.TintedImage--green .TintedImage__layer { background-color: rgb(26, 230, 103); }
+.TintedImage--red   .TintedImage__layer { background-color: rgb(227, 30, 25); }
+.TintedImage--blue  .TintedImage__layer { background-color: rgb(140, 255, 255); }
+
+/* ====== VARIANTE 2: via CSS variable (opcional) ====== */
+.TintedImage[data-color] .TintedImage__layer {
+  background-color: var(--picto-color, transparent);
+}
+.TintedImage[data-color="green"] { --picto-color: rgb(26, 230, 103); }
+.TintedImage[data-color="red"]   { --picto-color: rgb(227, 30, 25); }
+.TintedImage[data-color="blue"]  { --picto-color: rgb(140, 255, 255); }

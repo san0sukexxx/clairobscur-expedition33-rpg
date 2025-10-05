@@ -15,7 +15,9 @@ export class APIPictos {
                     "health": 2245
                 },
                 "description": "Every AP gain is increased by 1.",
-                "color": "green"
+                "color": "green",
+                "level": 1,
+                "luminaCost": 30
             },
             {
                 "name": "Energising Turn",
@@ -23,7 +25,9 @@ export class APIPictos {
                     "speed": 532
                 },
                 "description": "+1 AP on turn start.",
-                "color": "green"
+                "color": "green",
+                "level": 5,
+                "luminaCost": 32
             },
             {
                 "name": "Energising Attack I",
@@ -32,7 +36,10 @@ export class APIPictos {
                     "criticalRate": 11
                 },
                 "description": "+1 AP on Base Attack.",
-                "color": "green"
+                "color": "green",
+                "level": 7,
+                "luminaCost": 33,
+                "battleCount": 6
             },
             {
                 "name": "Energising Parry",
@@ -40,7 +47,10 @@ export class APIPictos {
                     "health": 2666
                 },
                 "description": "+1 AP on successful Parry.",
-                "color": "green"
+                "color": "green",
+                "level": 10,
+                "luminaCost": 34,
+                "battleCount": 1
             },
             {
                 "name": "Augmented First Strike",
@@ -49,7 +59,10 @@ export class APIPictos {
                     "criticalRate": 12
                 },
                 "description": "50% increased damage on the first hit. Once per battle.",
-                "color": "red"
+                "color": "red",
+                "level": 12,
+                "luminaCost": 35,
+                "battleCount": 12
             },
             {
                 "name": "Survivor",
@@ -58,7 +71,9 @@ export class APIPictos {
                     "criticalRate": 11
                 },
                 "description": "Survive fatal damage with 1 Health. Once per battle.",
-                "color": "blue"
+                "color": "blue",
+                "level": 3,
+                "luminaCost": 36
             }
         ];
 

@@ -41,6 +41,9 @@ export interface PictoResponse {
     color: PictoColor;
     level?: number;
     slot?: number;
+    luminaCost: number;
+    battleCount?: number;
+    isLuminaEquiped?: boolean;
 }
 
 export interface PictoStatusResponse {
