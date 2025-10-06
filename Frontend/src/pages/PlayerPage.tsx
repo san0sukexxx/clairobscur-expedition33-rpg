@@ -12,7 +12,9 @@ import LuminasSection from "../components/LuminasSection";
 import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput, type PlayerResponse } from "../api/APIPlayer";
-import { APIPictos, type PictoResponse } from "../api/APIPictos";
+import { APIPictos } from "../api/APIPictos";
+import { type PictoResponse } from "../api/ResponseModel";
+
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -153,7 +155,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "luminas" && (
-            <LuminasSection />
+            <LuminasSection luminas={pictos} player={player} setPlayer={setPlayer} />
           )}
 
           {!loading && !error && tab === "inventario" && (

@@ -43,7 +43,6 @@ export interface PictoResponse {
     slot?: number;
     luminaCost: number;
     battleCount?: number;
-    isLuminaEquiped?: boolean;
 }
 
 export interface PictoStatusResponse {

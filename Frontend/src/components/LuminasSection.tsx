@@ -1,185 +1,270 @@
 import { useMemo, useState } from "react";
-import { FaPlus, FaTimes } from "react-icons/fa";
+import { type PictoResponse, type PictoColor } from "../api/ResponseModel";
+import { type PlayerResponse } from "../api/APIPlayer";
 
-/* ---------------- Helpers ---------------- */
-function uid(): string {
-  if (typeof crypto !== "undefined" && typeof (crypto as any).randomUUID === "function") {
-    return (crypto as any).randomUUID();
-  }
-  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
-    const b = new Uint8Array(16);
-    crypto.getRandomValues(b);
-    b[6] = (b[6] & 0x0f) | 0x40;
-    b[8] = (b[8] & 0x3f) | 0x80;
-    const h = [...b].map(x => x.toString(16).padStart(2, "0")).join("");
-    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
-  }
-  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+interface LuminasTabProps {
+  luminas: PictoResponse[] | null;
+  player: PlayerResponse | null;
+  setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
 }
 
-/* ---------------- Tipos ---------------- */
-type LuminaBase = {
-  id: string;
-  name: string;
-  icon: string;      // caminho da imagem ou ícone
-  color: "emerald" | "red" | "cyan" | "amber" | "violet" | "slate";
+const colorToHex: Record<PictoColor, string> = {
+  green: "rgb(26, 230, 103)",
+  red: "rgb(227, 30, 25)",
+  blue: "rgb(140, 255, 255)",
 };
 
-type LuminaRow = {
-  rowId: string;     // id da linha (permite duplicar a mesma lumina várias vezes)
-  lumina: LuminaBase;
-  amount: number;
-};
+function PlusDiamond({
+  icon = "+",
+  picto,
+  isBig = false,
+}: {
+  icon?: string;
+  picto?: PictoResponse | null;
+  isBig?: boolean;
+}) {
+  const maskBase = picto?.name ? encodeURI(`/pictos/${picto.name}.webp`) : null;
 
-/* ---------------- Catálogo (picker) ---------------- */
-const ALL_LUMINAS: LuminaBase[] = [
-  { id: "energy-master", name: "Energy Master", icon: "/pictos/energy.png", color: "emerald" },
-  { id: "aug-first-strike", name: "Augmented First Strike", icon: "/pictos/strike.png", color: "red" },
-  { id: "survivor", name: "Survivor", icon: "/pictos/survivor.png", color: "cyan" },
-  { id: "aegis-revival", name: "Aegis Revival", icon: "/pictos/aegis.png", color: "cyan" },
-  { id: "recovery", name: "Recovery", icon: "/pictos/recovery.png", color: "violet" },
-  { id: "energising-parry", name: "Energising Parry", icon: "/pictos/parry.png", color: "emerald" },
-];
-
-/* ---------------- Componente ---------------- */
-export default function LuminasSection() {
-  const [rows, setRows] = useState<LuminaRow[]>([
-    { rowId: uid(), lumina: ALL_LUMINAS[0], amount: 40 },
-    { rowId: uid(), lumina: ALL_LUMINAS[1], amount: 5 },
-    { rowId: uid(), lumina: ALL_LUMINAS[2], amount: 20 },
-  ]);
-
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const [query, setQuery] = useState("");
-
-  const total = useMemo(() => rows.reduce((acc, r) => acc + (Number(r.amount) || 0), 0), [rows]);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return ALL_LUMINAS;
-    return ALL_LUMINAS.filter(l => l.name.toLowerCase().includes(q));
-  }, [query]);
-
-  function addLumina(l: LuminaBase) {
-    setRows(prev => [...prev, { rowId: uid(), lumina: l, amount: 0 }]); // permite duplicados
-    setPickerOpen(false);
-    setQuery("");
-  }
-
-  function removeRow(rowId: string) {
-    setRows(prev => prev.filter(r => r.rowId !== rowId));
-  }
-
-  function setAmount(rowId: string, val: string) {
-    const n = Number(val.replace(/\D/g, "")) || 0;
-    setRows(prev => prev.map(r => (r.rowId === rowId ? { ...r, amount: n } : r)));
-  }
+  const wrapperSize = isBig ? "w-14 h-14" : "w-9 h-9";
+  const innerSize = isBig ? "w-11 h-11" : "w-7 h-7";
+  const iconSize = isBig ? "text-2xl" : "text-lg";
 
   return (
-    <div className="card bg-base-100 shadow">
-      <div className="card-body">
-        {/* Título */}
-        <h2 className="text-center font-bold tracking-wide uppercase">
-          Luminas <span className="text-info">({total})</span>
-        </h2>
-
-        {/* Lista */}
-        <ul className="mt-3 space-y-3">
-          {rows.map(r => (
-            <li key={r.rowId} className="rounded-lg border border-base-300 bg-base-200 px-3 py-4">
-              <div className="flex items-center gap-4">
-                <DiamondOrImg icon={r.lumina.icon} color={r.lumina.color} />
-                <span className="flex-1">{r.lumina.name}</span>
-
-                {/* quantidade à direita + remover */}
-                <div className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    className="input input-ghost w-16 text-right text-lg"
-                    value={r.amount}
-                    onChange={(e) => setAmount(r.rowId, e.target.value)}
-                  />
-                  <button className="btn btn-ghost btn-xs" onClick={() => removeRow(r.rowId)} aria-label="Clear">
-                    <FaTimes />
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-
-          {/* Add New -> abre picker */}
-          <li>
-            <button
-              type="button"
-              className="w-full rounded-lg border border-base-300 bg-base-200 hover:bg-base-300 transition py-4 px-3 flex items-center gap-4"
-              onClick={() => setPickerOpen(true)}
-            >
-              <DiamondOrImg icon="" color="slate" />
-              <span className="flex-1 text-left">Add New</span>
-              <FaPlus className="opacity-70" />
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      {/* Picker / Modal */}
-      <dialog className={`modal ${pickerOpen ? "modal-open" : ""}`}>
-        <div className="modal-box max-w-md">
-          <h3 className="font-bold text-lg mb-3">Selecionar Lumina</h3>
-
-          <label className="input input-bordered flex items-center gap-2 mb-3">
-            <input
-              className="grow"
-              placeholder="Buscar..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-          </label>
-
-          <ul className="menu bg-base-200 rounded-box p-2 max-h-80 overflow-auto">
-            {filtered.map(l => (
-              <li key={l.id}>
-                <button className="flex items-center gap-3 py-2" onClick={() => addLumina(l)}>
-                  <DiamondOrImg icon={l.icon} color={l.color} />
-                  <span>{l.name}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <div className="modal-action">
-            <form method="dialog">
-              <button className="btn" onClick={() => setPickerOpen(false)}>Fechar</button>
-            </form>
-          </div>
-        </div>
-        <form method="dialog" className="modal-backdrop" onClick={() => setPickerOpen(false)}>
-          <button>close</button>
-        </form>
-      </dialog>
+    <div
+      className={`relative ${wrapperSize} rotate-45 border border-white/20 rounded-sm grid place-items-center bg-black/30 ml-2`}
+      aria-label={picto?.name ?? "Adicionar picto"}
+    >
+      {maskBase ? (
+        <div
+          className={`rotate-[-45deg] ${innerSize}`}
+          style={{
+            backgroundColor: picto ? colorToHex[picto.color] : "transparent",
+            WebkitMaskImage: `url("${maskBase}?scope=mask")`,
+            maskImage: `url("${maskBase}?scope=mask")`,
+            WebkitMaskRepeat: "no-repeat",
+            maskRepeat: "no-repeat",
+            WebkitMaskSize: "contain",
+            maskSize: "contain",
+            WebkitMaskPosition: "center",
+            maskPosition: "center",
+          }}
+        />
+      ) : (
+        <span className={`rotate-[-45deg] leading-none ${iconSize}`}>{icon}</span>
+      )}
     </div>
   );
 }
 
-/* Ícone: usa imagem se existir; senão, desenha um losango colorido */
-function DiamondOrImg({ icon, color }: { icon: string; color: "emerald" | "red" | "cyan" | "amber" | "violet" | "slate" }) {
-  if (icon) {
-    return <img src={icon} alt="" className="w-10 h-10 object-contain rounded-md" />;
-  }
-  const bg = {
-    emerald: "bg-emerald-400",
-    red: "bg-rose-500",
-    cyan: "bg-cyan-400",
-    amber: "bg-amber-400",
-    violet: "bg-violet-400",
-    slate: "bg-slate-400",
-  }[color];
+function Modal({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) {
+  if (!open) return null;
   return (
-    <div className="relative w-10 h-10">
-      <div className={`absolute inset-0 origin-center rotate-45 ${bg} rounded-sm shadow`} />
-      <div className="absolute inset-1 origin-center rotate-45 bg-base-100 rounded-sm" />
+    <div className="fixed inset-0 z-50">
+      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+      <div className="absolute inset-0 flex items-center justify-center p-4">
+        <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-[#121212] border border-white/10 shadow-2xl">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+            <div className="text-lg tracking-wide">Selecione um Picto</div>
+            <button onClick={onClose} className="text-2xl leading-none px-2">×</button>
+          </div>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="p-4">
+      <input
+        className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+        placeholder="Buscar..."
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </div>
+  );
+}
+
+function PictoCard({ picto, onPick }: { picto: PictoResponse; onPick?: (p: PictoResponse) => void }) {
+  return (
+    <button
+      onClick={() => onPick && onPick(picto)}
+      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
+    >
+      <PlusDiamond icon="" picto={picto} isBig={true} />
+      <div className="flex flex-col gap-2">
+        <div className="flex items-start justify-between">
+          <div className="text-xl font-semibold leading-tight">{picto.name}</div>
+        </div>
+        <div className="opacity-80">{picto.description}</div>
+      </div>
+    </button>
+  );
+}
+
+export default function LuminasSection({ luminas, player, setPlayer }: LuminasTabProps) {
+  const [openSlot, setOpenSlot] = useState<number | null>(null);
+  const [query, setQuery] = useState("");
+
+  // Slots infinitos: todos os escolhidos + 1 slot vazio para adicionar
+  const slots: (PictoResponse | null)[] = useMemo(() => {
+    const chosen = (player?.luminas ?? []);
+    return [...chosen, null];
+  }, [player?.luminas]);
+
+  // Filtra por busca e remove já selecionados (não pode repetir)
+  const filtered = useMemo(() => {
+    const list = luminas ?? [];
+    const selectedNames = new Set(
+      (player?.luminas ?? []).map(p => p.name.toLowerCase())
+    );
+    const withoutSelected = list.filter(
+      p => !selectedNames.has(p.name.toLowerCase()) && (p.battleCount ?? 0) >= 4
+    );
+
+    const q = query.trim().toLowerCase();
+    if (!q) return withoutSelected;
+
+    return withoutSelected.filter(
+      p =>
+        p.name.toLowerCase().includes(q) ||
+        (p.description ?? "").toLowerCase().includes(q)
+    );
+  }, [luminas, query, player?.luminas]);
+
+  function upsertPictoAt(slotIndex: number, picto: PictoResponse) {
+    setPlayer(prev => {
+      if (!prev) return prev;
+      const current = [...(prev.luminas ?? [])];
+
+      // Remover duplicata pelo name (case-insensitive)
+      const nameLc = picto.name.toLowerCase();
+      const existingIdx = current.findIndex(p => p.name.toLowerCase() === nameLc);
+      let targetIndex = slotIndex;
+
+      if (existingIdx !== -1 && existingIdx !== targetIndex) {
+        current.splice(existingIdx, 1);
+        // Se removemos um antes do alvo, o índice alvo diminui 1
+        if (existingIdx < targetIndex) targetIndex -= 1;
+      }
+
+      const chosen: PictoResponse = { ...picto, level: picto.level ?? 1 };
+
+      if (targetIndex >= current.length) {
+        current.push(chosen); // adicionando no slot vazio (final)
+      } else {
+        current[targetIndex] = chosen; // substituindo um existente (se algum dia permitir editar)
+      }
+      return { ...prev, luminas: current };
+    });
+    setOpenSlot(null);
+  }
+
+  function clearSlot(slotIndex: number) {
+    setPlayer(prev => {
+      if (!prev) return prev;
+      const next = [...(prev.luminas ?? [])];
+      if (slotIndex >= 0 && slotIndex < next.length) {
+        next.splice(slotIndex, 1); // remove e “fecha” o array
+      }
+      return { ...prev, luminas: next };
+    });
+  }
+
+  function handleSlotActivate(idx: number) {
+    // Abre o modal apenas no slot vazio (o último, que é null)
+    if (!slots[idx]) setOpenSlot(idx);
+  }
+
+  function onKeyActivate(e: React.KeyboardEvent<HTMLDivElement>, idx: number) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleSlotActivate(idx);
+    }
+  }
+
+  return (
+    <div className="text-white">
+      <div className="text-center text-lg tracking-widest pb-3 opacity-90">LUMINAS</div>
+
+      <div className="flex flex-col gap-4">
+        {slots.map((selected, idx) => {
+          const accent = selected ? colorToHex[selected.color] : "rgba(255,255,255,0.15)";
+          const isAddSlot = selected === null; // último slot
+
+          return (
+            <div key={selected ? `${selected.name}-${idx}` : `empty-${idx}`} className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
+              {/* Borda chanfrada */}
+              <div
+                className="pointer-events-none absolute inset-x-3 top-2 bottom-1 rounded-xl"
+                style={{
+                  border: `1px solid ${selected ? accent : "transparent"}`,
+                  clipPath:
+                    "polygon(0% 10%, 6% 10%, 7.5% 5%, 100% 5%, 100% 95%, 7.5% 95%, 6% 90%, 0% 90%)",
+                }}
+              />
+
+              <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => onKeyActivate(e, idx)}
+                onClick={() => handleSlotActivate(idx)}
+                className={`w-full text-left py-4 px-6 pl-28 rounded-2xl transition-colors ${isAddSlot ? "h-32 grid place-items-center hover:bg-white/5" : "hover:bg-white/5"
+                  }`}
+              >
+                {/* Trilho/diamante lateral */}
+                <div className="absolute left-5 top-1/2 -translate-y-1/2">
+                  <PlusDiamond icon={selected ? "" : "+"} picto={selected ?? undefined} isBig={true} />
+                </div>
+
+                {selected ? (
+                  <div className="flex flex-col gap-1">
+                    {/* Header: título + Clear */}
+                    <div className="flex items-start justify-between">
+                      <div className="text-2xl font-semibold leading-tight mr-2">
+                        {selected.name} <span className="opacity-70">({selected.luminaCost})</span>
+                      </div>
+                      <button
+                        className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          clearSlot(idx);
+                        }}
+                        aria-label={`Remover ${selected.name}`}
+                      >
+                        ×
+                      </button>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px w-full bg-white/10 my-1" />
+
+                    {/* Descrição */}
+                    <div className="opacity-85">{selected.description}</div>
+                  </div>
+                ) : (
+                  <div className="text-center w-full opacity-60 tracking-wide text-lg">
+                    Adicionar Lumina
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Modal de seleção */}
+      <Modal open={openSlot !== null} onClose={() => setOpenSlot(null)}>
+        <SearchBox value={query} onChange={setQuery} />
+        <div className="px-4 pb-4 overflow-y-auto max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filtered.map((p) => (
+            <PictoCard key={`${p.name}-${p.color}`} picto={p} onPick={(pp) => upsertPictoAt(openSlot ?? (player?.luminas?.length ?? 0), pp)} />
+          ))}
+          {filtered.length === 0 && <div className="opacity-70 p-8 text-center">Nenhuma Lumina encontrada.</div>}
+        </div>
+      </Modal>
     </div>
   );
 }

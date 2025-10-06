@@ -8,6 +8,7 @@ export interface PlayerResponse {
   playerSheet?: PlayerSheetResponse;
   weapons?: WeaponResponse[];
   pictos?: PictoResponse[];
+  luminas?: PictoResponse[];
   items?: ItemResponse[];
   skills?: SkillResponse[];
   fightInfo?: FightInfoResponse;
@@ -109,8 +110,9 @@ export class APIPlayer {
           },
           "description": "Every AP gain is increased by 1.",
           "color": "green",
-          level: 5,
-          slot: 0
+          "level": 5,
+          "slot": 0,
+          "luminaCost": 31
         },
         {
           "name": "Augmented First Strike",
@@ -120,8 +122,46 @@ export class APIPlayer {
           },
           "description": "50% increased damage on the first hit. Once per battle.",
           "color": "red",
-          level: 15,
-          slot: 2
+          "level": 15,
+          "slot": 2,
+          "luminaCost": 30
+        },
+      ],
+      luminas: [
+        {
+          "name": "Energising Parry",
+          "status": {
+            "health": 2666
+          },
+          "description": "+1 AP on successful Parry.",
+          "color": "green",
+          "level": 10,
+          "luminaCost": 34,
+          "battleCount": 6
+        },
+        {
+          "name": "Augmented First Strike",
+          "status": {
+            "speed": 420,
+            "criticalRate": 12
+          },
+          "description": "50% increased damage on the first hit. Once per battle.",
+          "color": "red",
+          "level": 12,
+          "luminaCost": 35,
+          "battleCount": 12
+        },
+        {
+          "name": "Survivor",
+          "status": {
+            "speed": 399,
+            "criticalRate": 11
+          },
+          "description": "Survive fatal damage with 1 Health. Once per battle.",
+          "color": "blue",
+          "level": 3,
+          "luminaCost": 36,
+          "battleCount": 4
         },
       ],
       items: [{ description: "Potion of Healing" }],

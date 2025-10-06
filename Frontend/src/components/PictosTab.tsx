@@ -166,17 +166,14 @@ export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps)
   const filtered = useMemo(() => {
     const list = pictos ?? [];
 
-    // nomes já escolhidos nos slots (identificador = name)
     const selectedNames = new Set(
       (player?.pictos ?? []).map(p => p.name.toLowerCase())
     );
 
-    // remove os já selecionados
     const withoutSelected = list.filter(
       p => !selectedNames.has(p.name.toLowerCase())
     );
 
-    // aplica a busca
     const q = query.trim().toLowerCase();
     if (!q) return withoutSelected;
 
@@ -266,7 +263,7 @@ export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps)
                 {selected ? (
                   <div className="flex flex-col gap-3">
                     {/* Header: título + Clear (botão separado, não aninhado) */}
-                    <div className="flex items-start justify-between pr-2">
+                    <div className="flex items-start justify-between">
                       <div className="text-2xl font-semibold leading-tight mr-2">{selected.name}</div>
                       <button
                         className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
