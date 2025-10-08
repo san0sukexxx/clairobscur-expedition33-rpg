@@ -22,7 +22,10 @@ export interface WeaponResponse {
 }
 
 export interface ItemResponse {
+  id?: string;
   description: string;
+  quantity?: number;
+  maxQuantity?: number;
 }
 
 export interface SkillResponse {
@@ -164,7 +167,7 @@ export class APIPlayer {
           "battleCount": 4
         },
       ],
-      items: [{ description: "Potion of Healing" }],
+      items: [{ description: "Bacon frito", quantity: 1, maxQuantity: 1 }],
       skills: [{ id: "skill-1", slot: 0 }],
       fightInfo: {
         // playerBattleID: 4,

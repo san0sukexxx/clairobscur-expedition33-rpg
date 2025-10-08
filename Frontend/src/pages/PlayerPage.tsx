@@ -9,6 +9,7 @@ import WeaponSection from "../components/WeaponSection";
 import PlayerSheet from "../components/PlayerSheet";
 import PictosTab from "../components/PictosTab";
 import LuminasSection from "../components/LuminasSection";
+import ItemsSection from "../components/ItemsSection";
 import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput, type PlayerResponse } from "../api/APIPlayer";
@@ -30,7 +31,6 @@ import { RefreshHelper } from "../utils/RefreshHelper";
 import { useToast } from "../components/Toast";
 
 type Skill = { id: string; name: string; learned: boolean };
-type Item = { id: string; name: string; equipped: boolean };
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -74,22 +74,8 @@ export default function PlayerPage() {
   ]);
 
   // mock simples
-  const [items, setItems] = useState<Item[]>([
-    { id: "i1", name: "Espada longa", equipped: true },
-    { id: "i2", name: "Escudo de madeira", equipped: false },
-    { id: "i3", name: "Poção de cura", equipped: false },
-  ]);
-
-  // mock simples
   function toggleSkill(id: string) {
     setSkills(prev => prev.map(s => s.id === id ? { ...s, learned: !s.learned } : s));
-  }
-
-  // mock simples
-  function toggleItem(id: string) {
-    setItems(prev =>
-      prev.map(it => it.id === id ? { ...it, equipped: !it.equipped } : it)
-    );
   }
 
   function handleCombatMenuAction(action: CombatMenuAction) {
@@ -159,31 +145,8 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "inventario" && (
-            <div className="card bg-base-100 shadow">
-              <div className="card-body">
-                <h2 className="card-title">Inventário</h2>
-                <ul className="menu bg-base-200 rounded-box p-2 w-full">
-                  {items.map(item => (
-                    <li key={item.id}>
-                      <label className="flex items-center gap-3 py-2">
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-secondary"
-                          checked={item.equipped}
-                          onChange={() => toggleItem(item.id)}
-                        />
-                        <span>{item.name}</span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-3 text-sm opacity-70">
-                  Marque os itens que o personagem está utilizando no momento.
-                </div>
-              </div>
-            </div>
+            <ItemsSection player={player} setPlayer={setPlayer} />
           )}
-
 
           {!loading && !error && tab === "combate" && (
             <CombatSection onMenuAction={handleCombatMenuAction} player={player} setPlayer={setPlayer} />
