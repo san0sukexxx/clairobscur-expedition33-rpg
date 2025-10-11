@@ -9,13 +9,14 @@ import WeaponSection from "../components/WeaponSection";
 import PlayerSheet from "../components/PlayerSheet";
 import PictosTab from "../components/PictosTab";
 import LuminasSection from "../components/LuminasSection";
+import SkillsSection from "../components/SkillsSection";
+import SkillPickerSection from "../components/SkillPickerSection";
 import ItemsSection from "../components/ItemsSection";
 import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput, type PlayerResponse } from "../api/APIPlayer";
 import { APIPictos } from "../api/APIPictos";
 import { type PictoResponse } from "../api/ResponseModel";
-
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -29,8 +30,6 @@ import {
 import PanelModal from "../components/PanelModal";
 import { RefreshHelper } from "../utils/RefreshHelper";
 import { useToast } from "../components/Toast";
-
-type Skill = { id: string; name: string; learned: boolean };
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -65,18 +64,6 @@ export default function PlayerPage() {
   useEffect(() => {
     onPlayerChange();
   }, [player]);
-
-  // mock simples
-  const [skills, setSkills] = useState<Skill[]>([
-    { id: "s1", name: "Investigar", learned: true },
-    { id: "s2", name: "Furtividade", learned: false },
-    { id: "s3", name: "Acrobacia", learned: true },
-  ]);
-
-  // mock simples
-  function toggleSkill(id: string) {
-    setSkills(prev => prev.map(s => s.id === id ? { ...s, learned: !s.learned } : s));
-  }
 
   function handleCombatMenuAction(action: CombatMenuAction) {
     switch (action) {
@@ -153,29 +140,8 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "habilidades" && (
-            <div className="card bg-base-100 shadow">
-              <div className="card-body">
-                <h2 className="card-title">Habilidades</h2>
-                <ul className="menu bg-base-200 rounded-box p-2 w-full">
-                  {skills.map(s => (
-                    <li key={s.id}>
-                      <label className="flex items-center gap-3 py-2">
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-primary"
-                          checked={s.learned}
-                          onChange={() => toggleSkill(s.id)}
-                        />
-                        <span>{s.name}</span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-3 text-sm opacity-70">
-                  Marque as habilidades que seu personagem já domina.
-                </div>
-              </div>
-            </div>
+            <SkillsSection player={player} setPlayer={setPlayer} />
+            // <SkillPickerSection player={player} setPlayer={setPlayer} />
           )}
         </section>
       </main>

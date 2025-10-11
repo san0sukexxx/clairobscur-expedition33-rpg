@@ -51,3 +51,23 @@ export interface PictoStatusResponse {
     health?: number;
     defense?: number;
 }
+
+export interface SkillResponse {
+    id: string;
+    name: string;
+    cost: number;
+    description: string;
+    type: string;
+    isGradient: boolean;
+    image: string;
+    isBlocked: boolean;
+    isUnlocked: boolean;
+    slot?: number;
+    pre_requisite?: SkillPreRequisite[];
+}
+
+export interface SkillPreRequisite {
+    id: string;
+    name: string;
+    image: string;
+}

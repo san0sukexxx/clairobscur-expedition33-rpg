@@ -1,5 +1,5 @@
 import { APIService } from "./APIService";
-import { type InitiativeResponse, type StatusResponse, type BattleCharacterInfo, type PictoResponse } from "./ResponseModel";
+import { type InitiativeResponse, type StatusResponse, type BattleCharacterInfo, type PictoResponse, type SkillResponse } from "./ResponseModel";
 
 export type BattleStatus = "starting" | "started" | "finished";
 
@@ -26,11 +26,6 @@ export interface ItemResponse {
   description: string;
   quantity?: number;
   maxQuantity?: number;
-}
-
-export interface SkillResponse {
-  id: string;
-  slot?: number;
 }
 
 export interface FightInfoResponse {
@@ -168,7 +163,53 @@ export class APIPlayer {
         },
       ],
       items: [{ description: "Bacon frito", quantity: 1, maxQuantity: 1 }],
-      skills: [{ id: "skill-1", slot: 0 }],
+      skills: [
+        {
+          "id": "sciel-focused-foretell",
+          "name": "Focused Foretell",
+          "cost": 2,
+          "description": "Deals medium single target Physical damage.\n1 hit.\nApplies 2 Foretell.\nApplies 3 additional Foretell if target has 0 Foretell",
+          "type": "sun",
+          "isGradient": false,
+          "image": "Sciel_FocusedForetell.webp",
+          "isBlocked": false,
+          "isUnlocked": true,
+        },
+        {
+          "id": "sciel-final-path",
+          "name": "Final Path",
+          "cost": 8,
+          "description": "Final Path is a Skill in Clair Obscur Expedition 33.\nSkills are unique abilities for the playable Characters of the game; each character consists of a skill tree that requires skill points and other skills to unlock.",
+          "type": "moon",
+          "isGradient": true,
+          "image": "Sciel_FinalPath.webp",
+          "isBlocked": false,
+          "isUnlocked": false
+        },
+        {
+          "id": "sciel-final-path1",
+          "name": "Final Path1",
+          "cost": 8,
+          "description": "Final Path is a Skill in Clair Obscur Expedition 33.\nSkills are unique abilities for the playable Characters of the game; each character consists of a skill tree that requires skill points and other skills to unlock.",
+          "type": "moon",
+          "isGradient": true,
+          "image": "Sciel_FinalPath.webp",
+          "isBlocked": false,
+          "isUnlocked": false,
+          "pre_requisite": [
+            {
+              "id": "sciel-focused-foretell",
+              "name": "Focused Foretell",
+              "image": "Sciel_FocusedForetell.webp",
+            },
+            {
+              "id": "sciel-focused-foretell",
+              "name": "Focused Foretell",
+              "image": "Sciel_FocusedForetell.webp"
+            }
+          ]
+        }
+      ],
       fightInfo: {
         // playerBattleID: 4,
         initiatives: [
