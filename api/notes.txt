@@ -1,0 +1,13 @@
+Download:
+https://adoptium.net/pt-BR/temurin/releases?version=21
+https://github.com/jetbrains/kotlin/releases
+
+Extensions:
+Code Runner (Jun Han)
+Kotlin (fwcd)
+
+Setup:
+Add ....\kotlin-compiler-2.2.21-RC\kotlinc\bin to Path in Enviroment Variables
+
+Run project:
+.\gradlew.bat bootRun
