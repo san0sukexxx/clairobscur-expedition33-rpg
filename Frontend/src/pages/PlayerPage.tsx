@@ -141,7 +141,6 @@ export default function PlayerPage() {
 
           {!loading && !error && tab === "habilidades" && (
             <SkillsSection player={player} setPlayer={setPlayer} />
-            // <SkillPickerSection player={player} setPlayer={setPlayer} />
           )}
         </section>
       </main>

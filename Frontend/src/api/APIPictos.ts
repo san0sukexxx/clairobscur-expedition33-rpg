@@ -1,4 +1,4 @@
-import { APIService } from "./APIService";
+import { MockAPIService } from "./MockAPIService";
 import { type PictoResponse } from "../api/ResponseModel";
 
 export interface GetPictosListResponse {
@@ -78,7 +78,7 @@ export class APIPictos {
         ];
 
         // Simula latência e retorna
-        return APIService.respond<GetPictosListResponse>(
+        return MockAPIService.respond<GetPictosListResponse>(
             { pictos: mock },
             600
         );

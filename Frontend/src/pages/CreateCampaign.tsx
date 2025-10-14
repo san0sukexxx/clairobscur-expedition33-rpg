@@ -15,7 +15,6 @@ const DEFAULT_ITEMS: Item[] = [
 
 type CampaignForm = {
     name: string;
-    active: boolean;
     characters: Item[];
 };
 
@@ -24,7 +23,6 @@ export default function CreateCampaign() {
 
     const [campaign, setCampaign] = useState<CampaignForm>({
         name: "",
-        active: true,
         characters: DEFAULT_ITEMS,
     });
 
@@ -71,14 +69,14 @@ export default function CreateCampaign() {
         try {
             const response = await APICampaign.create({
                 name: campaign.name.trim(),
-                active: campaign.active,
-                characters: campaign.characters.filter((c) => c.checked).map((c) => c.id),
+                characters: campaign.characters
+                    .filter((c) => c.checked)
+                    .map((c) => c.id),
             });
 
-            navigate(`/campaign-admin/${response.data.id}`);
+            navigate(`/campaign-admin/${response.id}`);
         } catch (e) {
             console.error(e);
-            // opcional: exibir toast/alert
         } finally {
             setSubmitting(false);
         }

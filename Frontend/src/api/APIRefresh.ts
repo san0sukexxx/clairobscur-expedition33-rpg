@@ -1,4 +1,4 @@
-import { APIService } from "./APIService";
+import { MockAPIService } from "./MockAPIService";
 import { type InitiativeResponse, type BattleCharacterInfo } from "./ResponseModel"
 import { type Element } from "../types/WeaponDTO"
 
@@ -49,7 +49,7 @@ export interface GetRefreshResponse {
 export class APIRefresh {
   static async getInfo(playerId: string): Promise<GetRefreshResponse> {
     const actions = makeMockActions(playerId);
-    return APIService.respond<GetRefreshResponse>(
+    return MockAPIService.respond<GetRefreshResponse>(
       { actions },
       600
     );

@@ -1,4 +1,4 @@
-import { APIService } from "./APIService";
+import { MockAPIService } from "./MockAPIService";
 import { type InitiativeResponse, type StatusResponse, type BattleCharacterInfo, type PictoResponse, type SkillResponse } from "./ResponseModel";
 
 export type BattleStatus = "starting" | "started" | "finished";
@@ -67,7 +67,7 @@ export class APIPlayer {
     input: CreatePlayerInput
   ): Promise<CreatePlayerResponse> {
 
-    return APIService.respond<CreatePlayerResponse>(
+    return MockAPIService.respond<CreatePlayerResponse>(
       { playerID: String(Date.now()) },
       600
     );
@@ -272,7 +272,7 @@ export class APIPlayer {
     };
 
     // Simula latência e retorna
-    return APIService.respond<GetPlayerResponse>(
+    return MockAPIService.respond<GetPlayerResponse>(
       { player: mock },
       600
     );
@@ -282,11 +282,11 @@ export class APIPlayer {
   }
 
   static async save(player: PlayerResponse): Promise<void> {
-    await APIService.respond<null>(null, 600);
+    await MockAPIService.respond<null>(null, 600);
   }
 
   static async saveRollInitiative(player: PlayerResponse, total: number): Promise<void> {
     console.log(total);
-    await APIService.respond<null>(null, 600);
+    await MockAPIService.respond<null>(null, 600);
   }
 }

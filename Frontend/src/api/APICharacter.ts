@@ -1,4 +1,4 @@
-import { APIService } from "./APIService";
+import { MockAPIService } from "./MockAPIService";
 
 export type ListCharacter = {
     id: string;
@@ -21,7 +21,7 @@ export class APICharacter {
             { id: "c3", name: "Tamara", character: "Lune" },
         ];
 
-        return APIService.respond<ListCharactersResponse>({
+        return MockAPIService.respond<ListCharactersResponse>({
             data: MOCK,
             total: MOCK.length,
         });

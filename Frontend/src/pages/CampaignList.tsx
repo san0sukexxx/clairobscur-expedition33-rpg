@@ -2,14 +2,14 @@ import { Link, useLocation } from "react-router-dom";
 import { FaPlay, FaArchive } from "react-icons/fa";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { APICampaign, type Campaign } from "../api/APICampaign";
-import { useApiList } from "../api/UseApiList";
+import { useApiListRaw } from "../api/UseApiListRaw";
 
 export default function CampaignList() {
   const { pathname } = useLocation();
   const campaignPath =
     pathname === "/campaign-list" ? "/character-sheet-list" : "/campaign-admin";
 
-  const { items, loading, error, reload } = useApiList<Campaign>(() =>
+  const { items, loading, error, reload } = useApiListRaw<Campaign>(() =>
     APICampaign.list()
   );
 
