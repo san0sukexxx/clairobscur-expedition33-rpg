@@ -1,4 +1,4 @@
-import { type PlayerResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/MockAPIPlayer";
 
 interface InitiativesQueueProps {
     player: PlayerResponse | null;

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaInfoCircle, FaLock, FaUnlock } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
 import type { SkillResponse } from "../api/ResponseModel";
-import type { PlayerResponse } from "../api/APIPlayer";
+import type { PlayerResponse } from "../api/MockAPIPlayer";
 
 export interface SkillsListTabProps {
     player: PlayerResponse | null;

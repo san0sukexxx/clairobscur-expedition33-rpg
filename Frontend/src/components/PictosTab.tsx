@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { type PictoResponse, type PictoColor } from "../api/ResponseModel";
-import { type PlayerResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { displayPictoAttributeCritical, displayPictoAttributeDefense, displayPictoAttributeHealth, displayPictoAttributeSpeed, displayPictoCritical, displayPictoDefense, displayPictoHealth, displayPictoSpeed } from "../utils/PictoUtils";
 
 interface PictosTabProps {

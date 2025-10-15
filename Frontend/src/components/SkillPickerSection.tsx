@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import type { PlayerResponse } from "../api/APIPlayer";
+import type { PlayerResponse } from "../api/MockAPIPlayer";
 import type { SkillResponse } from "../api/ResponseModel";
 import SkillModal from "./SkillModal";
 

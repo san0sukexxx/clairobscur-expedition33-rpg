@@ -1,0 +1,14 @@
+export const CHARACTERS_LIST = [
+    { id: "gustave", label: "Gustave" },
+    { id: "maelle", label: "Maelle" },
+    { id: "sciel", label: "Sciel" },
+    { id: "lune", label: "Lune" },
+    { id: "verso", label: "Verso" },
+    { id: "monoco", label: "Monoco" },
+];
+
+export function getCharacterLabelById(id?: string | null): string | null {
+    if (!id) return null;
+    const found = CHARACTERS_LIST.find(c => c.id === id);
+    return found ? found.label : null;
+}

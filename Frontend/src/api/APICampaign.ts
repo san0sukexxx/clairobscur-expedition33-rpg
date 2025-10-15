@@ -1,20 +1,19 @@
-// APICampaign.ts
 import { api } from "./api";
 
 export interface Campaign {
   id: number;
   name: string;
-  active: boolean;      // campo interno local
+  active: boolean;
   characters: string[];
 }
 
 export interface CreateCampaignInput {
   name: string;
-  characters: string[]; // <- sem 'active'
+  characters: string[];
 }
 
 export interface CreateCampaignResponse {
-  id: number;           // backend retorna { id }
+  id: number;
 }
 
 type CampaignFromServer = {
@@ -28,7 +27,7 @@ function mapFromServer(c: CampaignFromServer): Campaign {
     id: c.id,
     name: c.name,
     characters: c.characters ?? [],
-    active: true, // default local, já que o backend não envia
+    active: true,
   };
 }
 
@@ -36,6 +35,11 @@ export class APICampaign {
   static async list(): Promise<Campaign[]> {
     const raw = await api.get<CampaignFromServer[]>("campaigns");
     return (raw ?? []).map(mapFromServer);
+  }
+
+  static async get(id: number): Promise<Campaign> {
+    const raw = await api.get<CampaignFromServer>(`campaigns/${id}`);
+    return mapFromServer(raw);
   }
 
   static async create(input: CreateCampaignInput): Promise<CreateCampaignResponse> {

@@ -1,5 +1,5 @@
 import React from "react";
-import { type PlayerResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/MockAPIPlayer";
 import AnimatedStatBar from "./AnimatedStatBar";
 
 interface EnemiesStatusProps {

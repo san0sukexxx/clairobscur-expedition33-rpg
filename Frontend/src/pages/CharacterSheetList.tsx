@@ -3,15 +3,16 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import FloatingButton from "../components/FloatingButton";
-import { APICharacter, type ListCharacter } from "../api/APICharacter";
-import { useApiList } from "../api/UseApiList";
+import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
+import { useApiListRaw } from "../api/UseApiListRaw";
+import { getCharacterLabelById } from "../utils/CharacterUtils";
 
 export default function CharacterSheetList() {
   const { campaign } = useParams<{ campaign: string }>();
   const navigate = useNavigate();
 
-  const { items, loading, error, reload } = useApiList<ListCharacter>(() =>
-    APICharacter.list(campaign)
+  const { items, loading, error, reload } = useApiListRaw<GetPlayerResponse>(() =>
+    APIPlayer.list()
   );
 
   function handleAddCharacter() {
@@ -50,10 +51,10 @@ export default function CharacterSheetList() {
                   <div className="card-body p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <h2 className="card-title text-base">{c.name}</h2>
+                        <h2 className="card-title text-base">{c.playerSheet?.name ?? "Sem nome"}</h2>
                       </div>
                       <div className="text-right text-sm opacity-70">
-                        Character: {c.character}
+                        Personagem: {getCharacterLabelById(c.playerSheet?.characterId) ?? "Nenhum"}
                       </div>
                     </div>
 

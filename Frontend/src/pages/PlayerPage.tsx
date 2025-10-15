@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, matchPath } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaUser, FaSkull, FaCheckCircle } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
@@ -10,11 +10,11 @@ import PlayerSheet from "../components/PlayerSheet";
 import PictosTab from "../components/PictosTab";
 import LuminasSection from "../components/LuminasSection";
 import SkillsSection from "../components/SkillsSection";
-import SkillPickerSection from "../components/SkillPickerSection";
 import ItemsSection from "../components/ItemsSection";
 import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
-import { APIPlayer, type CreatePlayerInput, type PlayerResponse } from "../api/APIPlayer";
+import { APIPlayer, type CreatePlayerInput } from "../api/APIPlayer";
+import { type PlayerResponse, MockAPIPlayer } from "../api/MockAPIPlayer";
 import { APIPictos } from "../api/APIPictos";
 import { type PictoResponse } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
@@ -45,12 +45,18 @@ export default function PlayerPage() {
   const [modalBody, setModalBody] = useState<React.ReactNode>(null);
   const refreshHelper = new RefreshHelper();
   const { showToast } = useToast();
+  const { pathname } = useLocation();
+  // const isAdmin = pathname === "/campaign-player-admin";
+  const isAdmin = !!matchPath(
+    { path: "/campaign-player-admin/:campaign/:character", end: true },
+    pathname
+  );
 
   const weaponList = useMemo(() => {
     return WeaponsDataLoader.getByFile(
-      WeaponsDataLoader.fileForCharacter(player?.playerSheet?.character)
+      WeaponsDataLoader.fileForCharacter(player?.playerSheet?.characterId)
     );
-  }, [player?.playerSheet?.character]);
+  }, [player?.playerSheet?.characterId]);
 
   const { campaign, character } = useParams<{
     campaign: string;
@@ -98,7 +104,10 @@ export default function PlayerPage() {
       {/* Navbar topo */}
       <div className="navbar bg-base-100 shadow sticky top-0 z-10">
         <div className="flex-1">
-          <Link to={`/character-sheet-list/${campaign}`} className="flex items-center gap-2">
+          <Link
+            to={isAdmin ? "/campaign-admin/1" : `/character-sheet-list/${campaign}`}
+            className="flex items-center gap-2"
+          >
             <MdOutlineKeyboardBackspace />
             <span className="text-lg font-bold">Ficha do Jogador</span>
           </Link>
@@ -120,7 +129,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "arma" && (
-            <WeaponSection player={player} setPlayer={setPlayer} weaponList={weaponList} />
+            <WeaponSection player={player} setPlayer={setPlayer} weaponList={weaponList} isAdmin={isAdmin} />
           )}
 
           {!loading && !error && tab === "pictos" && (
@@ -215,10 +224,10 @@ export default function PlayerPage() {
     if (character == undefined) {
       const createSheet = async () => {
         try {
-          const input: CreatePlayerInput = { campaign: campaign! };
+          const input: CreatePlayerInput = { campaign: Number(campaign)! };
           const response = await APIPlayer.create(input);
 
-          navigate(`/campaign-player/${campaign}/${response.playerID}`, { replace: false });
+          navigate(`/campaign-player/${campaign}/${response.id}`, { replace: true });
         } catch (e: any) {
           setError("Erro ao carregar dados: " + e?.message);
         }
@@ -226,24 +235,26 @@ export default function PlayerPage() {
 
       createSheet();
     } else {
-      fetchInfo(character);
+      fetchInfo(parseInt(character));
     }
 
   }
 
-  async function fetchInfo(character: string) {
+  async function fetchInfo(character: number) {
     try {
       const [playerResponse, pictosListResponse] = await Promise.all([
-        APIPlayer.getInfo(character),
+        APIPlayer.get(character),
         APIPictos.getPictosList(),
       ]);
 
-      setPlayer(playerResponse.player);
+      setPlayer(playerResponse);
       setPictos(pictosListResponse.pictos);
 
       setLoading(false);
-      refreshHelper.init(character, playerResponse.player, setPlayer, showToast);
-      refreshHelper.refreshInfoLoop();
+
+      // TODO: implement
+      // refreshHelper.init(character, playerResponse.player, setPlayer, showToast);
+      // refreshHelper.refreshInfoLoop();
     } catch (e: any) {
       console.error("Erro ao carregar player:", e);
       setError("Erro ao carregar player: " + e?.message);
@@ -255,7 +266,7 @@ export default function PlayerPage() {
 
     const savePlayer = async () => {
       try {
-        await APIPlayer.save(player);
+        await MockAPIPlayer.save(player);
       } catch (e) {
         console.error("Erro ao salvar player:", e);
       }
@@ -279,7 +290,7 @@ export default function PlayerPage() {
 
     const rollCall = async (total: number) => {
       try {
-        await APIPlayer.saveRollInitiative(player, total);
+        await MockAPIPlayer.saveRollInitiative(player, total);
       } catch (e) {
         console.error("Erro ao salvar player:", e);
       }

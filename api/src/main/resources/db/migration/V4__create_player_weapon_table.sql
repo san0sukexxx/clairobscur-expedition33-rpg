@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS player_weapon (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_id INTEGER NOT NULL,
+    weapon_id TEXT NOT NULL,
+    weapon_level INTEGER DEFAULT 1,
+    FOREIGN KEY (player_id) REFERENCES player (id) ON DELETE CASCADE
+);

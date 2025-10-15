@@ -1,5 +1,5 @@
 import { APIRefresh, type GetRefreshResponse, type ActionResponse } from "../api/APIRefresh";
-import { type PlayerResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
 import { type AttackResponse } from "../api/APIRefresh";
 

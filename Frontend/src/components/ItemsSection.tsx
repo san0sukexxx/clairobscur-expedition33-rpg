@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { type PlayerResponse, type ItemResponse } from "../api/APIPlayer";
+import { type PlayerResponse, type ItemResponse } from "../api/MockAPIPlayer";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", "revive-elixir"]);

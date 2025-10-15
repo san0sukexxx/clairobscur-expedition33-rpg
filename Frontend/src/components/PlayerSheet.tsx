@@ -1,4 +1,5 @@
-import { type PlayerResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/MockAPIPlayer";
+import { APIPlayer } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
 
 interface PlayerSheetProps {
@@ -7,6 +8,10 @@ interface PlayerSheetProps {
 }
 
 export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
+    async function sync(p: PlayerResponse) {
+        await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
+    }
+
     return (
         <div className="card bg-base-100 shadow">
             <div className="card-body">
@@ -20,80 +25,78 @@ export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
                             className="input input-bordered w-full"
                             placeholder="Nome"
                             value={player?.playerSheet?.name ?? ""}
-                            onChange={(e) =>
-                                setPlayer((prev) =>
-                                    prev
-                                        ? {
-                                            ...prev,
-                                            playerSheet: {
-                                                ...prev.playerSheet,
-                                                name: e.target.value,
-                                            },
-                                        }
-                                        : prev
-                                )
-                            }
+                            onChange={async (e) => {
+                                if (!player) return;
+                                const next = {
+                                    ...player,
+                                    playerSheet: { ...player.playerSheet, name: e.target.value },
+                                };
+                                setPlayer(next);
+                                await sync(next);
+                            }}
                             disabled={!player}
                         />
                     </label>
 
                     <CharacterSelect
-                        selected={player?.playerSheet?.character ?? "gustave"}
-                        onSelect={(id) =>
-                            setPlayer((prev) =>
-                                prev
-                                    ? {
-                                        ...prev,
-                                        playerSheet: {
-                                            ...prev.playerSheet,
-                                            character: id,
-                                        },
-                                        weapons: prev.weapons
-                                            ? prev.weapons.map((w) => ({ ...w, inUse: false }))
-                                            : prev.weapons,
-                                    }
-                                    : prev
-                            )
-                        }
+                        selected={player?.playerSheet?.characterId}
+                        onSelect={async (id) => {
+                            if (!player) return;
+                            const next = {
+                                ...player,
+                                playerSheet: { ...player.playerSheet, characterId: id },
+                                weapons: player.weapons
+                                    ? player.weapons.map((w) => ({ ...w, inUse: false }))
+                                    : player.weapons,
+                            };
+                            setPlayer(next);
+                            await sync(next);
+                        }}
                     />
 
                     <div className="grid grid-cols-2 gap-3">
                         <label className="form-control">
                             <span className="label-text">Total de pontos</span>
-                            <input className="input input-bordered" placeholder="Ex.: 10" type="number"
+                            <input
+                                className="input input-bordered"
+                                placeholder="Ex.: 10"
+                                type="number"
                                 value={player?.playerSheet?.totalPoints ?? ""}
-                                onChange={(e) =>
-                                    setPlayer((prev) =>
-                                        prev
-                                            ? {
-                                                ...prev,
-                                                playerSheet: {
-                                                    ...prev.playerSheet,
-                                                    totalPoints: Number(e.target.value),
-                                                },
-                                            }
-                                            : prev
-                                    )
-                                } />
+                                onChange={async (e) => {
+                                    if (!player) return;
+                                    const next = {
+                                        ...player,
+                                        playerSheet: {
+                                            ...player.playerSheet,
+                                            totalPoints: Number(e.target.value),
+                                        },
+                                    };
+                                    setPlayer(next);
+                                    await sync(next);
+                                }}
+                            />
                         </label>
 
                         <label className="form-control">
                             <span className="label-text">XP</span>
-                            <input className="input input-bordered" placeholder="Ex.: 10" type="number"
+                            <input
+                                className="input input-bordered"
+                                placeholder="Ex.: 10"
+                                type="number"
                                 value={player?.playerSheet?.xp ?? ""}
-                                onChange={(e) =>
-                                    setPlayer((prev) =>
-                                        prev
-                                            ? {
-                                                ...prev,
-                                                playerSheet: {
-                                                    ...prev.playerSheet,
-                                                    xp: Number(e.target.value),
-                                                },
-                                            }
-                                            : prev
-                                    )
-                                } />
+                                onChange={async (e) => {
+                                    if (!player) return;
+                                    const next = {
+                                        ...player,
+                                        playerSheet: {
+                                            ...player.playerSheet,
+                                            xp: Number(e.target.value),
+                                        },
+                                    };
+                                    setPlayer(next);
+                                    await sync(next);
+                                }}
+                            />
                         </label>
                     </div>
 
@@ -106,43 +109,45 @@ export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
                                         type="number"
                                         className="input input-bordered"
                                         value={player?.playerSheet?.power ?? ""}
-                                        onChange={(e) =>
-                                            setPlayer((prev) =>
-                                                prev
-                                                    ? {
-                                                        ...prev,
-                                                        playerSheet: {
-                                                            ...prev.playerSheet,
-                                                            power: Number(e.target.value),
-                                                        },
-                                                    }
-                                                    : prev
-                                            )
-                                        }
+                                        onChange={async (e) => {
+                                            if (!player) return;
+                                            const next = {
+                                                ...player,
+                                                playerSheet: {
+                                                    ...player.playerSheet,
+                                                    power: Number(e.target.value),
+                                                },
+                                            };
+                                            setPlayer(next);
+                                            await sync(next);
+                                        }}
                                     />
                                 </label>
                                 <label className="form-control">
-                                    <span className="label-text">PA</span> <span className="pl-1 text-sm text-gray-500">máx. {player?.playerSheet?.power ?? ""}</span>
+                                    <span className="label-text">PA</span>
+                                    <span className="pl-1 text-sm text-gray-500">
+                                        máx. {player?.playerSheet?.power ?? ""}
+                                    </span>
                                     <input
                                         type="number"
                                         className="input input-bordered"
-                                        value={player?.playerSheet?.actionPoints ?? ""}
-                                        onChange={(e) =>
-                                            setPlayer((prev) =>
-                                                prev
-                                                    ? {
-                                                        ...prev,
-                                                        playerSheet: {
-                                                            ...prev.playerSheet,
-                                                            actionPoints: Number(e.target.value),
-                                                        },
-                                                    }
-                                                    : prev
-                                            )
-                                        }
+                                        value={player?.playerSheet?.apCurrent ?? ""}
+                                        onChange={async (e) => {
+                                            if (!player) return;
+                                            const next = {
+                                                ...player,
+                                                playerSheet: {
+                                                    ...player.playerSheet,
+                                                    apCurrent: Number(e.target.value),
+                                                },
+                                            };
+                                            setPlayer(next);
+                                            await sync(next);
+                                        }}
                                     />
                                 </label>
                             </div>
+
                             <div className="grid grid-cols-2 gap-3">
                                 <label className="form-control">
                                     <span className="label-text">Habilidade</span>
@@ -150,94 +155,93 @@ export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
                                         type="number"
                                         className="input input-bordered"
                                         value={player?.playerSheet?.hability ?? ""}
-                                        onChange={(e) =>
-                                            setPlayer((prev) =>
-                                                prev
-                                                    ? {
-                                                        ...prev,
-                                                        playerSheet: {
-                                                            ...prev.playerSheet,
-                                                            hability: Number(e.target.value),
-                                                        },
-                                                    }
-                                                    : prev
-                                            )
-                                        }
+                                        onChange={async (e) => {
+                                            if (!player) return;
+                                            const next = {
+                                                ...player,
+                                                playerSheet: {
+                                                    ...player.playerSheet,
+                                                    hability: Number(e.target.value),
+                                                },
+                                            };
+                                            setPlayer(next);
+                                            await sync(next);
+                                        }}
                                     />
                                 </label>
                                 <label className="form-control">
                                     <span className="label-text">PM</span>
                                     <span className="pl-1 text-sm text-gray-500">
-                                        máx. {((player?.playerSheet?.hability ?? 0) * 5) === 0
+                                        máx.{" "}
+                                        {((player?.playerSheet?.hability ?? 0) * 5) === 0
                                             ? 1
                                             : (player?.playerSheet?.hability ?? 0) * 5}
                                     </span>
                                     <input
                                         type="number"
                                         className="input input-bordered"
-                                        value={player?.playerSheet?.magicPoints ?? ""}
-                                        onChange={(e) =>
-                                            setPlayer((prev) =>
-                                                prev
-                                                    ? {
-                                                        ...prev,
-                                                        playerSheet: {
-                                                            ...prev.playerSheet,
-                                                            magicPoints: Number(e.target.value),
-                                                        },
-                                                    }
-                                                    : prev
-                                            )
-                                        }
+                                        value={player?.playerSheet?.mpCurrent ?? ""}
+                                        onChange={async (e) => {
+                                            if (!player) return;
+                                            const next = {
+                                                ...player,
+                                                playerSheet: {
+                                                    ...player.playerSheet,
+                                                    mpCurrent: Number(e.target.value),
+                                                },
+                                            };
+                                            setPlayer(next);
+                                            await sync(next);
+                                        }}
                                     />
                                 </label>
                             </div>
+
                             <div className="grid grid-cols-2 gap-3">
                                 <label className="form-control">
                                     <span className="label-text">Resistência</span>
                                     <input
                                         type="number"
                                         className="input input-bordered"
-                                        value={player?.playerSheet?.resistence ?? ""}
-                                        onChange={(e) =>
-                                            setPlayer((prev) =>
-                                                prev
-                                                    ? {
-                                                        ...prev,
-                                                        playerSheet: {
-                                                            ...prev.playerSheet,
-                                                            resistence: Number(e.target.value),
-                                                        },
-                                                    }
-                                                    : prev
-                                            )
-                                        }
+                                        value={player?.playerSheet?.resistance ?? ""}
+                                        onChange={async (e) => {
+                                            if (!player) return;
+                                            const next = {
+                                                ...player,
+                                                playerSheet: {
+                                                    ...player.playerSheet,
+                                                    resistance: Number(e.target.value),
+                                                },
+                                            };
+                                            setPlayer(next);
+                                            await sync(next);
+                                        }}
                                     />
                                 </label>
                                 <label className="form-control">
                                     <span className="label-text">PV</span>
                                     <span className="pl-1 text-sm text-gray-500">
-                                        máx. {((player?.playerSheet?.resistence ?? 0) * 5) === 0
+                                        máx.{" "}
+                                        {((player?.playerSheet?.resistance ?? 0) * 5) === 0
                                             ? 1
-                                            : (player?.playerSheet?.resistence ?? 0) * 5}
+                                            : (player?.playerSheet?.resistance ?? 0) * 5}
                                     </span>
                                     <input
                                         type="number"
                                         className="input input-bordered"
-                                        value={player?.playerSheet?.healthPoints ?? ""}
-                                        onChange={(e) =>
-                                            setPlayer((prev) =>
-                                                prev
-                                                    ? {
-                                                        ...prev,
-                                                        playerSheet: {
-                                                            ...prev.playerSheet,
-                                                            healthPoints: Number(e.target.value),
-                                                        },
-                                                    }
-                                                    : prev
-                                            )
-                                        }
+                                        value={player?.playerSheet?.hpCurrent ?? ""}
+                                        onChange={async (e) => {
+                                            if (!player) return;
+                                            const next = {
+                                                ...player,
+                                                playerSheet: {
+                                                    ...player.playerSheet,
+                                                    hpCurrent: Number(e.target.value),
+                                                },
+                                            };
+                                            setPlayer(next);
+                                            await sync(next);
+                                        }}
                                     />
                                 </label>
                             </div>
@@ -250,19 +254,18 @@ export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
                             className="textarea textarea-bordered w-full h-48 rounded-md"
                             placeholder="Anotações"
                             value={player?.playerSheet?.notes ?? ""}
-                            onChange={(e) =>
-                                setPlayer((prev) =>
-                                    prev
-                                        ? {
-                                            ...prev,
-                                            playerSheet: {
-                                                ...prev.playerSheet,
-                                                notes: e.target.value,
-                                            },
-                                        }
-                                        : prev
-                                )
-                            }
+                            onChange={async (e) => {
+                                if (!player) return;
+                                const next = {
+                                    ...player,
+                                    playerSheet: {
+                                        ...player.playerSheet,
+                                        notes: e.target.value,
+                                    },
+                                };
+                                setPlayer(next);
+                                await sync(next);
+                            }}
                             disabled={!player}
                         />
                     </label>

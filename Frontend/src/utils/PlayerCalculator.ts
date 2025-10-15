@@ -1,4 +1,4 @@
-import { type PlayerResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/MockAPIPlayer";
 
 export function rollCommandForInitiative(player: PlayerResponse) {
     return "1d6";

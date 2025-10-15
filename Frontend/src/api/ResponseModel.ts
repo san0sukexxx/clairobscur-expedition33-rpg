@@ -71,3 +71,8 @@ export interface SkillPreRequisite {
     name: string;
     image: string;
 }
+
+export interface WeaponResponse {
+  id: string;
+  level: number;
+}

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { type PlayerResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/MockAPIPlayer";
 import SkillPickerSection from "./SkillPickerSection";
 import SkillsListSection from "./SkillsListSection";
 import { FaListCheck } from "react-icons/fa6";

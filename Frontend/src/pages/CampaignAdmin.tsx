@@ -1,144 +1,141 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
-import { FaUserFriends, FaFileAlt, FaMusic } from "react-icons/fa";
-import { nanoid } from "nanoid";
-
-// Modelo de dados (exemplo)
-type Player = { id: string; name: string; character?: string };
+import { FaUserFriends, FaFileAlt, FaShieldAlt } from "react-icons/fa";
+import { useApiListRaw } from "../api/UseApiListRaw";
+import { type GetPlayerResponse } from "../api/APIPlayer";
+import { APICampaignPlayer } from "../api/APICampaignPlayer";
+import { APICampaign, type Campaign } from "../api/APICampaign";
+import CampaignAdminSheets from "../components/CampaignAdminSheets";
 
 export default function CampaignAdmin() {
-    const [campaignName] = useState("Expedition 33");
-    const [players, setPlayers] = useState<Player[]>([
-        { id: "1", name: "Gustave Moreau", character: "Gustave" },
-        { id: "2", name: "Elena D.", character: "Sciel" },
-        { id: "3", name: "Marcus V.", character: "Lune" },
-    ]);
+    const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
+    const [activeTab, setActiveTab] = useState<"players" | "combats">("players");
+    const alreadyRan = useRef(false);
 
-    function addPlayer() {
-        const name = prompt("Nome do jogador:");
-        if (!name) return;
-        setPlayers((prev) => [
-            ...prev,
-            { id: nanoid(), name, character: "" },
-        ]);
+    const { campaign } = useParams<{ campaign?: string }>();
+    const campaignId = campaign ? parseInt(campaign, 10) : null;
+    const navigate = useNavigate();
+
+    const { items, loading, error, reload } = useApiListRaw<GetPlayerResponse>(
+        () => (campaignId !== null ? APICampaignPlayer.list(campaignId) : Promise.resolve([])),
+        [campaignId]
+    );
+
+    useEffect(() => {
+        setup();
+    }, [campaignId]);
+
+    async function setup() {
+        if (alreadyRan.current) return;
+        alreadyRan.current = true;
+
+        if (campaignId != null) {
+            try {
+                const info = await APICampaign.get(campaignId);
+                setCampaignInfo(info);
+            } catch {
+                const emptyCampaign: Campaign = {
+                    id: 0,
+                    name: "Falha ao carregar dados da campanha",
+                    active: false,
+                    characters: [],
+                };
+                setCampaignInfo(emptyCampaign);
+            }
+        }
     }
 
     return (
-        <div className="drawer lg:drawer-open min-h-dvh bg-base-200">
-            {/* Drawer toggle (mobile) */}
-            <input id="admin-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="min-h-dvh bg-base-200 flex flex-col">
+            {/* Navbar */}
+            <div className="navbar bg-base-100 shadow px-4">
+                <div className="flex-1">
+                    <span className="text-xl font-bold text-primary">Painel da Campanha</span>
+                </div>
 
-            {/* Conteúdo principal */}
-            <div className="drawer-content flex flex-col">
-                {/* Navbar */}
-                <div className="navbar bg-base-100 shadow">
-                    <div className="flex-none lg:hidden">
-                        <label htmlFor="admin-drawer" className="btn btn-ghost btn-square">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5"
-                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                                    d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </label>
-                    </div>
-                    <div className="flex-1">
-                        <span className="text-xl font-bold text-primary">Painel da Campanha</span>
+                <div className="flex-none">
+                    <button
+                        onClick={() => navigate("/")}
+                        className="btn btn-ghost gap-2"
+                    >
+                        <FiLogOut />
+                        Sair
+                    </button>
+                </div>
+            </div>
+
+            {/* Conteúdo */}
+            <main className="p-4 lg:p-6 flex flex-col gap-6 flex-1">
+                <div>
+                    <h1 className="text-3xl font-bold">
+                        {campaignInfo?.name ?? "Carregando..."}
+                    </h1>
+                    <p className="opacity-70">Administração da campanha</p>
+                </div>
+
+                {/* Tabs */}
+                <div className="w-full">
+                    <div role="tablist" className="tabs tabs-bordered">
+                        <button
+                            role="tab"
+                            className={`tab text-sm px-4 ${activeTab === "players" ? "tab-active font-semibold" : ""
+                                }`}
+                            onClick={() => setActiveTab("players")}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FaUserFriends />
+                                Jogadores
+                            </span>
+                        </button>
+
+                        <button
+                            role="tab"
+                            className={`tab text-sm px-4 ${activeTab === "combats" ? "tab-active font-semibold" : ""
+                                }`}
+                            onClick={() => setActiveTab("combats")}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FaShieldAlt />
+                                Combates
+                            </span>
+                        </button>
                     </div>
                 </div>
 
-                {/* Área principal */}
-                <main className="p-4 lg:p-6">
-                    <div className="mb-6">
-                        <h1 className="text-3xl font-bold">
-                            {campaignName}
-                        </h1>
-                        <p className="opacity-70">Administração da campanha</p>
-                    </div>
+                {/* Conteúdo das abas */}
+                {activeTab === "players" && (
+                    <CampaignAdminSheets
+                        campaignId={campaignId}
+                        campaignName={campaignInfo?.name ?? "(desconhecida)"}
+                        items={items}
+                        loading={loading}
+                        reload={async () => reload()}
+                        navigateToDetails={(playerId: number) => {
+                            navigate(`/campaign-player-admin/${campaign}/${playerId}`);
+                        }}
+                    />
+                )}
 
-                    {/* Card de jogadores */}
+                {activeTab === "combats" && (
                     <div className="card bg-base-100 shadow">
                         <div className="card-body">
-                            <div className="flex items-center justify-between gap-4">
-                                <h2 className="card-title">
-                                    <FaUserFriends className="opacity-60" /> Jogadores ({players.length})
-                                </h2>
-                                <button className="btn btn-primary btn-sm" onClick={addPlayer}>
-                                    Adicionar jogador
-                                </button>
-                            </div>
+                            <h2 className="card-title flex items-center gap-2">
+                                <FaShieldAlt className="opacity-60" />
+                                Combates
+                            </h2>
+                            <p className="text-sm opacity-70">
+                                Aqui você vai poder gerenciar os combates da campanha,
+                                iniciativa, inimigos e turnos.
+                            </p>
 
-                            <div className="overflow-x-auto">
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Nome</th>
-                                            <th>Personagem</th>
-                                            <th className="text-right">Ações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {players.map((p, i) => (
-                                            <tr key={p.id}>
-                                                <td>{i + 1}</td>
-                                                <td>{p.name}</td>
-                                                <td className="opacity-80">{p.character || "-"}</td>
-                                                <td className="text-right">
-                                                    <button
-                                                        className="btn btn-ghost btn-xs"
-                                                        onClick={() =>
-                                                            setPlayers((prev) => prev.filter((x) => x.id !== p.id))
-                                                        }
-                                                    >
-                                                        Remover
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        {players.length === 0 && (
-                                            <tr>
-                                                <td colSpan={4} className="text-center opacity-60">
-                                                    Nenhum jogador ainda.
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                            <div className="alert alert-info mt-4 text-sm leading-relaxed">
+                                Em breve você poderá criar e controlar combates diretamente por aqui.
                             </div>
                         </div>
                     </div>
-                </main>
-            </div>
-
-            {/* Sidebar / Menu */}
-            <div className="drawer-side">
-                <label htmlFor="admin-drawer" className="drawer-overlay"></label>
-                <aside className="w-72 bg-base-100 p-4">
-                    <div className="mb-6 px-2">
-                        <div className="text-lg font-bold">Menu</div>
-                        <div className="text-sm opacity-60">Campanha</div>
-                    </div>
-
-                    <ul className="menu w-full">
-                        <li>
-                            <Link to="/" className="gap-2">
-                                <FiLogOut /> Sair
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="#" className="gap-2">
-                                <FaFileAlt /> Fichas
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="#" className="gap-2">
-                                <FaMusic /> Sons
-                            </Link>
-                        </li>
-                    </ul>
-                </aside>
-            </div>
+                )}
+            </main>
         </div>
     );
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
-import { type PlayerResponse } from "../api/APIPlayer";
+import { type PlayerResponse } from "../api/MockAPIPlayer";
 import InitiativesQueue from "./InitiativesQueue";
 import { CgSandClock } from "react-icons/cg";
 

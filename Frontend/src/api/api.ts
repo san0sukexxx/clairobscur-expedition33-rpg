@@ -1,3 +1,6 @@
 import { APIService } from "./APIService";
 
-export const api = new APIService("http://localhost:8080/api/");
+const u = new URL(window.location.href);
+const apiBaseUrl = `${u.protocol}//${u.hostname}:8080/api/`;
+
+export const api = new APIService(apiBaseUrl);
