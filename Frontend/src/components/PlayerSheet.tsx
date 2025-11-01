@@ -1,13 +1,15 @@
 import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { APIPlayer } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
+import { APICampaign, type Campaign } from "../api/APICampaign";
 
 interface PlayerSheetProps {
     player: PlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+    campaignInfo: Campaign | null;
 }
 
-export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
+export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerSheetProps) {
     async function sync(p: PlayerResponse) {
         await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
     }
@@ -52,6 +54,7 @@ export default function PlayerSheet({ player, setPlayer }: PlayerSheetProps) {
                             setPlayer(next);
                             await sync(next);
                         }}
+                        allowedCharacters={campaignInfo?.characters ?? []}
                     />
 
                     <div className="grid grid-cols-2 gap-3">

@@ -25,12 +25,11 @@ class CampaignPlayerService(
         return players.map { p ->
             val pid = p.id ?: 0
 
-            val weapons = playerWeaponRepository.findByPlayerId(pid).map { it.toResponse() }
-
             GetPlayerResponse(
                     id = pid,
                     playerSheet = PlayerSheetResponse.fromEntity(p),
-                    weapons = weapons
+                    weapons = null,
+                    fightInfo = null
             )
         }
     }

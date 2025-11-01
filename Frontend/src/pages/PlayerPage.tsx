@@ -14,6 +14,7 @@ import ItemsSection from "../components/ItemsSection";
 import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput } from "../api/APIPlayer";
+import { APICampaign, type Campaign } from "../api/APICampaign";
 import { type PlayerResponse, MockAPIPlayer } from "../api/MockAPIPlayer";
 import { APIPictos } from "../api/APIPictos";
 import { type PictoResponse } from "../api/ResponseModel";
@@ -38,6 +39,7 @@ export default function PlayerPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<PlayerResponse | null>(null);
+  const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
   const [pictos, setPictos] = useState<PictoResponse[] | null>(null);
   const diceBoardRef = useRef<DiceBoardRef>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -125,7 +127,7 @@ export default function PlayerPage() {
         {/* Conteúdo da aba */}
         <section className="space-y-4">
           {!loading && !error && tab === "ficha" && (
-            <PlayerSheet player={player} setPlayer={setPlayer} />
+            <PlayerSheet player={player} setPlayer={setPlayer} campaignInfo={campaignInfo} />
           )}
 
           {!loading && !error && tab === "arma" && (
@@ -242,13 +244,18 @@ export default function PlayerPage() {
 
   async function fetchInfo(character: number) {
     try {
-      const [playerResponse, pictosListResponse] = await Promise.all([
+      if (!campaign) return;
+      const campaignId = parseInt(campaign, 10);
+
+      const [campaignInfo, playerResponse, pictosListResponse] = await Promise.all([
+        APICampaign.get(campaignId),
         APIPlayer.get(character),
         APIPictos.getPictosList(),
       ]);
 
       setPlayer(playerResponse);
       setPictos(pictosListResponse.pictos);
+      setCampaignInfo(campaignInfo);
 
       setLoading(false);
 

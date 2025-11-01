@@ -5,11 +5,13 @@ import { CHARACTERS_LIST } from "../utils/CharacterUtils";
 interface CharacterSelectProps {
     selected: string | null | undefined;
     onSelect: (id: string) => void;
+    allowedCharacters: string[];
 }
 
-export default function CharacterSelect({ selected, onSelect }: CharacterSelectProps) {
+export default function CharacterSelect({ selected, onSelect, allowedCharacters }: CharacterSelectProps) {
     const detailsRef = useRef<HTMLDetailsElement>(null);
     const current = CHARACTERS_LIST.find((c) => c.id === selected) ?? null;
+    const filteredList = CHARACTERS_LIST.filter((c) => allowedCharacters.includes(c.id));
 
     function handleSelect(id: string) {
         onSelect(id);
@@ -37,7 +39,7 @@ export default function CharacterSelect({ selected, onSelect }: CharacterSelectP
             </summary>
 
             <ul className="dropdown-content menu bg-base-100 rounded-box shadow w-80 mt-2 z-[1] p-2">
-                {CHARACTERS_LIST.map((c) => (
+                {filteredList.map((c) => (
                     <li key={c.id}>
                         <button
                             type="button"

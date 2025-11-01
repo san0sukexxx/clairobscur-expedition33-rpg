@@ -7,6 +7,7 @@ import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import CampaignAdminSheets from "../components/CampaignAdminSheets";
+import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
 
 export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
@@ -117,23 +118,10 @@ export default function CampaignAdmin() {
                     />
                 )}
 
-                {activeTab === "combats" && (
-                    <div className="card bg-base-100 shadow">
-                        <div className="card-body">
-                            <h2 className="card-title flex items-center gap-2">
-                                <FaShieldAlt className="opacity-60" />
-                                Combates
-                            </h2>
-                            <p className="text-sm opacity-70">
-                                Aqui você vai poder gerenciar os combates da campanha,
-                                iniciativa, inimigos e turnos.
-                            </p>
-
-                            <div className="alert alert-info mt-4 text-sm leading-relaxed">
-                                Em breve você poderá criar e controlar combates diretamente por aqui.
-                            </div>
-                        </div>
-                    </div>
+                {activeTab === "combats" && campaignId !== null && (
+                    <CampaignAdminCombatsTab 
+                        players={items}
+                        campaignId={campaignId} />
                 )}
             </main>
         </div>

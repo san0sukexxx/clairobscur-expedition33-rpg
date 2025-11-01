@@ -1,4 +1,3 @@
-// api-service.ts
 export class APIService {
     private baseUrl: string;
 
@@ -6,7 +5,6 @@ export class APIService {
         this.baseUrl = baseUrl;
     }
 
-    // Método genérico para requisições
     private async request<TResponse>(
         endpoint: string,
         options: RequestInit
@@ -24,17 +22,18 @@ export class APIService {
             throw new Error(`Erro ${response.status}: ${errorText}`);
         }
 
-        return (await response.json()) as TResponse;
+        const text = await response.text();
+        if (!text) {
+            return undefined as TResponse;
+        }
+
+        return JSON.parse(text) as TResponse;
     }
 
-    // GET
     async get<TResponse>(endpoint: string): Promise<TResponse> {
-        return this.request<TResponse>(endpoint, {
-            method: "GET",
-        });
+        return this.request<TResponse>(endpoint, { method: "GET" });
     }
 
-    // POST
     async post<TRequest, TResponse>(
         endpoint: string,
         body: TRequest
@@ -45,7 +44,6 @@ export class APIService {
         });
     }
 
-    // PUT
     async put<TRequest, TResponse>(
         endpoint: string,
         body: TRequest
@@ -56,10 +54,7 @@ export class APIService {
         });
     }
 
-    // DELETE
     async delete<TResponse>(endpoint: string): Promise<TResponse> {
-        return this.request<TResponse>(endpoint, {
-            method: "DELETE",
-        });
+        return this.request<TResponse>(endpoint, { method: "DELETE" });
     }
 }

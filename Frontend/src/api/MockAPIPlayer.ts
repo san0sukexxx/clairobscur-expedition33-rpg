@@ -24,7 +24,6 @@ export interface ItemResponse {
 }
 
 export interface FightInfoResponse {
-  playerBattleID?: number;
   initiatives?: InitiativeResponse[];
   characters?: BattleCharacterInfo[]; // enemies and allies
   battleStatus: BattleStatus;
@@ -75,11 +74,11 @@ export class MockAPIPlayer {
         notes: "Notes"
       },
       weapons: [
-        { id: "Abysseram", inUse: false, level: 3 },
-        { id: "Baguette", inUse: false, level: 6 },
-        { id: "Chevalam", inUse: false, level: 21 },
-        { id: "Kralim", inUse: false, level: 8 },
-        { id: "Sadon", inUse: true, level: 8 },
+        { id: "Abysseram", level: 3 },
+        { id: "Baguette", level: 6 },
+        { id: "Chevalam", level: 21 },
+        { id: "Kralim", level: 8 },
+        { id: "Sadon", level: 8 },
       ],
       pictos: [
         {
@@ -192,7 +191,6 @@ export class MockAPIPlayer {
         }
       ],
       fightInfo: {
-        // playerBattleID: 4,
         initiatives: [
           {
             playFirst: false,

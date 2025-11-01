@@ -1,16 +1,14 @@
 package com.example.demo.controller
 
-import com.example.demo.dto.CreatePlayerRequest
-import com.example.demo.dto.CreatePlayerResponse
-import com.example.demo.dto.GetPlayerResponse
-import com.example.demo.dto.PlayerSheetResponse
-import com.example.demo.dto.PlayerWeaponResponse
-import com.example.demo.dto.UpdatePlayerRequest
+import com.example.demo.dto.*
 import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
+import com.example.demo.repository.BattleCharacterRepository
+import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.CampaignPlayerRepository
 import com.example.demo.repository.PlayerRepository
 import com.example.demo.repository.PlayerWeaponRepository
+import com.example.demo.service.FightService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -19,7 +17,10 @@ import org.springframework.web.bind.annotation.*
 class PlayerController(
         private val playerRepository: PlayerRepository,
         private val campaignPlayerRepository: CampaignPlayerRepository,
-        private val playerWeaponRepository: PlayerWeaponRepository
+        private val playerWeaponRepository: PlayerWeaponRepository,
+        private val battleRepository: BattleRepository,
+        private val battleCharacterRepository: BattleCharacterRepository,
+        private val fightService: FightService
 ) {
 
         @PostMapping
@@ -58,18 +59,11 @@ class PlayerController(
                         players.map { player ->
                                 val pid = player.id ?: 0
 
-                                val weapons =
-                                        playerWeaponRepository.findByPlayerId(pid).map { pw ->
-                                                PlayerWeaponResponse(
-                                                        id = pw.weaponId,
-                                                        level = pw.weaponLevel
-                                                )
-                                        }
-
                                 GetPlayerResponse(
                                         id = pid,
                                         playerSheet = PlayerSheetResponse.fromEntity(player),
-                                        weapons = weapons
+                                        weapons = null,
+                                        fightInfo = null
                                 )
                         }
 
@@ -88,11 +82,14 @@ class PlayerController(
                                 PlayerWeaponResponse(id = pw.weaponId, level = pw.weaponLevel)
                         }
 
+                val fightInfo = fightService.buildFightInfoForPlayer(id)
+
                 val response =
                         GetPlayerResponse(
                                 id = entity.id ?: 0,
                                 playerSheet = PlayerSheetResponse.fromEntity(entity),
-                                weapons = weapons
+                                weapons = weapons,
+                                fightInfo = fightInfo
                         )
 
                 return ResponseEntity.ok(response)
@@ -102,7 +99,7 @@ class PlayerController(
         fun update(
                 @PathVariable id: Int,
                 @RequestBody req: UpdatePlayerRequest
-        ): ResponseEntity<GetPlayerResponse> {
+        ): ResponseEntity<Void> {
                 val opt = playerRepository.findById(id)
                 if (opt.isEmpty) return ResponseEntity.notFound().build()
 
@@ -122,20 +119,8 @@ class PlayerController(
                 p.notes = sheet.notes
                 p.weaponId = sheet.weaponId
 
-                val saved = playerRepository.save(p)
+                playerRepository.save(p)
 
-                val weapons =
-                        playerWeaponRepository.findByPlayerId(id).map { pw ->
-                                PlayerWeaponResponse(id = pw.weaponId, level = pw.weaponLevel)
-                        }
-
-                val body =
-                        GetPlayerResponse(
-                                id = saved.id ?: 0,
-                                playerSheet = PlayerSheetResponse.fromEntity(saved),
-                                weapons = weapons
-                        )
-
-                return ResponseEntity.ok(body)
+                return ResponseEntity.ok().build()
         }
 }
