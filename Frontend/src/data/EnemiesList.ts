@@ -12,6 +12,11 @@ export const EnemiesList: BattleCharacterInfo[] = [
         status: [],
         type: "npc",
         isEnemy: true,
+        npcInfo: {
+            power: 1,
+            hability: 2,
+            resistance: 3
+        }
     },
     {
         battleID: 0,
@@ -24,6 +29,11 @@ export const EnemiesList: BattleCharacterInfo[] = [
         status: [],
         type: "npc",
         isEnemy: true,
+        npcInfo: {
+            power: 1,
+            hability: 1,
+            resistance: 3
+        }
     },
 ];
 

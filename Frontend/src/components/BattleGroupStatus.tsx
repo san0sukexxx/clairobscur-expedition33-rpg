@@ -64,7 +64,7 @@ export default function EnemiesStatus({ player, isEnemies }: EnemiesStatusProps)
                                         />
 
                                     </div>
-                                    {ch.magicPoints !== undefined && ch.maxMagicPoints !== undefined && (
+                                    {ch.magicPoints !== undefined && ch.magicPoints !== null && ch.maxMagicPoints !== undefined && ch.maxMagicPoints !== null && (
                                         <div>
                                             <div className="flex items-center justify-between text-xs uppercase">
                                                 <span className="opacity-70">MP</span>

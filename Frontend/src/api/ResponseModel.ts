@@ -32,6 +32,13 @@ export interface BattleCharacterInfo {
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;
+    npcInfo?: NPCInfo;
+}
+
+export interface NPCInfo {
+    power?: number;
+    hability?: number;
+    resistance?: number;
 }
 
 export interface PictoResponse {

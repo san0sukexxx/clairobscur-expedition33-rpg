@@ -1,7 +1,7 @@
 package com.example.demo.dto
 
 data class BattleCharacterInfo(
-    val battleID: Int,
+    val battleID: Int?,
     val id: String,
     val name: String,
     val healthPoints: Int,

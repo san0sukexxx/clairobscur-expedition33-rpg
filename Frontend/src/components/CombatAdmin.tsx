@@ -13,6 +13,8 @@ export interface CombatEntity {
     type: BattleCharacterType
     currentHp: number
     maxHp: number
+    currentMp?: number
+    maxMp?: number
     avatarUrl?: string
     characterId?: string
 }
@@ -79,6 +81,8 @@ export default function CombatAdmin({
                     type: "player",
                     currentHp: bc.healthPoints,
                     maxHp: bc.maxHealthPoints,
+                    currentMp: bc.magicPoints,
+                    maxMp: bc.maxMagicPoints,
                     characterId: charId,
                     avatarUrl
                 }

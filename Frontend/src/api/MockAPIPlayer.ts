@@ -24,8 +24,9 @@ export interface ItemResponse {
 }
 
 export interface FightInfoResponse {
+  playerBattleID: number;
   initiatives?: InitiativeResponse[];
-  characters?: BattleCharacterInfo[]; // enemies and allies
+  characters?: BattleCharacterInfo[];
   battleStatus: BattleStatus;
   canRollInitiative: boolean;
 }
@@ -191,6 +192,7 @@ export class MockAPIPlayer {
         }
       ],
       fightInfo: {
+        playerBattleID: 1,
         initiatives: [
           {
             playFirst: false,

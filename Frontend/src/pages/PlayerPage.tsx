@@ -48,7 +48,6 @@ export default function PlayerPage() {
   const refreshHelper = new RefreshHelper();
   const { showToast } = useToast();
   const { pathname } = useLocation();
-  // const isAdmin = pathname === "/campaign-player-admin";
   const isAdmin = !!matchPath(
     { path: "/campaign-player-admin/:campaign/:character", end: true },
     pathname

@@ -8,6 +8,7 @@ import com.example.demo.repository.PlayerRepository
 import com.example.demo.repository.PlayerWeaponRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import com.example.demo.dto.PlayerWeaponResponse
 
 @Service
 class CampaignPlayerService(
@@ -25,10 +26,18 @@ class CampaignPlayerService(
         return players.map { p ->
             val pid = p.id ?: 0
 
+            val weapons =
+                    playerWeaponRepository.findByPlayerId(pid).map { pw ->
+                            PlayerWeaponResponse(
+                                    id = pw.weaponId,
+                                    level = pw.weaponLevel
+                            )
+                    }
+
             GetPlayerResponse(
                     id = pid,
                     playerSheet = PlayerSheetResponse.fromEntity(p),
-                    weapons = null,
+                    weapons = weapons,
                     fightInfo = null
             )
         }

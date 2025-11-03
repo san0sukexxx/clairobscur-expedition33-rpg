@@ -6,6 +6,7 @@ import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.CampaignPlayerRepository
 import com.example.demo.repository.CampaignRepository
+import com.example.demo.repository.PlayerRepository
 import org.springframework.stereotype.Service
 
 @Service
@@ -13,47 +14,75 @@ class FightService(
         private val battleRepository: BattleRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val campaignRepository: CampaignRepository,
-        private val campaignPlayerRepository: CampaignPlayerRepository
+        private val campaignPlayerRepository: CampaignPlayerRepository,
+        private val playerRepository: PlayerRepository
 ) {
-    fun buildFightInfoForPlayer(playerId: Int): FightInfoResponse? {
-        val campaignPlayer =
-                campaignPlayerRepository.findByPlayerId(playerId)
-                        ?: throw IllegalArgumentException("Player not linked to any campaign")
+        fun buildFightInfoForPlayer(playerId: Int): FightInfoResponse? {
+                val campaignPlayer =
+                        campaignPlayerRepository.findByPlayerId(playerId)
+                                ?: throw IllegalArgumentException(
+                                        "Player not linked to any campaign"
+                                )
 
-        val campaignId = campaignPlayer.campaignId
+                val campaignId = campaignPlayer.campaignId
+                val campaign =
+                        campaignRepository.findById(campaignId).orElseThrow {
+                                IllegalArgumentException("Campaign not found with id: $campaignId")
+                        }
 
-        val campaign =
-                campaignRepository.findById(campaignId).orElseThrow {
-                    IllegalArgumentException("Campaign not found with id: $campaignId")
-                }
+                val battleId = campaign.battleId ?: return null
+                val battle = battleRepository.findById(battleId).orElse(null) ?: return null
 
-        val battleId = campaign.battleId ?: return null
+                val characterEntities = battleCharacterRepository.findByBattleId(battleId)
 
-        val battle = battleRepository.findById(battleId).orElse(null) ?: return null
+                val characters: List<BattleCharacterInfo> =
+                        characterEntities.map { bc ->
+                                if (bc.characterType == "player") {
+                                        val playerIdFromExternal = bc.externalId.toIntOrNull()
+                                        val player =
+                                                playerIdFromExternal?.let { pid ->
+                                                        playerRepository.findById(pid).orElse(null)
+                                                }
 
-        val characterEntities = battleCharacterRepository.findByBattleId(battleId)
+                                        BattleCharacterInfo(
+                                                battleID = bc.id,
+                                                id = player?.characterId ?: bc.externalId,
+                                                name = bc.characterName,
+                                                healthPoints = bc.healthPoints,
+                                                maxHealthPoints = bc.maxHealthPoints,
+                                                magicPoints = bc.magicPoints,
+                                                maxMagicPoints = bc.maxMagicPoints,
+                                                status = null,
+                                                type = bc.characterType,
+                                                isEnemy = bc.isEnemy
+                                        )
+                                } else {
+                                        BattleCharacterInfo(
+                                                battleID = bc.id,
+                                                id = bc.externalId,
+                                                name = bc.characterName,
+                                                healthPoints = bc.healthPoints,
+                                                maxHealthPoints = bc.maxHealthPoints,
+                                                magicPoints = bc.magicPoints,
+                                                maxMagicPoints = bc.maxMagicPoints,
+                                                status = null,
+                                                type = bc.characterType,
+                                                isEnemy = bc.isEnemy
+                                        )
+                                }
+                        }
 
-        val characters: List<BattleCharacterInfo> =
-                characterEntities.map { bc ->
-                    BattleCharacterInfo(
-                            battleID = bc.battleId,
-                            id = bc.externalId,
-                            name = bc.characterName,
-                            healthPoints = bc.healthPoints,
-                            maxHealthPoints = bc.maxHealthPoints,
-                            magicPoints = bc.magicPoints,
-                            maxMagicPoints = bc.maxMagicPoints,
-                            status = null,
-                            type = bc.characterType,
-                            isEnemy = bc.isEnemy
-                    )
-                }
+                val playerBattleID =
+                        characterEntities
+                                .firstOrNull { it.externalId.toIntOrNull() == playerId }
+                                ?.id
 
-        return FightInfoResponse(
-                initiatives = emptyList(),
-                characters = characters,
-                battleStatus = battle.battleStatus,
-                canRollInitiative = false
-        )
-    }
+                return FightInfoResponse(
+                        playerBattleID = playerBattleID,
+                        initiatives = emptyList(),
+                        characters = characters,
+                        battleStatus = battle.battleStatus,
+                        canRollInitiative = false
+                )
+        }
 }
