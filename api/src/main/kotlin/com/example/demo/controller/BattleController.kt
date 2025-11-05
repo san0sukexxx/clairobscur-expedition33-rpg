@@ -1,24 +1,88 @@
 package com.example.demo.controller
 
+import com.example.demo.dto.BattleCharacterInfo
+import com.example.demo.dto.BattleWithDetailsResponse
+import com.example.demo.dto.InitiativeResponse
 import com.example.demo.dto.UseBattleRequest
 import com.example.demo.model.Battle
+import com.example.demo.repository.BattleCharacterRepository
+import com.example.demo.repository.BattleInitiativeRepository
 import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.CampaignRepository
+import com.example.demo.repository.PlayerRepository
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/battles")
 class BattleController(
         private val battleRepository: BattleRepository,
-        private val campaignRepository: CampaignRepository
+        private val campaignRepository: CampaignRepository,
+        private val battleCharacterRepository: BattleCharacterRepository,
+        private val playerRepository: PlayerRepository,
+        private val battleInitiativeRepository: BattleInitiativeRepository
 ) {
 
+    // BattleController.kt (trecho)
     @GetMapping("/{battleId}")
-    fun getBattleById(@PathVariable battleId: Int): ResponseEntity<Battle> {
+    fun getBattleById(@PathVariable battleId: Int): ResponseEntity<BattleWithDetailsResponse> {
         val opt = battleRepository.findById(battleId)
-        return if (opt.isPresent) ResponseEntity.ok(opt.get())
-        else ResponseEntity.notFound().build()
+        if (!opt.isPresent) return ResponseEntity.notFound().build()
+
+        val battle = opt.get()
+
+        // --- characters usando a lógica solicitada ---
+        val characterEntities = battleCharacterRepository.findByBattleId(battleId)
+
+        val characters: List<BattleCharacterInfo> =
+                characterEntities.map { bc ->
+                    val playerIdFromExternal = bc.externalId.toIntOrNull()
+
+                    val externalId =
+                            if (bc.characterType == "player") {
+                                playerIdFromExternal?.let { pid ->
+                                    playerRepository.findById(pid).orElse(null)?.characterId
+                                }
+                                        ?: bc.externalId
+                            } else {
+                                bc.externalId
+                            }
+
+                    BattleCharacterInfo(
+                            battleID = bc.id,
+                            id = externalId,
+                            name = bc.characterName,
+                            healthPoints = bc.healthPoints,
+                            maxHealthPoints = bc.maxHealthPoints,
+                            magicPoints = bc.magicPoints,
+                            maxMagicPoints = bc.maxMagicPoints,
+                            status = null,
+                            type = bc.characterType,
+                            isEnemy = bc.isEnemy
+                    )
+                }
+
+        val initiatives =
+                battleInitiativeRepository.findByBattleId(battleId).map {
+                    InitiativeResponse(
+                            playFirst = it.playFirst,
+                            battleID = it.battleCharacterId, // id do BattleCharacter
+                            value = it.initiativeValue,
+                            hability = it.hability
+                    )
+                }
+
+        val response =
+                BattleWithDetailsResponse(
+                        id = battle.id!!,
+                        campaignId = battle.campaignId,
+                        battleStatus = battle.battleStatus,
+                        characters = characters,
+                        initiatives = initiatives
+                )
+
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/campaign/{campaignId}")
@@ -30,6 +94,15 @@ class BattleController(
     @PostMapping
     fun create(@RequestBody battle: Battle): ResponseEntity<Int> {
         val saved = battleRepository.save(battle)
+
+        val campaign =
+                campaignRepository.findById(battle.campaignId).orElseThrow {
+                    IllegalArgumentException("Campaign not found with id: ${battle.campaignId}")
+                }
+
+        campaign.battleId = battle.id
+        campaignRepository.save(campaign)
+
         return ResponseEntity.ok(saved.id!!)
     }
 
@@ -46,13 +119,23 @@ class BattleController(
         }
     }
 
+    @Transactional
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Int): ResponseEntity<Unit> {
-        if (battleRepository.existsById(id)) {
-            battleRepository.deleteById(id)
-            return ResponseEntity.noContent().build()
+        if (!battleRepository.existsById(id)) {
+            return ResponseEntity.notFound().build()
         }
-        return ResponseEntity.notFound().build()
+
+        val characters = battleCharacterRepository.findByBattleId(id)
+        characters.forEach { character ->
+            battleInitiativeRepository.deleteByBattleCharacterId(character.id!!)
+        }
+
+        battleCharacterRepository.deleteAll(characters)
+
+        battleRepository.deleteById(id)
+
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/{battleId}/use")

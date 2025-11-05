@@ -1,8 +1,7 @@
 import { MockAPIService } from "./MockAPIService";
 import { type PlayerSheetResponse } from "./APIPlayer";
-import { type InitiativeResponse, type StatusResponse, type BattleCharacterInfo, type PictoResponse, type SkillResponse, type WeaponResponse } from "./ResponseModel";
+import { type StatusResponse, type FightInfoResponse, type PictoResponse, type SkillResponse, type WeaponResponse } from "./ResponseModel";
 
-export type BattleStatus = "starting" | "started" | "finished";
 
 export interface PlayerResponse {
   id: number;
@@ -21,14 +20,6 @@ export interface ItemResponse {
   description: string;
   quantity?: number;
   maxQuantity?: number;
-}
-
-export interface FightInfoResponse {
-  playerBattleID: number;
-  initiatives?: InitiativeResponse[];
-  characters?: BattleCharacterInfo[];
-  battleStatus: BattleStatus;
-  canRollInitiative: boolean;
 }
 
 export interface CreatePlayerInput {

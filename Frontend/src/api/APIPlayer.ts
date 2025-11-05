@@ -1,5 +1,5 @@
 import { api } from "./api";
-import { type WeaponResponse } from "./ResponseModel";
+import { type WeaponResponse, type FightInfoResponse } from "./ResponseModel";
 
 export interface PlayerSheetResponse {
     name?: string;
@@ -28,6 +28,7 @@ export interface GetPlayerResponse {
     id: number;
     playerSheet?: PlayerSheetResponse;
     weapons?: WeaponResponse[];
+    fightInfo?: FightInfoResponse;
 }
 
 export interface UpdatePlayerInput {

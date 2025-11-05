@@ -1,10 +1,15 @@
 import { api } from "./api"
-import { type BattleCharacterType } from "./ResponseModel"
+import { type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse } from "./ResponseModel"
 
 export interface Battle {
     id: number
     campaignId: number
     battleStatus: string
+}
+
+export interface BattleWithDetailsResponse extends Battle {
+    characters: BattleCharacterInfo[]
+    initiatives: InitiativeResponse[]
 }
 
 export interface CreateBattleInput {
@@ -26,6 +31,13 @@ export interface AddBattleCharacterRequest {
     maxHealthPoints: number
     magicPoints?: number
     maxMagicPoints?: number
+    initiative?: AddBattleCharacterInitiativeData
+}
+
+export interface AddBattleCharacterInitiativeData {
+    initiativeValue: number
+    hability: number
+    playFirst: boolean
 }
 
 export interface BattleCharacter {
@@ -41,6 +53,13 @@ export interface BattleCharacter {
     maxMagicPoints?: number
 }
 
+export interface CreateBattleInitiativeRequest {
+    battleCharacterId: number
+    value: number
+    hability: number
+    playFirst?: boolean
+}
+
 export class APIBattle {
     static async create(input: CreateBattleInput): Promise<number> {
         return api.post<CreateBattleInput, number>("battles", input)
@@ -48,6 +67,10 @@ export class APIBattle {
 
     static async listByCampaign(campaignId: number): Promise<Battle[]> {
         return api.get<Battle[]>(`battles/campaign/${campaignId}`)
+    }
+
+    static async getById(battleId: number): Promise<BattleWithDetailsResponse> {
+        return api.get<BattleWithDetailsResponse>(`battles/${battleId}`)
     }
 
     static async update(id: number, input: UpdateBattleInput): Promise<void> {
@@ -79,5 +102,9 @@ export class APIBattle {
 
     static async clearBattle(campaignId: number): Promise<void> {
         await api.put<{ campaignId: number }, void>("battles/clear", { campaignId })
+    }
+
+    static async addInitiative(input: CreateBattleInitiativeRequest): Promise<InitiativeResponse> {
+        return api.post<CreateBattleInitiativeRequest, InitiativeResponse>("battle-initiatives", input)
     }
 }

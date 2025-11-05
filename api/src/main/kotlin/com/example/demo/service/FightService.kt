@@ -2,10 +2,12 @@ package com.example.demo.service
 
 import com.example.demo.dto.BattleCharacterInfo
 import com.example.demo.dto.FightInfoResponse
+import com.example.demo.dto.InitiativeResponse
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.CampaignPlayerRepository
 import com.example.demo.repository.CampaignRepository
+import com.example.demo.repository.InitiativeRepository
 import com.example.demo.repository.PlayerRepository
 import org.springframework.stereotype.Service
 
@@ -15,7 +17,8 @@ class FightService(
         private val battleCharacterRepository: BattleCharacterRepository,
         private val campaignRepository: CampaignRepository,
         private val campaignPlayerRepository: CampaignPlayerRepository,
-        private val playerRepository: PlayerRepository
+        private val playerRepository: PlayerRepository,
+        private val initiativeRepository: InitiativeRepository
 ) {
         fun buildFightInfoForPlayer(playerId: Int): FightInfoResponse? {
                 val campaignPlayer =
@@ -37,39 +40,32 @@ class FightService(
 
                 val characters: List<BattleCharacterInfo> =
                         characterEntities.map { bc ->
-                                if (bc.characterType == "player") {
-                                        val playerIdFromExternal = bc.externalId.toIntOrNull()
-                                        val player =
+                                val playerIdFromExternal = bc.externalId.toIntOrNull()
+                                val externalId =
+                                        if (bc.characterType == "player") {
                                                 playerIdFromExternal?.let { pid ->
-                                                        playerRepository.findById(pid).orElse(null)
+                                                        playerRepository
+                                                                .findById(pid)
+                                                                .orElse(null)
+                                                                ?.characterId
                                                 }
+                                                        ?: bc.externalId
+                                        } else {
+                                                bc.externalId
+                                        }
 
-                                        BattleCharacterInfo(
-                                                battleID = bc.id,
-                                                id = player?.characterId ?: bc.externalId,
-                                                name = bc.characterName,
-                                                healthPoints = bc.healthPoints,
-                                                maxHealthPoints = bc.maxHealthPoints,
-                                                magicPoints = bc.magicPoints,
-                                                maxMagicPoints = bc.maxMagicPoints,
-                                                status = null,
-                                                type = bc.characterType,
-                                                isEnemy = bc.isEnemy
-                                        )
-                                } else {
-                                        BattleCharacterInfo(
-                                                battleID = bc.id,
-                                                id = bc.externalId,
-                                                name = bc.characterName,
-                                                healthPoints = bc.healthPoints,
-                                                maxHealthPoints = bc.maxHealthPoints,
-                                                magicPoints = bc.magicPoints,
-                                                maxMagicPoints = bc.maxMagicPoints,
-                                                status = null,
-                                                type = bc.characterType,
-                                                isEnemy = bc.isEnemy
-                                        )
-                                }
+                                BattleCharacterInfo(
+                                        battleID = bc.id,
+                                        id = externalId,
+                                        name = bc.characterName,
+                                        healthPoints = bc.healthPoints,
+                                        maxHealthPoints = bc.maxHealthPoints,
+                                        magicPoints = bc.magicPoints,
+                                        maxMagicPoints = bc.maxMagicPoints,
+                                        status = null,
+                                        type = bc.characterType,
+                                        isEnemy = bc.isEnemy
+                                )
                         }
 
                 val playerBattleID =
@@ -77,12 +73,26 @@ class FightService(
                                 .firstOrNull { it.externalId.toIntOrNull() == playerId }
                                 ?.id
 
+                val initiatives =
+                        initiativeRepository.findByBattleId(battleId).map { i ->
+                                InitiativeResponse(
+                                        playFirst = i.playFirst,
+                                        battleID = i.battleCharacterId,
+                                        value = i.initiativeValue,
+                                        hability = i.hability
+                                )
+                        }
+
+                val playerHasInitiative =
+                        playerBattleID != null && initiatives.any { it.battleID == playerBattleID }
+                val canRollInitiative = playerBattleID != null && !playerHasInitiative
+
                 return FightInfoResponse(
                         playerBattleID = playerBattleID,
-                        initiatives = emptyList(),
+                        initiatives = initiatives,
                         characters = characters,
                         battleStatus = battle.battleStatus,
-                        canRollInitiative = false
+                        canRollInitiative = canRollInitiative
                 )
         }
 }

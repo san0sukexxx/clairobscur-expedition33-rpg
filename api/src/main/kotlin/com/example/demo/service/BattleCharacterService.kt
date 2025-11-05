@@ -2,12 +2,17 @@ package com.example.demo.service
 
 import com.example.demo.dto.AddBattleCharacterRequest
 import com.example.demo.model.BattleCharacter
+import com.example.demo.model.BattleInitiative
 import com.example.demo.repository.BattleCharacterRepository
+import com.example.demo.repository.BattleInitiativeRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class BattleCharacterService(private val repository: BattleCharacterRepository) {
+class BattleCharacterService(
+        private val repository: BattleCharacterRepository,
+        private val initiativeRepository: BattleInitiativeRepository
+) {
     @Transactional
     fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
         val isEnemy = request.team.equals("B", ignoreCase = true)
@@ -26,11 +31,30 @@ class BattleCharacterService(private val repository: BattleCharacterRepository) 
                         canRollInitiative = false
                 )
 
-        return repository.save(entity).id!!
+        val savedCharacter = repository.save(entity)
+
+        request.initiative?.let {
+            val initiative =
+                    BattleInitiative(
+                            battleId = battleId,
+                            battleCharacterId = savedCharacter.id!!,
+                            initiativeValue = it.initiativeValue,
+                            hability = it.hability,
+                            playFirst = it.playFirst
+                    )
+
+            initiativeRepository.save(initiative)
+        }
+
+        return savedCharacter.id!!
     }
 
     @Transactional
     fun removeCharacter(id: Int) {
+        if (initiativeRepository.existsByBattleCharacterId(id)) {
+            initiativeRepository.deleteByBattleCharacterId(id)
+        }
+
         if (repository.existsById(id)) {
             repository.deleteById(id)
         }

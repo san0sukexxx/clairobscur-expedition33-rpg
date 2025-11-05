@@ -39,8 +39,7 @@ export default function CampaignAdmin() {
                 const emptyCampaign: Campaign = {
                     id: 0,
                     name: "Falha ao carregar dados da campanha",
-                    active: false,
-                    characters: [],
+                    characters: []
                 };
                 setCampaignInfo(emptyCampaign);
             }
@@ -118,10 +117,11 @@ export default function CampaignAdmin() {
                     />
                 )}
 
-                {activeTab === "combats" && campaignId !== null && (
+                {activeTab === "combats" && campaignId !== null && campaignInfo !== null && setCampaignInfo !== null && (
                     <CampaignAdminCombatsTab 
-                        players={items}
-                        campaignId={campaignId} />
+                        campaignInfo={campaignInfo}
+                        setCampaignInfo={setCampaignInfo}
+                        players={items} />
                 )}
             </main>
         </div>

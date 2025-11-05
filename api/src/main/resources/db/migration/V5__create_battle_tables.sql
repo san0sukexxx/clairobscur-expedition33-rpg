@@ -23,6 +23,7 @@ CREATE TABLE
 CREATE TABLE
     battle_initiative (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        battle_id INTEGER NOT NULL,
         battle_character_id INTEGER NOT NULL,
         initiative_value INTEGER NOT NULL,
         hability INTEGER NOT NULL,

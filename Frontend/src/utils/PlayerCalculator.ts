@@ -1,10 +1,22 @@
-import { type PlayerResponse } from "../api/MockAPIPlayer";
+import { type GetPlayerResponse } from "../api/APIPlayer";
 
-export function rollCommandForInitiative(player: PlayerResponse) {
+export function calculateMaxHP(player: GetPlayerResponse | null): number {
+    return (player?.playerSheet?.resistance ?? 0) * 5;
+}
+
+export function calculateMaxMP(player: GetPlayerResponse | null): number {
+    return (player?.playerSheet?.hability ?? 0) * 5;
+}
+
+export function calculateMaxPA(player: GetPlayerResponse | null): number {
+    return (player?.playerSheet?.power ?? 0) * 5;
+}
+
+export function rollCommandForInitiative(player: GetPlayerResponse) {
     return "1d6";
 }
 
-export function initiativeTotal(player: PlayerResponse, diceResult: any) {
+export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {
     const isCriticalFailure = isCriticalFailureRoll(diceResult);
 
     if (isCriticalFailure) {

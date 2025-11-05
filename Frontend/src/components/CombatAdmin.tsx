@@ -1,10 +1,15 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
-import { APIBattle } from "../api/APIBattle"
+import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser } from "react-icons/fa"
 import { getCharacterLabelById } from "../utils/CharacterUtils"
-import { getAllEnemiesSorted } from "../data/EnemiesList"
+import { getNPCMaxHealth, randomizeNpcInitiativeTotal } from "../utils/NpcCalculator"
+import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator"
+import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
 import { type BattleCharacterType } from "../api/ResponseModel"
+import { type Campaign } from "../api/APICampaign"
+import { type BattleWithDetailsResponse } from "../api/APIBattle"
+import InitiativesQueue from "./InitiativesQueue"
 
 export interface CombatEntity {
     rowId?: number
@@ -17,10 +22,11 @@ export interface CombatEntity {
     maxMp?: number
     avatarUrl?: string
     characterId?: string
+    isReadyToStart: boolean
 }
 
 export interface CombatAdminProps {
-    battleId: number
+    campaignInfo: Campaign
     initialStatus: string
     players: GetPlayerResponse[]
     onStatusChanged?: (newStatus: string) => void
@@ -29,27 +35,41 @@ export interface CombatAdminProps {
 type TeamKey = "A" | "B"
 
 export default function CombatAdmin({
-    battleId,
+    campaignInfo,
     initialStatus,
     players,
     onStatusChanged
 }: CombatAdminProps) {
+    const [battleDetails, setBattleDetails] = useState<BattleWithDetailsResponse | null>(null)
     const [battleStatus, setBattleStatus] = useState<string>(initialStatus)
     const [updatingStatus, setUpdatingStatus] = useState<boolean>(false)
-
     const [showAddModal, setShowAddModal] = useState<boolean>(false)
     const [targetTeam, setTargetTeam] = useState<TeamKey>("A")
     const [filterText, setFilterText] = useState<string>("")
-
     const [teamA, setTeamA] = useState<CombatEntity[]>([])
     const [teamB, setTeamB] = useState<CombatEntity[]>([])
-
     const [justAddedId, setJustAddedId] = useState<string | number | null>(null)
     const [bulkAdded, setBulkAdded] = useState<boolean>(false)
+    const [confirmRemoveOpen, setConfirmRemoveOpen] = useState(false)
+    const [removeTarget, setRemoveTarget] = useState<{ rowId: number; name: string } | null>(null)
 
     useEffect(() => {
         setBattleStatus(initialStatus)
-    }, [battleId, initialStatus])
+    }, [campaignInfo.id, initialStatus])
+
+    useEffect(() => {
+        async function fetchBattleDetails() {
+            if (!campaignInfo.battleId) return
+            try {
+                const data = await APIBattle.getById(campaignInfo.battleId)
+                setBattleDetails(data)
+            } catch (error) {
+                console.error("Erro ao carregar detalhes da batalha:", error)
+            }
+        }
+
+        fetchBattleDetails()
+    }, [campaignInfo.battleId])
 
     const playersById = useMemo(() => {
         const map = new Map<number, GetPlayerResponse>()
@@ -60,31 +80,27 @@ export default function CombatAdmin({
     }, [players])
 
     const loadTeams = useCallback(async () => {
-        const battleChars = await APIBattle.listCharacters(battleId)
+        if (campaignInfo.battleId == undefined) return
+        const battleChars = await APIBattle.listCharacters(campaignInfo.battleId)
 
         const mapped: CombatEntity[] = battleChars.map((bc) => {
             if (bc.characterType === "player") {
                 const numericId = parseInt(bc.externalId, 10)
                 const playerInfo = playersById.get(numericId)
-
                 const charId = playerInfo?.playerSheet?.characterId || ""
-                const avatarUrl = charId
-                    ? `/characters/${charId}.webp`
-                    : undefined
-
+                const avatarUrl = charId ? `/characters/${charId}.webp` : undefined
                 return {
                     rowId: bc.id,
                     externalId: bc.externalId,
-                    name:
-                        playerInfo?.playerSheet?.name?.trim() ||
-                        bc.characterName,
+                    name: playerInfo?.playerSheet?.name?.trim() || bc.characterName,
                     type: "player",
                     currentHp: bc.healthPoints,
                     maxHp: bc.maxHealthPoints,
                     currentMp: bc.magicPoints,
                     maxMp: bc.maxMagicPoints,
                     characterId: charId,
-                    avatarUrl
+                    avatarUrl: avatarUrl,
+                    isReadyToStart: isPlayerReadyToStart(playerInfo)
                 }
             } else {
                 return {
@@ -95,38 +111,37 @@ export default function CombatAdmin({
                     currentHp: bc.healthPoints,
                     maxHp: bc.maxHealthPoints,
                     characterId: bc.characterName,
-                    avatarUrl: `/enemies/${bc.externalId}.png`
+                    avatarUrl: `/enemies/${bc.externalId}.png`,
+                    isReadyToStart: true
                 }
             }
         })
 
         const aTeam = mapped.filter(
-            (m) =>
-                m &&
-                battleChars.find((bc) => bc.id === m.rowId)?.isEnemy ===
-                false
+            (m) => m && battleChars.find((bc) => bc.id === m.rowId)?.isEnemy === false
         )
-
         const bTeam = mapped.filter(
-            (m) =>
-                m &&
-                battleChars.find((bc) => bc.id === m.rowId)?.isEnemy === true
+            (m) => m && battleChars.find((bc) => bc.id === m.rowId)?.isEnemy === true
         )
 
         setTeamA(aTeam)
         setTeamB(bTeam)
-    }, [battleId, playersById])
+    }, [campaignInfo.id, playersById])
 
     useEffect(() => {
         loadTeams()
     }, [loadTeams])
 
     async function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        if (campaignInfo.battleId == undefined) {
+            return
+        }
+
         const newStatus = e.target.value
         setBattleStatus(newStatus)
         setUpdatingStatus(true)
         try {
-            await APIBattle.update(battleId, { battleStatus: newStatus })
+            await APIBattle.update(campaignInfo.battleId, { battleStatus: newStatus })
             onStatusChanged?.(newStatus)
         } catch {
             alert("Erro ao atualizar o status do combate.")
@@ -148,60 +163,82 @@ export default function CombatAdmin({
         setShowAddModal(false)
     }
 
+    function isPlayerReadyToStart(playerInfo: GetPlayerResponse | undefined): boolean {
+        return !(playerInfo?.fightInfo?.canRollInitiative ?? true)
+    }
+
     async function handleAddToTeam(entity: CombatEntity) {
+        if (campaignInfo.battleId == undefined) return
+        let initiative: AddBattleCharacterInitiativeData | undefined
+        if (entity.type == "npc") {
+            const npcInfo = getNpcById(String(entity.externalId))
+            if (npcInfo != undefined) {
+                initiative = {
+                    initiativeValue: randomizeNpcInitiativeTotal(npcInfo),
+                    hability: npcInfo.hability,
+                    playFirst: npcInfo.playFirst ?? false
+                }
+            }
+        }
         await APIBattle.addCharacter({
-            battleId,
+            battleId: campaignInfo.battleId,
             externalId: String(entity.externalId),
             characterName: entity.name,
             characterType: entity.type,
             team: targetTeam,
             healthPoints: entity.currentHp,
             maxHealthPoints: entity.maxHp,
-            magicPoints: undefined,
-            maxMagicPoints: undefined
+            magicPoints: entity.currentMp,
+            maxMagicPoints: entity.maxMp,
+            initiative: initiative
         })
-
         setJustAddedId(entity.externalId)
         setBulkAdded(false)
-
         setTimeout(() => {
-            setJustAddedId((current) =>
-                current === entity.externalId ? null : current
-            )
+            setJustAddedId((current) => (current === entity.externalId ? null : current))
         }, 2000)
-
         await loadTeams()
     }
 
     async function handleAddAllPlayers(entities: CombatEntity[]) {
+        if (campaignInfo.battleId == undefined) return
         for (const ent of entities) {
             await APIBattle.addCharacter({
-                battleId,
+                battleId: campaignInfo.battleId,
                 externalId: String(ent.externalId),
                 characterName: ent.name,
                 characterType: ent.type,
                 team: targetTeam,
                 healthPoints: ent.currentHp,
                 maxHealthPoints: ent.maxHp,
-                magicPoints: undefined,
-                maxMagicPoints: undefined
+                magicPoints: ent.currentMp,
+                maxMagicPoints: ent.maxMp
             })
         }
-
         setBulkAdded(true)
         setJustAddedId(null)
-
         setTimeout(() => {
             setBulkAdded(false)
         }, 2000)
-
         await loadTeams()
     }
 
-    async function handleRemoveFromTeam(rowId?: number) {
+    function openRemoveConfirm(rowId?: number, name?: string) {
         if (!rowId) return
-        await APIBattle.removeCharacter(rowId)
+        setRemoveTarget({ rowId, name: name ?? "Personagem" })
+        setConfirmRemoveOpen(true)
+    }
+
+    function closeRemoveConfirm() {
+        setConfirmRemoveOpen(false)
+        setRemoveTarget(null)
+    }
+
+    async function confirmRemove() {
+        if (!removeTarget) return
+        await APIBattle.removeCharacter(removeTarget.rowId)
         await loadTeams()
+        closeRemoveConfirm()
     }
 
     const availablePlayers: CombatEntity[] = useMemo(() => {
@@ -212,45 +249,44 @@ export default function CombatAdmin({
                 name: p.playerSheet?.name?.trim() || `Player #${p.id}`,
                 type: "player" as const,
                 currentHp: p.playerSheet?.hpCurrent ?? 0,
-                maxHp: p.playerSheet?.hpCurrent ?? 0,
+                maxHp: calculateMaxHP(p),
+                currentMp: p.playerSheet?.mpCurrent ?? 0,
+                maxMp: calculateMaxMP(p),
                 characterId: cid,
-                avatarUrl: cid ? `/characters/${cid}.webp` : undefined
+                avatarUrl: cid ? `/characters/${cid}.webp` : undefined,
+                isReadyToStart: isPlayerReadyToStart(p)
             }
         })
     }, [players])
 
     const availableEnemies: CombatEntity[] = useMemo(() => {
-        return getAllEnemiesSorted().map((enemy) => ({
-            externalId: enemy.id,
-            name: enemy.name,
+        return getAllNPCsSorted().map((npc) => ({
+            externalId: npc.id,
+            name: npc.name,
             type: "npc" as const,
-            currentHp: enemy.healthPoints,
-            maxHp: enemy.maxHealthPoints,
-            characterId: enemy.name,
-            avatarUrl: `/enemies/${enemy.id}.png`
+            currentHp: getNPCMaxHealth(npc),
+            maxHp: getNPCMaxHealth(npc),
+            characterId: npc.name,
+            avatarUrl: `/enemies/${npc.id}.png`,
+            isReadyToStart: true
         }))
     }, [])
 
     const filteredPlayers = useMemo(() => {
         const f = filterText.trim().toLowerCase()
         if (!f) return availablePlayers
-        return availablePlayers.filter((p) =>
-            p.name.toLowerCase().includes(f)
-        )
+        return availablePlayers.filter((p) => p.name.toLowerCase().includes(f))
     }, [filterText, availablePlayers])
 
     const filteredEnemies = useMemo(() => {
         const f = filterText.trim().toLowerCase()
         if (!f) return availableEnemies
-        return availableEnemies.filter((e) =>
-            e.name.toLowerCase().includes(f)
-        )
+        return availableEnemies.filter((e) => e.name.toLowerCase().includes(f))
     }, [filterText, availableEnemies])
 
     function renderAvatarCell(entity: CombatEntity) {
         const isPlayerWithImage = entity.type === "player" && entity.avatarUrl
         const isNpc = entity.type === "npc"
-
         return (
             <div className="avatar">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center bg-base-300">
@@ -279,37 +315,34 @@ export default function CombatAdmin({
                 <div className="card-body gap-4">
                     <div className="flex items-center justify-between">
                         <div className="text-lg font-semibold">{title}</div>
-                        <button
-                            className="btn btn-xs btn-primary"
-                            onClick={() => openAddModal(teamKey)}
-                        >
+                        <button className="btn btn-xs btn-primary" onClick={() => openAddModal(teamKey)}>
                             Adicionar
                         </button>
                     </div>
 
                     {members.length === 0 ? (
-                        <div className="text-sm opacity-60">
-                            Nenhum membro neste time.
-                        </div>
+                        <div className="text-sm opacity-60">Nenhum membro neste time.</div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="table table-zebra w-full">
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th>Nome</th>
+                                        <th>Pronto?</th>
                                         <th className="w-1/6 text-right">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {members.map((m) => (
                                         <tr key={m.rowId ?? m.externalId}>
+                                            <td>{renderAvatarCell(m)}</td>
                                             <td>{m.name}</td>
+                                            <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
                                             <td className="text-right">
                                                 <button
                                                     className="btn btn-xs btn-error"
-                                                    onClick={() =>
-                                                        handleRemoveFromTeam(m.rowId)
-                                                    }
+                                                    onClick={() => openRemoveConfirm(m.rowId, m.name)}
                                                 >
                                                     Remover
                                                 </button>
@@ -327,33 +360,22 @@ export default function CombatAdmin({
 
     function renderAddModal() {
         if (!showAddModal) return null
-
         return (
             <div className="modal modal-open">
                 <div className="modal-box max-w-5xl w-full max-h-[80vh] overflow-y-auto flex flex-col gap-6">
                     <div className="flex items-start justify-between">
                         <div>
-                            <h3 className="font-bold text-lg">
-                                Adicionar ao time {targetTeam}
-                            </h3>
-                            <p className="text-sm opacity-70">
-                                Selecione quem entra neste combate.
-                            </p>
+                            <h3 className="font-bold text-lg">Adicionar ao time {targetTeam}</h3>
+                            <p className="text-sm opacity-70">Selecione quem entra neste combate.</p>
                         </div>
-                        <button
-                            className="btn btn-sm btn-ghost"
-                            onClick={closeAddModal}
-                        >
+                        <button className="btn btn-sm btn-ghost" onClick={closeAddModal}>
                             ✕
                         </button>
                     </div>
 
                     <div className="form-control">
                         <label className="label flex items-center gap-4">
-                            <span className="label-text text-sm font-semibold">
-                                Filtro por nome
-                            </span>
-
+                            <span className="label-text text-sm font-semibold">Filtro por nome</span>
                             <input
                                 type="text"
                                 className="input input-bordered input-sm flex-1"
@@ -366,24 +388,12 @@ export default function CombatAdmin({
 
                     <div className="border rounded-lg">
                         <div className="px-4 py-2 border-b flex items-center justify-between">
-                            <div className="font-semibold text-sm">
-                                Jogadores
-                            </div>
-
+                            <div className="font-semibold text-sm">Jogadores</div>
                             <div className="flex items-center gap-2">
-                                <button
-                                    className="btn btn-xs btn-secondary"
-                                    onClick={() =>
-                                        handleAddAllPlayers(filteredPlayers)
-                                    }
-                                >
+                                <button className="btn btn-xs btn-secondary" onClick={() => handleAddAllPlayers(filteredPlayers)}>
                                     Adicionar todos
                                 </button>
-                                {bulkAdded ? (
-                                    <span className="text-xs text-success font-semibold">
-                                        Adicionados!
-                                    </span>
-                                ) : null}
+                                {bulkAdded ? <span className="text-xs text-success font-semibold">Adicionados!</span> : null}
                             </div>
                         </div>
 
@@ -400,10 +410,7 @@ export default function CombatAdmin({
                                 <tbody>
                                     {filteredPlayers.length === 0 ? (
                                         <tr>
-                                            <td
-                                                colSpan={4}
-                                                className="text-center text-sm opacity-60 py-6"
-                                            >
+                                            <td colSpan={4} className="text-center text-sm opacity-60 py-6">
                                                 Nenhum jogador encontrado.
                                             </td>
                                         </tr>
@@ -415,19 +422,11 @@ export default function CombatAdmin({
                                                 <td>{renderCharacterCell(entity)}</td>
                                                 <td className="text-right">
                                                     <div className="flex items-center gap-2 justify-end">
-                                                        <button
-                                                            className="btn btn-xs btn-primary"
-                                                            onClick={() =>
-                                                                handleAddToTeam(entity)
-                                                            }
-                                                        >
+                                                        <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
                                                             Adicionar
                                                         </button>
-                                                        {justAddedId ===
-                                                            entity.externalId ? (
-                                                            <span className="text-xs text-success font-semibold">
-                                                                Adicionado!
-                                                            </span>
+                                                        {justAddedId === entity.externalId ? (
+                                                            <span className="text-xs text-success font-semibold">Adicionado!</span>
                                                         ) : null}
                                                     </div>
                                                 </td>
@@ -440,10 +439,7 @@ export default function CombatAdmin({
                     </div>
 
                     <div className="border rounded-lg">
-                        <div className="px-4 py-2 border-b font-semibold text-sm">
-                            NPCs
-                        </div>
-
+                        <div className="px-4 py-2 border-b font-semibold text-sm">NPCs</div>
                         <div className="overflow-x-auto max-h-[28vh] overflow-y-auto">
                             <table className="table table-compact w-full">
                                 <thead>
@@ -457,10 +453,7 @@ export default function CombatAdmin({
                                 <tbody>
                                     {filteredEnemies.length === 0 ? (
                                         <tr>
-                                            <td
-                                                colSpan={4}
-                                                className="text-center text-sm opacity-60 py-6"
-                                            >
+                                            <td colSpan={4} className="text-center text-sm opacity-60 py-6">
                                                 Nenhum inimigo encontrado.
                                             </td>
                                         </tr>
@@ -472,19 +465,11 @@ export default function CombatAdmin({
                                                 <td>{renderCharacterCell(entity)}</td>
                                                 <td className="text-right">
                                                     <div className="flex items-center gap-2 justify-end">
-                                                        <button
-                                                            className="btn btn-xs btn-primary"
-                                                            onClick={() =>
-                                                                handleAddToTeam(entity)
-                                                            }
-                                                        >
+                                                        <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
                                                             Adicionar
                                                         </button>
-                                                        {justAddedId ===
-                                                            entity.externalId ? (
-                                                            <span className="text-xs text-success font-semibold">
-                                                                Adicionado!
-                                                            </span>
+                                                        {justAddedId === entity.externalId ? (
+                                                            <span className="text-xs text-success font-semibold">Adicionado!</span>
                                                         ) : null}
                                                     </div>
                                                 </td>
@@ -497,19 +482,36 @@ export default function CombatAdmin({
                     </div>
 
                     <div className="modal-action">
-                        <button
-                            className="btn btn-sm"
-                            onClick={closeAddModal}
-                        >
+                        <button className="btn btn-sm" onClick={closeAddModal}>
                             Cancelar
                         </button>
                     </div>
                 </div>
 
-                <div
-                    className="modal-backdrop bg-black/40"
-                    onClick={closeAddModal}
-                />
+                <div className="modal-backdrop bg-black/40" onClick={closeAddModal} />
+            </div>
+        )
+    }
+
+    function renderRemoveConfirmModal() {
+        if (!confirmRemoveOpen || !removeTarget) return null
+        return (
+            <div className="modal modal-open">
+                <div className="modal-box w-full max-w-md">
+                    <h3 className="font-bold text-lg">Remover do time</h3>
+                    <p className="py-4">
+                        Tem certeza de que deseja remover <span className="font-semibold">{removeTarget.name}</span> do time?
+                    </p>
+                    <div className="modal-action">
+                        <button className="btn btn-sm" onClick={closeRemoveConfirm}>
+                            Cancelar
+                        </button>
+                        <button className="btn btn-sm btn-error" onClick={confirmRemove}>
+                            Remover
+                        </button>
+                    </div>
+                </div>
+                <div className="modal-backdrop bg-black/40" onClick={closeRemoveConfirm} />
             </div>
         )
     }
@@ -519,15 +521,10 @@ export default function CombatAdmin({
             <div className="card bg-base-100 shadow">
                 <div className="card-body gap-6">
                     <div className="flex flex-col items-start gap-2">
-                        <div className="text-lg font-semibold">
-                            Combate #{battleId}
-                        </div>
-
+                        <div className="text-lg font-semibold">Combate #{campaignInfo.battleId}</div>
                         <div className="form-control w-full max-w-xs">
                             <label className="label">
-                                <span className="label-text font-semibold">
-                                    Status do combate
-                                </span>
+                                <span className="label-text font-semibold">Status do combate</span>
                             </label>
                             <select
                                 className="select select-bordered select-sm"
@@ -535,14 +532,14 @@ export default function CombatAdmin({
                                 onChange={handleStatusChange}
                                 disabled={updatingStatus}
                             >
-                                <option value="starting">
-                                    Aguardando início
-                                </option>
+                                <option value="starting">Aguardando início</option>
                                 <option value="started">Em andamento</option>
                                 <option value="finished">Terminada</option>
                             </select>
                         </div>
                     </div>
+
+                    <InitiativesQueue characters={battleDetails?.characters} initiatives={battleDetails?.initiatives} isStarted={battleStatus == "started"} />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {renderTeamCard("Time A", "A", teamA)}
@@ -552,6 +549,7 @@ export default function CombatAdmin({
             </div>
 
             {renderAddModal()}
+            {renderRemoveConfirmModal()}
         </>
     )
 }

@@ -8,6 +8,7 @@ export type StatusType =
 
 export type PictoColor = "green" | "red" | "blue";
 export type BattleCharacterType = "player" | "npc";
+export type BattleStatus = "starting" | "started" | "finished";
 
 export interface InitiativeResponse {
     playFirst: boolean;
@@ -32,13 +33,15 @@ export interface BattleCharacterInfo {
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;
-    npcInfo?: NPCInfo;
 }
 
 export interface NPCInfo {
-    power?: number;
-    hability?: number;
-    resistance?: number;
+    id: string;
+    name: string;
+    power: number;
+    hability: number;
+    resistance: number;
+    playFirst?: boolean;
 }
 
 export interface PictoResponse {
@@ -82,4 +85,12 @@ export interface SkillPreRequisite {
 export interface WeaponResponse {
   id: string;
   level: number;
+}
+
+export interface FightInfoResponse {
+  playerBattleID: number;
+  initiatives?: InitiativeResponse[];
+  characters?: BattleCharacterInfo[];
+  battleStatus: BattleStatus;
+  canRollInitiative: boolean;
 }

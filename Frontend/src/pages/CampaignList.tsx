@@ -13,21 +13,6 @@ export default function CampaignList() {
     APICampaign.list()
   );
 
-  function statusBadge(status: Campaign["active"]) {
-    if (status)
-      return (
-        <span className="badge badge-success gap-1">
-          <FaPlay /> Ativa
-        </span>
-      );
-    if (!status)
-      return (
-        <span className="badge badge-ghost gap-1">
-          <FaArchive /> Arquivada
-        </span>
-      );
-  }
-
   return (
     <div className="min-h-dvh bg-base-200">
       {/* Navbar (mobile) */}
@@ -61,7 +46,6 @@ export default function CampaignList() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <h2 className="card-title text-base">{c.name}</h2>
-                        <div className="mt-2">{statusBadge(c.active)}</div>
                       </div>
                     </div>
 

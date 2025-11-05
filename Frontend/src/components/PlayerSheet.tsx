@@ -1,7 +1,8 @@
 import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { APIPlayer } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
-import { APICampaign, type Campaign } from "../api/APICampaign";
+import { type Campaign } from "../api/APICampaign";
+import { calculateMaxHP, calculateMaxMP, calculateMaxPA } from "../utils/PlayerCalculator";
 
 interface PlayerSheetProps {
     player: PlayerResponse | null;
@@ -129,7 +130,8 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                 <label className="form-control">
                                     <span className="label-text">PA</span>
                                     <span className="pl-1 text-sm text-gray-500">
-                                        máx. {player?.playerSheet?.power ?? ""}
+                                        máx.{" "}
+                                        {calculateMaxPA(player)}
                                     </span>
                                     <input
                                         type="number"
@@ -176,9 +178,7 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                     <span className="label-text">PM</span>
                                     <span className="pl-1 text-sm text-gray-500">
                                         máx.{" "}
-                                        {((player?.playerSheet?.hability ?? 0) * 5) === 0
-                                            ? 1
-                                            : (player?.playerSheet?.hability ?? 0) * 5}
+                                        {calculateMaxMP(player)}
                                     </span>
                                     <input
                                         type="number"
@@ -225,9 +225,7 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                     <span className="label-text">PV</span>
                                     <span className="pl-1 text-sm text-gray-500">
                                         máx.{" "}
-                                        {((player?.playerSheet?.resistance ?? 0) * 5) === 0
-                                            ? 1
-                                            : (player?.playerSheet?.resistance ?? 0) * 5}
+                                        {calculateMaxHP(player)}
                                     </span>
                                     <input
                                         type="number"

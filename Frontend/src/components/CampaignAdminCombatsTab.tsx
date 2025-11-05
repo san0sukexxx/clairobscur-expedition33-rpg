@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import { FaShieldAlt, FaPlus } from "react-icons/fa";
 import { APIBattle, type Battle } from "../api/APIBattle";
 import CombatAdmin from "./CombatAdmin";
+import { type Campaign } from "../api/APICampaign";
 import { getBattleStatusLabel } from "../utils/BattleUtils";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 
 interface CampaignAdminCombatsTabProps {
-    campaignId: number;
+    campaignInfo: Campaign;
+    setCampaignInfo: React.Dispatch<React.SetStateAction<Campaign | null>>;
     players: GetPlayerResponse[];
 }
 
-export default function CampaignAdminCombatsTab({ campaignId, players }: CampaignAdminCombatsTabProps) {
+export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo, players }: CampaignAdminCombatsTabProps) {
     const [battles, setBattles] = useState<Battle[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -19,14 +21,12 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [confirmId, setConfirmId] = useState<number | null>(null);
 
-    const [selectedBattleId, setSelectedBattleId] = useState<number | null>(null);
-
     async function loadBattles() {
         setLoading(true);
         setError(null);
 
         try {
-            const data = await APIBattle.listByCampaign(campaignId);
+            const data = await APIBattle.listByCampaign(campaignInfo.id);
             setBattles(data);
         } catch {
             setError("Não foi possível carregar os combates desta campanha.");
@@ -35,17 +35,21 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
         }
     }
 
+    function handleSelectBattle(newId: number | null) {
+        setCampaignInfo(prev => prev ? { ...prev, battleId: newId } : prev)
+    }
+
     async function handleCreateBattle() {
         try {
             setCreating(true);
 
             const newId = await APIBattle.create({
-                campaignId,
+                campaignId: campaignInfo.id,
                 battleStatus: "starting",
             });
 
             await loadBattles();
-            setSelectedBattleId(newId);
+            handleSelectBattle(newId);
         } catch {
             setError("Erro ao criar o combate.");
         } finally {
@@ -55,8 +59,8 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
 
     async function handleOpenBattle(battleId: number) {
         try {
-            setSelectedBattleId(battleId)
-            await APIBattle.useBattle(battleId, campaignId)
+            handleSelectBattle(battleId)
+            await APIBattle.useBattle(battleId, campaignInfo.id)
         } catch (error) {
             console.error("Erro ao ativar batalha:", error)
             alert("Não foi possível ativar a batalha.")
@@ -64,11 +68,11 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
     }
 
     function handleBattleStatusChanged(newStatus: string) {
-        if (selectedBattleId == null) return;
+        if (campaignInfo.battleId == null) return;
 
         setBattles((oldBattles) =>
             oldBattles.map((b) =>
-                b.id === selectedBattleId
+                b.id === campaignInfo.battleId
                     ? { ...b, battleStatus: newStatus }
                     : b
             )
@@ -84,8 +88,8 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
 
             await loadBattles();
 
-            if (selectedBattleId === confirmId) {
-                setSelectedBattleId(null);
+            if (campaignInfo.battleId === confirmId) {
+                handleSelectBattle(null);
             }
         } catch {
             setError("Erro ao apagar o combate.");
@@ -96,11 +100,11 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
 
     useEffect(() => {
         loadBattles();
-    }, [campaignId]);
+    }, [campaignInfo.id]);
 
     const selectedBattle =
-        selectedBattleId != null
-            ? battles.find((b) => b.id === selectedBattleId) ?? null
+        campaignInfo.battleId != null
+            ? battles.find((b) => b.id === campaignInfo.battleId) ?? null
             : null;
 
     return (
@@ -187,7 +191,7 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
                                             <td>#{battle.id}</td>
                                             <td>{getBattleStatusLabel(battle.battleStatus)}</td>
                                             <td className="flex gap-2">
-                                                {battle.id !== selectedBattleId ? (
+                                                {battle.id !== campaignInfo.battleId ? (
                                                     <button
                                                         className="btn btn-xs btn-outline"
                                                         onClick={() => handleOpenBattle(battle.id)}
@@ -199,8 +203,8 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
                                                         className="btn btn-xs btn-warning"
                                                         onClick={async () => {
                                                             try {
-                                                                await APIBattle.clearBattle(campaignId)
-                                                                setSelectedBattleId(null)
+                                                                await APIBattle.clearBattle(campaignInfo.id)
+                                                                handleSelectBattle(null)
                                                             } catch (error) {
                                                                 console.error("Erro ao pausar batalha:", error)
                                                                 alert("Não foi possível pausar a batalha.")
@@ -231,7 +235,7 @@ export default function CampaignAdminCombatsTab({ campaignId, players }: Campaig
                         <div className="mt-8">
                             <CombatAdmin
                                 players={players}
-                                battleId={selectedBattle.id}
+                                campaignInfo={campaignInfo}
                                 initialStatus={selectedBattle.battleStatus}
                                 onStatusChanged={handleBattleStatusChanged}
                             />

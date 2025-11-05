@@ -17,7 +17,7 @@ export default function EnemiesStatus({ player, isEnemies }: EnemiesStatusProps)
     const characters = player?.fightInfo?.characters?.filter(ch => ch.isEnemy == isEnemies);
 
     return (
-        <div>
+        <div className="mt-5">
             <div className="card bg-base-100 shadow">
                 <div className="card-body">
                     <h2 className="card-title justify-center">
@@ -29,7 +29,7 @@ export default function EnemiesStatus({ player, isEnemies }: EnemiesStatusProps)
                     )}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {characters.map((ch) => (
-                            <div key={ch.id} className="rounded-xl bg-base-200/60 p-3 shadow-sm">
+                            <div key={ch.battleID} className="rounded-xl bg-base-200/60 p-3 shadow-sm">
                                 {/* Topo: avatar + nome */}
                                 <div className="flex items-center gap-3">
                                     <div className="avatar">

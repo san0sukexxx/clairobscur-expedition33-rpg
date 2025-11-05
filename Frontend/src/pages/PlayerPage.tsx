@@ -17,7 +17,8 @@ import { APIPlayer, type CreatePlayerInput } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { type PlayerResponse, MockAPIPlayer } from "../api/MockAPIPlayer";
 import { APIPictos } from "../api/APIPictos";
-import { type PictoResponse } from "../api/ResponseModel";
+import { APIBattle } from "../api/APIBattle";
+import { type PictoResponse, type FightInfoResponse } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -302,14 +303,14 @@ export default function PlayerPage() {
       }
     };
 
-    diceBoardRef.current?.roll(rollCommandForInitiative(player), (result) => {
-      const criticalRolls = countCriticalRolls(result);
-      const criticalMulti = calculateCriticalMulti(result);
-      const rollTotal = diceTotal(result);
-      const total = initiativeTotal(player, result);
-      const isCriticalFailure = isCriticalFailureRoll(result);
+    diceBoardRef.current?.roll(rollCommandForInitiative(player), async (result) => {
+      const criticalRolls = countCriticalRolls(result)
+      const criticalMulti = calculateCriticalMulti(result)
+      const rollTotal = diceTotal(result)
+      const total = initiativeTotal(player, result)
+      const isCriticalFailure = isCriticalFailureRoll(result)
 
-      setModalTitle("Resultado da rolagem");
+      setModalTitle("Resultado da rolagem")
 
       if (isCriticalFailure) {
         setModalBody(
@@ -318,9 +319,9 @@ export default function PlayerPage() {
               <FaSkull className="w-6 h-6" />
               Falha crítica
             </h3>
-            <p>Total: {total}</p>
+            <h1 className="text-2xl font-bold">Total: {total}</h1>
           </div>
-        );
+        )
       } else {
         setModalBody(
           <div className="space-y-2">
@@ -331,23 +332,50 @@ export default function PlayerPage() {
                 Críticos: <b>{criticalRolls}</b>
               </h3>
             )}
-            <p>Habilidade: <b>{(player.playerSheet?.hability ?? 0)}</b>
-              {criticalRolls > 0 && (
-                <b> (x{criticalMulti})</b>
-              )}
+            <p>
+              Habilidade: <b>{player.playerSheet?.hability ?? 0}</b>
+              {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
             </p>
-            <p>Total: {total}</p>
+            <h1 className="text-2xl font-bold">Total: {total}</h1>
           </div>
-        );
+        )
       }
 
-      setModalOpen(true);
+      setModalOpen(true)
+      rollCall(result)
 
-      rollCall(result);
+      try {
+        const savedInitiative = await APIBattle.addInitiative({
+          battleCharacterId: player.fightInfo?.playerBattleID ?? 0,
+          value: total,
+          hability: player.playerSheet?.hability ?? 0,
+          playFirst: criticalRolls > 0,
+        })
+
+        setPlayer((prev) => {
+          if (!prev || !prev.fightInfo) return prev
+
+          const fi = prev.fightInfo
+          const current = fi.initiatives ?? []
+
+          return {
+            ...prev,
+            fightInfo: {
+              ...fi,
+              initiatives: [...current, savedInitiative],
+            },
+          }
+        })
+      } catch (err) {
+        console.error("Erro ao registrar iniciativa:", err)
+      }
 
       setTimeout(() => {
-        diceBoardRef.current?.hideBoard();
-      }, 3000);
-    });
+        diceBoardRef.current?.hideBoard()
+      }, 3000)
+    })
+
+
+
   }
 }

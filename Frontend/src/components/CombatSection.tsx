@@ -60,7 +60,7 @@ export default function CombatSection({ onMenuAction, player, setPlayer }: Comba
                 </div>
             )}
 
-            <InitiativesQueue player={player} isStarted={player?.fightInfo?.battleStatus == "started"} />
+            <InitiativesQueue characters={player?.fightInfo?.characters} initiatives={player?.fightInfo?.initiatives} isStarted={player?.fightInfo?.battleStatus == "started"} />
 
             {tab === "enemies" && (
                 <BattleGroupStatus player={player} isEnemies={true} />

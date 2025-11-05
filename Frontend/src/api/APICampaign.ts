@@ -3,7 +3,7 @@ import { api } from "./api";
 export interface Campaign {
   id: number;
   name: string;
-  active: boolean;
+  battleId?: number | null;
   characters: string[];
 }
 
@@ -16,42 +16,24 @@ export interface CreateCampaignResponse {
   id: number;
 }
 
-type CampaignFromServer = {
-  id: number;
-  name: string;
-  characters: string[];
-};
-
-function mapFromServer(c: CampaignFromServer): Campaign {
-  return {
-    id: c.id,
-    name: c.name,
-    characters: c.characters ?? [],
-    active: true,
-  };
-}
-
 export class APICampaign {
   static async list(): Promise<Campaign[]> {
-    const raw = await api.get<CampaignFromServer[]>("campaigns");
-    return (raw ?? []).map(mapFromServer);
+    return await api.get<Campaign[]>("campaigns");
   }
 
   static async get(id: number): Promise<Campaign> {
-    const raw = await api.get<CampaignFromServer>(`campaigns/${id}`);
-    return mapFromServer(raw);
+    return await api.get<Campaign>(`campaigns/${id}`);
   }
 
   static async create(input: CreateCampaignInput): Promise<CreateCampaignResponse> {
     return api.post<CreateCampaignInput, CreateCampaignResponse>("campaigns", input);
   }
 
-  static async update(id: number, input: Partial<CreateCampaignInput>): Promise<Campaign> {
-    const updated = await api.put<Partial<CreateCampaignInput>, CampaignFromServer>(
+  static async update(id: number, input: Partial<CreateCampaignInput>): Promise<number> {
+    return await api.put<Partial<CreateCampaignInput>, number>(
       `campaigns/${id}`,
       input
     );
-    return mapFromServer(updated);
   }
 
   static async remove(id: number): Promise<boolean> {
