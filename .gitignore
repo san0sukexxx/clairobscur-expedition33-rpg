@@ -24,3 +24,7 @@ hs_err_pid*
 replay_pid*
 
 api/data/app.db
+
+api/data/app.db-shm
+
+api/data/app.db-wal

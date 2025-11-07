@@ -13,8 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 class CampaignPlayerService(
         private val campaignPlayerRepository: CampaignPlayerRepository,
         private val playerRepository: PlayerRepository,
-        private val playerWeaponRepository: PlayerWeaponRepository,
-        private val fightService: FightService
+        private val playerWeaponRepository: PlayerWeaponRepository
 ) {
 
         fun listPlayersByCampaign(campaignId: Int): List<GetPlayerResponse> {
@@ -34,13 +33,12 @@ class CampaignPlayerService(
                                         )
                                 }
 
-                        val fightInfo = fightService.buildFightInfoForPlayer(pid)
-
                         GetPlayerResponse(
                                 id = pid,
                                 playerSheet = PlayerSheetResponse.fromEntity(p),
                                 weapons = weapons,
-                                fightInfo = fightInfo
+                                fightInfo = null,
+                                latestEventID = null
                         )
                 }
         }

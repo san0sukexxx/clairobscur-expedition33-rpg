@@ -53,96 +53,86 @@ export default function CombatAdmin({
     const [confirmRemoveOpen, setConfirmRemoveOpen] = useState(false)
     const [removeTarget, setRemoveTarget] = useState<{ rowId: number; name: string } | null>(null)
 
+    const reloadBattleDetails = useCallback(async () => {
+        if (!campaignInfo.battleId) return
+        try {
+            const data = await APIBattle.getById(campaignInfo.battleId)
+            setBattleDetails(data)
+        } catch (error) {
+            console.error("Erro ao carregar detalhes da batalha:", error)
+        }
+    }, [campaignInfo.battleId, battleStatus])
+
+    useEffect(() => {
+        reloadBattleDetails()
+    }, [reloadBattleDetails])
+
     useEffect(() => {
         setBattleStatus(initialStatus)
     }, [campaignInfo.id, initialStatus])
 
     useEffect(() => {
-        async function fetchBattleDetails() {
-            if (!campaignInfo.battleId) return
-            try {
-                const data = await APIBattle.getById(campaignInfo.battleId)
-                setBattleDetails(data)
-            } catch (error) {
-                console.error("Erro ao carregar detalhes da batalha:", error)
-            }
-        }
+        if (campaignInfo.battleId == undefined
+            || battleDetails == undefined
+            || battleDetails == null) return
 
-        fetchBattleDetails()
-    }, [campaignInfo.battleId])
-
-    const playersById = useMemo(() => {
-        const map = new Map<number, GetPlayerResponse>()
-        players.forEach((p) => {
-            map.set(p.id, p)
-        })
-        return map
-    }, [players])
-
-    const loadTeams = useCallback(async () => {
-        if (campaignInfo.battleId == undefined) return
-        const battleChars = await APIBattle.listCharacters(campaignInfo.battleId)
-
-        const mapped: CombatEntity[] = battleChars.map((bc) => {
-            if (bc.characterType === "player") {
-                const numericId = parseInt(bc.externalId, 10)
-                const playerInfo = playersById.get(numericId)
-                const charId = playerInfo?.playerSheet?.characterId || ""
+        const mapped: CombatEntity[] = battleDetails.characters.map((bc) => {
+            if (bc.type === "player") {
+                const charId = bc.id
                 const avatarUrl = charId ? `/characters/${charId}.webp` : undefined
+
                 return {
-                    rowId: bc.id,
-                    externalId: bc.externalId,
-                    name: playerInfo?.playerSheet?.name?.trim() || bc.characterName,
+                    rowId: bc.battleID,
+                    externalId: bc.id,
+                    name: bc.name,
                     type: "player",
                     currentHp: bc.healthPoints,
                     maxHp: bc.maxHealthPoints,
                     currentMp: bc.magicPoints,
                     maxMp: bc.maxMagicPoints,
                     characterId: charId,
-                    avatarUrl: avatarUrl,
-                    isReadyToStart: isPlayerReadyToStart(playerInfo)
+                    avatarUrl,
+                    isReadyToStart: !bc.canRollInitiative
                 }
             } else {
                 return {
-                    rowId: bc.id,
-                    externalId: bc.externalId,
-                    name: bc.characterName,
+                    rowId: bc.battleID,
+                    externalId: bc.id,
+                    name: bc.name,
                     type: "npc",
                     currentHp: bc.healthPoints,
                     maxHp: bc.maxHealthPoints,
-                    characterId: bc.characterName,
-                    avatarUrl: `/enemies/${bc.externalId}.png`,
+                    characterId: bc.id,
+                    avatarUrl: `/enemies/${bc.id}.png`,
                     isReadyToStart: true
                 }
             }
         })
 
         const aTeam = mapped.filter(
-            (m) => m && battleChars.find((bc) => bc.id === m.rowId)?.isEnemy === false
+            (m) => m && battleDetails?.characters.find((bc) => bc.battleID === m.rowId)?.isEnemy === false
         )
         const bTeam = mapped.filter(
-            (m) => m && battleChars.find((bc) => bc.id === m.rowId)?.isEnemy === true
+            (m) => m && battleDetails?.characters.find((bc) => bc.battleID === m.rowId)?.isEnemy === true
         )
 
         setTeamA(aTeam)
         setTeamB(bTeam)
-    }, [campaignInfo.id, playersById])
+    }, [battleDetails])
 
-    useEffect(() => {
-        loadTeams()
-    }, [loadTeams])
+    async function handleStatusChange(newStatus: string) {
+        if (campaignInfo.battleId == undefined || campaignInfo.battleId == null) return
 
-    async function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) {
-        if (campaignInfo.battleId == undefined) {
-            return
-        }
-
-        const newStatus = e.target.value
         setBattleStatus(newStatus)
         setUpdatingStatus(true)
         try {
-            await APIBattle.update(campaignInfo.battleId, { battleStatus: newStatus })
+            if (newStatus === "started") {
+                await APIBattle.start(campaignInfo.battleId, newStatus)
+            } else {
+                await APIBattle.update(campaignInfo.battleId, { battleStatus: newStatus })
+            }
             onStatusChanged?.(newStatus)
+            await reloadBattleDetails()
         } catch {
             alert("Erro ao atualizar o status do combate.")
             setBattleStatus(initialStatus)
@@ -164,7 +154,7 @@ export default function CombatAdmin({
     }
 
     function isPlayerReadyToStart(playerInfo: GetPlayerResponse | undefined): boolean {
-        return !(playerInfo?.fightInfo?.canRollInitiative ?? true)
+        return playerInfo?.fightInfo?.canRollInitiative ?? true
     }
 
     async function handleAddToTeam(entity: CombatEntity) {
@@ -190,14 +180,17 @@ export default function CombatAdmin({
             maxHealthPoints: entity.maxHp,
             magicPoints: entity.currentMp,
             maxMagicPoints: entity.maxMp,
-            initiative: initiative
+            initiative,
+            canRollInitiative: entity.type == "player"
         })
+
         setJustAddedId(entity.externalId)
         setBulkAdded(false)
         setTimeout(() => {
             setJustAddedId((current) => (current === entity.externalId ? null : current))
         }, 2000)
-        await loadTeams()
+
+        await reloadBattleDetails()
     }
 
     async function handleAddAllPlayers(entities: CombatEntity[]) {
@@ -212,16 +205,18 @@ export default function CombatAdmin({
                 healthPoints: ent.currentHp,
                 maxHealthPoints: ent.maxHp,
                 magicPoints: ent.currentMp,
-                maxMagicPoints: ent.maxMp
+                maxMagicPoints: ent.maxMp,
+                canRollInitiative: ent.type == "player"
             })
         }
+
         setBulkAdded(true)
         setJustAddedId(null)
-        setTimeout(() => {
-            setBulkAdded(false)
-        }, 2000)
-        await loadTeams()
+        setTimeout(() => setBulkAdded(false), 2000)
+
+        await reloadBattleDetails()
     }
+
 
     function openRemoveConfirm(rowId?: number, name?: string) {
         if (!rowId) return
@@ -237,7 +232,7 @@ export default function CombatAdmin({
     async function confirmRemove() {
         if (!removeTarget) return
         await APIBattle.removeCharacter(removeTarget.rowId)
-        await loadTeams()
+        await reloadBattleDetails()
         closeRemoveConfirm()
     }
 
@@ -522,24 +517,44 @@ export default function CombatAdmin({
                 <div className="card-body gap-6">
                     <div className="flex flex-col items-start gap-2">
                         <div className="text-lg font-semibold">Combate #{campaignInfo.battleId}</div>
+
                         <div className="form-control w-full max-w-xs">
                             <label className="label">
                                 <span className="label-text font-semibold">Status do combate</span>
                             </label>
-                            <select
-                                className="select select-bordered select-sm"
-                                value={battleStatus}
-                                onChange={handleStatusChange}
-                                disabled={updatingStatus}
-                            >
-                                <option value="starting">Aguardando início</option>
-                                <option value="started">Em andamento</option>
-                                <option value="finished">Terminada</option>
-                            </select>
+
+                            <div className="flex items-center gap-3">
+                                <span className="text-sm">
+                                    {battleStatus === 'starting'
+                                        ? 'Aguardando início'
+                                        : battleStatus === 'started'
+                                            ? 'Em andamento'
+                                            : 'Terminada'}
+                                </span>
+
+                                {battleStatus !== 'finished' && (
+                                    <button
+                                        className={`btn btn-sm ${battleStatus === 'starting' ? 'btn-primary' : 'btn-error'
+                                            }`}
+                                        onClick={() =>
+                                            handleStatusChange(
+                                                battleStatus === 'starting' ? 'started' : 'finished'
+                                            )
+                                        }
+                                        disabled={updatingStatus}
+                                    >
+                                        {battleStatus === 'starting' ? 'Iniciar batalha' : 'Encerrar batalha'}
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    <InitiativesQueue characters={battleDetails?.characters} initiatives={battleDetails?.initiatives} isStarted={battleStatus == "started"} />
+                    <InitiativesQueue
+                        characters={battleDetails?.characters}
+                        initiatives={battleDetails?.initiatives}
+                        turns={battleDetails?.turns}
+                        isStarted={battleStatus == "started"} />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {renderTeamCard("Time A", "A", teamA)}

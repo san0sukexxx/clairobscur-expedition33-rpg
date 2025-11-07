@@ -7,5 +7,6 @@ data class BattleWithDetailsResponse(
     val campaignId: Int,
     val battleStatus: String,
     val characters: List<BattleCharacterInfo>,
-    val initiatives: List<InitiativeResponse>
+    val initiatives: List<InitiativeResponse>,
+    val turns: List<BattleTurnResponse>
 )

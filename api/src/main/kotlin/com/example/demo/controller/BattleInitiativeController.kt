@@ -17,45 +17,47 @@ class BattleInitiativeController(
         private val battleCharacterRepository: BattleCharacterRepository
 ) {
 
-    @PostMapping
-    @Transactional
-    fun create(
-            @RequestBody body: CreateBattleInitiativeRequest
-    ): ResponseEntity<InitiativeResponse> {
-        val bc =
-                battleCharacterRepository.findById(body.battleCharacterId).orElse(null)
-                        ?: return ResponseEntity.badRequest().build()
+        @PostMapping
+        @Transactional
+        fun create(
+                @RequestBody body: CreateBattleInitiativeRequest
+        ): ResponseEntity<InitiativeResponse> {
+                val bc =
+                        battleCharacterRepository.findById(body.battleCharacterId).orElse(null)
+                                ?: return ResponseEntity.badRequest().build()
 
-        val existing = initiativeRepository.findByBattleCharacterId(body.battleCharacterId)
+                val existing = initiativeRepository.findByBattleCharacterId(body.battleCharacterId)
 
-        val saved =
-                if (existing != null) {
-                    existing.initiativeValue = body.value
-                    existing.hability = body.hability
-                    existing.playFirst = body.playFirst ?: existing.playFirst
-                    initiativeRepository.save(existing).also { /* status 200 */}
-                } else {
-                    initiativeRepository.save(
-                            BattleInitiative(
-                                    battleId = bc.battleId,
-                                    battleCharacterId = body.battleCharacterId,
-                                    initiativeValue = body.value,
-                                    hability = body.hability,
-                                    playFirst = body.playFirst ?: false
-                            )
-                    )
-                }
+                val saved =
+                        if (existing != null) {
+                                existing.initiativeValue = body.value
+                                existing.hability = body.hability
+                                existing.playFirst = body.playFirst ?: existing.playFirst
+                                initiativeRepository.save(existing)
+                        } else {
+                                initiativeRepository.save(
+                                        BattleInitiative(
+                                                battleId = bc.battleId,
+                                                battleCharacterId = body.battleCharacterId,
+                                                initiativeValue = body.value,
+                                                hability = body.hability,
+                                                playFirst = body.playFirst ?: false
+                                        )
+                                )
+                        }
 
-        val response =
-                InitiativeResponse(
-                        playFirst = saved.playFirst,
-                        battleID =
-                                saved.battleCharacterId,
-                        value = saved.initiativeValue,
-                        hability = saved.hability
-                )
+                bc.canRollInitiative = false
+                battleCharacterRepository.save(bc)
 
-        val status = if (existing == null) HttpStatus.CREATED else HttpStatus.OK
-        return ResponseEntity.status(status).body(response)
-    }
+                val response =
+                        InitiativeResponse(
+                                playFirst = saved.playFirst,
+                                battleID = saved.battleCharacterId,
+                                value = saved.initiativeValue,
+                                hability = saved.hability
+                        )
+
+                val status = if (existing == null) HttpStatus.CREATED else HttpStatus.OK
+                return ResponseEntity.status(status).body(response)
+        }
 }

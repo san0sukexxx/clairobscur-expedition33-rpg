@@ -38,8 +38,8 @@ class SecurityConfig {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
-                .cors {} // usa o bean acima
-                .csrf { it.disable() } // típico para API REST
+                .cors {}
+                .csrf { it.disable() }
                 .authorizeHttpRequests { auth -> auth.requestMatchers("/**").permitAll() }
 
         return http.build()

@@ -1,23 +1,13 @@
 import { useRef, useMemo, useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaList } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaList, FaDice } from "react-icons/fa";
+import { GiStripedSword } from "react-icons/gi";
 import { APIPlayer } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPower, displayWeaponAttributePower, displayWeaponAttributeRank } from "../utils/WeaponUtils";
-
-const ELEMENT_EMOTE: Record<string, string> = {
-  Physical: "⚔️",
-  Void: "🕳️",
-  Light: "✨",
-  Lightning: "⚡️",
-  Fire: "🔥",
-  Ice: "❄️",
-  Dark: "🌑",
-  Earth: "🪨",
-  Unkown: "❓"
-} as const;
+import { displayWeaponPlusDices, displayWeaponAttributeRank, displayWeaponPlusPower } from "../utils/WeaponCalculator";
+import { ELEMENT_EMOTE } from "../utils/ElementUtils";
 
 type SelectorWeapon = {
   id: string;
@@ -403,12 +393,18 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
               <div className="grid grid-cols-4 gap-4 text-center mt-6">
                 <div>
                   <span className="block text-xs uppercase opacity-70">Poder</span>
-                  <span className="block text-2xl font-bold">
-                    {displayWeaponAttributePower(activeWeapon.power, activeWeapon.level)}
-                  </span>
-                  <span className="block text-s">
-                    ({displayWeaponPower(activeWeapon.power, activeWeapon.level)})
-                  </span>
+                  {displayWeaponPlusDices(activeWeapon.power, activeWeapon.level) !== null && (
+                    <span className="inline-flex items-center justify-center gap-1 text-2xl font-bold">
+                      {displayWeaponPlusDices(activeWeapon.power, activeWeapon.level)}
+                      <FaDice aria-hidden="true" />
+                    </span>
+                  )}
+                  {displayWeaponPlusPower(activeWeapon.power, activeWeapon.level) !== null && (
+                    <span className="inline-flex items-center justify-center gap-1 text-2xl font-bold">
+                      {displayWeaponPlusPower(activeWeapon.power, activeWeapon.level)}
+                      <GiStripedSword aria-hidden="true" />
+                    </span>
+                  )}
                 </div>
                 <div>
                   <span className="block text-xs uppercase opacity-70">Elemento</span>
@@ -506,7 +502,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                           <div>
                             <div className="uppercase tracking-wide text-sm opacity-70 mb-1">PODER</div>
                             <div className="text-4xl font-black leading-tight">
-                              {displayWeaponPower(weaponDetails.attributes.power, w.level)}
+                              // TODO
+                              {/* {displayWeaponPower(weaponDetails.attributes.power, w.level)} */}
                             </div>
                           </div>
 

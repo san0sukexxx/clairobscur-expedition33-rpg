@@ -1,10 +1,12 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.CreateCampaignResponse
+import com.example.demo.dto.GetCampaignResponse
 import com.example.demo.dto.ListCampaignRequest
 import com.example.demo.dto.ListCampaignResponse
 import com.example.demo.model.Campaign
 import com.example.demo.model.CampaignCharacter
+import com.example.demo.repository.CampaignEventRepository
 import com.example.demo.repository.CampaignRepository
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -12,7 +14,10 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/campaigns")
-class CampaignController(private val repository: CampaignRepository) {
+class CampaignController(
+        private val repository: CampaignRepository,
+        private val campaignEventRepository: CampaignEventRepository
+) {
     @PostMapping
     fun create(
             @Valid @RequestBody request: ListCampaignRequest
@@ -47,16 +52,18 @@ class CampaignController(private val repository: CampaignRepository) {
     }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id: Int): ResponseEntity<ListCampaignResponse> {
+    fun getById(@PathVariable id: Int): ResponseEntity<GetCampaignResponse> {
         val opt = repository.findByIdWithCharacters(id)
         return if (opt.isPresent) {
             val c = opt.get()
+            val latestEvent = campaignEventRepository.findTopByCampaignIdOrderByIdDesc(id)
             ResponseEntity.ok(
-                    ListCampaignResponse(
+                    GetCampaignResponse(
                             id = c.id,
                             name = c.name,
                             battleId = c.battleId,
-                            characters = c.characters.map { it.character }
+                            characters = c.characters.map { it.character },
+                            latestEventID = latestEvent?.id
                     )
             )
         } else {

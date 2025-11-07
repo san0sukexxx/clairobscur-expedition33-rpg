@@ -10,5 +10,6 @@ data class BattleCharacterInfo(
     val maxMagicPoints: Int?,
     val status: List<BattleStatusResponse>?,
     val type: String,
-    val isEnemy: Boolean
+    val isEnemy: Boolean,
+    val canRollInitiative: Boolean
 )

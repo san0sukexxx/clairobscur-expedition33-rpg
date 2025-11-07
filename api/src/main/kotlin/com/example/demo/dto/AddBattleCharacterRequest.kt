@@ -12,5 +12,6 @@ data class AddBattleCharacterRequest(
         @field:NotNull val maxHealthPoints: Int,
         val magicPoints: Int? = null,
         val maxMagicPoints: Int? = null,
-        val initiative: InitiativeData? = null
+        val initiative: InitiativeData? = null,
+        val canRollInitiative: Boolean = false
 )

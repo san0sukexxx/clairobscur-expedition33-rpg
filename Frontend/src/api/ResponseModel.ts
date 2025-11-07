@@ -17,6 +17,13 @@ export interface InitiativeResponse {
     hability: number;
 }
 
+export interface BattleTurnResponse {
+    id: number
+    battleId: number
+    battleCharacterId: number
+    playOrder: number
+}
+
 export interface StatusResponse {
     type: StatusType;
     ammount: number; // Ex.: Burning 3
@@ -33,6 +40,7 @@ export interface BattleCharacterInfo {
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;
+    canRollInitiative?: boolean;
 }
 
 export interface NPCInfo {
@@ -83,14 +91,15 @@ export interface SkillPreRequisite {
 }
 
 export interface WeaponResponse {
-  id: string;
-  level: number;
+    id: string;
+    level: number;
 }
 
 export interface FightInfoResponse {
-  playerBattleID: number;
-  initiatives?: InitiativeResponse[];
-  characters?: BattleCharacterInfo[];
-  battleStatus: BattleStatus;
-  canRollInitiative: boolean;
+    playerBattleID: number;
+    initiatives?: InitiativeResponse[];
+    characters?: BattleCharacterInfo[];
+    turns?: BattleTurnResponse[];
+    battleStatus: BattleStatus;
+    canRollInitiative: boolean;
 }

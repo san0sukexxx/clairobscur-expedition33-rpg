@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse } from "./ResponseModel"
+import { type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -10,6 +10,7 @@ export interface Battle {
 export interface BattleWithDetailsResponse extends Battle {
     characters: BattleCharacterInfo[]
     initiatives: InitiativeResponse[]
+    turns: BattleTurnResponse[]
 }
 
 export interface CreateBattleInput {
@@ -31,7 +32,8 @@ export interface AddBattleCharacterRequest {
     maxHealthPoints: number
     magicPoints?: number
     maxMagicPoints?: number
-    initiative?: AddBattleCharacterInitiativeData
+    initiative?: AddBattleCharacterInitiativeData,
+    canRollInitiative: boolean
 }
 
 export interface AddBattleCharacterInitiativeData {
@@ -40,24 +42,15 @@ export interface AddBattleCharacterInitiativeData {
     playFirst: boolean
 }
 
-export interface BattleCharacter {
-    id: number
-    battleId: number
-    externalId: string
-    characterName: string
-    characterType: BattleCharacterType
-    isEnemy: boolean
-    healthPoints: number
-    maxHealthPoints: number
-    magicPoints?: number
-    maxMagicPoints?: number
-}
-
 export interface CreateBattleInitiativeRequest {
     battleCharacterId: number
     value: number
     hability: number
     playFirst?: boolean
+}
+
+export interface CreateBattleTurnRequest {
+    battleCharacterId: number
 }
 
 export class APIBattle {
@@ -92,10 +85,6 @@ export class APIBattle {
         await api.delete<void>(`battles/characters/${id}`)
     }
 
-    static async listCharacters(battleId: number): Promise<BattleCharacter[]> {
-        return api.get<BattleCharacter[]>(`battles/${battleId}/characters`)
-    }
-
     static async useBattle(battleId: number, campaignId: number): Promise<void> {
         await api.put<{ campaignId: number }, void>(`battles/${battleId}/use`, { campaignId })
     }
@@ -106,5 +95,13 @@ export class APIBattle {
 
     static async addInitiative(input: CreateBattleInitiativeRequest): Promise<InitiativeResponse> {
         return api.post<CreateBattleInitiativeRequest, InitiativeResponse>("battle-initiatives", input)
+    }
+
+    static async joinBattle(input: CreateBattleTurnRequest): Promise<void> {
+        return api.post<CreateBattleTurnRequest, void>("battle-turns", input)
+    }
+
+    static async start(battleId: number, battleStatus: string): Promise<void> {
+        await api.post<{ battleStatus: string }, void>(`battles/${battleId}/start`, { battleStatus })
     }
 }

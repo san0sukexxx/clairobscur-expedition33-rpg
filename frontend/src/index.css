@@ -147,3 +147,17 @@
 .TintedImage[data-color="green"] { --picto-color: rgb(26, 230, 103); }
 .TintedImage[data-color="red"]   { --picto-color: rgb(227, 30, 25); }
 .TintedImage[data-color="blue"]  { --picto-color: rgb(140, 255, 255); }
+
+
+/* golden border */
+@keyframes gold-blink {
+  0% { box-shadow: 0 0 0 0 rgba(245,158,11,.9); }
+  50% { box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+  100% { box-shadow: 0 0 0 0 rgba(245,158,11,.9); }
+}
+
+.attack-glow {
+  border: 2px solid #f59e0b;
+  border-radius: 0.75rem;
+  animation: gold-blink 1.4s ease-in-out infinite;
+}

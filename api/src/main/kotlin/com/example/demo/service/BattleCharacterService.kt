@@ -28,7 +28,7 @@ class BattleCharacterService(
                         maxHealthPoints = request.maxHealthPoints,
                         magicPoints = request.magicPoints,
                         maxMagicPoints = request.maxMagicPoints,
-                        canRollInitiative = false
+                        canRollInitiative = request.canRollInitiative
                 )
 
         val savedCharacter = repository.save(entity)

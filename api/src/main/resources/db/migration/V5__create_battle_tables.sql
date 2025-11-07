@@ -2,7 +2,8 @@ CREATE TABLE
     battle (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         campaign_id INTEGER NOT NULL,
-        battle_status TEXT NOT NULL
+        battle_status TEXT NOT NULL,
+        current_turn_id INTEGER
     );
 
 CREATE TABLE
@@ -36,4 +37,12 @@ CREATE TABLE
         battle_character_id INTEGER NOT NULL,
         effect_type TEXT NOT NULL,
         ammount INTEGER NOT NULL
+    );
+
+CREATE TABLE
+    battle_turn (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        battle_id INTEGER NOT NULL,
+        battle_character_id INTEGER NOT NULL,
+        play_order INTEGER NOT NULL
     );

@@ -1,29 +1,54 @@
-import { useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
-import { type PlayerResponse } from "../api/MockAPIPlayer";
 import InitiativesQueue from "./InitiativesQueue";
 import { CgSandClock } from "react-icons/cg";
+import type { GetPlayerResponse } from "../api/APIPlayer";
+import type { BattleCharacterInfo } from "../api/ResponseModel";
 
 interface CombatsSectionProps {
-  onMenuAction: (action: CombatMenuAction) => void;
-  player: PlayerResponse | null;
-  setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+    onMenuAction: (action: CombatMenuAction) => void;
+    player: GetPlayerResponse | null;
+    onSelectTarget?: (target: BattleCharacterInfo) => void;
 }
 
-export default function CombatSection({ onMenuAction, player, setPlayer }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, onSelectTarget }: CombatsSectionProps) {
     const [tab, setTab] = useState<"enemies" | "team">("enemies");
+    const [isAttacking, setIsAttacking] = useState<Boolean>(false);
+
+    const currentCharacter = useMemo(() => {
+        return player?.fightInfo?.characters?.find(c => c.battleID == player.fightInfo?.playerBattleID)
+    }, [player?.fightInfo?.characters]);
+
+    const currentTeamTab = useMemo(() => {
+        return currentCharacter?.isEnemy ? "enemies" : "team"
+    }, [currentCharacter]);
+
+    const opositeTeamTab = useMemo(() => {
+        return currentCharacter?.isEnemy ? "team" : "enemies"
+    }, [currentCharacter]);
+
+    useEffect(() => {
+        if (currentCharacter) {
+            setTab(opositeTeamTab);
+        }
+    }, [currentCharacter]);
+
+    function handleSelectAttackTarget(target: BattleCharacterInfo) {
+        // TODO: wait mode
+        setIsAttacking(false);
+        onSelectTarget?.(target);
+    }
 
     function handleMenuAction(action: CombatMenuAction) {
-    
         switch (action) {
             case COMBAT_MENU_ACTIONS.Team:
-                setTab("team");
+                setTab(currentTeamTab);
                 break;
 
             case COMBAT_MENU_ACTIONS.Enemies:
-                setTab("enemies");
+                setTab(opositeTeamTab);
                 break;
 
             case COMBAT_MENU_ACTIONS.Inventory:
@@ -38,12 +63,25 @@ export default function CombatSection({ onMenuAction, player, setPlayer }: Comba
                 onMenuAction(COMBAT_MENU_ACTIONS.Initiative);
                 break;
 
+            case COMBAT_MENU_ACTIONS.Initiative:
+                onMenuAction(COMBAT_MENU_ACTIONS.Initiative);
+                break;
+
+            case COMBAT_MENU_ACTIONS.JoinBattle:
+                onMenuAction(COMBAT_MENU_ACTIONS.JoinBattle);
+                break;
+
             case COMBAT_MENU_ACTIONS.FreeShot:
-                setTab("enemies");
+                setTab(opositeTeamTab);
                 break;
 
             case COMBAT_MENU_ACTIONS.Attack:
-                setTab("enemies");
+                setIsAttacking(true);
+                setTab(opositeTeamTab);
+                break;
+
+            case COMBAT_MENU_ACTIONS.Cancel:
+                setIsAttacking(false);
                 break;
 
             default:
@@ -60,17 +98,28 @@ export default function CombatSection({ onMenuAction, player, setPlayer }: Comba
                 </div>
             )}
 
-            <InitiativesQueue characters={player?.fightInfo?.characters} initiatives={player?.fightInfo?.initiatives} isStarted={player?.fightInfo?.battleStatus == "started"} />
+            <InitiativesQueue
+                characters={player?.fightInfo?.characters}
+                initiatives={player?.fightInfo?.initiatives}
+                turns={player?.fightInfo?.turns}
+                isStarted={player?.fightInfo?.battleStatus == "started"} />
 
             {tab === "enemies" && (
-                <BattleGroupStatus player={player} isEnemies={true} />
+                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} />
             )}
 
             {tab === "team" && (
-                <BattleGroupStatus player={player} isEnemies={false} />
+                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} />
             )}
 
-            <CombatMenu player={player} onAction={handleMenuAction} tab={tab} />
+            <CombatMenu
+                player={player}
+                onAction={handleMenuAction}
+                tab={tab}
+                currentTeamTab={currentTeamTab}
+                opositeTeamTab={opositeTeamTab}
+                isAttacking={isAttacking}
+            />
         </div>
     );
 }

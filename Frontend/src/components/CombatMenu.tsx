@@ -1,21 +1,30 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { FaBars } from "react-icons/fa";
-import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
+import type { GetPlayerResponse } from "../api/APIPlayer";
 
 interface CombatMenuProps {
-  player: PlayerResponse | null;
+  player: GetPlayerResponse | null;
   onAction: (action: CombatMenuAction) => void;
   tab: String;
+  currentTeamTab: String;
+  opositeTeamTab: String;
+  isAttacking: Boolean;
 }
 
-export default function CombatMenu({ player, onAction, tab }: CombatMenuProps) {
+export default function CombatMenu({ player, onAction, tab, currentTeamTab, opositeTeamTab, isAttacking }: CombatMenuProps) {
   const [open, setOpen] = useState(false);
 
   function handleAction(action: CombatMenuAction) {
     setOpen(false);
     onAction(action);
   }
+
+  const isYourTurn = useMemo(() => {
+    const firstTurn = player?.fightInfo?.turns?.[0]
+    if (!firstTurn) return false
+    return firstTurn.battleCharacterId === player?.fightInfo?.playerBattleID
+  }, [player?.fightInfo])
 
   return (
     <div className="fixed bottom-20 right-4">
@@ -36,25 +45,31 @@ export default function CombatMenu({ player, onAction, tab }: CombatMenuProps) {
             flex flex-col gap-2
           "
         >
-          {tab == "enemies" && (
+          {tab == opositeTeamTab && !isAttacking && (
             <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
               Equipe
             </button>
           )}
-          
-          {tab == "team" && (
+
+          {tab == currentTeamTab && !isAttacking && (
             <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
               Inimigos
             </button>
           )}
 
-          {player?.fightInfo?.battleStatus == "starting" && player?.fightInfo?.canRollInitiative && (
+          {player?.fightInfo?.battleStatus == "starting" && !isAttacking && player?.fightInfo?.canRollInitiative && (
             <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Initiative)}>
               Rolar Iniciativa
             </button>
           )}
 
-          {player?.fightInfo?.battleStatus == "started" && (
+          {player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
+            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
+              Entrar na batalha
+            </button>
+          )}
+
+          {isYourTurn && !isAttacking && (
             <>
               <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
                 Itens
@@ -69,6 +84,12 @@ export default function CombatMenu({ player, onAction, tab }: CombatMenuProps) {
                 Atacar
               </button>
             </>
+          )}
+
+          {isAttacking && (
+            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
+              Cancelar
+            </button>
           )}
         </div>
       )}

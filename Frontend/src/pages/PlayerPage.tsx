@@ -13,16 +13,17 @@ import SkillsSection from "../components/SkillsSection";
 import ItemsSection from "../components/ItemsSection";
 import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
-import { APIPlayer, type CreatePlayerInput } from "../api/APIPlayer";
+import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
-import { type PlayerResponse, MockAPIPlayer } from "../api/MockAPIPlayer";
+import { MockAPIPlayer } from "../api/MockAPIPlayer";
 import { APIPictos } from "../api/APIPictos";
 import { APIBattle } from "../api/APIBattle";
-import { type PictoResponse, type FightInfoResponse } from "../api/ResponseModel";
+import { type PictoResponse, type BattleCharacterInfo } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
   rollCommandForInitiative,
+  rollCommandFoBasicAttack,
   initiativeTotal,
   countCriticalRolls,
   calculateCriticalMulti,
@@ -32,6 +33,7 @@ import {
 import PanelModal from "../components/PanelModal";
 import { RefreshHelper } from "../utils/RefreshHelper";
 import { useToast } from "../components/Toast";
+import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -39,7 +41,7 @@ export default function PlayerPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [player, setPlayer] = useState<PlayerResponse | null>(null);
+  const [player, setPlayer] = useState<GetPlayerResponse | null>(null);
   const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
   const [pictos, setPictos] = useState<PictoResponse[] | null>(null);
   const diceBoardRef = useRef<DiceBoardRef>(null);
@@ -53,6 +55,8 @@ export default function PlayerPage() {
     { path: "/campaign-player-admin/:campaign/:character", end: true },
     pathname
   );
+
+  const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const weaponList = useMemo(() => {
     return WeaponsDataLoader.getByFile(
@@ -84,6 +88,9 @@ export default function PlayerPage() {
       case COMBAT_MENU_ACTIONS.Initiative:
         rollInitiative();
         break;
+      case COMBAT_MENU_ACTIONS.JoinBattle:
+        joinBattle();
+        break;
       default:
         break;
     }
@@ -95,7 +102,7 @@ export default function PlayerPage() {
 
       <PanelModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleModalClose}
         title={modalTitle}
         size="md"
         showClose={false}
@@ -147,7 +154,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "combate" && (
-            <CombatSection onMenuAction={handleCombatMenuAction} player={player} setPlayer={setPlayer} />
+            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} />
           )}
 
           {!loading && !error && tab === "habilidades" && (
@@ -295,14 +302,6 @@ export default function PlayerPage() {
       });
     }
 
-    const rollCall = async (total: number) => {
-      try {
-        await MockAPIPlayer.saveRollInitiative(player, total);
-      } catch (e) {
-        console.error("Erro ao salvar player:", e);
-      }
-    };
-
     diceBoardRef.current?.roll(rollCommandForInitiative(player), async (result) => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculateCriticalMulti(result)
@@ -342,7 +341,6 @@ export default function PlayerPage() {
       }
 
       setModalOpen(true)
-      rollCall(result)
 
       try {
         const savedInitiative = await APIBattle.addInitiative({
@@ -370,12 +368,105 @@ export default function PlayerPage() {
         console.error("Erro ao registrar iniciativa:", err)
       }
 
-      setTimeout(() => {
-        diceBoardRef.current?.hideBoard()
-      }, 3000)
+      timeoutDiceBoardRef.current = setTimeout(() => {
+        diceBoardRef.current?.hideBoard();
+        timeoutDiceBoardRef.current = null;
+      }, 6000);
     })
 
+  }
+
+  function joinBattle() {
+    if (!player) return;
+
+    if (player.fightInfo) {
+      setPlayer({
+        ...player,
+        fightInfo: {
+          ...player.fightInfo,
+          canRollInitiative: false
+        }
+      });
+    }
 
 
+    const joinBattleCall = async () => {
+      try {
+        await APIBattle.joinBattle({
+          battleCharacterId: player.fightInfo?.playerBattleID ?? 0
+        })
+      } catch (e) {
+        console.error("Erro ao salvar player:", e);
+      }
+    };
+
+    joinBattleCall();
+  }
+
+  function handleSelectAttackTarget(target: BattleCharacterInfo) {
+    if (player == null) { return }
+
+    diceBoardRef.current?.roll(rollCommandFoBasicAttack(player, weaponList), async (result) => {
+      const criticalRolls = countCriticalRolls(result)
+      const criticalMulti = calculateCriticalMulti(result)
+      const rollTotal = diceTotal(result)
+      const weaponPower = calculateRawWeaponPower(player, weaponList, result)
+      const total = calculateBasicAttackDamage(player, weaponList, result)
+      const isCriticalFailure = isCriticalFailureRoll(result)
+
+      setModalTitle("Resultado da rolagem")
+
+      if (isCriticalFailure) {
+        setModalBody(
+          <div className="space-y-2">
+            <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
+              <FaSkull className="w-6 h-6" />
+              Falha crítica
+            </h3>
+            <h1 className="text-2xl font-bold">Total: {total}</h1>
+          </div>
+        )
+      } else {
+        setModalBody(
+          <div className="space-y-2">
+            <p>Rolagem: {rollTotal}</p>
+            {criticalRolls > 0 && (
+              <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
+                <FaCheckCircle className="w-6 h-6" />
+                Críticos: <b>{criticalRolls}</b>
+              </h3>
+            )}
+            <p>
+              Poder: <b>{player.playerSheet?.power ?? 0}</b>
+              {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
+            </p>
+            {weaponPower > 0 && (
+              <p>
+                Arma: <b>{weaponPower}</b>
+              </p>
+            )}
+            <h1 className="text-2xl font-bold">Total: {total}</h1>
+          </div>
+        )
+
+        // TODO: call attack API
+      }
+
+      setModalOpen(true)
+    });
+
+    timeoutDiceBoardRef.current = setTimeout(() => {
+      diceBoardRef.current?.hideBoard();
+      timeoutDiceBoardRef.current = null;
+    }, 6000);
+  }
+
+  function handleModalClose() {
+    if (timeoutDiceBoardRef.current) {
+      diceBoardRef.current?.hideBoard();
+      clearTimeout(timeoutDiceBoardRef.current);
+      timeoutDiceBoardRef.current = null;
+    }
+    setModalOpen(false);
   }
 }

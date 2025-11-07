@@ -16,5 +16,5 @@ data class BattleCharacter(
         @Column(name = "magic_points") val magicPoints: Int? = null,
         @Column(name = "max_magic_points") val maxMagicPoints: Int? = null,
         @Column(name = "can_roll_initiative", nullable = false)
-        val canRollInitiative: Boolean = false
+        var canRollInitiative: Boolean = false
 )

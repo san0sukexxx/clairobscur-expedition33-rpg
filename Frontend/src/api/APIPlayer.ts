@@ -29,6 +29,7 @@ export interface GetPlayerResponse {
     playerSheet?: PlayerSheetResponse;
     weapons?: WeaponResponse[];
     fightInfo?: FightInfoResponse;
+    latestEventID?: number;
 }
 
 export interface UpdatePlayerInput {

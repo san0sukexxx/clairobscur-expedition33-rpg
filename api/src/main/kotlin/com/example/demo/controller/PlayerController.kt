@@ -5,6 +5,7 @@ import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
+import com.example.demo.repository.CampaignEventRepository
 import com.example.demo.repository.CampaignPlayerRepository
 import com.example.demo.repository.PlayerRepository
 import com.example.demo.repository.PlayerWeaponRepository
@@ -20,6 +21,7 @@ class PlayerController(
         private val playerWeaponRepository: PlayerWeaponRepository,
         private val battleRepository: BattleRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
+        private val campaignEventRepository: CampaignEventRepository,
         private val fightService: FightService
 ) {
 
@@ -63,7 +65,8 @@ class PlayerController(
                                         id = pid,
                                         playerSheet = PlayerSheetResponse.fromEntity(player),
                                         weapons = null,
-                                        fightInfo = null
+                                        fightInfo = null,
+                                        latestEventID = null
                                 )
                         }
 
@@ -77,6 +80,12 @@ class PlayerController(
 
                 val entity = playerOpt.get()
 
+                val campaign =
+                        campaignPlayerRepository.findByPlayerId(id)
+                                ?: return ResponseEntity.badRequest().build()
+                                
+                val latestEvent = campaignEventRepository.findTopByCampaignIdOrderByIdDesc(campaign.campaignId)
+
                 val weapons =
                         playerWeaponRepository.findByPlayerId(id).map { pw ->
                                 PlayerWeaponResponse(id = pw.weaponId, level = pw.weaponLevel)
@@ -89,7 +98,8 @@ class PlayerController(
                                 id = entity.id ?: 0,
                                 playerSheet = PlayerSheetResponse.fromEntity(entity),
                                 weapons = weapons,
-                                fightInfo = fightInfo
+                                fightInfo = fightInfo,
+                                latestEventID = latestEvent?.id
                         )
 
                 return ResponseEntity.ok(response)

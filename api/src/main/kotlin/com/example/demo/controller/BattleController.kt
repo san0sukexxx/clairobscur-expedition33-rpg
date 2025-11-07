@@ -1,13 +1,17 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.BattleCharacterInfo
+import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.BattleWithDetailsResponse
 import com.example.demo.dto.InitiativeResponse
+import com.example.demo.dto.UpdateBattleStatusRequest
 import com.example.demo.dto.UseBattleRequest
 import com.example.demo.model.Battle
+import com.example.demo.model.BattleTurn
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleInitiativeRepository
 import com.example.demo.repository.BattleRepository
+import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.repository.CampaignRepository
 import com.example.demo.repository.PlayerRepository
 import org.springframework.http.ResponseEntity
@@ -21,10 +25,10 @@ class BattleController(
         private val campaignRepository: CampaignRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val playerRepository: PlayerRepository,
-        private val battleInitiativeRepository: BattleInitiativeRepository
+        private val battleInitiativeRepository: BattleInitiativeRepository,
+        private val battleTurnRepository: BattleTurnRepository
 ) {
 
-    // BattleController.kt (trecho)
     @GetMapping("/{battleId}")
     fun getBattleById(@PathVariable battleId: Int): ResponseEntity<BattleWithDetailsResponse> {
         val opt = battleRepository.findById(battleId)
@@ -32,13 +36,10 @@ class BattleController(
 
         val battle = opt.get()
 
-        // --- characters usando a lógica solicitada ---
         val characterEntities = battleCharacterRepository.findByBattleId(battleId)
-
         val characters: List<BattleCharacterInfo> =
                 characterEntities.map { bc ->
                     val playerIdFromExternal = bc.externalId.toIntOrNull()
-
                     val externalId =
                             if (bc.characterType == "player") {
                                 playerIdFromExternal?.let { pid ->
@@ -59,7 +60,8 @@ class BattleController(
                             maxMagicPoints = bc.maxMagicPoints,
                             status = null,
                             type = bc.characterType,
-                            isEnemy = bc.isEnemy
+                            isEnemy = bc.isEnemy,
+                            canRollInitiative = bc.canRollInitiative
                     )
                 }
 
@@ -67,9 +69,19 @@ class BattleController(
                 battleInitiativeRepository.findByBattleId(battleId).map {
                     InitiativeResponse(
                             playFirst = it.playFirst,
-                            battleID = it.battleCharacterId, // id do BattleCharacter
+                            battleID = it.battleCharacterId,
                             value = it.initiativeValue,
                             hability = it.hability
+                    )
+                }
+
+        val turns =
+                battleTurnRepository.findByBattleId(battleId).map { t ->
+                    BattleTurnResponse(
+                            id = t.id!!,
+                            battleId = t.battleId,
+                            playOrder = t.playOrder,
+                            battleCharacterId = t.battleCharacterId
                     )
                 }
 
@@ -79,7 +91,8 @@ class BattleController(
                         campaignId = battle.campaignId,
                         battleStatus = battle.battleStatus,
                         characters = characters,
-                        initiatives = initiatives
+                        initiatives = initiatives,
+                        turns = turns
                 )
 
         return ResponseEntity.ok(response)
@@ -126,13 +139,17 @@ class BattleController(
             return ResponseEntity.notFound().build()
         }
 
+        val turns = battleTurnRepository.findByBattleId(id)
+        if (turns.isNotEmpty()) {
+            battleTurnRepository.deleteAll(turns)
+        }
+
         val characters = battleCharacterRepository.findByBattleId(id)
         characters.forEach { character ->
             battleInitiativeRepository.deleteByBattleCharacterId(character.id!!)
         }
 
         battleCharacterRepository.deleteAll(characters)
-
         battleRepository.deleteById(id)
 
         return ResponseEntity.noContent().build()
@@ -169,5 +186,49 @@ class BattleController(
         campaignRepository.save(campaign)
 
         return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/{battleId}/start")
+    @Transactional
+    fun startBattle(
+            @PathVariable battleId: Int,
+            @RequestBody body: UpdateBattleStatusRequest
+    ): ResponseEntity<Void> {
+        val battle =
+                battleRepository.findById(battleId).orElse(null)
+                        ?: return ResponseEntity.notFound().build()
+
+        val existingTurns = battleTurnRepository.findByBattleId(battleId)
+        if (existingTurns.isNotEmpty()) {
+            battleTurnRepository.deleteAllInBatch(existingTurns)
+        }
+
+        if (body.battleStatus == "started") {
+            val initiatives = battleInitiativeRepository.findByBattleId(battleId)
+            val ordered =
+                    initiatives.sortedWith(
+                            compareByDescending<com.example.demo.model.BattleInitiative> {
+                                it.playFirst
+                            }
+                                    .thenByDescending { it.initiativeValue }
+                                    .thenBy { it.battleCharacterId }
+                    )
+            val turnsToSave =
+                    ordered.mapIndexed { index, ini ->
+                        BattleTurn(
+                                battleId = battleId,
+                                battleCharacterId = ini.battleCharacterId,
+                                playOrder = index + 1
+                        )
+                    }
+            if (turnsToSave.isNotEmpty()) {
+                battleTurnRepository.saveAll(turnsToSave)
+            }
+        }
+
+        battle.battleStatus = body.battleStatus
+        battleRepository.save(battle)
+
+        return ResponseEntity.noContent().build()
     }
 }
