@@ -3,6 +3,7 @@ package com.example.demo.controller
 import com.example.demo.dto.*
 import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
+import com.example.demo.model.CampaignEvent
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.CampaignEventRepository
@@ -10,6 +11,7 @@ import com.example.demo.repository.CampaignPlayerRepository
 import com.example.demo.repository.PlayerRepository
 import com.example.demo.repository.PlayerWeaponRepository
 import com.example.demo.service.FightService
+import com.example.demo.enums.CampaignEventType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -50,6 +52,14 @@ class PlayerController(
                         CampaignPlayer(campaignId = req.campaign, playerId = playerId)
                 )
 
+                campaignEventRepository.save(
+                        CampaignEvent(
+                                campaignId = req.campaign,
+                                eventType = CampaignEventType.PLAYER_CREATED.value,
+                                eventValue = playerId.toString()
+                        )
+                )
+
                 return ResponseEntity.ok(CreatePlayerResponse(id = playerId))
         }
 
@@ -83,8 +93,11 @@ class PlayerController(
                 val campaign =
                         campaignPlayerRepository.findByPlayerId(id)
                                 ?: return ResponseEntity.badRequest().build()
-                                
-                val latestEvent = campaignEventRepository.findTopByCampaignIdOrderByIdDesc(campaign.campaignId)
+
+                val latestEvent =
+                        campaignEventRepository.findTopByCampaignIdOrderByIdDesc(
+                                campaign.campaignId
+                        )
 
                 val weapons =
                         playerWeaponRepository.findByPlayerId(id).map { pw ->

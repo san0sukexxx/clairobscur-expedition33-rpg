@@ -18,7 +18,13 @@ export function calculateRawWeaponPower(player: GetPlayerResponse | null, weapon
 
 export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponList: WeaponDTO[], diceResult: any): number {
     const total = diceTotal(diceResult);
-    return (player?.playerSheet?.power ?? 0) + calculateRawWeaponPower(player, weaponList, diceResult) + total;
+    const failures = calculateFailureDiv(diceResult)
+    var playerPower = (player?.playerSheet?.power ?? 0) * calculateCriticalMulti(diceResult);
+
+    if (failures > 0) {
+        playerPower = Math.floor(playerPower / failures);
+    }
+    return playerPower + calculateRawWeaponPower(player, weaponList, diceResult) + total;
 }
 
 export function calculateMaxMP(player: GetPlayerResponse | null): number {
@@ -58,6 +64,10 @@ export function calculateCriticalMulti(diceResult: any) {
     return 1 + countCriticalRolls(diceResult);
 }
 
+export function calculateFailureDiv(diceResult: any) {
+    return 1 + countFailuresRolls(diceResult);
+}
+
 export function diceTotal(diceResult: any) {
     return diceResult.reduce((total: number, group: any) => {
         return total + group.value;
@@ -80,6 +90,23 @@ export function countCriticalRolls(result: any[]): number {
     }
 
     return Math.max(0, count6 - count1);
+}
+export function countFailuresRolls(result: any[]): number {
+    if (!Array.isArray(result)) return 0;
+
+    let count6 = 0;
+    let count1 = 0;
+
+    for (const group of result) {
+        if (!Array.isArray(group.rolls)) continue;
+
+        for (const roll of group.rolls) {
+            if (roll.value === 6) count6++;
+            if (roll.value === 1) count1++;
+        }
+    }
+
+    return Math.max(0, count1 - count6);
 }
 export function isCriticalFailureRoll(diceResult: any): boolean {
     if (!Array.isArray(diceResult)) return false;

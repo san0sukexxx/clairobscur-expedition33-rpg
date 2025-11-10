@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useLocation, matchPath } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaUser, FaSkull, FaCheckCircle } from "react-icons/fa";
+import { FaUser, FaSkull, FaCheckCircle, FaDivide } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
@@ -28,7 +28,9 @@ import {
   countCriticalRolls,
   calculateCriticalMulti,
   diceTotal,
-  isCriticalFailureRoll
+  isCriticalFailureRoll,
+  calculateFailureDiv,
+  countFailuresRolls
 } from "../utils/PlayerCalculator";
 import PanelModal from "../components/PanelModal";
 import { RefreshHelper } from "../utils/RefreshHelper";
@@ -371,7 +373,7 @@ export default function PlayerPage() {
       timeoutDiceBoardRef.current = setTimeout(() => {
         diceBoardRef.current?.hideBoard();
         timeoutDiceBoardRef.current = null;
-      }, 6000);
+      }, 5000);
     })
 
   }
@@ -412,45 +414,45 @@ export default function PlayerPage() {
       const rollTotal = diceTotal(result)
       const weaponPower = calculateRawWeaponPower(player, weaponList, result)
       const total = calculateBasicAttackDamage(player, weaponList, result)
-      const isCriticalFailure = isCriticalFailureRoll(result)
+      const failures = countFailuresRolls(result)
+      const failuresDiv = calculateFailureDiv(result)
 
       setModalTitle("Resultado da rolagem")
 
-      if (isCriticalFailure) {
-        setModalBody(
-          <div className="space-y-2">
+      setModalBody(
+        <div className="space-y-2">
+          <p>Rolagem: {rollTotal}</p>
+          {criticalRolls > 0 && (
+            <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
+              <FaCheckCircle className="w-6 h-6" />
+              Críticos: <b>{criticalRolls}</b>
+            </h3>
+          )}
+          {failures > 0 && (
             <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
               <FaSkull className="w-6 h-6" />
-              Falha crítica
+              Falhas críticas: <b>{failures}</b>
             </h3>
-            <h1 className="text-2xl font-bold">Total: {total}</h1>
-          </div>
-        )
-      } else {
-        setModalBody(
-          <div className="space-y-2">
-            <p>Rolagem: {rollTotal}</p>
-            {criticalRolls > 0 && (
-              <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
-                <FaCheckCircle className="w-6 h-6" />
-                Críticos: <b>{criticalRolls}</b>
-              </h3>
+          )}
+          <p>
+            Poder: <b>{player.playerSheet?.power ?? 0}</b>
+            {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
+            {failures > 0 && (
+              <span className="inline-flex items-center gap-1 font-bold ml-2">
+                (<FaDivide className="w-4 h-4" /> {failuresDiv} )
+              </span>
             )}
+          </p>
+          {weaponPower > 0 && (
             <p>
-              Poder: <b>{player.playerSheet?.power ?? 0}</b>
-              {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
+              Arma: <b>{weaponPower}</b>
             </p>
-            {weaponPower > 0 && (
-              <p>
-                Arma: <b>{weaponPower}</b>
-              </p>
-            )}
-            <h1 className="text-2xl font-bold">Total: {total}</h1>
-          </div>
-        )
+          )}
+          <h1 className="text-2xl font-bold">Total: {total}</h1>
+        </div>
+      )
 
-        // TODO: call attack API
-      }
+      // TODO: call attack API
 
       setModalOpen(true)
     });
@@ -458,7 +460,7 @@ export default function PlayerPage() {
     timeoutDiceBoardRef.current = setTimeout(() => {
       diceBoardRef.current?.hideBoard();
       timeoutDiceBoardRef.current = null;
-    }, 6000);
+    }, 5000);
   }
 
   function handleModalClose() {
