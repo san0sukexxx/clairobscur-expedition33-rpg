@@ -42,6 +42,8 @@ export default function PlayerPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [wasMasterEditing, setWasMasterEditing] = useState<boolean>(false);
+  const [wasInBattle, setWasInBattle] = useState<boolean>(false);
+  const prevInBattleRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<GetPlayerResponse | null>(null);
   const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
@@ -56,6 +58,15 @@ export default function PlayerPage() {
     { path: "/campaign-player-admin/:campaign/:character", end: true },
     pathname
   );
+
+  useEffect(() => {
+    if (!prevInBattleRef.current && wasInBattle) {
+      showToast("Uma batalha está em andamento");
+    } else if (prevInBattleRef.current && !wasInBattle) {
+      showToast("A batalha foi encerrada");
+    }
+    prevInBattleRef.current = wasInBattle;
+  }, [wasInBattle, showToast]);
 
   const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -261,8 +272,10 @@ export default function PlayerPage() {
 
   async function checkPlayerLoop() {
     try {
-      if (!character) return
-      const playerInfo = await APIPlayer.get(parseInt(character))
+      if (!character) return;
+      const playerInfo = await APIPlayer.get(parseInt(character));
+
+      setWasInBattle(playerInfo.fightInfo != null);
 
       setWasMasterEditing(prev => {
         if (playerInfo.isMasterEditing && !prev) {
@@ -275,7 +288,7 @@ export default function PlayerPage() {
         return prev;
       });
     } catch (e: any) {
-      console.error("Erro ao verificar editing:", e)
+      console.error("Erro ao verificar editing:", e);
     }
   }
 

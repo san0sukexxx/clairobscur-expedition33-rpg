@@ -1,4 +1,3 @@
-// toast-queue.tsx
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 type ToastOptions = {
