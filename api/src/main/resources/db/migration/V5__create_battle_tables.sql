@@ -52,3 +52,24 @@ CREATE TABLE
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE,
         FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE
     );
+
+CREATE TABLE
+    IF NOT EXISTS battle_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        battle_id INTEGER NOT NULL,
+        event_type TEXT NOT NULL,
+        event_description TEXT,
+        event_value TEXT,
+        FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE
+    );
+
+CREATE TABLE
+    IF NOT EXISTS battle_log_entity (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        battle_log_id INTEGER NOT NULL,
+        battle_character_id INTEGER NOT NULL,
+        is_source BOOLEAN DEFAULT 0,
+        is_target BOOLEAN DEFAULT 0,
+        FOREIGN KEY (battle_log_id) REFERENCES battle_log (id) ON DELETE CASCADE,
+        FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE
+    );

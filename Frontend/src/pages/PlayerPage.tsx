@@ -41,6 +41,7 @@ export default function PlayerPage() {
   const alreadyRan = useRef(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [wasMasterEditing, setWasMasterEditing] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<GetPlayerResponse | null>(null);
   const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
@@ -262,7 +263,17 @@ export default function PlayerPage() {
     try {
       if (!character) return
       const playerInfo = await APIPlayer.get(parseInt(character))
-      setPlayer(prev => (prev ? { ...prev, isMasterEditing: !!playerInfo.isMasterEditing } : prev))
+
+      setWasMasterEditing(prev => {
+        if (playerInfo.isMasterEditing && !prev) {
+          setPlayer(p => (p ? { ...p, isMasterEditing: true } : p));
+          return true;
+        } else if (!playerInfo.isMasterEditing && prev) {
+          setPlayer(playerInfo);
+          return false;
+        }
+        return prev;
+      });
     } catch (e: any) {
       console.error("Erro ao verificar editing:", e)
     }
