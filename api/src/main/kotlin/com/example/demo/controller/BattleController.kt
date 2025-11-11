@@ -139,17 +139,6 @@ class BattleController(
             return ResponseEntity.notFound().build()
         }
 
-        val turns = battleTurnRepository.findByBattleId(id)
-        if (turns.isNotEmpty()) {
-            battleTurnRepository.deleteAll(turns)
-        }
-
-        val characters = battleCharacterRepository.findByBattleId(id)
-        characters.forEach { character ->
-            battleInitiativeRepository.deleteByBattleCharacterId(character.id!!)
-        }
-
-        battleCharacterRepository.deleteAll(characters)
         battleRepository.deleteById(id)
 
         return ResponseEntity.noContent().build()

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
 import { FaUserFriends, FaFileAlt, FaShieldAlt } from "react-icons/fa";
 import { useApiListRaw } from "../api/UseApiListRaw";
-import { type GetPlayerResponse } from "../api/APIPlayer";
+import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import CampaignAdminSheets from "../components/CampaignAdminSheets";
@@ -22,6 +22,26 @@ export default function CampaignAdmin() {
         () => (campaignId !== null ? APICampaignPlayer.list(campaignId) : Promise.resolve([])),
         [campaignId]
     );
+
+    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+
+    useEffect(() => {
+        if (!loading && !hasLoadedOnce) {
+            setHasLoadedOnce(true);
+        }
+    }, [loading, hasLoadedOnce]);
+
+    const effectiveLoading = hasLoadedOnce ? false : loading;
+
+    useEffect(() => {
+        if (campaignId === null) return;
+
+        const interval = setInterval(() => {
+            reload();
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, [campaignId, reload]);
 
     useEffect(() => {
         setup();
@@ -43,6 +63,15 @@ export default function CampaignAdmin() {
                 };
                 setCampaignInfo(emptyCampaign);
             }
+        }
+    }
+
+    async function handleNavigateToDetails(playerId: number) {
+        try {
+            await APIPlayer.setMasterEditing(playerId, true);
+            navigate(`/campaign-player-admin/${campaign}/${playerId}`);
+        } catch {
+            console.log(error);
         }
     }
 
@@ -109,16 +138,14 @@ export default function CampaignAdmin() {
                         campaignId={campaignId}
                         campaignName={campaignInfo?.name ?? "(desconhecida)"}
                         items={items}
-                        loading={loading}
+                        loading={effectiveLoading}
                         reload={async () => reload()}
-                        navigateToDetails={(playerId: number) => {
-                            navigate(`/campaign-player-admin/${campaign}/${playerId}`);
-                        }}
+                        navigateToDetails={handleNavigateToDetails}
                     />
                 )}
 
                 {activeTab === "combats" && campaignId !== null && campaignInfo !== null && setCampaignInfo !== null && (
-                    <CampaignAdminCombatsTab 
+                    <CampaignAdminCombatsTab
                         campaignInfo={campaignInfo}
                         setCampaignInfo={setCampaignInfo}
                         players={items} />

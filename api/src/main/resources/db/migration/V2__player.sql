@@ -12,5 +12,6 @@ CREATE TABLE
         mp_current INTEGER DEFAULT 0,
         hp_current INTEGER DEFAULT 0,
         notes TEXT,
-        weapon_id TEXT
+        weapon_id TEXT,
+        master_editing BOOLEAN DEFAULT 0
     );

@@ -106,8 +106,10 @@
 .TintedImage {
   position: relative;
   display: inline-block;
-  width: 70px;   /* ajuste conforme necessário */
-  height: 70px;  /* ajuste conforme necessário */
+  width: 70px;
+  /* ajuste conforme necessário */
+  height: 70px;
+  /* ajuste conforme necessário */
   flex: 0 0 70px;
 }
 
@@ -136,28 +138,72 @@
 }
 
 /* ====== VARIANTE 1: via classes por cor ====== */
-.TintedImage--green .TintedImage__layer { background-color: rgb(26, 230, 103); }
-.TintedImage--red   .TintedImage__layer { background-color: rgb(227, 30, 25); }
-.TintedImage--blue  .TintedImage__layer { background-color: rgb(140, 255, 255); }
+.TintedImage--green .TintedImage__layer {
+  background-color: rgb(26, 230, 103);
+}
+
+.TintedImage--red .TintedImage__layer {
+  background-color: rgb(227, 30, 25);
+}
+
+.TintedImage--blue .TintedImage__layer {
+  background-color: rgb(140, 255, 255);
+}
 
 /* ====== VARIANTE 2: via CSS variable (opcional) ====== */
 .TintedImage[data-color] .TintedImage__layer {
   background-color: var(--picto-color, transparent);
 }
-.TintedImage[data-color="green"] { --picto-color: rgb(26, 230, 103); }
-.TintedImage[data-color="red"]   { --picto-color: rgb(227, 30, 25); }
-.TintedImage[data-color="blue"]  { --picto-color: rgb(140, 255, 255); }
+
+.TintedImage[data-color="green"] {
+  --picto-color: rgb(26, 230, 103);
+}
+
+.TintedImage[data-color="red"] {
+  --picto-color: rgb(227, 30, 25);
+}
+
+.TintedImage[data-color="blue"] {
+  --picto-color: rgb(140, 255, 255);
+}
 
 
 /* golden border */
 @keyframes gold-blink {
-  0% { box-shadow: 0 0 0 0 rgba(245,158,11,.9); }
-  50% { box-shadow: 0 0 0 6px rgba(245,158,11,0); }
-  100% { box-shadow: 0 0 0 0 rgba(245,158,11,.9); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, .9);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, .9);
+  }
 }
 
 .attack-glow {
   border: 2px solid #f59e0b;
   border-radius: 0.75rem;
   animation: gold-blink 1.4s ease-in-out infinite;
+}
+
+/* overlay */
+@keyframes half-turn {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(180deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-half-turn {
+  animation: half-turn 4s linear infinite;
 }

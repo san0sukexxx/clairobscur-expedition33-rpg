@@ -1,17 +1,15 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.*
+import com.example.demo.dto.MasterEditingRequest
 import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
-import com.example.demo.model.CampaignEvent
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
-import com.example.demo.repository.CampaignEventRepository
 import com.example.demo.repository.CampaignPlayerRepository
 import com.example.demo.repository.PlayerRepository
 import com.example.demo.repository.PlayerWeaponRepository
 import com.example.demo.service.FightService
-import com.example.demo.enums.CampaignEventType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -23,7 +21,6 @@ class PlayerController(
         private val playerWeaponRepository: PlayerWeaponRepository,
         private val battleRepository: BattleRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
-        private val campaignEventRepository: CampaignEventRepository,
         private val fightService: FightService
 ) {
 
@@ -52,14 +49,6 @@ class PlayerController(
                         CampaignPlayer(campaignId = req.campaign, playerId = playerId)
                 )
 
-                campaignEventRepository.save(
-                        CampaignEvent(
-                                campaignId = req.campaign,
-                                eventType = CampaignEventType.PLAYER_CREATED.value,
-                                eventValue = playerId.toString()
-                        )
-                )
-
                 return ResponseEntity.ok(CreatePlayerResponse(id = playerId))
         }
 
@@ -76,7 +65,7 @@ class PlayerController(
                                         playerSheet = PlayerSheetResponse.fromEntity(player),
                                         weapons = null,
                                         fightInfo = null,
-                                        latestEventID = null
+                                        isMasterEditing = player.isMasterEditing
                                 )
                         }
 
@@ -89,15 +78,6 @@ class PlayerController(
                 if (playerOpt.isEmpty) return ResponseEntity.notFound().build()
 
                 val entity = playerOpt.get()
-
-                val campaign =
-                        campaignPlayerRepository.findByPlayerId(id)
-                                ?: return ResponseEntity.badRequest().build()
-
-                val latestEvent =
-                        campaignEventRepository.findTopByCampaignIdOrderByIdDesc(
-                                campaign.campaignId
-                        )
 
                 val weapons =
                         playerWeaponRepository.findByPlayerId(id).map { pw ->
@@ -112,7 +92,7 @@ class PlayerController(
                                 playerSheet = PlayerSheetResponse.fromEntity(entity),
                                 weapons = weapons,
                                 fightInfo = fightInfo,
-                                latestEventID = latestEvent?.id
+                                isMasterEditing = entity.isMasterEditing
                         )
 
                 return ResponseEntity.ok(response)
@@ -143,6 +123,21 @@ class PlayerController(
                 p.weaponId = sheet.weaponId
 
                 playerRepository.save(p)
+
+                return ResponseEntity.ok().build()
+        }
+
+        @PutMapping("/{id}/master-editing")
+        fun setMasterEditing(
+                @PathVariable id: Int,
+                @RequestBody body: MasterEditingRequest
+        ): ResponseEntity<Void> {
+                val opt = playerRepository.findById(id)
+                if (opt.isEmpty) return ResponseEntity.notFound().build()
+
+                val player = opt.get()
+                player.isMasterEditing = body.isMasterEditing
+                playerRepository.save(player)
 
                 return ResponseEntity.ok().build()
         }

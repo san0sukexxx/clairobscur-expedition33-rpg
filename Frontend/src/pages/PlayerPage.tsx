@@ -15,7 +15,6 @@ import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
-import { MockAPIPlayer } from "../api/MockAPIPlayer";
 import { APIPictos } from "../api/APIPictos";
 import { APIBattle } from "../api/APIBattle";
 import { type PictoResponse, type BattleCharacterInfo } from "../api/ResponseModel";
@@ -33,9 +32,9 @@ import {
   countFailuresRolls
 } from "../utils/PlayerCalculator";
 import PanelModal from "../components/PanelModal";
-import { RefreshHelper } from "../utils/RefreshHelper";
 import { useToast } from "../components/Toast";
 import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
+import MasterEditingOverlay from "../components/MasterEditingOverlay"
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -50,7 +49,6 @@ export default function PlayerPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string | undefined>(undefined);
   const [modalBody, setModalBody] = useState<React.ReactNode>(null);
-  const refreshHelper = new RefreshHelper();
   const { showToast } = useToast();
   const { pathname } = useLocation();
   const isAdmin = !!matchPath(
@@ -75,32 +73,13 @@ export default function PlayerPage() {
     setup();
   }, []);
 
-  useEffect(() => {
-    onPlayerChange();
-  }, [player]);
-
-  function handleCombatMenuAction(action: CombatMenuAction) {
-    switch (action) {
-      case COMBAT_MENU_ACTIONS.Inventory:
-        setTab("inventario");
-        break;
-      case COMBAT_MENU_ACTIONS.Skills:
-        setTab("habilidades");
-        break;
-      case COMBAT_MENU_ACTIONS.Initiative:
-        rollInitiative();
-        break;
-      case COMBAT_MENU_ACTIONS.JoinBattle:
-        joinBattle();
-        break;
-      default:
-        break;
-    }
-  }
-
   return (
     <div className="min-h-dvh bg-base-200">
       <DiceBoard ref={diceBoardRef} />
+
+      {!isAdmin && player?.isMasterEditing && (
+        <MasterEditingOverlay />
+      )}
 
       <PanelModal
         open={modalOpen}
@@ -115,13 +94,13 @@ export default function PlayerPage() {
       {/* Navbar topo */}
       <div className="navbar bg-base-100 shadow sticky top-0 z-10">
         <div className="flex-1">
-          <Link
-            to={isAdmin ? "/campaign-admin/1" : `/character-sheet-list/${campaign}`}
-            className="flex items-center gap-2"
+          <button
+            onClick={() => handleNavigateBackToAdmin()}
+            className="flex items-center gap-2 text-lg font-bold hover:opacity-80 transition"
           >
-            <MdOutlineKeyboardBackspace />
-            <span className="text-lg font-bold">Ficha do Jogador</span>
-          </Link>
+            <MdOutlineKeyboardBackspace className="text-2xl" />
+            <span>Ficha do Jogador</span>
+          </button>
         </div>
       </div>
 
@@ -246,19 +225,19 @@ export default function PlayerPage() {
 
       createSheet();
     } else {
-      fetchInfo(parseInt(character));
+      return fetchInfo();
     }
 
   }
 
-  async function fetchInfo(character: number) {
+  async function fetchInfo() {
     try {
-      if (!campaign) return;
+      if (!campaign || !character) return;
       const campaignId = parseInt(campaign, 10);
 
       const [campaignInfo, playerResponse, pictosListResponse] = await Promise.all([
         APICampaign.get(campaignId),
-        APIPlayer.get(character),
+        APIPlayer.get(parseInt(character)),
         APIPictos.getPictosList(),
       ]);
 
@@ -268,27 +247,25 @@ export default function PlayerPage() {
 
       setLoading(false);
 
-      // TODO: implement
-      // refreshHelper.init(character, playerResponse.player, setPlayer, showToast);
-      // refreshHelper.refreshInfoLoop();
+      const interval = setInterval(() => {
+        checkPlayerLoop()
+      }, 2000)
+
+      return () => clearInterval(interval);
     } catch (e: any) {
       console.error("Erro ao carregar player:", e);
       setError("Erro ao carregar player: " + e?.message);
     }
   }
 
-  function onPlayerChange() {
-    if (!player) return;
-
-    const savePlayer = async () => {
-      try {
-        await MockAPIPlayer.save(player);
-      } catch (e) {
-        console.error("Erro ao salvar player:", e);
-      }
-    };
-
-    savePlayer();
+  async function checkPlayerLoop() {
+    try {
+      if (!character) return
+      const playerInfo = await APIPlayer.get(parseInt(character))
+      setPlayer(prev => (prev ? { ...prev, isMasterEditing: !!playerInfo.isMasterEditing } : prev))
+    } catch (e: any) {
+      console.error("Erro ao verificar editing:", e)
+    }
   }
 
   function rollInitiative() {
@@ -470,5 +447,39 @@ export default function PlayerPage() {
       timeoutDiceBoardRef.current = null;
     }
     setModalOpen(false);
+  }
+
+  function handleCombatMenuAction(action: CombatMenuAction) {
+    switch (action) {
+      case COMBAT_MENU_ACTIONS.Inventory:
+        setTab("inventario");
+        break;
+      case COMBAT_MENU_ACTIONS.Skills:
+        setTab("habilidades");
+        break;
+      case COMBAT_MENU_ACTIONS.Initiative:
+        rollInitiative();
+        break;
+      case COMBAT_MENU_ACTIONS.JoinBattle:
+        joinBattle();
+        break;
+      default:
+        break;
+    }
+  }
+
+  async function handleNavigateBackToAdmin() {
+    if (player == undefined || campaignInfo == undefined) { return; }
+
+    if (isAdmin) {
+      try {
+        await APIPlayer.setMasterEditing(player.id, false);
+        navigate(`/campaign-admin/${campaignInfo.id}`);
+      } catch {
+        console.log(error);
+      }
+    } else {
+      navigate(`/character-sheet-list/${campaign}`);
+    }
   }
 }

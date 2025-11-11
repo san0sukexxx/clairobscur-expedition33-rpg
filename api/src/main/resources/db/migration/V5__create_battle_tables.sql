@@ -1,13 +1,13 @@
 CREATE TABLE
-    battle (
+    IF NOT EXISTS battle (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         campaign_id INTEGER NOT NULL,
         battle_status TEXT NOT NULL,
-        current_turn_id INTEGER
+        FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE
     );
 
 CREATE TABLE
-    battle_character (
+    IF NOT EXISTS battle_character (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         battle_id INTEGER NOT NULL,
         external_id TEXT NOT NULL,
@@ -18,31 +18,37 @@ CREATE TABLE
         max_health_points INTEGER NOT NULL,
         magic_points INTEGER,
         max_magic_points INTEGER,
-        can_roll_initiative BOOLEAN NOT NULL DEFAULT 0
+        can_roll_initiative BOOLEAN NOT NULL DEFAULT 0,
+        FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE
     );
 
 CREATE TABLE
-    battle_initiative (
+    IF NOT EXISTS battle_initiative (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         battle_id INTEGER NOT NULL,
         battle_character_id INTEGER NOT NULL,
         initiative_value INTEGER NOT NULL,
         hability INTEGER NOT NULL,
-        play_first BOOLEAN NOT NULL DEFAULT 0
+        play_first BOOLEAN NOT NULL DEFAULT 0,
+        FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE,
+        FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE
     );
 
 CREATE TABLE
-    battle_status_effect (
+    IF NOT EXISTS battle_status_effect (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         battle_character_id INTEGER NOT NULL,
         effect_type TEXT NOT NULL,
-        ammount INTEGER NOT NULL
+        ammount INTEGER NOT NULL,
+        FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE
     );
 
 CREATE TABLE
-    battle_turn (
+    IF NOT EXISTS battle_turn (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         battle_id INTEGER NOT NULL,
         battle_character_id INTEGER NOT NULL,
-        play_order INTEGER NOT NULL
+        play_order INTEGER NOT NULL,
+        FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE,
+        FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE
     );

@@ -5,5 +5,5 @@ data class GetPlayerResponse(
         val playerSheet: PlayerSheetResponse?,
         val weapons: List<PlayerWeaponResponse>?,
         val fightInfo: FightInfoResponse?,
-        val latestEventID: Int?
+        val isMasterEditing: Boolean?
 )

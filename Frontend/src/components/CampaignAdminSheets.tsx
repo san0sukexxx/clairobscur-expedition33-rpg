@@ -109,8 +109,10 @@ export default function CampaignAdminSheets({
                                                     className="btn btn-primary btn-xs gap-1"
                                                     onClick={() => navigateToDetails(p.id)}
                                                 >
-                                                    <FaArrowRight /> Detalhes
+                                                    <FaArrowRight />
+                                                    {p.isMasterEditing ? "Editando" : "Detalhes"}
                                                 </button>
+
                                             </td>
                                         </tr>
                                     ))}

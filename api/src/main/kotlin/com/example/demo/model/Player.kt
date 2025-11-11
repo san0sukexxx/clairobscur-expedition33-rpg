@@ -16,5 +16,6 @@ data class Player(
         var mpCurrent: Int = 0,
         var hpCurrent: Int = 0,
         var notes: String? = null,
-        var weaponId: String? = null
+        var weaponId: String? = null,
+        @Column(name = "master_editing") var isMasterEditing: Boolean = false
 )

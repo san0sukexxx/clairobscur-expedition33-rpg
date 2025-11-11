@@ -38,7 +38,7 @@ class CampaignPlayerService(
                                 playerSheet = PlayerSheetResponse.fromEntity(p),
                                 weapons = weapons,
                                 fightInfo = null,
-                                latestEventID = null
+                                isMasterEditing = p.isMasterEditing
                         )
                 }
         }

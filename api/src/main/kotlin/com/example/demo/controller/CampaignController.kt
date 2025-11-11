@@ -6,7 +6,6 @@ import com.example.demo.dto.ListCampaignRequest
 import com.example.demo.dto.ListCampaignResponse
 import com.example.demo.model.Campaign
 import com.example.demo.model.CampaignCharacter
-import com.example.demo.repository.CampaignEventRepository
 import com.example.demo.repository.CampaignRepository
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -15,8 +14,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/campaigns")
 class CampaignController(
-        private val repository: CampaignRepository,
-        private val campaignEventRepository: CampaignEventRepository
+        private val repository: CampaignRepository
 ) {
     @PostMapping
     fun create(
@@ -56,14 +54,12 @@ class CampaignController(
         val opt = repository.findByIdWithCharacters(id)
         return if (opt.isPresent) {
             val c = opt.get()
-            val latestEvent = campaignEventRepository.findTopByCampaignIdOrderByIdDesc(id)
             ResponseEntity.ok(
                     GetCampaignResponse(
                             id = c.id,
                             name = c.name,
                             battleId = c.battleId,
-                            characters = c.characters.map { it.character },
-                            latestEventID = latestEvent?.id
+                            characters = c.characters.map { it.character }
                     )
             )
         } else {

@@ -7,6 +7,5 @@ import jakarta.persistence.*
 data class Battle(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int? = null,
         @Column(name = "campaign_id", nullable = false) val campaignId: Int,
-        @Column(name = "battle_status", nullable = false) var battleStatus: String,
-        @Column(name = "current_turn_id") var currentTurnId: Int? = null
+        @Column(name = "battle_status", nullable = false) var battleStatus: String
 )

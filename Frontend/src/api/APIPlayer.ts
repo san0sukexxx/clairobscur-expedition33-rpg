@@ -29,11 +29,15 @@ export interface GetPlayerResponse {
     playerSheet?: PlayerSheetResponse;
     weapons?: WeaponResponse[];
     fightInfo?: FightInfoResponse;
-    latestEventID?: number;
+    isMasterEditing?: boolean;
 }
 
 export interface UpdatePlayerInput {
     playerSheet: PlayerSheetResponse;
+}
+
+export interface SetMasterEditingInput {
+    isMasterEditing: boolean;
 }
 
 export class APIPlayer {
@@ -52,4 +56,12 @@ export class APIPlayer {
     static async update(id: number, input: UpdatePlayerInput): Promise<GetPlayerResponse> {
         return api.put<UpdatePlayerInput, GetPlayerResponse>(`players/${id}`, input);
     }
+
+    static async setMasterEditing(playerId: number, isMasterEditing: boolean): Promise<void> {
+        const input = {
+            isMasterEditing: isMasterEditing
+        }
+        return api.put<SetMasterEditingInput, void>(`players/${playerId}/master-editing`, input);
+    }
+    
 }
