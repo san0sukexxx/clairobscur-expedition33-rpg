@@ -3,15 +3,20 @@ package com.example.demo.service
 import com.example.demo.dto.AddBattleCharacterRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.model.BattleInitiative
+import com.example.demo.model.BattleLog
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleInitiativeRepository
+import com.example.demo.repository.BattleLogRepository
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BattleCharacterService(
         private val repository: BattleCharacterRepository,
-        private val initiativeRepository: BattleInitiativeRepository
+        private val initiativeRepository: BattleInitiativeRepository,
+        private val battleLogRepository: BattleLogRepository,
+        private val objectMapper: ObjectMapper
 ) {
     @Transactional
     fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
@@ -45,6 +50,22 @@ class BattleCharacterService(
 
             initiativeRepository.save(initiative)
         }
+
+        val eventJson =
+                objectMapper.writeValueAsString(
+                        mapOf(
+                                "battleCharacterId" to savedCharacter.id,
+                                "characterName" to savedCharacter.characterName,
+                                "characterType" to savedCharacter.characterType,
+                                "externalId" to savedCharacter.externalId,
+                                "isEnemy" to savedCharacter.isEnemy,
+                                "canRollInitiative" to savedCharacter.canRollInitiative
+                        )
+                )
+
+        battleLogRepository.save(
+                BattleLog(battleId = battleId, eventType = "ADD_CHARACTER", eventJson = eventJson)
+        )
 
         return savedCharacter.id!!
     }

@@ -103,6 +103,7 @@ class FightService(
                 val canRollInitiative = playerBattleEntity?.canRollInitiative ?: false
 
                 return FightInfoResponse(
+                        battleId = battleId,
                         playerBattleID = playerBattleID,
                         initiatives = initiatives,
                         characters = characters,

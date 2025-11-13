@@ -30,6 +30,7 @@ export interface GetPlayerResponse {
     weapons?: WeaponResponse[];
     fightInfo?: FightInfoResponse;
     isMasterEditing?: boolean;
+    lastBattleLogId?: number;
 }
 
 export interface UpdatePlayerInput {

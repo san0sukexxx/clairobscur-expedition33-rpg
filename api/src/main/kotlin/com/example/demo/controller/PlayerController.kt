@@ -1,14 +1,9 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.*
-import com.example.demo.dto.MasterEditingRequest
 import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
-import com.example.demo.repository.BattleCharacterRepository
-import com.example.demo.repository.BattleRepository
-import com.example.demo.repository.CampaignPlayerRepository
-import com.example.demo.repository.PlayerRepository
-import com.example.demo.repository.PlayerWeaponRepository
+import com.example.demo.repository.*
 import com.example.demo.service.FightService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,6 +16,7 @@ class PlayerController(
         private val playerWeaponRepository: PlayerWeaponRepository,
         private val battleRepository: BattleRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
+        private val battleLogRepository: BattleLogRepository,
         private val fightService: FightService
 ) {
 
@@ -65,7 +61,8 @@ class PlayerController(
                                         playerSheet = PlayerSheetResponse.fromEntity(player),
                                         weapons = null,
                                         fightInfo = null,
-                                        isMasterEditing = player.isMasterEditing
+                                        isMasterEditing = player.isMasterEditing,
+                                        lastBattleLogId = null
                                 )
                         }
 
@@ -86,13 +83,24 @@ class PlayerController(
 
                 val fightInfo = fightService.buildFightInfoForPlayer(id)
 
+                var lastBattleLogId: Int? = null
+                val currentBattleId = fightInfo?.battleId
+                if (currentBattleId != null) {
+                        lastBattleLogId =
+                                battleLogRepository
+                                        .findByBattleIdOrderByIdAsc(currentBattleId)
+                                        .lastOrNull()
+                                        ?.id
+                }
+
                 val response =
                         GetPlayerResponse(
                                 id = entity.id ?: 0,
                                 playerSheet = PlayerSheetResponse.fromEntity(entity),
                                 weapons = weapons,
                                 fightInfo = fightInfo,
-                                isMasterEditing = entity.isMasterEditing
+                                isMasterEditing = entity.isMasterEditing,
+                                lastBattleLogId = lastBattleLogId
                         )
 
                 return ResponseEntity.ok(response)
