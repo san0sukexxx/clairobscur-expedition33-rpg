@@ -103,3 +103,10 @@ export interface FightInfoResponse {
     battleStatus: BattleStatus;
     canRollInitiative: boolean;
 }
+
+export interface BattleLogResponse {
+    id: number;
+    eventType: string;
+    eventJson?: string;
+    battleId: number;
+}

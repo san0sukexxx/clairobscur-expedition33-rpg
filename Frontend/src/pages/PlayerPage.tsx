@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Link, useLocation, matchPath } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaUser, FaSkull, FaCheckCircle, FaDivide } from "react-icons/fa";
@@ -42,8 +42,6 @@ export default function PlayerPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [wasMasterEditing, setWasMasterEditing] = useState<boolean>(false);
-  const [wasInBattle, setWasInBattle] = useState<boolean>(false);
-  const prevInBattleRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<GetPlayerResponse | null>(null);
   const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
@@ -59,14 +57,7 @@ export default function PlayerPage() {
     pathname
   );
 
-  useEffect(() => {
-    if (!prevInBattleRef.current && wasInBattle) {
-      showToast("Uma batalha está em andamento");
-    } else if (prevInBattleRef.current && !wasInBattle) {
-      showToast("A batalha foi encerrada");
-    }
-    prevInBattleRef.current = wasInBattle;
-  }, [wasInBattle, showToast]);
+  const [lastBattleLog, setLastBattleLog] = useState<number | undefined>();
 
   const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -84,6 +75,57 @@ export default function PlayerPage() {
   useEffect(() => {
     setup();
   }, []);
+
+  const checkPlayerLoop = useCallback(async () => {
+    try {
+      if (!player) return;
+
+      const playerInfo = await APIPlayer.get(player.id, lastBattleLog);
+
+      checkBattleLog(playerInfo);
+
+      const hadBattle = player?.fightInfo != null;
+      const hasBattleNow = playerInfo?.fightInfo != null;
+
+      if (hadBattle !== hasBattleNow) {
+        showToast(
+          hasBattleNow
+            ? "Uma batalha está em andamento"
+            : "A batalha foi encerrada"
+        );
+
+        setPlayer(prev =>
+          prev
+            ? {
+              ...prev,
+              fightInfo: playerInfo?.fightInfo ?? undefined
+            }
+            : prev
+        );
+      }
+
+      setWasMasterEditing(prev => {
+        if (playerInfo.isMasterEditing && !prev) {
+          setPlayer(p => (p ? { ...p, isMasterEditing: true } : p));
+          return true;
+        } else if (!playerInfo.isMasterEditing && prev) {
+          setPlayer(playerInfo);
+          return false;
+        }
+        return prev;
+      });
+    } catch (e: any) {
+      console.error("Erro ao verificar editing:", e);
+    }
+  }, [player, lastBattleLog]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      void checkPlayerLoop();
+    }, 2000);
+
+    return () => clearInterval(id);
+  }, [checkPlayerLoop]);
 
   return (
     <div className="min-h-dvh bg-base-200">
@@ -237,7 +279,7 @@ export default function PlayerPage() {
 
       createSheet();
     } else {
-      return fetchInfo();
+      fetchInfo();
     }
 
   }
@@ -253,43 +295,70 @@ export default function PlayerPage() {
         APIPictos.getPictosList(),
       ]);
 
+      const lastBattleLog = getLastBattleLogFromPlayer(playerResponse);
+      setLastBattleLog(lastBattleLog);
+
       setPlayer(playerResponse);
       setPictos(pictosListResponse.pictos);
       setCampaignInfo(campaignInfo);
 
       setLoading(false);
-
-      const interval = setInterval(() => {
-        checkPlayerLoop()
-      }, 2000)
-
-      return () => clearInterval(interval);
     } catch (e: any) {
       console.error("Erro ao carregar player:", e);
       setError("Erro ao carregar player: " + e?.message);
     }
   }
 
-  async function checkPlayerLoop() {
-    try {
-      if (!character) return;
-      const playerInfo = await APIPlayer.get(parseInt(character));
+  function checkBattleLog(playerInfo: GetPlayerResponse) {
+    if (playerInfo.battleLogs && playerInfo.battleLogs.length > 0) {
 
-      setWasInBattle(playerInfo.fightInfo != null);
-
-      setWasMasterEditing(prev => {
-        if (playerInfo.isMasterEditing && !prev) {
-          setPlayer(p => (p ? { ...p, isMasterEditing: true } : p));
-          return true;
-        } else if (!playerInfo.isMasterEditing && prev) {
-          setPlayer(playerInfo);
-          return false;
+      for (const log of playerInfo.battleLogs) {
+        switch (log.eventType) {
+          case "ADD_CHARACTER":
+          case "REMOVE_CHARACTER":
+            applyFightInfoUpdate(playerInfo);
+            break;
         }
-        return prev;
-      });
-    } catch (e: any) {
-      console.error("Erro ao verificar editing:", e);
+      }
+
+      const lastBattleLog = getLastBattleLogFromPlayer(playerInfo);
+      setLastBattleLog(lastBattleLog);
     }
+  }
+
+  function applyFightInfoUpdate(playerInfo: GetPlayerResponse) {
+    setPlayer(prev =>
+      prev
+        ? {
+          ...prev,
+          fightInfo: prev.fightInfo
+            ? {
+              ...prev.fightInfo,
+              initiatives: playerInfo.fightInfo?.initiatives ?? prev.fightInfo.initiatives,
+              characters: playerInfo.fightInfo?.characters ?? prev.fightInfo.characters,
+              turns: playerInfo.fightInfo?.turns ?? prev.fightInfo.turns
+            }
+            : prev.fightInfo
+        }
+        : prev
+    );
+  }
+
+  function getLastBattleLogFromPlayer(playerInfo: GetPlayerResponse) {
+    if (playerInfo.battleLogs && playerInfo.battleLogs.length > 0) {
+
+      let lastId = 0;
+
+      for (const log of playerInfo.battleLogs) {
+        if (log.id > lastId) {
+          lastId = log.id;
+        }
+      }
+
+      return lastId;
+    }
+
+    return undefined;
   }
 
   function rollInitiative() {

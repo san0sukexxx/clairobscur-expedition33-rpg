@@ -1,5 +1,5 @@
 import { api } from "./api";
-import { type WeaponResponse, type FightInfoResponse } from "./ResponseModel";
+import { type WeaponResponse, type FightInfoResponse, type BattleLogResponse } from "./ResponseModel";
 
 export interface PlayerSheetResponse {
     name?: string;
@@ -30,7 +30,7 @@ export interface GetPlayerResponse {
     weapons?: WeaponResponse[];
     fightInfo?: FightInfoResponse;
     isMasterEditing?: boolean;
-    lastBattleLogId?: number;
+    battleLogs?: BattleLogResponse[];
 }
 
 export interface UpdatePlayerInput {
@@ -46,8 +46,12 @@ export class APIPlayer {
         return api.post<CreatePlayerInput, CreatePlayerResponse>("players", input);
     }
 
-    static async get(id: number): Promise<GetPlayerResponse> {
-        return api.get<GetPlayerResponse>(`players/${id}`);
+    static async get(id: number, lastBattleLog?: number): Promise<GetPlayerResponse> {
+        const query = lastBattleLog !== undefined
+            ? `?battleLogId=${lastBattleLog}`
+            : "";
+
+        return api.get<GetPlayerResponse>(`players/${id}${query}`);
     }
 
     static async list(): Promise<GetPlayerResponse[]> {
@@ -64,5 +68,5 @@ export class APIPlayer {
         }
         return api.put<SetMasterEditingInput, void>(`players/${playerId}/master-editing`, input);
     }
-    
+
 }

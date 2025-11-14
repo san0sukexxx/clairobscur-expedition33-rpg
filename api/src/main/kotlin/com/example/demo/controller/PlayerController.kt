@@ -1,6 +1,7 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.*
+import com.example.demo.model.BattleLog
 import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
 import com.example.demo.repository.*
@@ -61,8 +62,8 @@ class PlayerController(
                                         playerSheet = PlayerSheetResponse.fromEntity(player),
                                         weapons = null,
                                         fightInfo = null,
-                                        isMasterEditing = player.isMasterEditing,
-                                        lastBattleLogId = null
+                                        isMasterEditing = null,
+                                        battleLogs = null
                                 )
                         }
 
@@ -70,7 +71,11 @@ class PlayerController(
         }
 
         @GetMapping("/{id}")
-        fun getById(@PathVariable id: Int): ResponseEntity<GetPlayerResponse> {
+        fun getById(
+                @PathVariable id: Int,
+                @RequestParam(required = false) battleLogId: Int?
+        ): ResponseEntity<GetPlayerResponse> {
+
                 val playerOpt = playerRepository.findById(id)
                 if (playerOpt.isEmpty) return ResponseEntity.notFound().build()
 
@@ -83,24 +88,32 @@ class PlayerController(
 
                 val fightInfo = fightService.buildFightInfoForPlayer(id)
 
-                var lastBattleLogId: Int? = null
+                var battleLogs: List<BattleLog> = emptyList()
+
                 val currentBattleId = fightInfo?.battleId
                 if (currentBattleId != null) {
-                        lastBattleLogId =
-                                battleLogRepository
-                                        .findByBattleIdOrderByIdAsc(currentBattleId)
-                                        .lastOrNull()
-                                        ?.id
+
+                        val allLogs =
+                                battleLogRepository.findByBattleIdOrderByIdAsc(currentBattleId)
+
+                        battleLogs =
+                                if (battleLogId != null) {
+                                        allLogs.filter { log ->
+                                                log.id?.let { it > battleLogId } == true
+                                        }
+                                } else {
+                                        allLogs
+                                }
                 }
 
                 val response =
                         GetPlayerResponse(
-                                id = entity.id ?: 0,
+                                id = entity.id!!,
                                 playerSheet = PlayerSheetResponse.fromEntity(entity),
                                 weapons = weapons,
                                 fightInfo = fightInfo,
                                 isMasterEditing = entity.isMasterEditing,
-                                lastBattleLogId = lastBattleLogId
+                                battleLogs = battleLogs
                         )
 
                 return ResponseEntity.ok(response)

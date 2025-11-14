@@ -18,70 +18,83 @@ class BattleCharacterService(
         private val battleLogRepository: BattleLogRepository,
         private val objectMapper: ObjectMapper
 ) {
-    @Transactional
-    fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
-        val isEnemy = request.team.equals("B", ignoreCase = true)
+        @Transactional
+        fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
+                val isEnemy = request.team.equals("B", ignoreCase = true)
 
-        val entity =
-                BattleCharacter(
-                        battleId = battleId,
-                        externalId = request.externalId,
-                        characterName = request.characterName,
-                        characterType = request.characterType,
-                        isEnemy = isEnemy,
-                        healthPoints = request.healthPoints,
-                        maxHealthPoints = request.maxHealthPoints,
-                        magicPoints = request.magicPoints,
-                        maxMagicPoints = request.maxMagicPoints,
-                        canRollInitiative = request.canRollInitiative
-                )
+                val entity =
+                        BattleCharacter(
+                                battleId = battleId,
+                                externalId = request.externalId,
+                                characterName = request.characterName,
+                                characterType = request.characterType,
+                                isEnemy = isEnemy,
+                                healthPoints = request.healthPoints,
+                                maxHealthPoints = request.maxHealthPoints,
+                                magicPoints = request.magicPoints,
+                                maxMagicPoints = request.maxMagicPoints,
+                                canRollInitiative = request.canRollInitiative
+                        )
 
-        val savedCharacter = repository.save(entity)
+                val savedCharacter = repository.save(entity)
 
-        request.initiative?.let {
-            val initiative =
-                    BattleInitiative(
-                            battleId = battleId,
-                            battleCharacterId = savedCharacter.id!!,
-                            initiativeValue = it.initiativeValue,
-                            hability = it.hability,
-                            playFirst = it.playFirst
-                    )
+                request.initiative?.let {
+                        val initiative =
+                                BattleInitiative(
+                                        battleId = battleId,
+                                        battleCharacterId = savedCharacter.id!!,
+                                        initiativeValue = it.initiativeValue,
+                                        hability = it.hability,
+                                        playFirst = it.playFirst
+                                )
 
-            initiativeRepository.save(initiative)
-        }
+                        initiativeRepository.save(initiative)
+                }
 
-        val eventJson =
-                objectMapper.writeValueAsString(
-                        mapOf(
-                                "battleCharacterId" to savedCharacter.id,
-                                "characterName" to savedCharacter.characterName,
-                                "characterType" to savedCharacter.characterType,
-                                "externalId" to savedCharacter.externalId,
-                                "isEnemy" to savedCharacter.isEnemy,
-                                "canRollInitiative" to savedCharacter.canRollInitiative
+                val eventJson =
+                        objectMapper.writeValueAsString(
+                                mapOf(
+                                        "battleCharacterId" to savedCharacter.id,
+                                        "characterName" to savedCharacter.characterName,
+                                        "characterType" to savedCharacter.characterType,
+                                        "externalId" to savedCharacter.externalId,
+                                        "isEnemy" to savedCharacter.isEnemy,
+                                        "canRollInitiative" to savedCharacter.canRollInitiative
+                                )
+                        )
+
+                battleLogRepository.save(
+                        BattleLog(
+                                battleId = battleId,
+                                eventType = "ADD_CHARACTER",
+                                eventJson = eventJson
                         )
                 )
 
-        battleLogRepository.save(
-                BattleLog(battleId = battleId, eventType = "ADD_CHARACTER", eventJson = eventJson)
-        )
-
-        return savedCharacter.id!!
-    }
-
-    @Transactional
-    fun removeCharacter(id: Int) {
-        if (initiativeRepository.existsByBattleCharacterId(id)) {
-            initiativeRepository.deleteByBattleCharacterId(id)
+                return savedCharacter.id!!
         }
 
-        if (repository.existsById(id)) {
-            repository.deleteById(id)
-        }
-    }
+        @Transactional
+        fun removeCharacter(id: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
 
-    fun listCharacters(battleId: Int): List<BattleCharacter> {
-        return repository.findByBattleId(battleId)
-    }
+                val character = opt.get()
+
+                val battleId =
+                        character.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                repository.deleteById(id)
+
+                battleLogRepository.save(
+                        BattleLog(
+                                battleId = battleId,
+                                eventType = "REMOVE_CHARACTER",
+                                eventJson = null
+                        )
+                )
+        }
+        fun listCharacters(battleId: Int): List<BattleCharacter> {
+                return repository.findByBattleId(battleId)
+        }
 }

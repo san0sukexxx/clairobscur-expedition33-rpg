@@ -38,7 +38,8 @@ class CampaignPlayerService(
                                 playerSheet = PlayerSheetResponse.fromEntity(p),
                                 weapons = weapons,
                                 fightInfo = null,
-                                isMasterEditing = p.isMasterEditing
+                                isMasterEditing = null,
+                                battleLogs = null
                         )
                 }
         }
