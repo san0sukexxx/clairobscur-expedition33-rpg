@@ -1,12 +1,13 @@
 package com.example.demo.dto
 
-import com.example.demo.model.BattleCharacter
+import com.example.demo.model.BattleLog
 
 data class BattleWithDetailsResponse(
-    val id: Int,
-    val campaignId: Int,
-    val battleStatus: String,
-    val characters: List<BattleCharacterInfo>,
-    val initiatives: List<InitiativeResponse>,
-    val turns: List<BattleTurnResponse>
+        val id: Int,
+        val campaignId: Int,
+        val battleStatus: String,
+        val characters: List<BattleCharacterInfo>,
+        val initiatives: List<InitiativeResponse>,
+        val turns: List<BattleTurnResponse>,
+        val battleLogs: List<BattleLog>?
 )

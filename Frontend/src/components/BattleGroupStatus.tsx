@@ -1,4 +1,5 @@
 import React from "react";
+import { FaSkull } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
 import AnimatedStatBar from "./AnimatedStatBar";
@@ -41,68 +42,87 @@ export default function EnemiesStatus({
                     )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {characters.map((ch) => (
-                            <div
-                                key={ch.battleID}
-                                role={isAttacking ? "button" : undefined}
-                                onClick={() => {
-                                    if (isAttacking && onSelectTarget) onSelectTarget(ch);
-                                }}
-                                className={`rounded-xl bg-base-200/60 p-3 shadow-sm transition-all duration-200 
-                                    ${isAttacking ? "cursor-pointer hover:shadow-lg attack-glow" : "pointer-events-none"}`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="avatar">
-                                        <div className="w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200">
-                                            <img
-                                                src={ch.type == "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`}
-                                                alt={ch.name}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-baseline justify-between">
-                                            <p className="font-semibold">{ch.name}</p>
-                                        </div>
-                                    </div>
-                                </div>
+                        {characters.map((ch) => {
+                            const isDead = ch.healthPoints === 0;
 
-                                <div className="mt-3 space-y-2">
-                                    <div>
-                                        <div className="flex items-center justify-between text-xs uppercase">
-                                            <span className="opacity-70">HP</span>
-                                            <span className="font-mono">{ch.healthPoints}/{ch.maxHealthPoints}</span>
-                                        </div>
-                                        <AnimatedStatBar
-                                            value={pct(ch.healthPoints, ch.maxHealthPoints)}
-                                            label="HP"
-                                            fillClass="bg-error"
-                                            ghostClass="bg-error/30"
-                                        />
-                                    </div>
-
-                                    {ch.magicPoints !== undefined &&
-                                        ch.magicPoints !== null &&
-                                        ch.maxMagicPoints !== undefined &&
-                                        ch.maxMagicPoints !== null && (
-                                            <div>
-                                                <div className="flex items-center justify-between text-xs uppercase">
-                                                    <span className="opacity-70">MP</span>
-                                                    <span className="font-mono">
-                                                        {ch.magicPoints}/{ch.maxMagicPoints}
-                                                    </span>
-                                                </div>
-                                                <AnimatedStatBar
-                                                    value={pct(ch.magicPoints!, ch.maxMagicPoints!)}
-                                                    label="MP"
-                                                    fillClass="bg-info"
-                                                    ghostClass="bg-info/30"
+                            return (
+                                <div
+                                    key={ch.battleID}
+                                    role={isAttacking && !isDead ? "button" : undefined}
+                                    onClick={() => {
+                                        if (!isDead && isAttacking && onSelectTarget) onSelectTarget(ch);
+                                    }}
+                                    className={`
+                rounded-xl bg-base-200/60 p-3 shadow-sm transition-all duration-200
+                ${isDead ? "pointer-events-none opacity-60" : ""}
+                ${!isDead && isAttacking
+                                            ? "cursor-pointer hover:shadow-lg attack-glow"
+                                            : "pointer-events-none"
+                                        }
+            `}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="avatar">
+                                            <div className={`w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200 
+                                                ${isDead ? "grayscale" : ""}`}>
+                                                <img
+                                                    src={ch.type == "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`}
+                                                    alt={ch.name}
                                                 />
                                             </div>
-                                        )}
+                                        </div>
+
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
+                                                    {ch.name}
+                                                </p>
+
+                                                {isDead && (
+                                                    <FaSkull className="text-error" title="Morto" />
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-3 space-y-2">
+
+                                        <div>
+                                            <div className="flex items-center justify-between text-xs uppercase">
+                                                <span className="opacity-70">HP</span>
+                                                <span className="font-mono">{ch.healthPoints}/{ch.maxHealthPoints}</span>
+                                            </div>
+                                            <AnimatedStatBar
+                                                value={pct(ch.healthPoints, ch.maxHealthPoints)}
+                                                label="HP"
+                                                fillClass="bg-error"
+                                                ghostClass="bg-error/30"
+                                            />
+                                        </div>
+
+                                        {ch.magicPoints !== undefined &&
+                                            ch.magicPoints !== null &&
+                                            ch.maxMagicPoints !== undefined &&
+                                            ch.maxMagicPoints !== null && (
+                                                <div>
+                                                    <div className="flex items-center justify-between text-xs uppercase">
+                                                        <span className="opacity-70">MP</span>
+                                                        <span className="font-mono">
+                                                            {ch.magicPoints}/{ch.maxMagicPoints}
+                                                        </span>
+                                                    </div>
+                                                    <AnimatedStatBar
+                                                        value={pct(ch.magicPoints!, ch.maxMagicPoints!)}
+                                                        label="MP"
+                                                        fillClass="bg-info"
+                                                        ghostClass="bg-info/30"
+                                                    />
+                                                </div>
+                                            )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </div>

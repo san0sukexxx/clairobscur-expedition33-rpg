@@ -61,3 +61,25 @@ CREATE TABLE
         event_json TEXT,
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE
     );
+
+CREATE TABLE
+    IF NOT EXISTS attack (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        battle_id INTEGER NOT NULL,
+        total_power INTEGER NOT NULL,
+        target_battle_id INTEGER NOT NULL,
+        source_battle_id INTEGER NOT NULL,
+        is_resolved BOOLEAN DEFAULT 0,
+        FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE,
+        FOREIGN KEY (target_battle_id) REFERENCES battle_character (id) ON DELETE CASCADE,
+        FOREIGN KEY (source_battle_id) REFERENCES battle_character (id) ON DELETE CASCADE
+    );
+
+CREATE TABLE
+    IF NOT EXISTS attack_status_effect (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        attack_id INTEGER NOT NULL,
+        effect_type TEXT NOT NULL,
+        ammount INTEGER NOT NULL,
+        FOREIGN KEY (attack_id) REFERENCES attack (id) ON DELETE CASCADE
+    );

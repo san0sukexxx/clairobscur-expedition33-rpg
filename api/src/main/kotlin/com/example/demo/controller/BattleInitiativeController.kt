@@ -3,8 +3,11 @@ package com.example.demo.controller
 import com.example.demo.dto.CreateBattleInitiativeRequest
 import com.example.demo.dto.InitiativeResponse
 import com.example.demo.model.BattleInitiative
+import com.example.demo.model.BattleLog
 import com.example.demo.repository.BattleCharacterRepository
+import com.example.demo.repository.BattleLogRepository
 import com.example.demo.repository.InitiativeRepository
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -14,7 +17,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/battle-initiatives")
 class BattleInitiativeController(
         private val initiativeRepository: InitiativeRepository,
-        private val battleCharacterRepository: BattleCharacterRepository
+        private val battleLogRepository: BattleLogRepository,
+        private val battleCharacterRepository: BattleCharacterRepository,
+        private val objectMapper: ObjectMapper
 ) {
 
         @PostMapping
@@ -56,6 +61,26 @@ class BattleInitiativeController(
                                 value = saved.initiativeValue,
                                 hability = saved.hability
                         )
+
+                val eventJson =
+                        objectMapper.writeValueAsString(
+                                mapOf(
+                                        "battleId" to saved.battleId,
+                                        "battleCharacterId" to saved.battleCharacterId,
+                                        "initiativeValue" to saved.initiativeValue,
+                                        "hability" to saved.hability,
+                                        "playFirst" to saved.playFirst,
+                                        "isUpdate" to (existing != null)
+                                )
+                        )
+
+                battleLogRepository.save(
+                        BattleLog(
+                                battleId = bc.battleId,
+                                eventType = "SET_INITIATIVE",
+                                eventJson = eventJson
+                        )
+                )
 
                 val status = if (existing == null) HttpStatus.CREATED else HttpStatus.OK
                 return ResponseEntity.status(status).body(response)

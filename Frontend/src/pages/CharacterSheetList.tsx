@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import FloatingButton from "../components/FloatingButton";
-import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
+import { type GetPlayerResponse } from "../api/APIPlayer";
+import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { getCharacterLabelById } from "../utils/CharacterUtils";
 
@@ -11,9 +12,12 @@ export default function CharacterSheetList() {
   const { campaign } = useParams<{ campaign: string }>();
   const navigate = useNavigate();
 
-  const { items, loading, error, reload } = useApiListRaw<GetPlayerResponse>(() =>
-    APIPlayer.list()
-  );
+  const { items, loading, error, reload } =
+    useApiListRaw<GetPlayerResponse>(() => {
+      if (!campaign) return Promise.resolve([]);
+      return APICampaignPlayer.list(parseInt(campaign));
+    });
+
 
   function handleAddCharacter() {
     navigate(`/campaign-player/${campaign}`);

@@ -108,8 +108,7 @@ export default function CampaignAdmin() {
                     <div role="tablist" className="tabs tabs-bordered">
                         <button
                             role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "players" ? "tab-active font-semibold" : ""
-                                }`}
+                            className={`tab text-sm px-4 ${activeTab === "players" ? "tab-active font-semibold" : ""}`}
                             onClick={() => setActiveTab("players")}
                         >
                             <span className="flex items-center gap-2">
@@ -120,13 +119,28 @@ export default function CampaignAdmin() {
 
                         <button
                             role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "combats" ? "tab-active font-semibold" : ""
-                                }`}
+                            className={`tab text-sm px-4 ${activeTab === "combats" ? "tab-active font-semibold" : ""}`}
                             onClick={() => setActiveTab("combats")}
                         >
                             <span className="flex items-center gap-2">
                                 <FaShieldAlt />
                                 Combates
+                            </span>
+                        </button>
+
+                        {/* Nova aba de detalhes da campanha */}
+                        <button
+                            role="tab"
+                            className="tab text-sm px-4"
+                            onClick={() => {
+                                if (campaignId != null) {
+                                    navigate(`/edit-campaign-details/${campaignId}`);
+                                }
+                            }}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FaFileAlt />
+                                Detalhes
                             </span>
                         </button>
                     </div>
@@ -148,7 +162,8 @@ export default function CampaignAdmin() {
                     <CampaignAdminCombatsTab
                         campaignInfo={campaignInfo}
                         setCampaignInfo={setCampaignInfo}
-                        players={items} />
+                        players={items}
+                    />
                 )}
             </main>
         </div>

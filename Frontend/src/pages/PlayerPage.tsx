@@ -16,7 +16,7 @@ import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuA
 import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIPictos } from "../api/APIPictos";
-import { APIBattle } from "../api/APIBattle";
+import { APIBattle, type CreateAttackRequest } from "../api/APIBattle";
 import { type PictoResponse, type BattleCharacterInfo } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
@@ -27,13 +27,13 @@ import {
   countCriticalRolls,
   calculateCriticalMulti,
   diceTotal,
-  isCriticalFailureRoll,
   calculateFailureDiv,
   countFailuresRolls
 } from "../utils/PlayerCalculator";
 import PanelModal from "../components/PanelModal";
 import { useToast } from "../components/Toast";
 import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
+import { calculateAttackReceivedDamage } from "../utils/NpcCalculator";
 import MasterEditingOverlay from "../components/MasterEditingOverlay"
 
 export default function PlayerPage() {
@@ -115,7 +115,7 @@ export default function PlayerPage() {
         return prev;
       });
     } catch (e: any) {
-      console.error("Erro ao verificar editing:", e);
+      showToast("Erro ao verificar editing");
     }
   }, [player, lastBattleLog]);
 
@@ -287,7 +287,7 @@ export default function PlayerPage() {
   async function fetchInfo() {
     try {
       if (!campaign || !character) return;
-      const campaignId = parseInt(campaign, 10);
+      const campaignId = parseInt(campaign);
 
       const [campaignInfo, playerResponse, pictosListResponse] = await Promise.all([
         APICampaign.get(campaignId),
@@ -316,6 +316,10 @@ export default function PlayerPage() {
         switch (log.eventType) {
           case "ADD_CHARACTER":
           case "REMOVE_CHARACTER":
+          case "SET_INITIATIVE":
+          case "BATTLE_STARTED":
+          case "DAMAGE_DEALT":
+          case "TURN_ENDED":
             applyFightInfoUpdate(playerInfo);
             break;
         }
@@ -331,14 +335,7 @@ export default function PlayerPage() {
       prev
         ? {
           ...prev,
-          fightInfo: prev.fightInfo
-            ? {
-              ...prev.fightInfo,
-              initiatives: playerInfo.fightInfo?.initiatives ?? prev.fightInfo.initiatives,
-              characters: playerInfo.fightInfo?.characters ?? prev.fightInfo.characters,
-              turns: playerInfo.fightInfo?.turns ?? prev.fightInfo.turns
-            }
-            : prev.fightInfo
+          fightInfo: playerInfo.fightInfo ?? prev.fightInfo
         }
         : prev
     );
@@ -379,38 +376,38 @@ export default function PlayerPage() {
       const criticalMulti = calculateCriticalMulti(result)
       const rollTotal = diceTotal(result)
       const total = initiativeTotal(player, result)
-      const isCriticalFailure = isCriticalFailureRoll(result)
+      const failures = countFailuresRolls(result)
+      const failuresDiv = calculateFailureDiv(result)
 
       setModalTitle("Resultado da rolagem")
 
-      if (isCriticalFailure) {
-        setModalBody(
-          <div className="space-y-2">
+      setModalBody(
+        <div className="space-y-2">
+          <p>Rolagem: {rollTotal}</p>
+          {criticalRolls > 0 && (
+            <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
+              <FaCheckCircle className="w-6 h-6" />
+              Críticos: <b>{criticalRolls}</b>
+            </h3>
+          )}
+          {failures > 0 && (
             <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
               <FaSkull className="w-6 h-6" />
-              Falha crítica
+              Falhas críticas: <b>{failures}</b>
             </h3>
-            <h1 className="text-2xl font-bold">Total: {total}</h1>
-          </div>
-        )
-      } else {
-        setModalBody(
-          <div className="space-y-2">
-            <p>Rolagem: {rollTotal}</p>
-            {criticalRolls > 0 && (
-              <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
-                <FaCheckCircle className="w-6 h-6" />
-                Críticos: <b>{criticalRolls}</b>
-              </h3>
+          )}
+          <p>
+            Habilidade: <b>{player.playerSheet?.hability ?? 0}</b>
+            {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
+            {failures > 0 && (
+              <span className="inline-flex items-center gap-1 font-bold ml-2">
+                (<FaDivide className="w-4 h-4" /> {failuresDiv} )
+              </span>
             )}
-            <p>
-              Habilidade: <b>{player.playerSheet?.hability ?? 0}</b>
-              {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
-            </p>
-            <h1 className="text-2xl font-bold">Total: {total}</h1>
-          </div>
-        )
-      }
+          </p>
+          <h1 className="text-2xl font-bold">Total: {total}</h1>
+        </div>
+      )
 
       setModalOpen(true)
 
@@ -437,7 +434,7 @@ export default function PlayerPage() {
           }
         })
       } catch (err) {
-        console.error("Erro ao registrar iniciativa:", err)
+        showToast("Erro ao registrar iniciativa")
       }
 
       timeoutDiceBoardRef.current = setTimeout(() => {
@@ -468,11 +465,25 @@ export default function PlayerPage() {
           battleCharacterId: player.fightInfo?.playerBattleID ?? 0
         })
       } catch (e) {
-        console.error("Erro ao salvar player:", e);
+        showToast("Erro ao salvar player");
       }
     };
 
     joinBattleCall();
+  }
+
+  function endTurn() {
+    if (!player) return;
+
+    const endTurnCall = async () => {
+      try {
+        await APIBattle.endTurn(player.fightInfo?.playerBattleID ?? 0)
+      } catch (e) {
+        showToast("Erro ao terminar o turno:");
+      }
+    };
+
+    endTurnCall();
   }
 
   function handleSelectAttackTarget(target: BattleCharacterInfo) {
@@ -482,7 +493,7 @@ export default function PlayerPage() {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculateCriticalMulti(result)
       const rollTotal = diceTotal(result)
-      const weaponPower = calculateRawWeaponPower(player, weaponList, result)
+      const weaponPower = calculateRawWeaponPower(player, weaponList)
       const total = calculateBasicAttackDamage(player, weaponList, result)
       const failures = countFailuresRolls(result)
       const failuresDiv = calculateFailureDiv(result)
@@ -522,9 +533,48 @@ export default function PlayerPage() {
         </div>
       )
 
-      // TODO: call attack API
-
       setModalOpen(true)
+
+      try {
+        if (target.type == "npc") {
+          const totalDamageToNpc = calculateAttackReceivedDamage(target.id, total);
+
+          const attackInfo: CreateAttackRequest = {
+            totalDamage: totalDamageToNpc,
+            targetBattleId: target.battleID,
+            sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
+            // TODO:
+            // effects: [
+            //     {
+            //         effectType: "burn",
+            //         ammount: 5
+            //     }
+            // ]
+          }
+
+          await APIBattle.attack(attackInfo)
+        } else {
+          // const targetCharacter = player.fightInfo?.characters?.filter(ch => ch.battleID == target.battleID)
+
+          // const attackInfo: CreateAttackRequest = {
+          //   totalPower: total,
+          //   targetBattleId: target.battleID,
+          //   sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
+          //   // TODO:
+          //   // effects: [
+          //   //     {
+          //   //         effectType: "burn",
+          //   //         ammount: 5
+          //   //     }
+          //   // ]
+          // }
+
+          // await APIBattle.attack(attackInfo)
+        }
+
+      } catch (e) {
+        showToast("Erro ao atacar")
+      }
     });
 
     timeoutDiceBoardRef.current = setTimeout(() => {
@@ -555,6 +605,9 @@ export default function PlayerPage() {
         break;
       case COMBAT_MENU_ACTIONS.JoinBattle:
         joinBattle();
+        break;
+      case COMBAT_MENU_ACTIONS.EndTurn:
+        endTurn();
         break;
       default:
         break;

@@ -36,7 +36,6 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget }: 
     }, [currentCharacter]);
 
     function handleSelectAttackTarget(target: BattleCharacterInfo) {
-        // TODO: wait mode
         setIsAttacking(false);
         onSelectTarget?.(target);
     }
@@ -69,6 +68,10 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget }: 
 
             case COMBAT_MENU_ACTIONS.JoinBattle:
                 onMenuAction(COMBAT_MENU_ACTIONS.JoinBattle);
+                break;
+
+            case COMBAT_MENU_ACTIONS.EndTurn:
+                onMenuAction(COMBAT_MENU_ACTIONS.EndTurn);
                 break;
 
             case COMBAT_MENU_ACTIONS.FreeShot:

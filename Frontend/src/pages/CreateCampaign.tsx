@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { APICampaign } from "../api/APICampaign"; // ajuste o caminho conforme seu projeto
+import { useMemo, useState, useEffect } from "react";
+import { Link, useLocation, matchPath, useNavigate, useParams } from "react-router-dom";
+import { APICampaign } from "../api/APICampaign";
 
 type Item = { id: string; label: string; checked: boolean };
 
@@ -21,11 +21,22 @@ type CampaignForm = {
 export default function CreateCampaign() {
     const navigate = useNavigate();
 
+    const { pathname } = useLocation();
+    const isEdit = !!matchPath(
+        { path: "/edit-campaign-details/:campaign", end: true },
+        pathname
+    );
+
+    const { campaignId } = useParams<{ campaignId: string }>();
+
     const [campaign, setCampaign] = useState<CampaignForm>({
         name: "",
         characters: DEFAULT_ITEMS,
     });
 
+    const [lockedCharacterIds, setLockedCharacterIds] = useState<string[]>([]);
+
+    const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
     const [touched, setTouched] = useState(false);
 
@@ -45,18 +56,24 @@ export default function CreateCampaign() {
         campaign.name.trim().length >= 3 && selectedCount > 0 && !submitting;
 
     function toggleItem(id: string) {
-        setCampaign((prev) => ({
-            ...prev,
-            characters: prev.characters.map((i) =>
-                i.id === id ? { ...i, checked: !i.checked } : i
-            ),
-        }));
+        setCampaign((prev) => {
+            if (lockedCharacterIds.includes(id)) return prev;
+
+            return {
+                ...prev,
+                characters: prev.characters.map((i) =>
+                    i.id === id ? { ...i, checked: !i.checked } : i
+                ),
+            };
+        });
     }
 
     function toggleAll(checked: boolean) {
         setCampaign((prev) => ({
             ...prev,
-            characters: prev.characters.map((i) => ({ ...i, checked })),
+            characters: prev.characters.map((i) =>
+                lockedCharacterIds.includes(i.id) ? i : { ...i, checked }
+            ),
         }));
     }
 
@@ -67,14 +84,20 @@ export default function CreateCampaign() {
 
         setSubmitting(true);
         try {
-            const response = await APICampaign.create({
+            const campaignForm = {
                 name: campaign.name.trim(),
                 characters: campaign.characters
                     .filter((c) => c.checked)
                     .map((c) => c.id),
-            });
+            };
 
-            navigate(`/campaign-admin/${response.id}`);
+            if (isEdit) {
+                await APICampaign.edit(parseInt(campaignId ?? "0"), campaignForm);
+                navigate(`/campaign-admin/${campaignId}`);
+            } else {
+                const response = await APICampaign.create(campaignForm);
+                navigate(`/campaign-admin/${response.id}`);
+            }
         } catch (e) {
             console.error(e);
         } finally {
@@ -82,13 +105,22 @@ export default function CreateCampaign() {
         }
     }
 
+    useEffect(() => {
+        setup();
+    }, [campaignId]);
+
     return (
         <div className="min-h-dvh grid place-items-center bg-base-200 p-4">
             <form onSubmit={onSubmit} className="w-full max-w-md card bg-base-100 shadow-xl">
                 <div className="card-body gap-4">
-                    <h2 className="card-title text-primary">Criar Campanha</h2>
+                    <h2 className="card-title text-primary">
+                        {isEdit ? "Editar Campanha" : "Criar Campanha"}
+                    </h2>
 
-                    {/* Nome da campanha */}
+                    {error && (
+                        <div className="text-center text-error py-16">{error}</div>
+                    )}
+
                     <label className="form-control" onBlur={() => setTouched(true)}>
                         <span className="label-text">Nome da campanha</span>
                         <input
@@ -106,7 +138,6 @@ export default function CreateCampaign() {
                         )}
                     </label>
 
-                    {/* Ações de seleção */}
                     <div className="flex items-center justify-between mt-2">
                         <span className="text-sm opacity-70">
                             Personagens iniciais permitidos: <b>{selectedCount}</b> /{" "}
@@ -130,7 +161,6 @@ export default function CreateCampaign() {
                         </div>
                     </div>
 
-                    {/* Lista com checkboxes */}
                     <ul className="menu bg-base-200 rounded-box p-2 w-full">
                         {campaign.characters.map((item) => (
                             <li key={item.id}>
@@ -144,6 +174,7 @@ export default function CreateCampaign() {
                                         type="checkbox"
                                         className="checkbox checkbox-primary"
                                         checked={item.checked}
+                                        disabled={isEdit && lockedCharacterIds.includes(item.id)}
                                         onChange={() => toggleItem(item.id)}
                                     />
                                     <span>{item.label}</span>
@@ -152,7 +183,6 @@ export default function CreateCampaign() {
                         ))}
                     </ul>
 
-                    {/* Ações do formulário */}
                     <div className="card-actions justify-end mt-2">
                         <button
                             type="button"
@@ -166,7 +196,7 @@ export default function CreateCampaign() {
                             {submitting ? (
                                 <span className="loading loading-spinner loading-sm" />
                             ) : (
-                                "Criar campanha"
+                                isEdit ? "Editar campanha" : "Criar campanha"
                             )}
                         </button>
                     </div>
@@ -174,4 +204,28 @@ export default function CreateCampaign() {
             </form>
         </div>
     );
+
+    async function setup() {
+        try {
+            if (!isEdit) return;
+            if (!campaignId) return;
+
+            const campaignIdInt = parseInt(campaignId);
+            const campaignInfo = await APICampaign.get(campaignIdInt);
+
+            const updatedCharacters = DEFAULT_ITEMS.map((item) => ({
+                ...item,
+                checked: campaignInfo.characters.includes(item.id),
+            }));
+
+            setLockedCharacterIds(campaignInfo.characters);
+            setCampaign({
+                name: campaignInfo.name,
+                characters: updatedCharacters,
+            });
+        } catch (e: any) {
+            console.error("Erro ao carregar campanha:", e);
+            setError("Erro ao carregar campanha: " + e?.message);
+        }
+    }
 }

@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse } from "./ResponseModel"
+import { type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -11,6 +11,7 @@ export interface BattleWithDetailsResponse extends Battle {
     characters: BattleCharacterInfo[]
     initiatives: InitiativeResponse[]
     turns: BattleTurnResponse[]
+    battleLogs?: BattleLogResponse[];
 }
 
 export interface CreateBattleInput {
@@ -53,6 +54,35 @@ export interface CreateBattleTurnRequest {
     battleCharacterId: number
 }
 
+export interface CreateAttackRequest {
+    totalDamage?: number
+    totalPower?: number
+    targetBattleId: number
+    sourceBattleId: number
+    effects?: AttackStatusEffectRequest[]
+}
+
+export interface AttackStatusEffectRequest {
+    effectType: string
+    ammount: number
+}
+
+export interface GetAttacksResponse {
+    id: number
+    battleId: number
+    totalPower: number
+    targetBattleId: number
+    sourceBattleId: number
+    isResolved: boolean
+    effects: AttackStatusEffectResponse[]
+}
+
+export interface AttackStatusEffectResponse {
+    id: number
+    effectType: string
+    ammount: number
+}
+
 export class APIBattle {
     static async create(input: CreateBattleInput): Promise<number> {
         return api.post<CreateBattleInput, number>("battles", input)
@@ -62,8 +92,12 @@ export class APIBattle {
         return api.get<Battle[]>(`battles/campaign/${campaignId}`)
     }
 
-    static async getById(battleId: number): Promise<BattleWithDetailsResponse> {
-        return api.get<BattleWithDetailsResponse>(`battles/${battleId}`)
+    static async getById(battleId: number, lastBattleLog?: number): Promise<BattleWithDetailsResponse> {
+        const query = lastBattleLog !== undefined
+            ? `?battleLogId=${lastBattleLog}`
+            : "";
+
+        return api.get<BattleWithDetailsResponse>(`battles/${battleId}${query}`)
     }
 
     static async update(id: number, input: UpdateBattleInput): Promise<void> {
@@ -103,5 +137,17 @@ export class APIBattle {
 
     static async start(battleId: number, battleStatus: string): Promise<void> {
         await api.post<{ battleStatus: string }, void>(`battles/${battleId}/start`, { battleStatus })
+    }
+
+    static async attack(input: CreateAttackRequest): Promise<void> {
+        await api.post<CreateAttackRequest, void>("attacks", input)
+    }
+
+    static async getAttacks(battleId: number): Promise<GetAttacksResponse[]> {
+        return api.get<GetAttacksResponse[]>(`attacks/pending/${battleId}`)
+    }
+
+    static async endTurn(playerBattleId: number): Promise<void> {
+        await api.post<{}, void>(`battle-turns/${playerBattleId}/end`, {})
     }
 }

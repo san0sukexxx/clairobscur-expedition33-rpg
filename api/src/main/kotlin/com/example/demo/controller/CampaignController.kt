@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/campaigns")
-class CampaignController(
-        private val repository: CampaignRepository
-) {
+class CampaignController(private val repository: CampaignRepository) {
     @PostMapping
     fun create(
             @Valid @RequestBody request: ListCampaignRequest
@@ -76,5 +74,28 @@ class CampaignController(
         } else {
             ResponseEntity.notFound().build()
         }
+    }
+
+    @PutMapping("/{id}")
+    fun update(
+            @PathVariable id: Int,
+            @Valid @RequestBody request: ListCampaignRequest
+    ): ResponseEntity<Void> {
+        val opt = repository.findByIdWithCharacters(id)
+        if (!opt.isPresent) return ResponseEntity.notFound().build()
+
+        val campaign = opt.get()
+        campaign.name = request.name
+
+        campaign.characters.clear()
+        val newCharacters =
+                request.characters.map { ch ->
+                    CampaignCharacter(character = ch, campaign = campaign)
+                }
+        campaign.characters.addAll(newCharacters)
+
+        repository.save(campaign)
+
+        return ResponseEntity.noContent().build()
     }
 }

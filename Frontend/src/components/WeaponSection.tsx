@@ -1,5 +1,5 @@
 import { useRef, useMemo, useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaList, FaDice } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaList, FaDice, FaChartLine } from "react-icons/fa";
 import { GiStripedSword } from "react-icons/gi";
 import { APIPlayer } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
@@ -387,6 +387,10 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                     </button>
                   </div>
                   <div className="mt-1 text-center text-xs uppercase opacity-70">Level</div>
+
+                  <div className="flex items-center justify-center gap-1 text-sm font-medium text-neutral-400">
+                    ( {activeWeapon.power} <FaChartLine aria-hidden="true" />)
+                  </div>
                 </div>
               </div>
 
@@ -486,6 +490,12 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                             (equipada)
                           </span>
                         ) : null}
+
+                        <span className="ml-2 inline-flex items-center gap-1 text-sm font-medium text-neutral-400">
+                          ( {weaponDetails.attributes.power}
+                          <FaChartLine aria-hidden="true" className="text-neutral-400" />)
+                        </span>
+
                       </div>
 
                       <div className="shrink-0 flex items-center justify-center rounded-lg bg-black/40 p-2 ring-1 ring-neutral-500 max-h-30 md:col-start-1">
@@ -501,9 +511,20 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                         <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                           <div>
                             <div className="uppercase tracking-wide text-sm opacity-70 mb-1">PODER</div>
-                            <div className="text-4xl font-black leading-tight">
-                              // TODO
-                              {/* {displayWeaponPower(weaponDetails.attributes.power, w.level)} */}
+                            <div className="space-y-1">
+                              {displayWeaponPlusDices(weaponDetails.attributes.power, w.level) !== null && (
+                                <div className="flex items-center justify-center gap-1 text-2xl font-bold">
+                                  {displayWeaponPlusDices(weaponDetails.attributes.power, w.level)}
+                                  <FaDice aria-hidden="true" />
+                                </div>
+                              )}
+
+                              {displayWeaponPlusPower(weaponDetails.attributes.power, w.level) !== null && (
+                                <div className="flex items-center justify-center gap-1 text-2xl font-bold">
+                                  {displayWeaponPlusPower(weaponDetails.attributes.power, w.level)}
+                                  <GiStripedSword aria-hidden="true" />
+                                </div>
+                              )}
                             </div>
                           </div>
 

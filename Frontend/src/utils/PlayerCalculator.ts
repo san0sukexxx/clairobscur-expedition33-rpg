@@ -6,9 +6,9 @@ export function calculateMaxHP(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.resistance ?? 0) * 5;
 }
 
-export function calculateRawWeaponPower(player: GetPlayerResponse | null, weaponList: WeaponDTO[], diceResult: any): number {
+export function calculateRawWeaponPower(player: GetPlayerResponse | null, weaponList: WeaponDTO[]): number {
     if (player?.playerSheet?.weaponId == null) {
-        return (player?.playerSheet?.power ?? 0);
+        return 0;
     }
 
     const weaponDetails = weaponList.find(w => w.name == player.playerSheet?.weaponId);
@@ -24,7 +24,7 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     if (failures > 0) {
         playerPower = Math.floor(playerPower / failures);
     }
-    return playerPower + calculateRawWeaponPower(player, weaponList, diceResult) + total;
+    return playerPower + calculateRawWeaponPower(player, weaponList) + total;
 }
 
 export function calculateMaxMP(player: GetPlayerResponse | null): number {
@@ -47,17 +47,15 @@ export function rollCommandFoBasicAttack(player: GetPlayerResponse, weaponList: 
 }
 
 export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {
-    const isCriticalFailure = isCriticalFailureRoll(diceResult);
+    const total = diceTotal(diceResult);
+    const failures = calculateFailureDiv(diceResult);
+    var playerInitiative = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult);
 
-    if (isCriticalFailure) {
-        return 1;
+    if (failures > 0) {
+        playerInitiative = Math.floor(playerInitiative / failures);
     }
 
-    const total = diceTotal(diceResult);
-    const hability = player.playerSheet?.hability ?? 0;
-    const criticalMulti = calculateCriticalMulti(diceResult);
-
-    return total + (hability * criticalMulti);
+    return total + playerInitiative;
 }
 
 export function calculateCriticalMulti(diceResult: any) {

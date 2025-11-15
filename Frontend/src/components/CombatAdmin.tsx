@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser } from "react-icons/fa"
@@ -10,6 +10,7 @@ import { type BattleCharacterType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
+import AnimatedStatBar from "./AnimatedStatBar"
 
 export interface CombatEntity {
     rowId?: number
@@ -52,16 +53,21 @@ export default function CombatAdmin({
     const [bulkAdded, setBulkAdded] = useState<boolean>(false)
     const [confirmRemoveOpen, setConfirmRemoveOpen] = useState(false)
     const [removeTarget, setRemoveTarget] = useState<{ rowId: number; name: string } | null>(null)
+    const [lastBattleLog, setLastBattleLog] = useState<number | undefined>();
 
     const reloadBattleDetails = useCallback(async () => {
         if (!campaignInfo.battleId) return
         try {
-            const data = await APIBattle.getById(campaignInfo.battleId)
-            setBattleDetails(data)
+            const battleDetailsInfo = await APIBattle.getById(campaignInfo.battleId, lastBattleLog)
+            if (battleDetails == null) {
+                setBattleDetails(battleDetailsInfo)
+            } else {
+                checkBattleLog(battleDetailsInfo)
+            }
         } catch (error) {
             console.error("Erro ao carregar detalhes da batalha:", error)
         }
-    }, [campaignInfo.battleId, battleStatus])
+    }, [campaignInfo.battleId, battleStatus, lastBattleLog])
 
     useEffect(() => {
         reloadBattleDetails()
@@ -70,6 +76,15 @@ export default function CombatAdmin({
     useEffect(() => {
         setBattleStatus(initialStatus)
     }, [campaignInfo.id, initialStatus])
+
+
+    useEffect(() => {
+        const id = setInterval(() => {
+            void reloadBattleDetails();
+        }, 2000);
+
+        return () => clearInterval(id);
+    }, [reloadBattleDetails]);
 
     useEffect(() => {
         if (campaignInfo.battleId == undefined
@@ -324,6 +339,8 @@ export default function CombatAdmin({
                                     <tr>
                                         <th></th>
                                         <th>Nome</th>
+                                        <th>Vida</th>
+                                        <th>Mana</th>
                                         <th>Pronto?</th>
                                         <th className="w-1/6 text-right">Ações</th>
                                     </tr>
@@ -332,8 +349,43 @@ export default function CombatAdmin({
                                     {members.map((m) => (
                                         <tr key={m.rowId ?? m.externalId}>
                                             <td>{renderAvatarCell(m)}</td>
+
                                             <td>{m.name}</td>
+
+                                            {/* VIDA */}
+                                            <td className="min-w-[120px]">
+                                                <div className="text-xs font-mono mb-1">
+                                                    {m.currentHp}/{m.maxHp}
+                                                </div>
+                                                <AnimatedStatBar
+                                                    value={Math.round((m.currentHp / m.maxHp) * 100)}
+                                                    label="HP"
+                                                    fillClass="bg-error"
+                                                    ghostClass="bg-error/30"
+                                                />
+                                            </td>
+
+                                            {/* MANA */}
+                                            <td className="min-w-[120px]">
+                                                {m.currentMp !== undefined && m.maxMp !== undefined ? (
+                                                    <>
+                                                        <div className="text-xs font-mono mb-1">
+                                                            {m.currentMp}/{m.maxMp}
+                                                        </div>
+                                                        <AnimatedStatBar
+                                                            value={Math.round((m.currentMp / m.maxMp) * 100)}
+                                                            label="MP"
+                                                            fillClass="bg-info"
+                                                            ghostClass="bg-info/30"
+                                                        />
+                                                    </>
+                                                ) : (
+                                                    <span className="opacity-60">—</span>
+                                                )}
+                                            </td>
+
                                             <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
+
                                             <td className="text-right">
                                                 <button
                                                     className="btn btn-xs btn-error"
@@ -567,4 +619,56 @@ export default function CombatAdmin({
             {renderRemoveConfirmModal()}
         </>
     )
+
+    function checkBattleLog(battleInfo: BattleWithDetailsResponse) {
+        if (battleInfo.battleLogs && battleInfo.battleLogs.length > 0) {
+
+            for (const log of battleInfo.battleLogs) {
+                switch (log.eventType) {
+                    case "ADD_CHARACTER":
+                    case "REMOVE_CHARACTER":
+                    case "SET_INITIATIVE":
+                    case "BATTLE_STARTED":
+                    case "DAMAGE_DEALT":
+                    case "TURN_ENDED":
+                        applyFightInfoUpdate(battleInfo);
+                        break;
+                }
+            }
+
+            const lastBattleLog = getLastBattleLogFromBattle(battleInfo);
+            setLastBattleLog(lastBattleLog);
+        }
+    }
+
+    function applyFightInfoUpdate(battleInfo: BattleWithDetailsResponse) {
+        setBattleDetails(prev =>
+            prev
+                ? {
+                    ...prev,
+                    initiatives: battleInfo.initiatives ?? prev.initiatives,
+                    characters: battleInfo.characters ?? prev.characters,
+                    turns: battleInfo.turns ?? prev.turns,
+                    battleLogs: battleInfo.battleLogs ?? prev.battleLogs
+                }
+                : prev
+        );
+    }
+
+    function getLastBattleLogFromBattle(battleInfo: BattleWithDetailsResponse) {
+        if (battleInfo.battleLogs && battleInfo.battleLogs.length > 0) {
+
+            let lastId = 0;
+
+            for (const log of battleInfo.battleLogs) {
+                if (log.id > lastId) {
+                    lastId = log.id;
+                }
+            }
+
+            return lastId;
+        }
+
+        return undefined;
+    }
 }

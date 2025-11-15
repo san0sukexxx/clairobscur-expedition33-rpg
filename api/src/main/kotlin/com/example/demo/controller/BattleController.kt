@@ -7,13 +7,9 @@ import com.example.demo.dto.InitiativeResponse
 import com.example.demo.dto.UpdateBattleStatusRequest
 import com.example.demo.dto.UseBattleRequest
 import com.example.demo.model.Battle
+import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleTurn
-import com.example.demo.repository.BattleCharacterRepository
-import com.example.demo.repository.BattleInitiativeRepository
-import com.example.demo.repository.BattleRepository
-import com.example.demo.repository.BattleTurnRepository
-import com.example.demo.repository.CampaignRepository
-import com.example.demo.repository.PlayerRepository
+import com.example.demo.repository.*
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -26,11 +22,15 @@ class BattleController(
         private val battleCharacterRepository: BattleCharacterRepository,
         private val playerRepository: PlayerRepository,
         private val battleInitiativeRepository: BattleInitiativeRepository,
+        private val battleLogRepository: BattleLogRepository,
         private val battleTurnRepository: BattleTurnRepository
 ) {
 
     @GetMapping("/{battleId}")
-    fun getBattleById(@PathVariable battleId: Int): ResponseEntity<BattleWithDetailsResponse> {
+    fun getBattleById(
+            @PathVariable battleId: Int,
+            @RequestParam(required = false) battleLogId: Int?
+    ): ResponseEntity<BattleWithDetailsResponse> {
         val opt = battleRepository.findById(battleId)
         if (!opt.isPresent) return ResponseEntity.notFound().build()
 
@@ -76,13 +76,24 @@ class BattleController(
                 }
 
         val turns =
-                battleTurnRepository.findByBattleId(battleId).map { t ->
+                battleTurnRepository.findByBattleIdOrderByPlayOrderAsc(battleId).map { t ->
                     BattleTurnResponse(
                             id = t.id!!,
                             battleId = t.battleId,
                             playOrder = t.playOrder,
                             battleCharacterId = t.battleCharacterId
                     )
+                }
+
+        var battleLogs: List<BattleLog> = emptyList()
+
+        val allLogs = battleLogRepository.findByBattleIdOrderByIdAsc(battleId)
+
+        battleLogs =
+                if (battleLogId != null) {
+                    allLogs.filter { log -> log.id?.let { it > battleLogId } == true }
+                } else {
+                    allLogs
                 }
 
         val response =
@@ -92,7 +103,8 @@ class BattleController(
                         battleStatus = battle.battleStatus,
                         characters = characters,
                         initiatives = initiatives,
-                        turns = turns
+                        turns = turns,
+                        battleLogs = battleLogs
                 )
 
         return ResponseEntity.ok(response)
@@ -213,6 +225,10 @@ class BattleController(
             if (turnsToSave.isNotEmpty()) {
                 battleTurnRepository.saveAll(turnsToSave)
             }
+
+            battleLogRepository.save(
+                    BattleLog(battleId = battleId, eventType = "BATTLE_STARTED", eventJson = null)
+            )
         }
 
         battle.battleStatus = body.battleStatus

@@ -91,7 +91,7 @@ class FightService(
                         }
 
                 val turns =
-                        battleTurnRepository.findByBattleId(battleId).map { t ->
+                        battleTurnRepository.findByBattleIdOrderByPlayOrderAsc(battleId).map { t ->
                                 BattleTurnResponse(
                                         id = t.id!!,
                                         battleId = t.battleId,

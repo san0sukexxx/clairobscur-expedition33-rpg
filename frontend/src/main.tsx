@@ -21,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/", element: <App /> },
       { path: "/master", element: <MasterPage /> },
       { path: "/create-campaign", element: <CreateCampaign /> },
+      { path: "/edit-campaign-details/:campaignId", element: <CreateCampaign /> },
       { path: "/campaign-admin/:campaign", element: <CampaignAdmin /> },
       { path: "/campaign-player/:campaign/:character", element: <PlayerPage /> },
       { path: "/campaign-player-admin/:campaign/:character", element: <PlayerPage /> },

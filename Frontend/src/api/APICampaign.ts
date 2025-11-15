@@ -40,4 +40,8 @@ export class APICampaign {
     await api.delete<void>(`campaigns/${id}`);
     return true;
   }
+
+  static async edit(id: number, input: Partial<CreateCampaignInput>): Promise<number> {
+    return await api.put<Partial<CreateCampaignInput>, number>(`campaigns/${id}`, input);
+  }
 }
