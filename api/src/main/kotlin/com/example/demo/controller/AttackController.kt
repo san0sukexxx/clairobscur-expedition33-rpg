@@ -55,6 +55,14 @@ class AttackController(
                                         )
                                 )
                         }
+
+                        battleLogRepository.save(
+                                BattleLog(
+                                        battleId = sourceBC.battleId,
+                                        eventType = "ATTACK_PENDING",
+                                        eventJson = null
+                                )
+                        )
                 } else if (body.totalDamage != null) {
                         val targetBC =
                                 battleCharacterRepository.findById(body.targetBattleId).orElse(null)

@@ -8,4 +8,9 @@ import org.springframework.stereotype.Repository
 interface AttackRepository : JpaRepository<Attack, Int> {
     fun findByBattleId(battleId: Int): List<Attack>
     fun findByBattleIdAndIsResolvedFalse(battleId: Int): List<Attack>
+    
+    fun findByBattleIdAndTargetBattleIdAndIsResolvedFalse(
+        battleId: Int,
+        targetBattleId: Int
+    ): List<Attack>
 }

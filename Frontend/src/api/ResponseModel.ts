@@ -6,6 +6,8 @@ export type StatusType =
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy";
 
+
+export type DefenseOption = "block" | "dodge" | "counter" | "take";
 export type PictoColor = "green" | "red" | "blue";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";
@@ -102,6 +104,16 @@ export interface FightInfoResponse {
     turns?: BattleTurnResponse[];
     battleStatus: BattleStatus;
     canRollInitiative: boolean;
+    pendingAttacks?: AttackResponse[];
+}
+
+export interface AttackResponse {
+    id: number;
+    battleId: number;
+    totalPower: number;
+    targetBattleId: number;
+    sourceBattleId: number;
+    isResolved: boolean;
 }
 
 export interface BattleLogResponse {
@@ -109,4 +121,10 @@ export interface BattleLogResponse {
     eventType: string;
     eventJson?: string;
     battleId: number;
+}
+
+export interface AttackStatusEffectResponse {
+    id: number
+    effectType: string
+    ammount: number
 }

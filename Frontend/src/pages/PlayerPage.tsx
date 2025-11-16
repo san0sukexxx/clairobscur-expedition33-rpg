@@ -17,24 +17,29 @@ import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../ap
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIPictos } from "../api/APIPictos";
 import { APIBattle, type CreateAttackRequest } from "../api/APIBattle";
-import { type PictoResponse, type BattleCharacterInfo } from "../api/ResponseModel";
+import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
   rollCommandForInitiative,
   rollCommandFoBasicAttack,
-  initiativeTotal,
-  countCriticalRolls,
-  calculateCriticalMulti,
-  diceTotal,
-  calculateFailureDiv,
-  countFailuresRolls
+  initiativeTotal
 } from "../utils/PlayerCalculator";
+
+import {
+  calculateCriticalMulti,
+  calculateFailureDiv,
+  diceTotal,
+  countCriticalRolls,
+  countFailuresRolls
+} from "../utils/DiceCalculator";
+
 import PanelModal from "../components/PanelModal";
 import { useToast } from "../components/Toast";
 import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
 import { calculateAttackReceivedDamage } from "../utils/NpcCalculator";
 import MasterEditingOverlay from "../components/MasterEditingOverlay"
+import PendingAttacksModal from "../components/PendingAttacksModal"
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -134,6 +139,11 @@ export default function PlayerPage() {
       {!isAdmin && player?.isMasterEditing && (
         <MasterEditingOverlay />
       )}
+
+      <PendingAttacksModal
+        player={player}
+        onSelectDefense={handleSelectDefense}
+      />
 
       <PanelModal
         open={modalOpen}
@@ -320,6 +330,7 @@ export default function PlayerPage() {
           case "BATTLE_STARTED":
           case "DAMAGE_DEALT":
           case "TURN_ENDED":
+          case "ATTACK_PENDING":
             applyFightInfoUpdate(playerInfo);
             break;
         }
@@ -627,5 +638,9 @@ export default function PlayerPage() {
     } else {
       navigate(`/character-sheet-list/${campaign}`);
     }
+  }
+
+  function handleSelectDefense(attack: AttackResponse, defense: DefenseOption) {
+    console.log("Defesa escolhida:", defense, "para o ataque", attack.id);
   }
 }

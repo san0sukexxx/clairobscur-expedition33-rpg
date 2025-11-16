@@ -1,6 +1,12 @@
 import { type NPCInfo } from "../api/ResponseModel"
 import { getNpcById } from "../data/NPCsList"
 
+import {
+    calculateCriticalMulti,
+    calculateFailureDiv,
+    diceTotal
+} from "./DiceCalculator";
+
 export function randomizeNpcInitiativeTotal(npc: NPCInfo) {
     const diceResult = Math.floor(Math.random() * 6) + 1
 
@@ -34,4 +40,20 @@ export function calculateAttackReceivedDamage(id: string, damage: number) {
 
     const totalDefense = randomizeNpcDefenseTotal(npcInfo);
     return Math.max(1, damage - totalDefense)
+}
+
+export function calculateNpcAttackPower(id: string, diceResult: any): number {
+    const npcInfo = getNpcById(id)
+    const total = diceTotal(diceResult);
+    const failures = calculateFailureDiv(diceResult)
+    var npcPower = (npcInfo?.power ?? 0) * calculateCriticalMulti(diceResult);
+
+    if (failures > 0) {
+        npcPower = Math.floor(npcPower / failures);
+    }
+    return npcPower + total;
+}
+
+export function rollCommandForNpcInitiative(id: string) {
+    return "1d6";
 }

@@ -3,14 +3,15 @@ import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBatt
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser } from "react-icons/fa"
 import { getCharacterLabelById } from "../utils/CharacterUtils"
-import { getNPCMaxHealth, randomizeNpcInitiativeTotal } from "../utils/NpcCalculator"
+import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateAttackReceivedDamage } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
-import { type BattleCharacterType } from "../api/ResponseModel"
+import { type BattleCharacterType, type BattleCharacterInfo } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
-import { type BattleWithDetailsResponse } from "../api/APIBattle"
+import { type BattleWithDetailsResponse, type CreateAttackRequest } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
 import AnimatedStatBar from "./AnimatedStatBar"
+import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 
 export interface CombatEntity {
     rowId?: number
@@ -54,6 +55,10 @@ export default function CombatAdmin({
     const [confirmRemoveOpen, setConfirmRemoveOpen] = useState(false)
     const [removeTarget, setRemoveTarget] = useState<{ rowId: number; name: string } | null>(null)
     const [lastBattleLog, setLastBattleLog] = useState<number | undefined>();
+    const [isSelectingTarget, setIsSelectingTarget] = useState(false)
+    const [attackType, setAttackType] = useState<string | null>(null)
+    const diceBoardRef = useRef<DiceBoardRef>(null)
+    const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const reloadBattleDetails = useCallback(async () => {
         if (!campaignInfo.battleId) return
@@ -319,6 +324,29 @@ export default function CombatAdmin({
         return entity.name
     }
 
+    function renderAttackOptions() {
+        if (!isCurrentTurnNPC()) {
+            return;
+        }
+
+        return (
+            <div className="card bg-base-200 shadow-inner flex-1">
+                <div className="card-body gap-4">
+                    <div className="flex flex-col items-start">
+                        <div className="text-lg font-semibold">Turno do NPC</div>
+                        <div className="text-md font-normal opacity-50">O que ele vai fazer?</div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                        <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("basic")}>
+                            Ataque básico
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     function renderTeamCard(title: string, teamKey: TeamKey, members: CombatEntity[]) {
         return (
             <div className="card bg-base-200 shadow-inner flex-1">
@@ -346,56 +374,64 @@ export default function CombatAdmin({
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {members.map((m) => (
-                                        <tr key={m.rowId ?? m.externalId}>
-                                            <td>{renderAvatarCell(m)}</td>
+                                    {members.map((m) => {
+                                        const isRowSelectable = isSelectingTarget && m.currentHp > 0
 
-                                            <td>{m.name}</td>
+                                        return (
+                                            <tr
+                                                key={m.rowId ?? m.externalId}
+                                                className={isRowSelectable ? "attack-glow cursor-pointer" : ""}
+                                                onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
+                                            >
+                                                <td>{renderAvatarCell(m)}</td>
 
-                                            {/* VIDA */}
-                                            <td className="min-w-[120px]">
-                                                <div className="text-xs font-mono mb-1">
-                                                    {m.currentHp}/{m.maxHp}
-                                                </div>
-                                                <AnimatedStatBar
-                                                    value={Math.round((m.currentHp / m.maxHp) * 100)}
-                                                    label="HP"
-                                                    fillClass="bg-error"
-                                                    ghostClass="bg-error/30"
-                                                />
-                                            </td>
+                                                <td>{m.name}</td>
 
-                                            {/* MANA */}
-                                            <td className="min-w-[120px]">
-                                                {m.currentMp !== undefined && m.maxMp !== undefined ? (
-                                                    <>
-                                                        <div className="text-xs font-mono mb-1">
-                                                            {m.currentMp}/{m.maxMp}
-                                                        </div>
-                                                        <AnimatedStatBar
-                                                            value={Math.round((m.currentMp / m.maxMp) * 100)}
-                                                            label="MP"
-                                                            fillClass="bg-info"
-                                                            ghostClass="bg-info/30"
-                                                        />
-                                                    </>
-                                                ) : (
-                                                    <span className="opacity-60">—</span>
-                                                )}
-                                            </td>
+                                                <td className="min-w-[120px]">
+                                                    <div className="text-xs font-mono mb-1">
+                                                        {m.currentHp}/{m.maxHp}
+                                                    </div>
+                                                    <AnimatedStatBar
+                                                        value={Math.round((m.currentHp / m.maxHp) * 100)}
+                                                        label="HP"
+                                                        fillClass="bg-error"
+                                                        ghostClass="bg-error/30"
+                                                    />
+                                                </td>
 
-                                            <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
+                                                <td className="min-w-[120px]">
+                                                    {m.currentMp !== undefined && m.maxMp !== undefined ? (
+                                                        <>
+                                                            <div className="text-xs font-mono mb-1">
+                                                                {m.currentMp}/{m.maxMp}
+                                                            </div>
+                                                            <AnimatedStatBar
+                                                                value={Math.round((m.currentMp / m.maxMp) * 100)}
+                                                                label="MP"
+                                                                fillClass="bg-info"
+                                                                ghostClass="bg-info/30"
+                                                            />
+                                                        </>
+                                                    ) : (
+                                                        <span className="opacity-60">—</span>
+                                                    )}
+                                                </td>
 
-                                            <td className="text-right">
-                                                <button
-                                                    className="btn btn-xs btn-error"
-                                                    onClick={() => openRemoveConfirm(m.rowId, m.name)}
-                                                >
-                                                    Remover
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                                <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
+
+                                                <td className="text-right">
+                                                    {!isRowSelectable && (
+                                                        <button
+                                                            className="btn btn-xs btn-error"
+                                                            onClick={() => openRemoveConfirm(m.rowId, m.name)}
+                                                        >
+                                                            Remover
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
                                 </tbody>
                             </table>
                         </div>
@@ -565,6 +601,8 @@ export default function CombatAdmin({
 
     return (
         <>
+            <DiceBoard ref={diceBoardRef} />
+
             <div className="card bg-base-100 shadow">
                 <div className="card-body gap-6">
                     <div className="flex flex-col items-start gap-2">
@@ -609,6 +647,7 @@ export default function CombatAdmin({
                         isStarted={battleStatus == "started"} />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {renderAttackOptions()}
                         {renderTeamCard("Time A", "A", teamA)}
                         {renderTeamCard("Time B", "B", teamB)}
                     </div>
@@ -631,6 +670,7 @@ export default function CombatAdmin({
                     case "BATTLE_STARTED":
                     case "DAMAGE_DEALT":
                     case "TURN_ENDED":
+                    case "ATTACK_PENDING":
                         applyFightInfoUpdate(battleInfo);
                         break;
                 }
@@ -670,5 +710,60 @@ export default function CombatAdmin({
         }
 
         return undefined;
+    }
+
+    function getActiveTurnCharacter(): BattleCharacterInfo | undefined {
+        if (battleDetails?.turns == undefined || battleDetails?.turns.length == 0) {
+            return undefined;
+        }
+
+        const turn = battleDetails.turns.find(t => t.playOrder == 1);
+        return battleDetails.characters.find(c => c.battleID == turn?.battleCharacterId)
+    }
+
+    function isCurrentTurnNPC() {
+        const character = getActiveTurnCharacter()
+        return character?.type == "npc"
+    }
+
+    function npcAttackTapped(type: string) {
+        setAttackType(type)
+        setIsSelectingTarget(true)
+    }
+
+    function handleTargetSelected(targetEntity: CombatEntity) {
+        if (!isSelectingTarget) return
+        setIsSelectingTarget(false)
+
+        const character = getActiveTurnCharacter()
+        const npcId = character?.id ?? ""
+
+        diceBoardRef.current?.roll(rollCommandForNpcInitiative(npcId), async (result) => {
+            var attackInfo: CreateAttackRequest = {
+                targetBattleId: targetEntity.rowId ?? 0,
+                sourceBattleId: character?.battleID ?? 0,
+                // TODO:
+                // effects: [
+                //     {
+                //         effectType: "burn",
+                //         ammount: 5
+                //     }
+                // ]
+            }
+
+            const totalPower = calculateNpcAttackPower(character?.id ?? "", result);
+            if(targetEntity.type == "npc") {
+                attackInfo.totalDamage = calculateAttackReceivedDamage(npcId, totalPower);
+            } else {
+                attackInfo.totalPower = totalPower;
+            }
+
+            await APIBattle.attack(attackInfo)
+        });
+
+        timeoutDiceBoardRef.current = setTimeout(() => {
+            diceBoardRef.current?.hideBoard();
+            timeoutDiceBoardRef.current = null;
+        }, 5000);
     }
 }

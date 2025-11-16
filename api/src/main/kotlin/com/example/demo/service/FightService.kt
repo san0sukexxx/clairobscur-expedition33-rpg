@@ -4,6 +4,7 @@ import com.example.demo.dto.BattleCharacterInfo
 import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.FightInfoResponse
 import com.example.demo.dto.InitiativeResponse
+import com.example.demo.repository.AttackRepository
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.BattleTurnRepository
@@ -21,7 +22,8 @@ class FightService(
         private val campaignPlayerRepository: CampaignPlayerRepository,
         private val playerRepository: PlayerRepository,
         private val initiativeRepository: InitiativeRepository,
-        private val battleTurnRepository: BattleTurnRepository
+        private val battleTurnRepository: BattleTurnRepository,
+        private val attackRepository: AttackRepository
 ) {
         fun buildFightInfoForPlayer(playerId: Int): FightInfoResponse? {
                 val campaignPlayer =
@@ -102,6 +104,16 @@ class FightService(
 
                 val canRollInitiative = playerBattleEntity?.canRollInitiative ?: false
 
+                val pendingAttacks =
+                        if (playerBattleID != null) {
+                                attackRepository.findByBattleIdAndTargetBattleIdAndIsResolvedFalse(
+                                        battleId,
+                                        playerBattleID
+                                )
+                        } else {
+                                emptyList()
+                        }
+
                 return FightInfoResponse(
                         battleId = battleId,
                         playerBattleID = playerBattleID,
@@ -109,7 +121,8 @@ class FightService(
                         characters = characters,
                         battleStatus = battle.battleStatus,
                         canRollInitiative = canRollInitiative,
-                        turns = turns
+                        turns = turns,
+                        pendingAttacks = pendingAttacks
                 )
         }
 }

@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse } from "./ResponseModel"
+import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -76,13 +76,6 @@ export interface GetAttacksResponse {
     isResolved: boolean
     effects: AttackStatusEffectResponse[]
 }
-
-export interface AttackStatusEffectResponse {
-    id: number
-    effectType: string
-    ammount: number
-}
-
 export class APIBattle {
     static async create(input: CreateBattleInput): Promise<number> {
         return api.post<CreateBattleInput, number>("battles", input)
