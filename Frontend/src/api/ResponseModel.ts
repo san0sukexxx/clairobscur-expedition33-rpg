@@ -7,7 +7,7 @@ export type StatusType =
     "Silenced" | "Dizzy";
 
 
-export type DefenseOption = "block" | "dodge" | "counter" | "take";
+export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take";
 export type PictoColor = "green" | "red" | "blue";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";

@@ -34,27 +34,23 @@ export default function PendingAttacksModal({
                 <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 flex flex-col items-center">
                     {pendingAttacks.map((attack) => {
                         const attacker = getCharacterNameByBattleId(attack.sourceBattleId);
-                        const target = getCharacterNameByBattleId(attack.targetBattleId);
 
                         return (
                             <div
                                 key={attack.id}
-                                className="rounded-lg border border-base-300 p-3 flex flex-col gap-2 w-full max-w-xs"
+                                className="relative rounded-lg border border-base-300 p-3 flex flex-col gap-2 w-full max-w-xs"
                             >
-                                <div className="flex justify-center">
-                                    <span className="text-sm font-semibold">
-                                        Proteja-se!
-                                    </span>
-                                </div>
+                                <button
+                                    className="btn btn-xs btn-ghost absolute top-2 right-2"
+                                    onClick={() => onSelectDefense(attack, "take")}
+                                >
+                                    Aceitar dano
+                                </button>
 
-                                <div className="text-sm text-left">
+                                <div className="text-sm text-left pr-14">
                                     <div>
                                         <span className="font-medium">Atacante: </span>
                                         <span>{attacker}</span>
-                                    </div>
-                                    <div>
-                                        <span className="font-medium">Alvo: </span>
-                                        <span>{target}</span>
                                     </div>
                                     <div>
                                         <span className="font-medium">Poder total: </span>
@@ -71,28 +67,14 @@ export default function PendingAttacksModal({
                                         className="btn btn-xs btn-outline"
                                         onClick={() => onSelectDefense(attack, "block")}
                                     >
-                                        Bloquear
+                                        Aparar
                                     </button>
 
                                     <button
                                         className="btn btn-xs btn-outline"
                                         onClick={() => onSelectDefense(attack, "dodge")}
                                     >
-                                        Esquivar
-                                    </button>
-
-                                    <button
-                                        className="btn btn-xs btn-outline"
-                                        onClick={() => onSelectDefense(attack, "counter")}
-                                    >
-                                        Contra-atacar
-                                    </button>
-
-                                    <button
-                                        className="btn btn-xs btn-ghost"
-                                        onClick={() => onSelectDefense(attack, "take")}
-                                    >
-                                        Aceitar dano
+                                        Desviar
                                     </button>
                                 </div>
                             </div>
