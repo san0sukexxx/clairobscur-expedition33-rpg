@@ -10,5 +10,6 @@ data class Attack(
         @Column(name = "total_power", nullable = false) val totalPower: Int,
         @Column(name = "target_battle_id", nullable = false) val targetBattleId: Int,
         @Column(name = "source_battle_id", nullable = false) val sourceBattleId: Int,
+        @Column(name = "total_defended", nullable = true) var totalDefended: Int? = null,
         @Column(name = "is_resolved", nullable = false) var isResolved: Boolean = false
 )

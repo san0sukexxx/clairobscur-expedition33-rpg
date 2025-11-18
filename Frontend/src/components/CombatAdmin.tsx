@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
 import { type GetPlayerResponse } from "../api/APIPlayer"
-import { FaUser } from "react-icons/fa"
+import { FaUser, FaSkull } from "react-icons/fa"
 import { getCharacterLabelById } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateAttackReceivedDamage } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator"
@@ -12,6 +12,8 @@ import { type BattleWithDetailsResponse, type CreateAttackRequest } from "../api
 import InitiativesQueue from "./InitiativesQueue"
 import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
+import { useToast } from "../components/Toast";
+import { rollWithTimeout } from "../utils/RollUtils";
 
 export interface CombatEntity {
     rowId?: number
@@ -59,6 +61,7 @@ export default function CombatAdmin({
     const [attackType, setAttackType] = useState<string | null>(null)
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const { showToast } = useToast();
 
     const reloadBattleDetails = useCallback(async () => {
         if (!campaignInfo.battleId) return
@@ -300,21 +303,26 @@ export default function CombatAdmin({
     }, [filterText, availableEnemies])
 
     function renderAvatarCell(entity: CombatEntity) {
-        const isPlayerWithImage = entity.type === "player" && entity.avatarUrl
-        const isNpc = entity.type === "npc"
+        const isPlayerWithImage = entity.type === "player" && entity.avatarUrl;
+        const isNpc = entity.type === "npc";
+
+        const grayscaleClass = entity.currentHp === 0 ? "grayscale" : "";
+
         return (
             <div className="avatar">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-base-300">
-                    {isPlayerWithImage ? (
-                        <img src={entity.avatarUrl} alt={entity.name} />
-                    ) : isNpc ? (
-                        <img src={entity.avatarUrl} alt={entity.name} />
+                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-base-300 overflow-hidden">
+                    {isPlayerWithImage || isNpc ? (
+                        <img
+                            src={entity.avatarUrl}
+                            alt={entity.name}
+                            className={grayscaleClass}
+                        />
                     ) : (
-                        <FaUser className="text-base-content opacity-60" />
+                        <FaUser className={`text-base-content opacity-60 ${grayscaleClass}`} />
                     )}
                 </div>
             </div>
-        )
+        );
     }
 
     function renderCharacterCell(entity: CombatEntity) {
@@ -337,9 +345,12 @@ export default function CombatAdmin({
                         <div className="text-md font-normal opacity-50">O que ele vai fazer?</div>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-row items-center gap-4">
                         <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("basic")}>
                             Ataque básico
+                        </button>
+                        <button className="btn btn-md btn-secondary" onClick={() => npcPassTurnTapped()}>
+                            Passar o turno
                         </button>
                     </div>
                 </div>
@@ -373,63 +384,121 @@ export default function CombatAdmin({
                                         <th className="w-1/6 text-right">Ações</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     {members.map((m) => {
                                         const isRowSelectable = isSelectingTarget && m.currentHp > 0
 
+                                        const entityAttacks =
+                                            battleDetails?.attacks?.filter(a => a.targetBattleId === m.rowId) ?? []
+
                                         return (
-                                            <tr
-                                                key={m.rowId ?? m.externalId}
-                                                className={isRowSelectable ? "attack-glow cursor-pointer" : ""}
-                                                onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
-                                            >
-                                                <td>{renderAvatarCell(m)}</td>
+                                            <>
+                                                <tr
+                                                    key={`row-${m.rowId}`}
+                                                    className={isRowSelectable ? "attack-glow cursor-pointer" : ""}
+                                                    onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
+                                                >
+                                                    <td>{renderAvatarCell(m)}</td>
 
-                                                <td>{m.name}</td>
-
-                                                <td className="min-w-[120px]">
-                                                    <div className="text-xs font-mono mb-1">
-                                                        {m.currentHp}/{m.maxHp}
-                                                    </div>
-                                                    <AnimatedStatBar
-                                                        value={Math.round((m.currentHp / m.maxHp) * 100)}
-                                                        label="HP"
-                                                        fillClass="bg-error"
-                                                        ghostClass="bg-error/30"
-                                                    />
-                                                </td>
-
-                                                <td className="min-w-[120px]">
-                                                    {m.currentMp !== undefined && m.maxMp !== undefined ? (
-                                                        <>
-                                                            <div className="text-xs font-mono mb-1">
-                                                                {m.currentMp}/{m.maxMp}
-                                                            </div>
-                                                            <AnimatedStatBar
-                                                                value={Math.round((m.currentMp / m.maxMp) * 100)}
-                                                                label="MP"
-                                                                fillClass="bg-info"
-                                                                ghostClass="bg-info/30"
-                                                            />
-                                                        </>
-                                                    ) : (
-                                                        <span className="opacity-60">—</span>
-                                                    )}
-                                                </td>
-
-                                                <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
-
-                                                <td className="text-right">
-                                                    {!isRowSelectable && (
-                                                        <button
-                                                            className="btn btn-xs btn-error"
-                                                            onClick={() => openRemoveConfirm(m.rowId, m.name)}
+                                                    <td className="flex items-center gap-1">
+                                                        <span
+                                                            className={`font-semibold ${m.currentHp === 0
+                                                                ? "text-neutral-500 line-through"
+                                                                : ""
+                                                                }`}
                                                         >
-                                                            Remover
-                                                        </button>
-                                                    )}
-                                                </td>
-                                            </tr>
+                                                            {m.name}
+                                                        </span>
+
+                                                        {m.currentHp === 0 && (
+                                                            <FaSkull className="ml-4 text-red-600 w-4 h-4" title="Morto" />
+                                                        )}
+                                                    </td>
+
+                                                    <td className="min-w-[120px]">
+                                                        <div className="text-xs font-mono mb-1">
+                                                            {m.currentHp}/{m.maxHp}
+                                                        </div>
+                                                        <AnimatedStatBar
+                                                            value={Math.round((m.currentHp / m.maxHp) * 100)}
+                                                            label="HP"
+                                                            fillClass="bg-error"
+                                                            ghostClass="bg-error/30"
+                                                        />
+                                                    </td>
+
+                                                    <td className="min-w-[120px]">
+                                                        {m.currentMp !== undefined && m.maxMp !== undefined ? (
+                                                            <>
+                                                                <div className="text-xs font-mono mb-1">
+                                                                    {m.currentMp}/{m.maxMp}
+                                                                </div>
+                                                                <AnimatedStatBar
+                                                                    value={Math.round((m.currentMp / m.maxMp) * 100)}
+                                                                    label="MP"
+                                                                    fillClass="bg-info"
+                                                                    ghostClass="bg-info/30"
+                                                                />
+                                                            </>
+                                                        ) : (
+                                                            <span className="opacity-60">—</span>
+                                                        )}
+                                                    </td>
+
+                                                    <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
+
+                                                    <td className="text-right">
+                                                        {!isRowSelectable && (
+                                                            <button
+                                                                className="btn btn-xs btn-error"
+                                                                onClick={() => openRemoveConfirm(m.rowId, m.name)}
+                                                            >
+                                                                Remover
+                                                            </button>
+                                                        )}
+                                                    </td>
+                                                </tr>
+
+                                                {entityAttacks.map(a => {
+                                                    const defesaFalhou = a.totalDefended == null || a.totalDefended > 0
+
+                                                    return (
+                                                        <div key={a.id} className="flex items-center gap-3 mb-2 ml-4">
+                                                            <span className="badge badge-sm badge-error">ATACADO</span>
+
+                                                            <span className="opacity-70">Poder total:</span>
+                                                            <span className="font-mono">{a.totalPower}</span>
+
+                                                            <span className="opacity-70">Atacante:</span>
+                                                            <span className="font-mono">#{a.sourceBattleId}</span>
+
+                                                            {!a.isResolved && (
+                                                                <span className="badge badge-warning badge-sm">PENDENTE</span>
+                                                            )}
+
+                                                            {a.isResolved && (
+                                                                <>
+                                                                    <span className="opacity-70">Defesa:</span>
+                                                                    <span className="font-mono">{a.totalDefended ?? 0}</span>
+
+                                                                    {!defesaFalhou && (
+                                                                        <span className="badge badge-success badge-sm">
+                                                                            Defendido
+                                                                        </span>
+                                                                    )}
+
+                                                                    {defesaFalhou && (
+                                                                        <span className="badge badge-error badge-sm">
+                                                                            Falhou na defesa
+                                                                        </span>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </>
                                         )
                                     })}
                                 </tbody>
@@ -689,6 +758,7 @@ export default function CombatAdmin({
                     initiatives: battleInfo.initiatives ?? prev.initiatives,
                     characters: battleInfo.characters ?? prev.characters,
                     turns: battleInfo.turns ?? prev.turns,
+                    attacks: battleInfo.attacks ?? prev.attacks,
                     battleLogs: battleInfo.battleLogs ?? prev.battleLogs
                 }
                 : prev
@@ -738,7 +808,7 @@ export default function CombatAdmin({
         const character = getActiveTurnCharacter()
         const npcId = character?.id ?? ""
 
-        diceBoardRef.current?.roll(rollCommandForNpcInitiative(npcId), async (result) => {
+        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcInitiative(npcId), result => {
             var attackInfo: CreateAttackRequest = {
                 targetBattleId: targetEntity.rowId ?? 0,
                 sourceBattleId: character?.battleID ?? 0,
@@ -752,18 +822,36 @@ export default function CombatAdmin({
             }
 
             const totalPower = calculateNpcAttackPower(character?.id ?? "", result);
-            if(targetEntity.type == "npc") {
+            if (targetEntity.type == "npc") {
                 attackInfo.totalDamage = calculateAttackReceivedDamage(npcId, totalPower);
+                showToast(`Causou ${attackInfo.totalDamage} de dano`);
             } else {
                 attackInfo.totalPower = totalPower;
+                showToast(`Atacou com ${attackInfo.totalPower} de dano`);
             }
 
-            await APIBattle.attack(attackInfo)
-        });
+            const callAttack = async () => {
+                try {
+                    await APIBattle.attack(attackInfo)
+                } catch (e) {
+                    showToast("Erro ao encerrar o atacar");
+                }
+            };
 
-        timeoutDiceBoardRef.current = setTimeout(() => {
-            diceBoardRef.current?.hideBoard();
-            timeoutDiceBoardRef.current = null;
-        }, 5000);
+            callAttack();
+        });
+    }
+
+    function npcPassTurnTapped() {
+        const endTurnCall = async () => {
+            try {
+                const character = getActiveTurnCharacter()
+                await APIBattle.endTurn(character?.battleID ?? 0)
+            } catch (e) {
+                showToast("Erro ao encerrar o turno");
+            }
+        };
+
+        endTurnCall();
     }
 }

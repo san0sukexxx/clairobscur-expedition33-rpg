@@ -113,6 +113,7 @@ export interface AttackResponse {
     totalPower: number;
     targetBattleId: number;
     sourceBattleId: number;
+    totalDefended?: number;
     isResolved: boolean;
 }
 

@@ -1,6 +1,7 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { calculateWeaponPlusDices, calculateWeaponPlusPower } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
+import { type DefenseOption } from "../api/ResponseModel";
 import {
     calculateCriticalMulti,
     calculateFailureDiv,
@@ -32,6 +33,48 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     return playerPower + calculateRawWeaponPower(player, weaponList) + total;
 }
 
+export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponList: WeaponDTO[], diceResult: any, defenseOption: DefenseOption): number {
+    if (defenseOption == "take") {
+        return totalDamage;
+    }
+    
+    const diceTotalSum = diceTotal(diceResult);
+    const failures = calculateFailureDiv(diceResult)
+    var playerDefense = 0;
+
+    if (defenseOption == "block" || defenseOption == "dodge") {
+        var resistance = (player?.playerSheet?.resistance ?? 0) * calculateCriticalMulti(diceResult);
+        if (failures > 0) {
+            resistance = Math.floor(resistance / failures);
+        }
+
+        playerDefense = resistance + diceTotalSum;
+    } else if (defenseOption == "gradient-block") {
+        var power = (player?.playerSheet?.power ?? 0) * calculateCriticalMulti(diceResult);
+
+        if (failures > 0) {
+            power = Math.floor(power / failures);
+        }
+
+        power -= 2;
+
+        playerDefense = power + diceTotalSum;
+    } else if (defenseOption == "jump") {
+        var hability = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult);
+        if (failures > 0) {
+            hability = Math.floor(hability / failures);
+        }
+
+        playerDefense = hability + diceTotalSum;
+    }
+
+    if (defenseOption == "dodge") {
+        playerDefense += player?.playerSheet?.hability ?? 0;
+    }
+
+    return totalDamage - playerDefense;
+}
+
 export function calculateMaxMP(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.hability ?? 0) * 5;
 }
@@ -44,11 +87,15 @@ export function rollCommandForInitiative(player: GetPlayerResponse) {
     return "1d6";
 }
 
-export function rollCommandFoBasicAttack(player: GetPlayerResponse, weaponList: WeaponDTO[]) {
+export function rollCommandForBasicAttack(player: GetPlayerResponse, weaponList: WeaponDTO[]) {
     const weaponDetails = weaponList.find(w => w.name == player.playerSheet?.weaponId);
     const weapon = player?.weapons?.find(w => w.id == player.playerSheet?.weaponId);
     const dices = calculateWeaponPlusDices(weaponDetails?.attributes.power ?? 0, weapon?.level ?? 0) + 1;
     return `${dices}d6`;
+}
+
+export function rollCommandForDefense(player: GetPlayerResponse, weaponList: WeaponDTO[], defenseOption: DefenseOption) {
+    return "1d6";
 }
 
 export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {

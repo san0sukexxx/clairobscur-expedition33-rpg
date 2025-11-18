@@ -13,7 +13,7 @@ export default function PendingAttacksModal({
 }: PendingAttacksModalProps) {
     const pendingAttacks = player?.fightInfo?.pendingAttacks ?? [];
 
-    if (!player || pendingAttacks.length === 0) return null;
+    if (!player || pendingAttacks.length === 0 || player.playerSheet?.hpCurrent == 0) return null;
 
     const characters = player.fightInfo?.characters ?? [];
 

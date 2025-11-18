@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse } from "./ResponseModel"
+import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -12,6 +12,7 @@ export interface BattleWithDetailsResponse extends Battle {
     initiatives: InitiativeResponse[]
     turns: BattleTurnResponse[]
     battleLogs?: BattleLogResponse[];
+    attacks?: AttackResponse[];
 }
 
 export interface CreateBattleInput {
@@ -76,6 +77,12 @@ export interface GetAttacksResponse {
     isResolved: boolean
     effects: AttackStatusEffectResponse[]
 }
+
+export interface CreateDefenseRequest {
+    attackId: number
+    totalDamage: number
+}
+
 export class APIBattle {
     static async create(input: CreateBattleInput): Promise<number> {
         return api.post<CreateBattleInput, number>("battles", input)
@@ -138,6 +145,10 @@ export class APIBattle {
 
     static async getAttacks(battleId: number): Promise<GetAttacksResponse[]> {
         return api.get<GetAttacksResponse[]>(`attacks/pending/${battleId}`)
+    }
+
+    static async defend(input: CreateDefenseRequest): Promise<void> {
+        await api.post<CreateDefenseRequest, void>("defenses", input)
     }
 
     static async endTurn(playerBattleId: number): Promise<void> {

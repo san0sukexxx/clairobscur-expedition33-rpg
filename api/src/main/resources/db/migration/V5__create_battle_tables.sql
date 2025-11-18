@@ -69,6 +69,7 @@ CREATE TABLE
         total_power INTEGER NOT NULL,
         target_battle_id INTEGER NOT NULL,
         source_battle_id INTEGER NOT NULL,
+        total_defended INTEGER,
         is_resolved BOOLEAN DEFAULT 0,
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE,
         FOREIGN KEY (target_battle_id) REFERENCES battle_character (id) ON DELETE CASCADE,

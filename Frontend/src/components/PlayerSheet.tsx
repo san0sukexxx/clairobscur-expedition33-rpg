@@ -68,13 +68,17 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                 value={player?.playerSheet?.totalPoints ?? ""}
                                 onChange={async (e) => {
                                     if (!player) return;
+
+                                    const raw = e.target.value;
+
                                     const next = {
                                         ...player,
                                         playerSheet: {
                                             ...player.playerSheet,
-                                            totalPoints: Number(e.target.value),
+                                            totalPoints: raw === "" ? undefined : Number(raw),
                                         },
                                     };
+
                                     setPlayer(next);
                                     await sync(next);
                                 }}
@@ -90,13 +94,17 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                 value={player?.playerSheet?.xp ?? ""}
                                 onChange={async (e) => {
                                     if (!player) return;
+
+                                    const raw = e.target.value;
+
                                     const next = {
                                         ...player,
                                         playerSheet: {
                                             ...player.playerSheet,
-                                            xp: Number(e.target.value),
+                                            xp: raw === "" ? undefined : Number(raw),
                                         },
                                     };
+
                                     setPlayer(next);
                                     await sync(next);
                                 }}
@@ -115,13 +123,17 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                         value={player?.playerSheet?.power ?? ""}
                                         onChange={async (e) => {
                                             if (!player) return;
+
+                                            const raw = e.target.value;
+
                                             const next = {
                                                 ...player,
                                                 playerSheet: {
                                                     ...player.playerSheet,
-                                                    power: Number(e.target.value),
+                                                    power: raw === "" ? undefined : Number(raw),
                                                 },
                                             };
+
                                             setPlayer(next);
                                             await sync(next);
                                         }}
@@ -139,17 +151,22 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                         value={player?.playerSheet?.apCurrent ?? ""}
                                         onChange={async (e) => {
                                             if (!player) return;
+
+                                            const raw = e.target.value;
+
                                             const next = {
                                                 ...player,
                                                 playerSheet: {
                                                     ...player.playerSheet,
-                                                    apCurrent: Number(e.target.value),
+                                                    apCurrent: raw === "" ? undefined : Number(raw),
                                                 },
                                             };
+
                                             setPlayer(next);
                                             await sync(next);
                                         }}
                                     />
+
                                 </label>
                             </div>
 
@@ -162,13 +179,17 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                         value={player?.playerSheet?.hability ?? ""}
                                         onChange={async (e) => {
                                             if (!player) return;
+
+                                            const raw = e.target.value;
+
                                             const next = {
                                                 ...player,
                                                 playerSheet: {
                                                     ...player.playerSheet,
-                                                    hability: Number(e.target.value),
+                                                    hability: raw === "" ? undefined : Number(raw),
                                                 },
                                             };
+
                                             setPlayer(next);
                                             await sync(next);
                                         }}
@@ -186,13 +207,17 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                         value={player?.playerSheet?.mpCurrent ?? ""}
                                         onChange={async (e) => {
                                             if (!player) return;
+
+                                            const raw = e.target.value;
+
                                             const next = {
                                                 ...player,
                                                 playerSheet: {
                                                     ...player.playerSheet,
-                                                    mpCurrent: Number(e.target.value),
+                                                    mpCurrent: raw === "" ? undefined : Number(raw),
                                                 },
                                             };
+
                                             setPlayer(next);
                                             await sync(next);
                                         }}
@@ -209,13 +234,17 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                         value={player?.playerSheet?.resistance ?? ""}
                                         onChange={async (e) => {
                                             if (!player) return;
+
+                                            const raw = e.target.value;
+
                                             const next = {
                                                 ...player,
                                                 playerSheet: {
                                                     ...player.playerSheet,
-                                                    resistance: Number(e.target.value),
+                                                    resistance: raw === "" ? undefined : Number(raw),
                                                 },
                                             };
+
                                             setPlayer(next);
                                             await sync(next);
                                         }}
@@ -233,13 +262,17 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                         value={player?.playerSheet?.hpCurrent ?? ""}
                                         onChange={async (e) => {
                                             if (!player) return;
+
+                                            const raw = e.target.value;
+
                                             const next = {
                                                 ...player,
                                                 playerSheet: {
                                                     ...player.playerSheet,
-                                                    hpCurrent: Number(e.target.value),
+                                                    hpCurrent: raw === "" ? undefined : Number(raw),
                                                 },
                                             };
+
                                             setPlayer(next);
                                             await sync(next);
                                         }}

@@ -16,14 +16,16 @@ import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuA
 import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIPictos } from "../api/APIPictos";
-import { APIBattle, type CreateAttackRequest } from "../api/APIBattle";
+import { APIBattle, type CreateAttackRequest, type CreateDefenseRequest } from "../api/APIBattle";
 import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
   rollCommandForInitiative,
-  rollCommandFoBasicAttack,
-  initiativeTotal
+  rollCommandForBasicAttack,
+  rollCommandForDefense,
+  initiativeTotal,
+  calculateDefense
 } from "../utils/PlayerCalculator";
 
 import {
@@ -34,6 +36,7 @@ import {
   countFailuresRolls
 } from "../utils/DiceCalculator";
 
+import { rollWithTimeout } from "../utils/RollUtils";
 import PanelModal from "../components/PanelModal";
 import { useToast } from "../components/Toast";
 import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
@@ -328,9 +331,12 @@ export default function PlayerPage() {
           case "REMOVE_CHARACTER":
           case "SET_INITIATIVE":
           case "BATTLE_STARTED":
-          case "DAMAGE_DEALT":
           case "TURN_ENDED":
           case "ATTACK_PENDING":
+            applyFightInfoUpdate(playerInfo);
+            break;
+          case "DAMAGE_DEALT":
+            applySheetInfoUpdate(playerInfo);
             applyFightInfoUpdate(playerInfo);
             break;
         }
@@ -347,6 +353,17 @@ export default function PlayerPage() {
         ? {
           ...prev,
           fightInfo: playerInfo.fightInfo ?? prev.fightInfo
+        }
+        : prev
+    );
+  }
+
+  function applySheetInfoUpdate(playerInfo: GetPlayerResponse) {
+    setPlayer(prev =>
+      prev
+        ? {
+          ...prev,
+          playerSheet: playerInfo.playerSheet ?? prev.playerSheet
         }
         : prev
     );
@@ -382,7 +399,7 @@ export default function PlayerPage() {
       });
     }
 
-    diceBoardRef.current?.roll(rollCommandForInitiative(player), async (result) => {
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForInitiative(player), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculateCriticalMulti(result)
       const rollTotal = diceTotal(result)
@@ -422,36 +439,35 @@ export default function PlayerPage() {
 
       setModalOpen(true)
 
-      try {
-        const savedInitiative = await APIBattle.addInitiative({
-          battleCharacterId: player.fightInfo?.playerBattleID ?? 0,
-          value: total,
-          hability: player.playerSheet?.hability ?? 0,
-          playFirst: criticalRolls > 0,
-        })
+      const callAddInitiative = async () => {
+        try {
+          const savedInitiative = await APIBattle.addInitiative({
+            battleCharacterId: player.fightInfo?.playerBattleID ?? 0,
+            value: total,
+            hability: player.playerSheet?.hability ?? 0,
+            playFirst: criticalRolls > 0,
+          })
 
-        setPlayer((prev) => {
-          if (!prev || !prev.fightInfo) return prev
+          setPlayer((prev) => {
+            if (!prev || !prev.fightInfo) return prev
 
-          const fi = prev.fightInfo
-          const current = fi.initiatives ?? []
+            const fi = prev.fightInfo
+            const current = fi.initiatives ?? []
 
-          return {
-            ...prev,
-            fightInfo: {
-              ...fi,
-              initiatives: [...current, savedInitiative],
-            },
-          }
-        })
-      } catch (err) {
-        showToast("Erro ao registrar iniciativa")
-      }
+            return {
+              ...prev,
+              fightInfo: {
+                ...fi,
+                initiatives: [...current, savedInitiative],
+              },
+            }
+          })
+        } catch (err) {
+          showToast("Erro ao registrar iniciativa")
+        }
+      };
 
-      timeoutDiceBoardRef.current = setTimeout(() => {
-        diceBoardRef.current?.hideBoard();
-        timeoutDiceBoardRef.current = null;
-      }, 5000);
+      callAddInitiative();
     })
 
   }
@@ -490,7 +506,7 @@ export default function PlayerPage() {
       try {
         await APIBattle.endTurn(player.fightInfo?.playerBattleID ?? 0)
       } catch (e) {
-        showToast("Erro ao terminar o turno:");
+        showToast("Erro ao encerrar o turno");
       }
     };
 
@@ -500,7 +516,7 @@ export default function PlayerPage() {
   function handleSelectAttackTarget(target: BattleCharacterInfo) {
     if (player == null) { return }
 
-    diceBoardRef.current?.roll(rollCommandFoBasicAttack(player, weaponList), async (result) => {
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForBasicAttack(player, weaponList), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculateCriticalMulti(result)
       const rollTotal = diceTotal(result)
@@ -546,52 +562,51 @@ export default function PlayerPage() {
 
       setModalOpen(true)
 
-      try {
-        if (target.type == "npc") {
-          const totalDamageToNpc = calculateAttackReceivedDamage(target.id, total);
+      const callAttack = async () => {
+        try {
+          if (target.type == "npc") {
+            const totalDamageToNpc = calculateAttackReceivedDamage(target.id, total);
 
-          const attackInfo: CreateAttackRequest = {
-            totalDamage: totalDamageToNpc,
-            targetBattleId: target.battleID,
-            sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
-            // TODO:
-            // effects: [
-            //     {
-            //         effectType: "burn",
-            //         ammount: 5
-            //     }
-            // ]
+            const attackInfo: CreateAttackRequest = {
+              totalDamage: totalDamageToNpc,
+              targetBattleId: target.battleID,
+              sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
+              // TODO:
+              // effects: [
+              //     {
+              //         effectType: "burn",
+              //         ammount: 5
+              //     }
+              // ]
+            }
+
+            await APIBattle.attack(attackInfo)
+          } else {
+            // const targetCharacter = player.fightInfo?.characters?.filter(ch => ch.battleID == target.battleID)
+
+            // const attackInfo: CreateAttackRequest = {
+            //   totalPower: total,
+            //   targetBattleId: target.battleID,
+            //   sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
+            //   // TODO:
+            //   // effects: [
+            //   //     {
+            //   //         effectType: "burn",
+            //   //         ammount: 5
+            //   //     }
+            //   // ]
+            // }
+
+            // await APIBattle.attack(attackInfo)
           }
 
-          await APIBattle.attack(attackInfo)
-        } else {
-          // const targetCharacter = player.fightInfo?.characters?.filter(ch => ch.battleID == target.battleID)
-
-          // const attackInfo: CreateAttackRequest = {
-          //   totalPower: total,
-          //   targetBattleId: target.battleID,
-          //   sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
-          //   // TODO:
-          //   // effects: [
-          //   //     {
-          //   //         effectType: "burn",
-          //   //         ammount: 5
-          //   //     }
-          //   // ]
-          // }
-
-          // await APIBattle.attack(attackInfo)
+        } catch (e) {
+          showToast("Erro ao atacar")
         }
+      };
 
-      } catch (e) {
-        showToast("Erro ao atacar")
-      }
+      callAttack();
     });
-
-    timeoutDiceBoardRef.current = setTimeout(() => {
-      diceBoardRef.current?.hideBoard();
-      timeoutDiceBoardRef.current = null;
-    }, 5000);
   }
 
   function handleModalClose() {
@@ -640,7 +655,76 @@ export default function PlayerPage() {
     }
   }
 
-  function handleSelectDefense(attack: AttackResponse, defense: DefenseOption) {
-    console.log("Defesa escolhida:", defense, "para o ataque", attack.id);
+  async function handleSelectDefense(attack: AttackResponse, defense: DefenseOption) {
+    if (!player || !diceBoardRef.current) {
+      return;
+    }
+
+    const callDefend = async (payload: CreateDefenseRequest) => {
+      try {
+        await APIBattle.defend(payload);
+      } catch (e) {
+        showToast("Erro ao encerrar o defender");
+      }
+    };
+
+    const executeDefense = async (result: any | null) => {
+      try {
+        let defenseValue = attack.totalPower;
+        if (result != null) {
+          defenseValue = calculateDefense(attack.totalPower, player, weaponList, result, defense);
+        }
+        let description = "Você recebeu todo o dano.";
+
+        if (defense === "block") {
+          if (defenseValue > 0) {
+            description = `Você não conseguiu aparar, o golpe causou ${defenseValue} de dano`;
+          } else {
+            description = `Você conseguiu aparar o golpe!`;
+          }
+        } else if (defense === "gradient-block") {
+          if (defenseValue > 0) {
+            description = `Você não conseguiu aparar, o golpe causou ${defenseValue} de dano`;
+          } else {
+            description = `Você conseguiu aparar o golpe! É hora de um contra-ataque!`;
+          }
+        } else if (defense === "dodge") {
+          if (defenseValue > 0) {
+            description = `Você não conseguiu desviar, o golpe causou ${defenseValue} de dano`;
+          } else {
+            description = `Você conseguiu desviar do golpe!`;
+          }
+        } else if (defense === "jump") {
+          if (defenseValue > 0) {
+            description = `Você não conseguiu pular do ataque e recebeu ${defenseValue} de dano`;
+          } else {
+            description = `Você conseguiu pular do ataque!`;
+          }
+        }
+
+        const payload: CreateDefenseRequest = {
+          attackId: attack.id,
+          totalDamage: defenseValue,
+        };
+
+        callDefend(payload);
+
+        showToast(description);
+      } catch (e) {
+        showToast("Falha ao registrar a defesa");
+      }
+    };
+
+    const takeTheDamage = async () => {
+      executeDefense(null)
+    };
+
+    if (defense != "take") {
+      rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForDefense(player, weaponList, defense), result => {
+        executeDefense(result);
+      });
+    } else {
+      takeTheDamage()
+    }
   }
 }

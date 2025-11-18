@@ -23,7 +23,8 @@ class BattleController(
         private val playerRepository: PlayerRepository,
         private val battleInitiativeRepository: BattleInitiativeRepository,
         private val battleLogRepository: BattleLogRepository,
-        private val battleTurnRepository: BattleTurnRepository
+        private val battleTurnRepository: BattleTurnRepository,
+        private val attackRepository: AttackRepository
 ) {
 
     @GetMapping("/{battleId}")
@@ -37,7 +38,7 @@ class BattleController(
         val battle = opt.get()
 
         val characterEntities = battleCharacterRepository.findByBattleId(battleId)
-        val characters: List<BattleCharacterInfo> =
+        val characters =
                 characterEntities.map { bc ->
                     val playerIdFromExternal = bc.externalId.toIntOrNull()
                     val externalId =
@@ -85,16 +86,13 @@ class BattleController(
                     )
                 }
 
-        var battleLogs: List<BattleLog> = emptyList()
-
         val allLogs = battleLogRepository.findByBattleIdOrderByIdAsc(battleId)
+        val battleLogs =
+                if (battleLogId != null)
+                        allLogs.filter { log -> log.id?.let { it > battleLogId } == true }
+                else allLogs
 
-        battleLogs =
-                if (battleLogId != null) {
-                    allLogs.filter { log -> log.id?.let { it > battleLogId } == true }
-                } else {
-                    allLogs
-                }
+        val attacks = attackRepository.findByBattleId(battleId)
 
         val response =
                 BattleWithDetailsResponse(
@@ -104,7 +102,8 @@ class BattleController(
                         characters = characters,
                         initiatives = initiatives,
                         turns = turns,
-                        battleLogs = battleLogs
+                        battleLogs = battleLogs,
+                        attacks = attacks
                 )
 
         return ResponseEntity.ok(response)

@@ -132,14 +132,14 @@ class PlayerController(
 
                 p.name = sheet.name
                 p.characterId = sheet.characterId
-                sheet.totalPoints?.let { p.totalPoints = it }
-                sheet.xp?.let { p.xp = it }
-                sheet.power?.let { p.power = it }
-                sheet.hability?.let { p.hability = it }
-                sheet.resistance?.let { p.resistance = it }
-                sheet.apCurrent?.let { p.apCurrent = it }
-                sheet.mpCurrent?.let { p.mpCurrent = it }
-                sheet.hpCurrent?.let { p.hpCurrent = it }
+                p.totalPoints = sheet.totalPoints ?: 0
+                p.xp = sheet.xp ?: 0
+                p.power = sheet.power ?: 0
+                p.hability = sheet.hability ?: 0
+                p.resistance = sheet.resistance ?: 0
+                p.apCurrent = sheet.apCurrent ?: 0
+                p.mpCurrent = sheet.mpCurrent ?: 0
+                p.hpCurrent = sheet.hpCurrent ?: 0
                 p.notes = sheet.notes
                 p.weaponId = sheet.weaponId
 
