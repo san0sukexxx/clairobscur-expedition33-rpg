@@ -51,7 +51,7 @@ class AttackController(
                                         AttackStatusEffect(
                                                 attackId = attack.id!!,
                                                 effectType = eff.effectType,
-                                                ammount = eff.ammount
+                                                ammount = eff.ammount ?: 0
                                         )
                                 )
                         }
@@ -126,5 +126,22 @@ class AttackController(
                         }
 
                 return ResponseEntity.ok(response)
+        }
+
+        @PostMapping("/{battleId}/allow-counter")
+        fun allowCounterForAll(@PathVariable battleId: Int): ResponseEntity<Void> {
+                val attacks = attackRepository.findByBattleId(battleId)
+                attacks.forEach { it.allowCounter = true }
+                attackRepository.saveAll(attacks)
+
+                battleLogRepository.save(
+                        BattleLog(
+                                battleId = battleId,
+                                eventType = "ALLOW_COUNTER",
+                                eventJson = null
+                        )
+                )
+
+                return ResponseEntity.ok().build()
         }
 }

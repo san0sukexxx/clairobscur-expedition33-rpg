@@ -1,19 +1,24 @@
+import React from "react";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull } from "react-icons/fa"
+import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
+import { GiShieldReflect } from "react-icons/gi";
+import { FaArrowsDownToLine } from "react-icons/fa6";
 import { getCharacterLabelById } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateAttackReceivedDamage } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
-import { type BattleCharacterType, type BattleCharacterInfo } from "../api/ResponseModel"
+import { type BattleCharacterType, type BattleCharacterInfo, type AttackType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
-import { type BattleWithDetailsResponse, type CreateAttackRequest } from "../api/APIBattle"
+import { type BattleWithDetailsResponse, type CreateAttackRequest, type AttackStatusEffectRequest } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
 import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { useToast } from "../components/Toast";
 import { rollWithTimeout } from "../utils/RollUtils";
+
 
 export interface CombatEntity {
     rowId?: number
@@ -58,7 +63,7 @@ export default function CombatAdmin({
     const [removeTarget, setRemoveTarget] = useState<{ rowId: number; name: string } | null>(null)
     const [lastBattleLog, setLastBattleLog] = useState<number | undefined>();
     const [isSelectingTarget, setIsSelectingTarget] = useState(false)
-    const [attackType, setAttackType] = useState<string | null>(null)
+    const [attackType, setAttackType] = useState<AttackType | null>(null)
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
@@ -332,6 +337,28 @@ export default function CombatAdmin({
         return entity.name
     }
 
+    function renderActionOptions() {
+        if (isCurrentTurnNPC()) {
+            return;
+        }
+
+        return (
+            <div className="card bg-base-200 shadow-inner flex-1">
+                <div className="card-body gap-4">
+                    <div className="flex flex-col items-start">
+                        <div className="text-lg font-semibold">Turno do Jogador</div>
+                    </div>
+
+                    <div className="flex flex-row flex-wrap items-center gap-4">
+                        <button className="btn btn-md btn-info" onClick={() => actionAllowCounter()}>
+                            <FaShieldAlt className="mr-1" />
+                            Permitir counter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
     function renderAttackOptions() {
         if (!isCurrentTurnNPC()) {
             return;
@@ -345,12 +372,35 @@ export default function CombatAdmin({
                         <div className="text-md font-normal opacity-50">O que ele vai fazer?</div>
                     </div>
 
-                    <div className="flex flex-row items-center gap-4">
+                    <div className="flex flex-row flex-wrap items-center gap-4">
                         <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("basic")}>
+                            <FaFistRaised className="mr-1" />
                             Ataque básico
                         </button>
+
+                        <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("jump")}>
+                            <FaArrowUp className="mr-1" />
+                            Pular em um
+                        </button>
+
+                        <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("jump-all")}>
+                            <FaArrowsDownToLine className="mr-1" />
+                            Pular em todos
+                        </button>
+
+                        <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("gradient")}>
+                            <FaFireAlt className="mr-1" />
+                            Ataque Gradiente
+                        </button>
+
                         <button className="btn btn-md btn-secondary" onClick={() => npcPassTurnTapped()}>
+                            <FaHourglassHalf className="mr-1" />
                             Passar o turno
+                        </button>
+
+                        <button className="btn btn-md btn-info" onClick={() => actionAllowCounter()}>
+                            <FaShieldAlt className="mr-1" />
+                            Permitir counter
                         </button>
                     </div>
                 </div>
@@ -388,14 +438,12 @@ export default function CombatAdmin({
                                 <tbody>
                                     {members.map((m) => {
                                         const isRowSelectable = isSelectingTarget && m.currentHp > 0
-
                                         const entityAttacks =
                                             battleDetails?.attacks?.filter(a => a.targetBattleId === m.rowId) ?? []
 
                                         return (
-                                            <>
+                                            <React.Fragment key={m.rowId}>
                                                 <tr
-                                                    key={`row-${m.rowId}`}
                                                     className={isRowSelectable ? "attack-glow cursor-pointer" : ""}
                                                     onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
                                                 >
@@ -403,9 +451,7 @@ export default function CombatAdmin({
 
                                                     <td className="flex items-center gap-1">
                                                         <span
-                                                            className={`font-semibold ${m.currentHp === 0
-                                                                ? "text-neutral-500 line-through"
-                                                                : ""
+                                                            className={`font-semibold ${m.currentHp === 0 ? "text-neutral-500 line-through" : ""
                                                                 }`}
                                                         >
                                                             {m.name}
@@ -464,41 +510,53 @@ export default function CombatAdmin({
                                                     const defesaFalhou = a.totalDefended == null || a.totalDefended > 0
 
                                                     return (
-                                                        <div key={a.id} className="flex items-center gap-3 mb-2 ml-4">
-                                                            <span className="badge badge-sm badge-error">ATACADO</span>
+                                                        <tr key={`attack-${a.id}`} className="bg-base-300/40">
+                                                            <td colSpan={6} className="py-2">
+                                                                <div className="flex items-center gap-3">
+                                                                    <span className="badge badge-sm badge-error">ATACADO</span>
 
-                                                            <span className="opacity-70">Poder total:</span>
-                                                            <span className="font-mono">{a.totalPower}</span>
+                                                                    <span className="opacity-70">Poder total:</span>
+                                                                    <span className="font-mono">{a.totalPower}</span>
 
-                                                            <span className="opacity-70">Atacante:</span>
-                                                            <span className="font-mono">#{a.sourceBattleId}</span>
+                                                                    <span className="opacity-70">Atacante:</span>
+                                                                    <span className="font-mono">#{a.sourceBattleId}</span>
 
-                                                            {!a.isResolved && (
-                                                                <span className="badge badge-warning badge-sm">PENDENTE</span>
-                                                            )}
-
-                                                            {a.isResolved && (
-                                                                <>
-                                                                    <span className="opacity-70">Defesa:</span>
-                                                                    <span className="font-mono">{a.totalDefended ?? 0}</span>
-
-                                                                    {!defesaFalhou && (
-                                                                        <span className="badge badge-success badge-sm">
-                                                                            Defendido
-                                                                        </span>
+                                                                    {!a.isResolved && (
+                                                                        <span className="badge badge-warning badge-sm">PENDENTE</span>
                                                                     )}
 
-                                                                    {defesaFalhou && (
-                                                                        <span className="badge badge-error badge-sm">
-                                                                            Falhou na defesa
-                                                                        </span>
+                                                                    {a.isResolved && (
+                                                                        <>
+                                                                            <span className="opacity-70">Dano recebido:</span>
+                                                                            <span className="font-mono">{a.totalDefended ?? 0}</span>
+
+                                                                            {!defesaFalhou && (
+                                                                                <span className="badge badge-success badge-sm">Defendido</span>
+                                                                            )}
+
+                                                                            {defesaFalhou && (
+                                                                                <span className="badge badge-error badge-sm">Falhou na defesa</span>
+                                                                            )}
+                                                                        </>
                                                                     )}
-                                                                </>
-                                                            )}
-                                                        </div>
+
+                                                                    {a.allowCounter && (
+                                                                        <>
+                                                                            {!a.isCounterResolved && (
+                                                                                <span className="badge badge-info badge-sm">Counter permitido</span>
+                                                                            )}
+
+                                                                            {a.isCounterResolved && (
+                                                                                <span className="badge badge-success badge-sm">Counter executado</span>
+                                                                            )}
+                                                                        </>
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
                                                     )
                                                 })}
-                                            </>
+                                            </React.Fragment>
                                         )
                                     })}
                                 </tbody>
@@ -717,6 +775,7 @@ export default function CombatAdmin({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {renderAttackOptions()}
+                        {renderActionOptions()}
                         {renderTeamCard("Time A", "A", teamA)}
                         {renderTeamCard("Time B", "B", teamB)}
                     </div>
@@ -740,6 +799,8 @@ export default function CombatAdmin({
                     case "DAMAGE_DEALT":
                     case "TURN_ENDED":
                     case "ATTACK_PENDING":
+                    case "ALLOW_COUNTER":
+                    case "COUNTER_RESOLVED":
                         applyFightInfoUpdate(battleInfo);
                         break;
                 }
@@ -796,9 +857,31 @@ export default function CombatAdmin({
         return character?.type == "npc"
     }
 
-    function npcAttackTapped(type: string) {
+    function npcAttackTapped(type: AttackType) {
         setAttackType(type)
-        setIsSelectingTarget(true)
+
+        if (type == "jump-all") {
+            handleMultipleAttack()
+        } else {
+            setIsSelectingTarget(true)
+        }
+    }
+
+    function handleMultipleAttack() {
+        const character = getActiveTurnCharacter()
+        const npcId = character?.id ?? ""
+
+        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcInitiative(npcId), result => {
+            const enemies = battleDetails?.characters.filter(c => c.isEnemy != character?.isEnemy)
+
+            if (enemies) {
+                for (const enemy of enemies) {
+                    if (character) {
+                        doTheAttack(character, enemy.battleID, enemy.type, result)
+                    }
+                }
+            }
+        })
     }
 
     function handleTargetSelected(targetEntity: CombatEntity) {
@@ -809,37 +892,50 @@ export default function CombatAdmin({
         const npcId = character?.id ?? ""
 
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcInitiative(npcId), result => {
-            var attackInfo: CreateAttackRequest = {
-                targetBattleId: targetEntity.rowId ?? 0,
-                sourceBattleId: character?.battleID ?? 0,
-                // TODO:
-                // effects: [
-                //     {
-                //         effectType: "burn",
-                //         ammount: 5
-                //     }
-                // ]
+            if (character) {
+                doTheAttack(character, targetEntity.rowId ?? 0, targetEntity.type, result)
             }
-
-            const totalPower = calculateNpcAttackPower(character?.id ?? "", result);
-            if (targetEntity.type == "npc") {
-                attackInfo.totalDamage = calculateAttackReceivedDamage(npcId, totalPower);
-                showToast(`Causou ${attackInfo.totalDamage} de dano`);
-            } else {
-                attackInfo.totalPower = totalPower;
-                showToast(`Atacou com ${attackInfo.totalPower} de dano`);
-            }
-
-            const callAttack = async () => {
-                try {
-                    await APIBattle.attack(attackInfo)
-                } catch (e) {
-                    showToast("Erro ao encerrar o atacar");
-                }
-            };
-
-            callAttack();
         });
+    }
+
+    function doTheAttack(sourceInfo: BattleCharacterInfo, targetID: number, targetType: BattleCharacterType, result: any) {
+        var effects: AttackStatusEffectRequest[] = [];
+
+        if (attackType == "jump" || attackType == "jump-all") {
+            effects.push({
+                effectType: "jump"
+            })
+        }
+        if (attackType == "gradient") {
+            effects.push({
+                effectType: "gradient"
+            })
+        }
+
+        var attackInfo: CreateAttackRequest = {
+            targetBattleId: targetID,
+            sourceBattleId: sourceInfo?.battleID ?? 0,
+            effects: effects
+        }
+
+        const totalPower = calculateNpcAttackPower(sourceInfo?.id ?? "", result);
+        if (targetType == "npc") {
+            attackInfo.totalDamage = calculateAttackReceivedDamage(sourceInfo.id, totalPower);
+            showToast(`Causou ${attackInfo.totalDamage} de dano`);
+        } else {
+            attackInfo.totalPower = totalPower;
+            showToast(`Atacou com ${attackInfo.totalPower} de dano`);
+        }
+
+        const callAttack = async () => {
+            try {
+                await APIBattle.attack(attackInfo)
+            } catch (e) {
+                showToast("Erro ao encerrar o atacar");
+            }
+        };
+
+        callAttack();
     }
 
     function npcPassTurnTapped() {
@@ -852,6 +948,19 @@ export default function CombatAdmin({
             }
         };
 
+        setIsSelectingTarget(false);
         endTurnCall();
+    }
+
+    function actionAllowCounter() {
+        const allowCounterCall = async () => {
+            try {
+                await APIBattle.allowCounter(battleDetails?.id ?? 0)
+            } catch (e) {
+                showToast("Erro ao encerrar o turno");
+            }
+        };
+
+        allowCounterCall();
     }
 }

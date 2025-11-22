@@ -14,6 +14,12 @@ export function calculateWeaponPlusPower(power: number, level: number): number |
   if (decimalPart == undefined) return null;
   return decimalPart;
 }
+export function calculateWeaponCounterMaxPower(power: number, level: number): number | null {
+  const weaponPower = calculateWeaponPower(power, level);
+  const [integerPart, decimalPart] = weaponPower.toString().split(".").map(Number);
+  if (decimalPart == undefined) return integerPart * 3;
+  return integerPart * 3 + decimalPart;
+}
 export function displayWeaponPlusDices(power: number, level: number): string | null {
   return "+" + calculateWeaponPlusDices(power, level);
 }

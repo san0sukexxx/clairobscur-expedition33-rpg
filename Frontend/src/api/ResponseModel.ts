@@ -7,7 +7,9 @@ export type StatusType =
     "Silenced" | "Dizzy";
 
 
-export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take";
+export type EffectType = "jump" | "gradient";
+export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
+export type AttackType = "basic" | "jump" | "jump-all" | "gradient";
 export type PictoColor = "green" | "red" | "blue";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";
@@ -115,6 +117,9 @@ export interface AttackResponse {
     sourceBattleId: number;
     totalDefended?: number;
     isResolved: boolean;
+    allowCounter?: boolean;
+    isCounterResolved?: boolean;
+    effects?: AttackStatusEffectResponse[];
 }
 
 export interface BattleLogResponse {

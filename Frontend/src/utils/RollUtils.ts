@@ -4,12 +4,18 @@ export function rollWithTimeout(
     command: string,
     callback: (result: any) => void
 ) {
-    diceBoardRef.current?.roll(command, (result: any) => {
+    if (!diceBoardRef.current) return
+
+    if (timeoutDiceBoardRef.current != null) {
+        clearTimeout(timeoutDiceBoardRef.current)
+        timeoutDiceBoardRef.current = null
+    }
+
+    diceBoardRef.current.roll(command, (result: any) => {
         callback(result)
 
-        if (timeoutDiceBoardRef.current) {
+        if (timeoutDiceBoardRef.current != null) {
             clearTimeout(timeoutDiceBoardRef.current)
-            timeoutDiceBoardRef.current = null
         }
 
         timeoutDiceBoardRef.current = window.setTimeout(() => {

@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse } from "./ResponseModel"
+import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type EffectType } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -64,8 +64,8 @@ export interface CreateAttackRequest {
 }
 
 export interface AttackStatusEffectRequest {
-    effectType: string
-    ammount: number
+    effectType: EffectType
+    ammount?: number
 }
 
 export interface GetAttacksResponse {
@@ -153,5 +153,16 @@ export class APIBattle {
 
     static async endTurn(playerBattleId: number): Promise<void> {
         await api.post<{}, void>(`battle-turns/${playerBattleId}/end`, {})
+    }
+
+    static async allowCounter(battleCharacterId: number): Promise<void> {
+        await api.post<{}, void>(`attacks/${battleCharacterId}/allow-counter`, {})
+    }
+
+    static async applyDefense(battleCharacterId: number, maxDamage: number): Promise<void> {
+        await api.post<{ maxDamage: number }, void>(
+            `defenses/apply-defense/${battleCharacterId}`,
+            { maxDamage }
+        )
     }
 }

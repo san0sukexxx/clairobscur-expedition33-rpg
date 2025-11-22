@@ -1,5 +1,5 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
-import { calculateWeaponPlusDices, calculateWeaponPlusPower } from "./WeaponCalculator";
+import { calculateWeaponPlusDices, calculateWeaponPlusPower, calculateWeaponCounterMaxPower } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
 import { type DefenseOption } from "../api/ResponseModel";
 import {
@@ -73,6 +73,18 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     }
 
     return totalDamage - playerDefense;
+}
+
+export function calculateMaxCounterDamage(player: GetPlayerResponse | null, weaponList: WeaponDTO[]): number {
+    const playerPower = (player?.playerSheet?.power ?? 0)
+    if (player?.playerSheet?.weaponId == null) {
+        return playerPower;
+    }
+
+    const weaponDetails = weaponList.find(w => w.name == player.playerSheet?.weaponId);
+    const weapon = player?.weapons?.find(w => w.id == player.playerSheet?.weaponId);
+
+    return playerPower + (calculateWeaponCounterMaxPower(weaponDetails?.attributes.power ?? 0, weapon?.level ?? 0) ?? 0);
 }
 
 export function calculateMaxMP(player: GetPlayerResponse | null): number {

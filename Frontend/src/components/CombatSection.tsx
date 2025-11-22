@@ -6,6 +6,7 @@ import InitiativesQueue from "./InitiativesQueue";
 import { CgSandClock } from "react-icons/cg";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo } from "../api/ResponseModel";
+import PlayerStatusFloating from "./PlayerStatusFloating";
 
 interface CombatsSectionProps {
     onMenuAction: (action: CombatMenuAction) => void;
@@ -100,6 +101,10 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget }: 
                     <span className="font-semibold">Aguardando jogadores...</span>
                 </div>
             )}
+
+            <PlayerStatusFloating
+                player={player}
+            />
 
             <InitiativesQueue
                 characters={player?.fightInfo?.characters}

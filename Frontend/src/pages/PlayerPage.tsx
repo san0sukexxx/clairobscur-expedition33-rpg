@@ -25,7 +25,8 @@ import {
   rollCommandForBasicAttack,
   rollCommandForDefense,
   initiativeTotal,
-  calculateDefense
+  calculateDefense,
+  calculateMaxCounterDamage
 } from "../utils/PlayerCalculator";
 
 import {
@@ -145,6 +146,7 @@ export default function PlayerPage() {
 
       <PendingAttacksModal
         player={player}
+        weaponList={weaponList}
         onSelectDefense={handleSelectDefense}
       />
 
@@ -332,9 +334,11 @@ export default function PlayerPage() {
           case "SET_INITIATIVE":
           case "BATTLE_STARTED":
           case "TURN_ENDED":
+          case "ALLOW_COUNTER":
           case "ATTACK_PENDING":
             applyFightInfoUpdate(playerInfo);
             break;
+          case "COUNTER_RESOLVED":
           case "DAMAGE_DEALT":
             applySheetInfoUpdate(playerInfo);
             applyFightInfoUpdate(playerInfo);
@@ -582,22 +586,20 @@ export default function PlayerPage() {
 
             await APIBattle.attack(attackInfo)
           } else {
-            // const targetCharacter = player.fightInfo?.characters?.filter(ch => ch.battleID == target.battleID)
+            const attackInfo: CreateAttackRequest = {
+              totalPower: total,
+              targetBattleId: target.battleID,
+              sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
+              // TODO:
+              // effects: [
+              //     {
+              //         effectType: "burn",
+              //         ammount: 5
+              //     }
+              // ]
+            }
 
-            // const attackInfo: CreateAttackRequest = {
-            //   totalPower: total,
-            //   targetBattleId: target.battleID,
-            //   sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
-            //   // TODO:
-            //   // effects: [
-            //   //     {
-            //   //         effectType: "burn",
-            //   //         ammount: 5
-            //   //     }
-            //   // ]
-            // }
-
-            // await APIBattle.attack(attackInfo)
+            await APIBattle.attack(attackInfo)
           }
 
         } catch (e) {
@@ -668,6 +670,19 @@ export default function PlayerPage() {
       }
     };
 
+    const callCounter = async (battleCharacterId: number, maxDamage: number) => {
+      try {
+        await APIBattle.applyDefense(battleCharacterId, maxDamage);
+        if (maxDamage > 0) {
+          showToast("Você contra-atacou!");
+        } else {
+          showToast("Você não contra-atacou");
+        }
+      } catch (e) {
+        showToast("Erro ao encerrar o executar o counter");
+      }
+    };
+
     const executeDefense = async (result: any | null) => {
       try {
         let defenseValue = attack.totalPower;
@@ -719,7 +734,11 @@ export default function PlayerPage() {
       executeDefense(null)
     };
 
-    if (defense != "take") {
+    if (defense == "counter") {
+      callCounter(attack.targetBattleId, calculateMaxCounterDamage(player, weaponList));
+    } else if (defense == "cancel-counter") {
+      callCounter(attack.targetBattleId, 0);
+    } else if (defense != "take") {
       rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForDefense(player, weaponList, defense), result => {
         executeDefense(result);
       });

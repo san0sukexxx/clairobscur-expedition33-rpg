@@ -1,6 +1,7 @@
 package com.example.demo.dto
 
 import com.example.demo.model.Attack
+import com.example.demo.dto.AttackResponse
 
 data class FightInfoResponse(
         val battleId: Int?,
@@ -10,5 +11,5 @@ data class FightInfoResponse(
         val battleStatus: String,
         val canRollInitiative: Boolean,
         val turns: List<BattleTurnResponse>? = null,
-        val pendingAttacks: List<Attack>? = null
+        val pendingAttacks: List<AttackResponse>? = null
 )

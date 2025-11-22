@@ -27,7 +27,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
   }, [player?.fightInfo])
 
   return (
-    <div className="fixed bottom-20 right-4">
+    <div className="fixed bottom-20 right-4 z-41">
       {/* Botão principal */}
       <button
         className="btn btn-primary btn-circle shadow-lg"
