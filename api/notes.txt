@@ -9,5 +9,9 @@ Kotlin (fwcd)
 Setup:
 Add ....\kotlin-compiler-2.2.21-RC\kotlinc\bin to Path in Enviroment Variables
 
-Run project:
+For mac or linux users:
+chmod a+x gradlew
+./gradlew bootRun
+
+For windows users:
 .\gradlew.bat bootRun
