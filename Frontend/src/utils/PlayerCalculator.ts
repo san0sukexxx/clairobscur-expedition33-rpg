@@ -7,6 +7,8 @@ import {
     calculateFailureDiv,
     diceTotal
 } from "./DiceCalculator";
+import { getNpcById } from "../data/NPCsList";
+import { getWeaponElementModifier } from "./NpcCalculator";
 
 export function calculateMaxHP(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.resistance ?? 0) * 5;
@@ -22,7 +24,9 @@ export function calculateRawWeaponPower(player: GetPlayerResponse | null, weapon
     return (calculateWeaponPlusPower(weaponDetails?.attributes.power ?? 0, weapon?.level ?? 0) ?? 0);
 }
 
-export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponList: WeaponDTO[], diceResult: any): number {
+export function calculateBasicAttackDamage(player: GetPlayerResponse | null, npcId: string, weaponList: WeaponDTO[], diceResult: any): number {
+    const npcInfo = getNpcById(npcId)
+
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
     var playerPower = (player?.playerSheet?.power ?? 0) * calculateCriticalMulti(diceResult);
@@ -30,14 +34,22 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     if (failures > 0) {
         playerPower = Math.floor(playerPower / failures);
     }
-    return playerPower + calculateRawWeaponPower(player, weaponList) + total;
+    const attackDamage = playerPower + calculateRawWeaponPower(player, weaponList) + total;
+
+    if (npcInfo != undefined) {
+        return Math.floor(
+            attackDamage * (getWeaponElementModifier(npcId, player, weaponList)?.multiplier ?? 1)
+        );
+    }
+
+    return attackDamage;
 }
 
 export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponList: WeaponDTO[], diceResult: any, defenseOption: DefenseOption): number {
     if (defenseOption == "take") {
         return totalDamage;
     }
-    
+
     const diceTotalSum = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
     var playerDefense = 0;
@@ -88,7 +100,11 @@ export function calculateMaxCounterDamage(player: GetPlayerResponse | null, weap
 }
 
 export function calculateMaxMP(player: GetPlayerResponse | null): number {
-    return (player?.playerSheet?.hability ?? 0) * 5;
+    return (player?.playerSheet?.hability ?? 0) * 3;
+}
+
+export function calculateInitialMP(player: GetPlayerResponse | null): number {
+    return (player?.playerSheet?.hability ?? 0);
 }
 
 export function calculateMaxPA(player: GetPlayerResponse | null): number {

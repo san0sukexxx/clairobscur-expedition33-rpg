@@ -1,9 +1,8 @@
-// src/types/Weapon.ts
+import { type Element } from "../api/ResponseModel"
 
 // Ranks possíveis
 export type Rank = "S" | "A" | "B" | "C" | "D" | "E";
 export type AttributeType = "vitality" | "agility" | "defense" | "luck";
-export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 
 // Estrutura de uma passiva
 export interface PassiveDTO {

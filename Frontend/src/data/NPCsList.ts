@@ -13,7 +13,8 @@ export const NPCsList: NPCInfo[] = [
         name: "Golem",
         power: 1,
         hability: 1,
-        resistance: 3
+        resistance: 3,
+        weakTo: "Fire"
     },
 ];
 

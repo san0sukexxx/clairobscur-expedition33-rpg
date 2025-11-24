@@ -17,7 +17,7 @@ import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../ap
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIPictos } from "../api/APIPictos";
 import { APIBattle, type CreateAttackRequest, type CreateDefenseRequest } from "../api/APIBattle";
-import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption } from "../api/ResponseModel";
+import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -41,9 +41,10 @@ import { rollWithTimeout } from "../utils/RollUtils";
 import PanelModal from "../components/PanelModal";
 import { useToast } from "../components/Toast";
 import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
-import { calculateAttackReceivedDamage } from "../utils/NpcCalculator";
+import { calculateAttackReceivedDamage, getWeaponElementModifier } from "../utils/NpcCalculator";
 import MasterEditingOverlay from "../components/MasterEditingOverlay"
 import PendingAttacksModal from "../components/PendingAttacksModal"
+import { getElementModifierText } from "../utils/ElementUtils";
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -59,6 +60,7 @@ export default function PlayerPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string | undefined>(undefined);
   const [modalBody, setModalBody] = useState<React.ReactNode>(null);
+  const [attackType, setAttackType] = useState<AttackType>("basic");
   const { showToast } = useToast();
   const { pathname } = useLocation();
   const isAdmin = !!matchPath(
@@ -335,9 +337,9 @@ export default function PlayerPage() {
           case "BATTLE_STARTED":
           case "TURN_ENDED":
           case "ALLOW_COUNTER":
-          case "ATTACK_PENDING":
             applyFightInfoUpdate(playerInfo);
             break;
+          case "ATTACK_PENDING":
           case "COUNTER_RESOLVED":
           case "DAMAGE_DEALT":
             applySheetInfoUpdate(playerInfo);
@@ -525,9 +527,10 @@ export default function PlayerPage() {
       const criticalMulti = calculateCriticalMulti(result)
       const rollTotal = diceTotal(result)
       const weaponPower = calculateRawWeaponPower(player, weaponList)
-      const total = calculateBasicAttackDamage(player, weaponList, result)
+      const total = calculateBasicAttackDamage(player, target.id, weaponList, result)
       const failures = countFailuresRolls(result)
       const failuresDiv = calculateFailureDiv(result)
+      const elementModifier = getWeaponElementModifier(target.id, player, weaponList)
 
       setModalTitle("Resultado da rolagem")
 
@@ -560,6 +563,14 @@ export default function PlayerPage() {
               Arma: <b>{weaponPower}</b>
             </p>
           )}
+          {elementModifier != undefined && (
+            <p>
+              Elemento da arma: <b>{getElementModifierText(elementModifier.type)}</b>
+              <span className="inline-flex items-center gap-1 font-bold ml-2">
+                (x{elementModifier.multiplier})
+              </span>
+            </p>
+          )}
           <h1 className="text-2xl font-bold">Total: {total}</h1>
         </div>
       )
@@ -575,6 +586,7 @@ export default function PlayerPage() {
               totalDamage: totalDamageToNpc,
               targetBattleId: target.battleID,
               sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
+              attackType: attackType
               // TODO:
               // effects: [
               //     {
@@ -590,6 +602,7 @@ export default function PlayerPage() {
               totalPower: total,
               targetBattleId: target.battleID,
               sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
+              attackType: attackType
               // TODO:
               // effects: [
               //     {
@@ -636,6 +649,9 @@ export default function PlayerPage() {
         break;
       case COMBAT_MENU_ACTIONS.EndTurn:
         endTurn();
+        break;
+      case COMBAT_MENU_ACTIONS.Attack:
+        setAttackType("basic");
         break;
       default:
         break;

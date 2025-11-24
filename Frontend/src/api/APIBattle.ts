@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type EffectType } from "./ResponseModel"
+import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type EffectType, type AttackType } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -60,7 +60,8 @@ export interface CreateAttackRequest {
     totalPower?: number
     targetBattleId: number
     sourceBattleId: number
-    effects?: AttackStatusEffectRequest[]
+    effects?: AttackStatusEffectRequest[],
+    attackType?: AttackType
 }
 
 export interface AttackStatusEffectRequest {

@@ -2,7 +2,7 @@ import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { APIPlayer } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
-import { calculateMaxHP, calculateMaxMP, calculateMaxPA } from "../utils/PlayerCalculator";
+import { calculateMaxHP, calculateMaxMP, calculateMaxPA, calculateInitialMP } from "../utils/PlayerCalculator";
 
 interface PlayerSheetProps {
     player: PlayerResponse | null;
@@ -58,7 +58,7 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                         allowedCharacters={campaignInfo?.characters ?? []}
                     />
 
-                    <div className="grid grid-cols-2 gap-3">
+                    {/* <div className="grid grid-cols-2 gap-3">
                         <label className="form-control">
                             <span className="label-text">Total de pontos</span>
                             <input
@@ -110,7 +110,7 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                 }}
                             />
                         </label>
-                    </div>
+                    </div> */}
 
                     <div className="card bg-base-200 shadow">
                         <div className="card-body">
@@ -201,27 +201,10 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                         máx.{" "}
                                         {calculateMaxMP(player)}
                                     </span>
-                                    <input
-                                        type="number"
-                                        className="input input-bordered"
-                                        value={player?.playerSheet?.mpCurrent ?? ""}
-                                        onChange={async (e) => {
-                                            if (!player) return;
+                                    <div className="rounded-lg py-2 px-3 font-semibold bg-blue-500/10 text-blue-600 border border-blue-500/20">
+                                        PM Inicial: {calculateInitialMP(player)}
+                                    </div>
 
-                                            const raw = e.target.value;
-
-                                            const next = {
-                                                ...player,
-                                                playerSheet: {
-                                                    ...player.playerSheet,
-                                                    mpCurrent: raw === "" ? undefined : Number(raw),
-                                                },
-                                            };
-
-                                            setPlayer(next);
-                                            await sync(next);
-                                        }}
-                                    />
                                 </label>
                             </div>
 

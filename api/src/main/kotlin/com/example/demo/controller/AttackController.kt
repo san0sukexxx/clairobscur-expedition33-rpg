@@ -34,6 +34,16 @@ class AttackController(
                         battleCharacterRepository.findById(body.sourceBattleId).orElse(null)
                                 ?: return ResponseEntity.badRequest().build()
 
+                if (sourceBC.characterType == "player" && body.attackType == "basic") {
+                        val current = sourceBC.magicPoints ?: 0
+                        val max = sourceBC.maxMagicPoints ?: 0
+
+                        val next = (current + 1).coerceAtMost(max)
+
+                        sourceBC.magicPoints = next
+                        battleCharacterRepository.save(sourceBC)
+                }
+
                 if (body.totalPower != null) {
                         val attack =
                                 attackRepository.save(

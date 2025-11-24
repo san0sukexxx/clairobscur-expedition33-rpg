@@ -8,7 +8,7 @@ import { GiShieldReflect } from "react-icons/gi";
 import { FaArrowsDownToLine } from "react-icons/fa6";
 import { getCharacterLabelById } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateAttackReceivedDamage } from "../utils/NpcCalculator"
-import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator"
+import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
 import { type BattleCharacterType, type BattleCharacterInfo, type AttackType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
@@ -273,7 +273,7 @@ export default function CombatAdmin({
                 type: "player" as const,
                 currentHp: p.playerSheet?.hpCurrent ?? 0,
                 maxHp: calculateMaxHP(p),
-                currentMp: p.playerSheet?.mpCurrent ?? 0,
+                currentMp: calculateInitialMP(p),
                 maxMp: calculateMaxMP(p),
                 characterId: cid,
                 avatarUrl: cid ? `/characters/${cid}.webp` : undefined,

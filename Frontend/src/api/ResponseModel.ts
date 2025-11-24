@@ -6,7 +6,8 @@ export type StatusType =
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy";
 
-
+export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
+export type ElementModifierType = "imune" | "weak" | "resistent";
 export type EffectType = "jump" | "gradient";
 export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
 export type AttackType = "basic" | "jump" | "jump-all" | "gradient";
@@ -54,6 +55,9 @@ export interface NPCInfo {
     hability: number;
     resistance: number;
     playFirst?: boolean;
+    weakTo?: Element;
+    resistentTo?: Element;
+    imuneTo?: Element;
 }
 
 export interface PictoResponse {
@@ -133,4 +137,9 @@ export interface AttackStatusEffectResponse {
     id: number
     effectType: string
     ammount: number
+}
+
+export interface ElementModifier {
+    type: ElementModifierType
+    multiplier: number
 }
