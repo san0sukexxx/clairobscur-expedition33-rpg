@@ -7,6 +7,7 @@ import com.example.demo.model.BattleLog
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleInitiativeRepository
 import com.example.demo.repository.BattleLogRepository
+import com.example.demo.repository.BattleTurnRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,6 +17,8 @@ class BattleCharacterService(
         private val repository: BattleCharacterRepository,
         private val initiativeRepository: BattleInitiativeRepository,
         private val battleLogRepository: BattleLogRepository,
+        private val battleTurnRepository: BattleTurnRepository,
+        private val battleTurnService: BattleTurnService,
         private val objectMapper: ObjectMapper
 ) {
         @Transactional
@@ -84,7 +87,11 @@ class BattleCharacterService(
                 val battleId =
                         character.battleId ?: error("BattleCharacter $id não possui battleId")
 
+                battleTurnRepository.deleteByBattleCharacterId(id)
+
                 repository.deleteById(id)
+
+                battleTurnService.recalculatePlayOrder(battleId)
 
                 battleLogRepository.save(
                         BattleLog(
@@ -94,6 +101,7 @@ class BattleCharacterService(
                         )
                 )
         }
+
         fun listCharacters(battleId: Int): List<BattleCharacter> {
                 return repository.findByBattleId(battleId)
         }

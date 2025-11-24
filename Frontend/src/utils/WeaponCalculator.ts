@@ -1,3 +1,4 @@
+import type { WeaponInfo } from "../api/ResponseModel";
 import { roundDownOneDecimal } from "./MathUtils";
 
 export function calculateWeaponPower(power: number, level: number): number {
@@ -28,8 +29,9 @@ export function displayWeaponPlusPower(power: number, level: number): string | n
   if (weaponPower == null) return null;
   return "+" + weaponPower;
 }
+
+const ranks = ["S", "A", "B", "C", "D"];
 export function displayWeaponAttributeRank(rank: string, level: number): string {
-  const ranks = ["S", "A", "B", "C", "D"];
   const index = ranks.indexOf(rank);
 
   if (index === -1) return rank;
@@ -47,4 +49,15 @@ export function displayWeaponAttributeRank(rank: string, level: number): string 
   }
 
   return rank;
+}
+export function rankToValue(rank: string, level: number): number {
+  const weaponRank = displayWeaponAttributeRank(rank, level)
+  const index = ranks.indexOf(weaponRank);
+  if (index === -1) return 0;
+  return (ranks.length - index) * 5;
+}
+export function calculateWeaponVitalityBonus(weaponInfo: WeaponInfo | null): number {
+  if (weaponInfo?.details?.attributes.scaling.vitality == undefined) { return 0; }
+  const rank = weaponInfo?.details?.attributes.scaling.vitality;
+  return rankToValue(rank, weaponInfo.weapon?.level ?? 0)
 }

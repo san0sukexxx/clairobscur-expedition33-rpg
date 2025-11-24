@@ -17,7 +17,7 @@ import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../ap
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIPictos } from "../api/APIPictos";
 import { APIBattle, type CreateAttackRequest, type CreateDefenseRequest } from "../api/APIBattle";
-import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType } from "../api/ResponseModel";
+import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -77,6 +77,25 @@ export default function PlayerPage() {
       WeaponsDataLoader.fileForCharacter(player?.playerSheet?.characterId)
     );
   }, [player?.playerSheet?.characterId]);
+
+  const [weaponInfo, setWeaponInfo] = useState<WeaponInfo>({
+    weapon: null,
+    details: null,
+  });
+  
+  useEffect(() => {
+    const weaponId = player?.playerSheet?.weaponId;
+
+    if (!weaponId) {
+      setWeaponInfo({ weapon: null, details: null });
+      return;
+    }
+
+    const weapon = player?.weapons?.find(w => w.id === weaponId) ?? null;
+    const details = weaponList.find(w => w.name === weaponId) ?? null;
+
+    setWeaponInfo({ weapon, details });
+  }, [player?.playerSheet?.weaponId, player?.weapons, weaponList]);
 
   const { campaign, character } = useParams<{
     campaign: string;
@@ -186,7 +205,7 @@ export default function PlayerPage() {
         {/* Conteúdo da aba */}
         <section className="space-y-4">
           {!loading && !error && tab === "ficha" && (
-            <PlayerSheet player={player} setPlayer={setPlayer} campaignInfo={campaignInfo} />
+            <PlayerSheet player={player} setPlayer={setPlayer} campaignInfo={campaignInfo} weaponInfo={weaponInfo} />
           )}
 
           {!loading && !error && tab === "arma" && (
@@ -336,6 +355,7 @@ export default function PlayerPage() {
           case "SET_INITIATIVE":
           case "BATTLE_STARTED":
           case "TURN_ENDED":
+          case "TURN_ADDED":
           case "ALLOW_COUNTER":
             applyFightInfoUpdate(playerInfo);
             break;
@@ -497,6 +517,7 @@ export default function PlayerPage() {
         await APIBattle.joinBattle({
           battleCharacterId: player.fightInfo?.playerBattleID ?? 0
         })
+        showToast("Agora você está participando da batalha");
       } catch (e) {
         showToast("Erro ao salvar player");
       }
@@ -522,15 +543,15 @@ export default function PlayerPage() {
   function handleSelectAttackTarget(target: BattleCharacterInfo) {
     if (player == null) { return }
 
-    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForBasicAttack(player, weaponList), result => {
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForBasicAttack(player, weaponInfo), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculateCriticalMulti(result)
       const rollTotal = diceTotal(result)
-      const weaponPower = calculateRawWeaponPower(player, weaponList)
-      const total = calculateBasicAttackDamage(player, target.id, weaponList, result)
+      const weaponPower = calculateRawWeaponPower(weaponInfo)
+      const total = calculateBasicAttackDamage(player, weaponInfo, target.id, result)
       const failures = countFailuresRolls(result)
       const failuresDiv = calculateFailureDiv(result)
-      const elementModifier = getWeaponElementModifier(target.id, player, weaponList)
+      const elementModifier = getWeaponElementModifier(target.id, weaponInfo)
 
       setModalTitle("Resultado da rolagem")
 
@@ -703,7 +724,7 @@ export default function PlayerPage() {
       try {
         let defenseValue = attack.totalPower;
         if (result != null) {
-          defenseValue = calculateDefense(attack.totalPower, player, weaponList, result, defense);
+          defenseValue = calculateDefense(attack.totalPower, player, weaponInfo, result, defense);
         }
         let description = "Você recebeu todo o dano.";
 
@@ -755,7 +776,7 @@ export default function PlayerPage() {
     } else if (defense == "cancel-counter") {
       callCounter(attack.targetBattleId, 0);
     } else if (defense != "take") {
-      rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForDefense(player, weaponList, defense), result => {
+      rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForDefense(player, weaponInfo, defense), result => {
         executeDefense(result);
       });
     } else {

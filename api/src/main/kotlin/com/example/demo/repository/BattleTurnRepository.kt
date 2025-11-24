@@ -12,6 +12,7 @@ interface BattleTurnRepository : JpaRepository<BattleTurn, Int> {
     fun findTopByBattleIdOrderByPlayOrderDesc(battleId: Int): BattleTurn?
     fun findByBattleIdOrderByPlayOrderAsc(battleId: Int): List<BattleTurn>
     fun findByBattleCharacterId(battleCharacterId: Int): List<BattleTurn>
+    fun deleteByBattleCharacterId(battleCharacterId: Int)
 
     @Modifying
     @Query("UPDATE BattleTurn bt SET bt.playOrder = :playOrder WHERE bt.id = :id")

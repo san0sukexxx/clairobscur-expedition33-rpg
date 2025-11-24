@@ -3,14 +3,16 @@ import { APIPlayer } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
 import { calculateMaxHP, calculateMaxMP, calculateMaxPA, calculateInitialMP } from "../utils/PlayerCalculator";
+import type { WeaponInfo } from "../api/ResponseModel";
 
 interface PlayerSheetProps {
     player: PlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
     campaignInfo: Campaign | null;
+    weaponInfo: WeaponInfo | null;
 }
 
-export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerSheetProps) {
+export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInfo }: PlayerSheetProps) {
     async function sync(p: PlayerResponse) {
         await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
     }
@@ -237,7 +239,7 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                     <span className="label-text">PV</span>
                                     <span className="pl-1 text-sm text-gray-500">
                                         máx.{" "}
-                                        {calculateMaxHP(player)}
+                                        {calculateMaxHP(player, weaponInfo)}
                                     </span>
                                     <input
                                         type="number"

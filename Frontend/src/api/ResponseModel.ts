@@ -1,3 +1,5 @@
+import type { WeaponDTO } from "../types/WeaponDTO";
+
 export type StatusType =
     "Hastened" | "Empowered" | "Protected" | "Regeneration" |
     "Unprotected" | "Slowed" | "Weakened" | "Cursed" |
@@ -142,4 +144,9 @@ export interface AttackStatusEffectResponse {
 export interface ElementModifier {
     type: ElementModifierType
     multiplier: number
+}
+
+export interface WeaponInfo {
+    weapon: WeaponResponse | null;
+    details: WeaponDTO | null;
 }

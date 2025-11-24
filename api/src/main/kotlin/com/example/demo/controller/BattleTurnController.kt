@@ -47,6 +47,10 @@ class BattleTurnController(
                                 )
                         )
 
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "TURN_ADDED", eventJson = null)
+                )
+
                 return ResponseEntity.ok(saved.toResponse())
         }
 

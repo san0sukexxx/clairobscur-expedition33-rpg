@@ -20,4 +20,14 @@ class BattleTurnService(private val battleTurnRepository: BattleTurnRepository) 
             battleTurnRepository.updatePlayOrder(id, newOrder)
         }
     }
+
+    @Transactional
+    fun recalculatePlayOrder(battleId: Int) {
+        val turns = battleTurnRepository.findByBattleIdOrderByPlayOrderAsc(battleId)
+        turns.forEachIndexed { index, turn ->
+            val newOrder = index + 1
+            val id = turn.id ?: return@forEachIndexed
+            battleTurnRepository.updatePlayOrder(id, newOrder)
+        }
+    }
 }

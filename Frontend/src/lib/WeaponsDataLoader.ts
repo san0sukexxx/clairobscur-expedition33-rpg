@@ -76,10 +76,6 @@ export class WeaponsDataLoader {
     return this.byFile!;
   }
 
-    // { id: "maelle", label: "Maelle" },
-    // { id: "sciel", label: "Sciel" },
-    // { id: "lune", label: "Lune" },
-    // { id: "monoco", label: "Monoco" },
   static fileForCharacter(character?: string): string {
     switch (character) {
       case "gustave":

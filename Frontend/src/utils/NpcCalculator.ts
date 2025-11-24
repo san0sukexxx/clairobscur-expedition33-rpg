@@ -1,4 +1,4 @@
-import { type NPCInfo, type Element, type ElementModifier, type ElementModifierType } from "../api/ResponseModel"
+import { type NPCInfo, type Element, type ElementModifier, type ElementModifierType, type WeaponInfo } from "../api/ResponseModel"
 import { getNpcById } from "../data/NPCsList"
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type WeaponDTO } from "../types/WeaponDTO";
@@ -60,34 +60,24 @@ export function rollCommandForNpcInitiative(id: string) {
     return "1d6";
 }
 
-export function getWeaponElement(player: GetPlayerResponse | null, weaponList: WeaponDTO[]): Element | undefined {
-    if (player?.playerSheet?.weaponId != null) {
-        const weaponDetails = weaponList.find(w => w.name == player.playerSheet?.weaponId);
-        return weaponDetails?.attributes.element
-    }
-
-    return undefined;
-}
-
-export function getWeaponElementModifier(id: string, player: GetPlayerResponse | null, weaponList: WeaponDTO[]): ElementModifier | undefined {
+export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | null): ElementModifier | undefined {
     const npcInfo = getNpcById(id)
 
     if (npcInfo?.imuneTo != undefined || npcInfo?.resistentTo != undefined || npcInfo?.weakTo != undefined) {
-        const weaponElement = getWeaponElement(player, weaponList)
-        if (weaponElement != undefined) {
-            if(npcInfo?.imuneTo == weaponElement) {
+        if (weaponInfo != undefined) {
+            if(npcInfo?.imuneTo == weaponInfo.details?.attributes.element) {
                 return {
                     multiplier: 0,
                     type: "imune"
                 };
             }
-            if(npcInfo?.resistentTo == weaponElement) {
+            if(npcInfo?.resistentTo == weaponInfo.details?.attributes.element) {
                 return {
                     multiplier: 0.5,
                     type: "resistent"
                 };
             }
-            if(npcInfo?.weakTo == weaponElement) {
+            if(npcInfo?.weakTo == weaponInfo.details?.attributes.element) {
                 return {
                     multiplier: 1.5,
                     type: "weak"

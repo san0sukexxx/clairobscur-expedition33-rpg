@@ -1,7 +1,7 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { calculateWeaponPlusDices, calculateWeaponPlusPower, calculateWeaponCounterMaxPower } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
-import { type DefenseOption } from "../api/ResponseModel";
+import { type DefenseOption, type WeaponInfo } from "../api/ResponseModel";
 import {
     calculateCriticalMulti,
     calculateFailureDiv,
@@ -9,22 +9,24 @@ import {
 } from "./DiceCalculator";
 import { getNpcById } from "../data/NPCsList";
 import { getWeaponElementModifier } from "./NpcCalculator";
+import { calculateWeaponVitalityBonus } from "./WeaponCalculator";
 
-export function calculateMaxHP(player: GetPlayerResponse | null): number {
-    return (player?.playerSheet?.resistance ?? 0) * 5;
+export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {
+    const vitalityValue = calculateWeaponVitalityBonus(weaponInfo);
+    const resistanceHealth = (player?.playerSheet?.resistance ?? 0) * 5
+    
+    return resistanceHealth + vitalityValue;
 }
 
-export function calculateRawWeaponPower(player: GetPlayerResponse | null, weaponList: WeaponDTO[]): number {
-    if (player?.playerSheet?.weaponId == null) {
+export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null): number {
+    if (weaponInfo == null) {
         return 0;
     }
 
-    const weaponDetails = weaponList.find(w => w.name == player.playerSheet?.weaponId);
-    const weapon = player?.weapons?.find(w => w.id == player.playerSheet?.weaponId);
-    return (calculateWeaponPlusPower(weaponDetails?.attributes.power ?? 0, weapon?.level ?? 0) ?? 0);
+    return (calculateWeaponPlusPower(weaponInfo.details?.attributes.power ?? 0, weaponInfo.weapon?.level ?? 0) ?? 0);
 }
 
-export function calculateBasicAttackDamage(player: GetPlayerResponse | null, npcId: string, weaponList: WeaponDTO[], diceResult: any): number {
+export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcId: string, diceResult: any): number {
     const npcInfo = getNpcById(npcId)
 
     const total = diceTotal(diceResult);
@@ -34,18 +36,18 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, npc
     if (failures > 0) {
         playerPower = Math.floor(playerPower / failures);
     }
-    const attackDamage = playerPower + calculateRawWeaponPower(player, weaponList) + total;
+    const attackDamage = playerPower + calculateRawWeaponPower(weaponInfo) + total;
 
     if (npcInfo != undefined) {
         return Math.floor(
-            attackDamage * (getWeaponElementModifier(npcId, player, weaponList)?.multiplier ?? 1)
+            attackDamage * (getWeaponElementModifier(npcId, weaponInfo)?.multiplier ?? 1)
         );
     }
 
     return attackDamage;
 }
 
-export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponList: WeaponDTO[], diceResult: any, defenseOption: DefenseOption): number {
+export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any, defenseOption: DefenseOption): number {
     if (defenseOption == "take") {
         return totalDamage;
     }
@@ -115,14 +117,12 @@ export function rollCommandForInitiative(player: GetPlayerResponse) {
     return "1d6";
 }
 
-export function rollCommandForBasicAttack(player: GetPlayerResponse, weaponList: WeaponDTO[]) {
-    const weaponDetails = weaponList.find(w => w.name == player.playerSheet?.weaponId);
-    const weapon = player?.weapons?.find(w => w.id == player.playerSheet?.weaponId);
-    const dices = calculateWeaponPlusDices(weaponDetails?.attributes.power ?? 0, weapon?.level ?? 0) + 1;
+export function rollCommandForBasicAttack(player: GetPlayerResponse, weaponInfo: WeaponInfo | null) {
+    const dices = calculateWeaponPlusDices(weaponInfo?.details?.attributes.power ?? 0, weaponInfo?.weapon?.level ?? 0) + 1;
     return `${dices}d6`;
 }
 
-export function rollCommandForDefense(player: GetPlayerResponse, weaponList: WeaponDTO[], defenseOption: DefenseOption) {
+export function rollCommandForDefense(player: GetPlayerResponse, weaponInfo: WeaponInfo | null, defenseOption: DefenseOption) {
     return "1d6";
 }
 

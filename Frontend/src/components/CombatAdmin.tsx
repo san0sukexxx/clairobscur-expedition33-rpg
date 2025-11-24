@@ -10,7 +10,7 @@ import { getCharacterLabelById } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateAttackReceivedDamage } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
-import { type BattleCharacterType, type BattleCharacterInfo, type AttackType } from "../api/ResponseModel"
+import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse, type CreateAttackRequest, type AttackStatusEffectRequest } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
@@ -18,7 +18,7 @@ import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { useToast } from "../components/Toast";
 import { rollWithTimeout } from "../utils/RollUtils";
-
+import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 
 export interface CombatEntity {
     rowId?: number
@@ -67,7 +67,6 @@ export default function CombatAdmin({
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
-
     const reloadBattleDetails = useCallback(async () => {
         if (!campaignInfo.battleId) return
         try {
@@ -264,15 +263,33 @@ export default function CombatAdmin({
         closeRemoveConfirm()
     }
 
+    function loadWeaponInfo(player: GetPlayerResponse): WeaponInfo | null {
+        const weaponId = player?.playerSheet?.weaponId;
+
+        if (!weaponId) {
+            return null;
+        }
+
+        const weaponList = WeaponsDataLoader.getByFile(
+            WeaponsDataLoader.fileForCharacter(player?.playerSheet?.characterId ?? "")
+        );
+
+        const weapon = player?.weapons?.find(w => w.id === weaponId) ?? null;
+        const details = weaponList.find(w => w.name === weaponId) ?? null;
+
+        return { weapon, details };
+    }
+
     const availablePlayers: CombatEntity[] = useMemo(() => {
         return players.map((p) => {
             const cid = p.playerSheet?.characterId || ""
+            const weaponInfo = loadWeaponInfo(p);
             return {
                 externalId: p.id,
                 name: p.playerSheet?.name?.trim() || `Player #${p.id}`,
                 type: "player" as const,
                 currentHp: p.playerSheet?.hpCurrent ?? 0,
-                maxHp: calculateMaxHP(p),
+                maxHp: calculateMaxHP(p, weaponInfo),
                 currentMp: calculateInitialMP(p),
                 maxMp: calculateMaxMP(p),
                 characterId: cid,
@@ -338,7 +355,7 @@ export default function CombatAdmin({
     }
 
     function renderActionOptions() {
-        if (isCurrentTurnNPC()) {
+        if (!isCurrentTurnPlayer() || battleDetails?.attacks == undefined || battleDetails?.attacks?.length == 0) {
             return;
         }
 
@@ -797,6 +814,7 @@ export default function CombatAdmin({
                     case "SET_INITIATIVE":
                     case "BATTLE_STARTED":
                     case "DAMAGE_DEALT":
+                    case "TURN_ADDED":
                     case "TURN_ENDED":
                     case "ATTACK_PENDING":
                     case "ALLOW_COUNTER":
@@ -855,6 +873,11 @@ export default function CombatAdmin({
     function isCurrentTurnNPC() {
         const character = getActiveTurnCharacter()
         return character?.type == "npc"
+    }
+
+    function isCurrentTurnPlayer() {
+        const character = getActiveTurnCharacter()
+        return character?.type == "player"
     }
 
     function npcAttackTapped(type: AttackType) {
