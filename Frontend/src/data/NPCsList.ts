@@ -14,7 +14,8 @@ export const NPCsList: NPCInfo[] = [
         power: 1,
         hability: 1,
         resistance: 3,
-        weakTo: "Fire"
+        weakTo: "Fire",
+        freeShotWeakPoints: 2
     },
 ];
 

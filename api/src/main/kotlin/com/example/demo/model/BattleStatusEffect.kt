@@ -3,10 +3,10 @@ package com.example.demo.model
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "attack_status_effect")
-data class AttackStatusEffect(
+@Table(name = "battle_status_effect")
+data class BattleStatusEffect(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int? = null,
-        @Column(name = "attack_id", nullable = false) val attackId: Int,
+        @Column(name = "battle_character_id", nullable = false) val battleCharacterId: Int,
         @Column(name = "effect_type", nullable = false) val effectType: String,
         @Column(name = "ammount", nullable = false) val ammount: Int,
         @Column(name = "remaining_turns") val remainingTurns: Int? = null

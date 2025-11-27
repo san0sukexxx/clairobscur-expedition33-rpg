@@ -77,6 +77,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget }: 
 
             case COMBAT_MENU_ACTIONS.FreeShot:
                 setTab(opositeTeamTab);
+                setIsAttacking(true);
+                onMenuAction(COMBAT_MENU_ACTIONS.FreeShot);
                 break;
 
             case COMBAT_MENU_ACTIONS.Attack:
@@ -111,7 +113,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget }: 
                 characters={player?.fightInfo?.characters}
                 initiatives={player?.fightInfo?.initiatives}
                 turns={player?.fightInfo?.turns}
-                isStarted={player?.fightInfo?.battleStatus == "started"} />
+                isStarted={player?.fightInfo?.battleStatus == "started"}
+                showBattleId={false} />
 
             {tab === "enemies" && (
                 <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} />

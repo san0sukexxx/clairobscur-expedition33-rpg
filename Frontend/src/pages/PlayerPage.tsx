@@ -16,7 +16,7 @@ import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuA
 import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIPictos } from "../api/APIPictos";
-import { APIBattle, type CreateAttackRequest, type CreateDefenseRequest } from "../api/APIBattle";
+import { APIBattle, type AttackStatusEffectRequest, type CreateAttackRequest, type CreateDefenseRequest } from "../api/APIBattle";
 import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
@@ -26,7 +26,10 @@ import {
   rollCommandForDefense,
   initiativeTotal,
   calculateDefense,
-  calculateMaxCounterDamage
+  calculateMaxCounterDamage,
+  rollCommandForAttack,
+  calculateAttackDamage,
+  calculateFreeShotPlus
 } from "../utils/PlayerCalculator";
 
 import {
@@ -82,7 +85,7 @@ export default function PlayerPage() {
     weapon: null,
     details: null,
   });
-  
+
   useEffect(() => {
     const weaponId = player?.playerSheet?.weaponId;
 
@@ -425,7 +428,7 @@ export default function PlayerPage() {
       });
     }
 
-    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForInitiative(player), result => {
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForInitiative(weaponInfo), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculateCriticalMulti(result)
       const rollTotal = diceTotal(result)
@@ -543,15 +546,16 @@ export default function PlayerPage() {
   function handleSelectAttackTarget(target: BattleCharacterInfo) {
     if (player == null) { return }
 
-    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForBasicAttack(player, weaponInfo), result => {
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculateCriticalMulti(result)
       const rollTotal = diceTotal(result)
-      const weaponPower = calculateRawWeaponPower(weaponInfo)
-      const total = calculateBasicAttackDamage(player, weaponInfo, target.id, result)
+      const weaponPower = calculateRawWeaponPower(weaponInfo, attackType)
+      const total = calculateAttackDamage(player, weaponInfo, target, result, attackType)
       const failures = countFailuresRolls(result)
       const failuresDiv = calculateFailureDiv(result)
       const elementModifier = getWeaponElementModifier(target.id, weaponInfo)
+      const freeShotPlus = calculateFreeShotPlus(player, target, attackType)
 
       setModalTitle("Resultado da rolagem")
 
@@ -583,6 +587,12 @@ export default function PlayerPage() {
             <p>
               Arma: <b>{weaponPower}</b>
             </p>
+          )}
+          {freeShotPlus > 0 && (
+            <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
+              <FaCheckCircle className="w-6 h-6" />
+              Vulnerabilidade tiro-livre <b>(+{freeShotPlus})</b>
+            </h3>
           )}
           {elementModifier != undefined && (
             <p>
@@ -673,6 +683,9 @@ export default function PlayerPage() {
         break;
       case COMBAT_MENU_ACTIONS.Attack:
         setAttackType("basic");
+        break;
+      case COMBAT_MENU_ACTIONS.FreeShot:
+        setAttackType("free-shot");
         break;
       default:
         break;

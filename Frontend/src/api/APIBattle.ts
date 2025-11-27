@@ -66,7 +66,8 @@ export interface CreateAttackRequest {
 
 export interface AttackStatusEffectRequest {
     effectType: EffectType
-    ammount?: number
+    ammount?: number,
+    remainingTurns?: number
 }
 
 export interface GetAttacksResponse {

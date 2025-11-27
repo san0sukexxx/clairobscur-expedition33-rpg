@@ -444,6 +444,7 @@ export default function CombatAdmin({
                                 <thead>
                                     <tr>
                                         <th></th>
+                                        <th>ID</th>
                                         <th>Nome</th>
                                         <th>Vida</th>
                                         <th>Mana</th>
@@ -465,6 +466,7 @@ export default function CombatAdmin({
                                                     onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
                                                 >
                                                     <td>{renderAvatarCell(m)}</td>
+                                                    <td>{m.rowId}</td>
 
                                                     <td className="flex items-center gap-1">
                                                         <span
@@ -788,7 +790,8 @@ export default function CombatAdmin({
                         characters={battleDetails?.characters}
                         initiatives={battleDetails?.initiatives}
                         turns={battleDetails?.turns}
-                        isStarted={battleStatus == "started"} />
+                        isStarted={battleStatus == "started"}
+                        showBattleId={true} />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {renderAttackOptions()}

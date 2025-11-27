@@ -40,6 +40,7 @@ CREATE TABLE
         battle_character_id INTEGER NOT NULL,
         effect_type TEXT NOT NULL,
         ammount INTEGER NOT NULL,
+        remaining_turns INTEGER,
         FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE
     );
 
@@ -84,5 +85,6 @@ CREATE TABLE
         attack_id INTEGER NOT NULL,
         effect_type TEXT NOT NULL,
         ammount INTEGER NOT NULL,
+        remaining_turns INTEGER,
         FOREIGN KEY (attack_id) REFERENCES attack (id) ON DELETE CASCADE
     );

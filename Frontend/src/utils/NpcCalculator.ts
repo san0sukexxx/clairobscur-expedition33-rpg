@@ -62,9 +62,9 @@ export function rollCommandForNpcInitiative(id: string) {
 
 export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | null): ElementModifier | undefined {
     const npcInfo = getNpcById(id)
-
+    
     if (npcInfo?.imuneTo != undefined || npcInfo?.resistentTo != undefined || npcInfo?.weakTo != undefined) {
-        if (weaponInfo != undefined) {
+        if (weaponInfo != undefined && weaponInfo.details != null) {
             if(npcInfo?.imuneTo == weaponInfo.details?.attributes.element) {
                 return {
                     multiplier: 0,
@@ -85,5 +85,4 @@ export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | nu
             }
         }
     }
-
 }

@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { FaBars } from "react-icons/fa";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
+import type { BattleCharacterInfo } from "../api/ResponseModel";
 
 interface CombatMenuProps {
   player: GetPlayerResponse | null;
@@ -25,6 +26,14 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     if (!firstTurn) return false
     return firstTurn.battleCharacterId === player?.fightInfo?.playerBattleID
   }, [player?.fightInfo])
+
+  const characters = player?.fightInfo?.characters ?? [];
+  const playerBattleID = player?.fightInfo?.playerBattleID;
+
+  const ch: BattleCharacterInfo | undefined =
+    characters.find(c => c.battleID === playerBattleID) ?? characters.find(c => !c.isEnemy);
+
+  if (!ch) return null;
 
   return (
     <div className="fixed bottom-20 right-4 z-41">
@@ -77,9 +86,11 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
               <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
                 Habilidades
               </button>
-              <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
-                Tiro livre
-              </button>
+              {(ch.magicPoints ?? 0) > 0 && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
+                  Tiro livre
+                </button>
+              )}
               <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
                 Atacar
               </button>

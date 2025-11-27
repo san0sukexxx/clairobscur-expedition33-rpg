@@ -2,7 +2,7 @@ import type { WeaponInfo } from "../api/ResponseModel";
 import { roundDownOneDecimal } from "./MathUtils";
 
 export function calculateWeaponPower(power: number, level: number): number {
-  return roundDownOneDecimal((power / 8) * level / 1000);
+  return roundDownOneDecimal((power / 7) * level / 1000);
 }
 export function calculateWeaponPlusDices(power: number, level: number): number {
   const weaponPower = calculateWeaponPower(power, level);
@@ -54,10 +54,32 @@ export function rankToValue(rank: string, level: number): number {
   const weaponRank = displayWeaponAttributeRank(rank, level)
   const index = ranks.indexOf(weaponRank);
   if (index === -1) return 0;
-  return (ranks.length - index) * 5;
+  return (ranks.length - index);
 }
 export function calculateWeaponVitalityBonus(weaponInfo: WeaponInfo | null): number {
   if (weaponInfo?.details?.attributes.scaling.vitality == undefined) { return 0; }
   const rank = weaponInfo?.details?.attributes.scaling.vitality;
+  return rankToValue(rank, weaponInfo.weapon?.level ?? 0) * 5
+}
+export function calculateWeaponAgilityBonus(weaponInfo: WeaponInfo | null): number {
+  if (weaponInfo?.details?.attributes.scaling.agility == undefined) { return 0; }
+  const rank = weaponInfo?.details?.attributes.scaling.agility;
   return rankToValue(rank, weaponInfo.weapon?.level ?? 0)
+}
+export function calculateWeaponDefenseBonus(weaponInfo: WeaponInfo | null): number {
+  if (weaponInfo?.details?.attributes.scaling.defense == undefined) { return 0; }
+  const rank = weaponInfo?.details?.attributes.scaling.defense;
+  return rankToValue(rank, weaponInfo.weapon?.level ?? 0)
+}
+export function displayWeaponVitalityBonus(rank: string, level: number): string {
+  return "+" + rankToValue(rank, level) * 5
+}
+export function displayWeaponDefenseBonus(rank: string, level: number): string {
+  return "+" + rankToValue(rank, level)
+}
+export function displayWeaponLuckBonus(rank: string, level: number): string {
+  return "+" + rankToValue(rank, level)
+}
+export function displayWeaponAgilityBonus(rank: string, level: number): string {
+  return "+" + rankToValue(rank, level)
 }

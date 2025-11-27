@@ -3,6 +3,7 @@ package com.example.demo.service
 import com.example.demo.dto.AttackResponse
 import com.example.demo.dto.AttackStatusEffectResponse
 import com.example.demo.dto.BattleCharacterInfo
+import com.example.demo.dto.BattleStatusResponse
 import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.FightInfoResponse
 import com.example.demo.dto.InitiativeResponse
@@ -10,6 +11,7 @@ import com.example.demo.repository.AttackRepository
 import com.example.demo.repository.AttackStatusEffectRepository
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
+import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.repository.CampaignPlayerRepository
 import com.example.demo.repository.CampaignRepository
@@ -27,7 +29,8 @@ class FightService(
         private val initiativeRepository: InitiativeRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val attackRepository: AttackRepository,
-        private val attackStatusEffectRepository: AttackStatusEffectRepository
+        private val attackStatusEffectRepository: AttackStatusEffectRepository,
+        private val battleStatusEffectRepository: BattleStatusEffectRepository
 ) {
         fun buildFightInfoForPlayer(playerId: Int): FightInfoResponse? {
                 val campaignPlayer =
@@ -63,6 +66,18 @@ class FightService(
                                                 bc.externalId
                                         }
 
+                                val status =
+                                        battleStatusEffectRepository.findByBattleCharacterId(
+                                                        bc.id!!
+                                                )
+                                                .map {
+                                                        BattleStatusResponse(
+                                                                effectName = it.effectType,
+                                                                ammount = it.ammount,
+                                                                remainingTurns = it.remainingTurns
+                                                        )
+                                                }
+
                                 BattleCharacterInfo(
                                         battleID = bc.id,
                                         id = externalId,
@@ -71,7 +86,7 @@ class FightService(
                                         maxHealthPoints = bc.maxHealthPoints,
                                         magicPoints = bc.magicPoints,
                                         maxMagicPoints = bc.maxMagicPoints,
-                                        status = null,
+                                        status = status,
                                         type = bc.characterType,
                                         isEnemy = bc.isEnemy,
                                         canRollInitiative = bc.canRollInitiative

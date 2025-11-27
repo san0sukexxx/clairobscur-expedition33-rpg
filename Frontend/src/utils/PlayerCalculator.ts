@@ -1,7 +1,7 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { calculateWeaponPlusDices, calculateWeaponPlusPower, calculateWeaponCounterMaxPower } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
-import { type DefenseOption, type WeaponInfo } from "../api/ResponseModel";
+import { type AttackType, type BattleCharacterInfo, type DefenseOption, type WeaponInfo } from "../api/ResponseModel";
 import {
     calculateCriticalMulti,
     calculateFailureDiv,
@@ -9,21 +9,62 @@ import {
 } from "./DiceCalculator";
 import { getNpcById } from "../data/NPCsList";
 import { getWeaponElementModifier } from "./NpcCalculator";
-import { calculateWeaponVitalityBonus } from "./WeaponCalculator";
+import { calculateWeaponVitalityBonus, calculateWeaponAgilityBonus, calculateWeaponDefenseBonus } from "./WeaponCalculator";
 
 export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {
     const vitalityValue = calculateWeaponVitalityBonus(weaponInfo);
     const resistanceHealth = (player?.playerSheet?.resistance ?? 0) * 5
-    
+
     return resistanceHealth + vitalityValue;
 }
 
-export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null): number {
-    if (weaponInfo == null) {
+export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackType: AttackType): number {
+    if (weaponInfo == null || attackType == "free-shot") {
         return 0;
     }
 
     return (calculateWeaponPlusPower(weaponInfo.details?.attributes.power ?? 0, weaponInfo.weapon?.level ?? 0) ?? 0);
+}
+
+export function calculateAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType): number {
+    if (attackType == "basic") {
+        return calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo.id, diceResult);
+    } else if (attackType == "free-shot") {
+        return calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType);
+    }
+
+    return 1;
+}
+
+export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, attackType: AttackType): number {
+    if(attackType != "free-shot") { return 0; }
+    const npcInfo = getNpcById(npcBattleCharacterInfo.id)
+
+    if (npcInfo?.freeShotWeakPoints != undefined) {
+        const statusFreeShot = npcBattleCharacterInfo.status?.find(s => s.effectName == "Free-Shot")
+
+        console.log(statusFreeShot)
+
+        if (!statusFreeShot || statusFreeShot.ammount < npcInfo.freeShotWeakPoints) {
+            return (player?.playerSheet?.power ?? 0)
+        }
+    }
+
+    return 0
+}
+
+export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType): number {
+    const total = diceTotal(diceResult);
+    const failures = calculateFailureDiv(diceResult)
+    var criticalMulti = calculateCriticalMulti(diceResult)
+
+    var playerPower = (player?.playerSheet?.power ?? 0) * criticalMulti;
+    if (failures > 0) {
+        playerPower = Math.floor(playerPower / failures);
+    }
+    playerPower += calculateFreeShotPlus(player, npcBattleCharacterInfo, attackType)
+
+    return playerPower + total;
 }
 
 export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcId: string, diceResult: any): number {
@@ -36,7 +77,7 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     if (failures > 0) {
         playerPower = Math.floor(playerPower / failures);
     }
-    const attackDamage = playerPower + calculateRawWeaponPower(weaponInfo) + total;
+    const attackDamage = playerPower + calculateRawWeaponPower(weaponInfo, "basic") + total;
 
     if (npcInfo != undefined) {
         return Math.floor(
@@ -113,17 +154,42 @@ export function calculateMaxPA(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.power ?? 0);
 }
 
-export function rollCommandForInitiative(player: GetPlayerResponse) {
-    return "1d6";
+export function rollCommandForInitiative(weaponInfo: WeaponInfo | null) {
+    const agilityBonus = calculateWeaponAgilityBonus(weaponInfo) + 1
+    return agilityBonus + "d6";
 }
 
-export function rollCommandForBasicAttack(player: GetPlayerResponse, weaponInfo: WeaponInfo | null) {
+export function rollCommandForBasicAttack(weaponInfo: WeaponInfo | null) {
     const dices = calculateWeaponPlusDices(weaponInfo?.details?.attributes.power ?? 0, weaponInfo?.weapon?.level ?? 0) + 1;
     return `${dices}d6`;
 }
 
+export function rollCommandForAttack(weaponInfo: WeaponInfo | null, attackType: AttackType) {
+    var dices = 1;
+
+    if (attackType == "basic") {
+        dices = calculateWeaponPlusDices(weaponInfo?.details?.attributes.power ?? 0, weaponInfo?.weapon?.level ?? 0) + 1;
+    } else if (attackType == "free-shot") {
+        dices = 1;
+    }
+    return `${dices}d6`;
+}
+
 export function rollCommandForDefense(player: GetPlayerResponse, weaponInfo: WeaponInfo | null, defenseOption: DefenseOption) {
-    return "1d6";
+    var defenseDices = 1
+
+    switch (defenseOption) {
+        case "dodge":
+        case "jump":
+            defenseDices += calculateWeaponAgilityBonus(weaponInfo)
+            break
+        case "block":
+            defenseDices += calculateWeaponDefenseBonus(weaponInfo)
+            break
+        case "gradient-block":
+            return rollCommandForBasicAttack(weaponInfo)
+    }
+    return defenseDices + "d6";
 }
 
 export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {

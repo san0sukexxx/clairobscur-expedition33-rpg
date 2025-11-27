@@ -5,12 +5,13 @@ interface InitiativesQueueProps {
     characters?: BattleCharacterInfo[] | undefined
     initiatives?: InitiativeResponse[] | undefined
     turns?: BattleTurnResponse[] | undefined
-    isStarted: boolean
+    isStarted: boolean,
+    showBattleId: boolean
 }
 
 type AnyItem = InitiativeResponse | BattleTurnResponse
 
-export default function InitiativesQueue({ characters, initiatives, turns, isStarted }: InitiativesQueueProps) {
+export default function InitiativesQueue({ characters, initiatives, turns, isStarted, showBattleId }: InitiativesQueueProps) {
     const sortedQueue = useMemo<AnyItem[]>(() => {
         if (isStarted) {
             return turns ?? []
@@ -41,15 +42,25 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                         ? findCharacter(item.battleCharacterId)
                         : findCharacter(item.battleID)
 
+                    const battleId = isStarted
+                        ? item.battleCharacterId
+                        : item.battleID
+
                     const key = isStarted
-                        ? `turn-${(item as BattleTurnResponse).id ?? (item as BattleTurnResponse).battleCharacterId}-${index}`
-                        : `init-${(item as InitiativeResponse).battleID}-${index}`
+                        ? `turn-${item.id ?? item.battleCharacterId}-${index}`
+                        : `init-${item.battleID}-${index}`
 
                     if (!ch) return null
                     return (
                         <div key={key} className="flex flex-col items-center">
                             <div
-                                className={`relative flex-shrink-0 overflow-hidden rounded-md border-2 ${isActive ? "w-16 h-16 border-yellow-400 shadow-lg" : "w-12 h-12 border-neutral-700"
+                                className={`relative flex-shrink-0 overflow-hidden rounded-md border-2 ${isActive
+                                        ? showBattleId
+                                            ? "w-20 h-20 border-yellow-400 shadow-lg"
+                                            : "w-16 h-16 border-yellow-400 shadow-lg"
+                                        : showBattleId
+                                            ? "w-16 h-16 border-neutral-700"
+                                            : "w-12 h-12 border-neutral-700"
                                     }`}
                                 title={ch.name}
                             >
@@ -59,6 +70,12 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                                     className="w-full h-full object-cover"
                                 />
                             </div>
+
+                            {showBattleId && (
+                                <span className="text-xs text-neutral-400 mt-1">
+                                    #{battleId}
+                                </span>
+                            )}
                         </div>
                     )
                 })}

@@ -7,10 +7,12 @@ import com.example.demo.dto.StatusEffectRequest
 import com.example.demo.model.Attack
 import com.example.demo.model.AttackStatusEffect
 import com.example.demo.model.BattleLog
+import com.example.demo.model.BattleStatusEffect
 import com.example.demo.repository.AttackRepository
 import com.example.demo.repository.AttackStatusEffectRepository
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
+import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -23,6 +25,7 @@ class AttackController(
         private val attackStatusEffectRepository: AttackStatusEffectRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
+        private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val battleTurnRepository: BattleTurnRepository
 ) {
 
@@ -34,11 +37,16 @@ class AttackController(
                         battleCharacterRepository.findById(body.sourceBattleId).orElse(null)
                                 ?: return ResponseEntity.badRequest().build()
 
-                if (sourceBC.characterType == "player" && body.attackType == "basic") {
+                if (sourceBC.characterType == "player") {
                         val current = sourceBC.magicPoints ?: 0
                         val max = sourceBC.maxMagicPoints ?: 0
 
-                        val next = (current + 1).coerceAtMost(max)
+                        val next =
+                                when (body.attackType) {
+                                        "basic" -> (current + 1).coerceAtMost(max)
+                                        "free-shot" -> (current - 1).coerceAtLeast(0)
+                                        else -> current
+                                }
 
                         sourceBC.magicPoints = next
                         battleCharacterRepository.save(sourceBC)
@@ -61,7 +69,8 @@ class AttackController(
                                         AttackStatusEffect(
                                                 attackId = attack.id!!,
                                                 effectType = eff.effectType,
-                                                ammount = eff.ammount ?: 0
+                                                ammount = eff.ammount ?: 0,
+                                                remainingTurns = eff.remainingTurns
                                         )
                                 )
                         }
@@ -98,6 +107,25 @@ class AttackController(
                                         eventJson = null
                                 )
                         )
+
+                        if (body.attackType == "free-shot" && newHp > 0) {
+                                val effects =
+                                        battleStatusEffectRepository.findByBattleCharacterId(
+                                                targetBC.id!!
+                                        )
+                                val existing = effects.firstOrNull { it.effectType == "Free-Shot" }
+                                val next = (existing?.ammount ?: 0) + 1
+
+                                val toSave =
+                                        existing?.copy(ammount = next)
+                                                ?: BattleStatusEffect(
+                                                        battleCharacterId = targetBC.id!!,
+                                                        effectType = "Free-Shot",
+                                                        ammount = next
+                                                )
+
+                                battleStatusEffectRepository.save(toSave)
+                        }
                 }
 
                 return ResponseEntity.noContent().build()

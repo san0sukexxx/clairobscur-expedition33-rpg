@@ -1,12 +1,12 @@
 import { useRef, useMemo, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaList, FaDice, FaChartLine } from "react-icons/fa";
-import { GiStripedSword } from "react-icons/gi";
+import { GiStripedSword, GiLifeBar } from "react-icons/gi";
 import { APIPlayer } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPlusDices, displayWeaponAttributeRank, displayWeaponPlusPower } from "../utils/WeaponCalculator";
+import { displayWeaponPlusDices, displayWeaponAttributeRank, displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE } from "../utils/ElementUtils";
 
 type SelectorWeapon = {
@@ -427,9 +427,30 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                   value ? (
                     <div key={label}>
                       <span className="block text-xs uppercase opacity-70">{label}</span>
-                      <span className="block text-2xl font-bold">
-                        {displayWeaponAttributeRank(value, activeWeapon.level)}
-                      </span>
+                      {label == "Vitalidade" && (
+                        <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                          {displayWeaponVitalityBonus(value, activeWeapon.level)}
+                          <GiLifeBar />
+                        </span>
+                      )}
+                      {label == "Defesa" && (
+                        <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                          {displayWeaponDefenseBonus(value, activeWeapon.level)}
+                          <FaDice />
+                        </span>
+                      )}
+                      {label == "Sorte" && (
+                        <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                          {displayWeaponLuckBonus(value, activeWeapon.level)}
+                          <FaDice />
+                        </span>
+                      )}
+                      {label == "Agilidade" && (
+                        <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                          {displayWeaponAgilityBonus(value, activeWeapon.level)}
+                          <FaDice />
+                        </span>
+                      )}
                     </div>
                   ) : null
                 )}
@@ -546,9 +567,30 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                             value ? (
                               <div key={label}>
                                 <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{label}</div>
-                                <div className="text-4xl font-black leading-tighttext-4xl font-serif font-bold">
-                                  {displayWeaponAttributeRank(value, w.level)}
-                                </div>
+                                {label == "Vitalidade" && (
+                                  <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                                    {displayWeaponVitalityBonus(value, w.level)}
+                                    <GiLifeBar />
+                                  </span>
+                                )}
+                                {label == "Defesa" && (
+                                  <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                                    {displayWeaponDefenseBonus(value, w.level)}
+                                    <FaDice />
+                                  </span>
+                                )}
+                                {label == "Sorte" && (
+                                  <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                                    {displayWeaponLuckBonus(value, w.level)}
+                                    <FaDice />
+                                  </span>
+                                )}
+                                {label == "Agilidade" && (
+                                  <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                                    {displayWeaponAgilityBonus(value, w.level)}
+                                    <FaDice />
+                                  </span>
+                                )}
                               </div>
                             ) : null
                           )}

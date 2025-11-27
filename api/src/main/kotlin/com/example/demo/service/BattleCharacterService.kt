@@ -4,9 +4,11 @@ import com.example.demo.dto.AddBattleCharacterRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.model.BattleInitiative
 import com.example.demo.model.BattleLog
+import com.example.demo.model.BattleTurn
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleInitiativeRepository
 import com.example.demo.repository.BattleLogRepository
+import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.BattleTurnRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
@@ -19,10 +21,17 @@ class BattleCharacterService(
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val battleTurnService: BattleTurnService,
+        private val battleRepository: BattleRepository,
         private val objectMapper: ObjectMapper
 ) {
         @Transactional
         fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
+                val battle =
+                        battleRepository.findById(battleId).orElseThrow {
+                                IllegalArgumentException("Battle $battleId not found")
+                        }
+
+                val isBattleStarted = battle.battleStatus.equals("started", ignoreCase = true)
                 val isEnemy = request.team.equals("B", ignoreCase = true)
 
                 val entity =
@@ -41,17 +50,39 @@ class BattleCharacterService(
 
                 val savedCharacter = repository.save(entity)
 
-                request.initiative?.let {
-                        val initiative =
-                                BattleInitiative(
-                                        battleId = battleId,
-                                        battleCharacterId = savedCharacter.id!!,
-                                        initiativeValue = it.initiativeValue,
-                                        hability = it.hability,
-                                        playFirst = it.playFirst
-                                )
+                request.initiative?.let { initiativeRequest ->
+                        when {
+                                !isBattleStarted -> {
+                                        val initiative =
+                                                BattleInitiative(
+                                                        battleId = battleId,
+                                                        battleCharacterId = savedCharacter.id!!,
+                                                        initiativeValue =
+                                                                initiativeRequest.initiativeValue,
+                                                        hability = initiativeRequest.hability,
+                                                        playFirst = initiativeRequest.playFirst
+                                                )
 
-                        initiativeRepository.save(initiative)
+                                        initiativeRepository.save(initiative)
+                                }
+                                isBattleStarted &&
+                                        request.characterType.equals("npc", ignoreCase = true) -> {
+                                        val lastTurn =
+                                                battleTurnRepository
+                                                        .findTopByBattleIdOrderByPlayOrderDesc(
+                                                                battleId
+                                                        )
+                                        val nextOrder = (lastTurn?.playOrder ?: -1) + 1
+                                        val turn =
+                                                BattleTurn(
+                                                        battleId = battleId,
+                                                        battleCharacterId = savedCharacter.id!!,
+                                                        playOrder = nextOrder
+                                                )
+                                        battleTurnRepository.save(turn)
+                                }
+                                else -> {}
+                        }
                 }
 
                 val eventJson =

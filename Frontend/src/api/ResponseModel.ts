@@ -6,13 +6,13 @@ export type StatusType =
     "Stunned" | "Confused" | "Frozen" | "Entangled" |
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Plagued" | "Burning" |
-    "Silenced" | "Dizzy";
+    "Silenced" | "Dizzy" | "Free-Shot";
 
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent";
 export type EffectType = "jump" | "gradient";
 export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
-export type AttackType = "basic" | "jump" | "jump-all" | "gradient";
+export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot";
 export type PictoColor = "green" | "red" | "blue";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";
@@ -32,8 +32,9 @@ export interface BattleTurnResponse {
 }
 
 export interface StatusResponse {
-    type: StatusType;
+    effectName: StatusType;
     ammount: number; // Ex.: Burning 3
+    remainingTurns?: number | null;
 }
 
 export interface BattleCharacterInfo {
@@ -60,6 +61,7 @@ export interface NPCInfo {
     weakTo?: Element;
     resistentTo?: Element;
     imuneTo?: Element;
+    freeShotWeakPoints?: number;
 }
 
 export interface PictoResponse {
