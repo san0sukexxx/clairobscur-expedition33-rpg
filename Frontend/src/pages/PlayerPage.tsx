@@ -16,8 +16,8 @@ import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuA
 import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIPictos } from "../api/APIPictos";
-import { APIBattle, type AttackStatusEffectRequest, type CreateAttackRequest, type CreateDefenseRequest } from "../api/APIBattle";
-import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo } from "../api/ResponseModel";
+import { APIBattle, type AttackStatusEffectRequest, type CreateAttackRequest, type CreateDefenseRequest, type ResolveStatusRequest } from "../api/APIBattle";
+import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -48,6 +48,8 @@ import { calculateAttackReceivedDamage, getWeaponElementModifier } from "../util
 import MasterEditingOverlay from "../components/MasterEditingOverlay"
 import PendingAttacksModal from "../components/PendingAttacksModal"
 import { getElementModifierText } from "../utils/ElementUtils";
+import PendingStatusModal from "../components/PendingStatusModal";
+import { rollCommandForResolveStatus } from "../utils/StatusCalculator";
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -167,6 +169,11 @@ export default function PlayerPage() {
       {!isAdmin && player?.isMasterEditing && (
         <MasterEditingOverlay />
       )}
+
+      <PendingStatusModal
+        player={player}
+        onTapResolve={onResolveStatus}
+      />
 
       <PendingAttacksModal
         player={player}
@@ -360,6 +367,8 @@ export default function PlayerPage() {
           case "TURN_ENDED":
           case "TURN_ADDED":
           case "ALLOW_COUNTER":
+          case "STATUS_RESOLVED":
+          case "STATUS_ADDED":
             applyFightInfoUpdate(playerInfo);
             break;
           case "ATTACK_PENDING":
@@ -795,5 +804,25 @@ export default function PlayerPage() {
     } else {
       takeTheDamage()
     }
+  }
+
+  function onResolveStatus(status: StatusResponse, currentCharacter: BattleCharacterInfo | undefined) {
+    const callResolveStatus = async (payload: ResolveStatusRequest) => {
+      try {
+        await APIBattle.resolveStatus(payload);
+      } catch (e) {
+        showToast("Erro resolver o status");
+      }
+    };
+
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForResolveStatus(status), result => {
+      const total = diceTotal(result)
+
+      callResolveStatus({
+        battleCharacterId: currentCharacter?.battleID ?? 0,
+        effectType: status.effectName,
+        totalValue: total
+      })
+    })
   }
 }

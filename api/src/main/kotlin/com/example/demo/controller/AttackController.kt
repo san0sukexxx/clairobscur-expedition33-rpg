@@ -113,14 +113,14 @@ class AttackController(
                                         battleStatusEffectRepository.findByBattleCharacterId(
                                                 targetBC.id!!
                                         )
-                                val existing = effects.firstOrNull { it.effectType == "Free-Shot" }
+                                val existing = effects.firstOrNull { it.effectType == "free-shot" }
                                 val next = (existing?.ammount ?: 0) + 1
 
                                 val toSave =
                                         existing?.copy(ammount = next)
                                                 ?: BattleStatusEffect(
                                                         battleCharacterId = targetBC.id!!,
-                                                        effectType = "Free-Shot",
+                                                        effectType = "free-shot",
                                                         ammount = next
                                                 )
 
@@ -157,7 +157,8 @@ class AttackController(
                                                         AttackStatusEffectResponse(
                                                                 id = it.id!!,
                                                                 effectType = it.effectType,
-                                                                ammount = it.ammount
+                                                                ammount = it.ammount,
+                                                                remainingTurns = it.remainingTurns
                                                         )
                                                 }
                                 )

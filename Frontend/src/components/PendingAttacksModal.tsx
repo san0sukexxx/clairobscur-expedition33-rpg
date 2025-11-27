@@ -1,10 +1,10 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
-import { type AttackResponse, type DefenseOption } from "../api/ResponseModel";
+import { ignoreEffects, type AttackResponse, type DefenseOption } from "../api/ResponseModel";
 import {
     calculateMaxCounterDamage
 } from "../utils/PlayerCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
-import { getAttackType, getAttackTypeLabel } from "../utils/BattleUtils";
+import { getAttackType, getAttackTypeLabel, getStatusLabel } from "../utils/BattleUtils";
 import {
     FaArrowUp,
     FaFireAlt,
@@ -130,6 +130,18 @@ export default function PendingAttacksModal({
                                         <div>
                                             <span className="font-medium">Tipo do ataque: </span>
                                             <span>{getAttackTypeLabel(attackType)}</span>
+                                        </div>
+                                        <div>
+                                            <span className="font-medium">Efeitos se acertar: </span>
+                                            <span>
+                                                {attack.effects
+                                                    ?.filter(e => !ignoreEffects.includes(e.effectType))
+                                                    ?.map(e =>
+                                                        `${getStatusLabel(e.effectType)} ${e.ammount ?? ""}${e.remainingTurns ? ` (por ${e.remainingTurns} turno${e.remainingTurns > 1 ? "s" : ""})` : ""
+                                                        }`
+                                                    )
+                                                    .join("; ")}
+                                            </span>
                                         </div>
                                     </div>
 

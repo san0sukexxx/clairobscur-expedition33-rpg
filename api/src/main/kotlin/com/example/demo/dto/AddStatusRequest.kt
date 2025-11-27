@@ -1,7 +1,7 @@
 package com.example.demo.dto
 
-data class AttackStatusEffectResponse(
-        val id: Int,
+data class AddStatusRequest(
+        val battleCharacterId: Int,
         val effectType: String,
         val ammount: Int,
         val remainingTurns: Int?

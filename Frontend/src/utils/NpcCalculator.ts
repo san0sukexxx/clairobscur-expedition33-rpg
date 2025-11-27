@@ -60,6 +60,10 @@ export function rollCommandForNpcInitiative(id: string) {
     return "1d6";
 }
 
+export function rollCommandForNpcAttack(id: string) {
+    return "1d6";
+}
+
 export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | null): ElementModifier | undefined {
     const npcInfo = getNpcById(id)
     

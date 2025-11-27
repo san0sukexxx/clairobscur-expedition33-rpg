@@ -6,13 +6,14 @@ export type StatusType =
     "Stunned" | "Confused" | "Frozen" | "Entangled" |
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Plagued" | "Burning" |
-    "Silenced" | "Dizzy" | "Free-Shot";
+    "Silenced" | "Dizzy" | "free-shot" | "jump" | "gradient";
 
+export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent";
-export type EffectType = "jump" | "gradient";
 export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
 export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot";
+export type SkillType = "give-status";
 export type PictoColor = "green" | "red" | "blue";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";
@@ -35,6 +36,7 @@ export interface StatusResponse {
     effectName: StatusType;
     ammount: number; // Ex.: Burning 3
     remainingTurns?: number | null;
+    isResolved: boolean;
 }
 
 export interface BattleCharacterInfo {
@@ -62,6 +64,24 @@ export interface NPCInfo {
     resistentTo?: Element;
     imuneTo?: Element;
     freeShotWeakPoints?: number;
+    attackList?: NPCAttack[];
+    skillList?: NPCSkill[];
+}
+
+export interface NPCStatusItem {
+    type: StatusType;
+    ammount: number;
+    remainingTurns?: number;
+}
+
+export interface NPCAttack {
+    type: AttackType;
+    statusList: NPCStatusItem[];
+}
+
+export interface NPCSkill {
+    type: SkillType;
+    statusList: NPCStatusItem[];
 }
 
 export interface PictoResponse {
@@ -139,8 +159,9 @@ export interface BattleLogResponse {
 
 export interface AttackStatusEffectResponse {
     id: number
-    effectType: string
+    effectType: StatusType
     ammount: number
+    remainingTurns?: number | null
 }
 
 export interface ElementModifier {

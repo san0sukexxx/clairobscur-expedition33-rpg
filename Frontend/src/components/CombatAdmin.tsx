@@ -7,10 +7,10 @@ import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from
 import { GiShieldReflect } from "react-icons/gi";
 import { FaArrowsDownToLine } from "react-icons/fa6";
 import { getCharacterLabelById } from "../utils/CharacterUtils"
-import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateAttackReceivedDamage } from "../utils/NpcCalculator"
+import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateAttackReceivedDamage, rollCommandForNpcAttack } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
-import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo } from "../api/ResponseModel"
+import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SkillType, type NPCSkill } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse, type CreateAttackRequest, type AttackStatusEffectRequest } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
@@ -19,6 +19,7 @@ import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { useToast } from "../components/Toast";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
+import { getAttackTypeLabel, getSkillLabel, getStatusLabel } from "../utils/BattleUtils";
 
 export interface CombatEntity {
     rowId?: number
@@ -32,6 +33,7 @@ export interface CombatEntity {
     avatarUrl?: string
     characterId?: string
     isReadyToStart: boolean
+    status?: StatusResponse[]
 }
 
 export interface CombatAdminProps {
@@ -64,6 +66,8 @@ export default function CombatAdmin({
     const [lastBattleLog, setLastBattleLog] = useState<number | undefined>();
     const [isSelectingTarget, setIsSelectingTarget] = useState(false)
     const [attackType, setAttackType] = useState<AttackType | null>(null)
+    const [npcAttack, setNPCAttack] = useState<NPCAttack | null>(null)
+    const [npcSkill, setNPCSkill] = useState<NPCSkill | null>(null)
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
@@ -119,7 +123,8 @@ export default function CombatAdmin({
                     maxMp: bc.maxMagicPoints,
                     characterId: charId,
                     avatarUrl,
-                    isReadyToStart: !bc.canRollInitiative
+                    isReadyToStart: !bc.canRollInitiative,
+                    status: bc.status
                 }
             } else {
                 return {
@@ -131,7 +136,8 @@ export default function CombatAdmin({
                     maxHp: bc.maxHealthPoints,
                     characterId: bc.id,
                     avatarUrl: `/enemies/${bc.id}.png`,
-                    isReadyToStart: true
+                    isReadyToStart: true,
+                    status: bc.status
                 }
             }
         })
@@ -376,10 +382,14 @@ export default function CombatAdmin({
             </div>
         )
     }
+
     function renderAttackOptions() {
         if (!isCurrentTurnNPC()) {
             return;
         }
+
+        const currentNpc = getActiveTurnCharacter();
+        const npcInfo = getNpcById(currentNpc?.id ?? "");
 
         return (
             <div className="card bg-base-200 shadow-inner flex-1">
@@ -389,40 +399,96 @@ export default function CombatAdmin({
                         <div className="text-md font-normal opacity-50">O que ele vai fazer?</div>
                     </div>
 
-                    <div className="flex flex-row flex-wrap items-center gap-4">
-                        <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("basic")}>
-                            <FaFistRaised className="mr-1" />
-                            Ataque básico
-                        </button>
+                    <div className="flex flex-row flex-wrap gap-6">
+                        {npcInfo?.attackList?.map((atk, idx) => (
+                            <div key={idx} className="flex flex-col items-center gap-2">
+                                <button
+                                    className="btn btn-md btn-primary"
+                                    onClick={() => npcCustomAttackTapped(atk)}
+                                >
+                                    {getAttackTypeLabel(atk.type)}
+                                </button>
 
-                        <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("jump")}>
-                            <FaArrowUp className="mr-1" />
-                            Pular em um
-                        </button>
+                                <div className="flex flex-col items-center text-sm opacity-80">
+                                    {atk.statusList?.map((s, i) => (
+                                        <div key={i} className="leading-tight text-center">
+                                            {getStatusLabel(s.type)} {s.ammount}
+                                            {s.remainingTurns !== undefined
+                                                ? ` (Por ${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
+                                                : ""}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
 
-                        <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("jump-all")}>
-                            <FaArrowsDownToLine className="mr-1" />
-                            Pular em todos
-                        </button>
+                    <div className="flex flex-col gap-2 mt-2">
+                        <h3 className="text-lg font-semibold">Habilidades</h3>
 
-                        <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("gradient")}>
-                            <FaFireAlt className="mr-1" />
-                            Ataque Gradiente
-                        </button>
+                        <div className="flex flex-row flex-wrap items-center gap-4">
+                            {npcInfo?.skillList?.map((skill, idx) => (
+                                <div key={idx} className="flex flex-col items-center gap-2">
+                                    <button
+                                        className="btn btn-md btn-primary"
+                                        onClick={() => npcSkillTapped(skill)}
+                                    >
+                                        {getSkillLabel(skill.type)}
+                                    </button>
 
-                        <button className="btn btn-md btn-secondary" onClick={() => npcPassTurnTapped()}>
-                            <FaHourglassHalf className="mr-1" />
-                            Passar o turno
-                        </button>
+                                    <div className="flex flex-col items-center text-sm opacity-80">
+                                        {skill.statusList?.map((s, i) => (
+                                            <div key={i} className="leading-tight text-center">
+                                                {getStatusLabel(s.type)} {s.ammount}
+                                                {s.remainingTurns !== undefined
+                                                    ? ` (Por ${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
+                                                    : ""}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
-                        <button className="btn btn-md btn-info" onClick={() => actionAllowCounter()}>
-                            <FaShieldAlt className="mr-1" />
-                            Permitir counter
-                        </button>
+                    <div className="flex flex-col gap-2 mt-2">
+                        <h3 className="text-lg font-semibold">Outras ações</h3>
+
+                        <div className="flex flex-row flex-wrap items-center gap-4">
+                            <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("basic")}>
+                                <FaFistRaised className="mr-1" />
+                                Ataque básico
+                            </button>
+
+                            <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("jump")}>
+                                <FaArrowUp className="mr-1" />
+                                Pular em um
+                            </button>
+
+                            <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("jump-all")}>
+                                <FaArrowsDownToLine className="mr-1" />
+                                Pular em todos
+                            </button>
+
+                            <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("gradient")}>
+                                <FaFireAlt className="mr-1" />
+                                Ataque Gradiente
+                            </button>
+
+                            <button className="btn btn-md btn-secondary" onClick={() => npcPassTurnTapped()}>
+                                <FaHourglassHalf className="mr-1" />
+                                Passar o turno
+                            </button>
+
+                            <button className="btn btn-md btn-info" onClick={() => actionAllowCounter()}>
+                                <FaShieldAlt className="mr-1" />
+                                Permitir counter
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        )
+        );
     }
 
     function renderTeamCard(title: string, teamKey: TeamKey, members: CombatEntity[]) {
@@ -449,6 +515,7 @@ export default function CombatAdmin({
                                         <th>Vida</th>
                                         <th>Mana</th>
                                         <th>Pronto?</th>
+                                        <th>Efeitos</th>
                                         <th className="w-1/6 text-right">Ações</th>
                                     </tr>
                                 </thead>
@@ -512,6 +579,19 @@ export default function CombatAdmin({
                                                     </td>
 
                                                     <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
+                                                    <td>
+                                                        <div className="flex flex-row flex-wrap gap-1">
+                                                            {m.status?.map((st, idx) => (
+                                                                <span
+                                                                    key={idx}
+                                                                    className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80"
+                                                                >
+                                                                    {getStatusLabel(st.effectName)} {st.ammount}{" "}
+                                                                    {st.remainingTurns ? `(${st.remainingTurns})` : ""}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </td>
 
                                                     <td className="text-right">
                                                         {!isRowSelectable && (
@@ -822,6 +902,8 @@ export default function CombatAdmin({
                     case "ATTACK_PENDING":
                     case "ALLOW_COUNTER":
                     case "COUNTER_RESOLVED":
+                    case "STATUS_RESOLVED":
+                    case "STATUS_ADDED":
                         applyFightInfoUpdate(battleInfo);
                         break;
                 }
@@ -883,10 +965,29 @@ export default function CombatAdmin({
         return character?.type == "player"
     }
 
-    function npcAttackTapped(type: AttackType) {
-        setAttackType(type)
+    function npcCustomAttackTapped(npcAttack: NPCAttack) {
+        setNPCSkill(null)
+        setAttackType(npcAttack.type)
+        setNPCAttack(npcAttack)
+        startTargeting()
+    }
 
-        if (type == "jump-all") {
+    function npcSkillTapped(skill: NPCSkill) {
+        setAttackType(null)
+        setNPCAttack(null)
+        setNPCSkill(skill)
+        startTargeting()
+    }
+
+    function npcAttackTapped(type: AttackType) {
+        setNPCSkill(null)
+        setAttackType(type)
+        setNPCAttack(null)
+        startTargeting()
+    }
+
+    function startTargeting() {
+        if (attackType == "jump-all") {
             handleMultipleAttack()
         } else {
             setIsSelectingTarget(true)
@@ -897,7 +998,7 @@ export default function CombatAdmin({
         const character = getActiveTurnCharacter()
         const npcId = character?.id ?? ""
 
-        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcInitiative(npcId), result => {
+        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcAttack(npcId), result => {
             const enemies = battleDetails?.characters.filter(c => c.isEnemy != character?.isEnemy)
 
             if (enemies) {
@@ -911,17 +1012,43 @@ export default function CombatAdmin({
     }
 
     function handleTargetSelected(targetEntity: CombatEntity) {
+        if (npcSkill) {
+            handleSkillTargetSelected(targetEntity);
+            return;
+        }
+
         if (!isSelectingTarget) return
         setIsSelectingTarget(false)
 
         const character = getActiveTurnCharacter()
         const npcId = character?.id ?? ""
 
-        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcInitiative(npcId), result => {
+        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcAttack(npcId), result => {
             if (character) {
                 doTheAttack(character, targetEntity.rowId ?? 0, targetEntity.type, result)
             }
         });
+    }
+
+    function handleSkillTargetSelected(targetEntity: CombatEntity) {
+        const callAddStatus = async () => {
+            try {
+                for (const status of npcSkill?.statusList ?? []) {
+                    await APIBattle.addStatus({
+                        battleCharacterId: targetEntity.rowId ?? 0,
+                        ammount: status.ammount,
+                        effectType: status.type,
+                        remainingTurns: status.remainingTurns
+                    })
+                }
+                showToast("Habilidades executadas");
+            } catch (e) {
+                showToast("Erro ao executar habilidade");
+            }
+        };
+
+        setIsSelectingTarget(false);
+        callAddStatus();
     }
 
     function doTheAttack(sourceInfo: BattleCharacterInfo, targetID: number, targetType: BattleCharacterType, result: any) {
@@ -936,6 +1063,15 @@ export default function CombatAdmin({
             effects.push({
                 effectType: "gradient"
             })
+        }
+        if (npcAttack) {
+            npcAttack.statusList.forEach(s => {
+                effects.push({
+                    effectType: s.type,
+                    ammount: s.ammount,
+                    remainingTurns: s.remainingTurns
+                });
+            });
         }
 
         var attackInfo: CreateAttackRequest = {

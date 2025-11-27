@@ -41,7 +41,7 @@ export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattl
     const npcInfo = getNpcById(npcBattleCharacterInfo.id)
 
     if (npcInfo?.freeShotWeakPoints != undefined) {
-        const statusFreeShot = npcBattleCharacterInfo.status?.find(s => s.effectName == "Free-Shot")
+        const statusFreeShot = npcBattleCharacterInfo.status?.find(s => s.effectName == "free-shot")
 
         console.log(statusFreeShot)
 

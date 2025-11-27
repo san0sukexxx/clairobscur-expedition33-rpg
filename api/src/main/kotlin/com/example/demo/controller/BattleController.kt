@@ -6,6 +6,7 @@ import com.example.demo.dto.BattleWithDetailsResponse
 import com.example.demo.dto.InitiativeResponse
 import com.example.demo.dto.UpdateBattleStatusRequest
 import com.example.demo.dto.UseBattleRequest
+import com.example.demo.dto.BattleStatusResponse
 import com.example.demo.model.Battle
 import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleTurn
@@ -24,6 +25,7 @@ class BattleController(
         private val battleInitiativeRepository: BattleInitiativeRepository,
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnRepository: BattleTurnRepository,
+        private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val attackRepository: AttackRepository
 ) {
 
@@ -51,6 +53,17 @@ class BattleController(
                                 bc.externalId
                             }
 
+                    val status =
+                            battleStatusEffectRepository.findByBattleCharacterId(bc.id!!).map { eff
+                                ->
+                                BattleStatusResponse(
+                                        effectName = eff.effectType,
+                                        remainingTurns = eff.remainingTurns,
+                                        ammount = eff.ammount,
+                                        isResolved = eff.isResolved
+                                )
+                            }
+
                     BattleCharacterInfo(
                             battleID = bc.id,
                             id = externalId,
@@ -59,7 +72,7 @@ class BattleController(
                             maxHealthPoints = bc.maxHealthPoints,
                             magicPoints = bc.magicPoints,
                             maxMagicPoints = bc.maxMagicPoints,
-                            status = null,
+                            status = status,
                             type = bc.characterType,
                             isEnemy = bc.isEnemy,
                             canRollInitiative = bc.canRollInitiative

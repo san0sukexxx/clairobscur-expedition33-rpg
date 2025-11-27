@@ -9,5 +9,6 @@ data class BattleStatusEffect(
         @Column(name = "battle_character_id", nullable = false) val battleCharacterId: Int,
         @Column(name = "effect_type", nullable = false) val effectType: String,
         @Column(name = "ammount", nullable = false) val ammount: Int,
-        @Column(name = "remaining_turns") val remainingTurns: Int? = null
+        @Column(name = "remaining_turns") val remainingTurns: Int? = null,
+        @Column(name = "is_resolved", nullable = false) val isResolved: Boolean = false
 )

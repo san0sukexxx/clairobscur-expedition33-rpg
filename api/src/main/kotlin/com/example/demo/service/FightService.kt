@@ -74,7 +74,8 @@ class FightService(
                                                         BattleStatusResponse(
                                                                 effectName = it.effectType,
                                                                 ammount = it.ammount,
-                                                                remainingTurns = it.remainingTurns
+                                                                remainingTurns = it.remainingTurns,
+                                                                isResolved = it.isResolved
                                                         )
                                                 }
 
@@ -136,7 +137,8 @@ class FightService(
                                                                                 id = e.id!!,
                                                                                 effectType =
                                                                                         e.effectType,
-                                                                                ammount = e.ammount
+                                                                                ammount = e.ammount,
+                                                                                remainingTurns = e.remainingTurns
                                                                         )
                                                                 }
 

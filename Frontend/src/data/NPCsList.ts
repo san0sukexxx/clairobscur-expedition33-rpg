@@ -11,11 +11,41 @@ export const NPCsList: NPCInfo[] = [
     {
         id: "golem",
         name: "Golem",
-        power: 1,
-        hability: 1,
+        power: 8,
+        hability: 3,
         resistance: 3,
         weakTo: "Fire",
-        freeShotWeakPoints: 2
+        freeShotWeakPoints: 2,
+        attackList: [{
+            type: "basic",
+            statusList: [
+                {
+                    type: "Frozen",
+                    ammount: 3
+                }
+            ]
+        },
+        {
+            type: "gradient",
+            statusList: [
+                {
+                    type: "Burning",
+                    ammount: 3,
+                    remainingTurns: 2
+                }
+            ]
+        }],
+        skillList: [
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 3,
+                        type: "Shielded"
+                    }
+                ]
+            }
+        ]
     },
 ];
 

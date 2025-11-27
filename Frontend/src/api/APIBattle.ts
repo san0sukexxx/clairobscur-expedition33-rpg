@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type EffectType, type AttackType } from "./ResponseModel"
+import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type StatusType, type AttackType } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -65,8 +65,8 @@ export interface CreateAttackRequest {
 }
 
 export interface AttackStatusEffectRequest {
-    effectType: EffectType
-    ammount?: number,
+    effectType: StatusType
+    ammount?: number
     remainingTurns?: number
 }
 
@@ -83,6 +83,19 @@ export interface GetAttacksResponse {
 export interface CreateDefenseRequest {
     attackId: number
     totalDamage: number
+}
+
+export interface ResolveStatusRequest {
+    battleCharacterId: number
+    effectType: string
+    totalValue?: number
+}
+
+export interface AddStatusRequest {
+    battleCharacterId: number;
+    effectType: StatusType;
+    ammount: number;
+    remainingTurns?: number | null;
 }
 
 export class APIBattle {
@@ -166,5 +179,13 @@ export class APIBattle {
             `defenses/apply-defense/${battleCharacterId}`,
             { maxDamage }
         )
+    }
+
+    static async resolveStatus(input: ResolveStatusRequest): Promise<void> {
+        await api.post<ResolveStatusRequest, void>("battle-status/resolve", input)
+    }
+
+    static async addStatus(body: AddStatusRequest): Promise<void> {
+        await api.post("battle-status/add", body);
     }
 }

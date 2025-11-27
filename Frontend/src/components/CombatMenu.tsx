@@ -2,7 +2,8 @@ import { useState, useMemo } from "react";
 import { FaBars } from "react-icons/fa";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import type { BattleCharacterInfo } from "../api/ResponseModel";
+import { getCurrentPlayerStatus } from "../utils/StatusCalculator";
+import { getActiveTurnCharacter } from "../utils/CharacterUtils";
 
 interface CombatMenuProps {
   player: GetPlayerResponse | null;
@@ -16,6 +17,34 @@ interface CombatMenuProps {
 export default function CombatMenu({ player, onAction, tab, currentTeamTab, opositeTeamTab, isAttacking }: CombatMenuProps) {
   const [open, setOpen] = useState(false);
 
+  const currentCharacter = useMemo(() => {
+    return getActiveTurnCharacter(player)
+  }, [player?.fightInfo?.characters])
+
+  const playerStatus = useMemo(() => {
+    return getCurrentPlayerStatus(player)
+  }, [player?.fightInfo?.characters])
+
+  const isFrozen = useMemo(() => {
+    return playerStatus.some(ps => ps.effectName == "Frozen")
+  }, [playerStatus])
+
+  const canUseItems = useMemo(() => {
+    return !isFrozen
+  }, [player?.fightInfo?.characters])
+
+  const canUseHabilities = useMemo(() => {
+    return !isFrozen
+  }, [player?.fightInfo?.characters])
+
+  const canUseFreeShot = useMemo(() => {
+    return !isFrozen && (currentCharacter?.magicPoints ?? 0) > 0
+  }, [player?.fightInfo?.characters])
+
+  const canAttack = useMemo(() => {
+    return !isFrozen
+  }, [player?.fightInfo?.characters])
+
   function handleAction(action: CombatMenuAction) {
     setOpen(false);
     onAction(action);
@@ -27,13 +56,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     return firstTurn.battleCharacterId === player?.fightInfo?.playerBattleID
   }, [player?.fightInfo])
 
-  const characters = player?.fightInfo?.characters ?? [];
-  const playerBattleID = player?.fightInfo?.playerBattleID;
-
-  const ch: BattleCharacterInfo | undefined =
-    characters.find(c => c.battleID === playerBattleID) ?? characters.find(c => !c.isEnemy);
-
-  if (!ch) return null;
+  if (!currentCharacter) return null;
 
   return (
     <div className="fixed bottom-20 right-4 z-41">
@@ -80,20 +103,26 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
 
           {isYourTurn && !isAttacking && (
             <>
-              <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
-                Itens
-              </button>
-              <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
-                Habilidades
-              </button>
-              {(ch.magicPoints ?? 0) > 0 && (
+              {canUseItems && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
+                  Itens
+                </button>
+              )}
+              {canUseHabilities && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
+                  Habilidades
+                </button>
+              )}
+              {canUseFreeShot && (
                 <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
                   Tiro livre
                 </button>
               )}
-              <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
-                Atacar
-              </button>
+              {canAttack && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
+                  Atacar
+                </button>
+              )}
               <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
                 Encerrar o turno
               </button>

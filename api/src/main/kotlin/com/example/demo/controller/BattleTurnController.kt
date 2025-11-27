@@ -7,6 +7,7 @@ import com.example.demo.model.BattleTurn
 import com.example.demo.repository.AttackRepository
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
+import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.service.BattleTurnService
 import org.springframework.http.ResponseEntity
@@ -20,6 +21,7 @@ class BattleTurnController(
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnService: BattleTurnService,
+        private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val attackRepository: AttackRepository
 ) {
 
@@ -66,6 +68,37 @@ class BattleTurnController(
                 val attacks = attackRepository.findByBattleId(battleId)
                 if (attacks.isNotEmpty()) {
                         attackRepository.deleteAll(attacks)
+                }
+
+                val ignoreRemainingTurns = listOf("Burning", "Frozen")
+
+                val statusList = battleStatusEffectRepository.findByBattleCharacterId(bc.id!!)
+                statusList.forEach { eff ->
+                        val shouldIgnore = ignoreRemainingTurns.contains(eff.effectType)
+
+                        if (!shouldIgnore) {
+                                val current = eff.remainingTurns
+
+                                if (current != null) {
+                                        val next = current - 1
+                                        if (next <= 0) {
+                                                battleStatusEffectRepository.delete(eff)
+                                                return@forEach
+                                        } else {
+                                                battleStatusEffectRepository.save(
+                                                        eff.copy(
+                                                                remainingTurns = next,
+                                                                isResolved = false
+                                                        )
+                                                )
+                                                return@forEach
+                                        }
+                                }
+                        }
+
+                        if (eff.isResolved) {
+                                battleStatusEffectRepository.save(eff.copy(isResolved = false))
+                        }
                 }
 
                 battleTurnService.advanceTurn(battleId)

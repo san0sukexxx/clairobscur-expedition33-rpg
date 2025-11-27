@@ -1,5 +1,6 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
+import { getStatusLabel } from "../utils/BattleUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
 
 interface PlayerStatusFloatingProps {
@@ -27,9 +28,21 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     p-3 w-64
                 "
             >
-                <div className="flex flex-row gap-3 items-center justify-between">
+                {ch.status && ch.status.length > 0 && (
+                    <div className="mb-2 flex flex-row flex-wrap gap-1">
+                        {ch.status.map((st, idx) => (
+                            <span
+                                key={idx}
+                                className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-90"
+                            >
+                                {getStatusLabel(st.effectName)} {st.ammount}{" "}
+                                {st.remainingTurns ? `(${st.remainingTurns})` : ""}
+                            </span>
+                        ))}
+                    </div>
+                )}
 
-                    {/* HP */}
+                <div className="flex flex-row gap-3 items-center justify-between">
                     <div className="flex-1">
                         <div className="flex items-center justify-between text-[10px] uppercase">
                             <span className="opacity-70">Seu HP</span>
@@ -45,7 +58,6 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                         />
                     </div>
 
-                    {/* MP */}
                     {ch.magicPoints !== undefined &&
                         ch.magicPoints !== null &&
                         ch.maxMagicPoints !== undefined &&

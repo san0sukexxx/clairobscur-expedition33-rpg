@@ -41,6 +41,7 @@ CREATE TABLE
         effect_type TEXT NOT NULL,
         ammount INTEGER NOT NULL,
         remaining_turns INTEGER,
+        is_resolved BOOLEAN DEFAULT 0,
         FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE
     );
 

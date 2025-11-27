@@ -3,12 +3,10 @@ package com.example.demo.controller
 import com.example.demo.dto.ApplyDefenseRequest
 import com.example.demo.dto.CreateDefenseRequest
 import com.example.demo.model.BattleLog
-import com.example.demo.repository.AttackRepository
-import com.example.demo.repository.BattleCharacterRepository
-import com.example.demo.repository.BattleLogRepository
-import com.example.demo.repository.BattleTurnRepository
-import com.example.demo.repository.PlayerRepository
+import com.example.demo.model.BattleStatusEffect
+import com.example.demo.repository.*
 import com.example.demo.service.BattleTurnService
+import com.example.demo.service.DamageService
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -21,7 +19,10 @@ class DefenseController(
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val playerRepository: PlayerRepository,
-        private val battleTurnService: BattleTurnService
+        private val battleStatusEffectRepository: BattleStatusEffectRepository,
+        private val attackStatusEffectRepository: AttackStatusEffectRepository,
+        private val battleTurnService: BattleTurnService,
+        private val damageService: DamageService
 ) {
 
     @PostMapping
@@ -43,35 +44,7 @@ class DefenseController(
                 battleCharacterRepository.findById(attack.targetBattleId).orElse(null)
                         ?: return ResponseEntity.badRequest().build()
 
-        val damage = body.totalDamage.coerceAtLeast(0)
-        val newHp = (targetBC.healthPoints - damage).coerceAtLeast(0)
-
-        targetBC.healthPoints = newHp
-
-        if (newHp == 0) {
-            if (targetBC.magicPoints != null) {
-                targetBC.magicPoints = 0
-            }
-
-            val turns = battleTurnRepository.findByBattleCharacterId(targetBC.id!!)
-            if (turns.isNotEmpty()) {
-                battleTurnRepository.deleteAllInBatch(turns)
-            }
-        }
-
-        battleCharacterRepository.save(targetBC)
-
-        val playerId = targetBC.externalId.toIntOrNull()
-        if (playerId != null) {
-            val player = playerRepository.findById(playerId).orElse(null)
-            if (player != null) {
-                player.hpCurrent = targetBC.healthPoints
-                if (targetBC.magicPoints != null) {
-                    player.mpCurrent = targetBC.magicPoints!!
-                }
-                playerRepository.save(player)
-            }
-        }
+        damageService.applyDamage(targetBC, body.totalDamage)
 
         attack.totalDefended = body.totalDamage
         attack.isResolved = true
@@ -80,6 +53,32 @@ class DefenseController(
         battleLogRepository.save(
                 BattleLog(battleId = attack.battleId, eventType = "DAMAGE_DEALT", eventJson = null)
         )
+
+        val damage = body.totalDamage.coerceAtLeast(0)
+        if (damage > 0) {
+            val attackEffects = attackStatusEffectRepository.findByAttackId(attack.id!!)
+            val ignore = listOf("free-shot", "jump", "gradient")
+
+            attackEffects.filter { eff -> !ignore.contains(eff.effectType) }.forEach { eff ->
+                val existing =
+                        battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                                .firstOrNull { it.effectType == eff.effectType }
+
+                val nextAmmount = (existing?.ammount ?: 0) + eff.ammount
+                val nextTurns = eff.remainingTurns ?: existing?.remainingTurns
+
+                val toSave =
+                        existing?.copy(ammount = nextAmmount, remainingTurns = nextTurns)
+                                ?: BattleStatusEffect(
+                                        battleCharacterId = targetBC.id!!,
+                                        effectType = eff.effectType,
+                                        ammount = eff.ammount,
+                                        remainingTurns = eff.remainingTurns
+                                )
+
+                battleStatusEffectRepository.save(toSave)
+            }
+        }
 
         return ResponseEntity.noContent().build()
     }
@@ -93,10 +92,7 @@ class DefenseController(
 
         val attacks = attackRepository.findByTargetBattleId(battleCharacterId)
 
-        val usedAttacks =
-                attacks.filter {
-                    it.allowCounter && !it.isCounterResolved
-                }
+        val usedAttacks = attacks.filter { it.allowCounter && !it.isCounterResolved }
 
         if (usedAttacks.isEmpty()) {
             return ResponseEntity.noContent().build()
@@ -127,35 +123,9 @@ class DefenseController(
                     }
 
             if (damage > 0) {
-                val oldHp = attackerBC.healthPoints
-                val newHp = (oldHp - damage).coerceAtLeast(0)
-                attackerBC.healthPoints = newHp
-
+                val newHp = damageService.applyDamage(attackerBC, damage)
                 if (newHp == 0) {
-                    if (attackerBC.magicPoints != null) {
-                        attackerBC.magicPoints = 0
-                    }
-
-                    val turns = battleTurnRepository.findByBattleCharacterId(attackerBC.id!!)
-                    if (turns.isNotEmpty()) {
-                        battleTurnRepository.deleteAllInBatch(turns)
-                    }
-
                     shouldEndTurn = true
-                }
-
-                battleCharacterRepository.save(attackerBC)
-
-                val playerId = attackerBC.externalId.toIntOrNull()
-                if (playerId != null) {
-                    val player = playerRepository.findById(playerId).orElse(null)
-                    if (player != null) {
-                        player.hpCurrent = attackerBC.healthPoints
-                        if (attackerBC.magicPoints != null) {
-                            player.mpCurrent = attackerBC.magicPoints!!
-                        }
-                        playerRepository.save(player)
-                    }
                 }
             }
 

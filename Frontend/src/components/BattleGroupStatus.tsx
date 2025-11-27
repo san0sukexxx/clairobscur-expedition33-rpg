@@ -3,6 +3,7 @@ import { FaSkull } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
 import AnimatedStatBar from "./AnimatedStatBar";
+import { getStatusLabel } from "../utils/BattleUtils";
 
 interface EnemiesStatusProps {
     player: GetPlayerResponse | null;
@@ -72,16 +73,20 @@ export default function EnemiesStatus({
                                             </div>
                                         </div>
 
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
-                                                    {ch.name}
-                                                </p>
+                                        <div className="flex items-center gap-2 justify-between w-full">
+                                            <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
+                                                {ch.name}
+                                            </p>
 
-                                                {isDead && (
-                                                    <FaSkull className="text-error" title="Morto" />
-                                                )}
+                                            <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80">
+                                                {ch.status?.map((st, idx) => (
+                                                    <span key={idx} className="px-1 py-0.5 rounded bg-base-300">
+                                                        {getStatusLabel(st.effectName)} {st.ammount} {st.remainingTurns ? `(${st.remainingTurns})` : ""}
+                                                    </span>
+                                                ))}
                                             </div>
+
+                                            {isDead && <FaSkull className="text-error" title="Morto" />}
                                         </div>
                                     </div>
 
