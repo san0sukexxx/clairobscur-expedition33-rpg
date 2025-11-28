@@ -132,6 +132,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget }: 
                 opositeTeamTab={opositeTeamTab}
                 isAttacking={isAttacking}
             />
+
+            <div className="h-[100px]" />
         </div>
     );
 }

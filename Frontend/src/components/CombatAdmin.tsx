@@ -7,7 +7,7 @@ import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from
 import { GiShieldReflect } from "react-icons/gi";
 import { FaArrowsDownToLine } from "react-icons/fa6";
 import { getCharacterLabelById } from "../utils/CharacterUtils"
-import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateAttackReceivedDamage, rollCommandForNpcAttack } from "../utils/NpcCalculator"
+import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateNpcAttackReceivedDamage, rollCommandForNpcAttack, npcIsFlying, npcIsFlyingById } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
 import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SkillType, type NPCSkill } from "../api/ResponseModel"
@@ -423,33 +423,35 @@ export default function CombatAdmin({
                         ))}
                     </div>
 
-                    <div className="flex flex-col gap-2 mt-2">
-                        <h3 className="text-lg font-semibold">Habilidades</h3>
+                    {(npcInfo?.skillList?.length ?? 0) > 0 && (
+                        <div className="flex flex-col gap-2 mt-2">
+                            <h3 className="text-lg font-semibold">Habilidades</h3>
 
-                        <div className="flex flex-row flex-wrap items-center gap-4">
-                            {npcInfo?.skillList?.map((skill, idx) => (
-                                <div key={idx} className="flex flex-col items-center gap-2">
-                                    <button
-                                        className="btn btn-md btn-primary"
-                                        onClick={() => npcSkillTapped(skill)}
-                                    >
-                                        {getSkillLabel(skill.type)}
-                                    </button>
+                            <div className="flex flex-row flex-wrap items-center gap-4">
+                                {npcInfo?.skillList?.map((skill, idx) => (
+                                    <div key={idx} className="flex flex-col items-center gap-2">
+                                        <button
+                                            className="btn btn-md btn-primary"
+                                            onClick={() => npcSkillTapped(skill)}
+                                        >
+                                            {getSkillLabel(skill.type)}
+                                        </button>
 
-                                    <div className="flex flex-col items-center text-sm opacity-80">
-                                        {skill.statusList?.map((s, i) => (
-                                            <div key={i} className="leading-tight text-center">
-                                                {getStatusLabel(s.type)} {s.ammount}
-                                                {s.remainingTurns !== undefined
-                                                    ? ` (Por ${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
-                                                    : ""}
-                                            </div>
-                                        ))}
+                                        <div className="flex flex-col items-center text-sm opacity-80">
+                                            {skill.statusList?.map((s, i) => (
+                                                <div key={i} className="leading-tight text-center">
+                                                    {getStatusLabel(s.type)} {s.ammount}
+                                                    {s.remainingTurns !== undefined
+                                                        ? ` (Por ${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
+                                                        : ""}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="flex flex-col gap-2 mt-2">
                         <h3 className="text-lg font-semibold">Outras ações</h3>
@@ -581,7 +583,7 @@ export default function CombatAdmin({
                                                     <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
                                                     <td>
                                                         <div className="flex flex-row flex-wrap gap-1">
-                                                            {m.status?.map((st, idx) => (
+                                                            {m.status?.filter(s => s.effectName != "free-shot").map((st, idx) => (
                                                                 <span
                                                                     key={idx}
                                                                     className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80"
@@ -590,6 +592,14 @@ export default function CombatAdmin({
                                                                     {st.remainingTurns ? `(${st.remainingTurns})` : ""}
                                                                 </span>
                                                             ))}
+                                                            {npcIsFlyingById(m.characterId) && (
+                                                                <span
+                                                                    key="flying"
+                                                                    className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80"
+                                                                >
+                                                                    Voando
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     </td>
 
@@ -1082,7 +1092,7 @@ export default function CombatAdmin({
 
         const totalPower = calculateNpcAttackPower(sourceInfo?.id ?? "", result);
         if (targetType == "npc") {
-            attackInfo.totalDamage = calculateAttackReceivedDamage(sourceInfo.id, totalPower);
+            attackInfo.totalDamage = calculateNpcAttackReceivedDamage(sourceInfo, totalPower);
             showToast(`Causou ${attackInfo.totalDamage} de dano`);
         } else {
             attackInfo.totalPower = totalPower;

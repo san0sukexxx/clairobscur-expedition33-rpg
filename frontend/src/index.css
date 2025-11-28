@@ -66,8 +66,8 @@
   /* margem lateral fixa */
 
   animation: toastFade 350ms ease-out,
-    toastStay var(--stay, 1s) linear 350ms,
-    toastOut 300ms ease-in forwards calc(var(--stay, 1s) + 350ms);
+    toastStay var(--stay, 1500ms) linear 350ms,
+    toastOut 300ms ease-in forwards calc(var(--stay, 1500ms) + 350ms);
   will-change: transform, opacity;
 }
 

@@ -24,3 +24,12 @@ export function getActiveTurnCharacter(player: GetPlayerResponse | null): Battle
     const turn = player.fightInfo.turns.find(t => t.playOrder == 1);
     return player.fightInfo.characters?.find(c => c.battleID == turn?.battleCharacterId);
 }
+
+export function getPlayerCharacter(player: GetPlayerResponse | null): BattleCharacterInfo | undefined {
+    if (!player?.fightInfo) return undefined;
+
+    const playerBattleId = player.fightInfo.playerBattleID;
+    if (playerBattleId == null) return undefined;
+
+    return player.fightInfo.characters?.find(c => c.battleID === playerBattleId);
+}

@@ -1,4 +1,5 @@
-import { type AttackType, type AttackResponse, type StatusType, type BattleCharacterInfo, type SkillType } from "../api/ResponseModel";
+import type { GetPlayerResponse } from "../api/APIPlayer";
+import { type AttackType, type AttackResponse, type StatusType, type BattleCharacterInfo, type SkillType, type StatusResponse } from "../api/ResponseModel";
 
 export function getBattleStatusLabel(status: string): string {
     switch (status) {
@@ -79,5 +80,58 @@ export function getStatusLabel(status: StatusType): string {
         case "jump": return "Pular";
         case "gradient": return "Gradiente";
         default: return status;
+    }
+}
+
+export function getStatusDescription(status: StatusType): string {
+    switch (status) {
+        case "Frozen": return "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.";
+        case "Shielded": return "Cada escudo anula um ataque completamente.";
+        case "Burning": return "Causa dano no início do turno. Cada queimadura causa 1d6 de dano.";
+
+        // TODO
+        case "Hastened": return "Aumenta a velocidade de ações do personagem.";
+        case "Empowered": return "Concede bônus de força ou dano temporário.";
+        case "Protected": return "Reduz parte do dano recebido.";
+        case "Regeneration": return "Restaura vida ao longo dos turnos.";
+        case "Unprotected": return "Aumenta o dano recebido de todas as fontes.";
+        case "Slowed": return "Diminui a velocidade e iniciativa.";
+        case "Weakened": return "Reduz o dano causado pelo personagem.";
+        case "Cursed": return "Aplica penalidades variadas e reduz efetividade.";
+        case "Stunned": return "Impede o personagem de agir neste turno.";
+        case "Confused": return "Ações podem falhar ou ter efeitos inesperados.";
+        case "Entangled": return "Diminui mobilidade e pode impedir ações.";
+        case "Exhausted": return "Reduz a capacidade de ataque e defesa.";
+        case "Frenzy": return "Aumenta o dano, mas reduz precisão e defesa.";
+        case "Rage": return "Concede grande dano extra, mas prejudica defesa.";
+        case "Inverted": return "Inverte efeitos ou estatísticas temporariamente.";
+        case "Marked": return "Este alvo recebe dano aumentado.";
+        case "Plagued": return "Causa dano contínuo e reduz atributos.";
+        case "Silenced": return "Impede uso de habilidades mágicas.";
+        case "Dizzy": return "Reduz precisão e pode causar falha em ataques.";
+        case "free-shot": return "Acumula bônus para ataques básicos.";
+        case "jump": return "Ignora terreno ou obstáculos temporariamente.";
+        case "gradient": return "Efeito especial de uso interno.";
+        default: return "Efeito ativo.";
+    }
+}
+
+export function getResolveButtonLabel(status: StatusType): string {
+    switch (status) {
+        case "Frozen":
+        case "Burning":
+            return "Resolver";
+        default:
+            return "Ok";
+    }
+}
+
+export function statusNeedsResolveRoll(status: StatusResponse): boolean {
+    switch (status.effectName) {
+        case "Frozen":
+        case "Burning":
+            return true;
+        default:
+            return false;
     }
 }

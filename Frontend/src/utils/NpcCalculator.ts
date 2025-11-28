@@ -1,4 +1,4 @@
-import { type NPCInfo, type Element, type ElementModifier, type ElementModifierType, type WeaponInfo } from "../api/ResponseModel"
+import { type NPCInfo, type Element, type ElementModifier, type ElementModifierType, type WeaponInfo, type BattleCharacterInfo } from "../api/ResponseModel"
 import { getNpcById } from "../data/NPCsList"
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type WeaponDTO } from "../types/WeaponDTO";
@@ -35,10 +35,30 @@ export function getNPCMaxHealth(npc: NPCInfo) {
     return npc.resistance * 5;
 }
 
-export function calculateAttackReceivedDamage(id: string, damage: number) {
-    const npcInfo = getNpcById(id)
+export function hasShield(target: BattleCharacterInfo): boolean {
+    return target.status?.some(s => s.effectName == "Shielded") ?? false
+}
+
+export function npcIsFlying(target: BattleCharacterInfo): boolean {
+    if (target.type == "player") {
+        return false;
+    }
+
+    return getNpcById(target.id)?.isFlying ?? false
+}
+
+export function npcIsFlyingById(id: string | undefined) {
+    return getNpcById(id ?? "")?.isFlying ?? false
+}
+
+export function calculateNpcAttackReceivedDamage(target: BattleCharacterInfo, damage: number) {
+    const npcInfo = getNpcById(target.id)
 
     if (npcInfo == undefined) { return 1 }
+
+    if (hasShield(target)) {
+        return 0;
+    }
 
     const totalDefense = randomizeNpcDefenseTotal(npcInfo);
     return Math.max(1, damage - totalDefense)

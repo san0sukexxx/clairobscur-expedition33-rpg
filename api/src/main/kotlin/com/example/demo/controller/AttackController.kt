@@ -14,6 +14,7 @@ import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
 import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
+import com.example.demo.service.BattleService
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -26,7 +27,8 @@ class AttackController(
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
-        private val battleTurnRepository: BattleTurnRepository
+        private val battleTurnRepository: BattleTurnRepository,
+        private val battleService: BattleService
 ) {
 
         @PostMapping
@@ -99,6 +101,8 @@ class AttackController(
                                         battleTurnRepository.deleteAllInBatch(turns)
                                 }
                         }
+
+                        battleService.consumeShield(targetBC.id!!)
 
                         battleLogRepository.save(
                                 BattleLog(

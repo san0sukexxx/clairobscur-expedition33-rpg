@@ -4,6 +4,7 @@ import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { getStatusLabel } from "../utils/BattleUtils";
+import { npcIsFlying } from "../utils/NpcCalculator";
 
 interface EnemiesStatusProps {
     player: GetPlayerResponse | null;
@@ -79,11 +80,16 @@ export default function EnemiesStatus({
                                             </p>
 
                                             <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80">
-                                                {ch.status?.map((st, idx) => (
+                                                {ch.status?.filter(s => s.effectName != "free-shot").map((st, idx) => (
                                                     <span key={idx} className="px-1 py-0.5 rounded bg-base-300">
                                                         {getStatusLabel(st.effectName)} {st.ammount} {st.remainingTurns ? `(${st.remainingTurns})` : ""}
                                                     </span>
                                                 ))}
+                                                {npcIsFlying(ch) && (
+                                                    <span key="flying" className="px-1 py-0.5 rounded bg-base-300">
+                                                        Voando
+                                                    </span>
+                                                )}
                                             </div>
 
                                             {isDead && <FaSkull className="text-error" title="Morto" />}

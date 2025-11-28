@@ -5,6 +5,7 @@ import com.example.demo.dto.CreateDefenseRequest
 import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleStatusEffect
 import com.example.demo.repository.*
+import com.example.demo.service.BattleService
 import com.example.demo.service.BattleTurnService
 import com.example.demo.service.DamageService
 import org.springframework.http.ResponseEntity
@@ -22,7 +23,8 @@ class DefenseController(
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val attackStatusEffectRepository: AttackStatusEffectRepository,
         private val battleTurnService: BattleTurnService,
-        private val damageService: DamageService
+        private val damageService: DamageService,
+        private val battleService: BattleService
 ) {
 
     @PostMapping
@@ -53,6 +55,8 @@ class DefenseController(
         battleLogRepository.save(
                 BattleLog(battleId = attack.battleId, eventType = "DAMAGE_DEALT", eventJson = null)
         )
+        
+        battleService.consumeShield(targetBC.id!!)
 
         val damage = body.totalDamage.coerceAtLeast(0)
         if (damage > 0) {

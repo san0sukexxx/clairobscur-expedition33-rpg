@@ -8,8 +8,9 @@ import {
     diceTotal
 } from "./DiceCalculator";
 import { getNpcById } from "../data/NPCsList";
-import { getWeaponElementModifier } from "./NpcCalculator";
+import { getWeaponElementModifier, hasShield } from "./NpcCalculator";
 import { calculateWeaponVitalityBonus, calculateWeaponAgilityBonus, calculateWeaponDefenseBonus } from "./WeaponCalculator";
+import { getPlayerCharacter } from "./CharacterUtils";
 
 export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {
     const vitalityValue = calculateWeaponVitalityBonus(weaponInfo);
@@ -27,6 +28,10 @@ export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackTyp
 }
 
 export function calculateAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType): number {
+    if (hasShield(npcBattleCharacterInfo)) {
+        return 0;
+    }
+
     if (attackType == "basic") {
         return calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo.id, diceResult);
     } else if (attackType == "free-shot") {
@@ -37,13 +42,11 @@ export function calculateAttackDamage(player: GetPlayerResponse | null, weaponIn
 }
 
 export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, attackType: AttackType): number {
-    if(attackType != "free-shot") { return 0; }
+    if (attackType != "free-shot") { return 0; }
     const npcInfo = getNpcById(npcBattleCharacterInfo.id)
 
     if (npcInfo?.freeShotWeakPoints != undefined) {
         const statusFreeShot = npcBattleCharacterInfo.status?.find(s => s.effectName == "free-shot")
-
-        console.log(statusFreeShot)
 
         if (!statusFreeShot || statusFreeShot.ammount < npcInfo.freeShotWeakPoints) {
             return (player?.playerSheet?.power ?? 0)
@@ -88,7 +91,16 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     return attackDamage;
 }
 
+export function playerHasShield(player: GetPlayerResponse | null): boolean {
+    const currentCharacter = getPlayerCharacter(player);
+    return currentCharacter?.status?.some(s => s.effectName == "Shielded") ?? false
+}
+
 export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any, defenseOption: DefenseOption): number {
+    if (playerHasShield(player)) {
+        return 0;
+    }
+
     if (defenseOption == "take") {
         return totalDamage;
     }

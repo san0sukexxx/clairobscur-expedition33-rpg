@@ -6,7 +6,8 @@ export const NPCsList: NPCInfo[] = [
         name: "Grosse Tete",
         power: 1,
         hability: 2,
-        resistance: 3
+        resistance: 3,
+        isFlying: true
     },
     {
         id: "golem",

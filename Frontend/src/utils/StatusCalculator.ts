@@ -34,5 +34,3 @@ export function getCurrentPlayerStatus(player: GetPlayerResponse | null): Status
 
     return ch.status ?? [];
 }
-
-

@@ -1,6 +1,6 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo, StatusResponse } from "../api/ResponseModel";
-import { getStatusLabel } from "../utils/BattleUtils";
+import { getResolveButtonLabel, getStatusDescription, getStatusLabel } from "../utils/BattleUtils";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
 import { getCurrentPlayerPendingStatus } from "../utils/StatusCalculator";
 
@@ -26,21 +26,27 @@ export default function PendingStatusModal({ player, onTapResolve }: PendingStat
                     {pendingStatus.map((st, idx) => (
                         <div
                             key={idx}
-                            className="flex items-center justify-between rounded bg-base-200 px-2 py-1 text-sm gap-2"
+                            className="rounded bg-base-200 px-2 py-2 text-sm flex flex-col gap-1"
                         >
-                            <span className="flex-1">
-                                {getStatusLabel(st.effectName)} {st.ammount}{" "}
-                                {st.remainingTurns
-                                    ? `(${st.remainingTurns} turno${st.remainingTurns > 1 ? "s" : ""
-                                    })`
-                                    : ""}
-                            </span>
+                            <div className="flex items-center justify-between gap-2">
+                                <span className="flex-1">
+                                    {getStatusLabel(st.effectName)} {st.ammount}{" "}
+                                    {st.remainingTurns
+                                        ? `(${st.remainingTurns} turno${st.remainingTurns > 1 ? "s" : ""})`
+                                        : ""}
+                                </span>
 
-                            <button
-                                className="btn btn-xs btn-primary"
-                                onClick={() => onTapResolve(st, currentCharacter)}>
-                                Resolver
-                            </button>
+                                <button
+                                    className="btn btn-xs btn-primary"
+                                    onClick={() => onTapResolve(st, currentCharacter)}
+                                >
+                                    {getResolveButtonLabel(st.effectName)}
+                                </button>
+                            </div>
+
+                            <div className="text-xs opacity-60 pl-1">
+                                {getStatusDescription(st.effectName)}
+                            </div>
                         </div>
                     ))}
                 </div>

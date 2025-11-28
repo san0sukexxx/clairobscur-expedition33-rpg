@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Link, useLocation, matchPath } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaUser, FaSkull, FaCheckCircle, FaDivide } from "react-icons/fa";
+import { FaUser, FaSkull, FaCheckCircle, FaDivide, FaShieldAlt } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
@@ -29,7 +29,8 @@ import {
   calculateMaxCounterDamage,
   rollCommandForAttack,
   calculateAttackDamage,
-  calculateFreeShotPlus
+  calculateFreeShotPlus,
+  playerHasShield
 } from "../utils/PlayerCalculator";
 
 import {
@@ -44,12 +45,13 @@ import { rollWithTimeout } from "../utils/RollUtils";
 import PanelModal from "../components/PanelModal";
 import { useToast } from "../components/Toast";
 import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
-import { calculateAttackReceivedDamage, getWeaponElementModifier } from "../utils/NpcCalculator";
+import { calculateNpcAttackReceivedDamage, getWeaponElementModifier, hasShield, npcIsFlying } from "../utils/NpcCalculator";
 import MasterEditingOverlay from "../components/MasterEditingOverlay"
 import PendingAttacksModal from "../components/PendingAttacksModal"
 import { getElementModifierText } from "../utils/ElementUtils";
 import PendingStatusModal from "../components/PendingStatusModal";
 import { rollCommandForResolveStatus } from "../utils/StatusCalculator";
+import { statusNeedsResolveRoll } from "../utils/BattleUtils";
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -555,6 +557,11 @@ export default function PlayerPage() {
   function handleSelectAttackTarget(target: BattleCharacterInfo) {
     if (player == null) { return }
 
+    if (npcIsFlying(target) && attackType != "free-shot") {
+      showToast("Este inimigo está voando e só pode ser atingido por tiros livres", { duration: 3000 });
+      return;
+    }
+
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculateCriticalMulti(result)
@@ -565,6 +572,7 @@ export default function PlayerPage() {
       const failuresDiv = calculateFailureDiv(result)
       const elementModifier = getWeaponElementModifier(target.id, weaponInfo)
       const freeShotPlus = calculateFreeShotPlus(player, target, attackType)
+      const isShielded = hasShield(target)
 
       setModalTitle("Resultado da rolagem")
 
@@ -611,6 +619,12 @@ export default function PlayerPage() {
               </span>
             </p>
           )}
+          {isShielded && (
+            <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
+              <FaShieldAlt className="w-6 h-6" />
+              Possui escudo (Anula todo dano)
+            </h3>
+          )}
           <h1 className="text-2xl font-bold">Total: {total}</h1>
         </div>
       )
@@ -620,7 +634,7 @@ export default function PlayerPage() {
       const callAttack = async () => {
         try {
           if (target.type == "npc") {
-            const totalDamageToNpc = calculateAttackReceivedDamage(target.id, total);
+            const totalDamageToNpc = calculateNpcAttackReceivedDamage(target, total);
 
             const attackInfo: CreateAttackRequest = {
               totalDamage: totalDamageToNpc,
@@ -748,6 +762,7 @@ export default function PlayerPage() {
         if (result != null) {
           defenseValue = calculateDefense(attack.totalPower, player, weaponInfo, result, defense);
         }
+
         let description = "Você recebeu todo o dano.";
 
         if (defense === "block") {
@@ -774,6 +789,10 @@ export default function PlayerPage() {
           } else {
             description = `Você conseguiu pular do ataque!`;
           }
+        }
+
+        if (defenseValue == 0 && playerHasShield(player)) {
+          description = "Um escudo foi usado, você não recebeu dano"
         }
 
         const payload: CreateDefenseRequest = {
@@ -814,6 +833,16 @@ export default function PlayerPage() {
         showToast("Erro resolver o status");
       }
     };
+
+    if (!statusNeedsResolveRoll(status)) {
+      callResolveStatus({
+        battleCharacterId: currentCharacter?.battleID ?? 0,
+        effectType: status.effectName,
+        totalValue: 0
+      })
+
+      return;
+    }
 
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForResolveStatus(status), result => {
       const total = diceTotal(result)

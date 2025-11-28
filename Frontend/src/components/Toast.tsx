@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 type ToastOptions = {
-  duration?: number; // ms
+  duration?: number;
 };
 
 type Enqueue = (message: string, opts?: ToastOptions) => void;
@@ -29,7 +29,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     setQueue((q) => [...q, item]);
   }, []);
 
-  // Avança a fila quando não há toast ativo
   useEffect(() => {
     if (!current && queue.length > 0) {
       const [next, ...rest] = queue;
@@ -38,23 +37,29 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     }
   }, [current, queue]);
 
-  // Controla auto-close do toast atual
   useEffect(() => {
     if (!current) return;
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setCurrent(null), current.duration);
+
+    timerRef.current = setTimeout(() => {
+      setCurrent(null);
+    }, current.duration);
+
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [current]);
+  }, [current?.id, current?.duration]);
 
   return (
     <ToastQueueContext.Provider value={enqueue}>
       {children}
-      {/* Renderer */}
       {current && (
         <div className="toast-container">
-          <div className="toast-message" key={current.id}>
+          <div
+            className="toast-message"
+            key={current.id}
+            style={{ ["--stay" as any]: `${current.duration}ms` }}
+          >
             {current.message}
           </div>
         </div>

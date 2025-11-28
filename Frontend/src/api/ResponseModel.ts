@@ -66,6 +66,7 @@ export interface NPCInfo {
     freeShotWeakPoints?: number;
     attackList?: NPCAttack[];
     skillList?: NPCSkill[];
+    isFlying?: boolean;
 }
 
 export interface NPCStatusItem {
