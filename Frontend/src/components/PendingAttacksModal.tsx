@@ -1,7 +1,8 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { ignoreEffects, type AttackResponse, type DefenseOption } from "../api/ResponseModel";
 import {
-    calculateMaxCounterDamage
+    calculateMaxCounterDamage,
+    playerHasEntangled
 } from "../utils/PlayerCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
 import { getAttackType, getAttackTypeLabel, getStatusLabel } from "../utils/BattleUtils";
@@ -40,6 +41,8 @@ export default function PendingAttacksModal({
         attack.isResolved === true &&
         attack.allowCounter === true &&
         attack.isCounterResolved === false;
+
+    const canDodge = !playerHasEntangled(player)
 
     const counterAttacks = pendingAttacks.filter(isCounterAttack);
     const hasCounter = counterAttacks.length > 0;
@@ -180,13 +183,15 @@ export default function PendingAttacksModal({
                                                     Aparar
                                                 </button>
 
-                                                <button
-                                                    className="btn btn-xs btn-outline gap-2"
-                                                    onClick={() => onSelectDefense(attack, "dodge")}
-                                                >
-                                                    <FaRunning />
-                                                    Desviar
-                                                </button>
+                                                {canDodge && (
+                                                    <button
+                                                        className="btn btn-xs btn-outline gap-2"
+                                                        onClick={() => onSelectDefense(attack, "dodge")}
+                                                    >
+                                                        <FaRunning />
+                                                        Desviar
+                                                    </button>
+                                                )}
                                             </>
                                         )}
 

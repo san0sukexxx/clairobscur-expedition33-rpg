@@ -46,7 +46,7 @@ export function getAttackTypeLabel(type: AttackType): string {
 export function getSkillLabel(skill: SkillType): string {
     switch (skill) {
         case "give-status":
-            return "Dar status";
+            return "Aplicar status";
         default:
             return skill;
     }
@@ -65,7 +65,7 @@ export function getStatusLabel(status: StatusType): string {
         case "Stunned": return "Atordoado";
         case "Confused": return "Confuso";
         case "Frozen": return "Congelado";
-        case "Entangled": return "Enroscado";
+        case "Entangled": return "Acorrentado";
         case "Shielded": return "Escudado";
         case "Exhausted": return "Exausto";
         case "Frenzy": return "Frenesi";
@@ -76,11 +76,38 @@ export function getStatusLabel(status: StatusType): string {
         case "Burning": return "Queimando";
         case "Silenced": return "Silenciado";
         case "Dizzy": return "Tonto";
+        case "Fragile": return "Frágil";
+        case "Broken": return "Quebrado";
         case "free-shot": return "Free Shot";
         case "jump": return "Pular";
         case "gradient": return "Gradiente";
         default: return status;
     }
+}
+
+export function shouldShowStatusAmmount(type: StatusType): boolean {
+    const skillsWithoutAmmount: StatusType[] = [
+        "Hastened",
+        "Slowed",
+        "Empowered",
+        "Weakened",
+        "Protected",
+        "Unprotected",
+        "Cursed",
+        "Stunned",
+        "Entangled",
+        "Exhausted",
+        "Inverted",
+        "Marked",
+        "Silenced",
+        "Dizzy",
+        "Fragile",
+        "Broken",
+        "Fragile",
+        "Broken"
+    ];
+
+    return !skillsWithoutAmmount.includes(type);
 }
 
 export function getStatusDescription(status: StatusType): string {
@@ -95,20 +122,20 @@ export function getStatusDescription(status: StatusType): string {
         case "Protected": return "Melhora sua defesa ao aparar.";
         case "Unprotected": return "Dificulta sua defesa ao aparar.";
         case "Regeneration": return "Restaura uma porcentagem da sua vida a cada turno.";
-
-        // TODO
-        case "Cursed": return "Aplica penalidades variadas e reduz efetividade.";
+        case "Cursed": return "Morre quando o contador chegar a zero.";
         case "Stunned": return "Impede o personagem de agir neste turno.";
-        case "Confused": return "Ações podem falhar ou ter efeitos inesperados.";
-        case "Entangled": return "Diminui mobilidade e pode impedir ações.";
-        case "Exhausted": return "Reduz a capacidade de ataque e defesa.";
-        case "Frenzy": return "Aumenta o dano, mas reduz precisão e defesa.";
-        case "Rage": return "Concede grande dano extra, mas prejudica defesa.";
-        case "Inverted": return "Inverte efeitos ou estatísticas temporariamente.";
-        case "Marked": return "Este alvo recebe dano aumentado.";
-        case "Plagued": return "Causa dano contínuo e reduz atributos.";
-        case "Silenced": return "Impede uso de habilidades mágicas.";
-        case "Dizzy": return "Reduz precisão e pode causar falha em ataques.";
+        case "Confused": return "Seu personagem deve fazer o que o mestre disser. Você tem direito a um teste de resistência a cada início de turno.";
+        case "Entangled": return "Não pode desviar de ataques, apenas aparar, aparar gradiente ou pular.";
+        case "Exhausted": return "Qualquer ação que custe PM, custa 1 a mais e os personagens não podem recuperar PM de nenhuma maneira.";
+        case "Frenzy": return "O personagem tem +1 por frenesi em testes de ataque (exceto tiro livre).";
+        case "Rage": return "Você tem direito a uma ação de ataque básico extra, além de suas outras ações.";
+        case "Inverted": return "Quando receber cura de qualquer efeito, sofre dano ao invés de se curar.";
+        case "Marked": return "O personagem tem Perda no seu próximo teste de Defesa.";
+        case "Plagued": return "O personagem tem –5 PV máximos até o fim da cena. Essa condição pode acumular, diminuindo 5 PV por cada acumulo, até o personagem ficar com o mínimo de 1 PV máximo.";
+        case "Silenced": return "Não pode usar habilidades.";
+        case "Dizzy": return "Perda em ataques usando tiro livre ou habilidades.";
+        case "Fragile": return "Receber um dano maior que o dobro de sua resistência te torna frágil. Estando frágil você fica vulnerável a quebra.";
+        case "Broken": return "Você não pode se defender ou pode agir.";
         case "free-shot": return "Acumula bônus para ataques básicos.";
         case "jump": return "Ignora terreno ou obstáculos temporariamente.";
         case "gradient": return "Efeito especial de uso interno.";
@@ -120,6 +147,7 @@ export function getResolveButtonLabel(status: StatusType): string {
     switch (status) {
         case "Frozen":
         case "Burning":
+        case "Confused":
             return "Resolver";
         default:
             return "Ok";
@@ -130,6 +158,7 @@ export function statusNeedsResolveRoll(status: StatusResponse): boolean {
     switch (status.effectName) {
         case "Frozen":
         case "Burning":
+        case "Confused":
             return true;
         default:
             return false;

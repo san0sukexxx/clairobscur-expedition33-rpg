@@ -33,7 +33,10 @@ import {
   playerHasShield,
   playerHasEmpowered,
   playerHasWeakened,
-  calculateStatusResolvedTotalValue
+  calculateStatusResolvedTotalValue,
+  calculateResolveStatusWithDiceTotal,
+  getPlayerFrenzy,
+  playerHasDizzy
 } from "../utils/PlayerCalculator";
 
 import {
@@ -48,7 +51,7 @@ import { rollWithTimeout } from "../utils/RollUtils";
 import PanelModal from "../components/PanelModal";
 import { useToast } from "../components/Toast";
 import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
-import { calculateNpcAttackReceivedDamage, getWeaponElementModifier, hasEmpowered, hasHastened, hasShield, npcIsFlying } from "../utils/NpcCalculator";
+import { calculateNpcAttackReceivedDamage, checkForFragile, getWeaponElementModifier, hasEmpowered, hasHastened, hasShield, npcIsFlying } from "../utils/NpcCalculator";
 import MasterEditingOverlay from "../components/MasterEditingOverlay"
 import PendingAttacksModal from "../components/PendingAttacksModal"
 import { getElementModifierText } from "../utils/ElementUtils";
@@ -362,34 +365,48 @@ export default function PlayerPage() {
   }
 
   function checkBattleLog(playerInfo: GetPlayerResponse) {
-    if (playerInfo.battleLogs && playerInfo.battleLogs.length > 0) {
+    const logs = playerInfo.battleLogs ?? []
+    if (logs.length === 0) return
 
-      for (const log of playerInfo.battleLogs) {
-        switch (log.eventType) {
-          case "ADD_CHARACTER":
-          case "REMOVE_CHARACTER":
-          case "SET_INITIATIVE":
-          case "BATTLE_STARTED":
-          case "TURN_ENDED":
-          case "TURN_ADDED":
-          case "ALLOW_COUNTER":
-          case "STATUS_RESOLVED":
-          case "STATUS_ADDED":
-            applyFightInfoUpdate(playerInfo);
-            break;
-          case "ATTACK_PENDING":
-          case "COUNTER_RESOLVED":
-          case "DAMAGE_DEALT":
-            applySheetInfoUpdate(playerInfo);
-            applyFightInfoUpdate(playerInfo);
-            break;
-        }
-      }
+    const fightEvents = new Set([
+      "ADD_CHARACTER",
+      "REMOVE_CHARACTER",
+      "SET_INITIATIVE",
+      "BATTLE_STARTED",
+      "TURN_ENDED",
+      "TURN_ADDED",
+      "ALLOW_COUNTER",
+      "STATUS_ADDED",
+      "ATTACK_PENDING",
+      "COUNTER_RESOLVED",
+      "DAMAGE_DEALT",
+      "STATUS_RESOLVED",
+      "HP_CHANGED"
+    ])
 
-      const lastBattleLog = getLastBattleLogFromPlayer(playerInfo);
-      setLastBattleLog(lastBattleLog);
+    const sheetEvents = new Set([
+      "ATTACK_PENDING",
+      "COUNTER_RESOLVED",
+      "DAMAGE_DEALT",
+      "STATUS_ADDED",
+      "STATUS_RESOLVED",
+    ])
+
+    const shouldUpdateFight = logs.some(log => fightEvents.has(log.eventType))
+    const shouldUpdateSheet = logs.some(log => sheetEvents.has(log.eventType))
+
+    if (shouldUpdateSheet) {
+      applySheetInfoUpdate(playerInfo)
     }
+
+    if (shouldUpdateFight) {
+      applyFightInfoUpdate(playerInfo)
+    }
+
+    const lastBattleLog = getLastBattleLogFromPlayer(playerInfo)
+    setLastBattleLog(lastBattleLog)
   }
+
 
   function applyFightInfoUpdate(playerInfo: GetPlayerResponse) {
     setPlayer(prev =>
@@ -579,6 +596,8 @@ export default function PlayerPage() {
       const isShielded = hasShield(target)
       const isEmpowered = playerHasEmpowered(player)
       const isWeakened = playerHasWeakened(player)
+      const playerFrenzy = getPlayerFrenzy(player)
+      const isDizzy = playerHasDizzy(player)
 
       setModalTitle("Resultado da rolagem")
 
@@ -630,11 +649,24 @@ export default function PlayerPage() {
               Vulnerabilidade tiro-livre <b>(+{freeShotPlus})</b>
             </h3>
           )}
+          {((playerFrenzy?.ammount ?? 0) > 0) && attackType != "free-shot" && (
+            <p>
+              Frenesi <b>(+{playerFrenzy?.ammount})</b>
+            </p>
+          )}
           {elementModifier != undefined && (
             <p>
               Elemento da arma: <b>{getElementModifierText(elementModifier.type)}</b>
               <span className="inline-flex items-center gap-1 font-bold ml-2">
                 (x{elementModifier.multiplier})
+              </span>
+            </p>
+          )}
+          {isDizzy && attackType == "free-shot" && (
+            <p>
+              Está tonto:
+              <span className="inline-flex items-center gap-1 font-bold ml-2">
+                (<FaDivide className="w-4 h-4" /> 2 )
               </span>
             </p>
           )}
@@ -654,19 +686,23 @@ export default function PlayerPage() {
         try {
           if (target.type == "npc") {
             const totalDamageToNpc = calculateNpcAttackReceivedDamage(target, total);
+            const willGetFragile = checkForFragile(target, total);
 
+            let effects: AttackStatusEffectRequest[] = []
             const attackInfo: CreateAttackRequest = {
               totalDamage: totalDamageToNpc,
               targetBattleId: target.battleID,
               sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
-              attackType: attackType
-              // TODO:
-              // effects: [
-              //     {
-              //         effectType: "burn",
-              //         ammount: 5
-              //     }
-              // ]
+              attackType: attackType,
+              effects: effects
+            }
+
+            if (willGetFragile) {
+              effects.push({
+                effectType: "Fragile",
+                ammount: 1,
+                remainingTurns: 2
+              })
             }
 
             await APIBattle.attack(attackInfo)
@@ -865,7 +901,7 @@ export default function PlayerPage() {
     }
 
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForResolveStatus(status), result => {
-      const total = diceTotal(result)
+      const total = calculateResolveStatusWithDiceTotal(player, weaponInfo, status, result)
 
       callResolveStatus({
         battleCharacterId: currentCharacter?.battleID ?? 0,

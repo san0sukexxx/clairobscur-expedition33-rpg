@@ -188,4 +188,11 @@ export class APIBattle {
     static async addStatus(body: AddStatusRequest): Promise<void> {
         await api.post("battle-status/add", body);
     }
+    
+    static async updateCharacterHp(id: number, newHp: number): Promise<void> {
+        await api.put<{ newHp: number }, void>(
+            `battles/characters/${id}/hp`,
+            { newHp }
+        )
+    }
 }

@@ -57,6 +57,7 @@ class DefenseController(
         )
         
         battleService.consumeShield(targetBC.id!!)
+        battleService.removeMarked(targetBC.id!!)
 
         val damage = body.totalDamage.coerceAtLeast(0)
         if (damage > 0) {

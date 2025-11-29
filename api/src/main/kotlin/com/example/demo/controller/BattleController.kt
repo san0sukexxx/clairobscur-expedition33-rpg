@@ -1,12 +1,12 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.BattleCharacterInfo
+import com.example.demo.dto.BattleStatusResponse
 import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.BattleWithDetailsResponse
 import com.example.demo.dto.InitiativeResponse
 import com.example.demo.dto.UpdateBattleStatusRequest
 import com.example.demo.dto.UseBattleRequest
-import com.example.demo.dto.BattleStatusResponse
 import com.example.demo.model.Battle
 import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleTurn
@@ -101,9 +101,12 @@ class BattleController(
 
         val allLogs = battleLogRepository.findByBattleIdOrderByIdAsc(battleId)
         val battleLogs =
-                if (battleLogId != null)
-                        allLogs.filter { log -> log.id?.let { it > battleLogId } == true }
-                else allLogs
+                if (battleLogId != null) {
+                    allLogs.filter { log -> log.id?.let { it > battleLogId } == true }
+                } else {
+                    val last = allLogs.lastOrNull()
+                    if (last != null) listOf(last) else emptyList()
+                }
 
         val attacks = attackRepository.findByBattleId(battleId)
 

@@ -28,6 +28,17 @@ export function calculateStatusResolvedTotalValue(player: GetPlayerResponse | nu
     }
 }
 
+export function calculateResolveStatusWithDiceTotal(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, status: StatusResponse, diceResult: any): number {
+    const total = diceTotal(diceResult)
+
+    switch (status.effectName) {
+        case "Confused":
+            return total + (player?.playerSheet?.resistance ?? 0);
+        default:
+            return total;
+    }
+}
+
 export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackType: AttackType): number {
     if (weaponInfo == null || attackType == "free-shot") {
         return 0;
@@ -76,7 +87,13 @@ export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, 
     }
     playerPower += calculateFreeShotPlus(player, npcBattleCharacterInfo, attackType)
 
-    return playerPower + total;
+    const playerDizzy = getPlayerDizzy(player)
+    let damage = playerPower + total
+    if (playerDizzy) {
+        damage = Math.floor(damage / 2)
+    }
+
+    return damage;
 }
 
 export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcId: string, diceResult: any): number {
@@ -101,7 +118,7 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
         );
     }
 
-    return attackDamage;
+    return attackDamage + (getPlayerFrenzy(player)?.ammount ?? 0);
 }
 
 export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any, defenseOption: DefenseOption): number {
@@ -155,6 +172,8 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     if (defenseOption == "dodge") {
         playerDefense += (player?.playerSheet?.hability ?? 0) * hastenedMulti;
     }
+
+    playerDefense = playerHasMarked(player) ? Math.floor(playerDefense * 0.5) : playerDefense;
 
     return totalDamage - Math.floor(playerDefense);
 }
@@ -240,6 +259,19 @@ export function playerHasStatus(player: GetPlayerResponse | null, status: Status
     return hasStatus(currentCharacter, status);
 }
 
+export function getPlayerStatus(player: GetPlayerResponse | null, status: StatusType): StatusResponse | undefined {
+    const currentCharacter = getPlayerCharacter(player);
+    if(!currentCharacter) { return undefined }
+    
+    return currentCharacter.status?.find(s => s.effectName === status);
+}
+
 export const playerHasShield = (p: GetPlayerResponse | null) => playerHasStatus(p, "Shielded");
 export const playerHasEmpowered = (p: GetPlayerResponse | null) => playerHasStatus(p, "Empowered");
 export const playerHasWeakened = (p: GetPlayerResponse | null) => playerHasStatus(p, "Weakened");
+export const playerHasEntangled = (p: GetPlayerResponse | null) => playerHasStatus(p, "Entangled");
+export const playerHasExhausted = (p: GetPlayerResponse | null) => playerHasStatus(p, "Exhausted");
+export const playerHasMarked = (p: GetPlayerResponse | null) => playerHasStatus(p, "Marked");
+export const getPlayerFrenzy = (p: GetPlayerResponse | null) => getPlayerStatus(p, "Frenzy");
+export const getPlayerDizzy = (p: GetPlayerResponse | null) => getPlayerStatus(p, "Dizzy");
+export const playerHasDizzy = (p: GetPlayerResponse | null) => playerHasStatus(p, "Dizzy");

@@ -40,13 +40,23 @@ class AttackController(
                                 ?: return ResponseEntity.badRequest().build()
 
                 if (sourceBC.characterType == "player") {
+                        val exhausted =
+                                battleStatusEffectRepository
+                                        .findByBattleCharacterIdAndEffectType(
+                                                sourceBC.id!!,
+                                                "Exhausted"
+                                        )
+                                        .isNotEmpty()
+
+                        val freeShotCost = if (exhausted) 2 else 1
+
                         val current = sourceBC.magicPoints ?: 0
                         val max = sourceBC.maxMagicPoints ?: 0
 
                         val next =
                                 when (body.attackType) {
                                         "basic" -> (current + 1).coerceAtMost(max)
-                                        "free-shot" -> (current - 1).coerceAtLeast(0)
+                                        "free-shot" -> (current - freeShotCost).coerceAtLeast(0)
                                         else -> current
                                 }
 
@@ -103,6 +113,18 @@ class AttackController(
                         }
 
                         battleService.consumeShield(targetBC.id!!)
+                        battleService.removeMarked(targetBC.id!!)
+                        
+                        body.effects.forEach { eff ->
+                                battleStatusEffectRepository.save(
+                                        BattleStatusEffect(
+                                                battleCharacterId = targetBC.id!!,
+                                                effectType = eff.effectType,
+                                                ammount = eff.ammount ?: 0,
+                                                remainingTurns = eff.remainingTurns
+                                        )
+                                )
+                        }
 
                         battleLogRepository.save(
                                 BattleLog(

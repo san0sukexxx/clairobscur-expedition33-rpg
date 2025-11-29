@@ -33,20 +33,14 @@ class DamageService(
             if (turns.isNotEmpty()) {
                 battleTurnRepository.deleteAllInBatch(turns)
             }
+
+            val allEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+            if (allEffects.isNotEmpty()) {
+                battleStatusEffectRepository.deleteAll(allEffects)
+            }
         }
 
         battleCharacterRepository.save(targetBC)
-
-        if (targetBC.id != null) {
-            val frozenEffects =
-                    battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
-                            targetBC.id!!,
-                            "Frozen"
-                    )
-            if (frozenEffects.isNotEmpty()) {
-                battleStatusEffectRepository.deleteAll(frozenEffects)
-            }
-        }
 
         val playerId = targetBC.externalId.toIntOrNull()
         if (playerId != null) {

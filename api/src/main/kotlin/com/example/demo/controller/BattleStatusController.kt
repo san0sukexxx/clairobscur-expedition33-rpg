@@ -7,6 +7,7 @@ import com.example.demo.model.BattleStatusEffect
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
 import com.example.demo.repository.BattleStatusEffectRepository
+import com.example.demo.repository.PlayerRepository
 import com.example.demo.service.BattleTurnService
 import com.example.demo.service.DamageService
 import org.springframework.http.ResponseEntity
@@ -19,6 +20,7 @@ class BattleStatusController(
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
+        private val playerRepository: PlayerRepository,
         private val battleTurnService: BattleTurnService,
         private val damageService: DamageService
 ) {
@@ -65,9 +67,7 @@ class BattleStatusController(
             if (damage > 0) {
                 val newHp = damageService.applyDamage(battleCharacter, damage)
 
-                if (newHp <= 0) {
-                    battleTurnService.advanceTurn(battleId)
-                } else {
+                if (newHp > 0) {
                     effects.forEach { eff ->
                         val remaining = (eff.remainingTurns ?: 0) - 1
                         if (remaining <= 0) {
@@ -82,12 +82,24 @@ class BattleStatusController(
             val heal = body.totalValue.coerceAtLeast(0)
 
             if (heal > 0) {
-                val currentHp = battleCharacter.healthPoints
-                val maxHp = battleCharacter.maxHealthPoints ?: currentHp
-                val nextHp = (currentHp + heal).coerceAtMost(maxHp)
+                val invertedEffects =
+                        battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
+                                battleCharacter.id!!,
+                                "Inverted"
+                        )
 
-                battleCharacter.healthPoints = nextHp
-                battleCharacterRepository.save(battleCharacter)
+                val hasInverted = invertedEffects.isNotEmpty()
+
+                if (hasInverted) {
+                    damageService.applyDamage(battleCharacter, heal)
+                } else {
+                    val currentHp = battleCharacter.healthPoints
+                    val maxHp = battleCharacter.maxHealthPoints ?: currentHp
+                    val nextHp = (currentHp + heal).coerceAtMost(maxHp)
+
+                    battleCharacter.healthPoints = nextHp
+                    battleCharacterRepository.save(battleCharacter)
+                }
             }
 
             effects.forEach { eff ->
@@ -97,6 +109,27 @@ class BattleStatusController(
                     battleStatusEffectRepository.delete(eff)
                 } else {
                     battleStatusEffectRepository.save(eff.copy(remainingTurns = remaining))
+                }
+            }
+        } else if (body.effectType == "Cursed") {
+            effects.forEach { eff ->
+                val remaining = (eff.remainingTurns ?: 0) - 1
+
+                if (remaining <= 0) {
+                    val currentHp = battleCharacter.healthPoints
+
+                    if (currentHp > 0) {
+                        damageService.applyDamage(battleCharacter, currentHp)
+                    }
+                } else {
+                    battleStatusEffectRepository.save(eff.copy(remainingTurns = remaining))
+                }
+            }
+        } else if (body.effectType == "Confused") {
+            effects.forEach { eff ->
+                val effectValue = eff.ammount
+                if (effectValue != null && body.totalValue > effectValue) {
+                    battleStatusEffectRepository.delete(eff)
                 }
             }
         }
@@ -121,6 +154,33 @@ class BattleStatusController(
                         ?: return ResponseEntity.badRequest().build()
 
         val battleId = bc.battleId ?: return ResponseEntity.badRequest().build()
+
+        if (body.effectType == "Plagued") {
+            val amount = body.ammount ?: 0
+            if (amount > 0) {
+                val currentMax = bc.maxHealthPoints ?: bc.healthPoints
+                val reduction = 5 * amount
+                val nextMax = (currentMax - reduction).coerceAtLeast(1)
+                bc.maxHealthPoints = nextMax
+
+                if (bc.healthPoints > nextMax) {
+                    bc.healthPoints = nextMax
+                }
+
+                if (bc.characterType == "player") {
+                    val playerId = bc.externalId.toIntOrNull()
+                    if (playerId != null) {
+                        val player = playerRepository.findById(playerId).orElse(null)
+                        if (player != null) {
+                            player.hpCurrent = bc.healthPoints
+                            playerRepository.save(player)
+                        }
+                    }
+                }
+
+                battleCharacterRepository.save(bc)
+            }
+        }
 
         val existing =
                 battleStatusEffectRepository.findByBattleCharacterId(bc.id!!).firstOrNull {

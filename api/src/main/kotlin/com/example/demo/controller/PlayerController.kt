@@ -102,7 +102,8 @@ class PlayerController(
                                                 log.id?.let { it > battleLogId } == true
                                         }
                                 } else {
-                                        allLogs
+                                        val last = allLogs.lastOrNull()
+                                        if (last != null) listOf(last) else emptyList()
                                 }
                 }
 

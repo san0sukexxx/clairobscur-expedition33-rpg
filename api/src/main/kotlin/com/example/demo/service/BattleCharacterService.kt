@@ -72,7 +72,7 @@ class BattleCharacterService(
                                                         .findTopByBattleIdOrderByPlayOrderDesc(
                                                                 battleId
                                                         )
-                                        val nextOrder = (lastTurn?.playOrder ?: -1) + 1
+                                        val nextOrder = (lastTurn?.playOrder ?: 0) + 1
                                         val turn =
                                                 BattleTurn(
                                                         battleId = battleId,
@@ -135,5 +135,25 @@ class BattleCharacterService(
 
         fun listCharacters(battleId: Int): List<BattleCharacter> {
                 return repository.findByBattleId(battleId)
+        }
+
+        @Transactional
+        fun updateCharacterHp(id: Int, newHp: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                val finalHp = newHp.coerceAtLeast(0)
+
+                entity.healthPoints = finalHp
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)
+                )
         }
 }

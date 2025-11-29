@@ -1,6 +1,11 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo, StatusResponse } from "../api/ResponseModel";
-import { getResolveButtonLabel, getStatusDescription, getStatusLabel } from "../utils/BattleUtils";
+import {
+    getResolveButtonLabel,
+    getStatusDescription,
+    getStatusLabel,
+    shouldShowStatusAmmount
+} from "../utils/BattleUtils";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
 import { getCurrentPlayerPendingStatus } from "../utils/StatusCalculator";
 
@@ -12,6 +17,7 @@ interface PendingStatusModalProps {
 export default function PendingStatusModal({ player, onTapResolve }: PendingStatusModalProps) {
     const currentCharacter = getActiveTurnCharacter(player);
     const pendingStatus = getCurrentPlayerPendingStatus(player);
+
     if (pendingStatus.length === 0) return null;
 
     return (
@@ -23,32 +29,39 @@ export default function PendingStatusModal({ player, onTapResolve }: PendingStat
                 </p>
 
                 <div className="flex-1 flex flex-col gap-2 mb-4 overflow-y-auto">
-                    {pendingStatus.map((st, idx) => (
-                        <div
-                            key={idx}
-                            className="rounded bg-base-200 px-2 py-2 text-sm flex flex-col gap-1"
-                        >
-                            <div className="flex items-center justify-between gap-2">
-                                <span className="flex-1">
-                                    {getStatusLabel(st.effectName)} {st.ammount}{" "}
-                                    {st.remainingTurns
-                                        ? `(${st.remainingTurns} turno${st.remainingTurns > 1 ? "s" : ""})`
-                                        : ""}
-                                </span>
+                    {pendingStatus.map((st, idx) => {
+                        const showAmmount = shouldShowStatusAmmount(st.effectName);
 
-                                <button
-                                    className="btn btn-xs btn-primary"
-                                    onClick={() => onTapResolve(st, currentCharacter)}
-                                >
-                                    {getResolveButtonLabel(st.effectName)}
-                                </button>
-                            </div>
+                        return (
+                            <div
+                                key={idx}
+                                className="rounded bg-base-200 px-2 py-2 text-sm flex flex-col gap-1"
+                            >
+                                <div className="flex items-center justify-between gap-2">
+                                    <span className="flex-1">
+                                        {getStatusLabel(st.effectName)}{" "}
+                                        {showAmmount && st.ammount != null ? st.ammount : ""}{" "}
+                                        {st.remainingTurns
+                                            ? `(${st.remainingTurns} turno${
+                                                  st.remainingTurns > 1 ? "s" : ""
+                                              })`
+                                            : ""}
+                                    </span>
 
-                            <div className="text-xs opacity-60 pl-1">
-                                {getStatusDescription(st.effectName)}
+                                    <button
+                                        className="btn btn-xs btn-primary"
+                                        onClick={() => onTapResolve(st, currentCharacter)}
+                                    >
+                                        {getResolveButtonLabel(st.effectName)}
+                                    </button>
+                                </div>
+
+                                <div className="text-xs opacity-60 pl-1">
+                                    {getStatusDescription(st.effectName)}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </div>

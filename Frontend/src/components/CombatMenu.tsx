@@ -29,20 +29,38 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     return playerStatus.some(ps => ps.effectName == "Frozen")
   }, [playerStatus])
 
+  const isStunned = useMemo(() => {
+    return playerStatus.some(ps => ps.effectName == "Stunned")
+  }, [playerStatus])
+
+  const isExhausted = useMemo(() => {
+    return playerStatus.some(ps => ps.effectName == "Exhausted")
+  }, [playerStatus])
+
+  const isSilenced = useMemo(() => {
+    return playerStatus.some(ps => ps.effectName == "Silenced")
+  }, [playerStatus])
+
   const canUseItems = useMemo(() => {
-    return !isFrozen
+    return !isFrozen && !isStunned
   }, [player?.fightInfo?.characters])
 
   const canUseHabilities = useMemo(() => {
-    return !isFrozen
+    return !isFrozen && !isStunned && !isSilenced
   }, [player?.fightInfo?.characters])
 
   const canUseFreeShot = useMemo(() => {
-    return !isFrozen && (currentCharacter?.magicPoints ?? 0) > 0
+    const mp = currentCharacter?.magicPoints ?? 0
+
+    if (isExhausted) {
+      return !isFrozen && !isStunned && mp >= 2
+    }
+
+    return !isFrozen && !isStunned && mp > 0
   }, [player?.fightInfo?.characters])
 
   const canAttack = useMemo(() => {
-    return !isFrozen
+    return !isFrozen && !isStunned
   }, [player?.fightInfo?.characters])
 
   function handleAction(action: CombatMenuAction) {

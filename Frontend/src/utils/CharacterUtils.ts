@@ -1,3 +1,4 @@
+import type { BattleWithDetailsResponse } from "../api/APIBattle";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo } from "../api/ResponseModel";
 
@@ -32,4 +33,13 @@ export function getPlayerCharacter(player: GetPlayerResponse | null): BattleChar
     if (playerBattleId == null) return undefined;
 
     return player.fightInfo.characters?.find(c => c.battleID === playerBattleId);
+}
+
+export function getActiveTurnCharacterFromBattle(battleDetails: BattleWithDetailsResponse): BattleCharacterInfo | undefined {
+    if (battleDetails?.turns == undefined || battleDetails?.turns.length == 0) {
+        return undefined;
+    }
+
+    const turn = battleDetails.turns.find(t => t.playOrder == 1);
+    return battleDetails.characters.find(c => c.battleID == turn?.battleCharacterId)
 }
