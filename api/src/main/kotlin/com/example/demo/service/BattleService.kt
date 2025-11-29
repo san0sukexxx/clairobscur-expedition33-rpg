@@ -42,4 +42,17 @@ class BattleService(
             }
         }
     }
+    
+    @Transactional
+    fun removeMarked(battleCharacterId: Int) {
+        val bc = battleCharacterRepository.findById(battleCharacterId).orElse(null) ?: return
+
+        val effects = battleStatusEffectRepository.findByBattleCharacterId(bc.id!!)
+
+        val marked = effects.filter { it.effectType == "Marked" }
+
+        if (marked.isNotEmpty()) {
+            battleStatusEffectRepository.deleteAll(marked)
+        }
+    }
 }

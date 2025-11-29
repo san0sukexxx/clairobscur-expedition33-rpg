@@ -1,6 +1,8 @@
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import type { StatusResponse } from "../api/ResponseModel"
+import type { BattleCharacterInfo, StatusResponse } from "../api/ResponseModel"
+import { getNpcById } from "../data/NPCsList";
 import { getActiveTurnCharacter } from "./CharacterUtils";
+import { rollD6 } from "./RollUtils";
 
 export function rollCommandForResolveStatus(status: StatusResponse) {
     var dices = 1
@@ -14,6 +16,21 @@ export function rollCommandForResolveStatus(status: StatusResponse) {
     }
 
     return dices + "d6";
+}
+
+export function calculateNpcStatusResolvedTotalValue(battleCharacterInfo: BattleCharacterInfo | undefined, status: StatusResponse): number {
+    const npcInfo = getNpcById(battleCharacterInfo?.id ?? "")
+
+    switch (status.effectName) {
+        case "Burning":
+            return rollD6(status.ammount).total
+        case "Regeneration":
+            return Math.floor((battleCharacterInfo?.maxHealthPoints ?? 0) / status.ammount / 10);
+        case "Confused":
+            return rollD6(status.ammount).total + (npcInfo?.resistance ?? 0)
+        default:
+            return rollD6(1).total;
+    }
 }
 
 export function getCurrentPlayerPendingStatus(player: GetPlayerResponse | null): StatusResponse[] {

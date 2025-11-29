@@ -6,7 +6,7 @@ export type StatusType =
     "Stunned" | "Confused" | "Frozen" | "Entangled" |
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Plagued" | "Burning" |
-    "Silenced" | "Dizzy" | "free-shot" | "jump" | "gradient";
+    "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";

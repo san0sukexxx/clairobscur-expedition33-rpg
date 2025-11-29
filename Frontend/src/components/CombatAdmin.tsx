@@ -4,9 +4,8 @@ import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBatt
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
-import { GiShieldReflect } from "react-icons/gi";
 import { FaArrowsDownToLine } from "react-icons/fa6";
-import { getCharacterLabelById } from "../utils/CharacterUtils"
+import { getCharacterLabelById, getActiveTurnCharacterFromBattle } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateNpcAttackReceivedDamage, rollCommandForNpcAttack, npcIsFlying, npcIsFlyingById } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
@@ -19,7 +18,8 @@ import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { useToast } from "../components/Toast";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
-import { getAttackTypeLabel, getSkillLabel, getStatusLabel } from "../utils/BattleUtils";
+import { getAttackTypeLabel, getSkillLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
+import { calculateNpcStatusResolvedTotalValue } from "../utils/StatusCalculator";
 
 export interface CombatEntity {
     rowId?: number
@@ -71,19 +71,70 @@ export default function CombatAdmin({
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
+
+    const processedEffectsRef = useRef<Set<string>>(new Set())
+    const lastActiveCharacterIdRef = useRef<number | undefined>(undefined)
+
+    const processUnresolvedStatuses = (battleDetailsInfo: BattleWithDetailsResponse) => {
+        const active = getActiveTurnCharacterFromBattle(battleDetailsInfo)
+        if (!active || active.type == "player") return
+
+        const statuses = active.status ?? []
+
+        const unresolved = statuses.filter(
+            s => s.isResolved === false && !!s.effectName
+        )
+
+        const notProcessed = unresolved.filter(
+            s => !processedEffectsRef.current.has(s.effectName)
+        )
+
+        if (notProcessed.length === 0) return
+
+        for (const status of notProcessed) {
+            processedEffectsRef.current.add(status.effectName)
+            void callStatusApiUntilSuccess(status, battleDetailsInfo)
+        }
+    }
+
+    function checkNewTurnStarted() {
+        if (!battleDetails) return
+
+        const activeCharacter = getActiveTurnCharacter()
+        const currentId = activeCharacter?.battleID
+
+        if (currentId == null) return
+
+        if (
+            lastActiveCharacterIdRef.current !== undefined &&
+            lastActiveCharacterIdRef.current !== currentId
+        ) {
+            processedEffectsRef.current.clear()
+        }
+
+        lastActiveCharacterIdRef.current = currentId
+    }
+
     const reloadBattleDetails = useCallback(async () => {
         if (!campaignInfo.battleId) return
         try {
             const battleDetailsInfo = await APIBattle.getById(campaignInfo.battleId, lastBattleLog)
             if (battleDetails == null) {
                 setBattleDetails(battleDetailsInfo)
+                const lastBattleLog = getLastBattleLogFromBattle(battleDetailsInfo);
+                setLastBattleLog(lastBattleLog);
             } else {
                 checkBattleLog(battleDetailsInfo)
+            }
+
+            checkNewTurnStarted()
+            if (isCurrentTurnNPC()) {
+                await processUnresolvedStatuses(battleDetailsInfo)
             }
         } catch (error) {
             console.error("Erro ao carregar detalhes da batalha:", error)
         }
-    }, [campaignInfo.battleId, battleStatus, lastBattleLog])
+    }, [campaignInfo.battleId, battleStatus, lastBattleLog, processUnresolvedStatuses])
 
     useEffect(() => {
         reloadBattleDetails()
@@ -410,14 +461,19 @@ export default function CombatAdmin({
                                 </button>
 
                                 <div className="flex flex-col items-center text-sm opacity-80">
-                                    {atk.statusList?.map((s, i) => (
-                                        <div key={i} className="leading-tight text-center">
-                                            {getStatusLabel(s.type)} {s.ammount}
-                                            {s.remainingTurns !== undefined
-                                                ? ` (Por ${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
-                                                : ""}
-                                        </div>
-                                    ))}
+                                    {atk.statusList?.map((s, i) => {
+                                        const showAmmount = shouldShowStatusAmmount(s.type);
+
+                                        return (
+                                            <div key={i} className="leading-tight text-center">
+                                                {getStatusLabel(s.type)}{" "}
+                                                {showAmmount && s.ammount != null ? s.ammount : ""}{" "}
+                                                {s.remainingTurns !== undefined
+                                                    ? ` (Por ${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
+                                                    : ""}
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         ))}
@@ -438,14 +494,18 @@ export default function CombatAdmin({
                                         </button>
 
                                         <div className="flex flex-col items-center text-sm opacity-80">
-                                            {skill.statusList?.map((s, i) => (
-                                                <div key={i} className="leading-tight text-center">
-                                                    {getStatusLabel(s.type)} {s.ammount}
-                                                    {s.remainingTurns !== undefined
-                                                        ? ` (Por ${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
-                                                        : ""}
-                                                </div>
-                                            ))}
+                                            {skill.statusList?.map((s, i) => {
+                                                const showAmount = shouldShowStatusAmmount(s.type);
+
+                                                return (
+                                                    <div key={i} className="leading-tight text-center">
+                                                        {getStatusLabel(s.type)} {showAmount ? s.ammount : ""}
+                                                        {s.remainingTurns !== undefined
+                                                            ? ` (${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
+                                                            : ""}
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 ))}
@@ -477,7 +537,10 @@ export default function CombatAdmin({
                                 Ataque Gradiente
                             </button>
 
-                            <button className="btn btn-md btn-secondary" onClick={() => npcPassTurnTapped()}>
+                            <button
+                                className="btn btn-md btn-warning hover:brightness-110"
+                                onClick={() => npcPassTurnTapped()}
+                            >
                                 <FaHourglassHalf className="mr-1" />
                                 Passar o turno
                             </button>
@@ -583,15 +646,22 @@ export default function CombatAdmin({
                                                     <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
                                                     <td>
                                                         <div className="flex flex-row flex-wrap gap-1">
-                                                            {m.status?.filter(s => s.effectName != "free-shot").map((st, idx) => (
-                                                                <span
-                                                                    key={idx}
-                                                                    className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80"
-                                                                >
-                                                                    {getStatusLabel(st.effectName)} {st.ammount}{" "}
-                                                                    {st.remainingTurns ? `(${st.remainingTurns})` : ""}
-                                                                </span>
-                                                            ))}
+                                                            {m.status
+                                                                ?.filter(s => s.effectName != "free-shot")
+                                                                .map((st, idx) => {
+                                                                    const showAmount = shouldShowStatusAmmount(st.effectName);
+
+                                                                    return (
+                                                                        <span
+                                                                            key={idx}
+                                                                            className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80"
+                                                                        >
+                                                                            {getStatusLabel(st.effectName)} {showAmount ? st.ammount : ""}
+                                                                            {st.remainingTurns ? ` (${st.remainingTurns})` : ""}
+                                                                        </span>
+                                                                    );
+                                                                })}
+
                                                             {npcIsFlyingById(m.characterId) && (
                                                                 <span
                                                                     key="flying"
@@ -898,30 +968,32 @@ export default function CombatAdmin({
     )
 
     function checkBattleLog(battleInfo: BattleWithDetailsResponse) {
-        if (battleInfo.battleLogs && battleInfo.battleLogs.length > 0) {
+        const logs = battleInfo.battleLogs ?? [];
+        if (logs.length === 0) return;
 
-            for (const log of battleInfo.battleLogs) {
-                switch (log.eventType) {
-                    case "ADD_CHARACTER":
-                    case "REMOVE_CHARACTER":
-                    case "SET_INITIATIVE":
-                    case "BATTLE_STARTED":
-                    case "DAMAGE_DEALT":
-                    case "TURN_ADDED":
-                    case "TURN_ENDED":
-                    case "ATTACK_PENDING":
-                    case "ALLOW_COUNTER":
-                    case "COUNTER_RESOLVED":
-                    case "STATUS_RESOLVED":
-                    case "STATUS_ADDED":
-                        applyFightInfoUpdate(battleInfo);
-                        break;
-                }
-            }
+        const relevantEvents = new Set([
+            "ADD_CHARACTER",
+            "REMOVE_CHARACTER",
+            "SET_INITIATIVE",
+            "BATTLE_STARTED",
+            "DAMAGE_DEALT",
+            "TURN_ADDED",
+            "TURN_ENDED",
+            "ATTACK_PENDING",
+            "ALLOW_COUNTER",
+            "COUNTER_RESOLVED",
+            "STATUS_RESOLVED",
+            "STATUS_ADDED",
+        ]);
 
-            const lastBattleLog = getLastBattleLogFromBattle(battleInfo);
-            setLastBattleLog(lastBattleLog);
+        const shouldUpdate = logs.some(log => relevantEvents.has(log.eventType));
+
+        if (shouldUpdate) {
+            applyFightInfoUpdate(battleInfo);
         }
+
+        const lastBattleLog = getLastBattleLogFromBattle(battleInfo);
+        setLastBattleLog(lastBattleLog);
     }
 
     function applyFightInfoUpdate(battleInfo: BattleWithDetailsResponse) {
@@ -1044,6 +1116,10 @@ export default function CombatAdmin({
         const callAddStatus = async () => {
             try {
                 for (const status of npcSkill?.statusList ?? []) {
+                    if (status.type) {
+                        processedEffectsRef.current.add(status.type)
+                    }
+
                     await APIBattle.addStatus({
                         battleCharacterId: targetEntity.rowId ?? 0,
                         ammount: status.ammount,
@@ -1090,7 +1166,7 @@ export default function CombatAdmin({
             effects: effects
         }
 
-        const totalPower = calculateNpcAttackPower(sourceInfo?.id ?? "", result);
+        const totalPower = calculateNpcAttackPower(sourceInfo, result);
         if (targetType == "npc") {
             attackInfo.totalDamage = calculateNpcAttackReceivedDamage(sourceInfo, totalPower);
             showToast(`Causou ${attackInfo.totalDamage} de dano`);
@@ -1134,5 +1210,29 @@ export default function CombatAdmin({
         };
 
         allowCounterCall();
+    }
+
+    async function callStatusApiUntilSuccess(
+        status: StatusResponse,
+        battleDetailsInfo: BattleWithDetailsResponse,
+        delay = 1000
+    ) {
+        while (true) {
+            try {
+                const currentNpc = getActiveTurnCharacterFromBattle(battleDetailsInfo)
+                const total = calculateNpcStatusResolvedTotalValue(currentNpc, status)
+                await APIBattle.resolveStatus({
+                    battleCharacterId: currentNpc?.battleID ?? 0,
+                    effectType: status.effectName,
+                    totalValue: total
+                })
+
+                return true
+            } catch (error) {
+                showToast(`Erro ao sincronizar status ${status.effectName}, tentando novamente...`)
+
+                await new Promise(resolve => setTimeout(resolve, delay))
+            }
+        }
     }
 }

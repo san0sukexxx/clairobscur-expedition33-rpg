@@ -72,7 +72,7 @@ class BattleCharacterService(
                                                         .findTopByBattleIdOrderByPlayOrderDesc(
                                                                 battleId
                                                         )
-                                        val nextOrder = (lastTurn?.playOrder ?: -1) + 1
+                                        val nextOrder = (lastTurn?.playOrder ?: 0) + 1
                                         val turn =
                                                 BattleTurn(
                                                         battleId = battleId,
