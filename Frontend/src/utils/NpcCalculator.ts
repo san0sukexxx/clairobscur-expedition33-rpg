@@ -1,4 +1,4 @@
-import { type NPCInfo, type Element, type ElementModifier, type ElementModifierType, type WeaponInfo, type BattleCharacterInfo } from "../api/ResponseModel"
+import { type NPCInfo, type Element, type ElementModifier, type ElementModifierType, type WeaponInfo, type BattleCharacterInfo, type StatusType } from "../api/ResponseModel"
 import { getNpcById } from "../data/NPCsList"
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type WeaponDTO } from "../types/WeaponDTO";
@@ -22,21 +22,33 @@ export function randomizeNpcInitiativeTotal(npc: NPCInfo) {
     return diceResult + (npc.hability * criticalMulti / failureDiv);
 }
 
-export function randomizeNpcDefenseTotal(npc: NPCInfo) {
-    const diceResult = Math.floor(Math.random() * 6) + 1
+export function randomizeNpcDefenseTotal(npc: NPCInfo, target: BattleCharacterInfo) {
+    let diceResult = Math.floor(Math.random() * 6) + 1
 
     const criticalMulti = diceResult == 6 ? 2 : 1;
     const failureDiv = diceResult == 1 ? 2 : 1;
+    let hability = 0
 
-    return diceResult + (npc.resistance * criticalMulti / failureDiv);
+    if(hasSlowed(target)) {
+        diceResult = Math.floor(diceResult / 2);
+    }
+    if(hasHastened(target)) {
+        hability = npc.hability;
+    }
+
+    let resistance = npc.resistance
+    if(hasUnprotected(target)) {
+        resistance = Math.floor(resistance / 2);
+    }
+    if(hasProtected(target)) {
+        resistance *= 2;
+    }
+
+    return diceResult + (resistance * criticalMulti / failureDiv) + hability;
 }
 
 export function getNPCMaxHealth(npc: NPCInfo) {
     return npc.resistance * 5;
-}
-
-export function hasShield(target: BattleCharacterInfo): boolean {
-    return target.status?.some(s => s.effectName == "Shielded") ?? false
 }
 
 export function npcIsFlying(target: BattleCharacterInfo): boolean {
@@ -60,7 +72,7 @@ export function calculateNpcAttackReceivedDamage(target: BattleCharacterInfo, da
         return 0;
     }
 
-    const totalDefense = randomizeNpcDefenseTotal(npcInfo);
+    const totalDefense = randomizeNpcDefenseTotal(npcInfo, target);
     return Math.max(1, damage - totalDefense)
 }
 
@@ -110,3 +122,15 @@ export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | nu
         }
     }
 }
+
+export function hasStatus(target: BattleCharacterInfo, status: StatusType): boolean {
+    return target.status?.some(s => s.effectName === status) ?? false;
+}
+
+export const hasShield = (t: BattleCharacterInfo) => hasStatus(t, "Shielded");
+export const hasHastened = (t: BattleCharacterInfo) => hasStatus(t, "Hastened");
+export const hasSlowed = (t: BattleCharacterInfo) => hasStatus(t, "Slowed");
+export const hasWeakened = (t: BattleCharacterInfo) => hasStatus(t, "Weakened");
+export const hasEmpowered = (t: BattleCharacterInfo) => hasStatus(t, "Empowered");
+export const hasProtected = (t: BattleCharacterInfo) => hasStatus(t, "Protected");
+export const hasUnprotected = (t: BattleCharacterInfo) => hasStatus(t, "Unprotected");

@@ -1,7 +1,7 @@
 package com.example.demo.controller
 
-import com.example.demo.dto.ApplyStatusRequest
 import com.example.demo.dto.AddStatusRequest
+import com.example.demo.dto.ApplyStatusRequest
 import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleStatusEffect
 import com.example.demo.repository.BattleCharacterRepository
@@ -78,6 +78,27 @@ class BattleStatusController(
                     }
                 }
             }
+        } else if (body.effectType == "Regeneration") {
+            val heal = body.totalValue.coerceAtLeast(0)
+
+            if (heal > 0) {
+                val currentHp = battleCharacter.healthPoints
+                val maxHp = battleCharacter.maxHealthPoints ?: currentHp
+                val nextHp = (currentHp + heal).coerceAtMost(maxHp)
+
+                battleCharacter.healthPoints = nextHp
+                battleCharacterRepository.save(battleCharacter)
+            }
+
+            effects.forEach { eff ->
+                val remaining = (eff.remainingTurns ?: 0) - 1
+
+                if (remaining <= 0) {
+                    battleStatusEffectRepository.delete(eff)
+                } else {
+                    battleStatusEffectRepository.save(eff.copy(remainingTurns = remaining))
+                }
+            }
         }
 
         effects.forEach { eff ->
@@ -110,7 +131,6 @@ class BattleStatusController(
                 if (existing != null) {
                     val nextAmount = (existing.ammount ?: 0) + body.ammount
                     val nextTurns = body.remainingTurns ?: existing.remainingTurns
-
                     existing.copy(ammount = nextAmount, remainingTurns = nextTurns)
                 } else {
                     BattleStatusEffect(
@@ -123,8 +143,28 @@ class BattleStatusController(
 
         battleStatusEffectRepository.save(toSave)
 
+        val oppositeTypes = getOppositeStatusTypes(body.effectType)
+        if (oppositeTypes.isNotEmpty()) {
+            val allEffects = battleStatusEffectRepository.findByBattleCharacterId(bc.id!!)
+            val toDelete = allEffects.filter { it.effectType in oppositeTypes }
+            if (toDelete.isNotEmpty()) {
+                battleStatusEffectRepository.deleteAll(toDelete)
+            }
+        }
+
         battleLogRepository.save(BattleLog(battleId = battleId, eventType = "STATUS_ADDED"))
 
         return ResponseEntity.noContent().build()
     }
+
+    private fun getOppositeStatusTypes(effectType: String): List<String> =
+            when (effectType) {
+                "Hastened" -> listOf("Slowed")
+                "Slowed" -> listOf("Hastened")
+                "Weakened" -> listOf("Empowered")
+                "Empowered" -> listOf("Weakened")
+                "Protected" -> listOf("Unprotected")
+                "Unprotected" -> listOf("Protected")
+                else -> emptyList()
+            }
 }

@@ -1,14 +1,14 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { calculateWeaponPlusDices, calculateWeaponPlusPower, calculateWeaponCounterMaxPower } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
-import { type AttackType, type BattleCharacterInfo, type DefenseOption, type WeaponInfo } from "../api/ResponseModel";
+import { type AttackType, type BattleCharacterInfo, type DefenseOption, type StatusResponse, type StatusType, type WeaponInfo } from "../api/ResponseModel";
 import {
     calculateCriticalMulti,
     calculateFailureDiv,
     diceTotal
 } from "./DiceCalculator";
 import { getNpcById } from "../data/NPCsList";
-import { getWeaponElementModifier, hasShield } from "./NpcCalculator";
+import { getWeaponElementModifier, hasHastened, hasProtected, hasShield, hasSlowed, hasStatus, hasUnprotected } from "./NpcCalculator";
 import { calculateWeaponVitalityBonus, calculateWeaponAgilityBonus, calculateWeaponDefenseBonus } from "./WeaponCalculator";
 import { getPlayerCharacter } from "./CharacterUtils";
 
@@ -17,6 +17,15 @@ export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: Wea
     const resistanceHealth = (player?.playerSheet?.resistance ?? 0) * 5
 
     return resistanceHealth + vitalityValue;
+}
+
+export function calculateStatusResolvedTotalValue(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, status: StatusResponse): number {
+    switch (status.effectName) {
+        case "Regeneration":
+            return Math.floor(calculateMaxHP(player, weaponInfo) / status.ammount / 10);
+        default:
+            return 0;
+    }
 }
 
 export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackType: AttackType): number {
@@ -75,7 +84,11 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
 
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
-    var playerPower = (player?.playerSheet?.power ?? 0) * calculateCriticalMulti(diceResult);
+    
+    let empoweredMulti = playerHasEmpowered(player) ? 2 : 1;
+    empoweredMulti = playerHasWeakened(player) ? 0.5 : empoweredMulti;
+
+    var playerPower = (player?.playerSheet?.power ?? 0) * calculateCriticalMulti(diceResult) * empoweredMulti;
 
     if (failures > 0) {
         playerPower = Math.floor(playerPower / failures);
@@ -91,26 +104,30 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     return attackDamage;
 }
 
-export function playerHasShield(player: GetPlayerResponse | null): boolean {
-    const currentCharacter = getPlayerCharacter(player);
-    return currentCharacter?.status?.some(s => s.effectName == "Shielded") ?? false
-}
-
 export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any, defenseOption: DefenseOption): number {
     if (playerHasShield(player)) {
         return 0;
     }
 
+    const playerCharacter = getPlayerCharacter(player);
+    if (!playerCharacter) { return 0 }
+
     if (defenseOption == "take") {
         return totalDamage;
     }
+
+    let hastenedMulti = hasHastened(playerCharacter) ? 2 : 1;
+    hastenedMulti = hasSlowed(playerCharacter) ? 0.5 : hastenedMulti;
+
+    let protectedMulti = hasProtected(playerCharacter) ? 2 : 1;
+    protectedMulti = hasUnprotected(playerCharacter) ? 0.5 : protectedMulti;
 
     const diceTotalSum = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
     var playerDefense = 0;
 
     if (defenseOption == "block" || defenseOption == "dodge") {
-        var resistance = (player?.playerSheet?.resistance ?? 0) * calculateCriticalMulti(diceResult);
+        var resistance = (player?.playerSheet?.resistance ?? 0) * calculateCriticalMulti(diceResult) * protectedMulti;
         if (failures > 0) {
             resistance = Math.floor(resistance / failures);
         }
@@ -127,19 +144,19 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 
         playerDefense = power + diceTotalSum;
     } else if (defenseOption == "jump") {
-        var hability = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult);
+        var hability = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult) * hastenedMulti;
         if (failures > 0) {
-            hability = Math.floor(hability / failures);
+            hability = hability / failures
         }
 
         playerDefense = hability + diceTotalSum;
     }
 
     if (defenseOption == "dodge") {
-        playerDefense += player?.playerSheet?.hability ?? 0;
+        playerDefense += (player?.playerSheet?.hability ?? 0) * hastenedMulti;
     }
 
-    return totalDamage - playerDefense;
+    return totalDamage - Math.floor(playerDefense);
 }
 
 export function calculateMaxCounterDamage(player: GetPlayerResponse | null, weaponList: WeaponDTO[]): number {
@@ -215,3 +232,14 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {
 
     return total + playerInitiative;
 }
+
+export function playerHasStatus(player: GetPlayerResponse | null, status: StatusType): boolean {
+    const currentCharacter = getPlayerCharacter(player);
+    if(!currentCharacter) { return false }
+    
+    return hasStatus(currentCharacter, status);
+}
+
+export const playerHasShield = (p: GetPlayerResponse | null) => playerHasStatus(p, "Shielded");
+export const playerHasEmpowered = (p: GetPlayerResponse | null) => playerHasStatus(p, "Empowered");
+export const playerHasWeakened = (p: GetPlayerResponse | null) => playerHasStatus(p, "Weakened");

@@ -45,6 +45,76 @@ export const NPCsList: NPCInfo[] = [
                         type: "Shielded"
                     }
                 ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Hastened",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Slowed",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Empowered",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Weakened",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Protected",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Unprotected",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Regeneration",
+                        remainingTurns: 2
+                    }
+                ]
             }
         ]
     },

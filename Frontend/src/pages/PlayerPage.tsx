@@ -30,7 +30,10 @@ import {
   rollCommandForAttack,
   calculateAttackDamage,
   calculateFreeShotPlus,
-  playerHasShield
+  playerHasShield,
+  playerHasEmpowered,
+  playerHasWeakened,
+  calculateStatusResolvedTotalValue
 } from "../utils/PlayerCalculator";
 
 import {
@@ -45,13 +48,14 @@ import { rollWithTimeout } from "../utils/RollUtils";
 import PanelModal from "../components/PanelModal";
 import { useToast } from "../components/Toast";
 import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
-import { calculateNpcAttackReceivedDamage, getWeaponElementModifier, hasShield, npcIsFlying } from "../utils/NpcCalculator";
+import { calculateNpcAttackReceivedDamage, getWeaponElementModifier, hasEmpowered, hasHastened, hasShield, npcIsFlying } from "../utils/NpcCalculator";
 import MasterEditingOverlay from "../components/MasterEditingOverlay"
 import PendingAttacksModal from "../components/PendingAttacksModal"
 import { getElementModifierText } from "../utils/ElementUtils";
 import PendingStatusModal from "../components/PendingStatusModal";
 import { rollCommandForResolveStatus } from "../utils/StatusCalculator";
 import { statusNeedsResolveRoll } from "../utils/BattleUtils";
+import { getPlayerCharacter } from "../utils/CharacterUtils";
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -573,6 +577,8 @@ export default function PlayerPage() {
       const elementModifier = getWeaponElementModifier(target.id, weaponInfo)
       const freeShotPlus = calculateFreeShotPlus(player, target, attackType)
       const isShielded = hasShield(target)
+      const isEmpowered = playerHasEmpowered(player)
+      const isWeakened = playerHasWeakened(player)
 
       setModalTitle("Resultado da rolagem")
 
@@ -600,6 +606,19 @@ export default function PlayerPage() {
               </span>
             )}
           </p>
+          {isEmpowered && (
+            <p>
+              Poderoso: <b>(x2)</b>
+            </p>
+          )}
+          {isWeakened && (
+            <p>
+              Enfraquecido:
+              <span className="inline-flex items-center gap-1 font-bold ml-2">
+                (<FaDivide className="w-4 h-4" /> 2 )
+              </span>
+            </p>
+          )}
           {weaponPower > 0 && (
             <p>
               Arma: <b>{weaponPower}</b>
@@ -835,10 +854,11 @@ export default function PlayerPage() {
     };
 
     if (!statusNeedsResolveRoll(status)) {
+      const total = calculateStatusResolvedTotalValue(player, weaponInfo, status)
       callResolveStatus({
         battleCharacterId: currentCharacter?.battleID ?? 0,
         effectType: status.effectName,
-        totalValue: 0
+        totalValue: total
       })
 
       return;

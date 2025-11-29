@@ -70,7 +70,7 @@ class BattleTurnController(
                         attackRepository.deleteAll(attacks)
                 }
 
-                val ignoreRemainingTurns = listOf("Burning", "Frozen")
+                val ignoreRemainingTurns = listOf("Burning", "Frozen", "Regeneration")
 
                 val statusList = battleStatusEffectRepository.findByBattleCharacterId(bc.id!!)
                 statusList.forEach { eff ->

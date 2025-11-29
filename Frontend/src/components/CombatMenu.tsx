@@ -56,8 +56,6 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     return firstTurn.battleCharacterId === player?.fightInfo?.playerBattleID
   }, [player?.fightInfo])
 
-  if (!currentCharacter) return null;
-
   return (
     <div className="fixed bottom-20 right-4 z-41">
       {/* Botão principal */}

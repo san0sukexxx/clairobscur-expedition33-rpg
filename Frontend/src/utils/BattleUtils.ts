@@ -88,15 +88,15 @@ export function getStatusDescription(status: StatusType): string {
         case "Frozen": return "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.";
         case "Shielded": return "Cada escudo anula um ataque completamente.";
         case "Burning": return "Causa dano no início do turno. Cada queimadura causa 1d6 de dano.";
+        case "Hastened": return "Melhora a esquiva e o pulo.";
+        case "Slowed": return "Dificulta a esquiva e o pulo.";
+        case "Empowered": return "Melhora seu ataque.";
+        case "Weakened": return "Enfraquece seu ataque.";
+        case "Protected": return "Melhora sua defesa ao aparar.";
+        case "Unprotected": return "Dificulta sua defesa ao aparar.";
+        case "Regeneration": return "Restaura uma porcentagem da sua vida a cada turno.";
 
         // TODO
-        case "Hastened": return "Aumenta a velocidade de ações do personagem.";
-        case "Empowered": return "Concede bônus de força ou dano temporário.";
-        case "Protected": return "Reduz parte do dano recebido.";
-        case "Regeneration": return "Restaura vida ao longo dos turnos.";
-        case "Unprotected": return "Aumenta o dano recebido de todas as fontes.";
-        case "Slowed": return "Diminui a velocidade e iniciativa.";
-        case "Weakened": return "Reduz o dano causado pelo personagem.";
         case "Cursed": return "Aplica penalidades variadas e reduz efetividade.";
         case "Stunned": return "Impede o personagem de agir neste turno.";
         case "Confused": return "Ações podem falhar ou ter efeitos inesperados.";
