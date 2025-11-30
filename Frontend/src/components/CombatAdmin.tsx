@@ -1041,7 +1041,6 @@ export default function CombatAdmin({
             "STATUS_ADDED",
             "HP_CHANGED",
         ]);
-        
 
         const shouldUpdate = logs.some(log => relevantEvents.has(log.eventType));
 
