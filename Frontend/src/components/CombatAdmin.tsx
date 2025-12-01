@@ -8,7 +8,7 @@ import { FaArrowsDownToLine } from "react-icons/fa6";
 import { getCharacterLabelById, getActiveTurnCharacterFromBattle } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateNpcAttackReceivedDamage, rollCommandForNpcAttack, npcIsFlying, npcIsFlyingById } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
-import { getAllNPCsSorted, getNpcById } from "../data/NPCsList"
+import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils"
 import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SkillType, type NPCSkill } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse, type CreateAttackRequest, type AttackStatusEffectRequest } from "../api/APIBattle"

@@ -14,7 +14,7 @@ export type ElementModifierType = "imune" | "weak" | "resistent";
 export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
 export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot";
 export type SkillType = "give-status";
-export type PictoColor = "green" | "red" | "blue";
+export type PictoColor = "green" | "red" | "blue" | "yellow";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";
 
@@ -87,13 +87,17 @@ export interface NPCSkill {
 
 export interface PictoResponse {
     name: string;
+    level?: number;
+    slot?: number;
+    battleCount?: number;
+}
+
+export interface PictoInfo {
+    name: string;
     status: PictoStatusResponse;
     description: string;
     color: PictoColor;
-    level?: number;
-    slot?: number;
     luminaCost: number;
-    battleCount?: number;
 }
 
 export interface PictoStatusResponse {

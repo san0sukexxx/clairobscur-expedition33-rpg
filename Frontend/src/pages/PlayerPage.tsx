@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Link, useLocation, matchPath } from "react-router-dom";
+import { useLocation, matchPath } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaUser, FaSkull, FaCheckCircle, FaDivide, FaShieldAlt } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
@@ -15,14 +15,12 @@ import CombatSection from "../components/CombatSection";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
-import { APIPictos } from "../api/APIPictos";
 import { APIBattle, type AttackStatusEffectRequest, type CreateAttackRequest, type CreateDefenseRequest, type ResolveStatusRequest } from "../api/APIBattle";
-import { type PictoResponse, type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse } from "../api/ResponseModel";
+import { type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
   rollCommandForInitiative,
-  rollCommandForBasicAttack,
   rollCommandForDefense,
   initiativeTotal,
   calculateDefense,
@@ -50,7 +48,7 @@ import {
 import { rollWithTimeout } from "../utils/RollUtils";
 import PanelModal from "../components/PanelModal";
 import { useToast } from "../components/Toast";
-import { calculateBasicAttackDamage, calculateRawWeaponPower } from "../utils/PlayerCalculator";
+import { calculateRawWeaponPower } from "../utils/PlayerCalculator";
 import { calculateNpcAttackReceivedDamage, checkForFragile, getWeaponElementModifier, hasEmpowered, hasHastened, hasShield, npcIsFlying } from "../utils/NpcCalculator";
 import MasterEditingOverlay from "../components/MasterEditingOverlay"
 import PendingAttacksModal from "../components/PendingAttacksModal"
@@ -58,7 +56,6 @@ import { getElementModifierText } from "../utils/ElementUtils";
 import PendingStatusModal from "../components/PendingStatusModal";
 import { rollCommandForResolveStatus } from "../utils/StatusCalculator";
 import { statusNeedsResolveRoll } from "../utils/BattleUtils";
-import { getPlayerCharacter } from "../utils/CharacterUtils";
 
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
@@ -69,7 +66,6 @@ export default function PlayerPage() {
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<GetPlayerResponse | null>(null);
   const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
-  const [pictos, setPictos] = useState<PictoResponse[] | null>(null);
   const diceBoardRef = useRef<DiceBoardRef>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string | undefined>(undefined);
@@ -232,12 +228,13 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "pictos" && (
-            <PictosTab pictos={pictos} player={player} setPlayer={setPlayer} />
+            <PictosTab player={player} setPlayer={setPlayer} />
           )}
 
-          {!loading && !error && tab === "luminas" && (
+          {/* TODO */}
+          {/* {!loading && !error && tab === "luminas" && (
             <LuminasSection luminas={pictos} player={player} setPlayer={setPlayer} />
-          )}
+          )} */}
 
           {!loading && !error && tab === "inventario" && (
             <ItemsSection player={player} setPlayer={setPlayer} />
@@ -344,17 +341,15 @@ export default function PlayerPage() {
       if (!campaign || !character) return;
       const campaignId = parseInt(campaign);
 
-      const [campaignInfo, playerResponse, pictosListResponse] = await Promise.all([
+      const [campaignInfo, playerResponse] = await Promise.all([
         APICampaign.get(campaignId),
-        APIPlayer.get(parseInt(character)),
-        APIPictos.getPictosList(),
+        APIPlayer.get(parseInt(character))
       ]);
 
       const lastBattleLog = getLastBattleLogFromPlayer(playerResponse);
       setLastBattleLog(lastBattleLog);
 
       setPlayer(playerResponse);
-      setPictos(pictosListResponse.pictos);
       setCampaignInfo(campaignInfo);
 
       setLoading(false);

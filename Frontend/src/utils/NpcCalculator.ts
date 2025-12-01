@@ -1,5 +1,5 @@
 import { type NPCInfo, type ElementModifier, type WeaponInfo, type BattleCharacterInfo, type StatusType, type StatusResponse } from "../api/ResponseModel"
-import { getNpcById } from "../data/NPCsList"
+import { getNpcById } from "../utils/NpcUtils"
 
 import {
     calculateCriticalMulti,

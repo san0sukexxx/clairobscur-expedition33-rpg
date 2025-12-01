@@ -1,12 +1,11 @@
 import { useRef, useMemo, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaList, FaDice, FaChartLine } from "react-icons/fa";
 import { GiStripedSword, GiLifeBar } from "react-icons/gi";
-import { APIPlayer } from "../api/APIPlayer";
+import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
-import { type PlayerResponse } from "../api/MockAPIPlayer";
 import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPlusDices, displayWeaponAttributeRank, displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus } from "../utils/WeaponCalculator";
+import { displayWeaponPlusDices, displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE } from "../utils/ElementUtils";
 
 type SelectorWeapon = {
@@ -23,13 +22,13 @@ type SelectorWeapon = {
 };
 
 interface WeaponSectionProps {
-  player: PlayerResponse | null;
-  setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+  player: GetPlayerResponse | null;
+  setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
   weaponList: WeaponDTO[];
   isAdmin: boolean;
 }
 
-function useActiveWeapon(weaponList: WeaponDTO[], player?: PlayerResponse | null): SelectorWeapon | null {
+function useActiveWeapon(weaponList: WeaponDTO[], player?: GetPlayerResponse | null): SelectorWeapon | null {
   return useMemo(() => {
     const equippedId = player?.playerSheet?.weaponId ?? null;
     if (equippedId == null) return null;

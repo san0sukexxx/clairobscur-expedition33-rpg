@@ -1,6 +1,6 @@
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo, StatusResponse } from "../api/ResponseModel"
-import { getNpcById } from "../data/NPCsList";
+import { getNpcById } from "../utils/NpcUtils";
 import { getActiveTurnCharacter } from "./CharacterUtils";
 import { rollD6 } from "./RollUtils";
 

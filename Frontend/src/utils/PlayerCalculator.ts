@@ -7,7 +7,7 @@ import {
     calculateFailureDiv,
     diceTotal
 } from "./DiceCalculator";
-import { getNpcById } from "../data/NPCsList";
+import { getNpcById } from "../utils/NpcUtils"
 import { getWeaponElementModifier, hasHastened, hasProtected, hasShield, hasSlowed, hasStatus, hasUnprotected } from "./NpcCalculator";
 import { calculateWeaponVitalityBonus, calculateWeaponAgilityBonus, calculateWeaponDefenseBonus } from "./WeaponCalculator";
 import { getPlayerCharacter } from "./CharacterUtils";

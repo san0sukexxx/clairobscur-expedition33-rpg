@@ -1,19 +1,18 @@
-import { type PlayerResponse } from "../api/MockAPIPlayer";
-import { APIPlayer } from "../api/APIPlayer";
+import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
 import { calculateMaxHP, calculateMaxMP, calculateMaxPA, calculateInitialMP } from "../utils/PlayerCalculator";
 import type { WeaponInfo } from "../api/ResponseModel";
 
 interface PlayerSheetProps {
-    player: PlayerResponse | null;
-    setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+    player: GetPlayerResponse | null;
+    setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     campaignInfo: Campaign | null;
     weaponInfo: WeaponInfo | null;
 }
 
 export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInfo }: PlayerSheetProps) {
-    async function sync(p: PlayerResponse) {
+    async function sync(p: GetPlayerResponse) {
         await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
     }
 

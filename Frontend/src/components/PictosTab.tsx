@@ -1,19 +1,21 @@
 import { useMemo, useState } from "react";
 import { type PictoResponse, type PictoColor } from "../api/ResponseModel";
-import { type PlayerResponse } from "../api/MockAPIPlayer";
-import { displayPictoAttributeCritical, displayPictoAttributeDefense, displayPictoAttributeHealth, displayPictoAttributeSpeed, displayPictoCritical, displayPictoDefense, displayPictoHealth, displayPictoSpeed } from "../utils/PictoUtils";
+import { displayPictoAttributeCritical, displayPictoAttributeDefense, displayPictoAttributeHealth, displayPictoAttributeSpeed, displayPictoCritical, displayPictoDefense, displayPictoHealth, displayPictoSpeed, getPictoByName } from "../utils/PictoUtils";
+import { PictosList } from "../data/PictosList";
+import type { GetPlayerResponse } from "../api/APIPlayer";
 
 interface PictosTabProps {
-  pictos: PictoResponse[] | null;
-  player: PlayerResponse | null;
-  setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+  player: GetPlayerResponse | null;
+  setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
 }
 
 const colorToHex: Record<PictoColor, string> = {
   green: "rgb(26, 230, 103)",
   red: "rgb(227, 30, 25)",
   blue: "rgb(140, 255, 255)",
+  yellow: "rgb(235, 220, 170)",
 };
+
 
 function PlusDiamond({
   icon = "+",
@@ -25,6 +27,7 @@ function PlusDiamond({
   isBig?: boolean;
 }) {
   const maskBase = picto?.name ? encodeURI(`/pictos/${picto.name}.webp`) : null;
+  const pictoInfo = getPictoByName(picto?.name ?? "")
 
   const wrapperSize = isBig ? "w-14 h-14" : "w-9 h-9";
   const innerSize = isBig ? "w-11 h-11" : "w-7 h-7";
@@ -39,7 +42,7 @@ function PlusDiamond({
         <div
           className={`rotate-[-45deg] ${innerSize}`}
           style={{
-            backgroundColor: colorToHex[picto!.color],
+            backgroundColor: colorToHex[pictoInfo!.color],
             WebkitMaskImage: `url("${maskBase}?scope=mask")`,
             maskImage: `url("${maskBase}?scope=mask")`,
             WebkitMaskRepeat: "no-repeat",
@@ -103,7 +106,10 @@ function Stat({ label, value, displayValue, displayAttributedValue }: { label: s
   );
 }
 
-function StatusTexts({ picto, level }: { picto: PictoResponse, level: number }) {
+function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse, level: number }) {
+  const picto = getPictoByName(pictoResponse.name)
+  if(!picto) { return }
+  
   return (
     <>
       <Stat label="Velocidade" value={picto.status.speed} displayValue={displayPictoSpeed(picto.status.speed ?? 0, level)} displayAttributedValue={displayPictoAttributeSpeed(picto.status.speed ?? 0, level)} />
@@ -124,6 +130,7 @@ function StatusTexts({ picto, level }: { picto: PictoResponse, level: number }) 
 }
 function PictoCard({ picto, onPick }: { picto: PictoResponse; onPick?: (p: PictoResponse) => void }) {
   const level = picto.level ?? 1;
+  const pictoInfo = getPictoByName(picto.name)
 
   return (
     <button
@@ -136,10 +143,10 @@ function PictoCard({ picto, onPick }: { picto: PictoResponse; onPick?: (p: Picto
           <div className="text-xl font-semibold leading-tight">{picto.name}</div>
         </div>
         <div className="grid grid-cols-1 gap-2">
-          <StatusTexts picto={picto} level={level} />
+          <StatusTexts pictoResponse={picto} level={level} />
           <Stat label="Nível" value={picto.level ?? 1} />
         </div>
-        <div className="opacity-80">{picto.description}</div>
+        <div className="opacity-80">{pictoInfo?.description}</div>
       </div>
     </button>
 
@@ -150,7 +157,7 @@ function getLevel(p: PictoResponse | null | undefined) {
   return p?.level ?? 1;
 }
 
-export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps) {
+export default function PictosTab({ player, setPlayer }: PictosTabProps) {
   const [openSlot, setOpenSlot] = useState<number | null>(null);
   const [query, setQuery] = useState("");
 
@@ -164,13 +171,11 @@ export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps)
   }, [player?.pictos]);
 
   const filtered = useMemo(() => {
-    const list = pictos ?? [];
-
     const selectedNames = new Set(
       (player?.pictos ?? []).map(p => p.name.toLowerCase())
     );
 
-    const withoutSelected = list.filter(
+    const withoutSelected = PictosList.filter(
       p => !selectedNames.has(p.name.toLowerCase())
     );
 
@@ -182,7 +187,7 @@ export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps)
         p.name.toLowerCase().includes(q) ||
         (p.description ?? "").toLowerCase().includes(q)
     );
-  }, [pictos, query, player?.pictos]);
+  }, [query, player?.pictos]);
 
 
   function upsertPictoAt(slotIndex: number, picto: PictoResponse) {
@@ -233,7 +238,8 @@ export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps)
       <div className="flex flex-col gap-4">
         {[0, 1, 2].map((idx) => {
           const selected = slots[idx];
-          const accent = selected ? colorToHex[selected.color] : "rgba(255,255,255,0.15)";
+          const pictoInfo = getPictoByName(selected?.name ?? "")
+          const accent = selected ? colorToHex[pictoInfo!.color] : "rgba(255,255,255,0.15)";
 
           return (
             <div key={idx} className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
@@ -279,7 +285,7 @@ export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps)
                     {/* Linha de stats */}
                     <div className="flex items-center gap-8">
                       <div className="grid grid-cols-1 gap-2">
-                        <StatusTexts picto={selected} level={selected.level ?? 1} />
+                        <StatusTexts pictoResponse={selected} level={selected.level ?? 1} />
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
@@ -314,7 +320,7 @@ export default function PictosTab({ pictos, player, setPlayer }: PictosTabProps)
                     <div className="h-px w-full bg-white/10 my-1" />
 
                     {/* Descrição */}
-                    <div className="opacity-85">{selected.description}</div>
+                    <div className="opacity-85">{pictoInfo?.description}</div>
                   </div>
                 ) : (
                   <div className="text-center w-full opacity-60 tracking-wide text-lg">Selecione um Picto</div>
