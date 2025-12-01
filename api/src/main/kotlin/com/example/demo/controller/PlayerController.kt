@@ -4,6 +4,7 @@ import com.example.demo.dto.*
 import com.example.demo.model.BattleLog
 import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
+import com.example.demo.model.PlayerPicto
 import com.example.demo.repository.*
 import com.example.demo.service.FightService
 import org.springframework.http.ResponseEntity
@@ -18,6 +19,7 @@ class PlayerController(
         private val battleRepository: BattleRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
+        private val playerPictoRepository: PlayerPictoRepository,
         private val fightService: FightService
 ) {
 
@@ -63,7 +65,8 @@ class PlayerController(
                                         weapons = null,
                                         fightInfo = null,
                                         isMasterEditing = null,
-                                        battleLogs = null
+                                        battleLogs = null,
+                                        pictos = null
                                 )
                         }
 
@@ -89,10 +92,9 @@ class PlayerController(
                 val fightInfo = fightService.buildFightInfoForPlayer(id)
 
                 var battleLogs: List<BattleLog> = emptyList()
-
                 val currentBattleId = fightInfo?.battleId
-                if (currentBattleId != null) {
 
+                if (currentBattleId != null) {
                         val allLogs =
                                 battleLogRepository.findByBattleIdOrderByIdAsc(currentBattleId)
 
@@ -107,6 +109,8 @@ class PlayerController(
                                 }
                 }
 
+                val pictos: List<PlayerPicto> = playerPictoRepository.findByPlayerId(id)
+
                 val response =
                         GetPlayerResponse(
                                 id = entity.id!!,
@@ -114,7 +118,8 @@ class PlayerController(
                                 weapons = weapons,
                                 fightInfo = fightInfo,
                                 isMasterEditing = entity.isMasterEditing,
-                                battleLogs = battleLogs
+                                battleLogs = battleLogs,
+                                pictos = pictos
                         )
 
                 return ResponseEntity.ok(response)

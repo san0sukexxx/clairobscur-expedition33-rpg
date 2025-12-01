@@ -6,32 +6,32 @@ export function calculatePictoSpeed(value: number, level: number): number {
     return value / 20 * level;
 }
 
-export function displayPictoSpeed(power: number, level: number): number {
-    return Math.round((power) * level);
+export function displayPictoSpeed(value: number, level: number): number {
+    return value;
 }
 
-export function displayPictoDefense(power: number, level: number): number {
-    return Math.round((power / 5) * level);
+export function displayPictoDefense(value: number, level: number): number {
+    return value;
 }
 
-export function displayPictoHealth(power: number, level: number): number {
-    return Math.round((power / 2) * level);
+export function displayPictoHealth(value: number, level: number): number {
+    return value;
 }
 
-export function displayPictoCritical(power: number, level: number): number {
-    return Math.round((power / 5) * level);
+export function displayPictoCritical(value: number, level: number): number {
+    return value;
 }
 
 export function displayPictoAttributeSpeed(value: number, level: number): string {
-    return "+" + roundDownOneDecimal((value) * level / 1000);
+    return "+" + Math.floor((value / 1400) * level);
 }
 
 export function displayPictoAttributeDefense(value: number, level: number): string {
-    return "+" + roundDownOneDecimal((value / 5) * level / 1000);
+    return "+" + Math.floor((value / 1000) * level);
 }
 
 export function displayPictoAttributeHealth(value: number, level: number): string {
-    return "+" + roundDownOneDecimal((value / 2) * level / 1000);
+    return "+" + Math.floor((value / 2500) * level);
 }
 
 export function displayPictoAttributeCritical(value: number, level: number): string {

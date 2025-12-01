@@ -228,7 +228,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "pictos" && (
-            <PictosTab player={player} setPlayer={setPlayer} />
+            <PictosTab player={player} setPlayer={setPlayer} isAdmin={isAdmin} />
           )}
 
           {/* TODO */}

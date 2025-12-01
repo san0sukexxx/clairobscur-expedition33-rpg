@@ -39,7 +39,8 @@ class CampaignPlayerService(
                                 weapons = weapons,
                                 fightInfo = null,
                                 isMasterEditing = null,
-                                battleLogs = null
+                                battleLogs = null,
+                                pictos = null
                         )
                 }
         }

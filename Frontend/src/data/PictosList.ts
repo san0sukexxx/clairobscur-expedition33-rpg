@@ -454,23 +454,6 @@ export const PictosList: PictoInfo[] = [
         luminaCost: 666
     },
     {
-        name: "Powerful Revive",
-        status: {
-            speed: 280,
-            criticalRate: 23
-        },
-        description: "Apply Powerful for 3 turns when revived.",
-        color: "red",
-        luminaCost: 666
-    },
-    {
-        name: "Revive With Rush",
-        status: {},
-        description: "Apply Rush for 3 turns on revive.",
-        color: "red",
-        luminaCost: 666
-    },
-    {
         name: "Solidifying",
         status: {
             defense: 647,
@@ -478,15 +461,6 @@ export const PictosList: PictoInfo[] = [
         },
         description: "+2 Shields when the character's Health falls below 50%. Once per battle.",
         color: "blue",
-        luminaCost: 666
-    },
-    {
-        name: "The One",
-        status: {
-            criticalRate: 69
-        },
-        description: "Max Health is reduced to 1.",
-        color: "green",
         luminaCost: 666
     },
     {
@@ -504,16 +478,6 @@ export const PictosList: PictoInfo[] = [
         status: {},
         description: "Apply Rush for 3 turns on revive.",
         color: "red",
-        luminaCost: 666
-    },
-    {
-        name: "Solidifying",
-        status: {
-            defense: 647,
-            speed: 266
-        },
-        description: "+2 Shields when the character's Health falls below 50%. Once per battle.",
-        color: "blue",
         luminaCost: 666
     },
     {
@@ -591,50 +555,11 @@ export const PictosList: PictoInfo[] = [
         luminaCost: 666
     },
     {
-        name: "Frozen Affinity",
-        status: {
-            speed: 280,
-            criticalRate: 23
-        },
-        description: "25% increased damage on Frozen targets.",
-        color: "red",
-        luminaCost: 666
-    },
-    {
-        name: "Inverted Affinity",
-        status: {
-            health: 1403,
-            criticalRate: 23
-        },
-        description: "Apply Inverted on self for 3 turns on battle start. 50% increased damage while Inverted.",
-        color: "red",
-        luminaCost: 666
-    },
-    {
-        name: "Exhausting Power",
-        status: {
-            health: 1403,
-            defense: 681
-        },
-        description: "50% increased damage if Exhausted.",
-        color: "red",
-        luminaCost: 666
-    },
-    {
         name: "Auto Death",
         status: {
             criticalRate: 60
         },
         description: "Kill self on battle start.",
-        color: "green",
-        luminaCost: 666
-    },
-    {
-        name: "Auto Burn",
-        status: {
-            speed: 560
-        },
-        description: "Self apply Burn on battle start.",
         color: "green",
         luminaCost: 666
     },
@@ -741,15 +666,6 @@ export const PictosList: PictoInfo[] = [
             speed: 560
         },
         description: "Self apply Burn on battle start.",
-        color: "green",
-        luminaCost: 666
-    },
-    {
-        name: "Auto Death",
-        status: {
-            criticalRate: 60
-        },
-        description: "Kill self on battle start.",
         color: "green",
         luminaCost: 666
     },

@@ -86,9 +86,12 @@ export interface NPCSkill {
 }
 
 export interface PictoResponse {
+    id: number,
+    playerId: number,
+    pictoId: string,
     name: string;
     level?: number;
-    slot?: number;
+    slot?: number | null;
     battleCount?: number;
 }
 

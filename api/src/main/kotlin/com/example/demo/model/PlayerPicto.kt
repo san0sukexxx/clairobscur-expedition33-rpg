@@ -18,6 +18,6 @@ data class PlayerPicto(
         @Column(name = "player_id", nullable = false) val playerId: Int,
         @Column(name = "picto_id", nullable = false) val pictoId: String,
         @Column(nullable = false) val level: Int = 1,
-        @Column(nullable = false) val slot: Int = 0,
+        @Column val slot: Int? = null,
         @Column(name = "battle_count", nullable = false) val battleCount: Int = 0
 )
