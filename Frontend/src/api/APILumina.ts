@@ -1,39 +1,24 @@
-// APILumina.ts
 import { api } from "./api"
 
-export interface PlayerLumina {
-    id: number
+export interface CreatePlayerLuminaRequest {
     playerId: number
     pictoId: string
 }
 
-export interface CreatePlayerLuminaInput {
-    playerId: number
-    pictoId: string
-}
-
-export interface UpdatePlayerLuminaInput {
-    pictoId: string
+export interface UpdatePlayerLuminaRequest {
+    isEquiped: boolean
 }
 
 export class APILumina {
-    static async list(): Promise<PlayerLumina[]> {
-        return api.get<PlayerLumina[]>("player-luminas")
+    static async createPlayerLumina(input: CreatePlayerLuminaRequest): Promise<number> {
+        return api.post<CreatePlayerLuminaRequest, number>("player-luminas", input)
     }
 
-    static async getById(id: number): Promise<PlayerLumina> {
-        return api.get<PlayerLumina>(`player-luminas/${id}`)
+    static async updatePlayerLumina(id: number, input: UpdatePlayerLuminaRequest): Promise<void> {
+        await api.put<UpdatePlayerLuminaRequest, void>(`player-luminas/${id}`, input)
     }
 
-    static async create(input: CreatePlayerLuminaInput): Promise<number> {
-        return api.post<CreatePlayerLuminaInput, number>("player-luminas", input)
-    }
-
-    static async update(id: number, input: UpdatePlayerLuminaInput): Promise<void> {
-        await api.put<UpdatePlayerLuminaInput, void>(`player-luminas/${id}`, input)
-    }
-
-    static async delete(id: number): Promise<void> {
+    static async deletePlayerLumina(id: number): Promise<void> {
         await api.delete<void>(`player-luminas/${id}`)
     }
 }

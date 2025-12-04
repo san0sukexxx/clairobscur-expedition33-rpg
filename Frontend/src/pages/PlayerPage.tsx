@@ -231,9 +231,8 @@ export default function PlayerPage() {
             <PictosTab player={player} setPlayer={setPlayer} isAdmin={isAdmin} />
           )}
 
-          {/* TODO */}
           {/* {!loading && !error && tab === "luminas" && (
-            <LuminasSection luminas={pictos} player={player} setPlayer={setPlayer} />
+            <LuminasSection player={player} setPlayer={setPlayer} />
           )} */}
 
           {!loading && !error && tab === "inventario" && (

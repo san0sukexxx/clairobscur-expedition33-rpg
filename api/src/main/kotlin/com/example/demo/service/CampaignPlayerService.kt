@@ -40,7 +40,8 @@ class CampaignPlayerService(
                                 fightInfo = null,
                                 isMasterEditing = null,
                                 battleLogs = null,
-                                pictos = null
+                                pictos = null,
+                                luminas = null
                         )
                 }
         }

@@ -1,6 +1,6 @@
 import { roundDownOneDecimal } from "./MathUtils";
 import { PictosList } from "../data/PictosList";
-import type { PictoInfo } from "../api/ResponseModel";
+import type { PictoColor, PictoInfo } from "../api/ResponseModel";
 
 export function calculatePictoSpeed(value: number, level: number): number {
     return value / 20 * level;
@@ -50,3 +50,9 @@ export function getAllPictosSorted(): PictoInfo[] {
     );
 }
 
+export const pictoColorHex: Record<PictoColor, string> = {
+  green: "rgb(26, 230, 103)",
+  red: "rgb(227, 30, 25)",
+  blue: "rgb(140, 255, 255)",
+  yellow: "rgb(235, 220, 170)",
+}

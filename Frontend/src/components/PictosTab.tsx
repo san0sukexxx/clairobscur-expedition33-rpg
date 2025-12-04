@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react"
-import { type PictoResponse, type PictoColor, type PictoInfo } from "../api/ResponseModel"
+import { type PictoResponse, type PictoInfo } from "../api/ResponseModel"
 import {
   displayPictoAttributeCritical,
   displayPictoAttributeDefense,
@@ -10,6 +10,7 @@ import {
   displayPictoHealth,
   displayPictoSpeed,
   getPictoByName,
+  pictoColorHex,
 } from "../utils/PictoUtils"
 import type { GetPlayerResponse } from "../api/APIPlayer"
 import { PictosList } from "../data/PictosList"
@@ -46,15 +47,6 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
       })
     return arr
   }, [player?.pictos])
-
-
-  const ownedPictos: PictoResponse[] = useMemo(
-    () =>
-      [...(player?.pictos ?? [])].sort((a, b) =>
-        getPictoName(a).localeCompare(getPictoName(b), "pt-BR")
-      ),
-    [player?.pictos]
-  )
 
   const inventory: PictoResponse[] = useMemo(() => {
     return (player?.pictos ?? [])
@@ -246,8 +238,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
       const existing = prev.pictos ?? []
 
       const alreadyHas = existing.some(
-        (p) =>
-          (p.name ?? p.pictoId)?.toLowerCase() === pendingAddPicto.name.toLowerCase()
+        (p) => p.pictoId.toLowerCase() === pendingAddPicto.name.toLowerCase()
       )
       if (alreadyHas) return prev
 
@@ -255,7 +246,6 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
         id: newId ?? 0,
         playerId: player.id,
         pictoId: pendingAddPicto.name,
-        name: pendingAddPicto.name,
         level: lvl,
         battleCount: 0
       }
@@ -314,7 +304,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           const name = getPictoName(selected)
           const pictoInfo = getPictoByName(name)
           const accent =
-            selected && pictoInfo ? colorToHex[pictoInfo.color] : "rgba(255,255,255,0.15)"
+            selected && pictoInfo ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.15)"
 
           return (
             <div
@@ -520,13 +510,6 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
   )
 }
 
-const colorToHex: Record<PictoColor, string> = {
-  green: "rgb(26, 230, 103)",
-  red: "rgb(227, 30, 25)",
-  blue: "rgb(140, 255, 255)",
-  yellow: "rgb(235, 220, 170)",
-}
-
 function PlusDiamond({
   icon = "+",
   picto,
@@ -542,7 +525,7 @@ function PlusDiamond({
   const wrapperSize = isBig ? "w-14 h-14" : "w-9 h-9"
   const innerSize = isBig ? "w-11 h-11" : "w-7 h-7"
   const iconSize = isBig ? "text-x2" : "text-lg"
-  const bgColor = pictoInfo ? colorToHex[pictoInfo.color] : "rgba(255,255,255,0.3)"
+  const bgColor = pictoInfo ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.3)"
 
   return (
     <div

@@ -15,6 +15,7 @@ CREATE TABLE
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         player_id INTEGER NOT NULL,
         picto_id TEXT NOT NULL,
+        is_equiped BOOLEAN DEFAULT 0,
         FOREIGN KEY (player_id) REFERENCES player (id) ON DELETE CASCADE,
         UNIQUE (player_id, picto_id)
     );

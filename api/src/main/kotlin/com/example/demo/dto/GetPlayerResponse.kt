@@ -2,6 +2,7 @@ package com.example.demo.dto
 
 import com.example.demo.model.BattleLog
 import com.example.demo.model.PlayerPicto
+import com.example.demo.model.PlayerLumina
 
 data class GetPlayerResponse(
         val id: Int,
@@ -10,5 +11,6 @@ data class GetPlayerResponse(
         val fightInfo: FightInfoResponse?,
         val isMasterEditing: Boolean?,
         val battleLogs: List<BattleLog>?,
-        val pictos: List<PlayerPicto>?
+        val pictos: List<PlayerPicto>?,
+        val luminas: List<PlayerLumina>?
 )

@@ -89,7 +89,6 @@ export interface PictoResponse {
     id: number,
     playerId: number,
     pictoId: string,
-    name: string;
     level?: number;
     slot?: number | null;
     battleCount?: number;
@@ -108,6 +107,13 @@ export interface PictoStatusResponse {
     criticalRate?: number;
     health?: number;
     defense?: number;
+}
+
+export interface LuminaResponse {
+    id: number
+    playerId: number
+    pictoId: string
+    isEquiped: boolean
 }
 
 export interface SkillResponse {

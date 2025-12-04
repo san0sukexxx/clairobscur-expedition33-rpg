@@ -5,6 +5,7 @@ import com.example.demo.model.BattleLog
 import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
 import com.example.demo.model.PlayerPicto
+import com.example.demo.model.PlayerLumina
 import com.example.demo.repository.*
 import com.example.demo.service.FightService
 import org.springframework.http.ResponseEntity
@@ -20,6 +21,7 @@ class PlayerController(
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
         private val playerPictoRepository: PlayerPictoRepository,
+        private val playerLuminaRepository: PlayerLuminaRepository,
         private val fightService: FightService
 ) {
 
@@ -66,7 +68,8 @@ class PlayerController(
                                         fightInfo = null,
                                         isMasterEditing = null,
                                         battleLogs = null,
-                                        pictos = null
+                                        pictos = null,
+                                        luminas = null
                                 )
                         }
 
@@ -110,6 +113,7 @@ class PlayerController(
                 }
 
                 val pictos: List<PlayerPicto> = playerPictoRepository.findByPlayerId(id)
+                val luminas: List<PlayerLumina> = playerLuminaRepository.findByPlayerId(id)
 
                 val response =
                         GetPlayerResponse(
@@ -119,7 +123,8 @@ class PlayerController(
                                 fightInfo = fightInfo,
                                 isMasterEditing = entity.isMasterEditing,
                                 battleLogs = battleLogs,
-                                pictos = pictos
+                                pictos = pictos,
+                                luminas = luminas
                         )
 
                 return ResponseEntity.ok(response)
