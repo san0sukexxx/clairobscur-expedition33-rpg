@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
-import { type PlayerResponse, type ItemResponse } from "../api/MockAPIPlayer";
+import { type ItemResponse } from "../api/MockAPIPlayer";
+import { type GetPlayerResponse } from "../api/APIPlayer";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", "revive-elixir"]);
 
 interface ItemsSectionProps {
-    player: PlayerResponse | null;
-    setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+    player: GetPlayerResponse | null;
+    setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
 }
 
 function Modal({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) {
@@ -39,7 +40,7 @@ function buildVisible(items?: ItemResponse[]) {
     return { result, map };
 }
 
-function ElixirsCard({ player, setPlayer }: { player: PlayerResponse | null, setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>> }) {
+function ElixirsCard({ player, setPlayer }: { player: GetPlayerResponse | null, setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>> }) {
     const ELIXIRS = [
         { id: "chroma-elixir", label: "Chroma", src: "/items/Chroma Elixir.png" },
         { id: "healing-elixir", label: "Healing", src: "/items/Healing Tints.png" },

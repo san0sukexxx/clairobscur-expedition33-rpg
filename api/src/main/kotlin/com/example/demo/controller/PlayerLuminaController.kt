@@ -7,7 +7,7 @@ import com.example.demo.repository.PlayerLuminaRepository
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/player-luminas")
+@RequestMapping("/api/player-luminas")
 class PlayerLuminaController(private val repository: PlayerLuminaRepository) {
 
     @PostMapping

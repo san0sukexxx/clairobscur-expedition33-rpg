@@ -1,14 +1,14 @@
 import { useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { type PlayerResponse } from "../api/MockAPIPlayer";
+import { type GetPlayerResponse } from "../api/APIPlayer";
 import SkillPickerSection from "./SkillPickerSection";
 import SkillsListSection from "./SkillsListSection";
 import { FaListCheck } from "react-icons/fa6";
 import { FaListUl } from "react-icons/fa";
 
 interface SkillsSectionProps {
-    player: PlayerResponse | null;
-    setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+    player: GetPlayerResponse | null;
+    setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
 }
 
 export default function SkillSection({ player, setPlayer }: SkillsSectionProps) {

@@ -231,9 +231,9 @@ export default function PlayerPage() {
             <PictosTab player={player} setPlayer={setPlayer} isAdmin={isAdmin} />
           )}
 
-          {/* {!loading && !error && tab === "luminas" && (
-            <LuminasSection player={player} setPlayer={setPlayer} />
-          )} */}
+          {!loading && !error && tab === "luminas" && (
+            <LuminasSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} />
+          )}
 
           {!loading && !error && tab === "inventario" && (
             <ItemsSection player={player} setPlayer={setPlayer} />

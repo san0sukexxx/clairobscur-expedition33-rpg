@@ -670,16 +670,6 @@ export const PictosList: PictoInfo[] = [
         luminaCost: 666
     },
     {
-        name: "Auto Curse",
-        status: {
-            speed: 140,
-            criticalRate: 35
-        },
-        description: "Self apply Curse on battle start.",
-        color: "green",
-        luminaCost: 666
-    },
-    {
         name: "At Death's Door",
         status: {
             defense: 681,

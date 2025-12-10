@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from "react";
-import type { PlayerResponse } from "../api/MockAPIPlayer";
+import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { SkillResponse } from "../api/ResponseModel";
 import SkillModal from "./SkillModal";
 
 export interface SkillPickerProps {
-    player: PlayerResponse | null;
-    setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+    player: GetPlayerResponse | null;
+    setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
 }
 
 // --- UI Helpers ---

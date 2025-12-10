@@ -47,7 +47,7 @@ export default function LuminasSection({
 
     const slots: (LuminaResponse | null)[] = useMemo(() => {
         const equipped = luminas.filter((l) => l.isEquiped)
-        return [equipped[0] ?? null, equipped[1] ?? null, equipped[2] ?? null]
+        return [...equipped, null]
     }, [luminas])
 
     const inventory: LuminaResponse[] = useMemo(
@@ -119,24 +119,7 @@ export default function LuminasSection({
                 l.id === lumina.id ? { ...l, isEquiped: true } : l,
             )
 
-            const equipped = updated.filter((l) => l.isEquiped)
-            if (equipped.length <= 3) {
-                return { ...prev, luminas: updated }
-            }
-
-            const keepIds = [
-                lumina.id,
-                equipped[0].id === lumina.id ? equipped[1]?.id : equipped[0]?.id,
-                equipped[1] && equipped[1].id !== lumina.id
-                    ? equipped[1].id
-                    : equipped[2]?.id,
-            ].filter((id): id is number => id !== undefined)
-
-            const normalized = updated.map((l) =>
-                keepIds.includes(l.id) ? l : { ...l, isEquiped: false },
-            )
-
-            return { ...prev, luminas: normalized }
+            return { ...prev, luminas: updated }
         })
 
         setModalType(null)
@@ -291,8 +274,7 @@ export default function LuminasSection({
             </div>
 
             <div className="flex flex-col gap-4">
-                {[0, 1, 2].map((idx) => {
-                    const selected = slots[idx]
+                {slots.map((selected, idx) => {
                     const name = getLuminaName(selected)
                     const pictoInfo = getPictoByName(name)
                     const accent =
@@ -302,11 +284,11 @@ export default function LuminasSection({
 
                     return (
                         <div
-                            key={idx}
+                            key={selected ? `lumina-${selected.id}` : "empty-slot"}
                             className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden"
                         >
                             <div
-                                className="pointer-events-none absolute inset-x-3 top-4 bottom-4 rounded-xl"
+                                className="pointer-events-none absolute inset-x-3 top-1 bottom-1 rounded-xl"
                                 style={{
                                     border: `1px solid ${selected ? accent : "transparent"}`,
                                     clipPath:
@@ -319,10 +301,11 @@ export default function LuminasSection({
                                 tabIndex={0}
                                 onKeyDown={(e) => onKeyActivate(e, idx)}
                                 onClick={() => handleSlotActivate(idx)}
-                                className={`w-full text-left p-6 pl-28 rounded-2xl transition-colors ${selected
-                                        ? "hover:bg-white/5 cursor-pointer"
-                                        : "h-48 grid place-items-center hover:bg-white/5"
-                                    }`}
+                                className={`w-full text-left p-6 pl-28 rounded-2xl transition-colors ${
+                                    selected
+                                        ? "hover:bg.white/5 cursor-pointer"
+                                        : "h-30 grid place-items-center hover:bg-white/5"
+                                }`}
                             >
                                 <div className="absolute left-5 top-1/2 -translate-y-1/2">
                                     <PlusDiamond
@@ -333,9 +316,9 @@ export default function LuminasSection({
                                 </div>
 
                                 {selected ? (
-                                    <div className="flex flex-col gap-3">
+                                    <div className="flex flex-col gap-2">
                                         <div className="flex items-start justify-between">
-                                            <div className="text-2xl font-semibold leading-tight mr-2">
+                                            <div className="text-xl font-semibold leading-tight mr-2">
                                                 {name}
                                             </div>
                                             <button
@@ -348,14 +331,6 @@ export default function LuminasSection({
                                                 ×
                                             </button>
                                         </div>
-
-                                        <div className="flex items-center gap-8">
-                                            <div className="grid grid-cols-1 gap-2">
-                                                <LuminaStatusTexts pictoName={name} />
-                                            </div>
-                                        </div>
-
-                                        <div className="h-px w-full bg-white/10 my-1" />
 
                                         <div className="opacity-85">{pictoInfo?.description}</div>
                                     </div>
@@ -609,71 +584,6 @@ function Stat({
     )
 }
 
-function LuminaStatusTexts({
-    pictoName,
-    level = 33,
-}: {
-    pictoName: string
-    level?: number
-}) {
-    const picto = getPictoByName(pictoName)
-    if (!picto) return null
-
-    return (
-        <>
-            <Stat
-                label="Agilidade"
-                value={picto.status.speed}
-                displayValue={displayPictoSpeed(picto.status.speed ?? 0, level)}
-                displayAttributedValue={displayPictoAttributeSpeed(
-                    picto.status.speed ?? 0,
-                    level,
-                )}
-            />
-            <Stat
-                label="Crítico"
-                value={
-                    picto.status.criticalRate !== undefined
-                        ? `${picto.status.criticalRate}%`
-                        : undefined
-                }
-                displayValue={displayPictoCritical(
-                    picto.status.criticalRate ?? 0,
-                    level,
-                )}
-                displayAttributedValue={displayPictoAttributeCritical(
-                    picto.status.criticalRate ?? 0,
-                    level,
-                )}
-            />
-            <Stat
-                label="HP"
-                value={picto.status.health}
-                displayValue={displayPictoHealth(
-                    picto.status.health ?? 0,
-                    level,
-                )}
-                displayAttributedValue={displayPictoAttributeHealth(
-                    picto.status.health ?? 0,
-                    level,
-                )}
-            />
-            <Stat
-                label="Defesa"
-                value={picto.status.defense}
-                displayValue={displayPictoDefense(
-                    picto.status.defense ?? 0,
-                    level,
-                )}
-                displayAttributedValue={displayPictoAttributeDefense(
-                    picto.status.defense ?? 0,
-                    level,
-                )}
-            />
-        </>
-    )
-}
-
 function LuminaCard({
     lumina,
     onPick,
@@ -694,9 +604,6 @@ function LuminaCard({
                 <div className="flex items-start justify-between">
                     <div className="text-xl font-semibold leading-tight">{name}</div>
                 </div>
-                <div className="grid grid-cols-1 gap-2">
-                    <LuminaStatusTexts pictoName={name} />
-                </div>
                 <div className="opacity-80">{pictoInfo?.description}</div>
             </div>
         </button>
@@ -710,8 +617,6 @@ function PictoInfoCard({
     info: PictoInfo
     onPick?: (p: PictoInfo) => void
 }) {
-    const picto = getPictoByName(info.name)
-
     return (
         <button
             onClick={() => onPick && onPick(info)}
@@ -723,9 +628,6 @@ function PictoInfoCard({
                     <div className="text-xl font-semibold leading-tight">
                         {info.name}
                     </div>
-                </div>
-                <div className="grid grid-cols-1 gap-2">
-                    {picto && <LuminaStatusTexts pictoName={picto.name} />}
                 </div>
                 <div className="opacity-80">{info.description}</div>
             </div>

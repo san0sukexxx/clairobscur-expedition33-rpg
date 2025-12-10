@@ -3,11 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaInfoCircle, FaLock, FaUnlock } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
 import type { SkillResponse } from "../api/ResponseModel";
-import type { PlayerResponse } from "../api/MockAPIPlayer";
+import type { GetPlayerResponse } from "../api/APIPlayer";
 
 export interface SkillsListTabProps {
-    player: PlayerResponse | null;
-    setPlayer: React.Dispatch<React.SetStateAction<PlayerResponse | null>>;
+    player: GetPlayerResponse | null;
+    setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
 }
 
 export default function SkillsListSection({ player, setPlayer }: SkillsListTabProps) {

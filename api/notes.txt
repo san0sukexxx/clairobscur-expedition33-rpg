@@ -15,3 +15,8 @@ chmod a+x gradlew
 
 For windows users:
 .\gradlew.bat bootRun
+
+
+For visual studio code:
+Install Kotlin (fwcd) extension
+Install SQLite Viewer extension
