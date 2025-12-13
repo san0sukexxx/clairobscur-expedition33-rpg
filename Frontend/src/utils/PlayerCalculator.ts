@@ -194,6 +194,10 @@ export function calculateMaxMP(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.hability ?? 0) * 3;
 }
 
+export function calculateMaxLuminas(player: GetPlayerResponse | null): number {
+    return (player?.playerSheet?.power ?? 0) * 10;
+}
+
 export function calculateInitialMP(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.hability ?? 0);
 }

@@ -8,7 +8,8 @@ export const COMBAT_MENU_ACTIONS = {
   Initiative: "Initiative",
   JoinBattle: "JoinBattle",
   Cancel: "Cancel",
-  EndTurn: "EndTurn"
+  EndTurn: "EndTurn",
+  Flee: "Flee"
 } as const;
 
 export type CombatMenuAction = typeof COMBAT_MENU_ACTIONS[keyof typeof COMBAT_MENU_ACTIONS];

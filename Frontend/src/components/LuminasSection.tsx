@@ -16,6 +16,7 @@ import {
 import type { GetPlayerResponse } from "../api/APIPlayer"
 import { APILumina } from "../api/APILumina"
 import { FaChartLine } from "react-icons/fa"
+import { calculateMaxLuminas } from "../utils/PlayerCalculator"
 
 interface LuminasSectionProps {
     player: GetPlayerResponse | null
@@ -38,12 +39,25 @@ export default function LuminasSection({
     const [modalType, setModalType] = useState<ModalType>(null)
     const [activeSlot, setActiveSlot] = useState<number | null>(null)
     const [query, setQuery] = useState("")
-    const [pendingAddPicto, setPendingAddPicto] = useState<PictoInfo | null>(null)
+    
+    const maxCostLuminas: number = useMemo(
+        () => calculateMaxLuminas(player),
+        [player?.playerSheet],
+    )
 
     const luminas: LuminaResponse[] = useMemo(
         () => (player?.luminas ?? []) as LuminaResponse[],
         [player?.luminas],
     )
+
+    const currentLuminaCost: number = useMemo(() => {
+        return luminas
+            .filter((l) => l.isEquiped)
+            .reduce((total, l) => {
+                const pictoInfo = getPictoByName(l.pictoId)
+                return total + (pictoInfo?.luminaCost ?? 0)
+            }, 0)
+    }, [luminas])
 
     const slots: (LuminaResponse | null)[] = useMemo(() => {
         const equipped = luminas.filter((l) => l.isEquiped)
@@ -90,9 +104,11 @@ export default function LuminasSection({
 
     const removeFiltered: LuminaResponse[] = useMemo(() => {
         const q = query.trim().toLowerCase()
-        const base = [...luminas].sort((a, b) =>
-            getLuminaName(a).localeCompare(getLuminaName(b), "pt-BR"),
-        )
+        const base = [...luminas]
+            .filter((l) => !l.isEquiped)
+            .sort((a, b) =>
+                getLuminaName(a).localeCompare(getLuminaName(b), "pt-BR"),
+            )
 
         if (!q) return base
 
@@ -105,6 +121,15 @@ export default function LuminasSection({
     }, [query, luminas])
 
     async function equipLumina(lumina: LuminaResponse) {
+        const pictoInfo = getPictoByName(lumina.pictoId)
+        const luminaCost = pictoInfo?.luminaCost ?? 0
+
+        // Verificar se equipar essa lumina excederia o limite de custo
+        if (currentLuminaCost + luminaCost > maxCostLuminas) {
+            alert(`Custo máximo de luminas excedido! Atual: ${currentLuminaCost}, Tentando adicionar: ${luminaCost}, Máximo: ${maxCostLuminas}`)
+            return
+        }
+
         try {
             await APILumina.updatePlayerLumina(lumina.id, { isEquiped: true })
         } catch (e) {
@@ -124,7 +149,6 @@ export default function LuminasSection({
 
         setModalType(null)
         setActiveSlot(null)
-        setPendingAddPicto(null)
         setQuery("")
     }
 
@@ -161,25 +185,17 @@ export default function LuminasSection({
     function openAdminAdd() {
         setModalType("admin-add")
         setActiveSlot(null)
-        setPendingAddPicto(null)
         setQuery("")
     }
 
     function openAdminRemove() {
         setModalType("admin-remove")
         setActiveSlot(null)
-        setPendingAddPicto(null)
         setQuery("")
     }
 
-    function handleAdminAddPick(info: PictoInfo) {
-        setPendingAddPicto(info)
-    }
-
-    async function confirmAdminAdd() {
-        if (!pendingAddPicto || !player) {
-            setModalType(null)
-            setPendingAddPicto(null)
+    async function handleAdminAddPick(info: PictoInfo) {
+        if (!player) {
             return
         }
 
@@ -188,7 +204,7 @@ export default function LuminasSection({
         try {
             newId = await APILumina.createPlayerLumina({
                 playerId: player.id,
-                pictoId: pendingAddPicto.name,
+                pictoId: info.name,
             })
         } catch (e) {
             console.error(e)
@@ -199,14 +215,14 @@ export default function LuminasSection({
             const existing = (prev.luminas ?? []) as LuminaResponse[]
 
             const alreadyHas = existing.some(
-                (l) => l.pictoId.toLowerCase() === pendingAddPicto.name.toLowerCase(),
+                (l) => l.pictoId.toLowerCase() === info.name.toLowerCase(),
             )
             if (alreadyHas) return prev
 
             const added: LuminaResponse = {
                 id: newId ?? 0,
                 playerId: player.id,
-                pictoId: pendingAddPicto.name,
+                pictoId: info.name,
                 isEquiped: false,
             }
 
@@ -214,7 +230,6 @@ export default function LuminasSection({
         })
 
         setModalType(null)
-        setPendingAddPicto(null)
         setQuery("")
     }
 
@@ -238,7 +253,6 @@ export default function LuminasSection({
     function closeModal() {
         setModalType(null)
         setActiveSlot(null)
-        setPendingAddPicto(null)
         setQuery("")
     }
 
@@ -252,8 +266,19 @@ export default function LuminasSection({
     return (
         <div className="text-white">
             <div className="flex items-center justify-between pb-3">
-                <div className="text-center flex-1 text-lg tracking-widest opacity-90">
-                    LUMINAS
+                <div className="flex items-center gap-4 flex-1">
+                    <div className="text-lg tracking-widest opacity-90">
+                        LUMINAS
+                    </div>
+                    <div className={`rounded-lg py-1 px-3 text-sm font-semibold ${
+                        currentLuminaCost > maxCostLuminas
+                            ? "bg-red-600/20 text-red-400 border border-red-600/30"
+                            : currentLuminaCost === maxCostLuminas
+                                ? "bg-amber-700/10 text-amber-700 border border-amber-700/20"
+                                : "bg-green-600/10 text-green-400 border border-green-600/20"
+                    }`}>
+                        Custo: {currentLuminaCost}/{maxCostLuminas}
+                    </div>
                 </div>
                 {isAdmin && (
                     <div className="flex gap-2">
@@ -356,13 +381,22 @@ export default function LuminasSection({
                 <div className="px-4 pb-4 overflow-y-auto max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-4">
                     {modalType === "slot" && activeSlot !== null && (
                         <>
-                            {slotFiltered.map((l) => (
-                                <LuminaCard
-                                    key={l.id}
-                                    lumina={l}
-                                    onPick={(lum) => equipLumina(lum)}
-                                />
-                            ))}
+                            {slotFiltered.map((l) => {
+                                const pictoInfo = getPictoByName(l.pictoId)
+                                const luminaCost = pictoInfo?.luminaCost ?? 0
+                                const wouldExceedLimit = currentLuminaCost + luminaCost > maxCostLuminas
+
+                                return (
+                                    <LuminaCard
+                                        key={l.id}
+                                        lumina={l}
+                                        onPick={(lum) => equipLumina(lum)}
+                                        disabled={wouldExceedLimit}
+                                        currentCost={currentLuminaCost}
+                                        maxCost={maxCostLuminas}
+                                    />
+                                )
+                            })}
                             {slotFiltered.length === 0 && (
                                 <div className="opacity-70 p-8 text-center">
                                     Nenhuma Lumina encontrada.
@@ -373,48 +407,17 @@ export default function LuminasSection({
 
                     {modalType === "admin-add" && (
                         <>
-                            {pendingAddPicto ? (
-                                <div className="col-span-full flex flex-col items-center gap-4 py-6">
-                                    <div className="text-lg">
-                                        Confirmar Lumina para{" "}
-                                        <span className="font-semibold">
-                                            {pendingAddPicto.name}
-                                        </span>
-                                        ?
-                                    </div>
-                                    <div className="flex gap-3 mt-2">
-                                        <button
-                                            className="px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/20"
-                                            onClick={confirmAdminAdd}
-                                        >
-                                            Confirmar
-                                        </button>
-                                        <button
-                                            className="px-4 py-2 rounded-md bg-black/40 hover:bg-black/60 border border-white/20"
-                                            onClick={() => {
-                                                setPendingAddPicto(null)
-                                                setModalType(null)
-                                            }}
-                                        >
-                                            Cancelar
-                                        </button>
-                                    </div>
+                            {addFiltered.map((p) => (
+                                <PictoInfoCard
+                                    key={p.name}
+                                    info={p}
+                                    onPick={handleAdminAddPick}
+                                />
+                            ))}
+                            {addFiltered.length === 0 && (
+                                <div className="opacity-70 p-8 text-center">
+                                    Nenhum Picto encontrado.
                                 </div>
-                            ) : (
-                                <>
-                                    {addFiltered.map((p) => (
-                                        <PictoInfoCard
-                                            key={p.name}
-                                            info={p}
-                                            onPick={handleAdminAddPick}
-                                        />
-                                    ))}
-                                    {addFiltered.length === 0 && (
-                                        <div className="opacity-70 p-8 text-center">
-                                            Nenhum Picto encontrado.
-                                        </div>
-                                    )}
-                                </>
                             )}
                         </>
                     )}
@@ -587,24 +590,50 @@ function Stat({
 function LuminaCard({
     lumina,
     onPick,
+    disabled = false,
+    currentCost,
+    maxCost,
 }: {
     lumina: LuminaResponse
     onPick?: (l: LuminaResponse) => void
+    disabled?: boolean
+    currentCost?: number
+    maxCost?: number
 }) {
     const name = getLuminaName(lumina)
     const pictoInfo = getPictoByName(name)
+    const luminaCost = pictoInfo?.luminaCost ?? 0
 
     return (
         <button
-            onClick={() => onPick && onPick(lumina)}
-            className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
+            onClick={() => !disabled && onPick && onPick(lumina)}
+            disabled={disabled}
+            className={`w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 transition-colors border rounded-xl ${
+                disabled
+                    ? "bg-black/40 opacity-50 cursor-not-allowed border-red-500/30"
+                    : "bg-black/25 hover:bg-white/5 border-white/10"
+            }`}
         >
             <PlusDiamond icon="" pictoName={name} isBig={true} />
             <div className="flex flex-col gap-2">
                 <div className="flex items-start justify-between">
                     <div className="text-xl font-semibold leading-tight">{name}</div>
+                    {luminaCost > 0 && (
+                        <div className={`rounded-lg py-1 px-2 text-sm font-semibold ${
+                            disabled
+                                ? "bg-red-600/20 text-red-400 border border-red-600/30"
+                                : "bg-amber-700/10 text-amber-700 border border-amber-700/20"
+                        }`}>
+                            Custo: {luminaCost}
+                        </div>
+                    )}
                 </div>
                 <div className="opacity-80">{pictoInfo?.description}</div>
+                {disabled && currentCost !== undefined && maxCost !== undefined && (
+                    <div className="text-xs text-red-400 mt-1">
+                        Limite excedido ({currentCost} + {luminaCost} {'>'} {maxCost})
+                    </div>
+                )}
             </div>
         </button>
     )

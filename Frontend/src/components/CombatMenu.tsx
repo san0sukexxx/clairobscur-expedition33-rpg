@@ -49,6 +49,10 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     return !isFrozen && !isStunned && !isSilenced
   }, [player?.fightInfo?.characters])
 
+  const canUseFlee = useMemo(() => {
+    return !isFrozen && !isStunned && !isSilenced
+  }, [player?.fightInfo?.characters])
+
   const canUseFreeShot = useMemo(() => {
     const mp = currentCharacter?.magicPoints ?? 0
 
@@ -127,6 +131,11 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
               {canUseHabilities && (
                 <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
                   Habilidades
+                </button>
+              )}
+              {canUseFlee && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Flee)}>
+                  Tentar fugir
                 </button>
               )}
               {canUseFreeShot && (

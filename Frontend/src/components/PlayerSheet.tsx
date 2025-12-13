@@ -1,7 +1,7 @@
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
-import { calculateMaxHP, calculateMaxMP, calculateMaxPA, calculateInitialMP } from "../utils/PlayerCalculator";
+import { calculateMaxHP, calculateMaxMP, calculateMaxPA, calculateInitialMP, calculateMaxLuminas } from "../utils/PlayerCalculator";
 import type { WeaponInfo } from "../api/ResponseModel";
 
 interface PlayerSheetProps {
@@ -140,7 +140,14 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInf
                                         }}
                                     />
                                 </label>
+
                                 <label className="form-control">
+                                    <span className="label-text">Luminas</span>
+                                    <div className="rounded-lg py-2 px-3 font-semibold bg-amber-700/10 text-amber-700 border border-amber-700/20">
+                                        Custo Máx. {calculateMaxLuminas(player)}
+                                    </div>
+                                </label>
+                                {/* <label className="form-control">
                                     <span className="label-text">PA</span>
                                     <span className="pl-1 text-sm text-gray-500">
                                         máx.{" "}
@@ -168,7 +175,7 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInf
                                         }}
                                     />
 
-                                </label>
+                                </label> */}
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
@@ -203,7 +210,7 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInf
                                         {calculateMaxMP(player)}
                                     </span>
                                     <div className="rounded-lg py-2 px-3 font-semibold bg-blue-500/10 text-blue-600 border border-blue-500/20">
-                                        PM Inicial: {calculateInitialMP(player)}
+                                        Inicial: {calculateInitialMP(player)}
                                     </div>
 
                                 </label>

@@ -26,7 +26,9 @@ class BattleController(
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
-        private val attackRepository: AttackRepository
+        private val attackRepository: AttackRepository,
+        private val playerPictoRepository: PlayerPictoRepository,
+        private val playerLuminaRepository: PlayerLuminaRepository
 ) {
 
     @GetMapping("/{battleId}")
@@ -146,6 +148,7 @@ class BattleController(
         return ResponseEntity.ok(saved.id!!)
     }
 
+    @Transactional
     @PutMapping("/{id}")
     fun update(@PathVariable id: Int, @RequestBody updated: Battle): ResponseEntity<Battle> {
         val opt = battleRepository.findById(id)
@@ -153,6 +156,49 @@ class BattleController(
             val existing = opt.get()
             val newBattle = existing.copy(battleStatus = updated.battleStatus)
             battleRepository.save(newBattle)
+
+            // Incrementar battle_count dos pictos quando a batalha termina
+            if (updated.battleStatus == "finished") {
+                val battleCharacters = battleCharacterRepository.findByBattleId(id)
+                val playerCharacters = battleCharacters.filter { it.characterType == "player" }
+
+                playerCharacters.forEach { bc ->
+                    val playerId = bc.externalId.toIntOrNull()
+
+                    if (playerId != null) {
+                        val player = playerRepository.findById(playerId).orElse(null)
+
+                        if (player != null && player.hpCurrent > 0) {
+                            val playerPictos = playerPictoRepository.findByPlayerId(playerId)
+                            val slottedPictos = playerPictos.filter { it.slot != null }
+
+                            slottedPictos.forEach { picto ->
+                                val oldBattleCount = picto.battleCount
+                                val newBattleCount = oldBattleCount + 1
+
+                                // Atualizar o battleCount
+                                val updatedPicto = picto.copy(battleCount = newBattleCount)
+                                playerPictoRepository.save(updatedPicto)
+
+                                // Se passou de 2 para 3, criar a lumina
+                                if (oldBattleCount == 2 && newBattleCount == 3) {
+                                    val existingLumina = playerLuminaRepository.findByPlayerIdAndPictoId(playerId, picto.pictoId)
+
+                                    if (existingLumina == null) {
+                                        val newLumina = com.example.demo.model.PlayerLumina(
+                                            playerId = playerId,
+                                            pictoId = picto.pictoId,
+                                            isEquiped = false
+                                        )
+                                        playerLuminaRepository.save(newLumina)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             ResponseEntity.ok().build()
         } else {
             ResponseEntity.notFound().build()
