@@ -116,6 +116,14 @@ export interface LuminaResponse {
     isEquiped: boolean
 }
 
+export interface PlayerItemResponse {
+    id: number
+    playerId: number
+    itemId: string
+    quantity: number
+    maxQuantity: number
+}
+
 export interface SkillResponse {
     id: string;
     name: string;

@@ -22,6 +22,7 @@ class PlayerController(
         private val battleLogRepository: BattleLogRepository,
         private val playerPictoRepository: PlayerPictoRepository,
         private val playerLuminaRepository: PlayerLuminaRepository,
+        private val playerItemRepository: PlayerItemRepository,
         private val fightService: FightService
 ) {
 
@@ -69,7 +70,8 @@ class PlayerController(
                                         isMasterEditing = null,
                                         battleLogs = null,
                                         pictos = null,
-                                        luminas = null
+                                        luminas = null,
+                                        items = null
                                 )
                         }
 
@@ -114,6 +116,7 @@ class PlayerController(
 
                 val pictos: List<PlayerPicto> = playerPictoRepository.findByPlayerId(id)
                 val luminas: List<PlayerLumina> = playerLuminaRepository.findByPlayerId(id)
+                val items = playerItemRepository.findByPlayerId(id)
 
                 val response =
                         GetPlayerResponse(
@@ -124,7 +127,8 @@ class PlayerController(
                                 isMasterEditing = entity.isMasterEditing,
                                 battleLogs = battleLogs,
                                 pictos = pictos,
-                                luminas = luminas
+                                luminas = luminas,
+                                items = items
                         )
 
                 return ResponseEntity.ok(response)

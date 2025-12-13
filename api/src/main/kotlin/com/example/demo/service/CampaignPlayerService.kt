@@ -41,7 +41,8 @@ class CampaignPlayerService(
                                 isMasterEditing = null,
                                 battleLogs = null,
                                 pictos = null,
-                                luminas = null
+                                luminas = null,
+                                items = null
                         )
                 }
         }
