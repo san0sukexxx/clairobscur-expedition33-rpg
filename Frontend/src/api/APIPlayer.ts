@@ -1,5 +1,5 @@
 import { api } from "./api";
-import { type WeaponResponse, type FightInfoResponse, type BattleLogResponse, type PictoResponse, type LuminaResponse, type PlayerItemResponse } from "./ResponseModel";
+import { type WeaponResponse, type FightInfoResponse, type BattleLogResponse, type PictoResponse, type LuminaResponse, type PlayerItemResponse, type PlayerSkillResponse } from "./ResponseModel";
 
 export interface PlayerSheetResponse {
     name?: string;
@@ -34,6 +34,7 @@ export interface GetPlayerResponse {
     pictos?: PictoResponse[];
     luminas?: LuminaResponse[];
     items?: PlayerItemResponse[];
+    skills?: PlayerSkillResponse[];
 }
 
 export interface UpdatePlayerInput {

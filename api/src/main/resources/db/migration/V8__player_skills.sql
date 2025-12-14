@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS player_skills (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    player_id INTEGER NOT NULL,
+    skill_id TEXT NOT NULL,
+    FOREIGN KEY (player_id) REFERENCES player (id) ON DELETE CASCADE
+);

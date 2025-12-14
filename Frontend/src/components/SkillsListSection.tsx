@@ -2,8 +2,9 @@ import React, { useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaInfoCircle, FaLock, FaUnlock } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
-import type { SkillResponse } from "../api/ResponseModel";
+import type { PlayerSkillResponse, SkillResponse } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
+import { getPlayerHasSkill, getSkillById, getSkillIsBlocked } from "../utils/SkillUtils";
 
 export interface SkillsListTabProps {
     player: GetPlayerResponse | null;
@@ -11,7 +12,9 @@ export interface SkillsListTabProps {
 }
 
 export default function SkillsListSection({ player, setPlayer }: SkillsListTabProps) {
-    const list: SkillResponse[] = Array.isArray(player?.skills) ? (player!.skills as SkillResponse[]) : [];
+    if(!player) { return }
+    
+    const list: PlayerSkillResponse[] = Array.isArray(player?.skills) ? (player!.skills as PlayerSkillResponse[]) : [];
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
     const toggle = useCallback((id: string) => {
@@ -29,7 +32,7 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
     function handleUnlock(skillId: string) {
         setPlayer((prev) => {
             if (!prev) return prev;
-            const skills = (prev.skills ?? []).map((s: SkillResponse) =>
+            const skills = (prev.skills ?? []).map((s: PlayerSkillResponse) =>
                 s.id === skillId ? { ...s, isUnlocked: true } : s
             );
             return { ...prev, skills };
@@ -62,8 +65,11 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
             <div className="grid grid-cols-1 gap-4 md:gap-6">
                 {list.map((skill) => {
                     const isOpen = !!expanded[skill.id];
+                    const skillInfo = getSkillById(skill.id)
 
-                    if (skill.isBlocked) {
+                    if (!skillInfo) { return; }
+
+                    if (getSkillIsBlocked(skill.id, player)) {
                         return (
                             <article
                                 key={skill.id}
@@ -83,7 +89,7 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                         );
                     }
 
-                    const disabled = !skill.isUnlocked;
+                    const disabled = !getPlayerHasSkill(skill.id, player);
 
                     return (
                         <article
@@ -109,11 +115,11 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                                     {/* Imagem em losango */}
                                     <div className="relative h-12 w-12 shrink-0">
                                         <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-white/20 bg-black/50">
-                                            {skill.image ? (
+                                            {skillInfo.image ? (
                                                 // eslint-disable-next-line @next/next/no-img-element
                                                 <img
-                                                    src={`/skills/${skill.image}`}
-                                                    alt={skill.name}
+                                                    src={`/skills/${skillInfo.image}`}
+                                                    alt={skillInfo.name}
                                                     className={`${disabled ? "opacity-70 grayscale" : ""} h-full w-full -rotate-45 object-cover`}
                                                 />
                                             ) : (
@@ -128,16 +134,16 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                                     <div className="min-w-0 flex-1">
                                         <div className="flex flex-wrap items-center gap-2 min-w-0">
                                             <h3 className="truncate font-serif text-lg font-semibold tracking-wide text-neutral-100 min-w-0">
-                                                <span className={`${disabled ? "opacity-70 grayscale" : ""} [font-variant-caps:small-caps] block truncate`}>{skill.name}</span>
+                                                <span className={`${disabled ? "opacity-70 grayscale" : ""} [font-variant-caps:small-caps] block truncate`}>{skillInfo.name}</span>
                                             </h3>
 
-                                            {skill.type && (
+                                            {skillInfo.type && (
                                                 <span className="shrink-0 rounded-full border border-white/15 px-2 py-0.5 text-xs text-neutral-200/90">
-                                                    {skill.type}
+                                                    {skillInfo.type}
                                                 </span>
                                             )}
 
-                                            {skill.isGradient && (
+                                            {skillInfo.isGradient && (
                                                 <span className="shrink-0 rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-xs text-fuchsia-200">
                                                     Gradiente
                                                 </span>
@@ -145,7 +151,7 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
 
                                             {/* Badge de custo */}
                                             <span className="ml-auto shrink-0 rounded-full bg-blue-600 px-2.5 py-0.5 text-[11px] font-bold leading-none text-white shadow-md">
-                                                {skill.cost}
+                                                {skillInfo.cost}
                                             </span>
                                         </div>
 
@@ -157,7 +163,7 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                                             </div>
                                         )}
 
-                                        {disabled && (!skill.pre_requisite || skill.pre_requisite.length === 0) && (
+                                        {disabled && (!skillInfo.pre_requisite || skillInfo.pre_requisite.length === 0) && (
                                             <div className="mt-4 flex justify-end">
                                                 <button
                                                     type="button"
@@ -191,12 +197,12 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                                         {/* Descrição (apagada se disabled) */}
                                         <div className={disabled ? "opacity-70 grayscale" : ""}>
                                             <div className="whitespace-pre-line text-[15px] leading-snug text-neutral-200 break-words">
-                                                {highlight(skill.description)}
+                                                {highlight(skillInfo.description)}
                                             </div>
                                         </div>
 
                                         {/* Pré-requisitos — SEM apagado/grayscale */}
-                                        {disabled && (skill.pre_requisite && skill.pre_requisite.length > 0) && (
+                                        {disabled && (skillInfo.pre_requisite && skillInfo.pre_requisite.length > 0) && (
                                             <div className="mt-2 rounded-md border border-amber-400/30 bg-amber-400/10 p-2 text-xs text-amber-200">
                                                 <div className="flex flex-wrap gap-3">
                                                     <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] text-amber-200">
@@ -204,25 +210,30 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                                                         <span>Obtenha uma dessas habilidades para desbloquear</span>
                                                     </div>
 
-                                                    {skill.pre_requisite?.map((prerequisite, index) => (
-                                                        <div key={index} className="flex items-center gap-3 my-2 mx-2">
-                                                            <div className="relative h-12 w-12 shrink-0">
-                                                                <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-white/20 bg-black/50">
-                                                                    {prerequisite.image && (
-                                                                        <img
-                                                                            src={`/skills/${prerequisite.image}`}
-                                                                            alt={prerequisite.name}
-                                                                            className="h-full w-full -rotate-45 object-cover"
-                                                                        />
-                                                                    )}
-                                                                </div>
-                                                            </div>
+                                                    {skillInfo.pre_requisite?.map((prerequisite, index) => {
+                                                        const preRequisiteInfo = getSkillById(prerequisite)
 
-                                                            <h3 className="text-sm font-semibold text-neutral-100">
-                                                                {prerequisite.name}
-                                                            </h3>
-                                                        </div>
-                                                    ))}
+                                                        if (!preRequisiteInfo) { return }
+                                                    
+                                                        return (
+                                                            <div key={index} className="flex items-center gap-3 my-2 mx-2">
+                                                                <div className="relative h-12 w-12 shrink-0">
+                                                                    <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-white/20 bg-black/50">
+                                                                        {preRequisiteInfo.image && (
+                                                                            <img
+                                                                                src={`/skills/${preRequisiteInfo.image}`}
+                                                                                alt={preRequisiteInfo.name}
+                                                                                className="h-full w-full -rotate-45 object-cover"
+                                                                            />
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+
+                                                                <h3 className="text-sm font-semibold text-neutral-100">
+                                                                    {preRequisiteInfo.name}
+                                                                </h3>
+                                                            </div>
+                                                        )})}
                                                 </div>
                                             </div>
                                         )}

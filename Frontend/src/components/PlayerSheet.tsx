@@ -1,7 +1,7 @@
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
-import { calculateMaxHP, calculateMaxMP, calculateMaxPA, calculateInitialMP, calculateMaxLuminas } from "../utils/PlayerCalculator";
+import { calculateMaxHP, calculateMaxMP, calculateMaxPA, calculateInitialMP, calculateMaxLuminas, calculateSkillPoints } from "../utils/PlayerCalculator";
 import type { WeaponInfo } from "../api/ResponseModel";
 
 interface PlayerSheetProps {
@@ -59,62 +59,69 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInf
                         allowedCharacters={campaignInfo?.characters ?? []}
                     />
 
-                    {/* <div className="grid grid-cols-2 gap-3">
-                        <label className="form-control">
-                            <span className="label-text">Total de pontos</span>
-                            <input
-                                className="input input-bordered"
-                                placeholder="Ex.: 10"
-                                type="number"
-                                value={player?.playerSheet?.totalPoints ?? ""}
-                                onChange={async (e) => {
-                                    if (!player) return;
-
-                                    const raw = e.target.value;
-
-                                    const next = {
-                                        ...player,
-                                        playerSheet: {
-                                            ...player.playerSheet,
-                                            totalPoints: raw === "" ? undefined : Number(raw),
-                                        },
-                                    };
-
-                                    setPlayer(next);
-                                    await sync(next);
-                                }}
-                            />
-                        </label>
-
-                        <label className="form-control">
-                            <span className="label-text">XP</span>
-                            <input
-                                className="input input-bordered"
-                                placeholder="Ex.: 10"
-                                type="number"
-                                value={player?.playerSheet?.xp ?? ""}
-                                onChange={async (e) => {
-                                    if (!player) return;
-
-                                    const raw = e.target.value;
-
-                                    const next = {
-                                        ...player,
-                                        playerSheet: {
-                                            ...player.playerSheet,
-                                            xp: raw === "" ? undefined : Number(raw),
-                                        },
-                                    };
-
-                                    setPlayer(next);
-                                    await sync(next);
-                                }}
-                            />
-                        </label>
-                    </div> */}
-
                     <div className="card bg-base-200 shadow">
                         <div className="card-body">
+                            <div className="grid grid-cols-2 gap-3">
+                                <label className="form-control">
+                                    <span className="label-text">Nível do personagem</span>
+                                    <input
+                                        className="input input-bordered"
+                                        placeholder="Ex.: 10"
+                                        type="number"
+                                        value={player?.playerSheet?.totalPoints ?? ""}
+                                        onChange={async (e) => {
+                                            if (!player) return;
+
+                                            const raw = e.target.value;
+
+                                            const next = {
+                                                ...player,
+                                                playerSheet: {
+                                                    ...player.playerSheet,
+                                                    totalPoints: raw === "" ? undefined : Number(raw),
+                                                },
+                                            };
+
+                                            setPlayer(next);
+                                            await sync(next);
+                                        }}
+                                    />
+                                </label>
+
+                                <label className="form-control">
+                                    <span className="label-text">Ptos. de habilidade</span>
+                                    <div className="rounded-lg py-2 px-3 font-semibold bg-green-700/10 text-green-700 border border-green-700/20">
+                                        {calculateSkillPoints(player)}
+                                    </div>
+                                </label>
+
+                                {/* <label className="form-control">
+                                    <span className="label-text">XP</span>
+                                    <input
+                                        className="input input-bordered"
+                                        placeholder="Ex.: 10"
+                                        type="number"
+                                        value={player?.playerSheet?.xp ?? ""}
+                                        onChange={async (e) => {
+                                            if (!player) return;
+
+                                            const raw = e.target.value;
+
+                                            const next = {
+                                                ...player,
+                                                playerSheet: {
+                                                    ...player.playerSheet,
+                                                    xp: raw === "" ? undefined : Number(raw),
+                                                },
+                                            };
+
+                                            setPlayer(next);
+                                            await sync(next);
+                                        }}
+                                    />
+                                </label> */}
+                            </div>
+
                             <div className="grid grid-cols-2 gap-3">
                                 <label className="form-control">
                                     <span className="label-text">Poder</span>

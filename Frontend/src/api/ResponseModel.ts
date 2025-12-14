@@ -124,24 +124,22 @@ export interface PlayerItemResponse {
     maxQuantity: number
 }
 
+export interface PlayerSkillResponse {
+    id: string;
+    skillId: string;
+}
+
 export interface SkillResponse {
     id: string;
+    character: string;
     name: string;
     cost: number;
     description: string;
     type: string;
     isGradient: boolean;
     image: string;
-    isBlocked: boolean;
-    isUnlocked: boolean;
     slot?: number;
-    pre_requisite?: SkillPreRequisite[];
-}
-
-export interface SkillPreRequisite {
-    id: string;
-    name: string;
-    image: string;
+    pre_requisite?: string[];
 }
 
 export interface WeaponResponse {

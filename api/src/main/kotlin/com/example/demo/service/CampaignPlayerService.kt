@@ -42,7 +42,8 @@ class CampaignPlayerService(
                                 battleLogs = null,
                                 pictos = null,
                                 luminas = null,
-                                items = null
+                                items = null,
+                                skills = null
                         )
                 }
         }

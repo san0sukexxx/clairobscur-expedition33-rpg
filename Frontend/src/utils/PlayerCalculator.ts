@@ -198,6 +198,10 @@ export function calculateMaxLuminas(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.power ?? 0) * 10;
 }
 
+export function calculateSkillPoints(player: GetPlayerResponse | null): number {
+    return (player?.playerSheet?.totalPoints ?? 0) * 2;
+}
+
 export function calculateInitialMP(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.hability ?? 0);
 }
