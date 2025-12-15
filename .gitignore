@@ -32,3 +32,5 @@ api/data/app.db-wal
 Frontend/public/assets/ammo/
 
 Frontend/public/assets/themes/default/
+
+.claude/

@@ -80,8 +80,6 @@ export function checkForFragile(target: BattleCharacterInfo, damage: number): bo
 
     if (npcInfo == undefined || hasBroken(target)) { return false }
 
-    console.log(npcInfo.resistance)
-    console.log(damage)
     return npcInfo.resistance * 2 < damage
 }
 

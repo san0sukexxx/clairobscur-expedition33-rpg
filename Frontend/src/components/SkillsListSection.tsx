@@ -1,21 +1,28 @@
 import React, { useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaInfoCircle, FaLock, FaUnlock } from "react-icons/fa";
+import { FaInfoCircle, FaLock, FaUnlock, FaTrash } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
 import type { PlayerSkillResponse, SkillResponse } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import { getPlayerHasSkill, getSkillById, getSkillIsBlocked } from "../utils/SkillUtils";
+import { getPlayerHasSkill, getSkillById, getSkillIsBlocked, getEnrichedCharacterSkills, calculateUsedSkillPoints, hasPrerequisitesFulfilled } from "../utils/SkillUtils";
+import { calculateSkillPoints } from "../utils/PlayerCalculator";
+import { APISkill } from "../api/APISkill";
 
 export interface SkillsListTabProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
+    isAdmin: boolean;
 }
 
-export default function SkillsListSection({ player, setPlayer }: SkillsListTabProps) {
+export default function SkillsListSection({ player, setPlayer, isAdmin }: SkillsListTabProps) {
     if(!player) { return }
-    
-    const list: PlayerSkillResponse[] = Array.isArray(player?.skills) ? (player!.skills as PlayerSkillResponse[]) : [];
+
+    const list: SkillResponse[] = getEnrichedCharacterSkills(player);
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+    const totalPoints = calculateSkillPoints(player);
+    const usedPoints = calculateUsedSkillPoints(player);
+    const remainingPoints = totalPoints - usedPoints;
 
     const toggle = useCallback((id: string) => {
         setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -29,14 +36,52 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
         );
     }
 
-    function handleUnlock(skillId: string) {
-        setPlayer((prev) => {
-            if (!prev) return prev;
-            const skills = (prev.skills ?? []).map((s: PlayerSkillResponse) =>
-                s.id === skillId ? { ...s, isUnlocked: true } : s
-            );
-            return { ...prev, skills };
-        });
+    async function handleUnlock(skillId: string) {
+        if (!player) return;
+
+        const alreadyUnlocked = player.skills?.some(s => s.skillId === skillId);
+        if (alreadyUnlocked) return;
+
+        try {
+            const relationId = await APISkill.addPlayerSkill({
+                playerId: player.id,
+                skillId: skillId
+            });
+
+            const newSkill: PlayerSkillResponse = {
+                id: relationId.toString(),
+                skillId: skillId
+            };
+
+            setPlayer((prev) => {
+                if (!prev) return prev;
+                return { ...prev, skills: [...(prev.skills ?? []), newSkill] };
+            });
+        } catch (error) {
+            console.error("Erro ao desbloquear habilidade:", error);
+        }
+    }
+
+    async function handleRemove(skillId: string) {
+        if (!player) return;
+
+        const playerSkill = player.skills?.find(s => s.skillId === skillId);
+        if (!playerSkill) return;
+
+        try {
+            const relationId = parseInt(playerSkill.id);
+            await APISkill.deletePlayerSkill(relationId);
+
+            setPlayer((prev) => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    skills: prev.skills?.filter(s => s.skillId !== skillId) ?? []
+                };
+            });
+        } catch (error) {
+            console.error("Erro ao remover habilidade:", error);
+        }
     }
 
     const highlight = (text: string) => {
@@ -112,11 +157,9 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                                 aria-controls={`skill-desc-${skill.id}`}
                             >
                                 <div className="flex items-center gap-4">
-                                    {/* Imagem em losango */}
                                     <div className="relative h-12 w-12 shrink-0">
                                         <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-white/20 bg-black/50">
                                             {skillInfo.image ? (
-                                                // eslint-disable-next-line @next/next/no-img-element
                                                 <img
                                                     src={`/skills/${skillInfo.image}`}
                                                     alt={skillInfo.name}
@@ -130,7 +173,6 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                                         </div>
                                     </div>
 
-                                    {/* Título + chips */}
                                     <div className="min-w-0 flex-1">
                                         <div className="flex flex-wrap items-center gap-2 min-w-0">
                                             <h3 className="truncate font-serif text-lg font-semibold tracking-wide text-neutral-100 min-w-0">
@@ -149,38 +191,58 @@ export default function SkillsListSection({ player, setPlayer }: SkillsListTabPr
                                                 </span>
                                             )}
 
-                                            {/* Badge de custo */}
                                             <span className="ml-auto shrink-0 rounded-full bg-blue-600 px-2.5 py-0.5 text-[11px] font-bold leading-none text-white shadow-md">
                                                 {skillInfo.cost}
                                             </span>
                                         </div>
 
-                                        {/* Aviso de não desbloqueada */}
                                         {disabled && (
                                             <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] text-amber-200">
                                                 <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
                                                 <span>Habilidade ainda não desbloqueada</span>
                                             </div>
                                         )}
-
-                                        {disabled && (!skillInfo.pre_requisite || skillInfo.pre_requisite.length === 0) && (
-                                            <div className="mt-4 flex justify-end">
-                                                <button
-                                                    type="button"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handleUnlock(skill.id);
-                                                    }}
-                                                    className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                                                >
-                                                    <FaUnlock className="h-3.5 w-3.5" aria-hidden />
-                                                    Desloquear
-                                                </button>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </button>
+
+                            {disabled && !getSkillIsBlocked(skill.id, player) && hasPrerequisitesFulfilled(skill.id, player) && (
+                                <div className="mt-4 flex justify-end">
+                                    {remainingPoints < skillInfo.cost ? (
+                                        <div className="text-xs text-red-400">
+                                            Pontos insuficientes (necessário: {skillInfo.cost}, disponível: {remainingPoints})
+                                        </div>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleUnlock(skill.id);
+                                            }}
+                                            className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                                        >
+                                            <FaUnlock className="h-3.5 w-3.5" aria-hidden />
+                                            Desbloquear ({skillInfo.cost})
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
+                            {!disabled && isAdmin && (
+                                <div className="mt-4 flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleRemove(skill.id);
+                                        }}
+                                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                    >
+                                        <FaTrash className="h-3.5 w-3.5" aria-hidden />
+                                        Remover
+                                    </button>
+                                </div>
+                            )}
 
                             {/* Área expansível */}
                             <AnimatePresence initial={false}>

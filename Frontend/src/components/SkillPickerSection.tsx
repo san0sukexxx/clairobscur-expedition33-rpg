@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { SkillResponse } from "../api/ResponseModel";
 import SkillModal from "./SkillModal";
+import { getEnrichedCharacterSkills, getPlayerHasSkill, getSkillIsBlocked } from "../utils/SkillUtils";
 
 export interface SkillPickerProps {
     player: GetPlayerResponse | null;
@@ -67,47 +68,59 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
 export default function SkillPickerSection({ player, setPlayer }: SkillPickerProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [query, setQuery] = useState("");
+    const [slotAssignments, setSlotAssignments] = useState<Record<number, string>>({});
 
-    // Slots atuais do player (0..5) a partir de player.skills (apenas válidas: desbloqueadas e não bloqueadas)
+    const characterSkills = useMemo(() =>
+        getEnrichedCharacterSkills(player),
+        [player]
+    );
+
     const slots: (SkillResponse | null)[] = useMemo(() => {
         const arr: (SkillResponse | null)[] = [null, null, null, null, null, null];
-        (player?.skills ?? [])
-            .filter((s) => s.isUnlocked && !s.isBlocked)
-            .forEach((s) => {
-                const idx = typeof s.slot === "number" ? Math.max(0, Math.min(5, s.slot!)) : -1;
-                if (idx >= 0) arr[idx] = s as SkillResponse;
-            });
-        return arr;
-    }, [player?.skills]);
 
-    // Pool disponível: habilidades do player SEM slot definido e válidas
+        Object.entries(slotAssignments).forEach(([slot, skillId]) => {
+            const skill = characterSkills.find(s => s.id === skillId);
+            if (skill && player && getPlayerHasSkill(skillId, player) && !getSkillIsBlocked(skillId, player)) {
+                arr[Number(slot)] = skill;
+            }
+        });
+
+        return arr;
+    }, [characterSkills, slotAssignments, player]);
+
     const filtered = useMemo(() => {
-        const all = (player?.skills ?? []) as SkillResponse[];
-        const pool = all.filter((s) => s.slot === undefined && s.isUnlocked && !s.isBlocked);
+        if (!player) return [];
+
+        const assignedIds = new Set(Object.values(slotAssignments));
+
+        const pool = characterSkills.filter((s) =>
+            !assignedIds.has(s.id) &&
+            getPlayerHasSkill(s.id, player) &&
+            !getSkillIsBlocked(s.id, player)
+        );
+
         const q = query.trim().toLowerCase();
         if (!q) return pool;
         return pool.filter(
             (s) => s.name.toLowerCase().includes(q) || (s.description ?? "").toLowerCase().includes(q)
         );
-    }, [player?.skills, query]);
+    }, [characterSkills, query, slotAssignments, player]);
 
     function upsertSkillAt(slotIndex: number, skill: SkillResponse) {
-        if (skill.isBlocked || !skill.isUnlocked) return; // segurança extra
-        setPlayer((prev) => {
-            if (!prev) return prev;
-            const current = (prev.skills ?? []) as SkillResponse[];
-            const others = current.filter((s) => s.slot !== slotIndex && s.id !== skill.id);
-            const chosen: SkillResponse = { ...skill, slot: slotIndex };
-            return { ...prev, skills: [...others, chosen] };
-        });
+        if (!player) return;
+        if (getSkillIsBlocked(skill.id, player) || !getPlayerHasSkill(skill.id, player)) return;
+
+        setSlotAssignments(prev => ({
+            ...prev,
+            [slotIndex]: skill.id
+        }));
         setOpenSlot(null);
     }
 
     function clearSlot(slotIndex: number) {
-        setPlayer((prev) => {
-            if (!prev) return prev;
-            const next = (prev.skills ?? []).map((s) => (s.slot === slotIndex ? { ...s, slot: undefined } : s));
-            return { ...prev, skills: next };
+        setSlotAssignments(prev => {
+            const { [slotIndex]: removed, ...rest } = prev;
+            return rest;
         });
     }
 

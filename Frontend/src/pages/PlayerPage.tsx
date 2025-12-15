@@ -244,7 +244,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "habilidades" && (
-            <SkillsSection player={player} setPlayer={setPlayer} />
+            <SkillsSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} />
           )}
         </section>
       </main>

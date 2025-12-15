@@ -138,8 +138,8 @@ export interface SkillResponse {
     type: string;
     isGradient: boolean;
     image: string;
-    slot?: number;
     pre_requisite?: string[];
+    isBlocked?: boolean;
 }
 
 export interface WeaponResponse {
