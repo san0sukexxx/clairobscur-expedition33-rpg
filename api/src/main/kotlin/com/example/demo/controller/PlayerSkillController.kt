@@ -1,6 +1,7 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.CreatePlayerSkillRequest
+import com.example.demo.dto.UpdatePlayerSkillRequest
 import com.example.demo.model.PlayerSkill
 import com.example.demo.repository.PlayerSkillRepository
 import org.springframework.http.ResponseEntity
@@ -21,10 +22,28 @@ class PlayerSkillController(private val repository: PlayerSkillRepository) {
         val entity =
                 PlayerSkill(
                         playerId = body.playerId,
-                        skillId = body.skillId
+                        skillId = body.skillId,
+                        slot = body.slot
                 )
 
         return repository.save(entity).id ?: 0
+    }
+
+    @PutMapping("/{id}")
+    fun update(
+            @PathVariable id: Int,
+            @RequestBody body: UpdatePlayerSkillRequest
+    ): ResponseEntity<Void> {
+        val existing = repository.findById(id).orElse(null)
+                ?: return ResponseEntity.notFound().build()
+
+        val updated =
+                existing.copy(
+                        slot = body.slot
+                )
+
+        repository.save(updated)
+        return ResponseEntity.noContent().build()
     }
 
     @DeleteMapping("/{id}")

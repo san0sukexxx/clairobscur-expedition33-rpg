@@ -127,6 +127,7 @@ export interface PlayerItemResponse {
 export interface PlayerSkillResponse {
     id: string;
     skillId: string;
+    slot?: number | null;
 }
 
 export interface SkillResponse {

@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { SkillResponse } from "../api/ResponseModel";
 import SkillModal from "./SkillModal";
 import { getEnrichedCharacterSkills, getPlayerHasSkill, getSkillIsBlocked } from "../utils/SkillUtils";
+import { APISkill } from "../api/APISkill";
 
 export interface SkillPickerProps {
     player: GetPlayerResponse | null;
@@ -75,6 +76,18 @@ export default function SkillPickerSection({ player, setPlayer }: SkillPickerPro
         [player]
     );
 
+    useEffect(() => {
+        if (!player?.skills) return;
+
+        const assignments: Record<number, string> = {};
+        player.skills.forEach(skill => {
+            if (skill.slot !== null && skill.slot !== undefined) {
+                assignments[skill.slot] = skill.skillId;
+            }
+        });
+        setSlotAssignments(assignments);
+    }, [player?.skills]);
+
     const slots: (SkillResponse | null)[] = useMemo(() => {
         const arr: (SkillResponse | null)[] = [null, null, null, null, null, null];
 
@@ -106,22 +119,75 @@ export default function SkillPickerSection({ player, setPlayer }: SkillPickerPro
         );
     }, [characterSkills, query, slotAssignments, player]);
 
-    function upsertSkillAt(slotIndex: number, skill: SkillResponse) {
+    async function upsertSkillAt(slotIndex: number, skill: SkillResponse) {
         if (!player) return;
         if (getSkillIsBlocked(skill.id, player) || !getPlayerHasSkill(skill.id, player)) return;
 
-        setSlotAssignments(prev => ({
-            ...prev,
-            [slotIndex]: skill.id
-        }));
-        setOpenSlot(null);
+        const playerSkill = player.skills?.find(s => s.skillId === skill.id);
+        if (!playerSkill) return;
+
+        if (playerSkill.slot === slotIndex) {
+            setOpenSlot(null);
+            return;
+        }
+
+        const previousSkillInSlot = slotAssignments[slotIndex];
+
+        try {
+            if (previousSkillInSlot && previousSkillInSlot !== skill.id) {
+                const prevPlayerSkill = player.skills?.find(s => s.skillId === previousSkillInSlot);
+                if (prevPlayerSkill) {
+                    const prevRelationId = parseInt(prevPlayerSkill.id);
+                    await APISkill.updatePlayerSkill(prevRelationId, { slot: null });
+                }
+            }
+
+            const relationId = parseInt(playerSkill.id);
+            await APISkill.updatePlayerSkill(relationId, { slot: slotIndex });
+
+            setPlayer(prev => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    skills: prev.skills?.map(s => {
+                        if (s.skillId === skill.id) return { ...s, slot: slotIndex };
+                        if (s.skillId === previousSkillInSlot && previousSkillInSlot !== skill.id) return { ...s, slot: null };
+                        return s;
+                    }) ?? []
+                };
+            });
+
+            setOpenSlot(null);
+        } catch (error) {
+            console.error("Erro ao equipar habilidade:", error);
+        }
     }
 
-    function clearSlot(slotIndex: number) {
-        setSlotAssignments(prev => {
-            const { [slotIndex]: removed, ...rest } = prev;
-            return rest;
-        });
+    async function clearSlot(slotIndex: number) {
+        if (!player) return;
+
+        const skillId = slotAssignments[slotIndex];
+        if (!skillId) return;
+
+        const playerSkill = player.skills?.find(s => s.skillId === skillId);
+        if (!playerSkill) return;
+
+        try {
+            const relationId = parseInt(playerSkill.id);
+            await APISkill.updatePlayerSkill(relationId, { slot: null });
+
+            setPlayer(prev => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    skills: prev.skills?.map(s =>
+                        s.skillId === skillId ? { ...s, slot: null } : s
+                    ) ?? []
+                };
+            });
+        } catch (error) {
+            console.error("Erro ao desequipar habilidade:", error);
+        }
     }
 
     function handleSlotActivate(idx: number) {

@@ -7,5 +7,6 @@ import jakarta.persistence.*
 data class PlayerSkill(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int? = null,
         @Column(name = "player_id", nullable = false) val playerId: Int,
-        @Column(name = "skill_id", nullable = false) val skillId: String
+        @Column(name = "skill_id", nullable = false) val skillId: String,
+        @Column(name = "slot") val slot: Int? = null
 )
