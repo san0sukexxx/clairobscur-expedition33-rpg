@@ -135,11 +135,12 @@ export interface SkillResponse {
     character: string;
     name: string;
     cost: number;
+    unlockCost?: number;
     description: string;
-    type: string;
-    isGradient: boolean;
+    type?: string;
+    isGradient?: boolean;
     image: string;
-    pre_requisite?: string[];
+    preRequisite?: string[];
     isBlocked?: boolean;
 }
 

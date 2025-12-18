@@ -168,7 +168,7 @@ export class MockAPIPlayer {
           "image": "Sciel_FinalPath.webp",
           "isBlocked": false,
           "isUnlocked": false,
-          "pre_requisite": [
+          "preRequisite": [
             {
               "id": "sciel-focused-foretell",
               "name": "Focused Foretell",

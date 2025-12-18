@@ -208,9 +208,9 @@ export default function SkillsListSection({ player, setPlayer, isAdmin }: Skills
 
                             {disabled && !getSkillIsBlocked(skill.id, player) && hasPrerequisitesFulfilled(skill.id, player) && (
                                 <div className="mt-4 flex justify-end">
-                                    {remainingPoints < skillInfo.cost ? (
+                                    {skillInfo.unlockCost !== undefined && remainingPoints < skillInfo.unlockCost ? (
                                         <div className="text-xs text-red-400">
-                                            Pontos insuficientes (necessário: {skillInfo.cost}, disponível: {remainingPoints})
+                                            Pontos insuficientes (necessário: {skillInfo.unlockCost}, disponível: {remainingPoints})
                                         </div>
                                     ) : (
                                         <button
@@ -222,7 +222,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin }: Skills
                                             className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
                                         >
                                             <FaUnlock className="h-3.5 w-3.5" aria-hidden />
-                                            Desbloquear ({skillInfo.cost})
+                                            Desbloquear {skillInfo.unlockCost !== undefined ? `(${skillInfo.unlockCost})` : ''}
                                         </button>
                                     )}
                                 </div>
@@ -264,7 +264,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin }: Skills
                                         </div>
 
                                         {/* Pré-requisitos — SEM apagado/grayscale */}
-                                        {disabled && (skillInfo.pre_requisite && skillInfo.pre_requisite.length > 0) && (
+                                        {disabled && (skillInfo.preRequisite && skillInfo.preRequisite.length > 0) && (
                                             <div className="mt-2 rounded-md border border-amber-400/30 bg-amber-400/10 p-2 text-xs text-amber-200">
                                                 <div className="flex flex-wrap gap-3">
                                                     <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] text-amber-200">
@@ -272,7 +272,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin }: Skills
                                                         <span>Obtenha uma dessas habilidades para desbloquear</span>
                                                     </div>
 
-                                                    {skillInfo.pre_requisite?.map((prerequisite, index) => {
+                                                    {skillInfo.preRequisite?.map((prerequisite, index) => {
                                                         const preRequisiteInfo = getSkillById(prerequisite)
 
                                                         if (!preRequisiteInfo) { return }

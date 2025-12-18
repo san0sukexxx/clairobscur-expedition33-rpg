@@ -15,7 +15,7 @@ export function getPlayerHasSkill(id: string, player: GetPlayerResponse): boolea
 export function hasPrerequisitesFulfilled(id: string, player: GetPlayerResponse): boolean {
     const skillInfo = getSkillById(id)
 
-    if(!skillInfo || !skillInfo.pre_requisite || skillInfo.pre_requisite.length === 0) {
+    if(!skillInfo || !skillInfo.preRequisite || skillInfo.preRequisite.length === 0) {
         return true;
     }
 
@@ -23,7 +23,7 @@ export function hasPrerequisitesFulfilled(id: string, player: GetPlayerResponse)
         return false;
     }
 
-    return skillInfo.pre_requisite.some(preReqId =>
+    return skillInfo.preRequisite.some(preReqId =>
         player.skills!.find(skill => skill.skillId === preReqId) !== undefined
     );
 }
@@ -35,7 +35,7 @@ export function getSkillIsBlocked(id: string, player: GetPlayerResponse): boolea
         return false;
     }
 
-    if(!skillInfo.pre_requisite || skillInfo.pre_requisite.length === 0) {
+    if(!skillInfo.preRequisite || skillInfo.preRequisite.length === 0) {
         return false;
     }
 
@@ -43,7 +43,7 @@ export function getSkillIsBlocked(id: string, player: GetPlayerResponse): boolea
         return true;
     }
 
-    return !skillInfo.pre_requisite.some(preReqId =>
+    return !skillInfo.preRequisite.some(preReqId =>
         player.skills!.find(skill => skill.skillId === preReqId) !== undefined
     );
 }
@@ -83,6 +83,6 @@ export function calculateUsedSkillPoints(player: GetPlayerResponse | null): numb
 
     return player.skills.reduce((total, playerSkill) => {
         const skillInfo = getSkillById(playerSkill.skillId);
-        return total + (skillInfo?.cost ?? 0);
+        return total + (skillInfo?.unlockCost ?? 0);
     }, 0);
 }
