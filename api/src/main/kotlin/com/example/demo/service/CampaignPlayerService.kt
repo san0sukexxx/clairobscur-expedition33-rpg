@@ -6,6 +6,7 @@ import com.example.demo.dto.PlayerWeaponResponse
 import com.example.demo.repository.CampaignPlayerRepository
 import com.example.demo.repository.PlayerRepository
 import com.example.demo.repository.PlayerWeaponRepository
+import com.example.demo.repository.PlayerPictoRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -13,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional
 class CampaignPlayerService(
         private val campaignPlayerRepository: CampaignPlayerRepository,
         private val playerRepository: PlayerRepository,
-        private val playerWeaponRepository: PlayerWeaponRepository
+        private val playerWeaponRepository: PlayerWeaponRepository,
+        private val playerPictoRepository: PlayerPictoRepository
 ) {
 
         fun listPlayersByCampaign(campaignId: Int): List<GetPlayerResponse> {
@@ -33,6 +35,8 @@ class CampaignPlayerService(
                                         )
                                 }
 
+                        val pictos = playerPictoRepository.findByPlayerId(pid)
+
                         GetPlayerResponse(
                                 id = pid,
                                 playerSheet = PlayerSheetResponse.fromEntity(p),
@@ -40,7 +44,7 @@ class CampaignPlayerService(
                                 fightInfo = null,
                                 isMasterEditing = null,
                                 battleLogs = null,
-                                pictos = null,
+                                pictos = pictos,
                                 luminas = null,
                                 items = null,
                                 skills = null

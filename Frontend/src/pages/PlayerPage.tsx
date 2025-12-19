@@ -34,11 +34,12 @@ import {
   calculateStatusResolvedTotalValue,
   calculateResolveStatusWithDiceTotal,
   getPlayerFrenzy,
-  playerHasDizzy
+  playerHasDizzy,
+  playerPictosTotalSpeed,
+  calculatePlayerCriticalMulti
 } from "../utils/PlayerCalculator";
 
 import {
-  calculateCriticalMulti,
   calculateFailureDiv,
   diceTotal,
   countCriticalRolls,
@@ -71,6 +72,7 @@ export default function PlayerPage() {
   const [modalTitle, setModalTitle] = useState<string | undefined>(undefined);
   const [modalBody, setModalBody] = useState<React.ReactNode>(null);
   const [attackType, setAttackType] = useState<AttackType>("basic");
+  const [isInventoryActiveInCombat, setIsInventoryActiveInCombat] = useState(false);
   const { showToast } = useToast();
   const { pathname } = useLocation();
   const isAdmin = !!matchPath(
@@ -115,6 +117,12 @@ export default function PlayerPage() {
   useEffect(() => {
     setup();
   }, []);
+
+  useEffect(() => {
+    if (tab !== "inventario") {
+      setIsInventoryActiveInCombat(false);
+    }
+  }, [tab]);
 
   const checkPlayerLoop = useCallback(async () => {
     try {
@@ -236,7 +244,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "inventario" && (
-            <ItemsSection player={player} setPlayer={setPlayer} />
+            <ItemsSection player={player} setPlayer={setPlayer} isInventoryActiveInCombat={isInventoryActiveInCombat} />
           )}
 
           {!loading && !error && tab === "combate" && (
@@ -456,7 +464,7 @@ export default function PlayerPage() {
 
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForInitiative(weaponInfo), result => {
       const criticalRolls = countCriticalRolls(result)
-      const criticalMulti = calculateCriticalMulti(result)
+      const criticalMulti = calculatePlayerCriticalMulti(result, player)
       const rollTotal = diceTotal(result)
       const total = initiativeTotal(player, result)
       const failures = countFailuresRolls(result)
@@ -488,6 +496,7 @@ export default function PlayerPage() {
               </span>
             )}
           </p>
+          <p>Bônus Pictos: <b>{playerPictosTotalSpeed(player)}</b></p>
           <h1 className="text-2xl font-bold">Total: {total}</h1>
         </div>
       )
@@ -579,7 +588,7 @@ export default function PlayerPage() {
 
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), result => {
       const criticalRolls = countCriticalRolls(result)
-      const criticalMulti = calculateCriticalMulti(result)
+      const criticalMulti = calculatePlayerCriticalMulti(result, player)
       const rollTotal = diceTotal(result)
       const weaponPower = calculateRawWeaponPower(weaponInfo, attackType)
       const total = calculateAttackDamage(player, weaponInfo, target, result, attackType)
@@ -740,6 +749,7 @@ export default function PlayerPage() {
     switch (action) {
       case COMBAT_MENU_ACTIONS.Inventory:
         setTab("inventario");
+        setIsInventoryActiveInCombat(true);
         break;
       case COMBAT_MENU_ACTIONS.Skills:
         setTab("habilidades");

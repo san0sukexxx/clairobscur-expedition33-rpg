@@ -602,17 +602,19 @@ export default function CombatAdmin({
                                                     <td>{renderAvatarCell(m)}</td>
                                                     <td>{m.rowId}</td>
 
-                                                    <td className="flex items-center gap-1">
-                                                        <span
-                                                            className={`font-semibold ${m.currentHp === 0 ? "text-neutral-500 line-through" : ""
-                                                                }`}
-                                                        >
-                                                            {m.name}
-                                                        </span>
+                                                    <td>
+                                                        <div className={m.currentHp === 0 ? "inline-flex items-center gap-1" : ""}>
+                                                            <span
+                                                                className={`font-semibold ${m.currentHp === 0 ? "text-neutral-500 line-through" : ""
+                                                                    }`}
+                                                            >
+                                                                {m.name}
+                                                            </span>
 
-                                                        {m.currentHp === 0 && (
-                                                            <FaSkull className="ml-4 text-red-600 w-4 h-4" title="Morto" />
-                                                        )}
+                                                            {m.currentHp === 0 && (
+                                                                <FaSkull className="ml-4 text-red-600 w-4 h-4" title="Morto" />
+                                                            )}
+                                                        </div>
                                                     </td>
 
                                                     <td className="min-w-[160px]">

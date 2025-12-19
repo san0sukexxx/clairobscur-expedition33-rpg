@@ -3,7 +3,19 @@ import { PictosList } from "../data/PictosList";
 import type { PictoColor, PictoInfo } from "../api/ResponseModel";
 
 export function calculatePictoSpeed(value: number, level: number): number {
-    return value / 20 * level;
+    return Math.floor((value / 1400) * level);
+}
+
+export function calculatePictoDefense(value: number, level: number): number {
+    return Math.floor((value / 1000) * level);
+}
+
+export function calculatePictoHealth(value: number, level: number): number {
+    return Math.floor((value / 2500) * level);
+}
+
+export function calculatePictoCritical(value: number, level: number): number {
+    return roundDownOneDecimal((value / 8) * level / 10);
 }
 
 export function displayPictoSpeed(value: number, level: number): number {
@@ -23,19 +35,19 @@ export function displayPictoCritical(value: number, level: number): number {
 }
 
 export function displayPictoAttributeSpeed(value: number, level: number): string {
-    return "+" + Math.floor((value / 1400) * level);
+    return "+" + calculatePictoSpeed(value, level);
 }
 
 export function displayPictoAttributeDefense(value: number, level: number): string {
-    return "+" + Math.floor((value / 1000) * level);
+    return "+" + calculatePictoDefense(value, level);
 }
 
 export function displayPictoAttributeHealth(value: number, level: number): string {
-    return "+" + Math.floor((value / 2500) * level);
+    return "+" + calculatePictoHealth(value, level);
 }
 
 export function displayPictoAttributeCritical(value: number, level: number): string {
-    return "x" + roundDownOneDecimal((value / 5) * level / 10);
+    return "x" + calculatePictoCritical(value, level);
 }
 
 export function getPictoByName(name: string): PictoInfo | undefined {

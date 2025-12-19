@@ -9,6 +9,7 @@ const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", 
 interface ItemsSectionProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
+    isInventoryActiveInCombat?: boolean;
 }
 
 function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
@@ -43,10 +44,14 @@ function buildVisible(items?: PlayerItemResponse[]) {
 
 function ElixirsCard({
     player,
-    setPlayer
+    setPlayer,
+    inCombat = false,
+    canUsePotion = false
 }: {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
+    inCombat?: boolean;
+    canUsePotion?: boolean;
 }) {
     const ELIXIRS = [
         { id: "chroma-elixir", label: "Chroma", src: "/items/Chroma Elixir.png" },
@@ -206,6 +211,23 @@ function ElixirsCard({
                                     <FaChevronRight size={12} />
                                 </button>
                             </div>
+
+                            {(e.id === "chroma-elixir" || inCombat) && (
+                                <button
+                                    className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15 disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                                    disabled={
+                                        e.id === "chroma-elixir"
+                                            ? (inCombat || qty === 0 || (player?.playerSheet?.hpCurrent ?? 0) <= 0)
+                                            : (!canUsePotion || qty === 0)
+                                    }
+                                    onClick={() => {
+                                        // TODO: Implementar uso do item
+                                        console.log("Usar item:", e.id);
+                                    }}
+                                >
+                                    Usar
+                                </button>
+                            )}
                         </div>
                     );
                 })}
@@ -215,13 +237,23 @@ function ElixirsCard({
 }
 
 
-export default function ItemsSection({ player, setPlayer }: ItemsSectionProps) {
+export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false }: ItemsSectionProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [editingItem, setEditingItem] = useState<PlayerItemResponse | null>(null);
 
     const [itemId, setItemId] = useState("");
     const [quantity, setQuantity] = useState<number>(1);
     const [maxQuantity, setMaxQuantity] = useState<number>(99);
+
+    const inCombat = player?.fightInfo != null;
+
+    const isYourTurn = useMemo(() => {
+        const firstTurn = player?.fightInfo?.turns?.[0];
+        if (!firstTurn) return false;
+        return firstTurn.battleCharacterId === player?.fightInfo?.playerBattleID;
+    }, [player?.fightInfo]);
+
+    const canUsePotion = isYourTurn && isInventoryActiveInCombat;
 
     const { result: visibleItems } = useMemo(
         () => buildVisible(player?.items),
@@ -359,7 +391,7 @@ export default function ItemsSection({ player, setPlayer }: ItemsSectionProps) {
             <div className="text-center text-lg tracking-widest pb-3 opacity-90">ITENS</div>
 
             <div className="mb-4">
-                <ElixirsCard player={player} setPlayer={setPlayer} />
+                <ElixirsCard player={player} setPlayer={setPlayer} inCombat={inCombat} canUsePotion={canUsePotion} />
             </div>
 
             <div className="flex flex-col gap-4">

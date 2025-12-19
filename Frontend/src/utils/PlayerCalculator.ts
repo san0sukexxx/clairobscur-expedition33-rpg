@@ -5,18 +5,94 @@ import { type AttackType, type BattleCharacterInfo, type DefenseOption, type Sta
 import {
     calculateCriticalMulti,
     calculateFailureDiv,
-    diceTotal
+    diceTotal,
+    countCriticalRolls
 } from "./DiceCalculator";
 import { getNpcById } from "../utils/NpcUtils"
 import { getWeaponElementModifier, hasHastened, hasProtected, hasShield, hasSlowed, hasStatus, hasUnprotected } from "./NpcCalculator";
 import { calculateWeaponVitalityBonus, calculateWeaponAgilityBonus, calculateWeaponDefenseBonus } from "./WeaponCalculator";
 import { getPlayerCharacter } from "./CharacterUtils";
+import { PictosList } from "../data/PictosList";
+import { calculatePictoHealth, calculatePictoSpeed, calculatePictoDefense, calculatePictoCritical } from "./PictoUtils";
+
+export function playerPictosTotalHealth(player: GetPlayerResponse | null): number {
+    let total = 0;
+    if (player?.pictos && player.pictos.length > 0) {
+        const equippedPictos = player.pictos.filter(picto => picto.slot !== null && picto.slot !== undefined);
+
+        for (const picto of equippedPictos) {
+            const pictoInfo = PictosList.find(p => p.name === picto.pictoId);
+            if (pictoInfo?.status?.health) {
+                total += calculatePictoHealth(pictoInfo.status.health, picto.level ?? 1);
+            }
+        }
+    }
+    return total;
+}
+
+export function playerPictosTotalSpeed(player: GetPlayerResponse | null): number {
+    let total = 0;
+    if (player?.pictos && player.pictos.length > 0) {
+        const equippedPictos = player.pictos.filter(picto => picto.slot !== null && picto.slot !== undefined);
+
+        for (const picto of equippedPictos) {
+            const pictoInfo = PictosList.find(p => p.name === picto.pictoId);
+            if (pictoInfo?.status?.speed) {
+                total += calculatePictoSpeed(pictoInfo.status.speed, picto.level ?? 1);
+            }
+        }
+    }
+    return total;
+}
+
+export function playerPictosTotalDefense(player: GetPlayerResponse | null): number {
+    let total = 0;
+    if (player?.pictos && player.pictos.length > 0) {
+        const equippedPictos = player.pictos.filter(picto => picto.slot !== null && picto.slot !== undefined);
+
+        for (const picto of equippedPictos) {
+            const pictoInfo = PictosList.find(p => p.name === picto.pictoId);
+            if (pictoInfo?.status?.defense) {
+                total += calculatePictoDefense(pictoInfo.status.defense, picto.level ?? 1);
+            }
+        }
+    }
+    return total;
+}
+
+export function playerPictosTotalCritical(player: GetPlayerResponse | null): number {
+    let total = 0;
+    if (player?.pictos && player.pictos.length > 0) {
+        const equippedPictos = player.pictos.filter(picto => picto.slot !== null && picto.slot !== undefined);
+
+        for (const picto of equippedPictos) {
+            const pictoInfo = PictosList.find(p => p.name === picto.pictoId);
+            if (pictoInfo?.status?.criticalRate) {
+                total += calculatePictoCritical(pictoInfo.status.criticalRate, picto.level ?? 1);
+            }
+        }
+    }
+    return total;
+}
+
+export function calculatePlayerCriticalMulti(diceResult: any, player: GetPlayerResponse | null): number {
+    const baseCriticalMulti = calculateCriticalMulti(diceResult);
+    const criticalRolls = countCriticalRolls(diceResult);
+
+    if (criticalRolls > 0) {
+        const pictoCritical = playerPictosTotalCritical(player);
+        return baseCriticalMulti + pictoCritical;
+    }
+
+    return baseCriticalMulti;
+}
 
 export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {
     const vitalityValue = calculateWeaponVitalityBonus(weaponInfo);
-    const resistanceHealth = (player?.playerSheet?.resistance ?? 0) * 5
+    const resistanceHealth = (player?.playerSheet?.resistance ?? 0) * 5;
+    const pictosHealthBonus = playerPictosTotalHealth(player);
 
-    return resistanceHealth + vitalityValue;
+    return resistanceHealth + vitalityValue + pictosHealthBonus;
 }
 
 export function calculateStatusResolvedTotalValue(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, status: StatusResponse): number {
@@ -79,7 +155,7 @@ export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattl
 export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType): number {
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
-    var criticalMulti = calculateCriticalMulti(diceResult)
+    var criticalMulti = calculatePlayerCriticalMulti(diceResult, player)
 
     var playerPower = (player?.playerSheet?.power ?? 0) * criticalMulti;
     if (failures > 0) {
@@ -101,24 +177,26 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
 
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
-    
+
     let empoweredMulti = playerHasEmpowered(player) ? 2 : 1;
     empoweredMulti = playerHasWeakened(player) ? 0.5 : empoweredMulti;
 
-    var playerPower = (player?.playerSheet?.power ?? 0) * calculateCriticalMulti(diceResult) * empoweredMulti;
+    var playerPower = (player?.playerSheet?.power ?? 0) * calculatePlayerCriticalMulti(diceResult, player) * empoweredMulti;
 
     if (failures > 0) {
         playerPower = Math.floor(playerPower / failures);
     }
-    const attackDamage = playerPower + calculateRawWeaponPower(weaponInfo, "basic") + total;
+    let attackDamage = playerPower + calculateRawWeaponPower(weaponInfo, "basic") + total;
 
     if (npcInfo != undefined) {
-        return Math.floor(
+        attackDamage = Math.floor(
             attackDamage * (getWeaponElementModifier(npcId, weaponInfo)?.multiplier ?? 1)
         );
     }
 
-    return attackDamage + (getPlayerFrenzy(player)?.ammount ?? 0);
+    attackDamage += (getPlayerFrenzy(player)?.ammount ?? 0);
+
+    return attackDamage;
 }
 
 export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any, defenseOption: DefenseOption): number {
@@ -144,14 +222,14 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     var playerDefense = 0;
 
     if (defenseOption == "block" || defenseOption == "dodge") {
-        var resistance = (player?.playerSheet?.resistance ?? 0) * calculateCriticalMulti(diceResult) * protectedMulti;
+        var resistance = (player?.playerSheet?.resistance ?? 0) * calculatePlayerCriticalMulti(diceResult, player) * protectedMulti;
         if (failures > 0) {
             resistance = Math.floor(resistance / failures);
         }
 
         playerDefense = resistance + diceTotalSum;
     } else if (defenseOption == "gradient-block") {
-        var power = (player?.playerSheet?.power ?? 0) * calculateCriticalMulti(diceResult);
+        var power = (player?.playerSheet?.power ?? 0) * calculatePlayerCriticalMulti(diceResult, player);
 
         if (failures > 0) {
             power = Math.floor(power / failures);
@@ -161,7 +239,7 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 
         playerDefense = power + diceTotalSum;
     } else if (defenseOption == "jump") {
-        var hability = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult) * hastenedMulti;
+        var hability = (player?.playerSheet?.hability ?? 0) * calculatePlayerCriticalMulti(diceResult, player) * hastenedMulti;
         if (failures > 0) {
             hability = hability / failures
         }
@@ -171,6 +249,14 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 
     if (defenseOption == "dodge") {
         playerDefense += (player?.playerSheet?.hability ?? 0) * hastenedMulti;
+    }
+
+    if (defenseOption == "dodge" || defenseOption == "jump") {
+        playerDefense += playerPictosTotalSpeed(player);
+    }
+
+    if (defenseOption == "block") {
+        playerDefense += playerPictosTotalDefense(player);
     }
 
     playerDefense = playerHasMarked(player) ? Math.floor(playerDefense * 0.5) : playerDefense;
@@ -257,7 +343,9 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {
         playerInitiative = Math.floor(playerInitiative / failures);
     }
 
-    return total + playerInitiative;
+    const pictosSpeedBonus = playerPictosTotalSpeed(player);
+
+    return total + playerInitiative + pictosSpeedBonus;
 }
 
 export function playerHasStatus(player: GetPlayerResponse | null, status: StatusType): boolean {
