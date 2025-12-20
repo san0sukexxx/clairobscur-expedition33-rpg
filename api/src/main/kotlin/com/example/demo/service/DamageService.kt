@@ -18,11 +18,39 @@ class DamageService(
 
     @Transactional
     fun applyDamage(targetBC: BattleCharacter, rawDamage: Int): Int {
-        val damage = rawDamage.coerceAtLeast(0)
-        if (damage <= 0) return targetBC.healthPoints
+        // Apply minimum damage rules:
+        // - NPCs: minimum 1 damage
+        // - Players: minimum 0 damage (can be 0)
+        val damage = when {
+            targetBC.characterType == "npc" -> rawDamage.coerceAtLeast(1)
+            else -> rawDamage.coerceAtLeast(0)
+        }
 
         val newHp = (targetBC.healthPoints - damage).coerceAtLeast(0)
         targetBC.healthPoints = newHp
+
+        if (damage > 0) {
+            val fleeingEffects = battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
+                targetBC.id!!,
+                "Fleeing"
+            )
+
+            if (fleeingEffects.isNotEmpty()) {
+                val battleId = targetBC.battleId ?: return newHp
+                val allCharacters = battleCharacterRepository.findByBattleId(battleId)
+                val teamMembers = allCharacters.filter { it.isEnemy == targetBC.isEnemy }
+
+                teamMembers.forEach { member ->
+                    val memberFleeingEffects = battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
+                        member.id!!,
+                        "Fleeing"
+                    )
+                    if (memberFleeingEffects.isNotEmpty()) {
+                        battleStatusEffectRepository.deleteAll(memberFleeingEffects)
+                    }
+                }
+            }
+        }
 
         if (newHp == 0) {
             if (targetBC.magicPoints != null) {

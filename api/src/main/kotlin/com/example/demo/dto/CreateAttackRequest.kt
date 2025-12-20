@@ -6,5 +6,7 @@ data class CreateAttackRequest(
         val targetBattleId: Int,
         val sourceBattleId: Int,
         val effects: List<StatusEffectRequest> = emptyList(),
-        val attackType: String?
+        val attackType: String?,
+        val skillCost: Int? = null,
+        val consumesCharge: Boolean? = null
 )

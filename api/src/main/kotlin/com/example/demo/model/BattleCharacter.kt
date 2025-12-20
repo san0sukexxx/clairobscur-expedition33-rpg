@@ -15,6 +15,8 @@ data class BattleCharacter(
         @Column(name = "max_health_points", nullable = false) var maxHealthPoints: Int,
         @Column(name = "magic_points") var magicPoints: Int? = null,
         @Column(name = "max_magic_points") val maxMagicPoints: Int? = null,
+        @Column(name = "charge_points") var chargePoints: Int? = null,
+        @Column(name = "max_charge_points") val maxChargePoints: Int? = null,
         @Column(name = "can_roll_initiative", nullable = false)
         var canRollInitiative: Boolean = false
 )

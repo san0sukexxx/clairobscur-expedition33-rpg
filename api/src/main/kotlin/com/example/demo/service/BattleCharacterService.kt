@@ -45,6 +45,8 @@ class BattleCharacterService(
                                 maxHealthPoints = request.maxHealthPoints,
                                 magicPoints = request.magicPoints,
                                 maxMagicPoints = request.maxMagicPoints,
+                                chargePoints = request.chargePoints ?: 0,
+                                maxChargePoints = request.maxChargePoints,
                                 canRollInitiative = request.canRollInitiative
                         )
 
@@ -154,6 +156,26 @@ class BattleCharacterService(
 
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)
+                )
+        }
+
+        @Transactional
+        fun updateCharacterMp(id: Int, newMp: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                val finalMp = newMp.coerceAtLeast(0)
+
+                entity.magicPoints = finalMp
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "MP_CHANGED", eventJson = null)
                 )
         }
 }

@@ -15,6 +15,7 @@ import com.example.demo.repository.BattleLogRepository
 import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.service.BattleService
+import com.example.demo.service.DamageService
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
@@ -28,7 +29,8 @@ class AttackController(
         private val battleLogRepository: BattleLogRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val battleTurnRepository: BattleTurnRepository,
-        private val battleService: BattleService
+        private val battleService: BattleService,
+        private val damageService: DamageService
 ) {
 
         @PostMapping
@@ -57,10 +59,28 @@ class AttackController(
                                 when (body.attackType) {
                                         "basic" -> (current + 1).coerceAtMost(max)
                                         "free-shot" -> (current - freeShotCost).coerceAtLeast(0)
+                                        "skill" -> {
+                                                val cost = body.skillCost ?: 0
+                                                (current - cost).coerceAtLeast(0)
+                                        }
                                         else -> current
                                 }
 
                         sourceBC.magicPoints = next
+
+                        // Charge system logic
+                        if (body.consumesCharge == true) {
+                                // Overcharge or other skill that consumes all charges
+                                sourceBC.chargePoints = 0
+                        } else {
+                                // All actions increment charge (+1), including each hit of multi-hit skills
+                                val currentCharge = sourceBC.chargePoints ?: 0
+                                val maxCharge = sourceBC.maxChargePoints ?: 0
+                                if (maxCharge > 0) {
+                                        sourceBC.chargePoints = (currentCharge + 1).coerceAtMost(maxCharge)
+                                }
+                        }
+
                         battleCharacterRepository.save(sourceBC)
                 }
 
@@ -99,31 +119,51 @@ class AttackController(
                                 battleCharacterRepository.findById(body.targetBattleId).orElse(null)
                                         ?: return ResponseEntity.badRequest().build()
 
-                        val newHp = (targetBC.healthPoints - body.totalDamage).coerceAtLeast(0)
-
-                        targetBC.healthPoints = newHp
-                        battleCharacterRepository.save(targetBC)
-
-                        if (newHp == 0) {
-                                val turns =
-                                        battleTurnRepository.findByBattleCharacterId(targetBC.id!!)
-                                if (turns.isNotEmpty()) {
-                                        battleTurnRepository.deleteAllInBatch(turns)
-                                }
-                        }
+                        val newHp = damageService.applyDamage(targetBC, body.totalDamage)
 
                         battleService.consumeShield(targetBC.id!!)
                         battleService.removeMarked(targetBC.id!!)
-                        
-                        body.effects.forEach { eff ->
-                                battleStatusEffectRepository.save(
-                                        BattleStatusEffect(
-                                                battleCharacterId = targetBC.id!!,
-                                                effectType = eff.effectType,
-                                                ammount = eff.ammount ?: 0,
-                                                remainingTurns = eff.remainingTurns
+
+                        val nonStackableEffects = listOf("Fragile", "Inverted", "Flying", "Dizzy", "Stunned", "Silenced", "Exhausted")
+
+                        if (newHp > 0) {
+                                body.effects.forEach { eff ->
+                                val allTargetEffects = battleStatusEffectRepository
+                                        .findByBattleCharacterId(targetBC.id!!)
+
+                                val existing = allTargetEffects.firstOrNull { it.effectType == eff.effectType }
+
+                                if (eff.effectType == "Fragile") {
+                                        val hasBroken = allTargetEffects.any { it.effectType == "Broken" }
+                                        if (hasBroken) {
+                                                return@forEach
+                                        }
+                                }
+
+                                if (existing != null && nonStackableEffects.contains(eff.effectType)) {
+                                        return@forEach
+                                }
+
+                                if (existing != null) {
+                                        val nextAmount = (existing.ammount) + (eff.ammount ?: 0)
+                                        val nextTurns = eff.remainingTurns ?: existing.remainingTurns
+                                        battleStatusEffectRepository.save(
+                                                existing.copy(
+                                                        ammount = nextAmount,
+                                                        remainingTurns = nextTurns
+                                                )
                                         )
-                                )
+                                } else {
+                                        battleStatusEffectRepository.save(
+                                                BattleStatusEffect(
+                                                        battleCharacterId = targetBC.id!!,
+                                                        effectType = eff.effectType,
+                                                        ammount = eff.ammount ?: 0,
+                                                        remainingTurns = eff.remainingTurns
+                                                )
+                                        )
+                                }
+                                }
                         }
 
                         battleLogRepository.save(

@@ -46,7 +46,7 @@ class DefenseController(
                 battleCharacterRepository.findById(attack.targetBattleId).orElse(null)
                         ?: return ResponseEntity.badRequest().build()
 
-        damageService.applyDamage(targetBC, body.totalDamage)
+        val newHp = damageService.applyDamage(targetBC, body.totalDamage)
 
         attack.totalDefended = body.totalDamage
         attack.isResolved = true
@@ -55,19 +55,26 @@ class DefenseController(
         battleLogRepository.save(
                 BattleLog(battleId = attack.battleId, eventType = "DAMAGE_DEALT", eventJson = null)
         )
-        
+
         battleService.consumeShield(targetBC.id!!)
         battleService.removeMarked(targetBC.id!!)
 
         val damage = body.totalDamage.coerceAtLeast(0)
-        if (damage > 0) {
+        if (damage > 0 && newHp > 0) {
             val attackEffects = attackStatusEffectRepository.findByAttackId(attack.id!!)
             val ignore = listOf("free-shot", "jump", "gradient")
 
             attackEffects.filter { eff -> !ignore.contains(eff.effectType) }.forEach { eff ->
-                val existing =
-                        battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
-                                .firstOrNull { it.effectType == eff.effectType }
+                val allTargetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+
+                if (eff.effectType == "Fragile") {
+                    val hasBroken = allTargetEffects.any { it.effectType == "Broken" }
+                    if (hasBroken) {
+                        return@forEach
+                    }
+                }
+
+                val existing = allTargetEffects.firstOrNull { it.effectType == eff.effectType }
 
                 val nextAmmount = (existing?.ammount ?: 0) + eff.ammount
                 val nextTurns = eff.remainingTurns ?: existing?.remainingTurns
@@ -94,6 +101,18 @@ class DefenseController(
             @PathVariable battleCharacterId: Int,
             @RequestBody body: ApplyDefenseRequest
     ): ResponseEntity<Void> {
+
+        val defenderBC = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+
+        // Increment charge for defending (if character has charge system)
+        if (defenderBC != null && defenderBC.characterType == "player") {
+            val currentCharge = defenderBC.chargePoints ?: 0
+            val maxCharge = defenderBC.maxChargePoints ?: 0
+            if (maxCharge > 0) {
+                defenderBC.chargePoints = (currentCharge + 1).coerceAtMost(maxCharge)
+                battleCharacterRepository.save(defenderBC)
+            }
+        }
 
         val attacks = attackRepository.findByTargetBattleId(battleCharacterId)
 

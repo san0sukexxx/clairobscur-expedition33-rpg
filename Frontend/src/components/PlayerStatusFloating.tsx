@@ -46,7 +46,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                 <div className="flex flex-row gap-3 items-center justify-between">
                     <div className="flex-1">
                         <div className="flex items-center justify-between text-[10px] uppercase">
-                            <span className="opacity-70">Seu HP</span>
+                            <span className="opacity-70">HP</span>
                             <span className="font-mono text-xs">
                                 {ch.healthPoints}/{ch.maxHealthPoints}
                             </span>
@@ -65,7 +65,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                         ch.maxMagicPoints !== null && (
                             <div className="flex-1">
                                 <div className="flex items-center justify-between text-[10px] uppercase">
-                                    <span className="opacity-70">Seu MP</span>
+                                    <span className="opacity-70">MP</span>
                                     <span className="font-mono text-xs">
                                         {ch.magicPoints}/{ch.maxMagicPoints}
                                     </span>
@@ -75,6 +75,25 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                     label="MP"
                                     fillClass="bg-info"
                                     ghostClass="bg-info/30"
+                                />
+                            </div>
+                        )}
+
+                    {ch.maxChargePoints !== undefined &&
+                        ch.maxChargePoints !== null &&
+                        ch.maxChargePoints > 0 && (
+                            <div className="flex-1">
+                                <div className="flex items-center justify-between text-[10px] uppercase">
+                                    <span className="opacity-70">Carga</span>
+                                    <span className="font-mono text-xs">
+                                        {ch.chargePoints ?? 0}/{ch.maxChargePoints}
+                                    </span>
+                                </div>
+                                <AnimatedStatBar
+                                    value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
+                                    label="Carga"
+                                    fillClass="bg-warning"
+                                    ghostClass="bg-warning/30"
                                 />
                             </div>
                         )}

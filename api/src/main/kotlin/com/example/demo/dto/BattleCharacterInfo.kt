@@ -8,6 +8,8 @@ data class BattleCharacterInfo(
     val maxHealthPoints: Int,
     val magicPoints: Int?,
     val maxMagicPoints: Int?,
+    val chargePoints: Int?,
+    val maxChargePoints: Int?,
     val status: List<BattleStatusResponse>?,
     val type: String,
     val isEnemy: Boolean,

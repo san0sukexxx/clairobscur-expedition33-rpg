@@ -12,7 +12,7 @@ export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent";
 export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
-export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot";
+export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot" | "skill";
 export type SkillType = "give-status";
 export type PictoColor = "green" | "red" | "blue" | "yellow";
 export type BattleCharacterType = "player" | "npc";
@@ -47,6 +47,8 @@ export interface BattleCharacterInfo {
     maxHealthPoints: number;
     magicPoints?: number;
     maxMagicPoints?: number;
+    chargePoints?: number;
+    maxChargePoints?: number;
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;

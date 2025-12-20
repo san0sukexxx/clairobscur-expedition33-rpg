@@ -13,6 +13,7 @@ interface EnemiesStatusProps {
     isAttacking: Boolean;
     onSelectTarget?: (target: BattleCharacterInfo) => void;
     isReviveMode?: boolean;
+    isExecutingSkill?: boolean;
 }
 
 function pct(cur: number, max: number) {
@@ -25,7 +26,8 @@ export default function EnemiesStatus({
     currentCharacter,
     isAttacking,
     onSelectTarget,
-    isReviveMode = false
+    isReviveMode = false,
+    isExecutingSkill = false
 }: EnemiesStatusProps) {
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -48,7 +50,7 @@ export default function EnemiesStatus({
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {characters.map((ch) => {
                             const isDead = ch.healthPoints === 0;
-                            const isSelectable = (isAttacking && !isDead) || (isReviveMode && isDead);
+                            const isSelectable = !isExecutingSkill && ((isAttacking && !isDead) || (isReviveMode && isDead));
 
                             return (
                                 <div
@@ -64,6 +66,7 @@ export default function EnemiesStatus({
                                             ? "cursor-pointer hover:shadow-lg target-glow"
                                             : "pointer-events-none"
                                         }
+                ${isExecutingSkill ? "opacity-50" : ""}
             `}
                                 >
                                     <div className="flex items-center gap-3">
@@ -139,6 +142,25 @@ export default function EnemiesStatus({
                                                         label="MP"
                                                         fillClass="bg-info"
                                                         ghostClass="bg-info/30"
+                                                    />
+                                                </div>
+                                            )}
+
+                                        {ch.maxChargePoints !== undefined &&
+                                            ch.maxChargePoints !== null &&
+                                            ch.maxChargePoints > 0 && (
+                                                <div>
+                                                    <div className="flex items-center justify-between text-xs uppercase">
+                                                        <span className="opacity-70">Carga</span>
+                                                        <span className="font-mono">
+                                                            {ch.chargePoints ?? 0}/{ch.maxChargePoints}
+                                                        </span>
+                                                    </div>
+                                                    <AnimatedStatBar
+                                                        value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
+                                                        label="Carga"
+                                                        fillClass="bg-warning"
+                                                        ghostClass="bg-warning/30"
                                                     />
                                                 </div>
                                             )}

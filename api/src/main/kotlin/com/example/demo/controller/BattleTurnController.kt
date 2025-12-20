@@ -74,6 +74,16 @@ class BattleTurnController(
 
                 val statusList = battleStatusEffectRepository.findByBattleCharacterId(bc.id!!)
                 statusList.forEach { eff ->
+                        if (eff.skipNextDecrement) {
+                                battleStatusEffectRepository.save(
+                                        eff.copy(
+                                                skipNextDecrement = false,
+                                                isResolved = if (eff.isResolved) false else eff.isResolved
+                                        )
+                                )
+                                return@forEach
+                        }
+
                         val shouldIgnore = ignoreRemainingTurns.contains(eff.effectType)
 
                         if (!shouldIgnore) {

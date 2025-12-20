@@ -256,6 +256,11 @@ export default function CombatAdmin({
                 }
             }
         }
+
+        // Detect if character is Gustave and initialize charge system
+        const isGustave = (entity.characterId?.toLowerCase() === "gustave") ||
+                         String(entity.externalId).toLowerCase().includes("gustave")
+
         await APIBattle.addCharacter({
             battleId: campaignInfo.battleId,
             externalId: String(entity.externalId),
@@ -266,6 +271,8 @@ export default function CombatAdmin({
             maxHealthPoints: entity.maxHp,
             magicPoints: entity.currentMp,
             maxMagicPoints: entity.maxMp,
+            chargePoints: isGustave ? 0 : undefined,
+            maxChargePoints: isGustave ? 10 : undefined,
             initiative,
             canRollInitiative: entity.type == "player"
         })
@@ -1045,6 +1052,9 @@ export default function CombatAdmin({
             "HP_CHANGED",
             "MP_CHANGED",
             "FLEEING",
+            "HEAL_APPLIED",
+            "STATUS_CLEANSED",
+            "BREAK_APPLIED"
         ]);
 
         const shouldUpdate = logs.some(log => relevantEvents.has(log.eventType));

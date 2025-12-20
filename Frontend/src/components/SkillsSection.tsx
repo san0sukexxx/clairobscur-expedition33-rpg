@@ -14,9 +14,10 @@ interface SkillsSectionProps {
     isAdmin: boolean;
     initialTab?: "list" | "picker";
     isUsingSkillMode?: boolean;
+    onUseSkill?: (skillId: string) => void;
 }
 
-export default function SkillSection({ player, setPlayer, isAdmin, initialTab = "list", isUsingSkillMode = false }: SkillsSectionProps) {
+export default function SkillSection({ player, setPlayer, isAdmin, initialTab = "list", isUsingSkillMode = false, onUseSkill }: SkillsSectionProps) {
     const [tab, setTab] = useState<"list" | "picker">(initialTab);
     const prefersReduced = useReducedMotion();
     const prev = useRef<"list" | "picker">("list");
@@ -26,7 +27,7 @@ export default function SkillSection({ player, setPlayer, isAdmin, initialTab = 
     const remainingPoints = totalPoints - usedPoints;
     const inBattle = !!player?.fightInfo?.turns?.some(
         turn => turn.battleCharacterId === player.fightInfo?.playerBattleID
-    );
+    ) && player?.fightInfo?.battleStatus !== "finished";
 
     useEffect(() => {
         setTab(initialTab);
@@ -83,7 +84,7 @@ export default function SkillSection({ player, setPlayer, isAdmin, initialTab = 
                             opacity: prefersReduced && tab !== "picker" ? 0 : 1,
                         }}
                     >
-                        <SkillPickerSection player={player} setPlayer={setPlayer} inBattle={inBattle} isUsingSkillMode={isUsingSkillMode} />
+                        <SkillPickerSection player={player} setPlayer={setPlayer} inBattle={inBattle} isUsingSkillMode={isUsingSkillMode} onUseSkill={onUseSkill} />
                     </div>
                 </motion.div>
             </div>

@@ -2,6 +2,7 @@ package com.example.demo.controller
 
 import com.example.demo.dto.AddBattleCharacterRequest
 import com.example.demo.dto.UpdateHpRequest
+import com.example.demo.dto.UpdateMpRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.service.BattleCharacterService
 import jakarta.validation.Valid
@@ -39,6 +40,15 @@ class BattleCharacterController(private val service: BattleCharacterService) {
             @RequestBody body: UpdateHpRequest
     ): ResponseEntity<Void> {
         service.updateCharacterHp(id, body.newHp)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/mp")
+    fun updateCharacterMp(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateMpRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterMp(id, body.newMp)
         return ResponseEntity.noContent().build()
     }
 }

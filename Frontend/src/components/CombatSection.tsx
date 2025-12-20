@@ -13,11 +13,13 @@ interface CombatsSectionProps {
     player: GetPlayerResponse | null;
     onSelectTarget?: (target: BattleCharacterInfo) => void;
     isReviveMode?: boolean;
+    isSelectingSkillTarget?: boolean;
     forcedTab?: "enemies" | "team" | null;
     onTabChange?: (tab: "enemies" | "team" | null) => void;
+    isExecutingSkill?: boolean;
 }
 
-export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, forcedTab, onTabChange }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false }: CombatsSectionProps) {
     const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
 
@@ -105,6 +107,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             case COMBAT_MENU_ACTIONS.Cancel:
                 setIsAttacking(false);
+                onMenuAction(COMBAT_MENU_ACTIONS.Cancel);
                 break;
 
             default:
@@ -133,11 +136,11 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 showBattleId={false} />
 
             {tab === "enemies" && (
-                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} />
+                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} />
             )}
 
             {tab === "team" && (
-                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} />
+                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} />
             )}
 
             <CombatMenu
@@ -147,6 +150,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 currentTeamTab={currentTeamTab}
                 opositeTeamTab={opositeTeamTab}
                 isAttacking={isAttacking}
+                isExecutingSkill={isExecutingSkill}
+                isSelectingSkillTarget={isSelectingSkillTarget}
             />
 
             <div className="h-[100px]" />

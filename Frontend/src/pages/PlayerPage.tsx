@@ -18,6 +18,9 @@ import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIBattle, type AttackStatusEffectRequest, type CreateAttackRequest, type CreateDefenseRequest, type ResolveStatusRequest } from "../api/APIBattle";
 import { APIItem } from "../api/APIItem";
 import { type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse } from "../api/ResponseModel";
+import { resolveSkill, calculateSkillHitDamage, applySpecialEffects, getStatusEffectsForTarget } from "../utils/BattleSkillUtils";
+import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
+import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -81,6 +84,9 @@ export default function PlayerPage() {
   const [combatTab, setCombatTab] = useState<"enemies" | "team" | null>(null);
   const [skillsInitialTab, setSkillsInitialTab] = useState<"list" | "picker">("list");
   const [isUsingSkillMode, setIsUsingSkillMode] = useState(false);
+  const [pendingSkillId, setPendingSkillId] = useState<string | null>(null);
+  const [isSelectingSkillTarget, setIsSelectingSkillTarget] = useState(false);
+  const [isExecutingSkill, setIsExecutingSkill] = useState(false);
   const { showToast } = useToast();
   const { pathname } = useLocation();
   const isAdmin = !!matchPath(
@@ -137,6 +143,8 @@ export default function PlayerPage() {
     if (tab !== "combate") {
       setIsReviveMode(false);
       setCombatTab(null);
+      setIsSelectingSkillTarget(false);
+      setPendingSkillId(null);
     }
   }, [tab]);
 
@@ -224,8 +232,13 @@ export default function PlayerPage() {
       <div className="navbar bg-base-100 shadow sticky top-0 z-10">
         <div className="flex-1">
           <button
-            onClick={() => handleNavigateBackToAdmin()}
-            className="flex items-center gap-2 text-lg font-bold hover:opacity-80 transition"
+            onClick={() => !isExecutingSkill && handleNavigateBackToAdmin()}
+            disabled={isExecutingSkill}
+            className={`flex items-center gap-2 text-lg font-bold transition ${
+              isExecutingSkill
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:opacity-80"
+            }`}
           >
             <MdOutlineKeyboardBackspace className="text-2xl" />
             <span>Ficha do Jogador</span>
@@ -264,11 +277,11 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "combate" && (
-            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} forcedTab={combatTab} onTabChange={setCombatTab} />
+            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} />
           )}
 
           {!loading && !error && tab === "habilidades" && (
-            <SkillsSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} initialTab={skillsInitialTab} isUsingSkillMode={isUsingSkillMode} />
+            <SkillsSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} initialTab={skillsInitialTab} isUsingSkillMode={isUsingSkillMode} onUseSkill={handleUseSkill} />
           )}
         </section>
       </main>
@@ -277,56 +290,63 @@ export default function PlayerPage() {
       <div className="fixed bottom-0 left-0 right-0 bg-base-100 border-t shadow-lg">
         <nav className="grid grid-cols-7">
           <button
-            className={`py-3 ${tab === "ficha" ? "text-primary" : "text-base-content/70"}`}
-            onClick={() => setTab("ficha")}
+            className={`py-3 ${tab === "ficha" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !isExecutingSkill && setTab("ficha")}
+            disabled={isExecutingSkill}
             aria-label="Ficha"
           >
             <FaUser className="mx-auto text-2xl" />
           </button>
 
           <button
-            className={`py-3 ${tab === "arma" ? "text-primary" : "text-base-content/70"}`}
-            onClick={() => setTab("arma")}
+            className={`py-3 ${tab === "arma" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !isExecutingSkill && setTab("arma")}
+            disabled={isExecutingSkill}
             aria-label="Arma"
           >
             <LuSword className="mx-auto text-2xl" />
           </button>
 
           <button
-            className={`py-3 ${tab === "pictos" ? "text-primary" : "text-base-content/70"}`}
-            onClick={() => setTab("pictos")}
+            className={`py-3 ${tab === "pictos" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !isExecutingSkill && setTab("pictos")}
+            disabled={isExecutingSkill}
             aria-label="Pictos"
           >
             <GiStoneTablet className="mx-auto text-2xl" />
           </button>
 
           <button
-            className={`py-3 ${tab === "luminas" ? "text-primary" : "text-base-content/70"}`}
-            onClick={() => setTab("luminas")}
+            className={`py-3 ${tab === "luminas" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !isExecutingSkill && setTab("luminas")}
+            disabled={isExecutingSkill}
             aria-label="Luminas"
           >
             <GiCrystalShine className="mx-auto text-2xl" />
           </button>
 
           <button
-            className={`py-3 ${tab === "inventario" ? "text-primary" : "text-base-content/70"}`}
-            onClick={() => setTab("inventario")}
+            className={`py-3 ${tab === "inventario" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !isExecutingSkill && setTab("inventario")}
+            disabled={isExecutingSkill}
             aria-label="Inventário"
           >
             <GiBackpack className="mx-auto text-2xl" />
           </button>
 
           <button
-            className={`py-3 ${tab === "habilidades" ? "text-primary" : "text-base-content/70"}`}
-            onClick={() => setTab("habilidades")}
+            className={`py-3 ${tab === "habilidades" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !isExecutingSkill && setTab("habilidades")}
+            disabled={isExecutingSkill}
             aria-label="Habilidades"
           >
             <GiMagicSwirl className="mx-auto text-2xl" />
           </button>
 
           <button
-            className={`py-3 ${tab === "combate" ? "text-primary" : "text-base-content/70"}`}
-            onClick={() => setTab("combate")}
+            className={`py-3 ${tab === "combate" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !isExecutingSkill && setTab("combate")}
+            disabled={isExecutingSkill}
             aria-label="Combate"
           >
             <LuSwords className="mx-auto text-2xl" />
@@ -402,7 +422,10 @@ export default function PlayerPage() {
       "STATUS_RESOLVED",
       "HP_CHANGED",
       "MP_CHANGED",
-      "FLEEING"
+      "FLEEING",
+      "HEAL_APPLIED",
+      "STATUS_CLEANSED",
+      "BREAK_APPLIED"
     ])
 
     const sheetEvents = new Set([
@@ -412,6 +435,9 @@ export default function PlayerPage() {
       "STATUS_ADDED",
       "STATUS_RESOLVED",
       "BATTLE_FINISHED",
+      "HEAL_APPLIED",
+      "STATUS_CLEANSED",
+      "BREAK_APPLIED"
     ])
 
     const shouldUpdateFight = logs.some(log => fightEvents.has(log.eventType))
@@ -484,6 +510,7 @@ export default function PlayerPage() {
       });
     }
 
+    setIsExecutingSkill(true);
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForInitiative(weaponInfo), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculatePlayerCriticalMulti(result, player)
@@ -551,6 +578,7 @@ export default function PlayerPage() {
         } catch (err) {
           showToast("Erro ao registrar iniciativa")
         }
+        setIsExecutingSkill(false);
       };
 
       callAddInitiative();
@@ -608,11 +636,19 @@ export default function PlayerPage() {
       return;
     }
 
+    // Handle skill usage
+    if (pendingSkillId) {
+      setIsExecutingSkill(true);
+      handleExecuteSkill(pendingSkillId, target);
+      return;
+    }
+
     if (npcIsFlying(target) && attackType != "free-shot") {
       showToast("Este inimigo está voando e só pode ser atingido por tiros livres", { duration: 3000 });
       return;
     }
 
+    setIsExecutingSkill(true);
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculatePlayerCriticalMulti(result, player)
@@ -757,6 +793,7 @@ export default function PlayerPage() {
         } catch (e) {
           showToast("Erro ao atacar")
         }
+        setIsExecutingSkill(false);
       };
 
       callAttack();
@@ -800,6 +837,11 @@ export default function PlayerPage() {
         break;
       case COMBAT_MENU_ACTIONS.Flee:
         attemptFlee();
+        break;
+      case COMBAT_MENU_ACTIONS.Cancel:
+        setPendingSkillId(null);
+        setIsSelectingSkillTarget(false);
+        setIsUsingSkillMode(false);
         break;
       default:
         break;
@@ -857,6 +899,182 @@ export default function PlayerPage() {
 
   function handlePotionUsed() {
     setTab("combate");
+  }
+
+  function handleUseSkill(skillId: string) {
+    // Get skill metadata to determine target type
+    const skillMetadata = SkillEffectsRegistry[skillId];
+
+    if (!skillMetadata) {
+      showToast("Erro: Habilidade não encontrada");
+      return;
+    }
+
+    // Determine if skill targets enemies or allies
+    const targetsEnemies =
+      skillMetadata.damageLevel !== "none" || // Damage skills target enemies
+      skillMetadata.primaryEffects.some(e => e.targetType === "enemy" || e.targetType === "all-enemies") ||
+      skillMetadata.conditionalEffects.some(e => e.targetType === "enemy" || e.targetType === "all-enemies");
+
+    const targetsAllies =
+      skillMetadata.targetScope === "self" ||
+      skillMetadata.primaryEffects.some(e => e.targetType === "self" || e.targetType === "ally" || e.targetType === "all-allies") ||
+      skillMetadata.conditionalEffects.some(e => e.targetType === "self" || e.targetType === "ally" || e.targetType === "all-allies");
+
+    // Store the skill to be used
+    setPendingSkillId(skillId);
+    setTab("combate");
+    setIsUsingSkillMode(false);
+
+    // Set correct tab and activate target glow
+    if (targetsEnemies && !targetsAllies) {
+      setCombatTab("enemies");
+    } else if (targetsAllies && !targetsEnemies) {
+      setCombatTab("team");
+    } else {
+      // Default to enemies if ambiguous
+      setCombatTab("enemies");
+    }
+
+    setIsSelectingSkillTarget(true);
+    showToast("Selecione um alvo para usar a habilidade", { duration: 2000 });
+  }
+
+  async function handleExecuteSkill(skillId: string, target: BattleCharacterInfo) {
+    if (!player?.fightInfo) return;
+
+    try {
+      const source = player.fightInfo.characters?.find(
+        c => c.battleID === player.fightInfo?.playerBattleID
+      );
+
+      if (!source) {
+        showToast("Erro: Personagem não encontrado na batalha");
+        return;
+      }
+
+      // Get skill cost and check if player has enough MP
+      const skillMetadata = SkillEffectsRegistry[skillId];
+      if (!skillMetadata) {
+        showToast("Erro: Habilidade não encontrada");
+        return;
+      }
+
+      // Get skill info from SkillList to get the cost
+      const skillInfo = player.skills?.find(s => s.skillId === skillId);
+      if (!skillInfo) {
+        showToast("Erro: Você não possui esta habilidade");
+        return;
+      }
+
+      // Find the full skill data including cost
+      const enrichedSkills = getEnrichedCharacterSkills(player);
+      const fullSkill = enrichedSkills.find(s => s.id === skillId);
+      const skillCost = fullSkill?.cost ?? 0;
+      const currentMp = source.magicPoints ?? 0;
+
+      if (currentMp < skillCost) {
+        showToast(`MP insuficiente! Necessário: ${skillCost}, Disponível: ${currentMp}`);
+        setPendingSkillId(null);
+        setIsSelectingSkillTarget(false);
+        return;
+      }
+
+      const resolved = resolveSkill(
+        skillId,
+        source,
+        target,
+        player.fightInfo.characters ?? []
+      );
+
+      // Calculate charge bonus for skills that scale with charge (e.g., Overcharge)
+      let chargeBonus = 0;
+      if (resolved.metadata.damageScalesWithCharge) {
+        const currentCharge = source.chargePoints ?? 0;
+        chargeBonus = currentCharge;  // +1 damage per charge
+      }
+
+      if (resolved.hitCount > 0) {
+        for (let hitIndex = 0; hitIndex < resolved.hitCount; hitIndex++) {
+          await new Promise<void>((resolve, reject) => {
+            rollWithTimeout(
+              diceBoardRef,
+              timeoutDiceBoardRef,
+              rollCommandForAttack(weaponInfo, "basic"),
+              async (result) => {
+                try {
+                  const weaponPower = calculateRawWeaponPower(weaponInfo, "basic");
+                  const baseHitDamage = calculateSkillHitDamage(resolved, weaponPower, result);
+                  const hitDamage = baseHitDamage + chargeBonus;  // Apply charge bonus
+
+                  for (const targetId of resolved.targetIds) {
+                    const effects = hitIndex === 0
+                      ? getStatusEffectsForTarget(resolved.effects, targetId)
+                      : [];
+
+                    const attackRequest: CreateAttackRequest = {
+                      sourceBattleId: source.battleID,
+                      targetBattleId: targetId,
+                      totalDamage: hitDamage,
+                      attackType: "skill",
+                      effects: effects,
+                      skillCost: hitIndex === 0 ? skillCost : 0,
+                      consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge
+                    };
+
+                    await APIBattle.attack(attackRequest);
+                  }
+
+                  resolve();
+                } catch (error) {
+                  reject(error);
+                }
+              }
+            );
+          });
+        }
+      } else {
+        for (const targetId of resolved.targetIds) {
+          const effects = getStatusEffectsForTarget(resolved.effects, targetId);
+
+          if (effects.length > 0) {
+            for (const effect of effects) {
+              await APIBattle.addStatus({
+                battleCharacterId: targetId,
+                effectType: effect.effectType,
+                ammount: effect.ammount ?? 0,
+                remainingTurns: effect.remainingTurns ?? 0
+              });
+            }
+          }
+        }
+
+        if (skillCost > 0) {
+          const newMp = Math.max(0, currentMp - skillCost);
+          await APIBattle.updateCharacterMp(source.battleID, newMp);
+        }
+      }
+
+      await applySpecialEffects(resolved.effects, player.fightInfo.characters ?? []);
+
+      if (resolved.metadata.canBreak) {
+        for (const targetId of resolved.targetIds) {
+          await APIBattle.breakTarget(targetId);
+        }
+      }
+
+      setPendingSkillId(null);
+      setIsSelectingSkillTarget(false);
+      setIsExecutingSkill(false);
+      showToast("Habilidade usada com sucesso!");
+
+    } catch (error) {
+      console.error("Erro ao usar skill:", error);
+      showToast("Erro ao usar habilidade");
+      setPendingSkillId(null);
+      setIsSelectingSkillTarget(false);
+      setIsExecutingSkill(false);
+    }
   }
 
   async function handleReviveTarget(target: BattleCharacterInfo) {
@@ -982,8 +1200,10 @@ export default function PlayerPage() {
         callDefend(payload);
 
         showToast(description);
+        setIsExecutingSkill(false);
       } catch (e) {
         showToast("Falha ao registrar a defesa");
+        setIsExecutingSkill(false);
       }
     };
 
@@ -996,6 +1216,7 @@ export default function PlayerPage() {
     } else if (defense == "cancel-counter") {
       callCounter(attack.targetBattleId, 0);
     } else if (defense != "take") {
+      setIsExecutingSkill(true);
       rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForDefense(player, weaponInfo, defense), result => {
         executeDefense(result);
       });
@@ -1008,8 +1229,10 @@ export default function PlayerPage() {
     const callResolveStatus = async (payload: ResolveStatusRequest) => {
       try {
         await APIBattle.resolveStatus(payload);
+        setIsExecutingSkill(false);
       } catch (e) {
         showToast("Erro resolver o status");
+        setIsExecutingSkill(false);
       }
     };
 
@@ -1024,6 +1247,7 @@ export default function PlayerPage() {
       return;
     }
 
+    setIsExecutingSkill(true);
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForResolveStatus(status), result => {
       const total = calculateResolveStatusWithDiceTotal(player, weaponInfo, status, result)
 

@@ -11,6 +11,7 @@ export interface SkillPickerProps {
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     inBattle: boolean;
     isUsingSkillMode?: boolean;
+    onUseSkill?: (skillId: string) => void;
 }
 
 // --- UI Helpers ---
@@ -71,7 +72,7 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
     );
 }
 
-export default function SkillPickerSection({ player, setPlayer, inBattle, isUsingSkillMode = false }: SkillPickerProps) {
+export default function SkillPickerSection({ player, setPlayer, inBattle, isUsingSkillMode = false, onUseSkill }: SkillPickerProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [query, setQuery] = useState("");
     const [slotAssignments, setSlotAssignments] = useState<Record<number, string>>({});
@@ -229,8 +230,9 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }
 
     function handleUseSkill(skillId: string) {
-        console.log("Usando habilidade:", skillId);
-        // TODO: Implementar lógica de usar habilidade
+        if (onUseSkill) {
+            onUseSkill(skillId);
+        }
     }
 
     function canUseSkill(skill: SkillResponse): boolean {
@@ -247,7 +249,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                 </div>
             )}
 
-            {isUsingSkillMode && (
+            {isUsingSkillMode && inBattle && (
                 <div className="mb-4 rounded-lg border border-blue-400/30 bg-blue-400/10 p-3 text-center text-sm text-blue-200">
                     Selecione uma habilidade equipada para usar em combate
                 </div>
@@ -286,7 +288,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                 className={`w-full text-left pl-24 rounded-2xl transition-colors flex items-center relative pr-12 ${
                                     selected
                                         ? "py-8 hover:bg-white/5 cursor-pointer"
-                                        : isUsingSkillMode
+                                        : (isUsingSkillMode && inBattle)
                                             ? "py-4 cursor-not-allowed opacity-70"
                                             : (inBattle && !isUsingSkillMode)
                                                 ? "py-4 cursor-not-allowed opacity-70"
@@ -305,7 +307,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                             <span className="relative -top-0.5 ml-3 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md">{selected.cost}</span>
                                         </div>
 
-                                        {isUsingSkillMode ? (
+                                        {isUsingSkillMode && inBattle ? (
                                             <button
                                                 className={`absolute right-6 top-1/2 -translate-y-1/2 px-4 py-1.5 text-sm rounded-md border border-white/15 ${
                                                     canUseSkill(selected)

@@ -4,8 +4,11 @@ import com.example.demo.dto.CreateBattleInitiativeRequest
 import com.example.demo.dto.InitiativeResponse
 import com.example.demo.model.BattleInitiative
 import com.example.demo.model.BattleLog
+import com.example.demo.model.BattleTurn
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
+import com.example.demo.repository.BattleRepository
+import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.repository.InitiativeRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.HttpStatus
@@ -19,6 +22,8 @@ class BattleInitiativeController(
         private val initiativeRepository: InitiativeRepository,
         private val battleLogRepository: BattleLogRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
+        private val battleRepository: BattleRepository,
+        private val battleTurnRepository: BattleTurnRepository,
         private val objectMapper: ObjectMapper
 ) {
 
@@ -30,6 +35,39 @@ class BattleInitiativeController(
                 val bc =
                         battleCharacterRepository.findById(body.battleCharacterId).orElse(null)
                                 ?: return ResponseEntity.badRequest().build()
+
+                val battle = battleRepository.findById(bc.battleId).orElse(null)
+                        ?: return ResponseEntity.badRequest().build()
+
+                if (battle.battleStatus == "started") {
+                        val last = battleTurnRepository.findTopByBattleIdOrderByPlayOrderDesc(bc.battleId)
+                        val nextPlayOrder = (last?.playOrder ?: 0) + 1
+
+                        battleTurnRepository.save(
+                                BattleTurn(
+                                        battleId = bc.battleId,
+                                        battleCharacterId = body.battleCharacterId,
+                                        playOrder = nextPlayOrder
+                                )
+                        )
+
+                        bc.canRollInitiative = false
+                        battleCharacterRepository.save(bc)
+
+                        battleLogRepository.save(
+                                BattleLog(battleId = bc.battleId, eventType = "TURN_ADDED", eventJson = null)
+                        )
+
+                        val response =
+                                InitiativeResponse(
+                                        playFirst = false,
+                                        battleID = body.battleCharacterId,
+                                        value = 0,
+                                        hability = body.hability
+                                )
+
+                        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+                }
 
                 val existing = initiativeRepository.findByBattleCharacterId(body.battleCharacterId)
 

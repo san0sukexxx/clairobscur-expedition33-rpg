@@ -38,7 +38,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Powerful",
     cost: 3,
     unlockCost: 3,
-    description: "Applies Powerful to 1-3 allies, increasing damage for 3 turns",
+    description: "Aplica Fortalecido em todos os aliados por 3 turnos, dobrando o dano",
     image: "Gustave_Powerful.webp",
     preRequisite: ["gustave-lumiere-assault"]
   },

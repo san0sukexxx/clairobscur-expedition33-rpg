@@ -74,6 +74,8 @@ class BattleController(
                             maxHealthPoints = bc.maxHealthPoints,
                             magicPoints = bc.magicPoints,
                             maxMagicPoints = bc.maxMagicPoints,
+                            chargePoints = bc.chargePoints,
+                            maxChargePoints = bc.maxChargePoints,
                             status = status,
                             type = bc.characterType,
                             isEnemy = bc.isEnemy,

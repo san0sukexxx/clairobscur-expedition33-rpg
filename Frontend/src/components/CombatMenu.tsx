@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
@@ -12,9 +12,11 @@ interface CombatMenuProps {
   currentTeamTab: String;
   opositeTeamTab: String;
   isAttacking: Boolean;
+  isExecutingSkill?: boolean;
+  isSelectingSkillTarget?: boolean;
 }
 
-export default function CombatMenu({ player, onAction, tab, currentTeamTab, opositeTeamTab, isAttacking }: CombatMenuProps) {
+export default function CombatMenu({ player, onAction, tab, currentTeamTab, opositeTeamTab, isAttacking, isExecutingSkill = false, isSelectingSkillTarget = false }: CombatMenuProps) {
   const [open, setOpen] = useState(false);
 
   const currentCharacter = useMemo(() => {
@@ -84,12 +86,29 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     return firstTurn.battleCharacterId === player?.fightInfo?.playerBattleID
   }, [player?.fightInfo])
 
+  // Close menu when executing skill
+  useEffect(() => {
+    if (isExecutingSkill) {
+      setOpen(false);
+    }
+  }, [isExecutingSkill]);
+
+  const hasBattle = useMemo(() => {
+    const battleStatus = player?.fightInfo?.battleStatus;
+    return battleStatus === "starting" || battleStatus === "started";
+  }, [player?.fightInfo?.battleStatus]);
+
+  if (!hasBattle) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-20 right-4 z-41">
       {/* Botão principal */}
       <button
-        className="btn btn-primary btn-circle shadow-lg"
-        onClick={() => setOpen((prev) => !prev)}
+        className={`btn btn-primary btn-circle shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+        onClick={() => !isExecutingSkill && setOpen((prev) => !prev)}
+        disabled={isExecutingSkill}
       >
         <FaBars size={20} />
       </button>
@@ -103,75 +122,84 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
             flex flex-col gap-2
           "
         >
-          {tab == opositeTeamTab && !isAttacking && (
-            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
-              Equipe
-            </button>
-          )}
-
-          {tab == currentTeamTab && !isAttacking && (
-            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
-              Inimigos
-            </button>
-          )}
-
-          {player?.fightInfo?.battleStatus == "starting" && !isAttacking && player?.fightInfo?.canRollInitiative && (
-            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Initiative)}>
-              Rolar Iniciativa
-            </button>
-          )}
-
-          {player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
-            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
-              Entrar na batalha
-            </button>
-          )}
-
-          {isYourTurn && !isAttacking && (
-            <>
-              {isFleeing ? (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
-                  Encerrar o turno
-                </button>
-              ) : (
-                <>
-                  {canUseItems && (
-                    <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
-                      Itens
-                    </button>
-                  )}
-                  {canUseHabilities && (
-                    <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
-                      Habilidades
-                    </button>
-                  )}
-                  {canUseFlee && (
-                    <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Flee)}>
-                      Tentar fugir
-                    </button>
-                  )}
-                  {canUseFreeShot && (
-                    <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
-                      Tiro livre
-                    </button>
-                  )}
-                  {canAttack && (
-                    <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
-                      Atacar
-                    </button>
-                  )}
-                  <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
-                    Encerrar o turno
-                  </button>
-                </>
-              )}
-            </>
-          )}
-
-          {isAttacking && (
+          {/* Quando selecionando alvo de habilidade, mostrar apenas Cancelar */}
+          {isSelectingSkillTarget ? (
             <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
               Cancelar
             </button>
+          ) : (
+            <>
+              {tab == opositeTeamTab && !isAttacking && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
+                  Equipe
+                </button>
+              )}
+
+              {tab == currentTeamTab && !isAttacking && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
+                  Inimigos
+                </button>
+              )}
+
+              {player?.fightInfo?.battleStatus == "starting" && !isAttacking && player?.fightInfo?.canRollInitiative && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Initiative)}>
+                  Rolar Iniciativa
+                </button>
+              )}
+
+              {player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
+                  Entrar na batalha
+                </button>
+              )}
+
+              {isYourTurn && !isAttacking && (
+                <>
+                  {isFleeing ? (
+                    <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
+                      Encerrar o turno
+                    </button>
+                  ) : (
+                    <>
+                      {canUseItems && (
+                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
+                          Itens
+                        </button>
+                      )}
+                      {canUseHabilities && (
+                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
+                          Habilidades
+                        </button>
+                      )}
+                      {canUseFlee && (
+                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Flee)}>
+                          Tentar fugir
+                        </button>
+                      )}
+                      {canUseFreeShot && (
+                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
+                          Tiro livre
+                        </button>
+                      )}
+                      {canAttack && (
+                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
+                          Atacar
+                        </button>
+                      )}
+                      <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
+                        Encerrar o turno
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
+
+              {isAttacking && (
+                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
+                  Cancelar
+                </button>
+              )}
+            </>
           )}
         </div>
       )}

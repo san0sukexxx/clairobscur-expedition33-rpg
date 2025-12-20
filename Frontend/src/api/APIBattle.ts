@@ -34,6 +34,8 @@ export interface AddBattleCharacterRequest {
     maxHealthPoints: number
     magicPoints?: number
     maxMagicPoints?: number
+    chargePoints?: number
+    maxChargePoints?: number
     initiative?: AddBattleCharacterInitiativeData,
     canRollInitiative: boolean
 }
@@ -62,6 +64,8 @@ export interface CreateAttackRequest {
     sourceBattleId: number
     effects?: AttackStatusEffectRequest[],
     attackType?: AttackType
+    skillCost?: number
+    consumesCharge?: boolean
 }
 
 export interface AttackStatusEffectRequest {
@@ -188,11 +192,30 @@ export class APIBattle {
     static async addStatus(body: AddStatusRequest): Promise<void> {
         await api.post("battle-status/add", body);
     }
-    
+
+    static async cleanse(battleCharacterId: number): Promise<void> {
+        await api.post(`battle-status/cleanse/${battleCharacterId}`, {});
+    }
+
+    static async heal(battleCharacterId: number, amount: number): Promise<void> {
+        await api.post(`battle-status/heal/${battleCharacterId}`, { amount });
+    }
+
+    static async breakTarget(battleCharacterId: number): Promise<void> {
+        await api.post(`battle-status/break/${battleCharacterId}`, {});
+    }
+
     static async updateCharacterHp(id: number, newHp: number): Promise<void> {
         await api.put<{ newHp: number }, void>(
             `battles/characters/${id}/hp`,
             { newHp }
+        )
+    }
+
+    static async updateCharacterMp(id: number, newMp: number): Promise<void> {
+        await api.put<{ newMp: number }, void>(
+            `battles/characters/${id}/mp`,
+            { newMp }
         )
     }
 

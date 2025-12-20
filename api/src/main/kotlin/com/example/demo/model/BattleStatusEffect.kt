@@ -10,5 +10,6 @@ data class BattleStatusEffect(
         @Column(name = "effect_type", nullable = false) val effectType: String,
         @Column(name = "ammount", nullable = false) val ammount: Int,
         @Column(name = "remaining_turns") val remainingTurns: Int? = null,
-        @Column(name = "is_resolved", nullable = false) val isResolved: Boolean = false
+        @Column(name = "is_resolved", nullable = false) val isResolved: Boolean = false,
+        @Column(name = "skip_next_decrement", nullable = false) val skipNextDecrement: Boolean = false
 )
