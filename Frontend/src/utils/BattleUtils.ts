@@ -78,6 +78,7 @@ export function getStatusLabel(status: StatusType): string {
         case "Dizzy": return "Tonto";
         case "Fragile": return "Frágil";
         case "Broken": return "Quebrado";
+        case "Fleeing": return "Fugindo";
         case "free-shot": return "Free Shot";
         case "jump": return "Pular";
         case "gradient": return "Gradiente";
@@ -104,7 +105,8 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Fragile",
         "Broken",
         "Fragile",
-        "Broken"
+        "Broken",
+        "Fleeing"
     ];
 
     return !skillsWithoutAmmount.includes(type);
@@ -136,6 +138,7 @@ export function getStatusDescription(status: StatusType): string {
         case "Dizzy": return "Perda em ataques usando tiro livre ou habilidades.";
         case "Fragile": return "Receber um dano maior que o dobro de sua resistência te torna frágil. Estando frágil você fica vulnerável a quebra.";
         case "Broken": return "Você não pode se defender ou pode agir.";
+        case "Fleeing": return "O personagem está tentando fugir da batalha e não pode realizar nenhuma outra ação.";
         case "free-shot": return "Acumula bônus para ataques básicos.";
         case "jump": return "Ignora terreno ou obstáculos temporariamente.";
         case "gradient": return "Efeito especial de uso interno.";

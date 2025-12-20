@@ -1,6 +1,6 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
-import { getStatusLabel } from "../utils/BattleUtils";
+import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
 
 interface PlayerStatusFloatingProps {
@@ -35,8 +35,9 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                 key={idx}
                                 className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-90"
                             >
-                                {getStatusLabel(st.effectName)} {st.ammount}{" "}
-                                {st.remainingTurns ? `(${st.remainingTurns})` : ""}
+                                {getStatusLabel(st.effectName)}{" "}
+                                {shouldShowStatusAmmount(st.effectName) && st.ammount}
+                                {st.remainingTurns ? ` (${st.remainingTurns})` : ""}
                             </span>
                         ))}
                     </div>

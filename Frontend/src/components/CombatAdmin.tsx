@@ -1033,6 +1033,7 @@ export default function CombatAdmin({
             "REMOVE_CHARACTER",
             "SET_INITIATIVE",
             "BATTLE_STARTED",
+            "BATTLE_FINISHED",
             "DAMAGE_DEALT",
             "TURN_ADDED",
             "TURN_ENDED",
@@ -1043,12 +1044,19 @@ export default function CombatAdmin({
             "STATUS_ADDED",
             "HP_CHANGED",
             "MP_CHANGED",
+            "FLEEING",
         ]);
 
         const shouldUpdate = logs.some(log => relevantEvents.has(log.eventType));
 
         if (shouldUpdate) {
             applyFightInfoUpdate(battleInfo);
+        }
+
+        const hasBattleFinished = logs.some(log => log.eventType === "BATTLE_FINISHED");
+        if (hasBattleFinished && battleInfo.battleStatus) {
+            setBattleStatus(battleInfo.battleStatus);
+            onStatusChanged?.(battleInfo.battleStatus);
         }
 
         const lastBattleLog = getLastBattleLogFromBattle(battleInfo);

@@ -330,8 +330,14 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                   : "h-48 grid place-items-center hover:bg-white/5"
                   }`}
               >
-                <div className="absolute left-5 top-1/2 -translate-y-1/2">
+                <div className="absolute left-5 top-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
                   <PlusDiamond icon={selected ? "" : "+"} picto={selected} isBig={true} />
+                  {selected && (
+                    <div className="flex items-end justify-center mt-1">
+                      <span className="text-xl font-extrabold leading-none">{selected.battleCount ?? 0}</span>
+                      <span className="text-xs opacity-60 leading-none">/3</span>
+                    </div>
+                  )}
                 </div>
 
                 {selected ? (
@@ -380,32 +386,30 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
-                      <div className="flex items-center gap-1 text-sm">
-                        <span className="opacity-70 mr-2">Nível</span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            className="w-7 h-7 grid place-items-center rounded-md border border-white/15 bg-white/5 hover:bg-white/10"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              bumpLevel(idx, -1)
-                            }}
-                          >
-                            ‹
-                          </button>
-                          <span className="text-xl font-extrabold w-10 text-center">
-                            {getLevel(selected)}
-                          </span>
-                          <button
-                            className="w-7 h-7 grid place-items-center rounded-md border border-white/15 bg-white/5 hover:bg-white/10"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              bumpLevel(idx, +1)
-                            }}
-                          >
-                            ›
-                          </button>
-                        </div>
+                    <div className="flex items-center gap-1 text-sm">
+                      <span className="opacity-70 mr-2">Nível</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="w-7 h-7 grid place-items-center rounded-md border border-white/15 bg-white/5 hover:bg-white/10"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            bumpLevel(idx, -1)
+                          }}
+                        >
+                          ‹
+                        </button>
+                        <span className="text-xl font-extrabold w-10 text-center">
+                          {getLevel(selected)}
+                        </span>
+                        <button
+                          className="w-7 h-7 grid place-items-center rounded-md border border-white/15 bg-white/5 hover:bg-white/10"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            bumpLevel(idx, +1)
+                          }}
+                        >
+                          ›
+                        </button>
                       </div>
                     </div>
 
@@ -698,7 +702,13 @@ function PictoCard({
       onClick={() => onPick && onPick(picto)}
       className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg:white/5 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
     >
-      <PlusDiamond icon="" picto={picto} isBig={true} />
+      <div className="flex flex-col items-center gap-3">
+        <PlusDiamond icon="" picto={picto} isBig={true} />
+        <div className="flex items-end justify-center">
+          <span className="text-xl font-extrabold leading-none">{picto.battleCount ?? 0}</span>
+          <span className="text-xs opacity-60 leading-none">/3</span>
+        </div>
+      </div>
       <div className="flex flex-col gap-2">
         <div className="flex items-start justify-between">
           <div className="text-xl font-semibold leading-tight">{name}</div>

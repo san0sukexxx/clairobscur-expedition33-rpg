@@ -6,6 +6,7 @@ import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleStatusEffect
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
+import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.PlayerRepository
 import com.example.demo.service.BattleTurnService
@@ -20,6 +21,7 @@ class BattleStatusController(
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
+        private val battleRepository: BattleRepository,
         private val playerRepository: PlayerRepository,
         private val battleTurnService: BattleTurnService,
         private val damageService: DamageService
@@ -130,6 +132,40 @@ class BattleStatusController(
                 val effectValue = eff.ammount
                 if (effectValue != null && body.totalValue > effectValue) {
                     battleStatusEffectRepository.delete(eff)
+                }
+            }
+        } else if (body.effectType == "Fleeing") {
+            effects.forEach { eff ->
+                val currentRemainingTurns = eff.remainingTurns
+                if (currentRemainingTurns != null) {
+                    val remaining = currentRemainingTurns - 1
+
+                    if (remaining <= 0) {
+                        val allCharacters = battleCharacterRepository.findByBattleId(battleId)
+                        val teamMembers = allCharacters.filter { it.isEnemy == battleCharacter.isEnemy }
+
+                        teamMembers.forEach { member ->
+                            val memberEffects = battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
+                                    member.id!!,
+                                    "Fleeing"
+                            )
+                            memberEffects.forEach { memberEff ->
+                                battleStatusEffectRepository.delete(memberEff)
+                            }
+                            battleCharacterRepository.delete(member)
+                        }
+
+                        val battle = battleRepository.findById(battleId).orElse(null)
+                        if (battle != null) {
+                            val updatedBattle = battle.copy(battleStatus = "finished")
+                            battleRepository.save(updatedBattle)
+                            battleLogRepository.save(
+                                    BattleLog(battleId = battleId, eventType = "BATTLE_FINISHED", eventJson = null)
+                            )
+                        }
+                    } else {
+                        battleStatusEffectRepository.save(eff.copy(remainingTurns = remaining))
+                    }
                 }
             }
         }

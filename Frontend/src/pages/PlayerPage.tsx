@@ -385,6 +385,7 @@ export default function PlayerPage() {
       "REMOVE_CHARACTER",
       "SET_INITIATIVE",
       "BATTLE_STARTED",
+      "BATTLE_FINISHED",
       "TURN_ENDED",
       "TURN_ADDED",
       "ALLOW_COUNTER",
@@ -394,7 +395,8 @@ export default function PlayerPage() {
       "DAMAGE_DEALT",
       "STATUS_RESOLVED",
       "HP_CHANGED",
-      "MP_CHANGED"
+      "MP_CHANGED",
+      "FLEEING"
     ])
 
     const sheetEvents = new Set([
@@ -403,6 +405,7 @@ export default function PlayerPage() {
       "DAMAGE_DEALT",
       "STATUS_ADDED",
       "STATUS_RESOLVED",
+      "BATTLE_FINISHED",
     ])
 
     const shouldUpdateFight = logs.some(log => fightEvents.has(log.eventType))
@@ -437,7 +440,9 @@ export default function PlayerPage() {
       prev
         ? {
           ...prev,
-          playerSheet: playerInfo.playerSheet ?? prev.playerSheet
+          playerSheet: playerInfo.playerSheet ?? prev.playerSheet,
+          pictos: playerInfo.pictos ?? prev.pictos,
+          luminas: playerInfo.luminas ?? prev.luminas
         }
         : prev
     );
@@ -785,8 +790,47 @@ export default function PlayerPage() {
       case COMBAT_MENU_ACTIONS.FreeShot:
         setAttackType("free-shot");
         break;
+      case COMBAT_MENU_ACTIONS.Flee:
+        attemptFlee();
+        break;
       default:
         break;
+    }
+  }
+
+  function attemptFlee() {
+    setModalTitle("Tentar fugir");
+    setModalBody(
+      <div className="space-y-4">
+        <p>Tem certeza que deseja tentar fugir da batalha?</p>
+        <p className="text-sm text-gray-500">Toda sua equipe receberá o status "Fugindo".</p>
+        <div className="flex gap-2 justify-end">
+          <button className="btn btn-ghost" onClick={handleModalClose}>
+            Cancelar
+          </button>
+          <button className="btn btn-primary" onClick={confirmFlee}>
+            Confirmar
+          </button>
+        </div>
+      </div>
+    );
+    setModalOpen(true);
+  }
+
+  async function confirmFlee() {
+    if (!player?.fightInfo) return;
+
+    try {
+      const playerId = player.id;
+      const playerBattleId = player.fightInfo.playerBattleID;
+
+      showToast("Tentando fugir...");
+      await APIBattle.flee(playerId, playerBattleId);
+      await APIBattle.endTurn(playerBattleId);
+      handleModalClose();
+    } catch (e) {
+      console.error("Erro ao tentar fugir:", e);
+      showToast("Erro ao tentar fugir");
     }
   }
 

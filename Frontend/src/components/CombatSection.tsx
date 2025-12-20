@@ -87,6 +87,10 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 onMenuAction(COMBAT_MENU_ACTIONS.EndTurn);
                 break;
 
+            case COMBAT_MENU_ACTIONS.Flee:
+                onMenuAction(COMBAT_MENU_ACTIONS.Flee);
+                break;
+
             case COMBAT_MENU_ACTIONS.FreeShot:
                 setTab(opositeTeamTab);
                 setIsAttacking(true);

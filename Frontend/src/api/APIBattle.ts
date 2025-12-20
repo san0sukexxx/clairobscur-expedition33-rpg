@@ -195,4 +195,11 @@ export class APIBattle {
             { newHp }
         )
     }
+
+    static async flee(playerId: number, playerBattleId: number): Promise<void> {
+        await api.post<{ playerId: number, playerBattleId: number }, void>(
+            `battles/flee`,
+            { playerId, playerBattleId }
+        )
+    }
 }

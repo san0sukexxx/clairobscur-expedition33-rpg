@@ -197,6 +197,10 @@ class BattleController(
                         }
                     }
                 }
+
+                battleLogRepository.save(
+                        BattleLog(battleId = id, eventType = "BATTLE_FINISHED", eventJson = null)
+                )
             }
 
             ResponseEntity.ok().build()
@@ -294,6 +298,39 @@ class BattleController(
 
         battle.battleStatus = body.battleStatus
         battleRepository.save(battle)
+
+        return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/flee")
+    @Transactional
+    fun flee(@RequestBody body: Map<String, Int>): ResponseEntity<Void> {
+        val playerBattleId = body["playerBattleId"] ?: return ResponseEntity.badRequest().build()
+
+        val playerCharacter =
+                battleCharacterRepository.findById(playerBattleId).orElse(null)
+                        ?: return ResponseEntity.notFound().build()
+
+        val battleId = playerCharacter.battleId ?: return ResponseEntity.badRequest().build()
+
+        val allCharacters = battleCharacterRepository.findByBattleId(battleId)
+        val teamMembers = allCharacters.filter { it.isEnemy == playerCharacter.isEnemy }
+
+        teamMembers.forEach { member ->
+            val remainingTurns = if (member.id == playerBattleId) 1 else null
+            val statusEffect = com.example.demo.model.BattleStatusEffect(
+                    battleCharacterId = member.id!!,
+                    effectType = "Fleeing",
+                    ammount = 0,
+                    remainingTurns = remainingTurns,
+                    isResolved = true
+            )
+            battleStatusEffectRepository.save(statusEffect)
+        }
+
+        battleLogRepository.save(
+                BattleLog(battleId = battleId, eventType = "FLEEING", eventJson = null)
+        )
 
         return ResponseEntity.noContent().build()
     }
