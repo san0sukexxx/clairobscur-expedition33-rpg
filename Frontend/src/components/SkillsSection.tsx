@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import SkillPickerSection from "./SkillPickerSection";
@@ -12,16 +12,25 @@ interface SkillsSectionProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     isAdmin: boolean;
+    initialTab?: "list" | "picker";
+    isUsingSkillMode?: boolean;
 }
 
-export default function SkillSection({ player, setPlayer, isAdmin }: SkillsSectionProps) {
-    const [tab, setTab] = useState<"list" | "picker">("list");
+export default function SkillSection({ player, setPlayer, isAdmin, initialTab = "list", isUsingSkillMode = false }: SkillsSectionProps) {
+    const [tab, setTab] = useState<"list" | "picker">(initialTab);
     const prefersReduced = useReducedMotion();
     const prev = useRef<"list" | "picker">("list");
 
     const totalPoints = calculateSkillPoints(player);
     const usedPoints = calculateUsedSkillPoints(player);
     const remainingPoints = totalPoints - usedPoints;
+    const inBattle = !!player?.fightInfo?.turns?.some(
+        turn => turn.battleCharacterId === player.fightInfo?.playerBattleID
+    );
+
+    useEffect(() => {
+        setTab(initialTab);
+    }, [initialTab]);
 
     function handleMenuAction() {
         prev.current = tab;
@@ -32,16 +41,6 @@ export default function SkillSection({ player, setPlayer, isAdmin }: SkillsSecti
 
     return (
         <div className="relative">
-            <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-[#141414] px-4 py-2">
-                <span className="text-sm opacity-80">Pontos de Habilidade:</span>
-                <span className={`text-lg font-bold ${remainingPoints < 0 ? 'text-red-400' : 'text-green-400'}`}>
-                    {usedPoints} / {totalPoints}
-                </span>
-                {remainingPoints < 0 && (
-                    <span className="ml-2 text-xs text-red-400">(Excesso: {Math.abs(remainingPoints)})</span>
-                )}
-            </div>
-
             <div
                 className="relative w-full"
                 style={{ perspective: 1200 }}
@@ -70,7 +69,7 @@ export default function SkillSection({ player, setPlayer, isAdmin }: SkillsSecti
                             opacity: prefersReduced && tab !== "list" ? 0 : 1,
                         }}
                     >
-                        <SkillsListSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} />
+                        <SkillsListSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} inBattle={inBattle} />
                     </div>
 
                     <div
@@ -84,7 +83,7 @@ export default function SkillSection({ player, setPlayer, isAdmin }: SkillsSecti
                             opacity: prefersReduced && tab !== "picker" ? 0 : 1,
                         }}
                     >
-                        <SkillPickerSection player={player} setPlayer={setPlayer} />
+                        <SkillPickerSection player={player} setPlayer={setPlayer} inBattle={inBattle} isUsingSkillMode={isUsingSkillMode} />
                     </div>
                 </motion.div>
             </div>

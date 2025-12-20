@@ -1,4 +1,5 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { SkillResponse } from "../api/ResponseModel";
 import SkillModal from "./SkillModal";
@@ -8,6 +9,8 @@ import { APISkill } from "../api/APISkill";
 export interface SkillPickerProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
+    inBattle: boolean;
+    isUsingSkillMode?: boolean;
 }
 
 // --- UI Helpers ---
@@ -56,7 +59,9 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
                     <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md">{skill.cost}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                    <span className="rounded-full border border-white/15 px-2 py-0.5 opacity-90">{skill.type}</span>
+                    {skill.type && (
+                        <span className="rounded-full border border-white/15 px-2 py-0.5 opacity-90">{skill.type}</span>
+                    )}
                     {skill.isGradient && (
                         <span className="rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-fuchsia-200">Gradiente</span>
                     )}
@@ -66,10 +71,11 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
     );
 }
 
-export default function SkillPickerSection({ player, setPlayer }: SkillPickerProps) {
+export default function SkillPickerSection({ player, setPlayer, inBattle, isUsingSkillMode = false }: SkillPickerProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [query, setQuery] = useState("");
     const [slotAssignments, setSlotAssignments] = useState<Record<number, string>>({});
+    const [expanded, setExpanded] = useState<Record<number, boolean>>({});
 
     const characterSkills = useMemo(() =>
         getEnrichedCharacterSkills(player),
@@ -100,6 +106,34 @@ export default function SkillPickerSection({ player, setPlayer }: SkillPickerPro
 
         return arr;
     }, [characterSkills, slotAssignments, player]);
+
+    const currentMP = useMemo(() => {
+        if (inBattle && player?.fightInfo) {
+            const currentChar = player.fightInfo.characters?.find(
+                c => c.battleID === player.fightInfo?.playerBattleID
+            );
+            return currentChar?.magicPoints ?? 0;
+        }
+        return player?.playerSheet?.mpCurrent ?? 0;
+    }, [player, inBattle]);
+
+    const toggle = useCallback((idx: number) => {
+        setExpanded((prev) => ({ ...prev, [idx]: !prev[idx] }));
+    }, []);
+
+    const highlight = (text: string) => {
+        const terms = ["Physical", "Foretell", "Magical", "Bleed", "Poison", "Stun"];
+        const pattern = new RegExp(`\\b(${terms.join("|")})\\b`, "g");
+        return text.split(pattern).map((chunk, i) =>
+            terms.includes(chunk) ? (
+                <span key={i} className="text-amber-300 font-semibold">
+                    {chunk}
+                </span>
+            ) : (
+                <React.Fragment key={i}>{chunk}</React.Fragment>
+            )
+        );
+    };
 
     const filtered = useMemo(() => {
         if (!player) return [];
@@ -191,33 +225,73 @@ export default function SkillPickerSection({ player, setPlayer }: SkillPickerPro
     }
 
     function handleSlotActivate(idx: number) {
-        if (!slots[idx]) setOpenSlot(idx);
+        if (!slots[idx] && !inBattle) setOpenSlot(idx);
     }
 
-    function onKeyActivate(e: React.KeyboardEvent<HTMLDivElement>, idx: number) {
-        if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            handleSlotActivate(idx);
-        }
+    function handleUseSkill(skillId: string) {
+        console.log("Usando habilidade:", skillId);
+        // TODO: Implementar lógica de usar habilidade
+    }
+
+    function canUseSkill(skill: SkillResponse): boolean {
+        return currentMP >= skill.cost;
     }
 
     return (
         <div className="text-white">
             <div className="text-center text-lg tracking-widest pb-3 opacity-90">HABILIDADES</div>
 
+            {inBattle && !isUsingSkillMode && (
+                <div className="mb-4 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-center text-sm text-amber-200">
+                    Não é possível equipar ou desequipar habilidades durante a batalha
+                </div>
+            )}
+
+            {isUsingSkillMode && (
+                <div className="mb-4 rounded-lg border border-blue-400/30 bg-blue-400/10 p-3 text-center text-sm text-blue-200">
+                    Selecione uma habilidade equipada para usar em combate
+                </div>
+            )}
+
             <div className="grid grid-cols-1 gap-4">
                 {Array.from({ length: 6 }).map((_, idx) => {
                     const selected = slots[idx];
+
+                    const isOpen = !!expanded[idx];
 
                     return (
                         <div key={idx} className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
                             <div
                                 role="button"
                                 tabIndex={0}
-                                onKeyDown={(e) => onKeyActivate(e, idx)}
-                                onClick={() => handleSlotActivate(idx)}
-                                className={`w-full text-left pl-24 rounded-2xl transition-colors flex items-center relative pr-12 ${selected ? "py-8 hover:bg-white/5 cursor-default" : "py-4 hover:bg-white/5 cursor-pointer"
-                                    }`}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        if (selected) {
+                                            toggle(idx);
+                                        } else {
+                                            handleSlotActivate(idx);
+                                        }
+                                    }
+                                }}
+                                onClick={() => {
+                                    if (selected) {
+                                        toggle(idx);
+                                    } else {
+                                        handleSlotActivate(idx);
+                                    }
+                                }}
+                                aria-expanded={selected ? isOpen : undefined}
+                                aria-controls={selected ? `skill-desc-${idx}` : undefined}
+                                className={`w-full text-left pl-24 rounded-2xl transition-colors flex items-center relative pr-12 ${
+                                    selected
+                                        ? "py-8 hover:bg-white/5 cursor-pointer"
+                                        : isUsingSkillMode
+                                            ? "py-4 cursor-not-allowed opacity-70"
+                                            : (inBattle && !isUsingSkillMode)
+                                                ? "py-4 cursor-not-allowed opacity-70"
+                                                : "py-4 hover:bg-white/5 cursor-pointer"
+                                }`}
                             >
                                 {/* Losango lateral */}
                                 <div className="absolute left-5 top-1/2 -translate-y-1/2">
@@ -231,21 +305,69 @@ export default function SkillPickerSection({ player, setPlayer }: SkillPickerPro
                                             <span className="relative -top-0.5 ml-3 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md">{selected.cost}</span>
                                         </div>
 
-                                        <button
-                                            className="absolute right-6 top-1/2 -translate-y-1/2 px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                clearSlot(idx);
-                                            }}
-                                            aria-label="Remover habilidade do slot"
-                                        >
-                                            ×
-                                        </button>
+                                        {isUsingSkillMode ? (
+                                            <button
+                                                className={`absolute right-6 top-1/2 -translate-y-1/2 px-4 py-1.5 text-sm rounded-md border border-white/15 ${
+                                                    canUseSkill(selected)
+                                                        ? 'bg-emerald-600 hover:bg-emerald-500'
+                                                        : 'bg-gray-600 opacity-50 cursor-not-allowed'
+                                                }`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (canUseSkill(selected)) {
+                                                        handleUseSkill(selected.id);
+                                                    }
+                                                }}
+                                                disabled={!canUseSkill(selected)}
+                                                aria-label={`Usar ${selected.name}`}
+                                            >
+                                                Usar
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className={`absolute right-6 top-1/2 -translate-y-1/2 px-3 py-1 text-sm rounded-md border border-white/15 ${
+                                                    inBattle
+                                                        ? 'bg-white/5 opacity-50 cursor-not-allowed'
+                                                        : 'bg-white/10 hover:bg-white/20'
+                                                }`}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (!inBattle) clearSlot(idx);
+                                                }}
+                                                disabled={inBattle}
+                                                aria-label="Remover habilidade do slot"
+                                            >
+                                                ×
+                                            </button>
+                                        )}
                                     </>
                                 ) : (
                                     <div className="w-full opacity-60 py-4">Selecione uma Habilidade</div>
                                 )}
                             </div>
+
+                            {/* Área expansível */}
+                            {selected && (
+                                <AnimatePresence initial={false}>
+                                    {isOpen && (
+                                        <motion.div
+                                            id={`skill-desc-${idx}`}
+                                            key="content"
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: "auto" }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="border-t border-white/10"
+                                        >
+                                            <div className="px-6 py-4">
+                                                <div className="whitespace-pre-line text-[15px] leading-snug text-neutral-200 break-words">
+                                                    {highlight(selected.description)}
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            )}
                         </div>
                     );
                 })}

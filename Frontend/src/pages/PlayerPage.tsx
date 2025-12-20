@@ -79,6 +79,8 @@ export default function PlayerPage() {
   const [isReviveMode, setIsReviveMode] = useState(false);
   const [revivePercent, setRevivePercent] = useState(30);
   const [combatTab, setCombatTab] = useState<"enemies" | "team" | null>(null);
+  const [skillsInitialTab, setSkillsInitialTab] = useState<"list" | "picker">("list");
+  const [isUsingSkillMode, setIsUsingSkillMode] = useState(false);
   const { showToast } = useToast();
   const { pathname } = useLocation();
   const isAdmin = !!matchPath(
@@ -127,6 +129,10 @@ export default function PlayerPage() {
   useEffect(() => {
     if (tab !== "inventario") {
       setIsInventoryActiveInCombat(false);
+    }
+    if (tab !== "habilidades") {
+      setSkillsInitialTab("list");
+      setIsUsingSkillMode(false);
     }
     if (tab !== "combate") {
       setIsReviveMode(false);
@@ -254,7 +260,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "inventario" && (
-            <ItemsSection player={player} setPlayer={setPlayer} isInventoryActiveInCombat={isInventoryActiveInCombat} weaponInfo={weaponInfo} onReviveRequested={handleReviveRequested} />
+            <ItemsSection player={player} setPlayer={setPlayer} isInventoryActiveInCombat={isInventoryActiveInCombat} weaponInfo={weaponInfo} onReviveRequested={handleReviveRequested} onPotionUsed={handlePotionUsed} />
           )}
 
           {!loading && !error && tab === "combate" && (
@@ -262,7 +268,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "habilidades" && (
-            <SkillsSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} />
+            <SkillsSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} initialTab={skillsInitialTab} isUsingSkillMode={isUsingSkillMode} />
           )}
         </section>
       </main>
@@ -773,6 +779,8 @@ export default function PlayerPage() {
         setIsInventoryActiveInCombat(true);
         break;
       case COMBAT_MENU_ACTIONS.Skills:
+        setSkillsInitialTab("picker");
+        setIsUsingSkillMode(true);
         setTab("habilidades");
         break;
       case COMBAT_MENU_ACTIONS.Initiative:
@@ -845,6 +853,10 @@ export default function PlayerPage() {
     setCombatTab(teamTab as "enemies" | "team");
     setTab("combate");
     setIsReviveMode(true);
+  }
+
+  function handlePotionUsed() {
+    setTab("combate");
   }
 
   async function handleReviveTarget(target: BattleCharacterInfo) {

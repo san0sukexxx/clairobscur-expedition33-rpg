@@ -12,9 +12,10 @@ export interface SkillsListTabProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     isAdmin: boolean;
+    inBattle: boolean;
 }
 
-export default function SkillsListSection({ player, setPlayer, isAdmin }: SkillsListTabProps) {
+export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle }: SkillsListTabProps) {
     if(!player) { return }
 
     const list: SkillResponse[] = getEnrichedCharacterSkills(player);
@@ -105,6 +106,16 @@ export default function SkillsListSection({ player, setPlayer, isAdmin }: Skills
                 <p className="text-sm opacity-70 text-left">Lista completa das habilidades do personagem</p>
                 <span className="mt-2 block text-sm opacity-70 text-left">{list.length} item(ns)</span>
             </header>
+
+            <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-[#141414] px-4 py-2">
+                <span className="text-sm opacity-80">Pontos de Habilidade:</span>
+                <span className={`text-lg font-bold ${remainingPoints < 0 ? 'text-red-400' : 'text-green-400'}`}>
+                    {usedPoints} / {totalPoints}
+                </span>
+                {remainingPoints < 0 && (
+                    <span className="ml-2 text-xs text-red-400">(Excesso: {Math.abs(remainingPoints)})</span>
+                )}
+            </div>
 
             {/* grade ajustada para desktop */}
             <div className="grid grid-cols-1 gap-4 md:gap-6">
@@ -212,6 +223,10 @@ export default function SkillsListSection({ player, setPlayer, isAdmin }: Skills
                                         <div className="text-xs text-red-400">
                                             Pontos insuficientes (necessário: {skillInfo.unlockCost}, disponível: {remainingPoints})
                                         </div>
+                                    ) : inBattle ? (
+                                        <div className="text-xs text-amber-400">
+                                            Não é possível desbloquear habilidades durante a batalha
+                                        </div>
                                     ) : (
                                         <button
                                             type="button"
@@ -230,17 +245,23 @@ export default function SkillsListSection({ player, setPlayer, isAdmin }: Skills
 
                             {!disabled && isAdmin && (
                                 <div className="mt-4 flex justify-end">
-                                    <button
-                                        type="button"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            handleRemove(skill.id);
-                                        }}
-                                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                    >
-                                        <FaTrash className="h-3.5 w-3.5" aria-hidden />
-                                        Remover
-                                    </button>
+                                    {inBattle ? (
+                                        <div className="text-xs text-amber-400">
+                                            Não é possível remover habilidades durante a batalha
+                                        </div>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleRemove(skill.id);
+                                            }}
+                                            className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                        >
+                                            <FaTrash className="h-3.5 w-3.5" aria-hidden />
+                                            Remover
+                                        </button>
+                                    )}
                                 </div>
                             )}
 

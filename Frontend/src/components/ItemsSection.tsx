@@ -14,6 +14,7 @@ interface ItemsSectionProps {
     isInventoryActiveInCombat?: boolean;
     weaponInfo: WeaponInfo;
     onReviveRequested?: (percent: number) => void;
+    onPotionUsed?: () => void;
 }
 
 function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
@@ -52,7 +53,8 @@ function ElixirsCard({
     inCombat = false,
     canUsePotion = false,
     weaponInfo,
-    onReviveRequested
+    onReviveRequested,
+    onPotionUsed
 }: {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
@@ -60,6 +62,7 @@ function ElixirsCard({
     canUsePotion?: boolean;
     weaponInfo: WeaponInfo;
     onReviveRequested?: (percent: number) => void;
+    onPotionUsed?: () => void;
 }) {
     const [usingItem, setUsingItem] = useState<string | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -74,18 +77,34 @@ function ElixirsCard({
     }, [player?.fightInfo?.characters]);
 
     const isHpFull = useMemo(() => {
+        if (inCombat && player?.fightInfo) {
+            const currentChar = player.fightInfo.characters?.find(
+                c => c.battleID === player.fightInfo?.playerBattleID
+            );
+            if (currentChar) {
+                return currentChar.healthPoints >= currentChar.maxHealthPoints;
+            }
+        }
         if (!player?.playerSheet) return true;
         const currentHp = player.playerSheet.hpCurrent ?? 0;
         const maxHp = calculateMaxHP(player, weaponInfo);
         return currentHp >= maxHp;
-    }, [player, weaponInfo]);
+    }, [player, weaponInfo, inCombat]);
 
     const isMpFull = useMemo(() => {
+        if (inCombat && player?.fightInfo) {
+            const currentChar = player.fightInfo.characters?.find(
+                c => c.battleID === player.fightInfo?.playerBattleID
+            );
+            if (currentChar && currentChar.magicPoints !== undefined && currentChar.maxMagicPoints !== undefined) {
+                return currentChar.magicPoints >= currentChar.maxMagicPoints;
+            }
+        }
         if (!player?.playerSheet) return true;
         const currentMp = player.playerSheet.mpCurrent ?? 0;
         const maxMp = calculateMaxMP(player);
         return currentMp >= maxMp;
-    }, [player]);
+    }, [player, inCombat]);
 
     const ELIXIRS = [
         { id: "chroma-elixir", label: "Chroma", src: "/items/Chroma Elixir.png" },
@@ -236,6 +255,10 @@ function ElixirsCard({
                     };
                 });
             }
+
+            if (itemId === "healing-elixir" || itemId === "energy-elixir") {
+                onPotionUsed?.();
+            }
         } catch (e) {
             console.error("Erro ao usar item:", e);
             alert("Erro ao usar o item");
@@ -383,7 +406,7 @@ function ElixirsCard({
 }
 
 
-export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false, weaponInfo, onReviveRequested }: ItemsSectionProps) {
+export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false, weaponInfo, onReviveRequested, onPotionUsed }: ItemsSectionProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [editingItem, setEditingItem] = useState<PlayerItemResponse | null>(null);
 
@@ -537,7 +560,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
             <div className="text-center text-lg tracking-widest pb-3 opacity-90">ITENS</div>
 
             <div className="mb-4">
-                <ElixirsCard player={player} setPlayer={setPlayer} inCombat={inCombat} canUsePotion={canUsePotion} weaponInfo={weaponInfo} onReviveRequested={onReviveRequested} />
+                <ElixirsCard player={player} setPlayer={setPlayer} inCombat={inCombat} canUsePotion={canUsePotion} weaponInfo={weaponInfo} onReviveRequested={onReviveRequested} onPotionUsed={onPotionUsed} />
             </div>
 
             <div className="flex flex-col gap-4">
