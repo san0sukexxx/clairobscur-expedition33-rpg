@@ -16,6 +16,7 @@ import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuA
 import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIBattle, type AttackStatusEffectRequest, type CreateAttackRequest, type CreateDefenseRequest, type ResolveStatusRequest } from "../api/APIBattle";
+import { APIItem } from "../api/APIItem";
 import { type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
@@ -36,7 +37,9 @@ import {
   getPlayerFrenzy,
   playerHasDizzy,
   playerPictosTotalSpeed,
-  calculatePlayerCriticalMulti
+  calculatePlayerCriticalMulti,
+  calculateMaxHP,
+  calculateMaxMP
 } from "../utils/PlayerCalculator";
 
 import {
@@ -73,6 +76,9 @@ export default function PlayerPage() {
   const [modalBody, setModalBody] = useState<React.ReactNode>(null);
   const [attackType, setAttackType] = useState<AttackType>("basic");
   const [isInventoryActiveInCombat, setIsInventoryActiveInCombat] = useState(false);
+  const [isReviveMode, setIsReviveMode] = useState(false);
+  const [revivePercent, setRevivePercent] = useState(30);
+  const [combatTab, setCombatTab] = useState<"enemies" | "team" | null>(null);
   const { showToast } = useToast();
   const { pathname } = useLocation();
   const isAdmin = !!matchPath(
@@ -121,6 +127,10 @@ export default function PlayerPage() {
   useEffect(() => {
     if (tab !== "inventario") {
       setIsInventoryActiveInCombat(false);
+    }
+    if (tab !== "combate") {
+      setIsReviveMode(false);
+      setCombatTab(null);
     }
   }, [tab]);
 
@@ -244,11 +254,11 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "inventario" && (
-            <ItemsSection player={player} setPlayer={setPlayer} isInventoryActiveInCombat={isInventoryActiveInCombat} />
+            <ItemsSection player={player} setPlayer={setPlayer} isInventoryActiveInCombat={isInventoryActiveInCombat} weaponInfo={weaponInfo} onReviveRequested={handleReviveRequested} />
           )}
 
           {!loading && !error && tab === "combate" && (
-            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} />
+            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} forcedTab={combatTab} onTabChange={setCombatTab} />
           )}
 
           {!loading && !error && tab === "habilidades" && (
@@ -383,7 +393,8 @@ export default function PlayerPage() {
       "COUNTER_RESOLVED",
       "DAMAGE_DEALT",
       "STATUS_RESOLVED",
-      "HP_CHANGED"
+      "HP_CHANGED",
+      "MP_CHANGED"
     ])
 
     const sheetEvents = new Set([
@@ -581,6 +592,11 @@ export default function PlayerPage() {
   function handleSelectAttackTarget(target: BattleCharacterInfo) {
     if (player == null) { return }
 
+    if (isReviveMode) {
+      handleReviveTarget(target);
+      return;
+    }
+
     if (npcIsFlying(target) && attackType != "free-shot") {
       showToast("Este inimigo está voando e só pode ser atingido por tiros livres", { duration: 3000 });
       return;
@@ -771,6 +787,54 @@ export default function PlayerPage() {
         break;
       default:
         break;
+    }
+  }
+
+  function handleReviveRequested(percent: number) {
+    setRevivePercent(percent);
+
+    const currentCharacter = player?.fightInfo?.characters?.find(
+      c => c.battleID === player.fightInfo?.playerBattleID
+    );
+    const teamTab = currentCharacter?.isEnemy ? "enemies" : "team";
+
+    setCombatTab(teamTab as "enemies" | "team");
+    setTab("combate");
+    setIsReviveMode(true);
+  }
+
+  async function handleReviveTarget(target: BattleCharacterInfo) {
+    if (!player) return;
+
+    try {
+      const maxHp = calculateMaxHP(player, weaponInfo);
+      const maxMp = calculateMaxMP(player);
+
+      await APIItem.useItem({
+        playerId: player.id,
+        itemId: "revive-elixir",
+        maxHp,
+        maxMp,
+        recoveryPercent: revivePercent,
+        targetBattleCharacterId: target.battleID
+      });
+
+      const item = player.items?.find(i => i.itemId === "revive-elixir");
+      if (item) {
+        setPlayer(prev => {
+          if (!prev) return prev;
+          const items = (prev.items ?? []).map(i =>
+            i.id === item.id ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i
+          );
+          return { ...prev, items };
+        });
+      }
+
+      setIsReviveMode(false);
+      showToast(`${target.name} foi revivido com ${revivePercent}% de HP!`);
+    } catch (e) {
+      console.error("Erro ao reviver:", e);
+      showToast("Erro ao usar poção de reviver");
     }
   }
 

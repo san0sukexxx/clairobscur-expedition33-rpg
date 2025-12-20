@@ -183,7 +183,7 @@
   }
 }
 
-.attack-glow {
+.target-glow {
   border: 2px solid #f59e0b;
   border-radius: 0.75rem;
   animation: gold-blink 1.4s ease-in-out infinite;

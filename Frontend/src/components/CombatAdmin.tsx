@@ -596,7 +596,7 @@ export default function CombatAdmin({
                                         return (
                                             <React.Fragment key={m.rowId}>
                                                 <tr
-                                                    className={isRowSelectable ? "attack-glow cursor-pointer" : ""}
+                                                    className={isRowSelectable ? "target-glow cursor-pointer" : ""}
                                                     onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
                                                 >
                                                     <td>{renderAvatarCell(m)}</td>
@@ -1042,6 +1042,7 @@ export default function CombatAdmin({
             "STATUS_RESOLVED",
             "STATUS_ADDED",
             "HP_CHANGED",
+            "MP_CHANGED",
         ]);
 
         const shouldUpdate = logs.some(log => relevantEvents.has(log.eventType));

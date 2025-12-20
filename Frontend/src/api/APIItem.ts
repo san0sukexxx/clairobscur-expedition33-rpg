@@ -12,6 +12,15 @@ export interface UpdatePlayerItemRequest {
     maxQuantity?: number
 }
 
+export interface UseItemRequest {
+    playerId: number
+    itemId: string
+    maxHp: number
+    maxMp: number
+    recoveryPercent?: number
+    targetBattleCharacterId?: number
+}
+
 export class APIItem {
     static async createPlayerItem(input: CreatePlayerItemRequest): Promise<number> {
         return api.post<CreatePlayerItemRequest, number>("player-items", input)
@@ -23,5 +32,9 @@ export class APIItem {
 
     static async deletePlayerItem(id: number): Promise<void> {
         await api.delete<void>(`player-items/${id}`)
+    }
+
+    static async useItem(input: UseItemRequest): Promise<void> {
+        await api.post<UseItemRequest, void>("player-items/use", input)
     }
 }

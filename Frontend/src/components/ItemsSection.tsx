@@ -3,6 +3,8 @@ import { type PlayerItemResponse } from "../api/ResponseModel";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIItem } from "../api/APIItem";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { type WeaponInfo } from "../api/ResponseModel";
+import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator";
 
 const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", "revive-elixir"]);
 
@@ -10,6 +12,8 @@ interface ItemsSectionProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     isInventoryActiveInCombat?: boolean;
+    weaponInfo: WeaponInfo;
+    onReviveRequested?: (percent: number) => void;
 }
 
 function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
@@ -46,13 +50,43 @@ function ElixirsCard({
     player,
     setPlayer,
     inCombat = false,
-    canUsePotion = false
+    canUsePotion = false,
+    weaponInfo,
+    onReviveRequested
 }: {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     inCombat?: boolean;
     canUsePotion?: boolean;
+    weaponInfo: WeaponInfo;
+    onReviveRequested?: (percent: number) => void;
 }) {
+    const [usingItem, setUsingItem] = useState<string | null>(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+    const [recoveryPercent, setRecoveryPercent] = useState(30);
+
+    const hasDeadTeammate = useMemo(() => {
+        if (!player?.fightInfo?.characters) return false;
+        return player.fightInfo.characters.some(char =>
+            !char.isEnemy && char.healthPoints === 0
+        );
+    }, [player?.fightInfo?.characters]);
+
+    const isHpFull = useMemo(() => {
+        if (!player?.playerSheet) return true;
+        const currentHp = player.playerSheet.hpCurrent ?? 0;
+        const maxHp = calculateMaxHP(player, weaponInfo);
+        return currentHp >= maxHp;
+    }, [player, weaponInfo]);
+
+    const isMpFull = useMemo(() => {
+        if (!player?.playerSheet) return true;
+        const currentMp = player.playerSheet.mpCurrent ?? 0;
+        const maxMp = calculateMaxMP(player);
+        return currentMp >= maxMp;
+    }, [player]);
+
     const ELIXIRS = [
         { id: "chroma-elixir", label: "Chroma", src: "/items/Chroma Elixir.png" },
         { id: "healing-elixir", label: "Healing", src: "/items/Healing Tints.png" },
@@ -122,7 +156,6 @@ function ElixirsCard({
                     return { ...prev, items };
                 });
             } else {
-                // Criar novo com maxQuantity
                 const newId = await APIItem.createPlayerItem({
                     playerId: player.id,
                     itemId,
@@ -147,13 +180,115 @@ function ElixirsCard({
         }
     }
 
-    return (
-        <div className="rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
-            <div className="px-6 py-3 border-b border-white/10 text-lg tracking-widest text-center opacity-90">
-                ELIXIRES
-            </div>
+    function openRecoveryModal(itemId: string) {
+        setSelectedItemId(itemId);
+        setRecoveryPercent(30);
+        setModalOpen(true);
+    }
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4">
+    function closeRecoveryModal() {
+        setModalOpen(false);
+        setSelectedItemId(null);
+        setRecoveryPercent(30);
+    }
+
+    async function useItem(itemId: string, percent?: number) {
+        if (!player || !player.playerSheet) return;
+
+        setUsingItem(itemId);
+
+        try {
+            const maxHp = calculateMaxHP(player, weaponInfo);
+            const maxMp = calculateMaxMP(player);
+
+            await APIItem.useItem({
+                playerId: player.id,
+                itemId,
+                maxHp,
+                maxMp,
+                recoveryPercent: percent
+            });
+
+            const item = player.items?.find(i => i.itemId === itemId);
+            if (item) {
+                setPlayer(prev => {
+                    if (!prev || !prev.playerSheet) return prev;
+                    const items = (prev.items ?? []).map(i =>
+                        i.id === item.id ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i
+                    );
+
+                    let updatedSheet = { ...prev.playerSheet };
+
+                    if (itemId === "chroma-elixir") {
+                        updatedSheet.hpCurrent = maxHp;
+                    } else if (itemId === "healing-elixir") {
+                        const recoveryAmount = Math.floor((maxHp * (percent ?? 30)) / 100);
+                        updatedSheet.hpCurrent = Math.min((prev.playerSheet?.hpCurrent ?? 0) + recoveryAmount, maxHp);
+                    } else if (itemId === "energy-elixir") {
+                        const recoveryAmount = Math.floor((maxMp * (percent ?? 30)) / 100);
+                        updatedSheet.mpCurrent = Math.min((prev.playerSheet?.mpCurrent ?? 0) + recoveryAmount, maxMp);
+                    }
+
+                    return {
+                        ...prev,
+                        items,
+                        playerSheet: updatedSheet
+                    };
+                });
+            }
+        } catch (e) {
+            console.error("Erro ao usar item:", e);
+            alert("Erro ao usar o item");
+        } finally {
+            setUsingItem(null);
+        }
+    }
+
+    async function confirmUseItem() {
+        if (!selectedItemId) return;
+        closeRecoveryModal();
+
+        if (selectedItemId === "revive-elixir") {
+            if (onReviveRequested) {
+                onReviveRequested(recoveryPercent);
+            }
+        } else {
+            await useItem(selectedItemId, recoveryPercent);
+        }
+    }
+
+    return (
+        <>
+            <Modal open={modalOpen} onClose={closeRecoveryModal} title="Recuperação">
+                <div className="p-4 flex flex-col gap-4">
+                    <div>
+                        <label className="block text-sm opacity-80 mb-2">
+                            Porcentagem de recuperação:
+                        </label>
+                        <input
+                            type="number"
+                            min={1}
+                            max={100}
+                            className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                            value={recoveryPercent}
+                            onChange={(e) => setRecoveryPercent(Number(e.target.value))}
+                        />
+                    </div>
+                    <button
+                        className="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                        onClick={confirmUseItem}
+                    >
+                        Confirmar
+                    </button>
+                </div>
+            </Modal>
+
+            <div className="rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
+                <div className="px-6 py-3 border-b border-white/10 text-lg tracking-widest text-center opacity-90">
+                    ELIXIRES
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4">
                 {ELIXIRS.map((e) => {
                     const item = player?.items?.find(i => i.itemId === e.id);
                     const qty = item?.quantity ?? 0;
@@ -216,16 +351,26 @@ function ElixirsCard({
                                 <button
                                     className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15 disabled:opacity-50 disabled:cursor-not-allowed w-full"
                                     disabled={
-                                        e.id === "chroma-elixir"
+                                        usingItem === e.id ||
+                                        (e.id === "chroma-elixir"
                                             ? (inCombat || qty === 0 || (player?.playerSheet?.hpCurrent ?? 0) <= 0)
-                                            : (!canUsePotion || qty === 0)
+                                            : e.id === "revive-elixir"
+                                            ? (!canUsePotion || qty === 0 || !hasDeadTeammate)
+                                            : e.id === "healing-elixir"
+                                            ? (!canUsePotion || qty === 0 || isHpFull)
+                                            : e.id === "energy-elixir"
+                                            ? (!canUsePotion || qty === 0 || isMpFull)
+                                            : (!canUsePotion || qty === 0))
                                     }
                                     onClick={() => {
-                                        // TODO: Implementar uso do item
-                                        console.log("Usar item:", e.id);
+                                        if (e.id === "healing-elixir" || e.id === "energy-elixir" || e.id === "revive-elixir") {
+                                            openRecoveryModal(e.id);
+                                        } else {
+                                            useItem(e.id);
+                                        }
                                     }}
                                 >
-                                    Usar
+                                    {usingItem === e.id ? "Usando..." : "Usar"}
                                 </button>
                             )}
                         </div>
@@ -233,11 +378,12 @@ function ElixirsCard({
                 })}
             </div>
         </div>
+        </>
     );
 }
 
 
-export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false }: ItemsSectionProps) {
+export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false, weaponInfo, onReviveRequested }: ItemsSectionProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [editingItem, setEditingItem] = useState<PlayerItemResponse | null>(null);
 
@@ -391,7 +537,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
             <div className="text-center text-lg tracking-widest pb-3 opacity-90">ITENS</div>
 
             <div className="mb-4">
-                <ElixirsCard player={player} setPlayer={setPlayer} inCombat={inCombat} canUsePotion={canUsePotion} />
+                <ElixirsCard player={player} setPlayer={setPlayer} inCombat={inCombat} canUsePotion={canUsePotion} weaponInfo={weaponInfo} onReviveRequested={onReviveRequested} />
             </div>
 
             <div className="flex flex-col gap-4">

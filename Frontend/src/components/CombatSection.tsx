@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
@@ -12,11 +12,23 @@ interface CombatsSectionProps {
     onMenuAction: (action: CombatMenuAction) => void;
     player: GetPlayerResponse | null;
     onSelectTarget?: (target: BattleCharacterInfo) => void;
+    isReviveMode?: boolean;
+    forcedTab?: "enemies" | "team" | null;
+    onTabChange?: (tab: "enemies" | "team" | null) => void;
 }
 
-export default function CombatSection({ onMenuAction, player, onSelectTarget }: CombatsSectionProps) {
-    const [tab, setTab] = useState<"enemies" | "team">("enemies");
+export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, forcedTab, onTabChange }: CombatsSectionProps) {
+    const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
+
+    const tab = forcedTab ?? internalTab;
+    const setTab = (newTab: "enemies" | "team") => {
+        if (onTabChange) {
+            onTabChange(newTab);
+        } else {
+            setInternalTab(newTab);
+        }
+    };
 
     const currentCharacter = useMemo(() => {
         return player?.fightInfo?.characters?.find(c => c.battleID == player.fightInfo?.playerBattleID)
@@ -31,10 +43,10 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget }: 
     }, [currentCharacter]);
 
     useEffect(() => {
-        if (currentCharacter) {
+        if (currentCharacter && !forcedTab) {
             setTab(opositeTeamTab);
         }
-    }, [currentCharacter]);
+    }, [currentCharacter, opositeTeamTab, forcedTab]);
 
     function handleSelectAttackTarget(target: BattleCharacterInfo) {
         setIsAttacking(false);
@@ -117,11 +129,11 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget }: 
                 showBattleId={false} />
 
             {tab === "enemies" && (
-                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} />
+                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} />
             )}
 
             {tab === "team" && (
-                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} />
+                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} />
             )}
 
             <CombatMenu

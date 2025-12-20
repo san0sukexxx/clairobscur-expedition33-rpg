@@ -12,6 +12,7 @@ interface EnemiesStatusProps {
     currentCharacter: BattleCharacterInfo | undefined;
     isAttacking: Boolean;
     onSelectTarget?: (target: BattleCharacterInfo) => void;
+    isReviveMode?: boolean;
 }
 
 function pct(cur: number, max: number) {
@@ -23,7 +24,8 @@ export default function EnemiesStatus({
     isEnemies,
     currentCharacter,
     isAttacking,
-    onSelectTarget
+    onSelectTarget,
+    isReviveMode = false
 }: EnemiesStatusProps) {
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -46,19 +48,20 @@ export default function EnemiesStatus({
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {characters.map((ch) => {
                             const isDead = ch.healthPoints === 0;
+                            const isSelectable = (isAttacking && !isDead) || (isReviveMode && isDead);
 
                             return (
                                 <div
                                     key={ch.battleID}
-                                    role={isAttacking && !isDead ? "button" : undefined}
+                                    role={isSelectable ? "button" : undefined}
                                     onClick={() => {
-                                        if (!isDead && isAttacking && onSelectTarget) onSelectTarget(ch);
+                                        if (isSelectable && onSelectTarget) onSelectTarget(ch);
                                     }}
                                     className={`
                 rounded-xl bg-base-200/60 p-3 shadow-sm transition-all duration-200
-                ${isDead ? "pointer-events-none opacity-60" : ""}
-                ${!isDead && isAttacking
-                                            ? "cursor-pointer hover:shadow-lg attack-glow"
+                ${isDead && !isReviveMode ? "pointer-events-none opacity-60" : ""}
+                ${isSelectable
+                                            ? "cursor-pointer hover:shadow-lg target-glow"
                                             : "pointer-events-none"
                                         }
             `}

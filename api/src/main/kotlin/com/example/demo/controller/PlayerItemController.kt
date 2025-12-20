@@ -95,25 +95,80 @@ class PlayerItemController(
             return ResponseEntity.badRequest().build()
         }
 
-        val battleCharacter = battleCharacterRepository.findAll()
-            .firstOrNull { it.externalId == body.playerId.toString() && it.characterType.equals("player", ignoreCase = true) }
-
-        if (battleCharacter == null) {
-            return ResponseEntity.badRequest().build()
-        }
-
         when (body.itemId) {
             "chroma-elixir" -> {
-                battleCharacter.healthPoints = battleCharacter.maxHealthPoints
-                battleCharacter.magicPoints = battleCharacter.maxMagicPoints
+                val battleCharacter = battleCharacterRepository.findAll()
+                    .firstOrNull { it.externalId == body.playerId.toString() && it.characterType.equals("player", ignoreCase = true) }
 
-                battleCharacterRepository.save(battleCharacter)
+                if (battleCharacter != null) {
+                    battleCharacter.healthPoints = body.maxHp
+                    battleCharacterRepository.save(battleCharacter)
+                    playerEntity.hpCurrent = body.maxHp
+                    playerRepository.save(playerEntity)
+                } else {
+                    playerEntity.hpCurrent = body.maxHp
+                    playerRepository.save(playerEntity)
+                }
+            }
+            "healing-elixir" -> {
+                val percent = body.recoveryPercent ?: 30
+                val recoveryAmount = (body.maxHp * percent) / 100
+                val newHp = minOf(playerEntity.hpCurrent + recoveryAmount, body.maxHp)
 
-                playerEntity.hpCurrent = battleCharacter.maxHealthPoints
-                playerEntity.mpCurrent = battleCharacter.maxMagicPoints ?: 0
-                playerRepository.save(playerEntity)
+                val battleCharacter = battleCharacterRepository.findAll()
+                    .firstOrNull { it.externalId == body.playerId.toString() && it.characterType.equals("player", ignoreCase = true) }
 
-                val battleId = battleCharacter.battleId
+                battleCharacter?.let {
+                    it.healthPoints = newHp
+                    battleCharacterRepository.save(it)
+                    playerEntity.hpCurrent = newHp
+                    playerRepository.save(playerEntity)
+
+                    val battleId = it.battleId
+                    battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)
+                    )
+                }
+            }
+            "energy-elixir" -> {
+                val percent = body.recoveryPercent ?: 30
+
+                val battleCharacter = battleCharacterRepository.findAll()
+                    .firstOrNull { it.externalId == body.playerId.toString() && it.characterType.equals("player", ignoreCase = true) }
+
+                battleCharacter?.let {
+                    val currentMp = it.magicPoints ?: 0
+                    val recoveryAmount = (body.maxMp * percent) / 100
+                    val newMp = minOf(currentMp + recoveryAmount, body.maxMp)
+
+                    it.magicPoints = newMp
+                    battleCharacterRepository.save(it)
+                    playerEntity.mpCurrent = newMp
+                    playerRepository.save(playerEntity)
+
+                    val battleId = it.battleId
+                    battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "MP_CHANGED", eventJson = null)
+                    )
+                }
+            }
+            "revive-elixir" -> {
+                val percent = body.recoveryPercent ?: 30
+                val targetBattleCharacterId = body.targetBattleCharacterId ?: return ResponseEntity.badRequest().build()
+
+                val targetCharacter = battleCharacterRepository.findById(targetBattleCharacterId)
+                if (targetCharacter.isEmpty) {
+                    return ResponseEntity.badRequest().build()
+                }
+
+                val target = targetCharacter.get()
+                val recoveryAmount = (target.maxHealthPoints * percent) / 100
+                val newHp = minOf(recoveryAmount, target.maxHealthPoints)
+
+                target.healthPoints = newHp
+                battleCharacterRepository.save(target)
+
+                val battleId = target.battleId
                 battleLogRepository.save(
                     BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)
                 )
