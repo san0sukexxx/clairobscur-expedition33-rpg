@@ -55,4 +55,11 @@ class PlayerSkillController(private val repository: PlayerSkillRepository) {
         repository.deleteById(id)
         return ResponseEntity.noContent().build()
     }
+
+    @DeleteMapping("/player/{playerId}")
+    fun deleteAllByPlayerId(@PathVariable playerId: Int): ResponseEntity<Void> {
+        val skills = repository.findByPlayerId(playerId)
+        repository.deleteAll(skills)
+        return ResponseEntity.noContent().build()
+    }
 }

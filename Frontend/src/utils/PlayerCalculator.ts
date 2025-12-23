@@ -1,7 +1,7 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { calculateWeaponPlusDices, calculateWeaponPlusPower, calculateWeaponCounterMaxPower } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
-import { type AttackType, type BattleCharacterInfo, type DefenseOption, type StatusResponse, type StatusType, type WeaponInfo } from "../api/ResponseModel";
+import { type AttackType, type BattleCharacterInfo, type DefenseOption, type StatusResponse, type StatusType, type WeaponInfo, type Stance } from "../api/ResponseModel";
 import {
     calculateCriticalMulti,
     calculateFailureDiv,
@@ -123,18 +123,28 @@ export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackTyp
     return (calculateWeaponPlusPower(weaponInfo.details?.attributes.power ?? 0, weaponInfo.weapon?.level ?? 0) ?? 0);
 }
 
-export function calculateAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType): number {
+export function calculateAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, stance?: Stance | null): number {
     if (hasShield(npcBattleCharacterInfo)) {
         return 0;
     }
 
+    let damage = 0;
     if (attackType == "basic") {
-        return calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo.id, diceResult);
+        damage = calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo.id, diceResult);
     } else if (attackType == "free-shot") {
-        return calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType);
+        damage = calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType);
+    } else {
+        damage = 1;
     }
 
-    return 1;
+    // Apply stance modifiers to damage dealt
+    if (stance === "Offensive") {
+        damage = Math.floor(damage * 1.5);  // +50% damage
+    } else if (stance === "Virtuous") {
+        damage = Math.floor(damage * 3.0);  // +200% damage (3x total)
+    }
+
+    return damage;
 }
 
 export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, attackType: AttackType): number {
@@ -199,7 +209,7 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     return attackDamage;
 }
 
-export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any, defenseOption: DefenseOption): number {
+export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any, defenseOption: DefenseOption, stance?: Stance | null): number {
     if (playerHasShield(player)) {
         return 0;
     }
@@ -208,7 +218,14 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     if (!playerCharacter) { return 0 }
 
     if (defenseOption == "take") {
-        return totalDamage;
+        // Apply stance modifiers to damage received when taking damage
+        let damage = totalDamage;
+        if (stance === "Defensive") {
+            damage = Math.floor(damage * 0.5);  // -50% damage received
+        } else if (stance === "Offensive") {
+            damage = Math.floor(damage * 1.5);  // +50% damage received
+        }
+        return damage;
     }
 
     let hastenedMulti = hasHastened(playerCharacter) ? 2 : 1;
@@ -261,7 +278,16 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 
     playerDefense = playerHasMarked(player) ? Math.floor(playerDefense * 0.5) : playerDefense;
 
-    return totalDamage - Math.floor(playerDefense);
+    let damageReceived = totalDamage - Math.floor(playerDefense);
+
+    // Apply stance modifiers to damage received after defense calculation
+    if (stance === "Defensive") {
+        damageReceived = Math.floor(damageReceived * 0.5);  // -50% damage received
+    } else if (stance === "Offensive") {
+        damageReceived = Math.floor(damageReceived * 1.5);  // +50% damage received
+    }
+
+    return damageReceived;
 }
 
 export function calculateMaxCounterDamage(player: GetPlayerResponse | null, weaponList: WeaponDTO[]): number {

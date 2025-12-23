@@ -1,6 +1,7 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
+import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
 
 interface PlayerStatusFloatingProps {
@@ -19,6 +20,18 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
         characters.find(c => c.battleID === playerBattleID) ?? characters.find(c => !c.isEnemy);
 
     if (!ch) return null;
+
+    // Check if player is in the turns queue
+    const playerInTurns = player?.fightInfo?.turns?.some(
+        turn => turn.battleCharacterId === playerBattleID
+    ) ?? false;
+
+    // Check if player has any gradient skills equipped in slots
+    const hasGradientSkills = player?.skills?.some(playerSkill => {
+        if (playerSkill.slot === null || playerSkill.slot === undefined) return false;
+        const skillData = getEnrichedCharacterSkills(player).find(s => s.id === playerSkill.skillId);
+        return skillData?.isGradient ?? false;
+    }) ?? false;
 
     return (
         <div className="fixed bottom-20 left-4 z-40">
@@ -78,26 +91,67 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                 />
                             </div>
                         )}
-
-                    {ch.maxChargePoints !== undefined &&
-                        ch.maxChargePoints !== null &&
-                        ch.maxChargePoints > 0 && (
-                            <div className="flex-1">
-                                <div className="flex items-center justify-between text-[10px] uppercase">
-                                    <span className="opacity-70">Carga</span>
-                                    <span className="font-mono text-xs">
-                                        {ch.chargePoints ?? 0}/{ch.maxChargePoints}
-                                    </span>
-                                </div>
-                                <AnimatedStatBar
-                                    value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
-                                    label="Carga"
-                                    fillClass="bg-warning"
-                                    ghostClass="bg-warning/30"
-                                />
-                            </div>
-                        )}
                 </div>
+
+                {/* Charge bar for Gustave - below HP/MP */}
+                {ch.maxChargePoints !== undefined &&
+                    ch.maxChargePoints !== null &&
+                    ch.maxChargePoints > 0 && (
+                        <div className="mt-2">
+                            <div className="flex items-center justify-between text-[10px] uppercase">
+                                <span className="opacity-70">Carga</span>
+                                <span className="font-mono text-xs">
+                                    {ch.chargePoints ?? 0}/{ch.maxChargePoints}
+                                </span>
+                            </div>
+                            <AnimatedStatBar
+                                value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
+                                label="Carga"
+                                fillClass="bg-warning"
+                                ghostClass="bg-warning/30"
+                            />
+                        </div>
+                    )}
+
+                {/* Gradient bar - only if player has gradient skills equipped and is in turns */}
+                {hasGradientSkills && playerInTurns && (
+                        <div className="mt-2">
+                            <div className="flex items-center justify-between text-[10px] uppercase">
+                                <span className="opacity-70">Gradiente</span>
+                                <span className="font-mono text-xs">
+                                    {Math.floor((ch.gradientPoints ?? 0) / 12)}/3
+                                </span>
+                            </div>
+                            <AnimatedStatBar
+                                value={pct((ch.gradientPoints ?? 0) % 12, 12)}
+                                label="Gradiente"
+                                fillClass="bg-purple-500"
+                                ghostClass="bg-purple-500/30"
+                            />
+                        </div>
+                    )}
+
+                {/* Stance indicator for Maelle only */}
+                {ch.stance !== undefined &&
+                 ch.id.toLowerCase().includes("maelle") && (
+                    <div className="mt-2">
+                        <div className="flex items-center gap-2 text-[10px]">
+                            <span className="opacity-70">Postura</span>
+                            {ch.stance === "Defensive" && (
+                                <div className="badge badge-info badge-sm">Defensiva</div>
+                            )}
+                            {ch.stance === "Offensive" && (
+                                <div className="badge badge-error badge-sm">Ofensiva</div>
+                            )}
+                            {ch.stance === "Virtuous" && (
+                                <div className="badge badge-secondary badge-sm">Virtuosa</div>
+                            )}
+                            {!ch.stance && (
+                                <div className="badge badge-ghost badge-sm">Sem postura</div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

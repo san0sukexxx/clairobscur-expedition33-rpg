@@ -76,6 +76,8 @@ class BattleController(
                             maxMagicPoints = bc.maxMagicPoints,
                             chargePoints = bc.chargePoints,
                             maxChargePoints = bc.maxChargePoints,
+                            gradientPoints = if (bc.isEnemy) battle.teamBGradientPoints else battle.teamAGradientPoints,
+                            stance = bc.stance,
                             status = status,
                             type = bc.characterType,
                             isEnemy = bc.isEnemy,

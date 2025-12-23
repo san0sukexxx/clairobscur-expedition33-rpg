@@ -8,5 +8,10 @@ data class CreateAttackRequest(
         val effects: List<StatusEffectRequest> = emptyList(),
         val attackType: String?,
         val skillCost: Int? = null,
-        val consumesCharge: Boolean? = null
+        val consumesCharge: Boolean? = null,
+        val isGradient: Boolean? = null,
+        val destroysShields: Boolean? = null,
+        val grantsAPPerShield: Int? = null,
+        val consumesBurn: Int? = null,
+        val executionThreshold: Int? = null
 )

@@ -6,7 +6,8 @@ export type StatusType =
     "Stunned" | "Confused" | "Frozen" | "Entangled" |
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Plagued" | "Burning" |
-    "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing";
+    "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
+    "FireVulnerability" | "Taunt";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
@@ -17,6 +18,7 @@ export type SkillType = "give-status";
 export type PictoColor = "green" | "red" | "blue" | "yellow";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";
+export type Stance = "Defensive" | "Offensive" | "Virtuous";
 
 export interface InitiativeResponse {
     playFirst: boolean;
@@ -49,6 +51,8 @@ export interface BattleCharacterInfo {
     maxMagicPoints?: number;
     chargePoints?: number;
     maxChargePoints?: number;
+    gradientPoints?: number;
+    stance?: Stance | null;
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;
@@ -141,6 +145,7 @@ export interface SkillResponse {
     description: string;
     type?: string;
     isGradient?: boolean;
+    masterUnlock?: boolean;  // Requires master permission to unlock
     image: string;
     preRequisite?: string[];
     isBlocked?: boolean;

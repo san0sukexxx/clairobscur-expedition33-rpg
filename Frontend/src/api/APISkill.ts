@@ -22,4 +22,8 @@ export class APISkill {
     static async deletePlayerSkill(id: number): Promise<void> {
         await api.delete<void>(`player-Skills/${id}`);
     }
+
+    static async deleteAllPlayerSkills(playerId: number): Promise<void> {
+        await api.delete<void>(`player-Skills/player/${playerId}`);
+    }
 }

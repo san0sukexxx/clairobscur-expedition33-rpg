@@ -57,7 +57,9 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
             <div className="flex flex-col gap-1 min-w-0">
                 <div className="flex items-start gap-2 justify-between">
                     <div className="text-base font-semibold leading-tight truncate">{skill.name}</div>
-                    <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md">{skill.cost}</span>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${skill.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                        {skill.isGradient ? `${skill.cost} ${skill.cost === 1 ? 'carga' : 'cargas'}` : skill.cost}
+                    </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                     {skill.type && (
@@ -116,6 +118,16 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             return currentChar?.magicPoints ?? 0;
         }
         return player?.playerSheet?.mpCurrent ?? 0;
+    }, [player, inBattle]);
+
+    const currentGradientCharges = useMemo(() => {
+        if (inBattle && player?.fightInfo) {
+            const currentChar = player.fightInfo.characters?.find(
+                c => c.battleID === player.fightInfo?.playerBattleID
+            );
+            return Math.floor((currentChar?.gradientPoints ?? 0) / 12);
+        }
+        return 0;
     }, [player, inBattle]);
 
     const toggle = useCallback((idx: number) => {
@@ -236,6 +248,9 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }
 
     function canUseSkill(skill: SkillResponse): boolean {
+        if (skill.isGradient) {
+            return currentGradientCharges >= skill.cost;
+        }
         return currentMP >= skill.cost;
     }
 
@@ -304,7 +319,9 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                     <>
                                         <div className="flex-1 text-lg font-semibold leading-tight mr-2 truncate">
                                             {selected.name}
-                                            <span className="relative -top-0.5 ml-3 rounded-full bg-blue-600 px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md">{selected.cost}</span>
+                                            <span className={`relative -top-0.5 ml-3 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${selected.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                                                {selected.isGradient ? `${selected.cost} ${selected.cost === 1 ? 'carga' : 'cargas'}` : selected.cost}
+                                            </span>
                                         </div>
 
                                         {isUsingSkillMode && inBattle ? (

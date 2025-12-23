@@ -18,12 +18,24 @@ class DamageService(
 
     @Transactional
     fun applyDamage(targetBC: BattleCharacter, rawDamage: Int): Int {
+        // Check if target has Unprotected (Defenseless) status for +25% damage
+        val hasUnprotected = battleStatusEffectRepository
+                .findByBattleCharacterIdAndEffectType(targetBC.id!!, "Unprotected")
+                .isNotEmpty()
+
+        // Apply Defenseless bonus if present
+        val damageWithDefenseless = if (hasUnprotected) {
+            (rawDamage * 1.25).toInt()  // +25% damage
+        } else {
+            rawDamage
+        }
+
         // Apply minimum damage rules:
         // - NPCs: minimum 1 damage
         // - Players: minimum 0 damage (can be 0)
         val damage = when {
-            targetBC.characterType == "npc" -> rawDamage.coerceAtLeast(1)
-            else -> rawDamage.coerceAtLeast(0)
+            targetBC.characterType == "npc" -> damageWithDefenseless.coerceAtLeast(1)
+            else -> damageWithDefenseless.coerceAtLeast(0)
         }
 
         val newHp = (targetBC.healthPoints - damage).coerceAtLeast(0)

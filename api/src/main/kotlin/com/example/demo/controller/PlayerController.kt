@@ -149,6 +149,21 @@ class PlayerController(
                 val p = opt.get()
                 val sheet = req.playerSheet
 
+                // Check if characterId is changing
+                val oldCharacterId = p.characterId
+                val newCharacterId = sheet.characterId
+                val isChangingCharacter = oldCharacterId != null && newCharacterId != null && oldCharacterId != newCharacterId
+
+                // If changing character, reset skills and unequip weapon
+                if (isChangingCharacter) {
+                        // Delete all skills (this clears the purchased/unlocked skills list)
+                        val skills = playerSkillRepository.findByPlayerId(id)
+                        playerSkillRepository.deleteAll(skills)
+
+                        // Unequip weapon
+                        p.weaponId = null
+                }
+
                 p.name = sheet.name
                 p.characterId = sheet.characterId
                 p.totalPoints = sheet.totalPoints ?: 0
@@ -160,7 +175,11 @@ class PlayerController(
                 p.mpCurrent = sheet.mpCurrent ?: 0
                 p.hpCurrent = sheet.hpCurrent ?: 0
                 p.notes = sheet.notes
-                p.weaponId = sheet.weaponId
+
+                // Only update weaponId if not changing character (already set to null above)
+                if (!isChangingCharacter) {
+                        p.weaponId = sheet.weaponId
+                }
 
                 playerRepository.save(p)
 

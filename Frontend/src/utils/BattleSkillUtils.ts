@@ -1,5 +1,5 @@
 import { SkillEffectsRegistry, type SkillEffect, type SkillMetadata } from "../data/SkillEffectsRegistry";
-import type { BattleCharacterInfo, StatusType } from "../api/ResponseModel";
+import type { BattleCharacterInfo, StatusType, Stance } from "../api/ResponseModel";
 import { APIBattle, type AttackStatusEffectRequest } from "../api/APIBattle";
 
 // ==================== INTERFACES ====================
@@ -184,11 +184,16 @@ export function calculateSkillHitDamage(
         case "very-high":
             multiplier = 2.0;  // 200% do dano base
             break;
+        case "extreme":
+            multiplier = 2.5;  // 250% do dano base
+            break;
         default:
             multiplier = 1.0;
     }
 
-    return Math.floor(weaponPower * multiplier);
+    let damage = Math.floor(weaponPower * multiplier);
+
+    return damage;
 }
 
 function resolveEffects(

@@ -12,6 +12,7 @@ import com.example.demo.repository.AttackRepository
 import com.example.demo.repository.AttackStatusEffectRepository
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
+import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.service.BattleService
@@ -27,6 +28,7 @@ class AttackController(
         private val attackStatusEffectRepository: AttackStatusEffectRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
+        private val battleRepository: BattleRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val battleService: BattleService,
@@ -55,7 +57,11 @@ class AttackController(
                         val current = sourceBC.magicPoints ?: 0
                         val max = sourceBC.maxMagicPoints ?: 0
 
-                        val next =
+                        // Handle Gradient skills separately (they don't use MP)
+                        val next = if (body.isGradient == true) {
+                                // Gradient skills don't consume MP
+                                current
+                        } else {
                                 when (body.attackType) {
                                         "basic" -> (current + 1).coerceAtMost(max)
                                         "free-shot" -> (current - freeShotCost).coerceAtLeast(0)
@@ -65,6 +71,7 @@ class AttackController(
                                         }
                                         else -> current
                                 }
+                        }
 
                         sourceBC.magicPoints = next
 
@@ -79,6 +86,34 @@ class AttackController(
                                 if (maxCharge > 0) {
                                         sourceBC.chargePoints = (currentCharge + 1).coerceAtMost(maxCharge)
                                 }
+                        }
+
+                        // Gradient system logic (team-based)
+                        val battle = battleRepository.findById(sourceBC.battleId).orElse(null)
+                        if (battle != null) {
+                                if (body.isGradient == true) {
+                                        // Gradient skills consume gradient charges from team (skillCost * 12 points per charge)
+                                        val gradientCost = (body.skillCost ?: 1) * 12
+                                        if (sourceBC.isEnemy) {
+                                                val currentGradient = battle.teamBGradientPoints
+                                                battle.teamBGradientPoints = (currentGradient - gradientCost).coerceAtLeast(0)
+                                        } else {
+                                                val currentGradient = battle.teamAGradientPoints
+                                                battle.teamAGradientPoints = (currentGradient - gradientCost).coerceAtLeast(0)
+                                        }
+                                } else if (body.attackType == "skill" && body.skillCost != null && body.skillCost > 0) {
+                                        // Using skills with MP cost charges gradient bar (MP cost = gradient points gained)
+                                        // Max gradient points = 36 (3 charges * 12 points each)
+                                        val maxGradient = 36  // 3 charges * 12 points per charge
+                                        if (sourceBC.isEnemy) {
+                                                val currentGradient = battle.teamBGradientPoints
+                                                battle.teamBGradientPoints = (currentGradient + body.skillCost).coerceAtMost(maxGradient)
+                                        } else {
+                                                val currentGradient = battle.teamAGradientPoints
+                                                battle.teamAGradientPoints = (currentGradient + body.skillCost).coerceAtMost(maxGradient)
+                                        }
+                                }
+                                battleRepository.save(battle)
                         }
 
                         battleCharacterRepository.save(sourceBC)
@@ -115,13 +150,95 @@ class AttackController(
                                 )
                         )
                 } else if (body.totalDamage != null) {
-                        val targetBC =
+                        var targetBC =
                                 battleCharacterRepository.findById(body.targetBattleId).orElse(null)
                                         ?: return ResponseEntity.badRequest().build()
 
-                        val newHp = damageService.applyDamage(targetBC, body.totalDamage)
+                        // Egide: Check if there's an ally with Taunt status to redirect damage
+                        val battleId = targetBC.battleId
+                        val allCharacters = battleCharacterRepository.findByBattleId(battleId)
+                        val allies = allCharacters.filter { it.isEnemy == targetBC.isEnemy && it.id != targetBC.id }
 
-                        battleService.consumeShield(targetBC.id!!)
+                        // Find ally with Taunt status (Egide active)
+                        val tauntingAlly = allies.firstOrNull { ally ->
+                                battleStatusEffectRepository
+                                        .findByBattleCharacterIdAndEffectType(ally.id!!, "Taunt")
+                                        .isNotEmpty()
+                        }
+
+                        // Redirect damage to taunting ally if exists
+                        if (tauntingAlly != null) {
+                                targetBC = tauntingAlly
+                        }
+
+                        // Gommage: Check for execution threshold (instant kill if HP% <= threshold)
+                        val shouldExecute = if (body.executionThreshold != null) {
+                                val currentHpPercent = (targetBC.healthPoints.toDouble() / targetBC.maxHealthPoints.toDouble()) * 100
+                                currentHpPercent <= body.executionThreshold
+                        } else {
+                                false
+                        }
+
+                        // Execute instantly if below threshold, otherwise apply normal damage
+                        val newHp = if (shouldExecute) {
+                                // Instant execution - set HP to 0
+                                targetBC.healthPoints = 0
+                                battleCharacterRepository.save(targetBC)
+                                0
+                        } else {
+                                damageService.applyDamage(targetBC, body.totalDamage)
+                        }
+
+                        // Breaking Rules: Destroy all shields and grant AP
+                        if (body.destroysShields == true) {
+                                val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                                val shieldEffects = targetEffects.filter { it.effectType == "Shielded" }
+                                val shieldsDestroyed = shieldEffects.size
+
+                                // Remove all shield effects
+                                shieldEffects.forEach { shield ->
+                                        battleStatusEffectRepository.delete(shield)
+                                }
+
+                                // Grant AP to source character (Maelle)
+                                if (shieldsDestroyed > 0 && body.grantsAPPerShield != null) {
+                                        val apToGrant = shieldsDestroyed * body.grantsAPPerShield
+                                        val currentMP = sourceBC.magicPoints ?: 0
+                                        val maxMP = sourceBC.maxMagicPoints ?: 0
+                                        sourceBC.magicPoints = (currentMP + apToGrant).coerceAtMost(maxMP)
+                                        battleCharacterRepository.save(sourceBC)
+                                }
+                        } else {
+                                // Normal shield consumption (only 1)
+                                battleService.consumeShield(targetBC.id!!)
+                        }
+
+                        // Combustion: Consume Burn stacks from target
+                        body.consumesBurn?.let { consumeAmount ->
+                                if (consumeAmount > 0) {
+                                        val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                                        val burnEffects = targetEffects.filter { it.effectType == "Burning" }
+
+                                        var burnsRemaining: Int = consumeAmount
+                                        for (burn in burnEffects) {
+                                                if (burnsRemaining > 0) {
+                                                        val burnAmount = burn.ammount
+                                                        if (burnAmount <= burnsRemaining) {
+                                                                // Remove entire burn effect
+                                                                battleStatusEffectRepository.delete(burn)
+                                                                burnsRemaining -= burnAmount
+                                                        } else {
+                                                                // Reduce burn amount
+                                                                battleStatusEffectRepository.save(
+                                                                        burn.copy(ammount = burnAmount - burnsRemaining)
+                                                                )
+                                                                burnsRemaining = 0
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+
                         battleService.removeMarked(targetBC.id!!)
 
                         val nonStackableEffects = listOf("Fragile", "Inverted", "Flying", "Dizzy", "Stunned", "Silenced", "Exhausted")

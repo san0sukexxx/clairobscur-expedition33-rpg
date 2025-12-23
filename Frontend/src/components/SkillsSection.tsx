@@ -33,6 +33,10 @@ export default function SkillSection({ player, setPlayer, isAdmin, initialTab = 
         setTab(initialTab);
     }, [initialTab]);
 
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [tab]);
+
     function handleMenuAction() {
         prev.current = tab;
         setTab(tab === "list" ? "picker" : "list");

@@ -17,7 +17,8 @@ import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../ap
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIBattle, type AttackStatusEffectRequest, type CreateAttackRequest, type CreateDefenseRequest, type ResolveStatusRequest } from "../api/APIBattle";
 import { APIItem } from "../api/APIItem";
-import { type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse } from "../api/ResponseModel";
+import { APISkill } from "../api/APISkill";
+import { type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse, type StatusType } from "../api/ResponseModel";
 import { resolveSkill, calculateSkillHitDamage, applySpecialEffects, getStatusEffectsForTarget } from "../utils/BattleSkillUtils";
 import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
 import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
@@ -131,6 +132,26 @@ export default function PlayerPage() {
   useEffect(() => {
     setup();
   }, []);
+
+  // Reload player data when characterId changes (to refresh skills list after backend cleanup)
+  const previousCharacterId = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    const currentCharId = player?.playerSheet?.characterId;
+
+    if (previousCharacterId.current && currentCharId && previousCharacterId.current !== currentCharId) {
+      // Character changed, reload player data
+      if (character) {
+        APIPlayer.get(parseInt(character)).then(updatedPlayer => {
+          setPlayer(updatedPlayer);
+        }).catch(error => {
+          console.error("Erro ao recarregar dados do player:", error);
+        });
+      }
+    }
+
+    previousCharacterId.current = currentCharId;
+  }, [player?.playerSheet?.characterId, character]);
 
   useEffect(() => {
     if (tab !== "inventario") {
@@ -654,7 +675,8 @@ export default function PlayerPage() {
       const criticalMulti = calculatePlayerCriticalMulti(result, player)
       const rollTotal = diceTotal(result)
       const weaponPower = calculateRawWeaponPower(weaponInfo, attackType)
-      const total = calculateAttackDamage(player, weaponInfo, target, result, attackType)
+      const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID)
+      const total = calculateAttackDamage(player, weaponInfo, target, result, attackType, playerChar?.stance)
       const failures = countFailuresRolls(result)
       const failuresDiv = calculateFailureDiv(result)
       const elementModifier = getWeaponElementModifier(target.id, weaponInfo)
@@ -872,7 +894,8 @@ export default function PlayerPage() {
 
     try {
       const playerId = player.id;
-      const playerBattleId = player.fightInfo.playerBattleID;
+      const playerBattleId = player.fightInfo?.playerBattleID;
+      if (!playerBattleId) return;
 
       showToast("Tentando fugir...");
       await APIBattle.flee(playerId, playerBattleId);
@@ -943,7 +966,7 @@ export default function PlayerPage() {
     if (!player?.fightInfo) return;
 
     try {
-      const source = player.fightInfo.characters?.find(
+      const source = player.fightInfo?.characters?.find(
         c => c.battleID === player.fightInfo?.playerBattleID
       );
 
@@ -970,20 +993,32 @@ export default function PlayerPage() {
       const enrichedSkills = getEnrichedCharacterSkills(player);
       const fullSkill = enrichedSkills.find(s => s.id === skillId);
       const skillCost = fullSkill?.cost ?? 0;
-      const currentMp = source.magicPoints ?? 0;
+      const isGradientSkill = fullSkill?.isGradient ?? false;
 
-      if (currentMp < skillCost) {
-        showToast(`MP insuficiente! Necessário: ${skillCost}, Disponível: ${currentMp}`);
-        setPendingSkillId(null);
-        setIsSelectingSkillTarget(false);
-        return;
+      // Validate resources (MP or Gradient charges)
+      if (isGradientSkill) {
+        const currentGradientCharges = Math.floor((source.gradientPoints ?? 0) / 12);
+        if (currentGradientCharges < skillCost) {
+          showToast(`Cargas de Gradiente insuficientes! Necessário: ${skillCost}, Disponível: ${currentGradientCharges}`);
+          setPendingSkillId(null);
+          setIsSelectingSkillTarget(false);
+          return;
+        }
+      } else {
+        const currentMp = source.magicPoints ?? 0;
+        if (currentMp < skillCost) {
+          showToast(`MP insuficiente! Necessário: ${skillCost}, Disponível: ${currentMp}`);
+          setPendingSkillId(null);
+          setIsSelectingSkillTarget(false);
+          return;
+        }
       }
 
       const resolved = resolveSkill(
         skillId,
         source,
         target,
-        player.fightInfo.characters ?? []
+        player.fightInfo?.characters ?? []
       );
 
       // Calculate charge bonus for skills that scale with charge (e.g., Overcharge)
@@ -991,6 +1026,79 @@ export default function PlayerPage() {
       if (resolved.metadata.damageScalesWithCharge) {
         const currentCharge = source.chargePoints ?? 0;
         chargeBonus = currentCharge;  // +1 damage per charge
+      }
+
+      // Burning Canvas: Calculate burn damage multiplier
+      let burnMultiplier = 1.0;
+      if (resolved.metadata.damageScalesWithBurn) {
+        const targetStatuses = target.status ?? [];
+        const burnStacks = targetStatuses
+          .filter(s => s.effectName === "Burning")
+          .reduce((sum, s) => sum + (s.ammount ?? 0), 0);
+
+        if (burnStacks > 0) {
+          const bonusPerBurn = (resolved.metadata.burnDamageBonus ?? 10) / 100;  // Default 10% = 0.1
+          burnMultiplier = 1.0 + (burnStacks * bonusPerBurn);
+          showToast(`${burnStacks} Queimadura(s) no alvo! Dano +${Math.floor(burnStacks * bonusPerBurn * 100)}%`);
+        }
+      }
+
+      // Combustion: Calculate burn consumption multiplier and prepare to consume burns
+      let burnConsumptionMultiplier = 1.0;
+      let burnsToConsume = 0;
+      if (resolved.metadata.consumesBurn) {
+        const targetStatuses = target.status ?? [];
+        const burnStacks = targetStatuses
+          .filter(s => s.effectName === "Burning")
+          .reduce((sum, s) => sum + (s.ammount ?? 0), 0);
+
+        if (burnStacks > 0) {
+          const maxConsume = resolved.metadata.maxBurnConsumption ?? 10;
+          burnsToConsume = Math.min(burnStacks, maxConsume);
+          const bonusPerBurn = (resolved.metadata.burnConsumptionBonus ?? 10) / 100;
+          burnConsumptionMultiplier = 1.0 + (burnsToConsume * bonusPerBurn);
+          showToast(`Consumindo ${burnsToConsume} Queimadura(s)! Dano +${Math.floor(burnsToConsume * bonusPerBurn * 100)}%`);
+        }
+      }
+
+      // Degagement: Check if target has Fire Vulnerability for double Fire damage
+      let fireVulnerabilityMultiplier = 1.0;
+      if (resolved.metadata.forcedElement === "Fire") {
+        const targetStatuses = target.status ?? [];
+        const hasFireVulnerability = targetStatuses.some(s => s.effectName === "FireVulnerability");
+        if (hasFireVulnerability) {
+          fireVulnerabilityMultiplier = 2.0;  // Double damage
+          showToast("Alvo vulnerável a Fogo! Dano x2!");
+        }
+      }
+
+      // Gustave's Homage: Check if target has Marked status for bonus damage
+      let markedDamageMultiplier = 1.0;
+      if (resolved.metadata.markedDamageBonus) {
+        const targetStatuses = target.status ?? [];
+        const isMarked = targetStatuses.some(s => s.effectName === "Marked");
+        if (isMarked) {
+          const bonusPercent = resolved.metadata.markedDamageBonus;
+          markedDamageMultiplier = 1.0 + (bonusPercent / 100);
+          showToast(`Alvo Marcado! Dano +${bonusPercent}%`);
+        }
+      }
+
+      // Breaking Rules: Count shields on target and prepare to destroy them
+      let shieldsDestroyed = 0;
+      if (resolved.metadata.destroysShields) {
+        const targetStatuses = target.status ?? [];
+        shieldsDestroyed = targetStatuses.filter(s => s.effectName === "Shielded").length;
+        if (shieldsDestroyed > 0) {
+          showToast(`Destruindo ${shieldsDestroyed} shield(s)!`);
+        }
+      }
+
+      // Breaking Rules: Check if target has Unprotected (Defenseless) for conditional effects
+      let targetHasUnprotected = false;
+      if (resolved.metadata.conditionalEffects && resolved.metadata.conditionalEffects.length > 0) {
+        const targetStatuses = target.status ?? [];
+        targetHasUnprotected = targetStatuses.some(s => s.effectName === "Unprotected");
       }
 
       if (resolved.hitCount > 0) {
@@ -1009,7 +1117,16 @@ export default function PlayerPage() {
                   let empoweredMulti = playerHasEmpowered(player) ? 2 : 1;
                   empoweredMulti = playerHasWeakened(player) ? 0.5 : empoweredMulti;
 
-                  let playerPower = (player?.playerSheet?.power ?? 0) * calculatePlayerCriticalMulti(result, player) * empoweredMulti;
+                  // Sword Ballet: Double crit damage (4x total instead of 2x)
+                  let critMulti = calculatePlayerCriticalMulti(result, player);
+                  if (resolved.metadata.doubleCritDamage && critMulti > 1) {
+                    critMulti = critMulti * 2;  // 2x becomes 4x
+                    if (hitIndex === 0) {
+                      showToast(`Crítico duplo! (${critMulti}x de dano)`);
+                    }
+                  }
+
+                  let playerPower = (player?.playerSheet?.power ?? 0) * critMulti * empoweredMulti;
 
                   if (failures > 0) {
                     playerPower = Math.floor(playerPower / failures);
@@ -1020,7 +1137,13 @@ export default function PlayerPage() {
 
                   // Apply skill damage multiplier
                   const baseHitDamage = calculateSkillHitDamage(resolved, basePower, result);
-                  const hitDamage = baseHitDamage + chargeBonus;  // Apply charge bonus
+
+                  // Apply charge bonus (additive) then burn multipliers, fire vulnerability, and marked bonus (multiplicative)
+                  const damageWithCharge = baseHitDamage + chargeBonus;
+                  const damageWithBurnScaling = Math.floor(damageWithCharge * burnMultiplier);
+                  const damageWithBurnConsumption = Math.floor(damageWithBurnScaling * burnConsumptionMultiplier);
+                  const damageWithFireVulnerability = Math.floor(damageWithBurnConsumption * fireVulnerabilityMultiplier);
+                  const hitDamage = Math.floor(damageWithFireVulnerability * markedDamageMultiplier);
 
                   for (const targetId of resolved.targetIds) {
                     const effects = hitIndex === 0
@@ -1028,8 +1151,54 @@ export default function PlayerPage() {
                       : [];
 
                     // Find the target character to check if it's NPC or player
-                    const targetChar = (player.fightInfo.characters ?? []).find(c => c.battleID === targetId);
+                    const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === targetId);
                     const isNpcTarget = targetChar?.type === "npc";
+
+                    // Apply conditional effects if conditions are met
+                    let finalEffects = [...effects];
+                    if (hitIndex === 0 && targetHasUnprotected && resolved.metadata.conditionalEffects) {
+                      // Add conditional effects that match the condition
+                      const conditionalEffectsToAdd = resolved.metadata.conditionalEffects
+                        .filter(e => e.condition === "target-unprotected")
+                        .map(e => ({
+                          effectType: e.effectType as StatusType,
+                          ammount: e.amount,
+                          remainingTurns: e.remainingTurns ?? 0
+                        }));
+                      finalEffects = [...finalEffects, ...conditionalEffectsToAdd];
+                    }
+
+                    // Egide: Extend Taunt duration if source has Protected (Shield) status
+                    if (hitIndex === 0 && skillId === "maelle-egide") {
+                      const sourceStatuses = source.status ?? [];
+                      const hasProtected = sourceStatuses.some(s => s.effectName === "Protected");
+                      if (hasProtected) {
+                        // Extend Taunt duration from 2 to 3 turns
+                        finalEffects = finalEffects.map(effect => {
+                          if (effect.effectType === "Taunt") {
+                            return { ...effect, remainingTurns: 3 };
+                          }
+                          return effect;
+                        });
+                        showToast("Duração do Égide estendida! (3 turnos)");
+                      }
+                    }
+
+                    // Conditional Burn Bonus (Spark, Rain of Fire, Pyrolyse)
+                    if (hitIndex === 0 && resolved.metadata.conditionalBurnBonus) {
+                      const { fromStance, bonusBurn } = resolved.metadata.conditionalBurnBonus;
+                      if (source.stance === fromStance) {
+                        // Add bonus burn to Burning effects
+                        finalEffects = finalEffects.map(effect => {
+                          if (effect.effectType === "Burning") {
+                            const newAmount = (effect.ammount ?? 0) + bonusBurn;
+                            showToast(`Bonus de postura! +${bonusBurn} Queimaduras (${newAmount} total)`);
+                            return { ...effect, ammount: newAmount };
+                          }
+                          return effect;
+                        });
+                      }
+                    }
 
                     // NPCs receive totalDamage (direct damage), players receive totalPower (pending attack)
                     const attackRequest: CreateAttackRequest = isNpcTarget
@@ -1038,18 +1207,28 @@ export default function PlayerPage() {
                           targetBattleId: targetId,
                           totalDamage: hitDamage,
                           attackType: "skill",
-                          effects: effects,
+                          effects: finalEffects,
                           skillCost: hitIndex === 0 ? skillCost : 0,
-                          consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge
+                          consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge,
+                          isGradient: hitIndex === 0 && resolved.metadata.isGradient,
+                          destroysShields: hitIndex === 0 && resolved.metadata.destroysShields,
+                          grantsAPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsAPPerShield : undefined,
+                          consumesBurn: hitIndex === 0 && burnsToConsume > 0 ? burnsToConsume : undefined,
+                          executionThreshold: resolved.metadata.executionThreshold
                         }
                       : {
                           sourceBattleId: source.battleID,
                           targetBattleId: targetId,
                           totalPower: hitDamage,
                           attackType: "skill",
-                          effects: effects,
+                          effects: finalEffects,
                           skillCost: hitIndex === 0 ? skillCost : 0,
-                          consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge
+                          consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge,
+                          isGradient: hitIndex === 0 && resolved.metadata.isGradient,
+                          destroysShields: hitIndex === 0 && resolved.metadata.destroysShields,
+                          grantsAPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsAPPerShield : undefined,
+                          consumesBurn: hitIndex === 0 && burnsToConsume > 0 ? burnsToConsume : undefined,
+                          executionThreshold: resolved.metadata.executionThreshold
                         };
 
                     await APIBattle.attack(attackRequest);
@@ -1067,8 +1246,57 @@ export default function PlayerPage() {
           });
         }
       } else {
+        // For skills without hits (status-only skills), still need to consume resources
+        // Send a dummy attack to trigger MP/Gradient consumption in backend
+        if (skillCost > 0) {
+          const firstTargetId = resolved.targetIds[0];
+          if (firstTargetId) {
+            const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === firstTargetId);
+            const isNpcTarget = targetChar?.type === "npc";
+
+            const attackRequest: CreateAttackRequest = isNpcTarget
+              ? {
+                  sourceBattleId: source.battleID,
+                  targetBattleId: firstTargetId,
+                  totalDamage: 0,  // No damage, just resource consumption
+                  attackType: "skill",
+                  effects: [],
+                  skillCost: skillCost,
+                  isGradient: isGradientSkill
+                }
+              : {
+                  sourceBattleId: source.battleID,
+                  targetBattleId: firstTargetId,
+                  totalPower: 0,  // No damage, just resource consumption
+                  attackType: "skill",
+                  effects: [],
+                  skillCost: skillCost,
+                  isGradient: isGradientSkill
+                };
+
+            await APIBattle.attack(attackRequest);
+          }
+        }
+
+        // Apply status effects
         for (const targetId of resolved.targetIds) {
-          const effects = getStatusEffectsForTarget(resolved.effects, targetId);
+          let effects = getStatusEffectsForTarget(resolved.effects, targetId);
+
+          // Egide: Extend Taunt duration if source has Protected (Shield) status
+          if (skillId === "maelle-egide") {
+            const sourceStatuses = source.status ?? [];
+            const hasProtected = sourceStatuses.some(s => s.effectName === "Protected");
+            if (hasProtected) {
+              // Extend Taunt duration from 2 to 3 turns
+              effects = effects.map(effect => {
+                if (effect.effectType === "Taunt") {
+                  return { ...effect, remainingTurns: 3 };
+                }
+                return effect;
+              });
+              showToast("Duração do Égide estendida! (3 turnos)");
+            }
+          }
 
           if (effects.length > 0) {
             for (const effect of effects) {
@@ -1081,19 +1309,86 @@ export default function PlayerPage() {
             }
           }
         }
-
-        if (skillCost > 0) {
-          const newMp = Math.max(0, currentMp - skillCost);
-          await APIBattle.updateCharacterMp(source.battleID, newMp);
-        }
       }
 
-      await applySpecialEffects(resolved.effects, player.fightInfo.characters ?? []);
+      await applySpecialEffects(resolved.effects, player.fightInfo?.characters ?? []);
 
       if (resolved.metadata.canBreak) {
         for (const targetId of resolved.targetIds) {
           await APIBattle.breakTarget(targetId);
         }
+      }
+
+      // Change stance if skill changes stance (e.g., Breaking Rules -> Offensive)
+      if (resolved.metadata.changesStanceTo !== undefined) {
+        // Fleuret Fury special case: preserves Virtuose stance if already there
+        const shouldChangeStance = resolved.metadata.preservesVirtuoseStance && source.stance === 'Virtuous'
+          ? false  // Keep Virtuose stance
+          : source.stance !== resolved.metadata.changesStanceTo;
+
+        if (shouldChangeStance) {
+          const newStance = resolved.metadata.changesStanceTo;
+          await APIBattle.updateCharacterStance(source.battleID, newStance);
+          const stanceName = newStance === 'Offensive' ? 'Ofensiva' :
+                            newStance === 'Defensive' ? 'Defensiva' :
+                            newStance === 'Virtuous' ? 'Virtuosa' : 'Sem Postura';
+          showToast(`Postura alterada para ${stanceName}!`);
+        }
+      }
+
+      // Last Chance: Set HP to 1 and refill AP to maximum
+      if (resolved.metadata.setsHpTo !== undefined) {
+        await APIBattle.updateCharacterHp(source.battleID, resolved.metadata.setsHpTo);
+        showToast(`Vida reduzida para ${resolved.metadata.setsHpTo}!`);
+      }
+
+      if (resolved.metadata.refillsAP) {
+        const maxMp = source.maxMagicPoints ?? 0;
+        await APIBattle.updateCharacterMp(source.battleID, maxMp);
+        showToast(`PA recarregado para ${maxMp}!`);
+      }
+
+      // Mezzo Forte: Reapply current stance (triggers stance benefits again)
+      if (resolved.metadata.reappliesStance && source.stance) {
+        await APIBattle.updateCharacterStance(source.battleID, source.stance);
+        const stanceName = source.stance === 'Offensive' ? 'Ofensiva' :
+                          source.stance === 'Defensive' ? 'Defensiva' :
+                          source.stance === 'Virtuous' ? 'Virtuosa' : 'Sem Postura';
+        showToast(`Postura ${stanceName} reaplicada!`);
+      }
+
+      // Mezzo Forte / Swift Stride: Grant random AP between min and max
+      if (resolved.metadata.grantsAPRange) {
+        const { min, max } = resolved.metadata.grantsAPRange;
+        const apGranted = Math.floor(Math.random() * (max - min + 1)) + min;
+        const currentMp = source.magicPoints ?? 0;
+        const maxMp = source.maxMagicPoints ?? 0;
+        const newMp = Math.min(currentMp + apGranted, maxMp);
+        await APIBattle.updateCharacterMp(source.battleID, newMp);
+        if (apGranted > 0) {
+          showToast(`+${apGranted} PA concedidos! (${currentMp} → ${newMp})`);
+        }
+      }
+
+      // Swift Stride: Switch to Virtuose if target is burning
+      if (resolved.metadata.switchesToVirtuoseIfBurning) {
+        const targetStatuses = target.status ?? [];
+        const isBurning = targetStatuses.some(s => s.effectName === "Burning");
+        if (isBurning) {
+          await APIBattle.updateCharacterStance(source.battleID, "Virtuous");
+          showToast("Alvo está Queimando! Mudou para postura Virtuosa!");
+        }
+      }
+
+      // Stendhal: Apply self-Defenseless
+      if (resolved.metadata.appliesSelfDefenseless) {
+        await APIBattle.addStatus({
+          battleCharacterId: source.battleID,
+          effectType: "Unprotected",
+          ammount: 0,
+          remainingTurns: 2
+        });
+        showToast("Indefeso aplicado em si mesma!");
       }
 
       setPendingSkillId(null);
@@ -1187,9 +1482,17 @@ export default function PlayerPage() {
 
     const executeDefense = async (result: any | null) => {
       try {
+        const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID)
         let defenseValue = attack.totalPower;
         if (result != null) {
-          defenseValue = calculateDefense(attack.totalPower, player, weaponInfo, result, defense);
+          defenseValue = calculateDefense(attack.totalPower, player, weaponInfo, result, defense, playerChar?.stance);
+        } else {
+          // When taking damage without rolling, still apply stance modifiers
+          if (playerChar?.stance === "Defensive") {
+            defenseValue = Math.floor(defenseValue * 0.5)  // -50% damage received
+          } else if (playerChar?.stance === "Offensive") {
+            defenseValue = Math.floor(defenseValue * 1.5)  // +50% damage received
+          }
         }
 
         let description = "Você recebeu todo o dano.";

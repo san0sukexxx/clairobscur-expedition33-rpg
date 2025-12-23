@@ -47,6 +47,7 @@ class BattleCharacterService(
                                 maxMagicPoints = request.maxMagicPoints,
                                 chargePoints = request.chargePoints ?: 0,
                                 maxChargePoints = request.maxChargePoints,
+                                stance = request.stance,
                                 canRollInitiative = request.canRollInitiative
                         )
 
@@ -176,6 +177,24 @@ class BattleCharacterService(
 
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "MP_CHANGED", eventJson = null)
+                )
+        }
+
+        @Transactional
+        fun updateCharacterStance(id: Int, newStance: String?) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                entity.stance = newStance
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "STANCE_CHANGED", eventJson = null)
                 )
         }
 }

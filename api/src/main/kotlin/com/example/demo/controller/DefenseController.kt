@@ -104,6 +104,16 @@ class DefenseController(
 
         val defenderBC = battleCharacterRepository.findById(battleCharacterId).orElse(null)
 
+        // Apply defensive stance bonus: +1 MP when blocking or dodging
+        if (defenderBC != null && defenderBC.characterType == "player" && defenderBC.stance == "Defensive") {
+            val currentMp = defenderBC.magicPoints ?: 0
+            val maxMp = defenderBC.maxMagicPoints ?: 0
+            if (maxMp > 0) {
+                defenderBC.magicPoints = (currentMp + 1).coerceAtMost(maxMp)
+                battleCharacterRepository.save(defenderBC)
+            }
+        }
+
         // Increment charge for defending (if character has charge system)
         if (defenderBC != null && defenderBC.characterType == "player") {
             val currentCharge = defenderBC.chargePoints ?: 0

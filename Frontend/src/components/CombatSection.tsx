@@ -3,6 +3,7 @@ import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import InitiativesQueue from "./InitiativesQueue";
+import GradientBar from "./GradientBar";
 import { CgSandClock } from "react-icons/cg";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo } from "../api/ResponseModel";
@@ -127,6 +128,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
             <PlayerStatusFloating
                 player={player}
             />
+
+            <GradientBar characters={player?.fightInfo?.characters} player={player} turns={player?.fightInfo?.turns} />
 
             <InitiativesQueue
                 characters={player?.fightInfo?.characters}

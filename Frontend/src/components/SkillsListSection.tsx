@@ -202,8 +202,8 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                                 </span>
                                             )}
 
-                                            <span className="ml-auto shrink-0 rounded-full bg-blue-600 px-2.5 py-0.5 text-[11px] font-bold leading-none text-white shadow-md">
-                                                {skillInfo.cost}
+                                            <span className={`ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${skillInfo.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                                                {skillInfo.isGradient ? `${skillInfo.cost} ${skillInfo.cost === 1 ? 'carga' : 'cargas'}` : skillInfo.cost}
                                             </span>
                                         </div>
 
@@ -234,10 +234,20 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                                 e.preventDefault();
                                                 handleUnlock(skill.id);
                                             }}
-                                            className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                                            className={`inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold text-white shadow-sm focus:outline-none focus:ring-2 ${
+                                                skillInfo.masterUnlock
+                                                    ? 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500'
+                                                    : 'bg-emerald-600 hover:bg-emerald-500 focus:ring-emerald-400'
+                                            }`}
                                         >
                                             <FaUnlock className="h-3.5 w-3.5" aria-hidden />
-                                            Desbloquear {skillInfo.unlockCost !== undefined ? `(${skillInfo.unlockCost})` : ''}
+                                            {skillInfo.masterUnlock
+                                                ? skillInfo.unlockCost && skillInfo.unlockCost > 0
+                                                    ? `Desbloqueie somente quando o mestre permitir (${skillInfo.unlockCost})`
+                                                    : 'Desbloqueie somente quando o mestre permitir'
+                                                : skillInfo.unlockCost === 0
+                                                ? 'Desbloqueio Grátis'
+                                                : `Desbloquear (${skillInfo.unlockCost})`}
                                         </button>
                                     )}
                                 </div>

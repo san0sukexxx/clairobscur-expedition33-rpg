@@ -6,7 +6,7 @@ import AnimatedStatBar from "./AnimatedStatBar";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
 
-interface EnemiesStatusProps {
+interface BattleGroupStatusProps {
     player: GetPlayerResponse | null;
     isEnemies: Boolean;
     currentCharacter: BattleCharacterInfo | undefined;
@@ -20,7 +20,7 @@ function pct(cur: number, max: number) {
     return Math.max(0, Math.min(100, Math.round((cur / max) * 100)));
 }
 
-export default function EnemiesStatus({
+export default function BattleGroupStatus({
     player,
     isEnemies,
     currentCharacter,
@@ -28,7 +28,7 @@ export default function EnemiesStatus({
     onSelectTarget,
     isReviveMode = false,
     isExecutingSkill = false
-}: EnemiesStatusProps) {
+}: BattleGroupStatusProps) {
     if (player?.fightInfo?.characters == undefined) return null;
 
     const characters = player.fightInfo.characters.filter(ch => ch.isEnemy == isEnemies);
@@ -164,6 +164,28 @@ export default function EnemiesStatus({
                                                     />
                                                 </div>
                                             )}
+
+                                        {/* Stance indicator for Maelle only */}
+                                        {ch.stance !== undefined &&
+                                         ch.id.toLowerCase().includes("maelle") && (
+                                            <div className="mt-2">
+                                                <div className="flex items-center gap-2 text-xs">
+                                                    <span className="opacity-70">Postura</span>
+                                                    {ch.stance === "Defensive" && (
+                                                        <div className="badge badge-info">Defensiva</div>
+                                                    )}
+                                                    {ch.stance === "Offensive" && (
+                                                        <div className="badge badge-error">Ofensiva</div>
+                                                    )}
+                                                    {ch.stance === "Virtuous" && (
+                                                        <div className="badge badge-secondary">Virtuosa</div>
+                                                    )}
+                                                    {!ch.stance && (
+                                                        <div className="badge badge-ghost">Sem postura</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             );

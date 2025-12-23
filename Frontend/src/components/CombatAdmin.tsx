@@ -13,6 +13,7 @@ import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, ty
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse, type CreateAttackRequest, type AttackStatusEffectRequest } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
+import GradientBar from "./GradientBar"
 import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { useToast } from "../components/Toast";
@@ -261,6 +262,10 @@ export default function CombatAdmin({
         const isGustave = (entity.characterId?.toLowerCase() === "gustave") ||
                          String(entity.externalId).toLowerCase().includes("gustave")
 
+        // Detect if character is Maelle and initialize stance system
+        const isMaelle = (entity.characterId?.toLowerCase() === "maelle") ||
+                        String(entity.externalId).toLowerCase().includes("maelle")
+
         await APIBattle.addCharacter({
             battleId: campaignInfo.battleId,
             externalId: String(entity.externalId),
@@ -273,6 +278,7 @@ export default function CombatAdmin({
             maxMagicPoints: entity.maxMp,
             chargePoints: isGustave ? 0 : undefined,
             maxChargePoints: isGustave ? 10 : undefined,
+            stance: isMaelle ? null : undefined,
             initiative,
             canRollInitiative: entity.type == "player"
         })
@@ -1007,6 +1013,8 @@ export default function CombatAdmin({
                             </div>
                         </div>
                     </div>
+
+                    <GradientBar characters={battleDetails?.characters} player={undefined} turns={battleDetails?.turns} />
 
                     <InitiativesQueue
                         characters={battleDetails?.characters}

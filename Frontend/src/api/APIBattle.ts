@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type StatusType, type AttackType } from "./ResponseModel"
+import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type StatusType, type AttackType, type Stance } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -36,6 +36,7 @@ export interface AddBattleCharacterRequest {
     maxMagicPoints?: number
     chargePoints?: number
     maxChargePoints?: number
+    stance?: Stance | null
     initiative?: AddBattleCharacterInitiativeData,
     canRollInitiative: boolean
 }
@@ -66,6 +67,11 @@ export interface CreateAttackRequest {
     attackType?: AttackType
     skillCost?: number
     consumesCharge?: boolean
+    isGradient?: boolean
+    destroysShields?: boolean
+    grantsAPPerShield?: number
+    consumesBurn?: number  // Number of Burn stacks to consume from target
+    executionThreshold?: number  // If target HP% <= this, execute instantly (kill)
 }
 
 export interface AttackStatusEffectRequest {
@@ -216,6 +222,13 @@ export class APIBattle {
         await api.put<{ newMp: number }, void>(
             `battles/characters/${id}/mp`,
             { newMp }
+        )
+    }
+
+    static async updateCharacterStance(id: number, newStance: Stance | null): Promise<void> {
+        await api.put<{ newStance: Stance | null }, void>(
+            `battles/characters/${id}/stance`,
+            { newStance }
         )
     }
 

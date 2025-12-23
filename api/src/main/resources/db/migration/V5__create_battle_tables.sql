@@ -3,6 +3,8 @@ CREATE TABLE
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         campaign_id INTEGER NOT NULL,
         battle_status TEXT NOT NULL,
+        team_a_gradient_points INTEGER NOT NULL DEFAULT 0,
+        team_b_gradient_points INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE
     );
 
@@ -20,6 +22,7 @@ CREATE TABLE
         max_magic_points INTEGER,
         charge_points INTEGER,
         max_charge_points INTEGER,
+        stance TEXT,
         can_roll_initiative BOOLEAN NOT NULL DEFAULT 0,
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE
     );
