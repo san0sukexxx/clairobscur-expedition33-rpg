@@ -5,7 +5,7 @@ import {
     playerHasEntangled
 } from "../utils/PlayerCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
-import { getAttackType, getAttackTypeLabel, getStatusLabel } from "../utils/BattleUtils";
+import { getAttackType, getAttackTypeLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import {
     FaArrowUp,
     FaFireAlt,
@@ -139,10 +139,12 @@ export default function PendingAttacksModal({
                                             <span>
                                                 {attack.effects
                                                     ?.filter(e => !ignoreEffects.includes(e.effectType))
-                                                    ?.map(e =>
-                                                        `${getStatusLabel(e.effectType)} ${e.ammount ?? ""}${e.remainingTurns ? ` (por ${e.remainingTurns} turno${e.remainingTurns > 1 ? "s" : ""})` : ""
-                                                        }`
-                                                    )
+                                                    ?.map(e => {
+                                                        const showAmmount = shouldShowStatusAmmount(e.effectType);
+                                                        const ammountText = showAmmount && e.ammount != null ? ` ${e.ammount}` : "";
+                                                        const turnsText = e.remainingTurns ? ` (por ${e.remainingTurns} turno${e.remainingTurns > 1 ? "s" : ""})` : "";
+                                                        return `${getStatusLabel(e.effectType)}${ammountText}${turnsText}`;
+                                                    })
                                                     .join("; ")}
                                             </span>
                                         </div>

@@ -937,7 +937,6 @@ export default function PlayerPage() {
     }
 
     setIsSelectingSkillTarget(true);
-    showToast("Selecione um alvo para usar a habilidade", { duration: 2000 });
   }
 
   async function handleExecuteSkill(skillId: string, target: BattleCharacterInfo) {
@@ -1003,8 +1002,24 @@ export default function PlayerPage() {
               rollCommandForAttack(weaponInfo, "basic"),
               async (result) => {
                 try {
+                  // Calculate base damage similar to basic attack (player power + weapon + dice + criticals)
+                  const total = diceTotal(result);
+                  const failures = calculateFailureDiv(result);
+
+                  let empoweredMulti = playerHasEmpowered(player) ? 2 : 1;
+                  empoweredMulti = playerHasWeakened(player) ? 0.5 : empoweredMulti;
+
+                  let playerPower = (player?.playerSheet?.power ?? 0) * calculatePlayerCriticalMulti(result, player) * empoweredMulti;
+
+                  if (failures > 0) {
+                    playerPower = Math.floor(playerPower / failures);
+                  }
+
                   const weaponPower = calculateRawWeaponPower(weaponInfo, "basic");
-                  const baseHitDamage = calculateSkillHitDamage(resolved, weaponPower, result);
+                  const basePower = playerPower + weaponPower + total;
+
+                  // Apply skill damage multiplier
+                  const baseHitDamage = calculateSkillHitDamage(resolved, basePower, result);
                   const hitDamage = baseHitDamage + chargeBonus;  // Apply charge bonus
 
                   for (const targetId of resolved.targetIds) {
@@ -1012,18 +1027,36 @@ export default function PlayerPage() {
                       ? getStatusEffectsForTarget(resolved.effects, targetId)
                       : [];
 
-                    const attackRequest: CreateAttackRequest = {
-                      sourceBattleId: source.battleID,
-                      targetBattleId: targetId,
-                      totalDamage: hitDamage,
-                      attackType: "skill",
-                      effects: effects,
-                      skillCost: hitIndex === 0 ? skillCost : 0,
-                      consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge
-                    };
+                    // Find the target character to check if it's NPC or player
+                    const targetChar = (player.fightInfo.characters ?? []).find(c => c.battleID === targetId);
+                    const isNpcTarget = targetChar?.type === "npc";
+
+                    // NPCs receive totalDamage (direct damage), players receive totalPower (pending attack)
+                    const attackRequest: CreateAttackRequest = isNpcTarget
+                      ? {
+                          sourceBattleId: source.battleID,
+                          targetBattleId: targetId,
+                          totalDamage: hitDamage,
+                          attackType: "skill",
+                          effects: effects,
+                          skillCost: hitIndex === 0 ? skillCost : 0,
+                          consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge
+                        }
+                      : {
+                          sourceBattleId: source.battleID,
+                          targetBattleId: targetId,
+                          totalPower: hitDamage,
+                          attackType: "skill",
+                          effects: effects,
+                          skillCost: hitIndex === 0 ? skillCost : 0,
+                          consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge
+                        };
 
                     await APIBattle.attack(attackRequest);
                   }
+
+                  // Show toast with damage
+                  showToast(`Total: ${hitDamage}`);
 
                   resolve();
                 } catch (error) {
@@ -1066,7 +1099,6 @@ export default function PlayerPage() {
       setPendingSkillId(null);
       setIsSelectingSkillTarget(false);
       setIsExecutingSkill(false);
-      showToast("Habilidade usada com sucesso!");
 
     } catch (error) {
       console.error("Erro ao usar skill:", error);
