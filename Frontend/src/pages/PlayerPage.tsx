@@ -21,7 +21,8 @@ import { APISkill } from "../api/APISkill";
 import { type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse, type StatusType } from "../api/ResponseModel";
 import { resolveSkill, calculateSkillHitDamage, applySpecialEffects, getStatusEffectsForTarget } from "../utils/BattleSkillUtils";
 import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
-import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
+import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
+import { executeAllSpecialMechanics } from "../utils/SkillSpecialMechanics";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -1021,6 +1022,10 @@ export default function PlayerPage() {
         player.fightInfo?.characters ?? []
       );
 
+      // Get skill metadata to extract type (sun/moon for Sciel)
+      const skillData = getSkillById(skillId);
+      const skillType = skillData?.type;  // "sun" or "moon" for Sciel skills
+
       // Calculate charge bonus for skills that scale with charge (e.g., Overcharge)
       let chargeBonus = 0;
       if (resolved.metadata.damageScalesWithCharge) {
@@ -1096,9 +1101,95 @@ export default function PlayerPage() {
 
       // Breaking Rules: Check if target has Unprotected (Defenseless) for conditional effects
       let targetHasUnprotected = false;
+      let targetHasNoForetell = false;
       if (resolved.metadata.conditionalEffects && resolved.metadata.conditionalEffects.length > 0) {
         const targetStatuses = target.status ?? [];
         targetHasUnprotected = targetStatuses.some(s => s.effectName === "Unprotected");
+
+        // Focused Foretell: Check if target has no Foretell stacks
+        const foretellStacks = targetStatuses
+          .filter(s => s.effectName === "Foretell")
+          .reduce((sum, s) => sum + (s.ammount ?? 0), 0);
+        targetHasNoForetell = foretellStacks === 0;
+      }
+
+      // Our Sacrifice: Drain allies HP and consume all enemies Foretell
+      let hpDrained = 0;
+      let allEnemiesForetellConsumed = 0;
+      if (resolved.metadata.drainsAlliesHp || resolved.metadata.consumesAllEnemiesForetell) {
+        const allCharacters = player.fightInfo?.characters ?? [];
+
+        // Drain allies HP to 1
+        if (resolved.metadata.drainsAlliesHp) {
+          const aliveAllies = allCharacters.filter(c =>
+            !c.isEnemy &&
+            c.battleID !== source.battleID &&
+            c.healthPoints > 1  // Only drain if HP > 1
+          );
+
+          for (const ally of aliveAllies) {
+            const hpToDrain = ally.healthPoints - 1;
+            hpDrained += hpToDrain;
+            await APIBattle.updateCharacterHp(ally.battleID, 1);
+          }
+
+          if (hpDrained > 0) {
+            showToast(`HP drenado de aliados: ${hpDrained} (Dano +${hpDrained})`);
+          }
+        }
+
+        // Consume Foretell from ALL enemies
+        if (resolved.metadata.consumesAllEnemiesForetell) {
+          const allEnemies = allCharacters.filter(c => c.isEnemy);
+
+          for (const enemy of allEnemies) {
+            const enemyForetell = enemy.status
+              ?.filter(s => s.effectName === "Foretell")
+              .reduce((sum, s) => sum + (s.ammount ?? 0), 0) ?? 0;
+
+            if (enemyForetell > 0) {
+              allEnemiesForetellConsumed += enemyForetell;
+              // Consume via backend (will be done in attack request)
+            }
+          }
+
+          if (allEnemiesForetellConsumed > 0) {
+            showToast(`Predição total de inimigos: ${allEnemiesForetellConsumed} (Dano +${allEnemiesForetellConsumed})`);
+          }
+        }
+      }
+
+      // Twilight Slash / Harvest / Plentiful Harvest: Calculate Foretell consumption bonus and prepare to consume
+      let foretellBonus = 0;
+      let foretellsToConsume = 0;
+      let foretellHealBonus = 0;  // Bonus de cura por Predição (Harvest)
+      let mpToGrant = 0;  // MP a conceder por Predição (Plentiful Harvest)
+      if (resolved.metadata.consumesForetell) {
+        const targetStatuses = target.status ?? [];
+        const foretellStacks = targetStatuses
+          .filter(s => s.effectName === "Foretell")
+          .reduce((sum, s) => sum + (s.ammount ?? 0), 0);
+
+        if (foretellStacks > 0) {
+          foretellsToConsume = foretellStacks;
+
+          // Harvest: Calcula bonus de cura
+          if (resolved.metadata.foretellHealBonus) {
+            foretellHealBonus = foretellStacks * resolved.metadata.foretellHealBonus;
+            showToast(`Consumindo ${foretellsToConsume} Predições! Cura +${foretellHealBonus}%`);
+          }
+          // Plentiful Harvest: Calcula MP a conceder para aliado
+          else if (resolved.metadata.grantsMpPerForetell) {
+            mpToGrant = foretellStacks * resolved.metadata.grantsMpPerForetell;
+            showToast(`Consumindo ${foretellsToConsume} Predições! MP a conceder: ${mpToGrant}`);
+          }
+          // Twilight Slash: Calcula bonus de dano
+          else if (resolved.metadata.foretellDamageBonus) {
+            const bonusPerForetell = resolved.metadata.foretellDamageBonus;
+            foretellBonus = foretellStacks * bonusPerForetell;
+            showToast(`Consumindo ${foretellsToConsume} Predições! Dano +${foretellBonus}`);
+          }
+        }
       }
 
       if (resolved.hitCount > 0) {
@@ -1138,14 +1229,51 @@ export default function PlayerPage() {
                   // Apply skill damage multiplier
                   const baseHitDamage = calculateSkillHitDamage(resolved, basePower, result);
 
-                  // Apply charge bonus (additive) then burn multipliers, fire vulnerability, and marked bonus (multiplicative)
-                  const damageWithCharge = baseHitDamage + chargeBonus;
-                  const damageWithBurnScaling = Math.floor(damageWithCharge * burnMultiplier);
-                  const damageWithBurnConsumption = Math.floor(damageWithBurnScaling * burnConsumptionMultiplier);
-                  const damageWithFireVulnerability = Math.floor(damageWithBurnConsumption * fireVulnerabilityMultiplier);
-                  const hitDamage = Math.floor(damageWithFireVulnerability * markedDamageMultiplier);
+                  // Sealed Fate / Firing Shadow: Consume 1 Foretell per hit for bonus damage
+                  // For AOE skills, we'll try to consume from each target individually in the attack loop
+                  // For single target, we consume here once per hit
+                  let foretellPerHitMultiplier = 1.0;
+                  const foretellConsumedPerTarget = new Map<number, boolean>();
+
+                  if (resolved.metadata.consumesForetellPerHit) {
+                    // Pre-consume for all targets (each target independently)
+                    for (const targetId of resolved.targetIds) {
+                      const consumed = await APIBattle.consumeOneForetell(targetId);
+                      foretellConsumedPerTarget.set(targetId, consumed);
+                      if (consumed && hitIndex === 0) {
+                        const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === targetId);
+                        showToast(`${targetChar?.name ?? 'Alvo'}: Predição consumida! Dano x${resolved.metadata.foretellPerHitMultiplier ?? 3.0}`);
+                      }
+                    }
+                  }
+
+                  // Twilight: Check if source has Twilight status for +150% damage (2.5x total)
+                  const sourceStatuses = source.status ?? [];
+                  const hasTwilight = sourceStatuses.some(s => s.effectName === "Twilight");
+                  const twilightMultiplier = hasTwilight ? 2.5 : 1.0;
+
+                  let primaryTargetDamage = 0;  // Save damage for Searing Bond propagation
 
                   for (const targetId of resolved.targetIds) {
+                    // Apply per-target Foretell consumption multiplier (Sealed Fate / Firing Shadow)
+                    const targetForetellMultiplier = foretellConsumedPerTarget.get(targetId)
+                      ? (resolved.metadata.foretellPerHitMultiplier ?? 3.0)
+                      : 1.0;
+
+                    // Apply charge bonus, foretell bonus, HP drained, and all enemies foretell (additive) then per-hit foretell multiplier, twilight, burn multipliers, fire vulnerability, and marked bonus (multiplicative)
+                    const damageWithCharge = baseHitDamage + chargeBonus + foretellBonus + hpDrained + allEnemiesForetellConsumed;
+                    const damageWithForetellPerHit = Math.floor(damageWithCharge * targetForetellMultiplier);
+                    const damageWithTwilight = Math.floor(damageWithForetellPerHit * twilightMultiplier);
+                    const damageWithBurnScaling = Math.floor(damageWithTwilight * burnMultiplier);
+                    const damageWithBurnConsumption = Math.floor(damageWithBurnScaling * burnConsumptionMultiplier);
+                    const damageWithFireVulnerability = Math.floor(damageWithBurnConsumption * fireVulnerabilityMultiplier);
+                    const hitDamage = Math.floor(damageWithFireVulnerability * markedDamageMultiplier);
+
+                    // Save damage from first target for Searing Bond propagation
+                    if (targetId === resolved.targetIds[0]) {
+                      primaryTargetDamage = hitDamage;
+                    }
+
                     const effects = hitIndex === 0
                       ? getStatusEffectsForTarget(resolved.effects, targetId)
                       : [];
@@ -1156,16 +1284,30 @@ export default function PlayerPage() {
 
                     // Apply conditional effects if conditions are met
                     let finalEffects = [...effects];
-                    if (hitIndex === 0 && targetHasUnprotected && resolved.metadata.conditionalEffects) {
-                      // Add conditional effects that match the condition
-                      const conditionalEffectsToAdd = resolved.metadata.conditionalEffects
-                        .filter(e => e.condition === "target-unprotected")
-                        .map(e => ({
-                          effectType: e.effectType as StatusType,
-                          ammount: e.amount,
-                          remainingTurns: e.remainingTurns ?? 0
-                        }));
-                      finalEffects = [...finalEffects, ...conditionalEffectsToAdd];
+                    if (hitIndex === 0 && resolved.metadata.conditionalEffects) {
+                      // Breaking Rules: Add conditional effects for Unprotected target
+                      if (targetHasUnprotected) {
+                        const unprotectedEffects = resolved.metadata.conditionalEffects
+                          .filter(e => e.condition === "target-unprotected")
+                          .map(e => ({
+                            effectType: e.effectType as StatusType,
+                            ammount: e.amount,
+                            remainingTurns: e.remainingTurns ?? 0
+                          }));
+                        finalEffects = [...finalEffects, ...unprotectedEffects];
+                      }
+
+                      // Focused Foretell: Add conditional effects for target without Foretell
+                      if (targetHasNoForetell) {
+                        const noForetellEffects = resolved.metadata.conditionalEffects
+                          .filter(e => e.condition === "target-no-foretell")
+                          .map(e => ({
+                            effectType: e.effectType as StatusType,
+                            ammount: e.amount,
+                            remainingTurns: e.remainingTurns ?? 0
+                          }));
+                        finalEffects = [...finalEffects, ...noForetellEffects];
+                      }
                     }
 
                     // Egide: Extend Taunt duration if source has Protected (Shield) status
@@ -1181,6 +1323,46 @@ export default function PlayerPage() {
                           return effect;
                         });
                         showToast("Duração do Égide estendida! (3 turnos)");
+                      }
+                    }
+
+                    // Twilight: Double all Foretell stacks inflicted if source has Twilight status
+                    if (hitIndex === 0 && hasTwilight) {
+                      finalEffects = finalEffects.map(effect => {
+                        if (effect.effectType === "Foretell") {
+                          return { ...effect, ammount: (effect.ammount ?? 0) * 2 };
+                        }
+                        return effect;
+                      });
+                    }
+
+                    // Spectral Sweep: Apply additional Foretell on critical hits
+                    if (resolved.metadata.appliesForetellOnCrit && critMulti > 1) {
+                      const bonusForetell = resolved.metadata.appliesForetellOnCrit;
+                      // Check if there's already a Foretell effect to add to
+                      const existingForetell = finalEffects.find(e => e.effectType === "Foretell");
+                      if (existingForetell) {
+                        // Add to existing Foretell
+                        finalEffects = finalEffects.map(effect => {
+                          if (effect.effectType === "Foretell") {
+                            const newAmount = (effect.ammount ?? 0) + bonusForetell;
+                            if (hitIndex === 0) {
+                              showToast(`Crítico! +${bonusForetell} Predição adicional`);
+                            }
+                            return { ...effect, ammount: newAmount };
+                          }
+                          return effect;
+                        });
+                      } else {
+                        // Create new Foretell effect
+                        finalEffects.push({
+                          effectType: "Foretell",
+                          ammount: bonusForetell,
+                          remainingTurns: 0
+                        });
+                        if (hitIndex === 0) {
+                          showToast(`Crítico! +${bonusForetell} Predição`);
+                        }
                       }
                     }
 
@@ -1214,7 +1396,9 @@ export default function PlayerPage() {
                           destroysShields: hitIndex === 0 && resolved.metadata.destroysShields,
                           grantsAPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsAPPerShield : undefined,
                           consumesBurn: hitIndex === 0 && burnsToConsume > 0 ? burnsToConsume : undefined,
-                          executionThreshold: resolved.metadata.executionThreshold
+                          consumesForetell: hitIndex === 0 && foretellsToConsume > 0 ? foretellsToConsume : undefined,
+                          executionThreshold: resolved.metadata.executionThreshold,
+                          skillType: hitIndex === 0 ? skillType : undefined
                         }
                       : {
                           sourceBattleId: source.battleID,
@@ -1228,14 +1412,72 @@ export default function PlayerPage() {
                           destroysShields: hitIndex === 0 && resolved.metadata.destroysShields,
                           grantsAPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsAPPerShield : undefined,
                           consumesBurn: hitIndex === 0 && burnsToConsume > 0 ? burnsToConsume : undefined,
-                          executionThreshold: resolved.metadata.executionThreshold
+                          consumesForetell: hitIndex === 0 && foretellsToConsume > 0 ? foretellsToConsume : undefined,
+                          executionThreshold: resolved.metadata.executionThreshold,
+                          skillType: hitIndex === 0 ? skillType : undefined
                         };
 
                     await APIBattle.attack(attackRequest);
                   }
 
+                  // Searing Bond: Propagate damage to other Burning enemies
+                  if (hitIndex === resolved.hitCount - 1 && resolved.metadata.propagatesBurnDamage) {
+                    // Only propagate on last hit
+                    const primaryTargetId = resolved.targetIds[0]; // Single target skill
+                    const allEnemies = (player.fightInfo?.characters ?? []).filter(c => c.isEnemy);
+
+                    // Find other burning enemies (not the primary target)
+                    const otherBurningEnemies = allEnemies.filter(enemy =>
+                      enemy.battleID !== primaryTargetId &&
+                      enemy.status?.some(s => s.effectName === "Burning")
+                    );
+
+                    if (otherBurningEnemies.length > 0) {
+                      const propagatedDamage = Math.floor(primaryTargetDamage / 2); // 50% of damage
+
+                      for (const enemy of otherBurningEnemies) {
+                        const isNpc = enemy.type === "npc";
+
+                        // Apply half damage + 1 Foretell to each burning enemy
+                        const propagationRequest: CreateAttackRequest = isNpc
+                          ? {
+                              sourceBattleId: source.battleID,
+                              targetBattleId: enemy.battleID,
+                              totalDamage: propagatedDamage,
+                              attackType: "skill",
+                              effects: [
+                                {
+                                  effectType: "Foretell",
+                                  ammount: 1,
+                                  remainingTurns: 0
+                                }
+                              ],
+                              skillCost: 0 // No cost for propagation
+                            }
+                          : {
+                              sourceBattleId: source.battleID,
+                              targetBattleId: enemy.battleID,
+                              totalPower: propagatedDamage,
+                              attackType: "skill",
+                              effects: [
+                                {
+                                  effectType: "Foretell",
+                                  ammount: 1,
+                                  remainingTurns: 0
+                                }
+                              ],
+                              skillCost: 0 // No cost for propagation
+                            };
+
+                        await APIBattle.attack(propagationRequest);
+                      }
+
+                      showToast(`Vínculo Ardente: ${otherBurningEnemies.length} inimigo(s) afetado(s)!`);
+                    }
+                  }
+
                   // Show toast with damage
-                  showToast(`Total: ${hitDamage}`);
+                  showToast(`Total: ${primaryTargetDamage}`);
 
                   resolve();
                 } catch (error) {
@@ -1311,11 +1553,50 @@ export default function PlayerPage() {
         }
       }
 
-      await applySpecialEffects(resolved.effects, player.fightInfo?.characters ?? []);
+      await applySpecialEffects(resolved.effects, player.fightInfo?.characters ?? [], foretellHealBonus);
 
       if (resolved.metadata.canBreak) {
         for (const targetId of resolved.targetIds) {
           await APIBattle.breakTarget(targetId);
+        }
+      }
+
+      // Twilight Dance: Extend Twilight duration if source has Twilight status
+      if (resolved.metadata.extendsTwilight) {
+        const sourceStatuses = source.status ?? [];
+        const hasTwilight = sourceStatuses.some(s => s.effectName === "Twilight");
+        if (hasTwilight) {
+          await APIBattle.extendStatusDuration(source.battleID, "Twilight", 1);
+          showToast("Duração do Crepúsculo estendida! (+1 turno)");
+        }
+      }
+
+      // Delaying Slash: Delay target's turn by X positions
+      if (resolved.metadata.delaysTurn) {
+        for (const targetId of resolved.targetIds) {
+          await APIBattle.delayTurn(targetId, resolved.metadata.delaysTurn);
+          showToast(`Turno atrasado em ${resolved.metadata.delaysTurn} posições!`);
+        }
+      }
+
+      // Our Sacrifice: Consume Foretell from all enemies
+      if (resolved.metadata.consumesAllEnemiesForetell && allEnemiesForetellConsumed > 0) {
+        const allCharacters = player.fightInfo?.characters ?? [];
+        const allEnemies = allCharacters.filter(c => c.isEnemy);
+
+        for (const enemy of allEnemies) {
+          const enemyForetell = enemy.status
+            ?.filter(s => s.effectName === "Foretell")
+            .reduce((sum, s) => sum + (s.ammount ?? 0), 0) ?? 0;
+
+          if (enemyForetell > 0) {
+            // Resolve status to consume all Foretell
+            await APIBattle.resolveStatus({
+              battleCharacterId: enemy.battleID,
+              effectType: "Foretell",
+              totalValue: 0  // Set to 0 to remove all
+            });
+          }
         }
       }
 
@@ -1390,6 +1671,15 @@ export default function PlayerPage() {
         });
         showToast("Indefeso aplicado em si mesma!");
       }
+
+      // Execute all special skill mechanics
+      await executeAllSpecialMechanics({
+        source,
+        target,
+        resolved,
+        allCharacters: player.fightInfo?.characters ?? [],
+        showToast
+      }, mpToGrant);
 
       setPendingSkillId(null);
       setIsSelectingSkillTarget(false);

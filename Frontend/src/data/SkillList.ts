@@ -10,7 +10,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Lumiere Assault",
     cost: 3,
     unlockCost: 0,
-    description: "Causa dano baixo em alvo único usando elemento da arma. 5 acertos. Acertos críticos geram 1 Carga adicional. Habilidade inicial de Gustave.",
+    description: "Causa dano baixo em alvo único. 5 acertos. Usa elemento da arma. Acertos críticos geram 1 Carga adicional.",
     image: "Gustave_LumiereAssault.webp"
   },
   {
@@ -29,7 +29,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Overcharge",
     cost: 4,
     unlockCost: 0,
-    description: "Causa dano de Raio alto baseado na quantidade de Cargas acumuladas. 1 acerto. Pode causar Break. Consome todas as Cargas ao usar. Habilidade inicial de Gustave.",
+    description: "Causa dano de Raio alto baseado na quantidade de Cargas. 1 acerto. Pode causar Break.",
     image: "Gustave_Overcharge.webp"
   },
   {
@@ -68,7 +68,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Shatter",
     cost: 5,
     unlockCost: 6,
-    description: "Causa dano de Raio alto em todos os inimigos. 1 acerto. Pode causar Break. Se causar Break com sucesso, carrega completamente o Overcharge (10 Cargas). Requer habilidade Recovery.",
+    description: "Causa dano de Raio alto em todos os inimigos. 1 acerto. Pode causar Break. Se um alvo sofrer Break pelo acerto, Overcharge é totalmente carregado.",
     image: "Gustave_Shatter.webp",
     preRequisite: ["gustave-recovery"]
   },
@@ -78,7 +78,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Strike Storm",
     cost: 7,
     unlockCost: 10,
-    description: "Causa dano muito alto em alvo único usando elemento da arma. 6 acertos. Acertos críticos geram 2 Cargas adicionais (ao invés de 1). Requer habilidade From Fire.",
+    description: "Causa dano muito alto em alvo único. 6 acertos. Usa elemento da arma. Acertos críticos geram 2 Cargas adicionais.",
     image: "Gustave_StrikeStorm.webp",
     preRequisite: ["gustave-from-fire"]
   },
@@ -344,7 +344,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Offensive Switch",
     cost: 1,
     unlockCost: 0,
-    description: "Causa dano baixo em alvo único usando elemento da arma. 1 acerto. Aplica Indefeso por 3 turnos (inimigos recebem +25% de dano). Muda a postura para Ofensiva. Habilidade inicial de Maelle.",
+    description: "Causa dano baixo em alvo único e aplica Indefeso por 3 turnos. 1 acerto. Usa elemento da arma.",
     image: "Maelle_OffensiveSwitch.webp"
   },
   {
@@ -363,7 +363,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Percee",
     cost: 5,
     unlockCost: 0,
-    description: "Causa dano Físico médio em alvo único. 1 acerto. +50% de dano contra alvos Marcados. Custo: 5 PA (reduzido para 2 PA quando usado da postura Virtuosa). Muda a postura para Defensiva. Habilidade inicial de Maelle.",
+    description: "Causa dano Físico médio em alvo único. 1 acerto. Dano aumentado em alvos Marcados.",
     image: "Maelle_Percee.webp"
   },
   {
@@ -372,7 +372,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Degagement",
     cost: 2,
     unlockCost: 2,
-    description: "Causa dano de Fogo baixo em alvo único. 1 acerto. O alvo fica vulnerável a Fogo por 2 turnos (recebe o dobro de dano de Fogo). Muda a postura para Ofensiva.",
+    description: "Causa dano de Fogo baixo em alvo único. 1 acerto. O alvo fica vulnerável a dano de Fogo por 2 turnos.",
     image: "Maelle_Degagement.webp",
     preRequisite: ["maelle-spark","maelle-guard-down"]
   },
@@ -382,7 +382,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Guard Up",
     cost: 3,
     unlockCost: 2,
-    description: "Aplica Escudo em até 3 aliados por 3 turnos (reduz dano recebido, estende duração do Égide). QTE perfeito aplica em toda a equipe, QTE falho aplica em apenas 1 aliado. Muda a postura para Ofensiva.",
+    description: "Aplica Escudo, reduzindo dano recebido, em até 3 aliados por 3 turnos.",
     image: "Maelle_GuardUp.webp",
     preRequisite: ["maelle-swift-stride"]
   },
@@ -392,7 +392,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Swift Stride",
     cost: 3,
     unlockCost: 1,
-    description: "Causa dano Físico baixo em alvo único. 1 acerto. Muda para postura Virtuosa se o alvo estiver Queimando. Recupera 0-2 PA aleatoriamente. Melhor usado contra inimigos com Queimadura para ativar transição de postura.",
+    description: "Causa dano Físico baixo em alvo único. 1 acerto. Muda para postura Virtuosa se o alvo estiver Queimando. Recupera 0 a 2 PA.",
     image: "Maelle_SwiftStride.webp",
     preRequisite: ["maelle-percee"]
   },
@@ -412,7 +412,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Egide",
     cost: 3,
     unlockCost: 4,
-    description: "Protege aliados recebendo dano no lugar deles por 2 turnos. Se Maelle tiver Escudo (Protected), a duração é estendida em 1 turno. Muda a postura para Defensiva.",
+    description: "Protege aliados recebendo dano no lugar deles por 2 turnos. Duração é estendida em 1 ao ganhar Escudo.",
     image: "Maelle_Egide.webp",
     preRequisite: ["maelle-guard-up"]
   },
@@ -422,7 +422,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Spark",
     cost: 3,
     unlockCost: 1,
-    description: "Causa dano de Fogo baixo em alvo único. 1 acerto. Aplica 3 Queimaduras (5 se usado da postura Ofensiva). Muda a postura para Defensiva.",
+    description: "Causa dano de Fogo baixo em alvo único. 1 acerto. Aplica 3 Queimaduras.",
     image: "Maelle_Spark.webp",
     preRequisite: ["maelle-offensive-switch"]
   },
@@ -432,7 +432,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Rain of Fire",
     cost: 5,
     unlockCost: 4,
-    description: "Causa dano de Fogo médio em alvo único. 2 acertos. Aplica 3 Queimaduras por acerto (5 se usado da postura Defensiva). Muda a postura para Ofensiva. Uma das habilidades mais fortes de Maelle no início/meio do jogo.",
+    description: "Causa dano de Fogo médio em alvo único. 2 acertos. Aplica 3 Queimaduras por acerto.",
     image: "Maelle_RainOfFire.webp",
     preRequisite: ["maelle-degagement"]
   },
@@ -442,7 +442,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Combustion",
     cost: 4,
     unlockCost: 6,
-    description: "Causa dano Físico médio em alvo único. 2 acertos. Consome até 10 Queimaduras do alvo para aumentar o dano em 10% por Queimadura consumida. Muda a postura para Ofensiva.",
+    description: "Causa dano Físico médio em alvo único. 2 acertos. Consome até 10 Queimaduras para aumentar o dano.",
     image: "Maelle_Combustion.webp",
     preRequisite: ["maelle-rain-of-fire"]
   },
@@ -452,7 +452,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Fleuret Fury",
     cost: 6,
     unlockCost: 2,
-    description: "Causa dano Físico alto em alvo único. 3 acertos. Pode causar Break. Muda para Sem Postura, exceto se já estiver em postura Virtuosa (mantém Virtuosa).",
+    description: "Causa dano Físico alto em alvo único. 3 acertos. Se estiver em postura Virtuosa, mantém postura Virtuosa. Pode causar Break.",
     image: "Maelle_FleuretFury.webp",
     preRequisite: ["maelle-guard-up"]
   },
@@ -462,7 +462,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Breaking Rules",
     cost: 3,
     unlockCost: 3,
-    description: "Causa dano Físico baixo em alvo único. 2 acertos. Destrói todos os Escudos do alvo. Ganha 1 AP por Escudo destruído. Se o alvo estiver Indefeso, jogue um turno adicional. Muda a postura para Ofensiva.",
+    description: "Causa dano Físico baixo em alvo único. 2 acertos. Destrói todos os Escudos do alvo. Ganha 1 AP por Escudo destruído. Se o alvo estiver Indefeso, jogue um segundo turno.",
     image: "Maelle_BreakingRules.webp",
     preRequisite: ["maelle-fleuret-fury"]
   },
@@ -472,7 +472,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Fencer's Flurry",
     cost: 4,
     unlockCost: 6,
-    description: "Causa dano médio em todos os inimigos. 1 acerto. Usa elemento da arma. Aplica Indefeso por 1 turno (inimigos recebem +25% de dano). Muda a postura para Ofensiva.",
+    description: "Causa dano médio em todos os inimigos. 1 acerto. Usa elemento da arma. Aplica Indefeso por 1 turno.",
     image: "Maelle_FencersFlurry.webp",
     preRequisite: ["maelle-breaking-rules"]
   },
@@ -482,7 +482,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Phantom Strike",
     cost: 7,
     unlockCost: 4,
-    description: "Causa dano de Vazio muito alto em todos os inimigos. 4 acertos. Fornece +35% de Carga de Gradiente ao usar. Muda a postura para Defensiva. Desbloqueado no Ato III.",
+    description: "Causa dano de Vazio muito alto em todos os inimigos. 4 acertos. Também fornece +35% de uma Carga de Gradiente.",
     image: "Maelle_PhantomStrike.webp",
     preRequisite: ["maelle-offensive-switch","maelle-burning-canvas"]
   },
@@ -492,7 +492,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Burning Canvas",
     cost: 5,
     unlockCost: 6,
-    description: "Causa dano Vazio alto em alvo único. 5 acertos. Aplica 1 Queimadura por acerto. Ganha 10% de dano adicional por Queimadura no alvo. Muda a postura para Ofensiva.",
+    description: "Causa dano de Vazio alto em alvo único. 5 acertos. Aplica 1 Queimadura por acerto. Dano aumentado para cada Queimadura no alvo.",
     image: "Maelle_BurningCanvas.webp",
     preRequisite: ["maelle-phantom-strike","maelle-stendhal"]
   },
@@ -552,7 +552,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Stendhal",
     cost: 8,
     unlockCost: 4,
-    description: "Causa dano de Vazio extremo em alvo único. 1 acerto. Remove Escudos próprios e aplica Indefeso em si mesma. Muda para Sem Postura. Alto risco, alto dano - uma das skills de maior dano único do jogo com Luminas corretas. Desbloqueado no Ato III.",
+    description: "Causa dano de Vazio extremo em alvo único. 1 acerto. Remove Escudos próprios e aplica Indefeso em si mesma.",
     image: "Maelle_Stendhal.webp",
     preRequisite: ["maelle-percee","maelle-burning-canvas"]
   },
@@ -562,7 +562,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Sword Ballet",
     cost: 9,
     unlockCost: 10,
-    description: "Causa dano extremo em alvo único usando elemento da arma. 5 acertos. Acertos críticos causam o dobro do dano (4x total ao invés de 2x). Muda a postura para Defensiva. Muito eficaz no início/meio do jogo.",
+    description: "Causa dano extremo em alvo único. 5 acertos. Usa elemento da arma. Acertos Críticos causam o dobro do dano.",
     image: "Maelle_SwordBallet.webp",
     preRequisite: ["maelle-fencers-flurry"]
   },
@@ -572,7 +572,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Gustave's Homage",
     cost: 8,
     unlockCost: 8,
-    description: "Causa dano de Raio alto em alvo único. 8 acertos. +50% de dano contra alvos Marcados (não remove a Marca). Muda a postura para Virtuosa. Desbloqueado através do diário de Gustave.",
+    description: "Causa dano de Raio alto em alvo único. 8 acertos. Dano aumentado em alvos Marcados, não remove Marca.",
     image: "Maelle_SpoilerSkill.webp"
   },
   {
@@ -581,7 +581,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Virtuose Strike",
     cost: 1,
     unlockCost: 0,
-    description: "Habilidade Gradiente. Causa dano Físico alto em alvo único. 5 acertos. Muda a postura para Virtuosa. Não consome um turno. Útil para transição de postura sem sacrificar economia de ações. Desbloqueado automaticamente ao aprender Ataques Gradiente.",
+    description: "Causa dano Físico alto em alvo único. 5 acertos.",
     isGradient: true,
     masterUnlock: true,
     image: "Maelle_VirtuoseStrike.webp"
@@ -603,7 +603,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Phoenix Flame",
     cost: 2,
     unlockCost: 0,
-    description: "Habilidade Gradiente. Aplica 10 Queimaduras em todos os inimigos e revive todos os aliados com 50-70% de Vida. Muda a postura para Ofensiva. Não consome um turno. Requer Nível de Relacionamento 4 com Maelle.",
+    description: "Aplica 10 Queimaduras em todos os inimigos e revive todos os aliados com 50 a 70% de Vida.",
     isGradient: true,
     masterUnlock: true,
     image: "Maelle_PhoenixFlame.webp"
@@ -618,7 +618,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Twilight Slash",
     cost: 2,
     unlockCost: 0,
-    description: "Causa dano das Trevas baixo em alvo único. 1 acerto. Consome todos os Foretell para aumentar o dano. Habilidade inicial de Sciel.",
+    description: "Causa dano das Trevas baixo em alvo único. 1 acerto. Consome todas as Predições para aumentar o dano. Habilidade inicial de Sciel.",
     type: "moon",
     image: "Sciel_TwilightSlash.webp"
   },
@@ -628,7 +628,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Focused Foretell",
     cost: 2,
     unlockCost: 0,
-    description: "Causa dano Físico médio em alvo único. 1 acerto. Aplica 2-5 Foretell dependendo do estado do alvo. Habilidade inicial de Sciel.",
+    description: "Causa dano Físico médio em alvo único. 1 acerto. Aplica 2 Predições. Aplica 3 Predições adicionais se o alvo não tiver Predições.",
+    type: "sun",
     image: "Sciel_FocusedForetell.webp"
   },
   {
@@ -637,8 +638,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Bad Omen",
     cost: 3,
     unlockCost: 4,
-    description: "Causa dano das Trevas baixo em todos os inimigos. 2 acertos. Aplica 2 Foretell por acerto. Requer habilidade Marking Card.",
-    type: "moon",
+    description: "Causa dano das Trevas baixo em todos os inimigos. 2 acertos. Aplica 2 Predições por acerto. Requer habilidade Marking Card.",
+    type: "sun",
     image: "Sciel_BadOmen.webp",
     preRequisite: ["sciel-marking-card"]
   },
@@ -648,8 +649,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Marking Card",
     cost: 3,
     unlockCost: 2,
-    description: "Causa dano das Trevas médio em alvo único. 2 acertos. Aplica Marcado e 3 Foretell. Requer habilidade Focused Foretell.",
-    type: "moon",
+    description: "Causa dano das Trevas médio em alvo único. 2 acertos. Aplica Marcado. Aplica 3 Predições.",
+    type: "sun",
     image: "Sciel_MarkingCard.webp",
     preRequisite: ["sciel-focused-foretell"]
   },
@@ -659,7 +660,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Delaying Slash",
     cost: 5,
     unlockCost: 6,
-    description: "Causa dano médio em alvo único. 2 acertos. Consome Foretell para aumentar o dano e atrasar o alvo na ordem de turno. Requer habilidade Bad Omen.",
+    description: "Causa dano médio em alvo único. 2 acertos. Usa elemento da arma. Consome Predições para aumentar o dano e atrasar o turno do alvo.",
+    type: "moon",
     image: "Sciel_DelayingSlash.webp",
     preRequisite: ["sciel-bad-omen"]
   },
@@ -669,7 +671,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Dark Cleansing",
     cost: 0,
     unlockCost: 2,
-    description: "Remove todos os efeitos de status negativos de um aliado. Propaga os buffs do alvo para todos os aliados. Requer habilidade Spectral Sweep.",
+    description: "Remove todos os efeitos de status negativos de um aliado. Propaga os buffs do alvo para todos os aliados.",
     type: "moon",
     image: "Sciel_DarkCleansing.webp",
     preRequisite: ["sciel-spectral-sweep"]
@@ -680,7 +682,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Dark Wave",
     cost: 6,
     unlockCost: 10,
-    description: "Causa dano das Trevas alto em todos os inimigos. 3 acertos. Consome Foretell para aumentar o dano. Requer habilidades Grim Harvest ou Delaying Slash.",
+    description: "Causa dano das Trevas alto em todos os inimigos. 3 acertos. Consome todas as Predições para aumentar o dano.",
     type: "moon",
     image: "Sciel_DarkWave.webp",
     preRequisite: ["sciel-grim-harvest","sciel-delaying-slash"]
@@ -691,7 +693,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Grim Harvest",
     cost: 5,
     unlockCost: 6,
-    description: "Causa dano das Trevas médio em alvo único. 1 acerto. Cura todos os aliados em 30% da Vida máxima. Foretell aumenta a cura. Requer habilidade Sealed Fate.",
+    description: "Causa dano das Trevas médio em alvo único. 1 acerto. Cura todos os aliados em 30% da Vida. Consome Predições para aumentar a cura em 5% por Predição.",
     type: "moon",
     image: "Sciel_GrimHarvest.webp",
     preRequisite: ["sciel-sealed-fate"]
@@ -702,7 +704,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Harvest",
     cost: 3,
     unlockCost: 1,
-    description: "Causa dano médio em alvo único. 1 acerto. Cura Sciel em 40% da Vida máxima. Consome Foretell para aumentar a cura. Requer habilidade Twilight Slash.",
+    description: "Causa dano médio em alvo único. 1 acerto. Usa elemento da arma. Cura Sciel em 40% da Vida. Consome todas as Predições para aumentar a cura em 5% por Predição.",
+    type: "moon",
     image: "Sciel_Harvest.webp",
     preRequisite: ["sciel-twilight-slash"]
   },
@@ -712,8 +715,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Searing Bond",
     cost: 4,
     unlockCost: 2,
-    description: "Causa dano das Trevas médio em alvo único. 1 acerto. Aplica 5 Foretell. Efeito adicional contra inimigos Queimando. Requer habilidade Harvest.",
-    type: "moon",
+    description: "Causa dano das Trevas médio em alvo único. 1 acerto. Aplica 5 Predições. Causa dano e aplica Predições em todos os outros inimigos Queimando.",
+    type: "sun",
     image: "Sciel_SearingBond.webp",
     preRequisite: ["sciel-harvest"]
   },
@@ -723,7 +726,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Phantom Blade",
     cost: 5,
     unlockCost: 2,
-    description: "Causa dano das Trevas alto em alvo único. 1 acerto. Consome todos os Foretell para aumentar o dano. Pode causar Break. Requer habilidade Twilight Slash.",
+    description: "Causa dano das Trevas alto em alvo único. 1 acerto. Consome todas as Predições para aumentar o dano. Pode causar Break.",
     type: "moon",
     image: "Sciel_PhantomBlade.webp",
     preRequisite: ["sciel-twilight-slash"]
@@ -734,7 +737,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Sealed Fate",
     cost: 4,
     unlockCost: 4,
-    description: "Causa dano alto em alvo único. 5-7 acertos. Cada acerto consome 1 Foretell para 200% de dano adicional. Requer habilidade Phantom Blade.",
+    description: "Causa dano alto em alvo único. 5-7 acertos. Usa elemento da arma. Cada acerto pode consumir 1 Predição para causar 200% mais dano.",
+    type: "moon",
     image: "Sciel_SealedFate.webp",
     preRequisite: ["sciel-phantom-blade"]
   },
@@ -744,7 +748,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Spectral Sweep",
     cost: 7,
     unlockCost: 2,
-    description: "Causa dano médio em alvo único. 2-6 acertos. Aplica 1 Foretell por acerto. Acertos críticos concedem Foretell adicional. Requer habilidade Rush.",
+    description: "Causa dano médio em alvo único. 2-6 acertos. Usa elemento da arma. Aplica 1 Predição por acerto. Acertos críticos aplicam Predição adicional.",
+    type: "sun",
     image: "Sciel_SpectralSweep.webp",
     preRequisite: ["sciel-rush"]
   },
@@ -754,7 +759,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Firing Shadow",
     cost: 3,
     unlockCost: 2,
-    description: "Causa dano das Trevas baixo em todos os inimigos. 3 acertos. Consome 1 Foretell por acerto para aumentar o dano. Requer habilidade Searing Bond.",
+    description: "Causa dano das Trevas baixo em todos os inimigos. 3 acertos. Consome 1 Predição por acerto para aumentar o dano.",
     type: "moon",
     image: "Sciel_FiringShadow.webp",
     preRequisite: ["sciel-searing-bond"]
@@ -765,7 +770,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Fortune's Fury",
     cost: 5,
     unlockCost: 6,
-    description: "Um aliado alvo causa o dobro de dano durante 1 turno completo. Requer habilidade Firing Shadow.",
+    description: "Um aliado alvo causa o dobro de dano durante 1 turno.",
+    type: "sun",
     image: "Sciel_FortunesFury.webp",
     preRequisite: ["sciel-firing-shadow"]
   },
@@ -775,7 +781,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Our Sacrifice",
     cost: 4,
     unlockCost: 8,
-    description: "Causa dano das Trevas extremo em todos os inimigos. 1 acerto. Absorve Vida de aliados e Foretell de inimigos. Requer habilidade Fortune's Fury.",
+    description: "Causa dano das Trevas extremo em todos os inimigos. 1 acerto. Absorve Vida dos aliados e Predições dos inimigos para aumentar o dano.",
     type: "moon",
     image: "Sciel_OurSacrifice.webp",
     preRequisite: ["sciel-fortunes-fury"]
@@ -786,7 +792,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Plentiful Harvest",
     cost: 4,
     unlockCost: 4,
-    description: "Causa dano Físico médio em alvo único. 2 acertos. Converte Foretell em PA distribuídos entre aliados. Requer habilidade Firing Shadow.",
+    description: "Causa dano Físico médio em alvo único. 2 acertos. Consome todas as Predições do alvo e concede 1 PA a um aliado por Predição consumida.",
+    type: "moon",
     image: "Sciel_PlentifulHarvest.webp",
     preRequisite: ["sciel-firing-shadow"]
   },
@@ -796,7 +803,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Rush",
     cost: 3,
     unlockCost: 2,
-    description: "Aplica Rapidez em 1-3 aliados por 3 turnos, aumentando a Velocidade em 33%. Requer habilidade Focused Foretell.",
+    description: "Aplica Rapidez em 1-3 aliados, aumentando a Velocidade por 3 turnos.",
+    type: "sun",
     image: "Sciel_Rush.webp",
     preRequisite: ["sciel-focused-foretell"]
   },
@@ -806,7 +814,8 @@ export const SkillsList: SkillResponse[] = [
     name: "All Set",
     cost: 3,
     unlockCost: 6,
-    description: "Aplica Escudo, Fortalecido e Rapidez em todos os aliados. Combinação poderosa de buffs defensivos e ofensivos. Requer habilidade Card Weaver.",
+    description: "Aplica Escudo, Poderoso e Rapidez em todos os aliados.",
+    type: "sun",
     image: "Sciel_AllSet.webp",
     preRequisite: ["sciel-card-weaver"]
   },
@@ -816,7 +825,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Intervention",
     cost: 5,
     unlockCost: 6,
-    description: "Um aliado alvo joga imediatamente e ganha 4 PA. Excelente para combos e situações de emergência. Requer habilidade Dark Cleansing.",
+    description: "Um aliado alvo joga imediatamente e ganha 4 PA.",
+    type: "moon",
     image: "Sciel_Intervention.webp",
     preRequisite: ["sciel-dark-cleansing"]
   },
@@ -826,7 +836,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Card Weaver",
     cost: 3,
     unlockCost: 4,
-    description: "Causa dano Físico baixo em alvo único. 1 acerto. Propaga o Foretell do alvo para todos os inimigos. Requer habilidade Dark Cleansing.",
+    description: "Causa dano Físico baixo em alvo único. 1 acerto. Propaga as Predições do alvo para todos os inimigos. Joga um segundo turno.",
+    type: "sun",
     image: "Sciel_CardWeaver.webp",
     preRequisite: ["sciel-dark-cleansing"]
   },
@@ -836,8 +847,8 @@ export const SkillsList: SkillResponse[] = [
     name: "Final Path",
     cost: 9,
     unlockCost: 10,
-    description: "Causa dano das Trevas extremo em alvo único. 1 acerto. Aplica 10 Foretell. Pode causar Break. Requer habilidade Dark Wave.",
-    type: "moon",
+    description: "Causa dano das Trevas extremo em alvo único. 1 acerto. Aplica 10 Predições. Pode causar Break.",
+    type: "sun",
     image: "Sciel_FinalPath.webp",
     isBlocked: true,
     preRequisite: ["sciel-dark-wave"]
@@ -848,7 +859,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Twilight Dance",
     cost: 9,
     unlockCost: 10,
-    description: "Causa dano das Trevas extremo em alvo único. 4 acertos. Estende a duração do Crepúsculo em 1 turno. Consome Foretell. Requer habilidades Final Path, All Set ou Our Sacrifice.",
+    description: "Causa dano das Trevas extremo em alvo único. 4 acertos. Durante o Crepúsculo, estende a duração do Crepúsculo em 1 turno. Consome todas as Predições para aumentar o dano.",
     type: "moon",
     image: "Sciel_TwilightDance.webp",
     preRequisite: ["sciel-final-path","sciel-all-set","sciel-our-sacrifice"]
@@ -859,10 +870,10 @@ export const SkillsList: SkillResponse[] = [
     name: "Shadow Bringer",
     cost: 1,
     unlockCost: 0,
-    description: "Habilidade Gradiente. Causa dano das Trevas alto em inimigos aleatórios. 10 acertos. Aplica 1 Foretell por acerto. Desbloqueado automaticamente ao aprender Ataques Gradiente.",
+    description: "Habilidade Gradiente. Causa dano das Trevas alto em inimigos aleatórios. 10 acertos. Aplica 1 Predição por acerto.",
     isGradient: true,
     masterUnlock: true,
-    type: "moon",
+    type: "sun",
     image: "Sciel_ShadowBringer.webp"
   },
   {
@@ -871,7 +882,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Doom",
     cost: 2,
     unlockCost: 0,
-    description: "Habilidade Gradiente. Causa dano das Trevas muito alto em alvo único. 3 acertos. Aplica Fraco, Indefeso e Lento por 3 turnos. Pode causar Break. Requer Nível de Relacionamento 4 com Sciel.",
+    description: "Habilidade Gradiente. Causa dano das Trevas muito alto em alvo único. 3 acertos. Aplica Fraco, Indefeso e Lento por 3 turnos. Pode causar Break.",
     isGradient: true,
     masterUnlock: true,
     type: "moon",
@@ -883,9 +894,10 @@ export const SkillsList: SkillResponse[] = [
     name: "End Slice",
     cost: 3,
     unlockCost: 0,
-    description: "Habilidade Gradiente. Causa dano Físico extremo em alvo único. 1 acerto. O dano escala com a quantidade de Foretell consumido. Requer Nível de Relacionamento 7 com Sciel.",
+    description: "Habilidade Gradiente. Causa dano Físico extremo em alvo único. 1 acerto. O dano escala com a quantidade de Predições consumidas.",
     isGradient: true,
     masterUnlock: true,
+    type: "moon",
     image: "Sciel_EndSlice.webp"
   },
 

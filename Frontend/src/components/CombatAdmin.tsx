@@ -266,6 +266,10 @@ export default function CombatAdmin({
         const isMaelle = (entity.characterId?.toLowerCase() === "maelle") ||
                         String(entity.externalId).toLowerCase().includes("maelle")
 
+        // Detect if character is Sciel and initialize sun/moon charge system
+        const isSciel = (entity.characterId?.toLowerCase() === "sciel") ||
+                       String(entity.externalId).toLowerCase().includes("sciel")
+
         await APIBattle.addCharacter({
             battleId: campaignInfo.battleId,
             externalId: String(entity.externalId),
@@ -278,6 +282,8 @@ export default function CombatAdmin({
             maxMagicPoints: entity.maxMp,
             chargePoints: isGustave ? 0 : undefined,
             maxChargePoints: isGustave ? 10 : undefined,
+            sunCharges: isSciel ? 0 : undefined,
+            moonCharges: isSciel ? 0 : undefined,
             stance: isMaelle ? null : undefined,
             initiative,
             canRollInitiative: entity.type == "player"

@@ -14,6 +14,8 @@ data class AddBattleCharacterRequest(
         val maxMagicPoints: Int? = null,
         val chargePoints: Int? = null,
         val maxChargePoints: Int? = null,
+        val sunCharges: Int? = null,
+        val moonCharges: Int? = null,
         val stance: String? = null,
         val initiative: InitiativeData? = null,
         val canRollInitiative: Boolean = false

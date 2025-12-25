@@ -79,6 +79,10 @@ export function getStatusLabel(status: StatusType): string {
         case "Fragile": return "Frágil";
         case "Broken": return "Quebrado";
         case "Fleeing": return "Fugindo";
+        case "FireVulnerability": return "Vulnerável a Fogo";
+        case "Taunt": return "Provocar";
+        case "Foretell": return "Predição";
+        case "Twilight": return "🌕 Crepúsculo";
         case "free-shot": return "Free Shot";
         case "jump": return "Pular";
         case "gradient": return "Gradiente";
@@ -106,7 +110,8 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Broken",
         "Fragile",
         "Broken",
-        "Fleeing"
+        "Fleeing",
+        "Twilight"
     ];
 
     return !skillsWithoutAmmount.includes(type);
@@ -139,6 +144,7 @@ export function getStatusDescription(status: StatusType): string {
         case "Fragile": return "Receber um dano maior que o dobro de sua resistência te torna frágil. Estando frágil você fica vulnerável a quebra.";
         case "Broken": return "Você não pode se defender ou pode agir.";
         case "Fleeing": return "O personagem está tentando fugir da batalha e não pode realizar nenhuma outra ação.";
+        case "Twilight": return "Estado místico de Sciel que concede +150% de dano, dobro de Predição infligida (até 40 máximo) e impede ganho de cargas Sol/Lua. Ativado ao ter pelo menos 1 carga de Sol e 1 de Lua simultaneamente.";
         case "free-shot": return "Acumula bônus para ataques básicos.";
         case "jump": return "Ignora terreno ou obstáculos temporariamente.";
         case "gradient": return "Efeito especial de uso interno.";

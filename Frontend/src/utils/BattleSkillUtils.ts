@@ -258,7 +258,8 @@ function getEffectTargets(
  */
 export async function applySpecialEffects(
     effects: ResolvedEffect[],
-    allCharacters: BattleCharacterInfo[]
+    allCharacters: BattleCharacterInfo[],
+    foretellHealBonus: number = 0  // Bonus de cura por Predição consumida (%)
 ): Promise<void> {
     const specialEffects = effects.filter(
         e => e.effectType === "Heal" || e.effectType === "Cleanse"
@@ -269,7 +270,9 @@ export async function applySpecialEffects(
             const target = allCharacters.find(c => c.battleID === effect.targetBattleId);
             if (target) {
                 const maxHp = target.maxHealthPoints;
-                const healAmount = Math.floor(maxHp * (effect.amount / 100));
+                // Apply base heal % + foretell bonus %
+                const totalHealPercent = effect.amount + foretellHealBonus;
+                const healAmount = Math.floor(maxHp * (totalHealPercent / 100));
                 await APIBattle.heal(effect.targetBattleId, healAmount);
             }
         } else if (effect.effectType === "Cleanse") {

@@ -447,6 +447,88 @@ class BattleStatusController(
 
         return ResponseEntity.noContent().build()
     }
+
+    @PostMapping("/consume-foretell/{battleCharacterId}")
+    @Transactional
+    fun consumeOneForetell(@PathVariable battleCharacterId: Int): ResponseEntity<Boolean> {
+        val bc = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+                ?: return ResponseEntity.badRequest().build()
+
+        if (bc.healthPoints <= 0) {
+            return ResponseEntity.ok(false)
+        }
+
+        val battleId = bc.battleId ?: return ResponseEntity.badRequest().build()
+
+        // Find Foretell status and consume 1 stack
+        val foretellStatus = battleStatusEffectRepository
+                .findByBattleCharacterIdAndEffectType(battleCharacterId, "Foretell")
+                .firstOrNull()
+
+        if (foretellStatus == null || (foretellStatus.ammount ?: 0) <= 0) {
+            return ResponseEntity.ok(false)  // No Foretell to consume
+        }
+
+        val newAmount = (foretellStatus.ammount ?: 0) - 1
+        if (newAmount <= 0) {
+            // Remove status entirely
+            battleStatusEffectRepository.delete(foretellStatus)
+        } else {
+            // Decrease by 1
+            battleStatusEffectRepository.save(foretellStatus.copy(ammount = newAmount))
+        }
+
+        battleLogRepository.save(
+                BattleLog(
+                        battleId = battleId,
+                        eventType = "FORETELL_CONSUMED",
+                        eventJson = null
+                )
+        )
+
+        return ResponseEntity.ok(true)  // Successfully consumed 1 Foretell
+    }
+
+    @PostMapping("/extend-duration/{battleCharacterId}")
+    @Transactional
+    fun extendStatusDuration(
+            @PathVariable battleCharacterId: Int,
+            @RequestBody body: ExtendDurationRequest
+    ): ResponseEntity<Void> {
+        val bc = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+                ?: return ResponseEntity.badRequest().build()
+
+        if (bc.healthPoints <= 0) {
+            return ResponseEntity.noContent().build()
+        }
+
+        val battleId = bc.battleId ?: return ResponseEntity.badRequest().build()
+
+        // Find the status effect and extend its duration
+        val effects = battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
+                battleCharacterId,
+                body.effectType
+        )
+
+        effects.forEach { effect ->
+            val currentTurns = effect.remainingTurns ?: 0
+            val newTurns = currentTurns + body.additionalTurns
+            battleStatusEffectRepository.save(
+                    effect.copy(remainingTurns = newTurns)
+            )
+        }
+
+        battleLogRepository.save(
+                BattleLog(
+                        battleId = battleId,
+                        eventType = "STATUS_EXTENDED",
+                        eventJson = null
+                )
+        )
+
+        return ResponseEntity.noContent().build()
+    }
 }
 
 data class HealRequest(val amount: Int)
+data class ExtendDurationRequest(val effectType: String, val additionalTurns: Int)

@@ -165,6 +165,24 @@ export default function BattleGroupStatus({
                                                 </div>
                                             )}
 
+                                        {/* Sun/Moon charges for Sciel */}
+                                        {ch.id.toLowerCase().includes("sciel") && (
+                                            <div className="mt-2 flex items-center gap-3 text-sm">
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="text-amber-400">☀</span>
+                                                    <span className="font-mono font-semibold text-amber-300">
+                                                        {ch.sunCharges ?? 0}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className="text-purple-400">☾</span>
+                                                    <span className="font-mono font-semibold text-purple-300">
+                                                        {ch.moonCharges ?? 0}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+
                                         {/* Stance indicator for Maelle only */}
                                         {ch.stance !== undefined &&
                                          ch.id.toLowerCase().includes("maelle") && (

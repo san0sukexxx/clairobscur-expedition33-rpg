@@ -34,3 +34,5 @@ Frontend/public/assets/ammo/
 Frontend/public/assets/themes/default/
 
 .claude/
+
+api/database.db

@@ -86,7 +86,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
     }
 
     const highlight = (text: string) => {
-        const terms = ["Physical", "Foretell", "Magical", "Bleed", "Poison", "Stun"];
+        const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
         const pattern = new RegExp(`\\b(${terms.join("|")})\\b`, "g");
         return text.split(pattern).map((chunk, i) =>
             terms.includes(chunk) ? (
@@ -191,8 +191,12 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                             </h3>
 
                                             {skillInfo.type && (
-                                                <span className="shrink-0 rounded-full border border-white/15 px-2 py-0.5 text-xs text-neutral-200/90">
-                                                    {skillInfo.type}
+                                                <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs ${
+                                                    skillInfo.type === "sun"
+                                                        ? "border-amber-400/30 text-amber-300"
+                                                        : "border-purple-400/30 text-purple-300"
+                                                }`}>
+                                                    {skillInfo.type === "sun" ? "☀" : "☾"}
                                                 </span>
                                             )}
 

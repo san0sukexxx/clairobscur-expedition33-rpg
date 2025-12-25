@@ -17,6 +17,8 @@ data class BattleCharacter(
         @Column(name = "max_magic_points") val maxMagicPoints: Int? = null,
         @Column(name = "charge_points") var chargePoints: Int? = null,
         @Column(name = "max_charge_points") val maxChargePoints: Int? = null,
+        @Column(name = "sun_charges") var sunCharges: Int? = null,
+        @Column(name = "moon_charges") var moonCharges: Int? = null,
         @Column(name = "stance") var stance: String? = null,
         @Column(name = "can_roll_initiative", nullable = false)
         var canRollInitiative: Boolean = false

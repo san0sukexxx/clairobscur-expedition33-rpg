@@ -22,6 +22,8 @@ CREATE TABLE
         max_magic_points INTEGER,
         charge_points INTEGER,
         max_charge_points INTEGER,
+        sun_charges INTEGER,
+        moon_charges INTEGER,
         stance TEXT,
         can_roll_initiative BOOLEAN NOT NULL DEFAULT 0,
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE

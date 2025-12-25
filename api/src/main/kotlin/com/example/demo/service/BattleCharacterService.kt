@@ -47,6 +47,8 @@ class BattleCharacterService(
                                 maxMagicPoints = request.maxMagicPoints,
                                 chargePoints = request.chargePoints ?: 0,
                                 maxChargePoints = request.maxChargePoints,
+                                sunCharges = request.sunCharges ?: 0,
+                                moonCharges = request.moonCharges ?: 0,
                                 stance = request.stance,
                                 canRollInitiative = request.canRollInitiative
                         )

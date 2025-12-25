@@ -89,6 +89,8 @@ class FightService(
                                         maxMagicPoints = bc.maxMagicPoints,
                                         chargePoints = bc.chargePoints,
                                         maxChargePoints = bc.maxChargePoints,
+                                        sunCharges = bc.sunCharges,
+                                        moonCharges = bc.moonCharges,
                                         gradientPoints = if (bc.isEnemy) battle.teamBGradientPoints else battle.teamAGradientPoints,
                                         stance = bc.stance,
                                         status = status,

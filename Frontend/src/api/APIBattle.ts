@@ -36,6 +36,8 @@ export interface AddBattleCharacterRequest {
     maxMagicPoints?: number
     chargePoints?: number
     maxChargePoints?: number
+    sunCharges?: number
+    moonCharges?: number
     stance?: Stance | null
     initiative?: AddBattleCharacterInitiativeData,
     canRollInitiative: boolean
@@ -71,7 +73,9 @@ export interface CreateAttackRequest {
     destroysShields?: boolean
     grantsAPPerShield?: number
     consumesBurn?: number  // Number of Burn stacks to consume from target
+    consumesForetell?: number  // Number of Foretell stacks to consume from target
     executionThreshold?: number  // If target HP% <= this, execute instantly (kill)
+    skillType?: string  // "sun" or "moon" for Sciel's charge system
 }
 
 export interface AttackStatusEffectRequest {
@@ -209,6 +213,18 @@ export class APIBattle {
 
     static async breakTarget(battleCharacterId: number): Promise<void> {
         await api.post(`battle-status/break/${battleCharacterId}`, {});
+    }
+
+    static async extendStatusDuration(battleCharacterId: number, effectType: string, additionalTurns: number): Promise<void> {
+        await api.post(`battle-status/extend-duration/${battleCharacterId}`, { effectType, additionalTurns });
+    }
+
+    static async delayTurn(battleCharacterId: number, delayAmount: number): Promise<void> {
+        await api.post(`battle-turns/${battleCharacterId}/delay`, { delayAmount });
+    }
+
+    static async consumeOneForetell(battleCharacterId: number): Promise<boolean> {
+        return api.post<{}, boolean>(`battle-status/consume-foretell/${battleCharacterId}`, {});
     }
 
     static async updateCharacterHp(id: number, newHp: number): Promise<void> {

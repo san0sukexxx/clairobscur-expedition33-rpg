@@ -75,7 +75,7 @@ class AttackController(
 
                         sourceBC.magicPoints = next
 
-                        // Charge system logic
+                        // Charge system logic (Gustave)
                         if (body.consumesCharge == true) {
                                 // Overcharge or other skill that consumes all charges
                                 sourceBC.chargePoints = 0
@@ -85,6 +85,43 @@ class AttackController(
                                 val maxCharge = sourceBC.maxChargePoints ?: 0
                                 if (maxCharge > 0) {
                                         sourceBC.chargePoints = (currentCharge + 1).coerceAtMost(maxCharge)
+                                }
+                        }
+
+                        // Sun/Moon charge system logic (Sciel)
+                        // Check if character has Twilight status - if so, don't gain charges
+                        val hasTwilight = battleStatusEffectRepository
+                                .findByBattleCharacterIdAndEffectType(sourceBC.id!!, "Twilight")
+                                .isNotEmpty()
+
+                        if (!hasTwilight && body.skillType != null) {
+                                when (body.skillType.lowercase()) {
+                                        "sun" -> {
+                                                val currentSun = sourceBC.sunCharges ?: 0
+                                                sourceBC.sunCharges = (currentSun + 1).coerceAtMost(20)
+                                        }
+                                        "moon" -> {
+                                                val currentMoon = sourceBC.moonCharges ?: 0
+                                                sourceBC.moonCharges = (currentMoon + 1).coerceAtMost(20)
+                                        }
+                                }
+
+                                // Check for Twilight activation (needs at least 1 Sun AND 1 Moon charge)
+                                val sunCharges = sourceBC.sunCharges ?: 0
+                                val moonCharges = sourceBC.moonCharges ?: 0
+                                if (sunCharges >= 1 && moonCharges >= 1) {
+                                        // Activate Twilight: add status for 2 turns and reset charges
+                                        battleStatusEffectRepository.save(
+                                                BattleStatusEffect(
+                                                        battleCharacterId = sourceBC.id!!,
+                                                        effectType = "Twilight",
+                                                        ammount = 0,
+                                                        remainingTurns = 2
+                                                )
+                                        )
+                                        // Reset sun and moon charges
+                                        sourceBC.sunCharges = 0
+                                        sourceBC.moonCharges = 0
                                 }
                         }
 
@@ -239,6 +276,32 @@ class AttackController(
                                 }
                         }
 
+                        // Twilight Slash: Consume Foretell stacks from target
+                        body.consumesForetell?.let { consumeAmount ->
+                                if (consumeAmount > 0) {
+                                        val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                                        val foretellEffects = targetEffects.filter { it.effectType == "Foretell" }
+
+                                        var foretellsRemaining: Int = consumeAmount
+                                        for (foretell in foretellEffects) {
+                                                if (foretellsRemaining > 0) {
+                                                        val foretellAmount = foretell.ammount
+                                                        if (foretellAmount <= foretellsRemaining) {
+                                                                // Remove entire foretell effect
+                                                                battleStatusEffectRepository.delete(foretell)
+                                                                foretellsRemaining -= foretellAmount
+                                                        } else {
+                                                                // Reduce foretell amount
+                                                                battleStatusEffectRepository.save(
+                                                                        foretell.copy(ammount = foretellAmount - foretellsRemaining)
+                                                                )
+                                                                foretellsRemaining = 0
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+
                         battleService.removeMarked(targetBC.id!!)
 
                         val nonStackableEffects = listOf("Fragile", "Inverted", "Flying", "Dizzy", "Stunned", "Silenced", "Exhausted")
@@ -262,7 +325,15 @@ class AttackController(
                                 }
 
                                 if (existing != null) {
-                                        val nextAmount = (existing.ammount) + (eff.ammount ?: 0)
+                                        var nextAmount = (existing.ammount) + (eff.ammount ?: 0)
+
+                                        // Foretell cap: 20 normally, 40 if target has Twilight status
+                                        if (eff.effectType == "Foretell") {
+                                                val targetHasTwilight = allTargetEffects.any { it.effectType == "Twilight" }
+                                                val foretellCap = if (targetHasTwilight) 40 else 20
+                                                nextAmount = nextAmount.coerceAtMost(foretellCap)
+                                        }
+
                                         val nextTurns = eff.remainingTurns ?: existing.remainingTurns
                                         battleStatusEffectRepository.save(
                                                 existing.copy(
@@ -271,11 +342,20 @@ class AttackController(
                                                 )
                                         )
                                 } else {
+                                        var amount = eff.ammount ?: 0
+
+                                        // Foretell cap: 20 normally, 40 if target has Twilight status
+                                        if (eff.effectType == "Foretell") {
+                                                val targetHasTwilight = allTargetEffects.any { it.effectType == "Twilight" }
+                                                val foretellCap = if (targetHasTwilight) 40 else 20
+                                                amount = amount.coerceAtMost(foretellCap)
+                                        }
+
                                         battleStatusEffectRepository.save(
                                                 BattleStatusEffect(
                                                         battleCharacterId = targetBC.id!!,
                                                         effectType = eff.effectType,
-                                                        ammount = eff.ammount ?: 0,
+                                                        ammount = amount,
                                                         remainingTurns = eff.remainingTurns
                                                 )
                                         )

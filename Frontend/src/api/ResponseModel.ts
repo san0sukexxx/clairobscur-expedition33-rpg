@@ -7,7 +7,7 @@ export type StatusType =
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
-    "FireVulnerability" | "Taunt";
+    "FireVulnerability" | "Taunt" | "Foretell" | "Twilight";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
@@ -51,6 +51,8 @@ export interface BattleCharacterInfo {
     maxMagicPoints?: number;
     chargePoints?: number;
     maxChargePoints?: number;
+    sunCharges?: number;
+    moonCharges?: number;
     gradientPoints?: number;
     stance?: Stance | null;
     status?: StatusResponse[];

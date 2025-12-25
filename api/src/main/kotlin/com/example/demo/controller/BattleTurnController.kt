@@ -70,7 +70,7 @@ class BattleTurnController(
                         attackRepository.deleteAll(attacks)
                 }
 
-                val ignoreRemainingTurns = listOf("Burning", "Frozen", "Regeneration", "Cursed", "Fleeing")
+                val ignoreRemainingTurns = listOf("Burning", "Frozen", "Regeneration", "Cursed", "Fleeing", "Foretell")
 
                 val statusList = battleStatusEffectRepository.findByBattleCharacterId(bc.id!!)
                 statusList.forEach { eff ->
@@ -119,7 +119,29 @@ class BattleTurnController(
 
                 return ResponseEntity.noContent().build()
         }
+
+        @PostMapping("/{battleCharacterId}/delay")
+        @Transactional
+        fun delayTurn(
+                @PathVariable battleCharacterId: Int,
+                @RequestBody body: DelayTurnRequest
+        ): ResponseEntity<Void> {
+                val bc = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+                        ?: return ResponseEntity.badRequest().build()
+
+                val battleId = bc.battleId
+
+                battleTurnService.delayTurn(battleId, battleCharacterId, body.delayAmount)
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "TURN_DELAYED", eventJson = null)
+                )
+
+                return ResponseEntity.noContent().build()
+        }
 }
+
+data class DelayTurnRequest(val delayAmount: Int)
 
 private fun BattleTurn.toResponse() =
         BattleTurnResponse(

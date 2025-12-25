@@ -63,7 +63,13 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
                 </div>
                 <div className="flex items-center gap-2 text-xs">
                     {skill.type && (
-                        <span className="rounded-full border border-white/15 px-2 py-0.5 opacity-90">{skill.type}</span>
+                        <span className={`rounded-full border px-2 py-0.5 ${
+                            skill.type === "sun"
+                                ? "border-amber-400/30 text-amber-300"
+                                : "border-purple-400/30 text-purple-300"
+                        }`}>
+                            {skill.type === "sun" ? "☀" : "☾"}
+                        </span>
                     )}
                     {skill.isGradient && (
                         <span className="rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-fuchsia-200">Gradiente</span>
@@ -135,7 +141,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }, []);
 
     const highlight = (text: string) => {
-        const terms = ["Physical", "Foretell", "Magical", "Bleed", "Poison", "Stun"];
+        const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
         const pattern = new RegExp(`\\b(${terms.join("|")})\\b`, "g");
         return text.split(pattern).map((chunk, i) =>
             terms.includes(chunk) ? (
@@ -317,9 +323,23 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
 
                                 {selected ? (
                                     <>
-                                        <div className="flex-1 text-lg font-semibold leading-tight mr-2 truncate">
-                                            {selected.name}
-                                            <span className={`relative -top-0.5 ml-3 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${selected.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                                        <div className="flex-1 flex items-center gap-2 text-lg font-semibold leading-tight mr-2">
+                                            <span className="truncate">{selected.name}</span>
+                                            {selected.type && (
+                                                <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs ${
+                                                    selected.type === "sun"
+                                                        ? "border-amber-400/30 text-amber-300"
+                                                        : "border-purple-400/30 text-purple-300"
+                                                }`}>
+                                                    {selected.type === "sun" ? "☀" : "☾"}
+                                                </span>
+                                            )}
+                                            {selected.isGradient && (
+                                                <span className="shrink-0 rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-xs text-fuchsia-200">
+                                                    Gradiente
+                                                </span>
+                                            )}
+                                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${selected.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
                                                 {selected.isGradient ? `${selected.cost} ${selected.cost === 1 ? 'carga' : 'cargas'}` : selected.cost}
                                             </span>
                                         </div>

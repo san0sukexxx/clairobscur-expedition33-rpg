@@ -13,5 +13,7 @@ data class CreateAttackRequest(
         val destroysShields: Boolean? = null,
         val grantsAPPerShield: Int? = null,
         val consumesBurn: Int? = null,
-        val executionThreshold: Int? = null
+        val consumesForetell: Int? = null,  // Number of Foretell stacks to consume from target
+        val executionThreshold: Int? = null,
+        val skillType: String? = null  // "sun" or "moon" for Sciel's charge system
 )
