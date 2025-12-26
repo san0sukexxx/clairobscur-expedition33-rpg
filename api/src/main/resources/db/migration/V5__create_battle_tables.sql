@@ -25,6 +25,10 @@ CREATE TABLE
         sun_charges INTEGER,
         moon_charges INTEGER,
         stance TEXT,
+        stain_slot_1 TEXT,
+        stain_slot_2 TEXT,
+        stain_slot_3 TEXT,
+        stain_slot_4 TEXT,
         can_roll_initiative BOOLEAN NOT NULL DEFAULT 0,
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE
     );

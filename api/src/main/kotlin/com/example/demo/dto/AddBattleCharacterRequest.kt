@@ -17,6 +17,10 @@ data class AddBattleCharacterRequest(
         val sunCharges: Int? = null,
         val moonCharges: Int? = null,
         val stance: String? = null,
+        val stainSlot1: String? = null,
+        val stainSlot2: String? = null,
+        val stainSlot3: String? = null,
+        val stainSlot4: String? = null,
         val initiative: InitiativeData? = null,
         val canRollInitiative: Boolean = false
 )

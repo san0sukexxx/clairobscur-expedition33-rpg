@@ -41,6 +41,8 @@ export interface StatusResponse {
     isResolved: boolean;
 }
 
+export type StainType = "Lightning" | "Earth" | "Fire" | "Ice" | "Light";
+
 export interface BattleCharacterInfo {
     battleID: number;
     id: string; // known NPC ID or Player ID. Ex.: ice-golem
@@ -55,6 +57,10 @@ export interface BattleCharacterInfo {
     moonCharges?: number;
     gradientPoints?: number;
     stance?: Stance | null;
+    stainSlot1?: StainType | null;
+    stainSlot2?: StainType | null;
+    stainSlot3?: StainType | null;
+    stainSlot4?: StainType | null;
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;

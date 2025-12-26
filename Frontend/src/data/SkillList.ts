@@ -91,7 +91,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Electrify",
     cost: 1,
-    unlockCost: 1,
+    unlockCost: 0,  // Wiki: Not documented, likely 0 (unlocks via prerequisite)
     description: "Deals low single target Lightning damage. 3 hits",
     image: "Lune_Electrify.webp",
     preRequisite: ["lune-thunderfall"]
@@ -101,7 +101,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Immolation",
     cost: 2,
-    unlockCost: 2,
+    unlockCost: 0,  // Starting skill - no unlock cost
     description: "Deals low single target Fire damage and 3 Burn. 1 hit",
     image: "Lune_Immolation.webp"
   },
@@ -110,7 +110,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Ice Lance",
     cost: 4,
-    unlockCost: 4,
+    unlockCost: 0,  // Starting skill - no unlock cost
     description: "Deals medium single target Ice damage that Slows the target. 1 Hit",
     image: "Lune_IceGust.webp"
   },
@@ -119,7 +119,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Earth Rising",
     cost: 3,
-    unlockCost: 3,
+    unlockCost: 1,  // Wiki: 1 Required Skill Point
     description: "Deals low Earth damage to all enemies. 1 hit",
     image: "Lune_EarthRising.webp",
     preRequisite: ["lune-ice-lance"]
@@ -129,7 +129,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Thermal Transfer",
     cost: 2,
-    unlockCost: 2,
+    unlockCost: 0,  // Wiki: Not documented, likely 0 (unlocks via prerequisite)
     description: "Deals low single target Ice damage. 2 hits. Gains 4 AP if target Burning",
     image: "Lune_ThermalTransfer.webp",
     preRequisite: ["lune-earth-rising"]
@@ -139,7 +139,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Thunderfall",
     cost: 5,
-    unlockCost: 5,
+    unlockCost: 0,  // Wiki: Not documented, likely 0 (unlocks via prerequisite)
     description: "Deals medium Lightning damage to random enemies. 2-6 hits",
     image: "Lune_Thunderfall.webp",
     preRequisite: ["lune-immolation"]
@@ -149,7 +149,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Wildfire",
     cost: 4,
-    unlockCost: 4,
+    unlockCost: 2,  // Wiki: 2 Required Skill Points
     description: "Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burn",
     image: "Lune_Wildfire.webp",
     preRequisite: ["lune-thunderfall"]
@@ -159,7 +159,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Mayhem",
     cost: 3,
-    unlockCost: 3,
+    unlockCost: 0,  // Wiki: Not documented, likely 0 (unlocks via prerequisites)
     description: "Consumes all Stains to deal high elemental damage to the target",
     image: "Lune_Mayhem.webp",
     preRequisite: ["lune-electrify","lune-thermal-transfer"]
@@ -169,7 +169,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Elemental Trick",
     cost: 3,
-    unlockCost: 3,
+    unlockCost: 4,  // Wiki: 4 Required Skill Points
     description: "Deals low single target Ice, Fire, Lightning, and Earth damage. 4 hits",
     image: "Lune_ElementalTrick.webp",
     preRequisite: ["lune-mayhem"]
@@ -179,7 +179,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Elemental Genesis",
     cost: 4,
-    unlockCost: 4,
+    unlockCost: 10,  // Wiki: 10 Required Skill Points
     description: "Deals extreme damage to all enemies. 8 hits",
     image: "Lune_ElementalGenesis.webp",
     preRequisite: ["lune-elemental-trick"]
@@ -189,7 +189,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Crippling Tsunami",
     cost: 5,
-    unlockCost: 5,
+    unlockCost: 6,  // Wiki: 6 Required Skill Points
     description: "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns",
     image: "Lune_CripplingTsunami.webp",
     preRequisite: ["lune-thermal-transfer"]
@@ -199,7 +199,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Rockslide",
     cost: 5,
-    unlockCost: 5,
+    unlockCost: 2,  // Wiki: 2 Required Skill Points
     description: "Deals medium single target Earth damage. 2 hits. Can Break",
     image: "Lune_Rockslide.webp",
     preRequisite: ["lune-earth-rising"]
@@ -209,7 +209,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Crustal Crush",
     cost: 7,
-    unlockCost: 7,
+    unlockCost: 6,  // Wiki: 6 Required Skill Points
     description: "Deals High single target Earth and Break damage. 5 hits",
     image: "Lune_CrustalCrush.webp",
     preRequisite: ["lune-rockslide"]
@@ -219,7 +219,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Healing Light",
     cost: 3,
-    unlockCost: 3,
+    unlockCost: 0,  // Wiki: No unlock cost (unlocks via prerequisites)
     description: "Heals the targeted Ally and dispels Status Effects",
     image: "Lune_HealingLight.webp",
     preRequisite: ["lune-ice-lance","lune-immolation"]
@@ -229,7 +229,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Lightning Dance",
     cost: 7,
-    unlockCost: 7,
+    unlockCost: 6,  // Wiki: 6 Required Skill Points
     description: "Deals very high single target Lightning damage. 6 hits",
     image: "Lune_LightningDance.webp",
     preRequisite: ["lune-electrify"]
@@ -239,7 +239,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Storm Caller",
     cost: 6,
-    unlockCost: 6,
+    unlockCost: 8,  // Wiki: 8 Required Skill Points
     description: "All enemies receive medium Lightning damage at turn end",
     image: "Lune_StormCaller.webp",
     preRequisite: ["lune-lightning-dance"]
@@ -249,7 +249,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Terraquake",
     cost: 5,
-    unlockCost: 5,
+    unlockCost: 10,  // Wiki: 10 Required Skill Points
     description: "Deals low Earth damage and Break damage to all enemies every turn",
     image: "Lune_Terraquake.webp",
     preRequisite: ["lune-crustal-crush"]
@@ -259,7 +259,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Typhoon",
     cost: 8,
-    unlockCost: 8,
+    unlockCost: 8,  // Wiki: 8 Required Skill Points
     description: "On turn start, deals high Ice damage to all enemies and Heals allies",
     image: "Lune_Typhoon.webp",
     preRequisite: ["lune-crippling-tsunami"]
@@ -269,7 +269,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Rebirth",
     cost: 5,
-    unlockCost: 5,
+    unlockCost: 4,  // Wiki: 4 Required Skill Points
     description: "Revives an ally with 30-70% Health and 2 additional AP",
     image: "Lune_Rebirth.webp",
     preRequisite: ["lune-healing-light"]
@@ -279,7 +279,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Revitalization",
     cost: 5,
-    unlockCost: 5,
+    unlockCost: 6,  // Wiki: 6 Required Skill Points
     description: "Heals 1-3 allies by 40-60% Health",
     image: "Lune_Revitalization.webp",
     preRequisite: ["lune-rebirth"]
@@ -289,7 +289,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Fire Rage",
     cost: 5,
-    unlockCost: 5,
+    unlockCost: 6,  // Wiki: 6 Required Skill Points
     description: "Deals increasingly high Fire damage to all enemies",
     image: "Lune_FireRage.webp",
     preRequisite: ["lune-wildfire"]
@@ -299,7 +299,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Hell",
     cost: 9,
-    unlockCost: 9,
+    unlockCost: 10,  // Wiki: 10 Required Skill Points
     description: "Deals very high Fire damage with 5 Burn per hit to all enemies. 2 hits",
     image: "Lune_Hell.webp",
     preRequisite: ["lune-fire-rage"]
@@ -309,7 +309,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Sky Break",
     cost: 3,
-    unlockCost: 3,
+    unlockCost: 0,  // Wiki: No unlock cost (Relationship Level 7 with Lune)
     description: "Deals extreme damage to all enemies. 1 hit. Can Break",
     isGradient: true,
     image: "Lune_SkyBreak.webp"
@@ -319,7 +319,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Tree of Life",
     cost: 2,
-    unlockCost: 2,
+    unlockCost: 0,  // Wiki: No unlock cost (Relationship Level 4 with Lune)
     description: "Cleanses all Status Effects and Heals all allies",
     isGradient: true,
     image: "Lune_TreeOfLife.webp"
@@ -329,7 +329,7 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Tremor",
     cost: 1,
-    unlockCost: 1,
+    unlockCost: 0,  // Wiki: No unlock cost (auto-unlocked with Gradient Skills feature)
     description: "Deals high Earth damage to all enemies. 1 hit. Removes all enemies' Shields",
     isGradient: true,
     image: "Lune_Tremor.webp"

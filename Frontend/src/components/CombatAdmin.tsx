@@ -270,6 +270,10 @@ export default function CombatAdmin({
         const isSciel = (entity.characterId?.toLowerCase() === "sciel") ||
                        String(entity.externalId).toLowerCase().includes("sciel")
 
+        // Detect if character is Lune and initialize stain system (4 empty slots)
+        const isLune = (entity.characterId?.toLowerCase() === "lune") ||
+                      String(entity.externalId).toLowerCase().includes("lune")
+
         await APIBattle.addCharacter({
             battleId: campaignInfo.battleId,
             externalId: String(entity.externalId),
@@ -285,6 +289,10 @@ export default function CombatAdmin({
             sunCharges: isSciel ? 0 : undefined,
             moonCharges: isSciel ? 0 : undefined,
             stance: isMaelle ? null : undefined,
+            stainSlot1: isLune ? null : undefined,
+            stainSlot2: isLune ? null : undefined,
+            stainSlot3: isLune ? null : undefined,
+            stainSlot4: isLune ? null : undefined,
             initiative,
             canRollInitiative: entity.type == "player"
         })

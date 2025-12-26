@@ -55,6 +55,10 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInf
                             };
                             setPlayer(next);
                             await sync(next);
+
+                            // Reload player data to get updated weapons list
+                            const updatedPlayer = await APIPlayer.get(player.id);
+                            setPlayer(updatedPlayer);
                         }}
                         allowedCharacters={campaignInfo?.characters ?? []}
                     />

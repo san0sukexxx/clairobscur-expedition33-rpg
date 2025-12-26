@@ -50,6 +50,10 @@ class BattleCharacterService(
                                 sunCharges = request.sunCharges ?: 0,
                                 moonCharges = request.moonCharges ?: 0,
                                 stance = request.stance,
+                                stainSlot1 = request.stainSlot1,
+                                stainSlot2 = request.stainSlot2,
+                                stainSlot3 = request.stainSlot3,
+                                stainSlot4 = request.stainSlot4,
                                 canRollInitiative = request.canRollInitiative
                         )
 

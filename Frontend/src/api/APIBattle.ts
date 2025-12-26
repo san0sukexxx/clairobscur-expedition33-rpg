@@ -39,6 +39,10 @@ export interface AddBattleCharacterRequest {
     sunCharges?: number
     moonCharges?: number
     stance?: Stance | null
+    stainSlot1?: string | null
+    stainSlot2?: string | null
+    stainSlot3?: string | null
+    stainSlot4?: string | null
     initiative?: AddBattleCharacterInitiativeData,
     canRollInitiative: boolean
 }

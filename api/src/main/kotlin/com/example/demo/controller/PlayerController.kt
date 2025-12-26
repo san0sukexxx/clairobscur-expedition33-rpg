@@ -152,7 +152,8 @@ class PlayerController(
                 // Check if characterId is changing
                 val oldCharacterId = p.characterId
                 val newCharacterId = sheet.characterId
-                val isChangingCharacter = oldCharacterId != null && newCharacterId != null && oldCharacterId != newCharacterId
+                val isChangingCharacter = (oldCharacterId == null && newCharacterId != null) ||
+                                         (oldCharacterId != null && newCharacterId != null && oldCharacterId != newCharacterId)
 
                 // If changing character, reset skills and unequip weapon
                 if (isChangingCharacter) {
@@ -162,6 +163,25 @@ class PlayerController(
 
                         // Unequip weapon
                         p.weaponId = null
+
+                        // Grant starting weapon for the new character
+                        val startingWeaponId = getStartingWeaponForCharacter(newCharacterId)
+                        if (startingWeaponId != null) {
+                                // Check if player already has this weapon
+                                val existingWeapon = playerWeaponRepository.findByPlayerId(id)
+                                        .find { it.weaponId == startingWeaponId }
+
+                                if (existingWeapon == null) {
+                                        // Add starting weapon to player's inventory
+                                        playerWeaponRepository.save(
+                                                com.example.demo.model.PlayerWeapon(
+                                                        playerId = id,
+                                                        weaponId = startingWeaponId,
+                                                        weaponLevel = 1
+                                                )
+                                        )
+                                }
+                        }
                 }
 
                 p.name = sheet.name
@@ -199,5 +219,17 @@ class PlayerController(
                 playerRepository.save(player)
 
                 return ResponseEntity.ok().build()
+        }
+
+        private fun getStartingWeaponForCharacter(characterId: String?): String? {
+                return when (characterId) {
+                        "gustave" -> "Noahram"
+                        "lune" -> "Lunerim"
+                        "maelle" -> "Maellum"
+                        "sciel" -> "Scieleson"
+                        "verso" -> "Verleso"
+                        "monoco" -> "Monocaro"
+                        else -> null
+                }
         }
 }
