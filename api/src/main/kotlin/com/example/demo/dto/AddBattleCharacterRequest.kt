@@ -23,6 +23,9 @@ data class AddBattleCharacterRequest(
         val stainSlot4: String? = null,
         val perfectionRank: String? = null,
         val rankProgress: Int? = null,
+        val bestialWheelPosition: Int? = null,
         val initiative: InitiativeData? = null,
-        val canRollInitiative: Boolean = false
+        val canRollInitiative: Boolean = false,
+        val actionPoints: Int? = null,
+        val maxActionPoints: Int? = null
 )

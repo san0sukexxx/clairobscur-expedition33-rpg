@@ -195,6 +195,24 @@
   animation: gold-blink 1.4s ease-in-out infinite;
 }
 
+@keyframes subtle-blink {
+  0%, 100% {
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    opacity: 0.6;
+    border-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+}
+
+.bestial-active {
+  animation: subtle-blink 1.5s ease-in-out infinite;
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+}
+
 /* overlay */
 @keyframes half-turn {
   0% {

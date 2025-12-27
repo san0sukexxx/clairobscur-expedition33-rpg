@@ -81,7 +81,7 @@
     "name": "Brumaro",
     "attributes": {
       "power": 1260,
-      "element": "Sword",
+      "element": "Physical",
       "scaling": {
         "vitality": "A",
         "agility": "B"
@@ -211,7 +211,7 @@
     "name": "Monocaro",
     "attributes": {
       "power": 1020,
-      "element": "Sword",
+      "element": "Physical",
       "scaling": {
         "agility": "A",
         "luck": "B"

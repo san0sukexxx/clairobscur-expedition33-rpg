@@ -7,7 +7,7 @@ export type StatusType =
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
-    "FireVulnerability" | "Taunt" | "Foretell" | "Twilight";
+    "FireVulnerability" | "Taunt" | "Foretell" | "Twilight" | "Powerless";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
@@ -56,6 +56,8 @@ export interface BattleCharacterInfo {
     sunCharges?: number;
     moonCharges?: number;
     gradientPoints?: number;
+    actionPoints?: number;
+    maxActionPoints?: number;
     stance?: Stance | null;
     stainSlot1?: StainType | null;
     stainSlot2?: StainType | null;
@@ -63,6 +65,7 @@ export interface BattleCharacterInfo {
     stainSlot4?: StainType | null;
     perfectionRank?: string | null;
     rankProgress?: number | null;
+    bestialWheelPosition?: number | null;
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;
@@ -110,12 +113,27 @@ export interface PictoResponse {
     battleCount?: number;
 }
 
+export type PictoTrigger =
+    | "on-heal-ally"
+    | "on-revived"
+    | "on-free-aim"
+    | "on-battle-start"
+    | "on-healing-tint"
+    | "on-turn-start"
+    | "on-attack"
+    | "on-parry"
+    | "on-dodge"
+    | "on-crit"
+    | "on-skill-use"
+    | "on-damage-taken";
+
 export interface PictoInfo {
     name: string;
     status: PictoStatusResponse;
     description: string;
     color: PictoColor;
     luminaCost: number;
+    effectTriggers?: PictoTrigger[];  // When this picto's effect activates
 }
 
 export interface PictoStatusResponse {
@@ -211,4 +229,42 @@ export interface ElementModifier {
 export interface WeaponInfo {
     weapon: WeaponResponse | null;
     details: WeaponDTO | null;
+}
+
+// ==================== Picto Effect System ====================
+
+export interface PictoEffectTracker {
+    id: number;
+    battleId: number;
+    battleCharacterId: number;
+    pictoName: string;
+    effectType: string;
+    timesTriggered: number;
+    lastTurnTriggered?: number;
+}
+
+export interface DamageModifier {
+    id: number;
+    battleCharacterId: number;
+    modifierType: string;
+    multiplier: number;
+    flatBonus: number;
+    conditionType?: string;
+    isActive: boolean;
+}
+
+export interface StatusImmunity {
+    id: number;
+    battleCharacterId: number;
+    statusType: StatusType;
+    immunityType: 'immune' | 'resist';
+    resistChance?: number;
+}
+
+export interface ElementResistance {
+    id: number;
+    battleCharacterId: number;
+    element: Element;
+    resistanceType: 'immune' | 'resist' | 'weak';
+    damageMultiplier: number;
 }

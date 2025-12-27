@@ -86,16 +86,21 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
         }
     }
 
-    const highlight = (text: string) => {
-        // First, apply stain text rendering (converts "Mancha de X" to images)
-        const stainRendered = renderStainText(text);
+    const highlight = (text: string, skillId?: string) => {
+        // Only apply stain text rendering (converts "Mancha de X" to images) for Sciel's skills
+        const isScielSkill = skillId?.toLowerCase().includes("sciel") ?? false;
+        const stainRendered = isScielSkill ? renderStainText(text) : [text];
 
         // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
 
         // Add Verso's Perfection Ranks with their colors
         const rankTerms = ["Rank S", "Rank A", "Rank B", "Rank C", "Rank D"];
-        const allTerms = [...terms, ...rankTerms];
+
+        // Add Monoco's Bestial Wheel masks with their colors
+        const maskTerms = ["Máscara Onipotente", "Máscara Todopoderosa", "Máscara Lançadora", "Máscara de Conjurador", "Máscara Ágil", "Máscara Equilibrada", "Máscara Pesada"];
+
+        const allTerms = [...terms, ...rankTerms, ...maskTerms];
         const pattern = new RegExp(`\\b(${allTerms.join("|")})\\b`, "g");
 
         // Function to get rank color class
@@ -106,6 +111,20 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                 case "Rank B": return "text-blue-400 font-bold border-b-2 border-blue-400";
                 case "Rank C": return "text-amber-200 font-bold border-b-2 border-amber-200";
                 case "Rank D": return "text-gray-400 font-bold border-b-2 border-gray-400";
+                default: return "text-amber-300 font-semibold";
+            }
+        };
+
+        // Function to get mask color class
+        const getMaskColorClass = (mask: string): string => {
+            switch(mask) {
+                case "Máscara Onipotente": return "text-warning font-bold border-b-2 border-warning";
+                case "Máscara Todopoderosa": return "text-warning font-bold border-b-2 border-warning";
+                case "Máscara Lançadora": return "text-info font-bold border-b-2 border-info";
+                case "Máscara de Conjurador": return "text-info font-bold border-b-2 border-info";
+                case "Máscara Ágil": return "text-purple-600 font-bold border-b-2 border-purple-600";
+                case "Máscara Equilibrada": return "text-error font-bold border-b-2 border-error";
+                case "Máscara Pesada": return "text-success font-bold border-b-2 border-success";
                 default: return "text-amber-300 font-semibold";
             }
         };
@@ -122,6 +141,13 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                     // Apply rank-specific styling
                     return (
                         <span key={`${nodeIdx}-${chunkIdx}`} className={getRankColorClass(chunk)}>
+                            {chunk}
+                        </span>
+                    );
+                } else if (maskTerms.includes(chunk)) {
+                    // Apply mask-specific styling
+                    return (
+                        <span key={`${nodeIdx}-${chunkIdx}`} className={getMaskColorClass(chunk)}>
                             {chunk}
                         </span>
                     );
@@ -334,7 +360,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                         {/* Descrição (apagada se disabled) */}
                                         <div className={disabled ? "opacity-70 grayscale" : ""}>
                                             <div className="whitespace-pre-line text-[15px] leading-snug text-neutral-200 break-words">
-                                                {highlight(skillInfo.description)}
+                                                {highlight(skillInfo.description, skillInfo.id)}
                                             </div>
                                         </div>
 

@@ -3,6 +3,7 @@ import { type BattleCharacterInfo } from "../api/ResponseModel";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
+import { BestialWheel } from "./BestialWheel";
 
 interface PlayerStatusFloatingProps {
     player: GetPlayerResponse | null;
@@ -148,6 +149,15 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                         </div>
                     </div>
                 )}
+
+                {/* Monoco's Bestial Wheel */}
+                {ch.id.toLowerCase().includes("monoco") &&
+                    ch.bestialWheelPosition !== undefined &&
+                    ch.bestialWheelPosition !== null && (
+                        <div className="mt-2">
+                            <BestialWheel position={ch.bestialWheelPosition} />
+                        </div>
+                    )}
 
                 {/* Stance indicator for Maelle only */}
                 {ch.stance !== undefined &&

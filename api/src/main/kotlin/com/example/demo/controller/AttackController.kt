@@ -33,7 +33,9 @@ class AttackController(
         private val battleTurnRepository: BattleTurnRepository,
         private val battleService: BattleService,
         private val damageService: DamageService,
-        private val battleCharacterService: com.example.demo.service.BattleCharacterService
+        private val battleCharacterService: com.example.demo.service.BattleCharacterService,
+        private val damageModifierService: com.example.demo.service.DamageModifierService,
+        private val elementResistanceService: com.example.demo.service.ElementResistanceService
 ) {
 
         @PostMapping
@@ -188,6 +190,21 @@ class AttackController(
                                 battleRepository.save(battle)
                         }
 
+                        // Bestial Wheel advancement (Monoco)
+                        if (body.bestialWheelAdvance != null && body.bestialWheelAdvance > 0) {
+                                val currentPosition = sourceBC.bestialWheelPosition ?: 0
+                                val wheelSize = 9  // Pattern size: gold, blue, blue, purple, purple, red, red, green, green
+
+                                // For gradient skills, always set to gold (position 0)
+                                if (body.isGradient == true) {
+                                        sourceBC.bestialWheelPosition = 0
+                                } else {
+                                        // Advance by specified amount and wrap around
+                                        val newPosition = (currentPosition + body.bestialWheelAdvance) % wheelSize
+                                        sourceBC.bestialWheelPosition = newPosition
+                                }
+                        }
+
                         battleCharacterRepository.save(sourceBC)
                 }
 
@@ -243,6 +260,28 @@ class AttackController(
                                 targetBC = tauntingAlly
                         }
 
+                        // Apply damage modifiers from source character
+                        val modifierContext = mapOf(
+                                "targetBattleCharacterId" to targetBC.id!!,
+                                "isFirstHit" to (body.isFirstHit ?: false),
+                                "isSolo" to (allies.isEmpty())
+                        )
+                        var modifiedDamage = damageModifierService.calculateModifiedDamage(
+                                battleCharacterId = body.sourceBattleId,
+                                baseDamage = body.totalDamage,
+                                attackType = body.attackType ?: "basic",
+                                context = modifierContext
+                        )
+
+                        // Apply elemental resistances (if element is specified)
+                        if (body.element != null) {
+                                modifiedDamage = elementResistanceService.calculateElementalDamage(
+                                        battleCharacterId = targetBC.id!!,
+                                        baseDamage = modifiedDamage,
+                                        element = body.element
+                                )
+                        }
+
                         // Gommage: Check for execution threshold (instant kill if HP% <= threshold)
                         val shouldExecute = if (body.executionThreshold != null) {
                                 val currentHpPercent = (targetBC.healthPoints.toDouble() / targetBC.maxHealthPoints.toDouble()) * 100
@@ -251,14 +290,14 @@ class AttackController(
                                 false
                         }
 
-                        // Execute instantly if below threshold, otherwise apply normal damage
+                        // Execute instantly if below threshold, otherwise apply modified damage
                         val newHp = if (shouldExecute) {
                                 // Instant execution - set HP to 0
                                 targetBC.healthPoints = 0
                                 battleCharacterRepository.save(targetBC)
                                 0
                         } else {
-                                damageService.applyDamage(targetBC, body.totalDamage)
+                                damageService.applyDamage(targetBC, modifiedDamage)
                         }
 
                         // Verso's Perfection Rank: Rank down when receiving damage

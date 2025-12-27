@@ -6,6 +6,7 @@ import com.example.demo.dto.UpdateMpRequest
 import com.example.demo.dto.UpdateStanceRequest
 import com.example.demo.dto.UpdateStainsRequest
 import com.example.demo.dto.UpdateRankRequest
+import com.example.demo.dto.UpdateAPRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.service.BattleCharacterService
 import jakarta.validation.Valid
@@ -92,5 +93,20 @@ class BattleCharacterController(private val service: BattleCharacterService) {
     fun rankDownCharacter(@PathVariable id: Int): ResponseEntity<Map<String, Boolean>> {
         val success = service.rankDownCharacter(id)
         return ResponseEntity.ok(mapOf("success" to success))
+    }
+
+    @PostMapping("/characters/{id}/ap")
+    fun updateCharacterAP(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateAPRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterAP(id, body.amount)
+        return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/characters/{id}/ap")
+    fun getCharacterAP(@PathVariable id: Int): ResponseEntity<Map<String, Int?>> {
+        val ap = service.getCharacterAP(id)
+        return ResponseEntity.ok(ap)
     }
 }

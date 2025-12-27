@@ -278,6 +278,13 @@ export default function CombatAdmin({
         const isVerso = (entity.characterId?.toLowerCase() === "verso") ||
                        String(entity.externalId).toLowerCase().includes("verso")
 
+        // Detect if character is Monoco and initialize bestial wheel system
+        const isMonoco = (entity.characterId?.toLowerCase() === "monoco") ||
+                        String(entity.externalId).toLowerCase().includes("monoco")
+
+        // Random initial position for Bestial Wheel (0-8)
+        const randomBestialPosition = isMonoco ? Math.floor(Math.random() * 9) : undefined
+
         await APIBattle.addCharacter({
             battleId: campaignInfo.battleId,
             externalId: String(entity.externalId),
@@ -299,6 +306,7 @@ export default function CombatAdmin({
             stainSlot4: isLune ? null : undefined,
             perfectionRank: isVerso ? "D" : undefined,
             rankProgress: isVerso ? 0 : undefined,
+            bestialWheelPosition: randomBestialPosition,
             initiative,
             canRollInitiative: entity.type == "player"
         })

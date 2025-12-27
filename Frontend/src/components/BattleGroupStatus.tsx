@@ -3,6 +3,7 @@ import { FaSkull } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
 import AnimatedStatBar from "./AnimatedStatBar";
+import { BestialWheel } from "./BestialWheel";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
 
@@ -143,6 +144,15 @@ export default function BattleGroupStatus({
                                                         fillClass="bg-info"
                                                         ghostClass="bg-info/30"
                                                     />
+                                                </div>
+                                            )}
+
+                                        {/* Monoco's Bestial Wheel */}
+                                        {ch.id.toLowerCase().includes("monoco") &&
+                                            ch.bestialWheelPosition !== undefined &&
+                                            ch.bestialWheelPosition !== null && (
+                                                <div className="w-full">
+                                                    <BestialWheel position={ch.bestialWheelPosition} />
                                                 </div>
                                             )}
 

@@ -8,7 +8,8 @@ export const PictosList: PictoInfo[] = [
         },
         description: "Every AP gain is increased by 1.",
         color: "green",
-        luminaCost: 30
+        luminaCost: 30,
+        effectTriggers: ["on-turn-start", "on-attack", "on-parry", "on-dodge", "on-skill-use"]
     },
     {
         name: "Energising Turn",
@@ -66,7 +67,8 @@ export const PictosList: PictoInfo[] = [
         },
         description: "+1 Shield on being revived.",
         color: "green",
-        luminaCost: 15
+        luminaCost: 15,
+        effectTriggers: ["on-revived"]
     },
     {
         name: "Recovery",
@@ -1006,7 +1008,8 @@ export const PictosList: PictoInfo[] = [
         status: { health: 1403, speed: 280 },
         description: "Healing an ally also applies Rush for 1 turn.",
         color: "green",
-        luminaCost: 15
+        luminaCost: 15,
+        effectTriggers: ["on-heal-ally"]
     },
     {
         name: "Energising Heal",
@@ -1223,7 +1226,8 @@ export const PictosList: PictoInfo[] = [
         status: { health: 2526, defense: 137 },
         description: "20% chance to gain Rush on Free Aim shot.",
         color: "green",
-        luminaCost: 15
+        luminaCost: 15,
+        effectTriggers: ["on-free-aim"]
     },
     {
         name: "Energising Shots",
@@ -1279,7 +1283,8 @@ export const PictosList: PictoInfo[] = [
         status: { health: 1403, speed: 280 },
         description: "Gain Rush if fighting alone.",
         color: "green",
-        luminaCost: 15
+        luminaCost: 15,
+        effectTriggers: ["on-battle-start", "on-turn-start"]
     },
     {
         name: "Empowering Last Stand",
@@ -1489,7 +1494,8 @@ export const PictosList: PictoInfo[] = [
         status: { health: 1403, speed: 280 },
         description: "Healing Tints also apply Rush.",
         color: "green",
-        luminaCost: 15
+        luminaCost: 15,
+        effectTriggers: ["on-healing-tint"]
     },
     {
         name: "Better Healing Tint",

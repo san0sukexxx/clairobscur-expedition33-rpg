@@ -15,7 +15,7 @@ export interface SkillMetadata {
     // Damage
     damageLevel: "none" | "low" | "medium" | "high" | "very-high" | "extreme";  // none=0%, low=50%, medium=100%, high=150%, very-high=200%, extreme=250%
     hitCount: number;             // 1 to 8 hits
-    targetScope: "single" | "all" | "self";  // single = alvo selecionado, all = todos do tipo, self = si mesmo
+    targetScope: "single" | "all" | "self" | "random" | "ally" | "all-allies";  // single = alvo selecionado, all = todos do tipo, self = si mesmo, random = alvos aleatórios, ally = aliado, all-allies = todos aliados
     damageType: "physical" | "magical" | "true";
     usesWeaponElement: boolean;   // Use weapon's element?
     forcedElement?: string;       // "Lightning", "Fire", etc - overrides weapon element
@@ -33,7 +33,6 @@ export interface SkillMetadata {
     damageScalesWithCharge?: boolean;    // Damage scales with charge amount
     changesStanceTo?: Stance | null;     // Using this skill changes the user's stance to this (Breaking Rules -> Offensive)
     preservesVirtuoseStance?: boolean;   // If true and in Virtuose stance, keep Virtuose; otherwise go Stanceless (Fleuret Fury)
-    isGradient?: boolean;                // Uses Gradient Charge instead of MP (cost = gradient charges)
     destroysShields?: boolean;           // Destroys all Shielded status effects (Breaking Rules)
     grantsAPPerShield?: number;          // Grants AP per shield destroyed (Breaking Rules)
     damageScalesWithBurn?: boolean;      // Damage increases per Burn stack on target (Burning Canvas)
@@ -70,6 +69,28 @@ export interface SkillMetadata {
     grantsExtraTurn?: boolean;           // Grants an extra turn to the user (Card Weaver - shows toast only)
     cleansesAndCopiesBuffs?: boolean;    // Cleanses all debuffs from target and copies buffs to other allies (Dark Cleansing)
     randomAllyCount?: { min: number; max: number };  // Applies to random number of allies (Rush: 1-3)
+
+    // Monoco's Bestial Wheel System
+    bestialWheelAdvance?: number;        // Advances Monoco's Bestial Wheel by this many positions (wraps around at 9)
+    ignoresShields?: boolean;            // Ignores shields (doesn't remove them, damage goes through) (Chevaliere Piercing)
+    damagePerShieldStack?: number;       // Bonus damage per shield stack on target (Chevaliere Piercing: +1 per shield)
+    switchToAlmightyIfMarked?: boolean;  // Switches to Almighty Mask (position 0) if target is Marked (Benisseur Mortar)
+    sacrificesHpPercent?: number;        // Sacrifices this % of user's current HP to increase damage (Cultist Blood: 90%)
+    damageScalesWithLowHp?: boolean;     // Damage increases inversely with remaining HP (Cultist Slashes)
+    bonusDamageVsBurning?: boolean;      // Bonus damage against Burning targets (Danseuse Waltz)
+    damageEscalatesPerUse?: boolean;     // Damage increases with each consecutive use (Lampmaster Light: +20% per cast, max 5 stacks)
+    doubleDamageVsStunned?: boolean;     // Double damage if target is Stunned (Mighty Strike)
+    forceAlmightyMask?: boolean;         // Forces Bestial Wheel to Almighty Mask position (0) (Mighty Strike)
+    bonusDamageVsPowerless?: boolean;    // Bonus damage against Powerless targets (Obscur Sword)
+    grantsApAtCasterMask?: number;       // Grants this much AP to targets if at Caster/Almighty Mask (Orphelin Cheers: 3)
+    healsHpPercentAtCasterMask?: number; // Heals this % of max HP if at Caster/Almighty Mask (Pelerin Heal: 40%)
+    grantsApToAllAllies?: { min: number; max: number }; // Grants random AP (min-max) to all allies (Potier Energy: 1-3)
+    fillsBreakBarAtAgileMask?: number;   // Fills X% of Break Bar if at Agile/Almighty Mask (Ramasseur Bonk: 20%)
+    critTriggersExtraHit?: boolean;      // Critical hits add an additional hit (Sakapatate Explosion)
+    healsHpPercentPerHit?: number;       // Heals this % of max HP per hit (Sapling Absorption: 5%, doubled at Caster/Almighty Mask)
+    doublesHealAtCasterMask?: boolean;   // Doubles healing amount when at Caster/Almighty Mask (Sapling Absorption)
+    appliesRandomBuffs?: boolean;        // Applies random buffs to random allies (Troubadour Trumpet: 1-3 allies get 1 buff, 2 buffs at Caster/Almighty)
+    doublesBuffsAtCasterMask?: boolean;  // Applies double the buffs when at Caster/Almighty Mask (Troubadour Trumpet)
 
     // Lune's Stain System
     consumesStains?: Array<{ stain: "Lightning" | "Earth" | "Fire" | "Ice"; count: number }>;  // Stains consumed for enhanced effect
@@ -634,7 +655,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Fire",
-        isGradient: true,
         changesStanceTo: "Offensive",    // Changes stance to Offensive
         primaryEffects: [
             {
@@ -655,7 +675,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Void",
-        isGradient: true,
         changesStanceTo: "Virtuous",         // Changes to Virtuose stance
         executionThreshold: 25,              // Instantly kills if target HP <= 25%
         primaryEffects: [],
@@ -669,7 +688,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         damageType: "physical",
         usesWeaponElement: false,
-        isGradient: true,
         changesStanceTo: "Virtuous",     // Changes stance to Virtuose
         primaryEffects: [],
         conditionalEffects: []
@@ -738,7 +756,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Earth",
         primaryEffects: [],
         conditionalEffects: [],
-        consumesStains: [{ stain: "Fire", count: 1 }],
+        consumesStains: [{ stain: "Lightning", count: 1 }],
         gainsStains: ["Earth", "Light"]
     },
 
@@ -752,7 +770,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Lightning",
         primaryEffects: [],
         conditionalEffects: [],
-        consumesStains: [{ stain: "Fire", count: 1 }, { stain: "Ice", count: 1 }],
+        consumesStains: [{ stain: "Fire", count: 1 }],
         transformsStainToLight: { from: "Fire", to: "Light" },
         gainsStains: ["Lightning", "Light"]
     },
@@ -767,21 +785,23 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Ice",
         primaryEffects: [],
         conditionalEffects: [],
-        consumesStains: [{ stain: "Lightning", count: 1 }, { stain: "Fire", count: 1 }],
+        consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth for second turn
         gainsStains: ["Ice", "Light"]
+        // Gains 4 AP if target is Burning (implemented in battle logic)
+        // Second turn mechanic when 2 Earth consumed (implemented in battle logic)
     },
 
     "lune-thunderfall": {
         skillId: "lune-thunderfall",
         damageLevel: "medium",
         hitCount: 2,  // 2-6 random, +1 per crit
-        targetScope: "all",
+        targetScope: "random",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
         conditionalEffects: [],
-        consumesStains: [{ stain: "Ice", count: 1 }],
+        consumesStains: [{ stain: "Fire", count: 1 }],  // Consumes Fire for increased damage
         gainsStains: ["Lightning", "Light"]
     },
 
@@ -854,6 +874,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         ],
         conditionalEffects: [],
         consumesStains: [
+            { stain: "Earth", count: 1 },
             { stain: "Fire", count: 1 },
             { stain: "Lightning", count: 1 }
         ],
@@ -872,7 +893,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [],
         canBreak: true,
         consumesStains: [
-            { stain: "Lightning", count: 1 }
+            { stain: "Lightning", count: 1 },
+            { stain: "Ice", count: 1 },
+            { stain: "Fire", count: 1 }
         ],
         gainsStains: ["Earth", "Light"]
     },
@@ -881,7 +904,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "lune-healing-light",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "single",
+        targetScope: "ally",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
@@ -898,12 +921,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        consumesStains: [
-            { stain: "Ice", count: 1 },
-            { stain: "Earth", count: 1 },
-            { stain: "Fire", count: 1 },
-            { stain: "Lightning", count: 1 }
-        ],
+        consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth for 0 AP cost
         gainsStains: ["Light"]
     },
 
@@ -911,17 +929,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "lune-rebirth",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "single",
+        targetScope: "ally",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
         conditionalEffects: [],
-        consumesStains: [
-            { stain: "Ice", count: 1 },
-            { stain: "Earth", count: 1 },
-            { stain: "Fire", count: 1 }
-        ],
+        consumesStains: [{ stain: "Lightning", count: 3 }],  // Consumes 3 Lightning for 0 AP cost
         gainsStains: ["Light"]
     },
 
@@ -929,7 +943,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "lune-revitalization",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all",  // 1-3 allies
+        targetScope: "all-allies",  // 1-3 allies (random)
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
@@ -944,16 +958,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             {
                 effectType: "Regeneration",
                 amount: 0,
-                remainingTurns: 5,  // Extended from 3 to 5 turns if all 4 stains
-                targetType: "ally",
-                condition: "if-all-4-stains"
+                remainingTurns: 3,
+                targetType: "ally"
             }
         ],
-        consumesStains: [
-            { stain: "Lightning", count: 1 },
-            { stain: "Fire", count: 1 },
-            { stain: "Ice", count: 1 }
-        ],
+        consumesStains: [{ stain: "Fire", count: 3 }],  // Consumes 3 Fire to apply Regeneration
+        randomAllyCount: { min: 1, max: 3 },  // Heals 1-3 random allies
         gainsStains: ["Light"]
     },
 
@@ -1029,7 +1039,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         canBreak: true,
-        consumesStains: [{ stain: "Lightning", count: 1 }],
+        consumesStains: [{ stain: "Lightning", count: 2 }],
         gainsStains: ["Earth", "Light"]
     },
 
@@ -1099,7 +1109,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "magical",
         usesWeaponElement: false,
         stainDeterminedElement: true,  // Element determined by dominant stain type
-        isGradient: true,
         primaryEffects: [],
         conditionalEffects: [],
         canBreak: true,
@@ -1112,11 +1121,10 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "lune-tree-of-life",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all",  // All allies
+        targetScope: "all-allies",  // All allies
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
-        isGradient: true,
         primaryEffects: [
             {
                 effectType: "Heal",
@@ -1130,12 +1138,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        consumesStains: [
-            { stain: "Ice", count: 1 },
-            { stain: "Earth", count: 1 }
-        ],
-        gainsStains: ["Light"]
-        // Does not consume a turn
+        gainsStains: ["Light", "Light"]  // Generates +2 Light Stains
+        // Gradient Skill: 2 Gradient Charges, does not consume a turn
     },
 
     "lune-tremor": {
@@ -1146,14 +1150,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
-        isGradient: true,
         primaryEffects: [],
         conditionalEffects: [],
-        destroysShields: true,
-        consumesStains: [{ stain: "Ice", count: 1 }],
-        gainsStains: ["Earth", "Light"]
-        // Special: Removes all enemies' Shields
-        // Does not consume a turn
+        destroysShields: true,  // Removes all enemies' Shields
+        gainsStains: ["Light"]  // Generates 1 Light Stain
+        // Gradient Skill: 1 Gradient Charge, does not consume a turn
     },
 
     // ==================== VERSO (26 skills) ====================
@@ -1171,10 +1172,10 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        ranksUpOnCrit: true,  // Ranks up by 1 level if at least 1 critical hit occurs
-        rankConditionalBonus: { rank: "B", damageMultiplier: 1.5 }  // At Rank B: additional +50% damage (stacks with B's base +40%)
-        // Perfection: B Rank = Base +40% damage, PLUS additional +50% = +90% total (1.9x multiplier)
-        // Crits generate +1 Perfection rank point
+        gainsPerfectionOnCrit: true,  // Critical hits generate +1 Perfection
+        rankConditionalBonus: { rank: "B", damageMultiplier: 1.5 }  // At Rank B: +50% damage bonus
+        // Perfection: B Rank increases damage
+        // Starting skill for Verso
     },
 
     "verso-from-fire": {
@@ -1203,8 +1204,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
-        usesWeaponElement: true,
+        damageType: "magical",
+        usesWeaponElement: false,
+        forcedElement: "Lightning",
         primaryEffects: [
             {
                 effectType: "Marked",
@@ -1225,8 +1227,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: D Rank = Gives more Perfection
+        conditionalEffects: [],
+        gainsPerfection: { min: 2, max: 3 }  // At D Rank: Gives more Perfection (2-3 instead of 0-2)
     },
 
     // Support Skills
@@ -1249,9 +1251,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "self"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        gainsPerfection: { min: 0, max: 2 }  // Gives 0-2 Perfection progress
         // Perfection: C Rank = Recovers 100% HP instead of 50%
-        // Gives 0-2 Perfection
     },
 
     "verso-powerful": {
@@ -1263,7 +1265,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "Empowered",
+                effectType: "Powerful",  // +25% damage buff
                 amount: 0,
                 remainingTurns: 3,  // Base duration: 3 turns (5 at A Rank)
                 targetType: "self"  // Will be "all-allies" if dice roll is 4-6
@@ -1273,7 +1275,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         rollsForTargetScope: true,  // Rolls 1d6: 1-3 = self only, 4-6 = all allies
         rankConditionalDuration: { rank: "A", duration: 5 }  // At A Rank: 5 turns instead of 3
         // Perfection: A Rank = Duration extends to 5 turns
-        // Gives 0-2 Perfection
         // Gives 0-2 Perfection
     },
 
@@ -1292,19 +1293,20 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "self"
             }
         ],
-        conditionalEffects: []
-        // Perfection: B Rank = Increased damage
+        conditionalEffects: [],
+        rankConditionalBonus: { rank: "B", damageMultiplier: 1.25 }  // At B Rank: +25% damage
     },
 
     "verso-blitz": {
         skillId: "verso-blitz",
         damageLevel: "low",
-        hitCount: 1,  // Plays twice
+        hitCount: 1,
         targetScope: "single",
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
+        playsSecondTime: true,  // Plays a second time (total 2 hits)
         executionThreshold: 10  // Kills non-boss enemies < 10% HP
         // Perfection: B Rank = Increased damage
     },
@@ -1317,9 +1319,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: C Rank = Grants +1 AP (max 4 AP recovery)
-        // Returns 1-3 AP back
+        conditionalEffects: [],
+        returnsAp: { min: 1, max: 3 },  // Returns 1-3 AP back
+        rankConditionalBonus: { rank: "C", bonusApReturn: 1 }  // At C Rank: +1 AP (2-4 total)
     },
 
     "verso-follow-up": {
@@ -1372,8 +1374,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Light",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
-        // Perfection: C Rank = Increased damage
+        canBreak: true,
+        rankConditionalBonus: { rank: "C", damageMultiplier: 1.25 }  // At C Rank: +25% damage
     },
 
     "verso-perfect-break": {
@@ -1386,9 +1388,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Light",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        upgradesRankToSOnBreak: true  // When enemy breaks, auto-upgrade Perfection to S Rank
         // Perfection: B Rank = AP cost reduces to 5 (from 7)
-        // When enemy breaks, auto-upgrade to S Rank
     },
 
     "verso-defiant-strike": {
@@ -1401,40 +1403,41 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [
             {
                 effectType: "Marked",
-                amount: 2,
+                amount: 0,
                 remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        costsHpPercent: 30  // Costs 30% of current HP
         // Perfection: B Rank = Increased damage
-        // Costs 30% current HP
     },
 
     "verso-burden": {
         skillId: "verso-burden",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all",  // All allies + self
+        targetScope: "all-allies",  // All allies
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
-        // Removes all Status Effects from allies and applies to Verso
-        // Gains 1 Perfection Rank
+        conditionalEffects: [],
+        transfersAllStatusToSelf: true,  // Removes all status from allies and applies to Verso
+        gainsPerfectionRank: 1  // Gains +1 Perfection Rank
     },
 
     "verso-leadership": {
         skillId: "verso-leadership",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all",  // Other allies
+        targetScope: "all-allies",  // Other allies
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: C Rank = Grants +1 AP (total 3-5 AP)
-        // Reduces Perfection Rank by 1; Gives 2-4 AP to allies
+        conditionalEffects: [],
+        reducesRank: 1,  // Reduces Verso's Perfection Rank by 1
+        grantsApToAllies: { min: 2, max: 4 },  // Gives 2-4 AP to other allies
+        rankConditionalBonus: { rank: "C", bonusApToAllies: 1 }  // At C Rank: +1 AP (3-5 total)
     },
 
     "verso-overload": {
@@ -1446,10 +1449,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
-        setsHpTo: 1,
-        refillsAP: true
-        // Sets Perfection to S Rank and refills all AP
-        // Sets HP to 1 (high risk/reward)
+        setsRankToS: true,  // Sets Perfection to S Rank
+        refillsAP: true,  // Refills all AP
+        setsHpTo: 1  // Sets HP to 1 (high risk/reward)
     },
 
     "verso-speed-burst": {
@@ -1461,9 +1463,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: C Rank = Increased damage
-        // Damage increased by Speed difference with target
+        conditionalEffects: [],
+        scalesWithSpeedDifference: true,  // Damage increased by Speed difference with target
+        rankConditionalBonus: { rank: "C", damageMultiplier: 1.25 }  // At C Rank: +25% damage
     },
 
     "verso-light-holder": {
@@ -1475,9 +1477,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: A Rank = Grants +2 AP when activated
-        // Gains 1 Perfection Rank upon completion
+        conditionalEffects: [],
+        gainsPerfectionRank: 1,  // Gains +1 Perfection Rank upon completion
+        rankConditionalBonus: { rank: "A", grantsAp: 2 }  // At A Rank: Grants +2 AP
     },
 
     "verso-phantom-stars": {
@@ -1501,9 +1503,16 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         damageType: "physical",
         usesWeaponElement: false,
-        primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: A Rank = Can reapply Stun (stun-lock)
+        primaryEffects: [
+            {
+                effectType: "Stunned",
+                amount: 0,
+                remainingTurns: 1,
+                targetType: "enemy"
+            }
+        ],
+        conditionalEffects: [],
+        rankConditionalBonus: { rank: "A", canReapplyStun: true }  // At Rank A: Can reapply Stun
         // Increased damage if target is Stunned
     },
 
@@ -1515,9 +1524,10 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: S Rank = Increased damage
-        // Requires one-turn delay; interrupted if damaged
+        conditionalEffects: [],
+        requiresOneTurnDelay: true,  // After 1 turn, deals damage
+        interruptedIfDamaged: true,  // Interrupted if any damage taken during charge
+        rankConditionalBonus: { rank: "S", damageMultiplier: 1.25 }  // At S Rank: +25% damage
     },
 
     // Gradient Skills
@@ -1528,22 +1538,20 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         damageType: "physical",
         usesWeaponElement: false,
-        isGradient: true,
         primaryEffects: [],
         conditionalEffects: [],
         canBreak: true
-        // Does not consume a turn
+        // Does not consume a turn (Gradient skill - 2 charges)
         // Relationship Level 4 with Esquie
     },
 
     "verso-sabotage": {
         skillId: "verso-sabotage",
-        damageLevel: "medium",
+        damageLevel: "low",
         hitCount: 1,
         targetScope: "all",
         damageType: "physical",
         usesWeaponElement: false,
-        isGradient: true,
         primaryEffects: [
             {
                 effectType: "Marked",
@@ -1553,7 +1561,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: []
-        // Does not consume a turn
+        // Does not consume a turn (Gradient skill - 1 charge)
         // Story-unlocked
     },
 
@@ -1564,13 +1572,18 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         damageType: "physical",
         usesWeaponElement: false,
-        isGradient: true,
-        primaryEffects: [],
-        conditionalEffects: []
-        // Gains +1 Perfection per hit
-        // Applies Aureole (revives if dies)
-        // Does not consume a turn
-        // Relationship Level 7 with Esquie
+        primaryEffects: [
+            {
+                effectType: "Aureole",  // Revives Verso if he dies
+                amount: 1,
+                remainingTurns: 0,
+                targetType: "self"
+            }
+        ],
+        conditionalEffects: [],
+        gainsPerfectionPerHit: 1  // +1 Perfection per hit (8 total)
+        // Gradient Skill: Does not consume a turn
+        // Requires Relationship Level 7 with Esquie
     },
 
     // ==================== MONOCO (47 skills) ====================
@@ -1588,10 +1601,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
-        // Bestial Wheel: +3 positions
-        // Bonus at Balanced Mask or Almighty Mask
-        // Starting skill (no prerequisites)
+        conditionalEffects: [],
+        bestialWheelAdvance: 3
     },
 
     "monoco-stalact-punches": {
@@ -1604,10 +1615,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Ice",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
-        // Bestial Wheel: +4 positions
-        // Bonus at Heavy Mask or Almighty Mask
-        // Starting skill (no prerequisites)
+        canBreak: true,
+        bestialWheelAdvance: 4
     },
 
     // Enemy Drop Skills - Damage Skills
@@ -1619,17 +1628,15 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
-        // Bestial Wheel: +2 positions
-        // Cost: 0 AP at Agile or Almighty Mask
-        // Grants extra turn immediately after use
+        conditionalEffects: [],
+        bestialWheelAdvance: 2
     },
 
     "monoco-aberration-light": {
         skillId: "monoco-aberration-light",
         damageLevel: "high",
         hitCount: 2,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
@@ -1647,7 +1654,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 amount: 6,  // 4 base + 2 bonus at Agile Mask
                 targetType: "enemy"
             }
-        ]
+        ],
+        bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
         // 4 Burn per hit (6 at Agile/Almighty Mask)
     },
@@ -1662,15 +1670,68 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Light",
         primaryEffects: [
             {
-                effectType: "Weakened",  // Powerless
+                effectType: "Powerless",
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3
         // Bestial Wheel: +3 positions
         // Bonus damage at Caster or Almighty Mask
+    },
+
+    "monoco-braseleur-smash": {
+        skillId: "monoco-braseleur-smash",
+        damageLevel: "medium",
+        hitCount: 2,
+        targetScope: "single",
+        damageType: "magical",
+        usesWeaponElement: false,
+        forcedElement: "Fire",
+        primaryEffects: [
+            {
+                effectType: "Burning",
+                amount: 3,
+                targetType: "enemy"
+            }
+        ],
+        conditionalEffects: [],
+        bestialWheelAdvance: 2
+        // Bestial Wheel: +2 positions
+        // Applies 3 Burning
+        // Bonus damage at Balanced or Almighty Mask
+    },
+
+    "monoco-boucheclier-fortify": {
+        skillId: "monoco-boucheclier-fortify",
+        damageLevel: "none",
+        hitCount: 0,
+        targetScope: "ally",
+        damageType: "physical",
+        usesWeaponElement: false,
+        primaryEffects: [
+            {
+                effectType: "Shielded",
+                amount: 0,
+                remainingTurns: 3,
+                targetType: "ally"
+            }
+        ],
+        conditionalEffects: [
+            {
+                condition: "heavy-mask",
+                effectType: "Shielded",
+                amount: 1,
+                targetType: "ally"
+            }
+        ],
+        randomAllyCount: { min: 1, max: 3 },
+        bestialWheelAdvance: 5
+        // Bestial Wheel: +5 positions
+        // Applies Shielded for 3 turns on 1-3 allies
+        // Heavy Mask: Also grants 1 Shield stack
     },
 
     "monoco-benisseur-mortar": {
@@ -1689,9 +1750,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        switchToAlmightyIfMarked: true,
+        bestialWheelAdvance: 6
         // Bestial Wheel: +6 positions
-        // Auto-switch to Almighty Mask if target is Marked
+        // Auto-switch to Almighty Mask (position 0) if target is Marked
         // Bonus damage at Caster or Almighty Mask
     },
 
@@ -1703,9 +1766,20 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: [],
-        canBreak: true
+        conditionalEffects: [
+            {
+                condition: "target-fragile",
+                effectType: "Broken",
+                amount: 1,
+                remainingTurns: 1,
+                targetType: "enemy"
+            }
+        ],
+        canBreak: true,
+        bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
+        // Can Break
+        // Applies Broken if target is Fragile
         // Bonus damage at Caster or Almighty Mask
     },
 
@@ -1713,7 +1787,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-chapelier-slash",
         damageLevel: "high",
         hitCount: 3,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
@@ -1724,7 +1798,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
         // Applies Mark to all hit enemies
         // Bonus damage at Agile or Almighty Mask
@@ -1734,7 +1809,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-chevaliere-ice",
         damageLevel: "high",
         hitCount: 3,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
@@ -1746,7 +1821,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 2
         // Bestial Wheel: +2 positions
         // Bonus damage at Balanced or Almighty Mask
     },
@@ -1759,10 +1835,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        ignoresShields: true,
+        damagePerShieldStack: 1,
+        bestialWheelAdvance: 3
         // Bestial Wheel: +3 positions
-        // Pierces shields
-        // Damage increases per shield on target
+        // Ignores shields (damage goes through without removing them)
+        // +1 damage per shield stack on target
         // Bonus damage at Agile or Almighty Mask
     },
 
@@ -1770,13 +1849,15 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-chevaliere-thrusts",
         damageLevel: "high",
         hitCount: 3,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        doubleCritDamage: true,
+        bestialWheelAdvance: 3
         // Bestial Wheel: +3 positions
-        // Critical hits deal double damage
+        // Critical hits deal double damage (2x instead of normal crit multiplier)
         // Bonus damage at Heavy or Almighty Mask
     },
 
@@ -1784,20 +1865,22 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-clair-enfeeble",
         damageLevel: "medium",
         hitCount: 1,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
             {
-                effectType: "Weakened",  // Powerless
+                effectType: "Powerless",
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3
         // Bestial Wheel: +3 positions
+        // Applies Powerless for 3 turns to all enemies
         // Bonus damage at Balanced or Almighty Mask
     },
 
@@ -1805,10 +1888,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-contorsionniste-blast",
         damageLevel: "medium",
         hitCount: 1,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "physical",
         usesWeaponElement: true,
-        primaryEffects: []
+        primaryEffects: [],
+        conditionalEffects: [],
+        bestialWheelAdvance: 2
         // Bestial Wheel: +2 positions
         // Heals all allies by 10% HP per enemy hit
         // Bonus damage at Balanced or Almighty Mask
@@ -1821,10 +1906,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "random",  // Random targets
         damageType: "magical",
         usesWeaponElement: false,
-        forcedElement: "Dark",
+        forcedElement: "Void",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
+        // Deals extreme Void damage to random targets
         // More damage if same target hit multiple times
         // Bonus damage at Caster or Almighty Mask
     },
@@ -1833,12 +1920,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-cultist-blood",
         damageLevel: "medium",
         hitCount: 3,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 5,
+        sacrificesHpPercent: 90
         // Bestial Wheel: +5 positions
         // Sacrifices 90% of user's HP for increased damage
         // Bonus damage at Heavy or Almighty Mask
@@ -1853,7 +1942,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3,
+        damageScalesWithLowHp: true
         // Bestial Wheel: +3 positions
         // Damage increases inversely with remaining HP
         // Bonus damage at Agile or Almighty Mask
@@ -1868,7 +1959,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3,
+        bonusDamageVsBurning: true
         // Bestial Wheel: +3 positions
         // Enhanced damage vs Burned targets
         // Bonus damage at Balanced or Almighty Mask
@@ -1884,7 +1977,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Lightning",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        bestialWheelAdvance: 5
         // Bestial Wheel: +5 positions
         // Extra break damage
         // Bonus break at Caster or Almighty Mask
@@ -1899,7 +1993,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        bestialWheelAdvance: 1
         // Bestial Wheel: +1 position only
         // Bonus damage at Almighty Mask only
         // Optimal combo: Duallist Storm → Sapling Absorption → Duallist Storm
@@ -1920,7 +2015,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
         // Mark applied on second hit
         // Bonus damage at Agile or Almighty Mask
@@ -1936,13 +2032,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Earth",
         primaryEffects: [
             {
-                effectType: "Weakened",  // Powerless
+                effectType: "Powerless",
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3
         // Bestial Wheel: +3 positions
         // Bonus damage at Heavy or Almighty Mask
     },
@@ -1962,7 +2059,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 2
         // Bestial Wheel: +2 positions
         // Bonus damage at Balanced or Almighty Mask
     },
@@ -1971,7 +2069,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-glaise-earthquakes",
         damageLevel: "medium",
         hitCount: 3,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
@@ -1991,7 +2089,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 remainingTurns: 3,
                 targetType: "all-allies"
             }
-        ]
+        ],
+        bestialWheelAdvance: 6
         // Bestial Wheel: +6 positions
         // Grants Powerful to all allies at Heavy/Almighty Mask
     },
@@ -2040,7 +2139,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 remainingTurns: 5,
                 targetType: "enemy"
             }
-        ]
+        ],
+        bestialWheelAdvance: 6
         // Bestial Wheel: +6 positions
         // Defenceless duration: 3 turns (5 at Heavy/Almighty)
     },
@@ -2049,11 +2149,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-jar-lampstorm",
         damageLevel: "medium",
         hitCount: 4,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 6
         // Bestial Wheel: +6 positions
         // Bonus damage at Heavy or Almighty Mask
     },
@@ -2062,14 +2163,16 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-lampmaster-light",
         damageLevel: "high",
         hitCount: 1,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 1,
+        damageEscalatesPerUse: true
         // Bestial Wheel: +1 position only
-        // Damage escalates with each cast (max after 5 uses)
+        // Damage escalates with each cast (+20% per use, max 5 stacks = +100%)
         // Bonus damage at Almighty Mask only
     },
 
@@ -2089,7 +2192,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
         // Bonus damage at Agile or Almighty Mask
     },
@@ -2109,7 +2213,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "self"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3
         // Bestial Wheel: +3 positions
         // Applies Rush to self for 3 turns
         // Bonus damage at Agile or Almighty Mask
@@ -2124,7 +2229,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        bestialWheelAdvance: 2
         // Bestial Wheel: +2 positions
         // Bonus damage at Balanced or Almighty Mask
     },
@@ -2138,9 +2244,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3,
+        bonusDamageVsPowerless: true
         // Bestial Wheel: +3 positions
-        // Enhanced damage vs Powerless targets
+        // Enhanced damage vs Powerless targets (+50%)
         // Bonus damage at Heavy or Almighty Mask
     },
 
@@ -2148,12 +2256,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-portier-crash",
         damageLevel: "high",
         hitCount: 1,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        bestialWheelAdvance: 5
         // Bestial Wheel: +5 positions
         // Bonus damage at Heavy or Almighty Mask
     },
@@ -2168,9 +2277,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Dark",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        bestialWheelAdvance: 4,
+        fillsBreakBarAtAgileMask: 20
         // Bestial Wheel: +4 positions
-        // At Agile Mask: fills 20% of Break Bar
+        // At Agile/Almighty Mask: fills 20% of Break Bar
         // Enhanced break at Agile or Almighty Mask
     },
 
@@ -2183,7 +2294,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        bestialWheelAdvance: 3
         // Bestial Wheel: +3 positions
         // Bonus damage at Heavy or Almighty Mask
     },
@@ -2197,9 +2309,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3,
+        doubleDamageVsStunned: true
         // Bestial Wheel: +3 positions
-        // Enhanced damage vs Stunned targets
+        // Enhanced damage vs Stunned targets (2x)
         // Bonus damage at Balanced or Almighty Mask
     },
 
@@ -2212,7 +2326,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 6,
+        critTriggersExtraHit: true
         // Bestial Wheel: +6 positions
         // Critical hits trigger additional hit
         // Bonus damage at Caster or Almighty Mask
@@ -2222,7 +2338,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-sakapatate-fire",
         damageLevel: "extreme",
         hitCount: 3,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Fire",
@@ -2233,7 +2349,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 1
         // Bestial Wheel: +1 position only
         // 3 Burn per hit (9 total Burn possible)
         // Bonus damage at Almighty Mask only
@@ -2244,11 +2361,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "monoco-sakapatate-slam",
         damageLevel: "high",
         hitCount: 1,
-        targetScope: "all-enemies",
+        targetScope: "all",
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 5
         // Bestial Wheel: +5 positions
         // Enhanced damage vs Marked targets
         // Bonus damage at Heavy or Almighty Mask
@@ -2263,24 +2381,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 5,
+        healsHpPercentPerHit: 5,        // Heals 5% HP per hit
+        doublesHealAtCasterMask: true   // 10% HP per hit at Caster/Almighty Mask
         // Bestial Wheel: +5 positions
         // Recovers 5% HP per hit (10% at Caster/Almighty)
-        // Bonus healing at Caster or Almighty Mask
-    },
-
-    "monoco-stalact-punches": {
-        skillId: "monoco-stalact-punches",
-        damageLevel: "medium",
-        hitCount: 4,
-        targetScope: "single",
-        damageType: "magical",
-        usesWeaponElement: false,
-        forcedElement: "Ice",
-        primaryEffects: [],
-        conditionalEffects: [],
-        canBreak: true
-        // Already defined above as starting skill
+        // Bonus damage at Caster or Almighty Mask
     },
 
     // Support/Utility Skills
@@ -2298,7 +2405,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "ally"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
         // Grants 2 AP to target at Heavy/Almighty Mask
     },
@@ -2318,10 +2426,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "ally"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        randomAllyCount: { min: 1, max: 3 },
+        bestialWheelAdvance: 3,
+        grantsApAtCasterMask: 3
         // Bestial Wheel: +3 positions
-        // Applies to 1-3 allies
-        // At Caster/Almighty: grants 3 AP + 3x multiplier
+        // Applies to 1-3 random allies
+        // At Caster/Almighty: grants 3 AP to affected allies
     },
 
     "monoco-pelerin-heal": {
@@ -2339,9 +2450,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "all-allies"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 3,
+        healsHpPercentAtCasterMask: 40
         // Bestial Wheel: +3 positions
-        // At Caster/Almighty: bonus 40% HP healing
+        // At Caster/Almighty: bonus 40% HP instant healing
     },
 
     "monoco-potier-energy": {
@@ -2352,10 +2465,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 6,
+        grantsApToAllAllies: { min: 1, max: 3 },
+        grantsApAtCasterMask: 1  // +1 extra AP at Caster/Almighty
         // Bestial Wheel: +6 positions
-        // Grants 1-3 AP to all allies
-        // At Caster/Almighty: +1 extra AP
+        // Grants 1-3 AP to all allies (random per ally)
+        // At Caster/Almighty: +1 extra AP (total 2-4 per ally)
     },
 
     "monoco-troubadour-trumpet": {
@@ -2366,10 +2482,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 4,
+        randomAllyCount: { min: 1, max: 3 },  // Affects 1-3 random allies
+        appliesRandomBuffs: true,              // Applies random buffs
+        doublesBuffsAtCasterMask: true         // 2 buffs at Caster/Almighty Mask instead of 1
         // Bestial Wheel: +4 positions
-        // Applies random buffs to 1-3 allies
-        // At Caster/Almighty: applies second random buff
+        // Applies 1 random buff to 1-3 allies (2 buffs at Caster/Almighty Mask)
+        // Possible buffs: Empowered, Protected, Shielded, Regeneration, Hastened
     },
 
     // Gradient Skills
@@ -2381,10 +2501,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
-        // Gradient Skill: 1 Gradient Charge
+        conditionalEffects: [],
+        doubleDamageVsStunned: true,
+        forceAlmightyMask: true
+        // Gradient Skill: 1 Gradient Charge (defined in SkillList.ts)
         // Double damage vs Stunned targets
-        // Advances to Almighty Mask
+        // Forces Bestial Wheel to Almighty Mask (position 0)
         // Does not consume turn
         // Automatically unlocked (story progression)
     },
@@ -2396,7 +2518,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         damageType: "physical",
         usesWeaponElement: true,
-        primaryEffects: [],
+        primaryEffects: [
+            {
+                effectType: "Broken",
+                amount: 1,
+                remainingTurns: 1,
+                targetType: "enemy"
+            }
+        ],
         conditionalEffects: [],
         canBreak: true
         // Gradient Skill: 3 Gradient Charges
@@ -2426,8 +2555,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: []
-        // Gradient Skill: 2 Gradient Charges
-        // Gives 2 Shields + Regen to all allies
+        // Gradient Skill: 2 Gradient Charges (defined in SkillList.ts)
+        // Gives 2 Shields + Regen (3 turns) to all allies
         // Does not consume turn
         // Relationship Level 4 with Monoco
     },
@@ -2458,16 +2587,16 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [
             {
                 effectType: "Foretell",
-                amount: 2,  // Base: 2 Predições (ou 3 se alvo não tiver Foretell)
-                remainingTurns: 0,  // Foretell não tem duração de turnos
+                amount: 2,  // Base: 2 Foretells
+                remainingTurns: 0,  // Foretell doesn't have turn duration
                 targetType: "enemy"
             }
         ],
         conditionalEffects: [
             {
-                condition: "target-no-foretell",  // Se alvo não tem Predições
+                condition: "target-no-foretell",  // If target has 0 Foretell
                 effectType: "Foretell",
-                amount: 1,  // +1 Predição adicional (total 3, ou 6 com Crepúsculo que dobra tudo)
+                amount: 3,  // +3 additional Foretells (total 5)
                 remainingTurns: 0,
                 targetType: "enemy"
             }
@@ -2476,18 +2605,24 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
 
     "sciel-marking-card": {
         skillId: "sciel-marking-card",
-        damageLevel: "low",  // 50% weapon damage
+        damageLevel: "medium",  // 100% weapon damage
         hitCount: 2,
-        targetScope: "all",
-        damageType: "physical",
+        targetScope: "single",
+        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [
             {
+                effectType: "Marked",  // Mark effect
+                amount: 0,
+                remainingTurns: 3,
+                targetType: "enemy"
+            },
+            {
                 effectType: "Foretell",
-                amount: 2,  // 2 Foretell por acerto (total 4)
+                amount: 3,  // 3 Foretell total
                 remainingTurns: 0,
-                targetType: "all-enemies"
+                targetType: "enemy"
             }
         ],
         conditionalEffects: []
@@ -2495,65 +2630,51 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
 
     "sciel-bad-omen": {
         skillId: "sciel-bad-omen",
-        damageLevel: "medium",  // 100% weapon damage
+        damageLevel: "low",     // Low Dark damage
         hitCount: 2,
-        targetScope: "single",
-        damageType: "physical",
+        targetScope: "all",     // All enemies
+        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [
             {
-                effectType: "Marked",
-                amount: 0,
-                remainingTurns: 3,
-                targetType: "enemy"
-            },
-            {
                 effectType: "Foretell",
-                amount: 3,
+                amount: 2,      // 2 Foretell per hit (4 total)
                 remainingTurns: 0,
                 targetType: "enemy"
             }
         ],
         conditionalEffects: []
+        // Grants 1 Sun Charge - handled by skillType: "sun"
     },
 
     "sciel-sealed-fate": {
         skillId: "sciel-sealed-fate",
-        damageLevel: "medium",  // 100% weapon damage per hit
-        hitCount: 3,  // 3 hits, each consuming 1 Foretell
+        damageLevel: "high",  // 150% weapon damage per hit
+        hitCount: 6,  // Variable 5-7 hits (using 6 as average)
         targetScope: "single",
         damageType: "physical",
-        usesWeaponElement: false,
-        forcedElement: "Dark",
-        primaryEffects: [
-            {
-                effectType: "Foretell",
-                amount: 5,
-                remainingTurns: 0,
-                targetType: "enemy"
-            }
-        ],
+        usesWeaponElement: true,
+        primaryEffects: [],
         conditionalEffects: [],
-        consumesForetellPerHit: true,    // ✅ Cada hit consome 1 Predição
-        foretellPerHitMultiplier: 3.0    // ✅ 200% bonus = 3x dano total quando consome
+        consumesForetellPerHit: true,    // Each hit consumes 1 Foretell
+        foretellPerHitMultiplier: 3.0    // 200% bonus = 3x damage when consuming
     },
 
     "sciel-shadow-bringer": {
         skillId: "sciel-shadow-bringer",
         damageLevel: "high",  // 150% weapon damage
         hitCount: 10,
-        targetScope: "all",
+        targetScope: "random",  // Random enemies
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
-        isGradient: true,
         primaryEffects: [
             {
                 effectType: "Foretell",
-                amount: 1,  // 1 Foretell por acerto (total 10)
+                amount: 1,  // 1 Foretell per hit (total 10)
                 remainingTurns: 0,
-                targetType: "all-enemies"
+                targetType: "enemy"
             }
         ],
         conditionalEffects: []
@@ -2561,19 +2682,30 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
 
     "sciel-doom": {
         skillId: "sciel-doom",
-        damageLevel: "extreme",  // 250% weapon damage
-        hitCount: 1,
+        damageLevel: "very-high",  // 200% weapon damage
+        hitCount: 3,
         targetScope: "single",
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
-        isGradient: true,
         canBreak: true,
         primaryEffects: [
             {
-                effectType: "Foretell",
-                amount: 10,
-                remainingTurns: 0,
+                effectType: "Weakened",  // Powerless: -25% damage dealt
+                amount: 0,
+                remainingTurns: 3,
+                targetType: "enemy"
+            },
+            {
+                effectType: "Vulnerable",  // Defenceless: +20% damage taken
+                amount: 0,
+                remainingTurns: 3,
+                targetType: "enemy"
+            },
+            {
+                effectType: "Slowed",  // Slow: -33% speed
+                amount: 0,
+                remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
@@ -2684,14 +2816,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",  // 150% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
+        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         canBreak: true,
         primaryEffects: [],
         conditionalEffects: [],
-        consumesForetell: true,          // Consome todas as Predições
-        foretellDamageBonus: 2           // +2 de dano por Predição
+        consumesForetell: true,          // Consumes all Foretell
+        foretellDamageBonus: 2           // +2 damage per Foretell
     },
 
     "sciel-spectral-sweep": {
@@ -2731,12 +2863,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "sciel-fortunes-fury",
         damageLevel: "none",  // No damage, buff only
         hitCount: 0,
-        targetScope: "single",  // Single ally target
+        targetScope: "ally",  // Single ally target
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "Empowered",  // Double damage for 1 turn
+                effectType: "DoubleDamage",  // Double (2x) damage for 1 turn
                 amount: 0,
                 remainingTurns: 1,
                 targetType: "ally"
@@ -2750,14 +2882,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "sciel-our-sacrifice",
         damageLevel: "extreme",  // 250% weapon damage base
         hitCount: 1,
-        targetScope: "single",
+        targetScope: "all",  // All enemies
         damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
         conditionalEffects: [],
-        drainsAlliesHp: true,              // ✅ Drena HP de aliados para 1 (+1 dano por HP drenado)
-        consumesAllEnemiesForetell: true   // ✅ Consome Foretell de TODOS inimigos (+1 dano por Predição)
+        drainsAlliesHp: true,              // Drains all allies to 1 HP (+1 damage per HP drained)
+        consumesAllEnemiesForetell: true   // Consumes Foretell from ALL enemies (+1 damage per Foretell)
     },
 
     "sciel-plentiful-harvest": {
@@ -2769,77 +2901,85 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        consumesForetell: true,         // ✅ Consome todas as Predições do alvo
-        grantsMpPerForetell: 1          // ✅ Concede 1 PM a aliado aleatório por Predição consumida
+        consumesForetell: true,         // Consumes all Foretell from target
+        grantsApPerForetell: 1          // Grants 1 AP per Foretell consumed (NOT MP!)
     },
 
     "sciel-rush": {
         skillId: "sciel-rush",
         damageLevel: "none",  // No damage, buff only
         hitCount: 0,
-        targetScope: "self",  // Will be handled by special logic
+        targetScope: "ally",  // Random allies
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "Hastened",  // Increases Speed
+                effectType: "Hastened",  // Rush: +33% Speed
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "ally"
             }
         ],
         conditionalEffects: [],
-        randomAllyCount: { min: 1, max: 3 }  // ✅ Aplica em 1-3 aliados aleatórios
+        randomAllyCount: { min: 1, max: 3 }  // Applies to 1-3 random allies
     },
 
     "sciel-all-set": {
         skillId: "sciel-all-set",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all",
+        targetScope: "all-allies",
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "Hastened",
+                effectType: "Protected",  // Shell: Reduces damage by 20%
+                amount: 1,
+                remainingTurns: 3,
+                targetType: "all-allies"
+            },
+            {
+                effectType: "Empowered",  // Powerful: Increases damage by 25%
+                amount: 0,
+                remainingTurns: 3,
+                targetType: "all-allies"
+            },
+            {
+                effectType: "Hastened",  // Rush: Increases Speed by 33%
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "all-allies"
             }
         ],
         conditionalEffects: []
-        // Aplica Rapidez em 1-3 aliados aleatórios
+        // Grants 1 Sun Charge - handled by skillType: "sun"
     },
 
     "sciel-intervention": {
         skillId: "sciel-intervention",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "self",
-        damageType: "physical",
-        usesWeaponElement: false,
-        primaryEffects: [
-            {
-                effectType: "Protected",
-                amount: 2,
-                remainingTurns: 2,
-                targetType: "self"
-            }
-        ],
-        conditionalEffects: []
-    },
-
-    "sciel-card-weaver": {
-        skillId: "sciel-card-weaver",
-        damageLevel: "none",
-        hitCount: 0,
-        targetScope: "single",  // Alvo selecionado para redistribuir Foretell
+        targetScope: "ally",  // Target single ally
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
-        redistributesForetell: true,  // Redistribui Foretell do alvo para outros inimigos
-        grantsExtraTurn: true         // Turno extra (toast only)
+        grantsImmediateTurn: true,  // Ally plays immediately
+        grantsAP: 4  // Ally gains 4 AP
+    },
+
+    "sciel-card-weaver": {
+        skillId: "sciel-card-weaver",
+        damageLevel: "low",    // Low Physical damage
+        hitCount: 1,           // 1 hit
+        targetScope: "single",  // Target to redistribute Foretell from
+        damageType: "physical",
+        usesWeaponElement: false,
+        primaryEffects: [],
+        conditionalEffects: [],
+        redistributesForetell: true,  // Propagates target's Foretell to all enemies
+        grantsExtraTurn: true         // Plays a second turn
+        // Grants 1 Sun Charge - handled by skillType: "sun"
     },
 
     "sciel-final-path": {
@@ -2885,10 +3025,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         damageType: "physical",
         usesWeaponElement: true,
-        isGradient: true,
         primaryEffects: [],
         conditionalEffects: [],
-        consumesForetell: true,          // Consome todas as Predições
-        foretellDamageBonus: 3           // +3 de dano por Predição (50% a mais que normal)
+        // Wiki: "Damage increases for each Foretell consumed since the beginning of the battle"
+        // This suggests cumulative tracking across the battle, not instant consumption
+        // Current implementation uses instant consumption as placeholder
+        scalesWithBattleForetellCount: true  // TODO: Track total Foretell consumed in battle
     }
 };

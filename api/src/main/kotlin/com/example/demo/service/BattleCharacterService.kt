@@ -56,6 +56,7 @@ class BattleCharacterService(
                                 stainSlot4 = request.stainSlot4,
                                 perfectionRank = request.perfectionRank,
                                 rankProgress = request.rankProgress,
+                                bestialWheelPosition = request.bestialWheelPosition ?: 0,
                                 canRollInitiative = request.canRollInitiative
                         )
 
@@ -325,5 +326,52 @@ class BattleCharacterService(
                 )
 
                 return true
+        }
+
+        @Transactional
+        fun updateCharacterAP(id: Int, amount: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                // Get current charge points (used for AP), default to 0 if null
+                val currentAP = entity.chargePoints ?: 0
+                val maxAP = entity.maxChargePoints
+
+                // Calculate new AP value
+                var newAP = currentAP + amount
+
+                // If maxAP is set, enforce the limit
+                if (maxAP != null) {
+                        newAP = newAP.coerceIn(0, maxAP)
+                } else {
+                        // Otherwise, just ensure it's not negative
+                        newAP = newAP.coerceAtLeast(0)
+                }
+
+                entity.chargePoints = newAP
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "AP_CHANGED", eventJson = null)
+                )
+        }
+
+        fun getCharacterAP(id: Int): Map<String, Int?> {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) {
+                        throw IllegalArgumentException("BattleCharacter $id not found")
+                }
+
+                val entity = opt.get()
+
+                return mapOf(
+                        "actionPoints" to entity.chargePoints,
+                        "maxActionPoints" to entity.maxChargePoints
+                )
         }
 }

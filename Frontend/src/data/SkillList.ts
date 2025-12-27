@@ -7,7 +7,7 @@ export const SkillsList: SkillResponse[] = [
   {
     id: "gustave-lumiere-assault",
     character: "gustave",
-    name: "Lumiere Assault",
+    name: "Assalto Luimièriano",
     cost: 3,
     unlockCost: 0,
     description: "Causa dano baixo em alvo único. 5 acertos. Usa elemento da arma. Acertos críticos geram 1 Carga adicional.",
@@ -26,7 +26,7 @@ export const SkillsList: SkillResponse[] = [
   {
     id: "gustave-overcharge",
     character: "gustave",
-    name: "Overcharge",
+    name: "Sobrecarga",
     cost: 4,
     unlockCost: 0,
     description: "Causa dano de Raio alto baseado na quantidade de Cargas. 1 acerto. Pode causar Break.",
@@ -815,7 +815,7 @@ export const SkillsList: SkillResponse[] = [
     id: "sciel-all-set",
     character: "sciel",
     name: "All Set",
-    cost: 3,
+    cost: 6,
     unlockCost: 6,
     description: "Aplica Escudo, Poderoso e Rapidez em todos os aliados.",
     type: "sun",
@@ -1186,15 +1186,19 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Abbest Wind",
     cost: 3,
-    description: "Wind-based attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Wind-based attack.\n\nEfeito: Causa dano Físico baixo em alvo único. 1 acerto. Joga um segundo turno. Normalmente custa 2 PA, mas quando o Ponteiro da Roda Bestial está posicionado em uma Máscara Ágil ou Máscara Onipotente, o custo reduz para 0 PA. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Abbest enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_AbbestWind.webp"
   },
   {
     id: "monoco-aberration-light",
     character: "monoco",
     name: "Aberration Light",
-    cost: 3,
-    description: "Aberrant light attack.",
+    cost: 7,
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Aberration light attack.\n\nEfeito: Causa dano de Luz alto em todos os inimigos. 2 acertos. Aplica 4 Queimaduras por acerto. Máscara Ágil: Aplica 2 Queimaduras adicionais por acerto. Custa 7 PA. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Aberration enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_AberrationLight.webp"
   },
   {
@@ -1202,7 +1206,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Ballet Charm",
     cost: 3,
-    description: "Charming ballet-style attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Charming ballet-style attack.\n\nEfeito: Causa dano de Luz baixo em alvo único. 1 acerto. Aplica Indefeso no alvo por 3 turnos. Aumenta o dano quando usado com Máscara de Conjurador equipada. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Ballet enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_BalletCharm.webp"
   },
   {
@@ -1210,7 +1216,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Benisseur Mortar",
     cost: 3,
-    description: "Mortar bombardment attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Mortar bombardment attack.\n\nEfeito: Causa dano de Gelo médio em alvo único. 3 acertos. Muda para Máscara Onipotente se o alvo estiver Marcado. Máscara de Conjurador: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Bénisseur enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_BenisseurMortar.webp"
   },
   {
@@ -1218,7 +1226,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Boucheclier Fortify",
     cost: 3,
-    description: "Shield fortification skill.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Shield fortification skill.\n\nEfeito: Aplica Carapaça em 1-3 aliados por 3 turnos. Máscara Pesada: Também aplica 1 Escudo. Usar esta habilidade move o Ponteiro da Roda Bestial em 5 posições. Quando o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 1 Escudo aos aliados afetados.\nPré-requisito: Derrote e adquira o pé de um inimigo Boucheclier enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_BoucheclierFortify.webp"
   },
   {
@@ -1226,7 +1236,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Braseleur Smash",
     cost: 3,
-    description: "Powerful smashing attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Powerful smashing attack.\n\nEfeito: Causa dano de Fogo médio em alvo único e aplica 3 Queimaduras. 2 acertos. Dano aumentado quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Braseleur enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_BraseleurSmash.webp"
   },
   {
@@ -1234,7 +1246,10 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Break Point",
     cost: 3,
-    description: "Critical break point attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    isGradient: true,
+    description: "Critical break point attack.\n\nEfeito: Causa dano extremo em alvo único. 1 acerto. Usa elemento da arma. Preenche a Barra de Break do alvo e causa Break. Habilidade Gradiente (não consome turno).\nPré-requisito: Alcance Nível de Relacionamento 7 com Monoco.",
     image: "Monoco_BreakPoint.webp"
   },
   {
@@ -1242,7 +1257,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Bruler Bash",
     cost: 3,
-    description: "Burning bash attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Burning bash attack.\n\nEfeito: Causa dano Físico médio em alvo único. 3 acertos. Pode causar Break. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Bruler enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_BrulerBash.webp"
   },
   {
@@ -1250,7 +1267,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Chalier Combo",
     cost: 3,
-    description: "Multi-hit combo attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Multi-hit combo attack.\n\nEfeito: Causa dano Físico alto em alvo único. 6 acertos. Interrompido se falhar. Dano aumentado quando usado com Máscara Equilibrada ativa.\nPré-requisito: Habilidade inicial de Monoco, não requer pré-requisito.",
     image: "Monoco_ChalierCombo.webp"
   },
   {
@@ -1258,7 +1277,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Chapelier Slash",
     cost: 3,
-    description: "Slashing attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Slashing attack.\n\nEfeito: Causa dano Físico alto em todos os inimigos. 3 acertos. Aplica Marca. Move o Ponteiro da Roda Bestial em 4 posições. Dano aumentado quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Chapelier enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_ChapelierSlash.webp"
   },
   {
@@ -1266,7 +1287,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Chevaliere Ice",
     cost: 3,
-    description: "Ice-based knight attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Ice-based knight attack.\n\nEfeito: Causa dano de Gelo alto em todos os inimigos. 3 acertos. Aplica Lento nos alvos por 3 turnos. Modificador de Máscara Equilibrada aumenta o dano quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Gold Chevalière enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_ChevaliereIce.webp"
   },
   {
@@ -1274,7 +1297,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Chevaliere Piercing",
     cost: 3,
-    description: "Piercing knight attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Piercing knight attack.\n\nEfeito: Causa dano Físico em alvo único atravessando Escudos. 6 acertos. Dano aumentado para cada Escudo no alvo. Dano aumentado quando usado com Máscara Ágil equipada.\nPré-requisito: Derrote e adquira o pé de um inimigo Ceramic Chevalière enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_ChevalierePiercing.webp"
   },
   {
@@ -1282,7 +1307,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Chevaliere Thrusts",
     cost: 3,
-    description: "Multiple thrusting attacks.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Multiple thrusting attacks.\n\nEfeito: Causa dano Físico alto em todos os inimigos. 3 acertos. Acertos Críticos causam o dobro do dano. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Steel Chevalière enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_ChevaliereThrusts.webp"
   },
   {
@@ -1290,7 +1317,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Clair Enfeeble",
     cost: 3,
-    description: "Enfeebling light attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Enfeebling light attack.\n\nEfeito: Causa dano de Luz médio em todos os inimigos. 1 acerto. Aplica Indefeso por 3 turnos. Usar enquanto o Ponteiro da Roda Bestial está em Máscara Equilibrada ou Máscara Onipotente aumenta o dano.\nPré-requisito: Derrote e adquira o pé de um inimigo Clair enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_ClairEnfeeble.webp"
   },
   {
@@ -1298,7 +1327,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Contorsionniste Blast",
     cost: 3,
-    description: "Contortionist explosive blast.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Contortionist explosive blast.\n\nEfeito: Causa dano Físico médio em todos os inimigos. 1 acerto. Cura todos os aliados em 10% de Vida para cada inimigo atingido. Dano aumentado quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Contorsionniste enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_ContorsionnisteBlast.webp"
   },
   {
@@ -1306,7 +1337,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Creation Void",
     cost: 3,
-    description: "Creates void energy.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Creates void energy.\n\nEfeito: Causa dano de Vazio extremo em alvos aleatórios. 3 acertos. Dano aumentado se o mesmo alvo for atingido múltiplas vezes. Recebe aumento de dano quando utilizado enquanto o Ponteiro da Roda Bestial se alinha com Máscara de Conjurador ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Création enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_CreationVoid.webp"
   },
   {
@@ -1314,7 +1347,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Cruler Barrier",
     cost: 3,
-    description: "Protective barrier skill.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Protective barrier skill.\n\nEfeito: Aplica 1-2 Escudos no alvo. Máscara Pesada: Concede 2 PA ao alvo. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições. Quando ativado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 2 PA adicionais ao alvo.\nPré-requisito: Derrote e adquira o pé de um inimigo Cruler enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_CrulerBarrier.webp"
   },
   {
@@ -1322,7 +1357,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Cultist Blood",
     cost: 3,
-    description: "Blood-based cultist attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Blood-based cultist attack.\n\nEfeito: Causa dano das Trevas médio em todos os inimigos. 3 acertos. Sacrifica 90% de Vida para aumentar o dano. Máscara Pesada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Greatsword Cultist enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_CultistBlood.webp"
   },
   {
@@ -1330,7 +1367,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Cultist Slashes",
     cost: 3,
-    description: "Multiple cultist slashing attacks.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Multiple cultist slashing attacks.\n\nEfeito: Causa dano das Trevas médio em alvo único. 3 acertos. Causa mais dano quanto menos Vida Monoco tiver. Dano aumentado quando o Ponteiro da Roda Bestial se alinha com Máscara Ágil ou Máscara Onipotente. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Reaper Cultist enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_CultistSlashes.webp"
   },
   {
@@ -1338,7 +1377,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Danseuse Waltz",
     cost: 3,
-    description: "Graceful waltzing attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Graceful waltzing attack.\n\nEfeito: Causa dano de Fogo alto em alvo único. 3 acertos. Causa mais dano contra alvos Queimando. Máscara Equilibrada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Danseuses enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_DanseuseWaltz.webp"
   },
   {
@@ -1346,7 +1387,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Demineur Thunder",
     cost: 3,
-    description: "Thunder-based explosive attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Thunder-based explosive attack.\n\nEfeito: Causa dano de Raio baixo em alvo único. 1 acerto. Causa dano de Break extra. Bônus de dano de Break aumentado quando a Máscara de Conjurador está ativa. Usar esta habilidade avança o Ponteiro da Roda Bestial em 5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Demineur enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_DemineurThunder.webp"
   },
   {
@@ -1354,7 +1397,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Duallist Storm",
     cost: 3,
-    description: "Dual-wielding storm attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Dual-wielding storm attack.\n\nEfeito: Causa dano Físico extremo em alvo único. 4 acertos. Pode causar Break. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.\nPré-requisito: Derrote e adquira o pé de um inimigo Dualliste enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_DuallistStorm.webp"
   },
   {
@@ -1362,7 +1407,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Echassier Stabs",
     cost: 3,
-    description: "Multiple stabbing attacks.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Multiple stabbing attacks.\n\nEfeito: Causa dano Físico médio em alvo único. 2 acertos. O segundo acerto aplica Marca no alvo. Máscara Ágil: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Échassier enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_EchassierStabs.webp"
   },
   {
@@ -1370,7 +1417,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Eveque Spear",
     cost: 3,
-    description: "Bishop's spear attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Bishop's spear attack.\n\nEfeito: Causa dano de Terra alto em alvo único e aplica Impotente por 3 turnos. 1 acerto. Dano aumentado quando usado com modificador de Máscara Pesada. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Évêque enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_EvequeSpear.webp"
   },
   {
@@ -1378,7 +1427,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Gault Fury",
     cost: 3,
-    description: "Furious rage attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Furious rage attack.\n\nEfeito: Causa dano Físico baixo em alvo único. 4 acertos. Aplica Marca. Máscara Equilibrada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições. Quando ativado enquanto o ponteiro está em Máscara Equilibrada ou Máscara Onipotente, o dano aumenta.\nPré-requisito: Derrote e adquira o pé de um inimigo Gault enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_GaultFury.webp"
   },
   {
@@ -1386,7 +1437,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Glaise Earthquakes",
     cost: 3,
-    description: "Earth-shaking earthquake attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Earth-shaking earthquake attack.\n\nEfeito: Causa dano de Terra médio em todos os inimigos. 3 acertos. Aplica Fortalecido em si mesmo. Máscara Pesada: aplica Fortalecido em todos os aliados. Usar esta habilidade avança o Ponteiro da Roda Bestial em 6 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Glaise enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_GlaiseEarthquakes.webp"
   },
   {
@@ -1394,7 +1447,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Hexga Crush",
     cost: 3,
-    description: "Crushing hex attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Crushing hex attack.\n\nEfeito: Causa dano de Terra médio em alvo único. 2 acertos. Aplica Indefeso no alvo por 3 turnos. Modificador de Máscara Pesada aumenta o dano. Requer 5 PA para lançar e avança o Ponteiro da Roda Bestial em 6 posições. Quando usado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, a duração do debuff aumenta para 5 turnos.\nPré-requisito: Derrote e adquira o pé de um inimigo Hexga enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_HexgaCrush.webp"
   },
   {
@@ -1402,7 +1457,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Jar Lampstorm",
     cost: 3,
-    description: "Lamp jar storm attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Lamp jar storm attack.\n\nEfeito: Causa dano Físico médio em todos os inimigos. 4 acertos. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Jar enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_JarLampstorm.webp"
   },
   {
@@ -1410,7 +1467,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Lampmaster Light",
     cost: 3,
-    description: "Master lamp light attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Master lamp light attack.\n\nEfeito: Causa dano de Luz alto em todos os inimigos. 1 acerto. Dano aumentado a cada uso. Inclui aprimoramento de Máscara Onipotente que fornece dano aumentado. O dano escala com cada uso sucessivo, atingindo o máximo após cinco lançamentos.\nPré-requisito: Derrote e adquira o pé de um inimigo Lampmaster enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_LampmasterLight.webp"
   },
   {
@@ -1418,7 +1477,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Lancelier Impale",
     cost: 3,
-    description: "Impaling lance attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Impaling lance attack.\n\nEfeito: Causa dano de Gelo baixo em alvo único. 1 acerto. Desacelera o alvo por 3 turnos. Dano aumentado quando usado com o aprimoramento de Máscara Ágil ativo no Ponteiro da Roda Bestial.\nPré-requisito: Derrote e adquira o pé de um inimigo Lancelier enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_LancelierImpale.webp"
   },
   {
@@ -1426,7 +1487,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Luster Slices",
     cost: 3,
-    description: "Lustrous slicing attacks.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Lustrous slicing attacks.\n\nEfeito: Causa dano Físico baixo em alvo único. 3 acertos. Aplica Rapidez em si mesmo por 3 turnos. Ter Máscara Ágil ou Máscara Onipotente ativa aumenta o dano.\nPré-requisito: Derrote e adquira o pé de um inimigo Luster enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_LusterSlices.webp"
   },
   {
@@ -1434,7 +1497,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Mighty Strike",
     cost: 3,
-    description: "Powerful mighty strike.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Powerful mighty strike.\n\nEfeito: Causa dano alto em alvo único. 2 acertos. Usa elemento da arma. Causa o dobro do dano se o alvo estiver Atordoado. Vai para Máscara Onipotente.\nPré-requisito: Desbloqueado automaticamente ao aprender o recurso de Ataques/Habilidades Gradiente, que fica disponível ao progredir na história.",
     image: "Monoco_MightyStrike.webp"
   },
   {
@@ -1442,7 +1507,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Moissonneuse Vendange",
     cost: 3,
-    description: "Harvesting reaper attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Harvesting reaper attack.\n\nEfeito: Causa dano Físico alto em alvo único. 3 acertos. Pode causar Break. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Moissoneusse enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_MoissonneuseVendange.webp"
   },
   {
@@ -1450,7 +1517,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Obscur Sword",
     cost: 3,
-    description: "Dark shadow sword attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Dark shadow sword attack.\n\nEfeito: Causa dano das Trevas alto em alvo único. 5 acertos. Causa mais dano contra alvos Indefesos. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Obscur enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_ObscurSword.webp"
   },
   {
@@ -1458,7 +1527,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Orphelin Cheers",
     cost: 3,
-    description: "Orphan's cheerful buff.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Orphan's cheerful buff.\n\nEfeito: Aplica Fortalecido em 1-3 aliados. Máscara de Conjurador: Também concede 3 PA aos alvos. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições. Quando o ponteiro está em Máscara de Conjurador ou Máscara Onipotente, aliados afetados recebem benefícios triplicados.\nPré-requisito: Derrote e adquira o pé de um inimigo Orphelin enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_OrphelinCheers.webp"
   },
   {
@@ -1466,7 +1537,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Pelerin Heal",
     cost: 3,
-    description: "Pilgrim's healing skill.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Pilgrim's healing skill.\n\nEfeito: Aplica Regeneração em todos os aliados. Máscara de Conjurador: também cura 40% de Vida. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições. Quando o ponteiro está em Máscara de Conjurador ou Máscara Onipotente, o time recebe um aumento de cura de 40%.\nPré-requisito: Derrote e adquira o pé de um inimigo Pelerin enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_PelerinHeal.webp"
   },
   {
@@ -1474,7 +1547,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Portier Crash",
     cost: 3,
-    description: "Door-breaking crash attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Door-breaking crash attack.\n\nEfeito: Causa dano Físico alto em todos os inimigos. 1 acerto. Pode causar Break. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_PortierCrash.webp"
   },
   {
@@ -1482,7 +1557,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Potier Energy",
     cost: 3,
-    description: "Potter's energy skill.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Potter's energy skill.\n\nEfeito: Concede 1-3 PA a todos os aliados. Com aprimoramento de Máscara de Conjurador, fornece 1 PA adicional. Usar esta habilidade avança o Ponteiro da Roda Bestial em 6 posições. Quando ativado em Máscara de Conjurador ou Máscara Onipotente, aliados recebem um PA extra.\nPré-requisito: Derrote e adquira o pé de um inimigo Potier enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_PotierEnergy.webp"
   },
   {
@@ -1490,7 +1567,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Ramasseur Bonk",
     cost: 3,
-    description: "Collector's bonking attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Collector's bonking attack.\n\nEfeito: Causa dano das Trevas baixo em alvo único. 1 acerto. Pode causar Break. Efeito Máscara Ágil preenche 20% da Barra de Break do alvo. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, preenche a Barra de Break do inimigo em 20% ao acertar.\nPré-requisito: Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_RamasseurBonk.webp"
   },
   {
@@ -1498,7 +1577,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Rocher Hammering",
     cost: 3,
-    description: "Rock hammering attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Rock hammering attack.\n\nEfeito: Causa dano Físico médio em alvo único. 4 acertos. Pode causar Break. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Rocher enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_RocherHammering.webp"
   },
   {
@@ -1506,7 +1587,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Sakapatate Estoc",
     cost: 3,
-    description: "Estoc thrusting attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Estoc thrusting attack.\n\nEfeito: Causa dano de Raio baixo em alvo único. 1 acerto. Causa mais dano se o alvo estiver Atordoado. Máscara Equilibrada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Ranger Sakapatate enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_SakapatateEstoc.webp"
   },
   {
@@ -1514,7 +1597,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Sakapatate Explosion",
     cost: 3,
-    description: "Explosive attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Explosive attack.\n\nEfeito: Causa dano de Raio médio em inimigos aleatórios. 3 acertos. Acertos Críticos acionam um acerto adicional. Máscara de Conjurador: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Catapult Sakapatate enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_SakapatateExplosion.webp"
   },
   {
@@ -1522,7 +1607,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Sakapatate Fire",
     cost: 3,
-    description: "Fire-based attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Fire-based attack.\n\nEfeito: Causa dano de Fogo extremo em todos os inimigos. 3 acertos. Aplica 3 Queimaduras por acerto (9 total possível). Máscara Onipotente: Dano aumentado. Roda Bestial: +1 posição. Combo ótimo: Sakapatate Fire → Sapling Absorption → skill intermediária → Sakapatate Fire.\nPré-requisito: Derrote e adquira o pé do inimigo Ultimate Sakapatate enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_SakapatateFire.webp"
   },
   {
@@ -1530,7 +1617,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Sakapatate Slam",
     cost: 3,
-    description: "Powerful slamming attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Powerful slamming attack.\n\nEfeito: Causa dano Físico alto em todos os inimigos. 1 acerto. Dano aumentado contra alvos Marcados. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Robust Sakapatate enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_SakapatateSlam.webp"
   },
   {
@@ -1538,7 +1627,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Sanctuary",
     cost: 3,
-    description: "Creates protective sanctuary.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Creates protective sanctuary.\n\nEfeito: Habilidade Gradient (2 cargas). Concede 2 Escudos e aplica Regeneração em todos os aliados por 3 turnos. Não consome turno.\nPré-requisito: Alcance Nível de Relacionamento 4 com Monoco.",
     image: "Monoco_Sanctuary.webp"
   },
   {
@@ -1546,7 +1637,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Sapling Absorption",
     cost: 3,
-    description: "Absorbs energy like a sapling.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Absorbs energy like a sapling.\n\nEfeito: Causa dano das Trevas alto. 3 acertos. Recupera 5% de Vida por acerto (10% na Máscara de Conjurador ou Onipotente). Roda Bestial: +5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Sapling enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_SaplingAbsorption.webp"
   },
   {
@@ -1554,7 +1647,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Stalact Punches",
     cost: 3,
-    description: "Stalactite-like punching attacks.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Stalactite-like punching attacks.\n\nEfeito: Causa dano de Gelo médio em alvo único. 4 acertos. Alto dano de Break. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +4 posições.\nPré-requisito: Habilidade inicial de Monoco ao se juntar ao grupo, não requer pré-requisito.",
     image: "Monoco_StalactPunches.webp"
   },
   {
@@ -1562,7 +1657,9 @@ export const SkillsList: SkillResponse[] = [
     character: "monoco",
     name: "Troubadour Trumpet",
     cost: 3,
-    description: "Trumpet sound attack.",
+    unlockCost: 0,
+    masterUnlock: true,
+    description: "Trumpet sound attack.\n\nEfeito: Aplica 1 buff aleatório em 1-3 aliados (Empowered, Protected, Shielded, Regeneration ou Hastened). Máscara de Conjurador ou Onipotente: aplica 2 buffs aleatórios por aliado. Roda Bestial: +4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Troubadour enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_TroubadourTrumpet.webp"
   }
 ];

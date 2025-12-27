@@ -1,5 +1,5 @@
 import { api } from "./api"
-import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type StatusType, type AttackType, type Stance } from "./ResponseModel"
+import { type AttackStatusEffectResponse, type BattleCharacterInfo, type BattleCharacterType, type InitiativeResponse, type BattleTurnResponse, type BattleLogResponse, type AttackResponse, type StatusType, type AttackType, type Stance, type PictoEffectTracker, type DamageModifier, type StatusImmunity, type ElementResistance } from "./ResponseModel"
 
 export interface Battle {
     id: number
@@ -45,6 +45,7 @@ export interface AddBattleCharacterRequest {
     stainSlot4?: string | null
     perfectionRank?: string | null
     rankProgress?: number | null
+    bestialWheelPosition?: number | null
     initiative?: AddBattleCharacterInitiativeData,
     canRollInitiative: boolean
 }
@@ -82,6 +83,8 @@ export interface CreateAttackRequest {
     consumesForetell?: number  // Number of Foretell stacks to consume from target
     executionThreshold?: number  // If target HP% <= this, execute instantly (kill)
     skillType?: string  // "sun" or "moon" for Sciel's charge system
+    bestialWheelAdvance?: number  // Advances Monoco's Bestial Wheel by this many positions
+    ignoresShields?: boolean  // Damage goes through shields without removing them (Chevaliere Piercing)
 }
 
 export interface AttackStatusEffectRequest {
@@ -285,5 +288,92 @@ export class APIBattle {
             `battles/flee`,
             { playerId, playerBattleId }
         )
+    }
+
+    // ==================== AP/Energy Management ====================
+
+    static async giveAP(battleCharacterId: number, amount: number): Promise<void> {
+        await api.post<{ amount: number }, void>(
+            `battle/characters/${battleCharacterId}/ap`,
+            { amount }
+        )
+    }
+
+    static async getAP(battleCharacterId: number): Promise<number> {
+        return api.get<number>(`battle/characters/${battleCharacterId}/ap`)
+    }
+
+    // ==================== Picto Effect Tracking ====================
+
+    static async trackPictoEffect(
+        battleId: number,
+        battleCharacterId: number,
+        pictoName: string,
+        effectType: string
+    ): Promise<void> {
+        await api.post<{
+            battleId: number;
+            battleCharacterId: number;
+            pictoName: string;
+            effectType: string;
+        }, void>('battle/picto-effects/track', {
+            battleId,
+            battleCharacterId,
+            pictoName,
+            effectType
+        })
+    }
+
+    static async canActivatePictoEffect(
+        battleCharacterId: number,
+        pictoName: string
+    ): Promise<boolean> {
+        return api.get<boolean>(
+            `battle/picto-effects/check/${battleCharacterId}/${pictoName}`
+        )
+    }
+
+    static async resetTurnEffects(battleId: number): Promise<void> {
+        await api.post<{}, void>(`battle/picto-effects/reset-turn/${battleId}`, {})
+    }
+
+    // ==================== Damage Modifiers ====================
+
+    static async getModifiers(battleCharacterId: number): Promise<DamageModifier[]> {
+        return api.get<DamageModifier[]>(`battle/characters/${battleCharacterId}/modifiers`)
+    }
+
+    // ==================== Immunities & Resistances ====================
+
+    static async addImmunity(
+        battleCharacterId: number,
+        statusType: string,
+        immunityType: string
+    ): Promise<void> {
+        await api.post<{
+            statusType: string;
+            immunityType: string;
+        }, void>(`battle/characters/${battleCharacterId}/immunities`, {
+            statusType,
+            immunityType
+        })
+    }
+
+    static async getImmunities(battleCharacterId: number): Promise<StatusImmunity[]> {
+        return api.get<StatusImmunity[]>(`battle/characters/${battleCharacterId}/immunities`)
+    }
+
+    static async addResistance(
+        battleCharacterId: number,
+        element: string,
+        multiplier: number
+    ): Promise<void> {
+        await api.post<{
+            element: string;
+            multiplier: number;
+        }, void>(`battle/characters/${battleCharacterId}/resistances`, {
+            element,
+            multiplier
+        })
     }
 }

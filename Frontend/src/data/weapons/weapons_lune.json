@@ -562,7 +562,7 @@
     "name": "Troubadim",
     "attributes": {
       "power": 1140,
-      "element": "Sword",
+      "element": "Physical",
       "scaling": {
         "vitality": "B",
         "defense": "A"

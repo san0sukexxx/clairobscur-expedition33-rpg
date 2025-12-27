@@ -28,7 +28,8 @@ class BattleStatusController(
         private val battleTurnService: BattleTurnService,
         private val damageService: DamageService,
         private val battleTurnRepository: BattleTurnRepository,
-        private val objectMapper: ObjectMapper
+        private val objectMapper: ObjectMapper,
+        private val immunityService: com.example.demo.service.ImmunityService
 ) {
 
     @PostMapping("/resolve")
@@ -194,6 +195,27 @@ class BattleStatusController(
                         ?: return ResponseEntity.badRequest().build()
 
         if (bc.healthPoints <= 0) {
+            return ResponseEntity.noContent().build()
+        }
+
+        // Check if character is immune to this status
+        if (!immunityService.canApplyStatus(bc.id!!, body.effectType)) {
+            // Character is immune or resisted the status, log it and return
+            val battleId = bc.battleId ?: return ResponseEntity.badRequest().build()
+
+            val eventJson = objectMapper.writeValueAsString(
+                    mapOf(
+                            "battleCharacterId" to bc.id!!,
+                            "characterName" to bc.characterName,
+                            "statusType" to body.effectType,
+                            "result" to "immune_or_resisted"
+                    )
+            )
+
+            battleLogRepository.save(
+                    BattleLog(battleId = battleId, eventType = "STATUS_IMMUNE", eventJson = eventJson)
+            )
+
             return ResponseEntity.noContent().build()
         }
 

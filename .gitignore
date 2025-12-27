@@ -36,3 +36,9 @@ Frontend/public/assets/themes/default/
 .claude/
 
 api/database.db
+
+*.db-wal
+
+*.db
+
+*.db-shm

@@ -143,16 +143,21 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         setExpanded((prev) => ({ ...prev, [idx]: !prev[idx] }));
     }, []);
 
-    const highlight = (text: string) => {
-        // First, apply stain text rendering (converts "Mancha de X" to images)
-        const stainRendered = renderStainText(text);
+    const highlight = (text: string, skillId?: string) => {
+        // Only apply stain text rendering (converts "Mancha de X" to images) for Sciel's skills
+        const isScielSkill = skillId?.toLowerCase().includes("sciel") ?? false;
+        const stainRendered = isScielSkill ? renderStainText(text) : [text];
 
         // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
 
         // Add Verso's Perfection Ranks with their colors
         const rankTerms = ["Rank S", "Rank A", "Rank B", "Rank C", "Rank D"];
-        const allTerms = [...terms, ...rankTerms];
+
+        // Add Monoco's Bestial Wheel masks with their colors
+        const maskTerms = ["Máscara Onipotente", "Máscara Todopoderosa", "Máscara Lançadora", "Máscara de Conjurador", "Máscara Ágil", "Máscara Equilibrada", "Máscara Pesada"];
+
+        const allTerms = [...terms, ...rankTerms, ...maskTerms];
         const pattern = new RegExp(`\\b(${allTerms.join("|")})\\b`, "g");
 
         // Function to get rank color class
@@ -163,6 +168,20 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                 case "Rank B": return "text-blue-400 font-bold border-b-2 border-blue-400";
                 case "Rank C": return "text-amber-200 font-bold border-b-2 border-amber-200";
                 case "Rank D": return "text-gray-400 font-bold border-b-2 border-gray-400";
+                default: return "text-amber-300 font-semibold";
+            }
+        };
+
+        // Function to get mask color class
+        const getMaskColorClass = (mask: string): string => {
+            switch(mask) {
+                case "Máscara Onipotente": return "text-warning font-bold border-b-2 border-warning";
+                case "Máscara Todopoderosa": return "text-warning font-bold border-b-2 border-warning";
+                case "Máscara Lançadora": return "text-info font-bold border-b-2 border-info";
+                case "Máscara de Conjurador": return "text-info font-bold border-b-2 border-info";
+                case "Máscara Ágil": return "text-purple-600 font-bold border-b-2 border-purple-600";
+                case "Máscara Equilibrada": return "text-error font-bold border-b-2 border-error";
+                case "Máscara Pesada": return "text-success font-bold border-b-2 border-success";
                 default: return "text-amber-300 font-semibold";
             }
         };
@@ -179,6 +198,13 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                     // Apply rank-specific styling
                     return (
                         <span key={`${nodeIdx}-${chunkIdx}`} className={getRankColorClass(chunk)}>
+                            {chunk}
+                        </span>
+                    );
+                } else if (maskTerms.includes(chunk)) {
+                    // Apply mask-specific styling
+                    return (
+                        <span key={`${nodeIdx}-${chunkIdx}`} className={getMaskColorClass(chunk)}>
                             {chunk}
                         </span>
                     );
@@ -295,12 +321,32 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         }
     }
 
+    function getEffectiveCost(skill: SkillResponse): number {
+        // Get Monoco's Bestial Wheel position
+        const source = player?.fightInfo?.characters?.find(
+            c => c.battleID === player.fightInfo?.playerBattleID
+        );
+        const bestialWheelPosition = source?.bestialWheelPosition ?? -1;
+        const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+        const currentMask = wheelPattern[bestialWheelPosition] ?? "";
+        const isMonoco = source?.id.toLowerCase().includes("monoco") ?? false;
+
+        // Abbest Wind: Cost 0 MP on Máscara Ágil (purple) or Máscara Onipotente (gold)
+        if (isMonoco && skill.id === "monoco-abbest-wind" && !skill.isGradient && (currentMask === "purple" || currentMask === "gold")) {
+            return 0;
+        }
+
+        return skill.cost;
+    }
+
     function canUseSkill(skill: SkillResponse): boolean {
+        const effectiveCost = getEffectiveCost(skill);
+
         // Check MP/Gradient cost
         if (skill.isGradient) {
-            if (currentGradientCharges < skill.cost) return false;
+            if (currentGradientCharges < effectiveCost) return false;
         } else {
-            if (currentMP < skill.cost) return false;
+            if (currentMP < effectiveCost) return false;
         }
 
         // Check stain requirements (for skills like Elemental Genesis)
@@ -397,7 +443,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                                 </span>
                                             )}
                                             <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${selected.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                                                {selected.isGradient ? `${selected.cost} ${selected.cost === 1 ? 'carga' : 'cargas'}` : selected.cost}
+                                                {selected.isGradient ? `${getEffectiveCost(selected)} ${getEffectiveCost(selected) === 1 ? 'carga' : 'cargas'}` : getEffectiveCost(selected)}
                                             </span>
                                         </div>
 
@@ -457,7 +503,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                         >
                                             <div className="px-6 py-4">
                                                 <div className="whitespace-pre-line text-[15px] leading-snug text-neutral-200 break-words">
-                                                    {highlight(selected.description)}
+                                                    {highlight(selected.description, selected.id)}
                                                 </div>
                                             </div>
                                         </motion.div>

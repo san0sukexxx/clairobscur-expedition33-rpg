@@ -47,6 +47,9 @@ export function evaluateCondition(
         case "target-poisoned":
             return target.status?.some(s => s.effectName === "Plagued") ?? false;
 
+        case "target-fragile":
+            return target.status?.some(s => s.effectName === "Fragile") ?? false;
+
         case "self-hp-below-50":
             return source.healthPoints < (source.maxHealthPoints / 2);
 
@@ -62,6 +65,13 @@ export function evaluateCondition(
             return allCharacters
                 .filter(c => !c.isEnemy)
                 .every(c => c.healthPoints > 0);
+
+        case "heavy-mask":
+            // Check if Monoco's Bestial Wheel is on Heavy (green) mask
+            const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+            const bestialWheelPosition = source.bestialWheelPosition ?? -1;
+            const currentMask = wheelPattern[bestialWheelPosition] ?? "";
+            return currentMask === "green";
 
         default:
             console.warn(`Unknown condition: ${condition}`);
@@ -149,11 +159,21 @@ function resolveTargets(
                 .filter(c => c.isEnemy === primaryTarget.isEnemy)
                 .map(c => c.battleID);
 
+        case "ally":
+            // Ally can mean single ally or random ally depending on context
+            // For now, treat as single target (primaryTarget)
+            return [primaryTarget.battleID];
+
         case "all-allies":
             // Todos os aliados (mesma equipe do source, excluindo inimigos)
             return allCharacters
                 .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
                 .map(c => c.battleID);
+
+        case "random":
+            // For random targeting, return the primaryTarget as placeholder
+            // The actual random selection happens per hit in the attack logic
+            return [primaryTarget.battleID];
 
         case "self":
             // O próprio personagem

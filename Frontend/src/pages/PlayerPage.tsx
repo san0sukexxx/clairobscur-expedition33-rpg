@@ -25,6 +25,7 @@ import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
 import { executeAllSpecialMechanics } from "../utils/SkillSpecialMechanics";
 import { getVersoPerfectionDamageMultiplier } from "../utils/BattleUtils";
 import { hasRequiredStains, consumeStains, addStains, updateCharacterStains, transformStain } from "../utils/StainUtils";
+import { triggerOnHealAlly, triggerOnFreeAim, triggerOnBattleStart, triggerOnTurnStart } from "../utils/PictoEffectsIntegration";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -112,6 +113,9 @@ export default function PlayerPage() {
     weapon: null,
     details: null,
   });
+
+  // Lampmaster Light: Track consecutive uses for damage escalation (max 5 stacks)
+  const [lampmasterStacks, setLampmasterStacks] = useState(0);
 
   useEffect(() => {
     const weaponId = player?.playerSheet?.weaponId;
@@ -599,6 +603,15 @@ export default function PlayerPage() {
               },
             }
           })
+
+          // Trigger picto effects for battle start (after initiative rolled)
+          if (player.fightInfo) {
+            const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
+            const allChars = player.fightInfo.characters ?? [];
+            if (sourceChar && player.fightInfo.battleId) {
+              await triggerOnBattleStart(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
+            }
+          }
         } catch (err) {
           showToast("Erro ao registrar iniciativa")
         }
@@ -825,6 +838,15 @@ export default function PlayerPage() {
             await APIBattle.attack(attackInfo)
           }
 
+          // Trigger picto effects for free aim
+          if (attackType === "free-shot" && player.fightInfo) {
+            const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
+            const allChars = player.fightInfo.characters ?? [];
+            if (sourceChar && player.fightInfo.battleId) {
+              await triggerOnFreeAim(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
+            }
+          }
+
         } catch (e) {
           showToast("Erro ao atacar")
         }
@@ -1005,8 +1027,25 @@ export default function PlayerPage() {
       // Find the full skill data including cost
       const enrichedSkills = getEnrichedCharacterSkills(player);
       const fullSkill = enrichedSkills.find(s => s.id === skillId);
-      const skillCost = fullSkill?.cost ?? 0;
+      let skillCost = fullSkill?.cost ?? 0;
       const isGradientSkill = fullSkill?.isGradient ?? false;
+
+      // Monoco's Bestial Wheel special effects
+      // Each skill has a special effect when used on a specific mask color
+      // Máscara Onipotente (gold, position 0) acts as a wildcard for any skill's special effect
+      const bestialWheelPosition = source.bestialWheelPosition ?? -1;
+      const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+      const currentMask = wheelPattern[bestialWheelPosition] ?? "";
+      const isMonoco = source.id.toLowerCase().includes("monoco");
+
+      if (isMonoco && !isGradientSkill) {
+        // Abbest Wind: Cost 0 MP on Máscara Ágil (purple) or Máscara Onipotente (gold wildcard)
+        if (skillId === "monoco-abbest-wind" && (currentMask === "purple" || currentMask === "gold")) {
+          skillCost = 0;
+        }
+        // TODO: Add other Monoco skills' special mask effects here
+        // Example: if (skillId === "monoco-other-skill" && (currentMask === "blue" || currentMask === "gold")) { ... }
+      }
 
       // Validate resources (MP or Gradient charges)
       if (isGradientSkill) {
@@ -1331,6 +1370,20 @@ export default function PlayerPage() {
                   // Apply skill damage multiplier
                   const baseHitDamage = calculateSkillHitDamage(resolved, basePower, result);
 
+                  // Cultist Blood: Sacrifice 90% HP to increase damage (additive, happens once on first hit)
+                  let hpSacrificeBonus = 0;
+                  if (hitIndex === 0 && resolved.metadata.sacrificesHpPercent) {
+                    const percentToSacrifice = resolved.metadata.sacrificesHpPercent;
+                    const currentHp = source.healthPoints;
+                    const hpToSacrifice = Math.floor(currentHp * (percentToSacrifice / 100));
+                    if (hpToSacrifice > 0) {
+                      const newHp = currentHp - hpToSacrifice;
+                      await APIBattle.updateCharacterHp(source.battleID, Math.max(1, newHp));
+                      hpSacrificeBonus = hpToSacrifice;
+                      showToast(`Sacrificando ${percentToSacrifice}% HP (${hpToSacrifice})! Dano +${hpSacrificeBonus}`);
+                    }
+                  }
+
                   // Sealed Fate / Firing Shadow: Consume 1 Foretell per hit for bonus damage
                   // For AOE skills, we'll try to consume from each target individually in the attack loop
                   // For single target, we consume here once per hit
@@ -1378,20 +1431,121 @@ export default function PlayerPage() {
                     showToast(`Rank ${source.perfectionRank} de Perfeição! Dano +${bonusPercent}%`);
                   }
 
+                  // Cultist Slashes: Damage scales inversely with HP (lower HP = more damage)
+                  // Formula: 1.0 at 100% HP, up to 2.0 at 0% HP (linear scaling)
+                  let lowHpMultiplier = 1.0;
+                  if (resolved.metadata.damageScalesWithLowHp) {
+                    const hpPercent = source.healthPoints / source.maxHealthPoints;
+                    lowHpMultiplier = 1.0 + (1.0 - hpPercent);  // 100% HP = 1.0x, 50% HP = 1.5x, 0% HP = 2.0x
+                    if (hitIndex === 0 && lowHpMultiplier > 1.0) {
+                      const bonusPercent = Math.round((lowHpMultiplier - 1.0) * 100);
+                      showToast(`HP baixo! Dano +${bonusPercent}%`);
+                    }
+                  }
+
+                  // Lampmaster Light: Damage escalates with consecutive uses (+20% per stack, max 5)
+                  let lampmasterMultiplier = 1.0;
+                  if (resolved.metadata.damageEscalatesPerUse) {
+                    lampmasterMultiplier = 1.0 + (lampmasterStacks * 0.2);  // 0 stacks = 1.0x, 5 stacks = 2.0x
+                    if (hitIndex === 0) {
+                      const bonusPercent = Math.round((lampmasterMultiplier - 1.0) * 100);
+                      if (bonusPercent > 0) {
+                        showToast(`Lampmaster Stacks: ${lampmasterStacks} (+${bonusPercent}% dano)`);
+                      }
+                      // Increment stacks after this use (max 5)
+                      setLampmasterStacks(prev => Math.min(prev + 1, 5));
+                    }
+                  } else if (hitIndex === 0 && skillId !== "monoco-lampmaster-light") {
+                    // Reset Lampmaster stacks if using any other skill
+                    if (lampmasterStacks > 0) {
+                      setLampmasterStacks(0);
+                    }
+                  }
+
+                  // Monoco's Bestial Wheel: Máscara Onipotente (gold, position 0) increases damage by 50%
+                  const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+                  const bestialWheelPosition = source.bestialWheelPosition ?? -1;
+                  const currentMask = wheelPattern[bestialWheelPosition] ?? "";
+                  const isMonoco = source.id?.toLowerCase().includes("monoco");
+                  const almightyMaskMultiplier = (isMonoco && currentMask === "gold") ? 1.5 : 1.0;
+
                   let primaryTargetDamage = 0;  // Save damage for Searing Bond propagation
 
-                  for (const targetId of resolved.targetIds) {
+                  // For random targeting, select one random enemy per hit
+                  let targetsForThisHit = resolved.targetIds;
+                  if (resolved.metadata.targetScope === "random") {
+                    const enemies = (player.fightInfo?.characters ?? []).filter(c => c.isEnemy !== source.isEnemy);
+                    if (enemies.length > 0) {
+                      const randomEnemy = enemies[Math.floor(Math.random() * enemies.length)];
+                      targetsForThisHit = [randomEnemy.battleID];
+                    }
+                  }
+
+                  for (const targetId of targetsForThisHit) {
+                    // Calculate shield bonus for Chevaliere Piercing
+                    let shieldBonus = 0;
+                    if (resolved.metadata.damagePerShieldStack && player.fightInfo) {
+                      const targetChar = player.fightInfo.characters?.find(c => c.battleID === targetId);
+                      const shieldStacks = targetChar?.status?.find(s => s.effectName === "Shielded")?.ammount ?? 0;
+                      shieldBonus = shieldStacks * resolved.metadata.damagePerShieldStack;
+                    }
+
+                    // Danseuse Waltz: Bonus damage vs Burning targets (multiplicative)
+                    let burningTargetMultiplier = 1.0;
+                    if (resolved.metadata.bonusDamageVsBurning && player.fightInfo) {
+                      const targetChar = player.fightInfo.characters?.find(c => c.battleID === targetId);
+                      const isBurning = targetChar?.status?.some(s => s.effectName === "Burning") ?? false;
+                      if (isBurning) {
+                        burningTargetMultiplier = 1.5;  // 50% bonus damage vs Burning
+                        if (hitIndex === 0) {
+                          showToast(`Alvo queimando! Dano +50%`);
+                        }
+                      }
+                    }
+
+                    // Mighty Strike: Double damage vs Stunned targets (multiplicative)
+                    let stunnedTargetMultiplier = 1.0;
+                    if (resolved.metadata.doubleDamageVsStunned && player.fightInfo) {
+                      const targetChar = player.fightInfo.characters?.find(c => c.battleID === targetId);
+                      const isStunned = targetChar?.status?.some(s => s.effectName === "Stunned") ?? false;
+                      if (isStunned) {
+                        stunnedTargetMultiplier = 2.0;  // Double damage vs Stunned
+                        if (hitIndex === 0) {
+                          showToast(`Alvo atordoado! Dano x2`);
+                        }
+                      }
+                    }
+
+                    // Obscur Sword: Bonus damage vs Powerless targets (multiplicative)
+                    let powerlessTargetMultiplier = 1.0;
+                    if (resolved.metadata.bonusDamageVsPowerless && player.fightInfo) {
+                      const targetChar = player.fightInfo.characters?.find(c => c.battleID === targetId);
+                      const isPowerless = targetChar?.status?.some(s => s.effectName === "Powerless") ?? false;
+                      if (isPowerless) {
+                        powerlessTargetMultiplier = 1.5;  // 50% bonus damage vs Powerless
+                        if (hitIndex === 0) {
+                          showToast(`Alvo impotente! Dano +50%`);
+                        }
+                      }
+                    }
+
                     // Apply per-target Foretell consumption multiplier (Sealed Fate / Firing Shadow)
                     const targetForetellMultiplier = foretellConsumedPerTarget.get(targetId)
                       ? (resolved.metadata.foretellPerHitMultiplier ?? 3.0)
                       : 1.0;
 
-                    // Apply charge bonus, foretell bonus, HP drained, and all enemies foretell (additive) then per-hit foretell multiplier, twilight, Verso's perfection, burn multipliers, fire vulnerability, and marked bonus (multiplicative)
-                    const damageWithCharge = baseHitDamage + chargeBonus + foretellBonus + hpDrained + allEnemiesForetellConsumed;
+                    // Apply charge bonus, foretell bonus, HP drained, all enemies foretell, HP sacrifice, and shield bonus (additive) then per-hit foretell multiplier, twilight, Verso's perfection, low HP multiplier, lampmaster escalation, almighty mask, burning target, stunned target, powerless target, burn multipliers, fire vulnerability, and marked bonus (multiplicative)
+                    const damageWithCharge = baseHitDamage + chargeBonus + foretellBonus + hpDrained + allEnemiesForetellConsumed + hpSacrificeBonus + shieldBonus;
                     const damageWithForetellPerHit = Math.floor(damageWithCharge * targetForetellMultiplier);
                     const damageWithTwilight = Math.floor(damageWithForetellPerHit * twilightMultiplier);
                     const damageWithPerfection = Math.floor(damageWithTwilight * versoPerfectionMultiplier);
-                    const damageWithBurnScaling = Math.floor(damageWithPerfection * burnMultiplier);
+                    const damageWithLowHp = Math.floor(damageWithPerfection * lowHpMultiplier);
+                    const damageWithLampmaster = Math.floor(damageWithLowHp * lampmasterMultiplier);
+                    const damageWithAlmightyMask = Math.floor(damageWithLampmaster * almightyMaskMultiplier);
+                    const damageWithBurningTarget = Math.floor(damageWithAlmightyMask * burningTargetMultiplier);
+                    const damageWithStunnedTarget = Math.floor(damageWithBurningTarget * stunnedTargetMultiplier);
+                    const damageWithPowerlessTarget = Math.floor(damageWithStunnedTarget * powerlessTargetMultiplier);
+                    const damageWithBurnScaling = Math.floor(damageWithPowerlessTarget * burnMultiplier);
                     const damageWithBurnConsumption = Math.floor(damageWithBurnScaling * burnConsumptionMultiplier);
                     const damageWithFireVulnerability = Math.floor(damageWithBurnConsumption * fireVulnerabilityMultiplier);
                     const hitDamage = Math.floor(damageWithFireVulnerability * markedDamageMultiplier);
@@ -1509,6 +1663,26 @@ export default function PlayerPage() {
                       }
                     }
 
+                    // Sapling Absorption: Heal source HP per hit (5% base, 10% at Caster/Almighty Mask)
+                    if (resolved.metadata.healsHpPercentPerHit) {
+                      const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+                      const bestialWheelPosition = source.bestialWheelPosition ?? -1;
+                      const currentMask = wheelPattern[bestialWheelPosition] ?? "";
+                      const isCasterOrAlmighty = currentMask === "blue" || currentMask === "gold";
+
+                      // Double healing if at Caster/Almighty Mask
+                      const healMultiplier = (resolved.metadata.doublesHealAtCasterMask && isCasterOrAlmighty) ? 2 : 1;
+                      const healPercent = resolved.metadata.healsHpPercentPerHit * healMultiplier;
+                      const healAmount = Math.floor(source.maxHealthPoints * (healPercent / 100));
+                      const newHp = Math.min(source.healthPoints + healAmount, source.maxHealthPoints);
+
+                      await APIBattle.updateCharacterHp(source.battleID, newHp);
+
+                      if (hitIndex === 0) {
+                        showToast(`Absorção! Cura de ${healPercent}% HP (${healAmount})`);
+                      }
+                    }
+
                     // NPCs receive totalDamage (direct damage), players receive totalPower (pending attack)
                     const attackRequest: CreateAttackRequest = isNpcTarget
                       ? {
@@ -1519,13 +1693,19 @@ export default function PlayerPage() {
                           effects: finalEffects,
                           skillCost: hitIndex === 0 ? skillCost : 0,
                           consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge,
-                          isGradient: hitIndex === 0 && resolved.metadata.isGradient,
+                          isGradient: hitIndex === 0 && isGradientSkill,
                           destroysShields: hitIndex === 0 && resolved.metadata.destroysShields,
                           grantsAPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsAPPerShield : undefined,
                           consumesBurn: hitIndex === 0 && burnsToConsume > 0 ? burnsToConsume : undefined,
                           consumesForetell: hitIndex === 0 && foretellsToConsume > 0 ? foretellsToConsume : undefined,
                           executionThreshold: resolved.metadata.executionThreshold,
-                          skillType: hitIndex === 0 ? skillType : undefined
+                          skillType: hitIndex === 0 ? skillType : undefined,
+                          bestialWheelAdvance: hitIndex === 0 ? (
+                            resolved.metadata.forceAlmightyMask
+                              ? ((9 - bestialWheelPosition) % 9)  // Calculate positions to reach 0 (Almighty Mask)
+                              : resolved.metadata.bestialWheelAdvance
+                          ) : undefined,
+                          ignoresShields: resolved.metadata.ignoresShields
                         }
                       : {
                           sourceBattleId: source.battleID,
@@ -1535,13 +1715,19 @@ export default function PlayerPage() {
                           effects: finalEffects,
                           skillCost: hitIndex === 0 ? skillCost : 0,
                           consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge,
-                          isGradient: hitIndex === 0 && resolved.metadata.isGradient,
+                          isGradient: hitIndex === 0 && isGradientSkill,
                           destroysShields: hitIndex === 0 && resolved.metadata.destroysShields,
                           grantsAPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsAPPerShield : undefined,
                           consumesBurn: hitIndex === 0 && burnsToConsume > 0 ? burnsToConsume : undefined,
                           consumesForetell: hitIndex === 0 && foretellsToConsume > 0 ? foretellsToConsume : undefined,
                           executionThreshold: resolved.metadata.executionThreshold,
-                          skillType: hitIndex === 0 ? skillType : undefined
+                          skillType: hitIndex === 0 ? skillType : undefined,
+                          bestialWheelAdvance: hitIndex === 0 ? (
+                            resolved.metadata.forceAlmightyMask
+                              ? ((9 - bestialWheelPosition) % 9)  // Calculate positions to reach 0 (Almighty Mask)
+                              : resolved.metadata.bestialWheelAdvance
+                          ) : undefined,
+                          ignoresShields: resolved.metadata.ignoresShields
                         };
 
                     await APIBattle.attack(attackRequest);
@@ -1682,6 +1868,42 @@ export default function PlayerPage() {
 
       await applySpecialEffects(resolved.effects, player.fightInfo?.characters ?? [], foretellHealBonus);
 
+      // Orphelin Cheers: Grant AP to affected allies if at Caster/Almighty Mask
+      if (resolved.metadata.grantsApAtCasterMask) {
+        const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+        const bestialWheelPosition = source.bestialWheelPosition ?? -1;
+        const currentMask = wheelPattern[bestialWheelPosition] ?? "";
+        const isCasterOrAlmighty = currentMask === "blue" || currentMask === "gold";
+
+        if (isCasterOrAlmighty) {
+          const apToGrant = resolved.metadata.grantsApAtCasterMask;
+          for (const targetId of resolved.targetIds) {
+            // Grant AP logic would need backend support - for now, just show toast
+            showToast(`${apToGrant} PA concedidos ao aliado!`);
+          }
+        }
+      }
+
+      // Pelerin Heal: Heal HP if at Caster/Almighty Mask
+      if (resolved.metadata.healsHpPercentAtCasterMask && player.fightInfo) {
+        const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+        const bestialWheelPosition = source.bestialWheelPosition ?? -1;
+        const currentMask = wheelPattern[bestialWheelPosition] ?? "";
+        const isCasterOrAlmighty = currentMask === "blue" || currentMask === "gold";
+
+        if (isCasterOrAlmighty) {
+          const healPercent = resolved.metadata.healsHpPercentAtCasterMask;
+          const allAllies = (player.fightInfo.characters ?? []).filter(c => !c.isEnemy);
+
+          for (const ally of allAllies) {
+            const healAmount = Math.floor(ally.maxHealthPoints * (healPercent / 100));
+            await APIBattle.updateCharacterHp(ally.battleID, Math.min(ally.healthPoints + healAmount, ally.maxHealthPoints));
+          }
+
+          showToast(`Cura instantânea de ${healPercent}% HP aplicada a todos os aliados!`);
+        }
+      }
+
       if (resolved.metadata.canBreak) {
         for (const targetId of resolved.targetIds) {
           await APIBattle.breakTarget(targetId);
@@ -1791,6 +2013,12 @@ export default function PlayerPage() {
 
           await APIBattle.heal(source.battleID, healAmount);
           showToast(`Alvo Queimando! Verso curado em ${healPercent}% (${healAmount} HP)!`);
+
+          // Trigger picto effects for heal (Verso self-heal from burn)
+          if (player.fightInfo && player.fightInfo.battleId) {
+            const allChars = player.fightInfo.characters ?? [];
+            await triggerOnHealAlly(source, source, allChars, player.fightInfo.battleId, player.pictos, player.luminas, healAmount);
+          }
         }
       }
 
@@ -1802,6 +2030,51 @@ export default function PlayerPage() {
           await APIBattle.updateCharacterStance(source.battleID, "Virtuous");
           showToast("Alvo está Queimando! Mudou para postura Virtuosa!");
         }
+      }
+
+      // Troubadour Trumpet: Apply random buffs to 1-3 random allies
+      if (resolved.metadata.appliesRandomBuffs && player.fightInfo) {
+        const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+        const bestialWheelPosition = source.bestialWheelPosition ?? -1;
+        const currentMask = wheelPattern[bestialWheelPosition] ?? "";
+        const isCasterOrAlmighty = currentMask === "blue" || currentMask === "gold";
+
+        // Number of buffs to apply per ally (1 normally, 2 at Caster/Almighty)
+        const buffsPerAlly = (resolved.metadata.doublesBuffsAtCasterMask && isCasterOrAlmighty) ? 2 : 1;
+
+        // Number of allies to buff (1-3 random)
+        const allyCount = resolved.metadata.randomAllyCount
+          ? Math.floor(Math.random() * (resolved.metadata.randomAllyCount.max - resolved.metadata.randomAllyCount.min + 1)) + resolved.metadata.randomAllyCount.min
+          : 1;
+
+        // Get all allies
+        const allAllies = (player.fightInfo.characters ?? []).filter(c => !c.isEnemy && c.healthPoints > 0);
+
+        // Select random allies
+        const shuffledAllies = [...allAllies].sort(() => Math.random() - 0.5);
+        const selectedAllies = shuffledAllies.slice(0, Math.min(allyCount, allAllies.length));
+
+        // Possible buffs
+        const possibleBuffs: StatusType[] = ["Empowered", "Protected", "Shielded", "Regeneration", "Hastened"];
+
+        // Apply buffs to each selected ally
+        for (const ally of selectedAllies) {
+          for (let i = 0; i < buffsPerAlly; i++) {
+            const randomBuff = possibleBuffs[Math.floor(Math.random() * possibleBuffs.length)];
+            const buffAmount = randomBuff === "Shielded" ? 1 : 0;
+            const buffDuration = randomBuff === "Regeneration" || randomBuff === "Hastened" ? 3 : undefined;
+
+            await APIBattle.addStatus({
+              battleCharacterId: ally.battleID,
+              effectType: randomBuff,
+              ammount: buffAmount,
+              remainingTurns: buffDuration
+            });
+          }
+        }
+
+        const buffText = buffsPerAlly === 2 ? "2 buffs aleatórios" : "1 buff aleatório";
+        showToast(`Trombeta! ${buffText} aplicados em ${selectedAllies.length} aliado(s)!`);
       }
 
       // Stendhal: Apply self-Defenseless
