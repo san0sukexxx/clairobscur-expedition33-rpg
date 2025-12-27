@@ -4,6 +4,7 @@ import com.example.demo.dto.AddBattleCharacterRequest
 import com.example.demo.dto.UpdateHpRequest
 import com.example.demo.dto.UpdateMpRequest
 import com.example.demo.dto.UpdateStanceRequest
+import com.example.demo.dto.UpdateStainsRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.service.BattleCharacterService
 import jakarta.validation.Valid
@@ -59,6 +60,15 @@ class BattleCharacterController(private val service: BattleCharacterService) {
             @RequestBody body: UpdateStanceRequest
     ): ResponseEntity<Void> {
         service.updateCharacterStance(id, body.newStance)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/stains")
+    fun updateCharacterStains(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateStainsRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterStains(id, body.stainSlot1, body.stainSlot2, body.stainSlot3, body.stainSlot4)
         return ResponseEntity.noContent().build()
     }
 }

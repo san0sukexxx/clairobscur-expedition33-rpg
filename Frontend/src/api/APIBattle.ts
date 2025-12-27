@@ -252,6 +252,16 @@ export class APIBattle {
         )
     }
 
+    static async updateStains(
+        id: number,
+        stains: { stainSlot1: string | null; stainSlot2: string | null; stainSlot3: string | null; stainSlot4: string | null }
+    ): Promise<void> {
+        await api.put<typeof stains, void>(
+            `battles/characters/${id}/stains`,
+            stains
+        )
+    }
+
     static async flee(playerId: number, playerBattleId: number): Promise<void> {
         await api.post<{ playerId: number, playerBattleId: number }, void>(
             `battles/flee`,

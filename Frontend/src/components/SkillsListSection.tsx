@@ -7,6 +7,7 @@ import type { GetPlayerResponse } from "../api/APIPlayer";
 import { getPlayerHasSkill, getSkillById, getSkillIsBlocked, getEnrichedCharacterSkills, calculateUsedSkillPoints, hasPrerequisitesFulfilled } from "../utils/SkillUtils";
 import { calculateSkillPoints } from "../utils/PlayerCalculator";
 import { APISkill } from "../api/APISkill";
+import { renderStainText } from "../utils/StainTextUtils";
 
 export interface SkillsListTabProps {
     player: GetPlayerResponse | null;
@@ -86,17 +87,30 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
     }
 
     const highlight = (text: string) => {
+        // First, apply stain text rendering (converts "Mancha de X" to images)
+        const stainRendered = renderStainText(text);
+
+        // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
         const pattern = new RegExp(`\\b(${terms.join("|")})\\b`, "g");
-        return text.split(pattern).map((chunk, i) =>
-            terms.includes(chunk) ? (
-                <span key={i} className="text-amber-300 font-semibold">
-                    {chunk}
-                </span>
-            ) : (
-                <React.Fragment key={i}>{chunk}</React.Fragment>
-            )
-        );
+
+        return stainRendered.map((node, nodeIdx) => {
+            // If it's already a React element (stain image), keep it as is
+            if (typeof node !== "string") {
+                return <React.Fragment key={`stain-${nodeIdx}`}>{node}</React.Fragment>;
+            }
+
+            // Otherwise, apply term highlighting to text chunks
+            return node.split(pattern).map((chunk, chunkIdx) =>
+                terms.includes(chunk) ? (
+                    <span key={`${nodeIdx}-${chunkIdx}`} className="text-amber-300 font-semibold">
+                        {chunk}
+                    </span>
+                ) : (
+                    <React.Fragment key={`${nodeIdx}-${chunkIdx}`}>{chunk}</React.Fragment>
+                )
+            );
+        });
     };
 
     return (

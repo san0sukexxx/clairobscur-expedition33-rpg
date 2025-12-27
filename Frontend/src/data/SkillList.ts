@@ -91,8 +91,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Electrify",
     cost: 1,
-    unlockCost: 0,  // Wiki: Not documented, likely 0 (unlocks via prerequisite)
-    description: "Deals low single target Lightning damage. 3 hits",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Causa dano baixo de Raio a um único alvo. 3 acertos.\n\nConsome Fogo para gerar uma Mancha de Luz. Acertos críticos adicionam um acerto extra.\n\nUsar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz.",
     image: "Lune_Electrify.webp",
     preRequisite: ["lune-thunderfall"]
   },
@@ -101,8 +101,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Immolation",
     cost: 2,
-    unlockCost: 0,  // Starting skill - no unlock cost
-    description: "Deals low single target Fire damage and 3 Burn. 1 hit",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 acerto.\n\nConsome Gelo para causar dano aumentado.\n\nUsar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz.",
     image: "Lune_Immolation.webp"
   },
   {
@@ -110,8 +110,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Ice Lance",
     cost: 4,
-    unlockCost: 0,  // Starting skill - no unlock cost
-    description: "Deals medium single target Ice damage that Slows the target. 1 Hit",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 acerto.\n\nConsome Terra para causar dano aumentado.\n\nUsar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz.",
     image: "Lune_IceGust.webp"
   },
   {
@@ -119,8 +119,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Earth Rising",
     cost: 3,
-    unlockCost: 1,  // Wiki: 1 Required Skill Point
-    description: "Deals low Earth damage to all enemies. 1 hit",
+    unlockCost: 1,
+    description: "Efeito da Habilidade: Causa dano baixo de Terra a todos os inimigos. 1 acerto.\n\nConsome Raio para causar dano aumentado.\n\nUsar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz.",
     image: "Lune_EarthRising.webp",
     preRequisite: ["lune-ice-lance"]
   },
@@ -129,8 +129,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Thermal Transfer",
     cost: 2,
-    unlockCost: 0,  // Wiki: Not documented, likely 0 (unlocks via prerequisite)
-    description: "Deals low single target Ice damage. 2 hits. Gains 4 AP if target Burning",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Causa dano baixo de Gelo a um único alvo. 2 acertos. Ganha 4 PA se o alvo estiver Queimando.\n\nConsome 2 Manchas de Terra para jogar um segundo turno.\n\nUsar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz.",
     image: "Lune_ThermalTransfer.webp",
     preRequisite: ["lune-earth-rising"]
   },
@@ -139,8 +139,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Thunderfall",
     cost: 5,
-    unlockCost: 0,  // Wiki: Not documented, likely 0 (unlocks via prerequisite)
-    description: "Deals medium Lightning damage to random enemies. 2-6 hits",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Causa dano médio de Raio em inimigos aleatórios. 2-6 acertos.\n\nConsome Fogo para causar dano aumentado. Acertos críticos adicionam um acerto extra.\n\nUsar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz.",
     image: "Lune_Thunderfall.webp",
     preRequisite: ["lune-immolation"]
   },
@@ -149,8 +149,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Wildfire",
     cost: 4,
-    unlockCost: 2,  // Wiki: 2 Required Skill Points
-    description: "Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burn",
+    unlockCost: 2,
+    description: "Efeito da Habilidade: Causa dano médio de Fogo a todos os inimigos. 1 acerto. Aplica 3 Queimaduras.\n\nConsome 2 Manchas de Gelo para causar dano aumentado.\n\nUsar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz.",
     image: "Lune_Wildfire.webp",
     preRequisite: ["lune-thunderfall"]
   },
@@ -159,8 +159,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Mayhem",
     cost: 3,
-    unlockCost: 0,  // Wiki: Not documented, likely 0 (unlocks via prerequisites)
-    description: "Consumes all Stains to deal high elemental damage to the target",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Consome todas as Manchas para causar dano elemental alto ao alvo.\n\nPode causar Break se 4 Manchas forem consumidas.",
     image: "Lune_Mayhem.webp",
     preRequisite: ["lune-electrify","lune-thermal-transfer"]
   },
@@ -169,8 +169,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Elemental Trick",
     cost: 3,
-    unlockCost: 4,  // Wiki: 4 Required Skill Points
-    description: "Deals low single target Ice, Fire, Lightning, and Earth damage. 4 hits",
+    unlockCost: 4,
+    description: "Efeito da Habilidade: Causa dano baixo de Gelo, Fogo, Raio e Terra a um único alvo. 4 acertos.\n\nAcertos críticos geram a Mancha correspondente ao elemento.",
     image: "Lune_ElementalTrick.webp",
     preRequisite: ["lune-mayhem"]
   },
@@ -179,8 +179,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Elemental Genesis",
     cost: 4,
-    unlockCost: 10,  // Wiki: 10 Required Skill Points
-    description: "Deals extreme damage to all enemies. 8 hits",
+    unlockCost: 10,
+    description: "Efeito da Habilidade: Causa dano extremo a todos os inimigos. 8 acertos. Cada acerto causa dano em um elemento aleatório.\n\nRequer Raio, Terra, Fogo e Gelo para lançar.",
     image: "Lune_ElementalGenesis.webp",
     preRequisite: ["lune-elemental-trick"]
   },
@@ -189,8 +189,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Crippling Tsunami",
     cost: 5,
-    unlockCost: 6,  // Wiki: 6 Required Skill Points
-    description: "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns",
+    unlockCost: 6,
+    description: "Efeito da Habilidade: Causa dano médio de Gelo a todos os inimigos. 1 acerto. Aplica Desaceleração por 3 turnos.\n\nConsome todos os três tipos de Manchas para causar dano muito aumentado.\n\nUsar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz.",
     image: "Lune_CripplingTsunami.webp",
     preRequisite: ["lune-thermal-transfer"]
   },
@@ -199,8 +199,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Rockslide",
     cost: 5,
-    unlockCost: 2,  // Wiki: 2 Required Skill Points
-    description: "Deals medium single target Earth damage. 2 hits. Can Break",
+    unlockCost: 2,
+    description: "Efeito da Habilidade: Causa dano médio de Terra a um único alvo. 2 acertos. Pode causar Break.\n\nConsome todos os três tipos de Manchas para causar dano muito aumentado.\n\nUsar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz.",
     image: "Lune_Rockslide.webp",
     preRequisite: ["lune-earth-rising"]
   },
@@ -209,8 +209,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Crustal Crush",
     cost: 7,
-    unlockCost: 6,  // Wiki: 6 Required Skill Points
-    description: "Deals High single target Earth and Break damage. 5 hits",
+    unlockCost: 6,
+    description: "Efeito da Habilidade: Causa dano alto de Terra e dano de Break a um único alvo. 5 acertos.\n\nConsome 2 Manchas de Raio para causar dano aumentado.\n\nUsar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz.",
     image: "Lune_CrustalCrush.webp",
     preRequisite: ["lune-rockslide"]
   },
@@ -219,8 +219,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Healing Light",
     cost: 3,
-    unlockCost: 0,  // Wiki: No unlock cost (unlocks via prerequisites)
-    description: "Heals the targeted Ally and dispels Status Effects",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Cura o aliado alvo e dissipa Efeitos de Status.\n\nConsome 2 Manchas de Terra para custar 0 PA.\n\nUsar esta habilidade concede 1 Mancha de Luz.",
     image: "Lune_HealingLight.webp",
     preRequisite: ["lune-ice-lance","lune-immolation"]
   },
@@ -229,8 +229,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Lightning Dance",
     cost: 7,
-    unlockCost: 6,  // Wiki: 6 Required Skill Points
-    description: "Deals very high single target Lightning damage. 6 hits",
+    unlockCost: 6,
+    description: "Efeito da Habilidade: Causa dano muito alto de Raio a um único alvo. 6 acertos.\n\nConsome todos os três tipos de Manchas para causar dano muito aumentado. Acertos críticos adicionam um acerto extra.\n\nUsar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz.",
     image: "Lune_LightningDance.webp",
     preRequisite: ["lune-electrify"]
   },
@@ -239,8 +239,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Storm Caller",
     cost: 6,
-    unlockCost: 8,  // Wiki: 8 Required Skill Points
-    description: "All enemies receive medium Lightning damage at turn end",
+    unlockCost: 8,
+    description: "Efeito da Habilidade: Todos os inimigos recebem dano médio de Raio no fim do turno e dano baixo quando recebem dano. Duração: 3 turnos.\n\nConsome 2 Manchas de Fogo para dobrar os ataques de trovão no fim do turno.\n\nUsar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz.",
     image: "Lune_StormCaller.webp",
     preRequisite: ["lune-lightning-dance"]
   },
@@ -249,8 +249,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Terraquake",
     cost: 5,
-    unlockCost: 10,  // Wiki: 10 Required Skill Points
-    description: "Deals low Earth damage and Break damage to all enemies every turn",
+    unlockCost: 10,
+    description: "Efeito da Habilidade: Causa dano baixo de Terra e dano de Break a todos os inimigos a cada turno. Duração: 3 turnos.\n\nConsome 2 Manchas de Raio para estender a duração para 5 turnos.\n\nUsar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz.",
     image: "Lune_Terraquake.webp",
     preRequisite: ["lune-crustal-crush"]
   },
@@ -259,8 +259,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Typhoon",
     cost: 8,
-    unlockCost: 8,  // Wiki: 8 Required Skill Points
-    description: "On turn start, deals high Ice damage to all enemies and Heals allies",
+    unlockCost: 8,
+    description: "Efeito da Habilidade: No início do turno, causa dano alto de Gelo a todos os inimigos e cura aliados.\n\nConsome 2 Manchas de Terra para estender a duração de 3 para 5 turnos.\n\nUsar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz.",
     image: "Lune_Typhoon.webp",
     preRequisite: ["lune-crippling-tsunami"]
   },
@@ -269,8 +269,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Rebirth",
     cost: 5,
-    unlockCost: 4,  // Wiki: 4 Required Skill Points
-    description: "Revives an ally with 30-70% Health and 2 additional AP",
+    unlockCost: 4,
+    description: "Efeito da Habilidade: Revive um aliado com 30-70% de Vida e 2 PA adicionais.\n\nConsome 3 Manchas de Raio para custar 0 PA.\n\nUsar esta habilidade concede 1 Mancha de Luz.",
     image: "Lune_Rebirth.webp",
     preRequisite: ["lune-healing-light"]
   },
@@ -279,8 +279,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Revitalization",
     cost: 5,
-    unlockCost: 6,  // Wiki: 6 Required Skill Points
-    description: "Heals 1-3 allies by 40-60% Health",
+    unlockCost: 6,
+    description: "Efeito da Habilidade: Cura 1-3 aliados em 40-60% de Vida.\n\nConsome 3 Manchas de Fogo para também aplicar Regeneração por 3 turnos.\n\nUsar esta habilidade concede 1 Mancha de Luz.",
     image: "Lune_Revitalization.webp",
     preRequisite: ["lune-rebirth"]
   },
@@ -289,8 +289,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Fire Rage",
     cost: 5,
-    unlockCost: 6,  // Wiki: 6 Required Skill Points
-    description: "Deals increasingly high Fire damage to all enemies",
+    unlockCost: 6,
+    description: "Efeito da Habilidade: Causa dano alto de Fogo crescente a todos os inimigos a cada turno até Lune receber dano.\n\nConsome 2 Manchas de Gelo para causar dano aumentado.\n\nUsar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz.",
     image: "Lune_FireRage.webp",
     preRequisite: ["lune-wildfire"]
   },
@@ -299,8 +299,8 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Hell",
     cost: 9,
-    unlockCost: 10,  // Wiki: 10 Required Skill Points
-    description: "Deals very high Fire damage with 5 Burn per hit to all enemies. 2 hits",
+    unlockCost: 10,
+    description: "Efeito da Habilidade: Causa dano muito alto de Fogo aplicando 5 Queimaduras por acerto a todos os inimigos. 2 acertos.\n\nConsome todos os três tipos de Manchas para causar dano muito aumentado.\n\nUsar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz.",
     image: "Lune_Hell.webp",
     preRequisite: ["lune-fire-rage"]
   },
@@ -309,9 +309,10 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Sky Break",
     cost: 3,
-    unlockCost: 0,  // Wiki: No unlock cost (Relationship Level 7 with Lune)
-    description: "Deals extreme damage to all enemies. 1 hit. Can Break",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Causa dano extremo a todos os inimigos. 1 acerto. Pode causar Break.\n\nO elemento depende de qual Mancha Lune possui mais.\n\nUsar esta habilidade concede 3 Manchas de Luz.",
     isGradient: true,
+    masterUnlock: true,
     image: "Lune_SkyBreak.webp"
   },
   {
@@ -319,9 +320,10 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Tree of Life",
     cost: 2,
-    unlockCost: 0,  // Wiki: No unlock cost (Relationship Level 4 with Lune)
-    description: "Cleanses all Status Effects and Heals all allies",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Remove todos os Efeitos de Status e cura todos os aliados.\n\nUsar esta habilidade concede 1 Mancha de Luz.",
     isGradient: true,
+    masterUnlock: true,
     image: "Lune_TreeOfLife.webp"
   },
   {
@@ -329,9 +331,10 @@ export const SkillsList: SkillResponse[] = [
     character: "lune",
     name: "Tremor",
     cost: 1,
-    unlockCost: 0,  // Wiki: No unlock cost (auto-unlocked with Gradient Skills feature)
-    description: "Deals high Earth damage to all enemies. 1 hit. Removes all enemies' Shields",
+    unlockCost: 0,
+    description: "Efeito da Habilidade: Causa dano alto de Terra a todos os inimigos. 1 acerto. Remove todos os Escudos dos inimigos.\n\nUsar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz.",
     isGradient: true,
+    masterUnlock: true,
     image: "Lune_Tremor.webp"
   },
 
@@ -912,6 +915,7 @@ export const SkillsList: SkillResponse[] = [
     unlockCost: 3,
     description: "Gradient skill. Deals damage with enhanced effects.",
     isGradient: true,
+    masterUnlock: true,
     image: "Verso_AngelsEyes.webp"
   },
   {

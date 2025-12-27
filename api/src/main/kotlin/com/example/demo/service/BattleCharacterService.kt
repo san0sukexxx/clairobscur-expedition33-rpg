@@ -203,4 +203,25 @@ class BattleCharacterService(
                         BattleLog(battleId = battleId, eventType = "STANCE_CHANGED", eventJson = null)
                 )
         }
+
+        @Transactional
+        fun updateCharacterStains(id: Int, stainSlot1: String?, stainSlot2: String?, stainSlot3: String?, stainSlot4: String?) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                entity.stainSlot1 = stainSlot1
+                entity.stainSlot2 = stainSlot2
+                entity.stainSlot3 = stainSlot3
+                entity.stainSlot4 = stainSlot4
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "STAINS_CHANGED", eventJson = null)
+                )
+        }
 }

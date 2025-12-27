@@ -172,35 +172,44 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                 )}
 
                 {/* Lune's Stain System */}
-                {ch.id.toLowerCase().includes("lune") && (
-                    <div className="mt-2 flex items-center gap-2 text-xs">
-                        <span className="opacity-70 uppercase">Manchas</span>
-                        <div className="flex items-center gap-1.5">
-                            {[ch.stainSlot1, ch.stainSlot2, ch.stainSlot3, ch.stainSlot4].map((stain, idx) => {
-                                if (!stain) {
-                                    return (
-                                        <div
-                                            key={idx}
-                                            className="w-5 h-5 rounded-full border-2 border-base-300 bg-base-200/30"
-                                            title="Empty Slot"
-                                        />
-                                    );
-                                }
+                {ch.id.toLowerCase().includes("lune") && (() => {
+                    const stains = [ch.stainSlot1, ch.stainSlot2, ch.stainSlot3, ch.stainSlot4];
+                    const hasAnyStain = stains.some(s => s !== null && s !== undefined);
 
-                                const stainLower = stain.toLowerCase();
-                                return (
-                                    <img
-                                        key={idx}
-                                        src={`/stains/${stainLower}-stain.png`}
-                                        alt={stain}
-                                        title={`${stain} Stain`}
-                                        className="w-5 h-5 object-contain"
-                                    />
-                                );
-                            })}
+                    return (
+                        <div className="mt-2 flex items-center gap-2 text-xs">
+                            <span className="opacity-70 uppercase">Manchas</span>
+                            {!hasAnyStain ? (
+                                <div className="badge badge-ghost badge-sm opacity-60">Nenhuma</div>
+                            ) : (
+                                <div className="flex items-center gap-1.5">
+                                    {stains.map((stain, idx) => {
+                                        if (!stain) {
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className="w-5 h-5 rounded-full border-2 border-base-300 bg-base-200/30"
+                                                    title="Empty Slot"
+                                                />
+                                            );
+                                        }
+
+                                        const stainLower = stain.toLowerCase();
+                                        return (
+                                            <img
+                                                key={idx}
+                                                src={`/stains/${stainLower}-stain.png`}
+                                                alt={stain}
+                                                title={`${stain} Stain`}
+                                                className="w-5 h-5 object-contain"
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
-                    </div>
-                )}
+                    );
+                })()}
             </div>
         </div>
     );

@@ -23,6 +23,7 @@ import { resolveSkill, calculateSkillHitDamage, applySpecialEffects, getStatusEf
 import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
 import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
 import { executeAllSpecialMechanics } from "../utils/SkillSpecialMechanics";
+import { hasRequiredStains, consumeStains, addStains, updateCharacterStains, transformStain } from "../utils/StainUtils";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -1015,6 +1016,43 @@ export default function PlayerPage() {
         }
       }
 
+      // Validate stain requirements (ONLY for skills that explicitly require all 4 stains)
+      if (!hasRequiredStains(source, skillMetadata)) {
+        // Only block if skill requires all 4 elemental stains (e.g., Elemental Genesis)
+        if (skillMetadata.requiresAllStains) {
+          showToast("Requer todas as 4 manchas elementais (Raio, Terra, Fogo, Gelo)!");
+          setPendingSkillId(null);
+          setIsSelectingSkillTarget(false);
+          setIsExecutingSkill(false);
+          return;
+        }
+        // Note: consumesStains is OPTIONAL - skill can be used without stains for base effect
+      }
+
+      // Try to consume stains if available (for bonus effects)
+      let stainsConsumed = false;
+      let currentStainsAfterConsumption: [string | null, string | null, string | null, string | null] = [
+        source.stainSlot1 ?? null,
+        source.stainSlot2 ?? null,
+        source.stainSlot3 ?? null,
+        source.stainSlot4 ?? null
+      ];
+
+      if (skillMetadata.consumesStains || skillMetadata.requiresAllStains) {
+        const newStains = consumeStains(source, skillMetadata);
+
+        // Check if any stains were actually consumed (compare arrays)
+        const originalStains = [source.stainSlot1, source.stainSlot2, source.stainSlot3, source.stainSlot4];
+        const stainsChanged = originalStains.some((stain, idx) => stain !== newStains[idx]);
+
+        if (stainsChanged) {
+          await updateCharacterStains(source.battleID, newStains);
+          stainsConsumed = true;
+          currentStainsAfterConsumption = newStains; // Save stains after consumption
+          await checkPlayerLoop(); // Update frontend immediately
+        }
+      }
+
       const resolved = resolveSkill(
         skillId,
         source,
@@ -1680,6 +1718,58 @@ export default function PlayerPage() {
         allCharacters: player.fightInfo?.characters ?? [],
         showToast
       }, mpToGrant);
+
+      // Gain stains after skill execution
+      if (skillMetadata.gainsStains && skillMetadata.gainsStains.length > 0) {
+        // Use stains after consumption (not from player state which might be stale)
+        const newStains = addStains(currentStainsAfterConsumption, skillMetadata.gainsStains);
+        await updateCharacterStains(source.battleID, newStains);
+        await checkPlayerLoop(); // Update frontend immediately
+      }
+
+      // Handle Elemental Trick: Gain random stain on crit
+      if (skillMetadata.gainsStainOnCrit) {
+        const critRolls = countCriticalRolls(resolved.lastDiceResult ?? []);
+        if (critRolls > 0) {
+          const updatedSource = player.fightInfo?.characters?.find(
+            c => c.battleID === player.fightInfo?.playerBattleID
+          );
+
+          if (updatedSource) {
+            const randomStains = ["Lightning", "Earth", "Fire", "Ice"] as const;
+            const randomStain = randomStains[Math.floor(Math.random() * randomStains.length)];
+
+            const currentStains: [string | null, string | null, string | null, string | null] = [
+              updatedSource.stainSlot1 ?? null,
+              updatedSource.stainSlot2 ?? null,
+              updatedSource.stainSlot3 ?? null,
+              updatedSource.stainSlot4 ?? null
+            ];
+
+            const newStains = addStains(currentStains, [randomStain]);
+            await updateCharacterStains(source.battleID, newStains);
+            await checkPlayerLoop(); // Update frontend immediately
+
+            showToast(`Crítico! Mancha ${randomStain} ganha!`);
+          }
+        }
+      }
+
+      // Handle Electrify: Transform Fire to Light
+      if (skillMetadata.transformsStainToLight) {
+        const updatedSource = player.fightInfo?.characters?.find(
+          c => c.battleID === player.fightInfo?.playerBattleID
+        );
+
+        if (updatedSource) {
+          const { from, to } = skillMetadata.transformsStainToLight;
+          const newStains = transformStain(updatedSource, from, to);
+          await updateCharacterStains(source.battleID, newStains);
+          await checkPlayerLoop(); // Update frontend immediately
+
+          showToast(`Mancha ${from} transformada em ${to}!`);
+        }
+      }
 
       setPendingSkillId(null);
       setIsSelectingSkillTarget(false);

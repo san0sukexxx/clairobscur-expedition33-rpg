@@ -70,6 +70,15 @@ export interface SkillMetadata {
     grantsExtraTurn?: boolean;           // Grants an extra turn to the user (Card Weaver - shows toast only)
     cleansesAndCopiesBuffs?: boolean;    // Cleanses all debuffs from target and copies buffs to other allies (Dark Cleansing)
     randomAllyCount?: { min: number; max: number };  // Applies to random number of allies (Rush: 1-3)
+
+    // Lune's Stain System
+    consumesStains?: Array<{ stain: "Lightning" | "Earth" | "Fire" | "Ice"; count: number }>;  // Stains consumed for enhanced effect
+    gainsStains?: Array<"Lightning" | "Earth" | "Fire" | "Ice" | "Light">;  // Stains gained after using skill
+    requiresAllStains?: boolean;         // Requires Lightning, Earth, Fire, and Ice to cast (Elemental Genesis)
+    stainDeterminedElement?: boolean;    // Element determined by stain composition (Sky Break)
+    canBreakWithStains?: boolean;        // Can Break if 4 stains consumed (Mayhem)
+    gainsStainOnCrit?: boolean;          // Gains corresponding stain on critical hits (Elemental Trick)
+    transformsStainToLight?: { from: "Fire"; to: "Light" };  // Transforms Fire stain to Light stain (Electrify)
 }
 
 export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
@@ -679,8 +688,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
-        // Stain mechanics: Consumes 1 Earth for damage; Gains +1 Ice, +1 Light
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Earth", count: 1 }],
+        gainsStains: ["Ice", "Light"]
     },
 
     "lune-immolation": {
@@ -695,6 +705,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             {
                 effectType: "Burning",
                 amount: 3,  // +2 if target is Marked
+                remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
@@ -702,11 +713,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             {
                 effectType: "Burning",
                 amount: 5,  // 3 + 2 bonus
+                remainingTurns: 3,
                 targetType: "enemy",
                 condition: "target-marked"
             }
-        ]
-        // Stain mechanics: Consumes Ice for damage; Gains +1 Fire
+        ],
+        consumesStains: [{ stain: "Ice", count: 1 }],
+        gainsStains: ["Fire", "Light"]
     },
 
     "lune-earth-rising": {
@@ -718,8 +731,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [],
-        conditionalEffects: []
-        // Stain mechanics: Consumes Lightning for damage; Gains +1 Earth
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Fire", count: 1 }],
+        gainsStains: ["Earth", "Light"]
     },
 
     "lune-electrify": {
@@ -731,9 +745,10 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
-        conditionalEffects: []
-        // Stain mechanics: Gains +2 Lightning; Consumes 1 Fire to generate 1 Light
-        // Special: Critical hits trigger bonus attacks
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Fire", count: 1 }, { stain: "Ice", count: 1 }],
+        transformsStainToLight: { from: "Fire", to: "Light" },
+        gainsStains: ["Lightning", "Light"]
     },
 
     "lune-thermal-transfer": {
@@ -745,9 +760,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [],
-        conditionalEffects: []
-        // Stain mechanics: Consumes 2 Earth for extra turn; Gains +1 Ice
-        // Special: Grants 4 AP if target has Burn
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Lightning", count: 1 }, { stain: "Fire", count: 1 }],
+        gainsStains: ["Ice", "Light"]
     },
 
     "lune-thunderfall": {
@@ -759,8 +774,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
-        conditionalEffects: []
-        // Stain: Consumes Fire for damage; Gains +1 Lightning, +1 Light
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Ice", count: 1 }],
+        gainsStains: ["Lightning", "Light"]
     },
 
     "lune-wildfire": {
@@ -775,11 +791,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             {
                 effectType: "Burning",
                 amount: 3,
+                remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
-        // Stain: Consumes 2 Ice for damage; Gains +1 Fire, +1 Light
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Ice", count: 2 }],
+        gainsStains: ["Fire", "Light"]
     },
 
     "lune-elemental-trick": {
@@ -790,8 +808,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "magical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
-        // Elements: Ice, Fire, Lightning, Earth; Crits generate stains
+        conditionalEffects: [],
+        gainsStainOnCrit: true  // Critical hits generate corresponding stain
     },
 
     "lune-mayhem": {
@@ -803,8 +821,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true  // If 4+ Stains consumed
-        // Stain: Consumes ALL stains for damage; Break if 4+ consumed
+        canBreakWithStains: true,  // Can Break if 4+ stains consumed
+        consumesStains: [
+            { stain: "Lightning", count: 99 },
+            { stain: "Earth", count: 99 },
+            { stain: "Fire", count: 99 },
+            { stain: "Ice", count: 99 }
+        ]  // Consumes ALL stains present
     },
 
     "lune-crippling-tsunami": {
@@ -823,8 +846,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
-        // Stain: Consumes Earth+Lightning+Fire for damage; Gains +1 Ice, +1 Light
+        conditionalEffects: [],
+        consumesStains: [
+            { stain: "Fire", count: 1 },
+            { stain: "Lightning", count: 1 }
+        ],
+        gainsStains: ["Ice", "Light"]
     },
 
     "lune-rockslide": {
@@ -837,8 +864,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Earth",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
-        // Stain: Consumes Lightning+Ice+Fire for damage; Gains +1 Earth, +1 Light
+        canBreak: true,
+        consumesStains: [
+            { stain: "Lightning", count: 1 }
+        ],
+        gainsStains: ["Earth", "Light"]
     },
 
     "lune-healing-light": {
@@ -861,8 +891,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "ally"
             }
         ],
-        conditionalEffects: []
-        // Stain: Consumes 2 Earth for 0 AP cost; Gains +1 Light
+        conditionalEffects: [],
+        consumesStains: [
+            { stain: "Ice", count: 1 },
+            { stain: "Earth", count: 1 },
+            { stain: "Fire", count: 1 },
+            { stain: "Lightning", count: 1 }
+        ],
+        gainsStains: ["Light"]
     },
 
     "lune-rebirth": {
@@ -874,9 +910,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
-        conditionalEffects: []
-        // Special: Revives ally 30-70% HP + grants 2 AP
-        // Stain: Consumes 3 Lightning for 0 AP cost; Gains +1 Light
+        conditionalEffects: [],
+        consumesStains: [
+            { stain: "Ice", count: 1 },
+            { stain: "Earth", count: 1 },
+            { stain: "Fire", count: 1 }
+        ],
+        gainsStains: ["Light"]
     },
 
     "lune-revitalization": {
@@ -898,12 +938,17 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             {
                 effectType: "Regeneration",
                 amount: 0,
-                remainingTurns: 3,
+                remainingTurns: 5,  // Extended from 3 to 5 turns if all 4 stains
                 targetType: "ally",
-                condition: "if-3-earth-stains"
+                condition: "if-all-4-stains"
             }
-        ]
-        // Stain: Gains +1 Light; Consumes 3 Earth for Regeneration
+        ],
+        consumesStains: [
+            { stain: "Lightning", count: 1 },
+            { stain: "Fire", count: 1 },
+            { stain: "Ice", count: 1 }
+        ],
+        gainsStains: ["Light"]
     },
 
     "lune-lightning-dance": {
@@ -915,8 +960,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
-        conditionalEffects: []
-        // Stain: Consumes Earth+Ice+Fire for damage; Gains +1 Lightning, +1 Light
+        conditionalEffects: [],
+        consumesStains: [
+            { stain: "Earth", count: 1 },
+            { stain: "Ice", count: 1 },
+            { stain: "Fire", count: 1 }
+        ],
+        gainsStains: ["Lightning", "Light"]
     },
 
     "lune-storm-caller": {
@@ -928,9 +978,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
-        conditionalEffects: []
-        // Special: Duration effect - enemies take damage at turn end + when hit
-        // Stain: Consumes 2 Fire for double strikes; Gains +1 Lightning, +1 Light
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Fire", count: 2 }],
+        gainsStains: ["Lightning", "Light"]
     },
 
     "lune-terraquake": {
@@ -943,10 +993,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Earth",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
-        // Special: Duration effect - deals Earth damage + Break every turn
-        // Increases Break damage by 50%
-        // Stain: Consumes 2 Lightning for 5 turns; Gains +1 Earth, +1 Light
+        canBreak: true,
+        consumesStains: [{ stain: "Lightning", count: 2 }],
+        gainsStains: ["Earth", "Light"]
     },
 
     "lune-typhoon": {
@@ -958,9 +1007,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [],
-        conditionalEffects: []
-        // Special: Duration effect - damages enemies + heals allies each turn
-        // Stain: Consumes 2 Earth for 5 turns; Gains +1 Ice, +1 Light
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Earth", count: 2 }],
+        gainsStains: ["Ice", "Light"]
     },
 
     "lune-crustal-crush": {
@@ -973,8 +1022,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Earth",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
-        // Stain: Consumes Lightning for damage; Gains +1 Earth, +1 Light
+        canBreak: true,
+        consumesStains: [{ stain: "Lightning", count: 1 }],
+        gainsStains: ["Earth", "Light"]
     },
 
     "lune-elemental-genesis": {
@@ -985,9 +1035,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "magical",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
-        // Special: Requires all 4 elemental stains; Random element per hit
-        // Does NOT grant stains
+        conditionalEffects: [],
+        requiresAllStains: true,  // Requires Lightning, Earth, Fire, and Ice to cast
+        consumesStains: [
+            { stain: "Lightning", count: 1 },
+            { stain: "Earth", count: 1 },
+            { stain: "Fire", count: 1 },
+            { stain: "Ice", count: 1 }
+        ]
     },
 
     "lune-fire-rage": {
@@ -999,9 +1054,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [],
-        conditionalEffects: []
-        // Special: Escalating damage each turn until Lune is hit; Self-Stun if interrupted
-        // Stain: Consumes 2 Ice for damage; Gains +1 Fire, +1 Light
+        conditionalEffects: [],
+        consumesStains: [{ stain: "Ice", count: 2 }],
+        gainsStains: ["Fire", "Light"]
     },
 
     "lune-hell": {
@@ -1016,12 +1071,17 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             {
                 effectType: "Burning",
                 amount: 5,  // Per hit
+                remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
-        // Special: Self-damage if fails
-        // Stain: Consumes Ice+Earth+Lightning for damage; Gains +1 Fire, +1 Light
+        conditionalEffects: [],
+        consumesStains: [
+            { stain: "Ice", count: 1 },
+            { stain: "Earth", count: 1 },
+            { stain: "Lightning", count: 1 }
+        ],
+        gainsStains: ["Fire", "Light"]
     },
 
     // Gradient Skills
@@ -1032,12 +1092,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "all",
         damageType: "magical",
         usesWeaponElement: false,
+        stainDeterminedElement: true,  // Element determined by dominant stain type
         isGradient: true,
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        gainsStains: ["Light", "Light", "Light"]  // Gains +3 Light
         // Element varies based on which Stain type Lune has most
-        // Does not consume a turn; Gains +3 Light
+        // Does not consume a turn
     },
 
     "lune-tree-of-life": {
@@ -1061,8 +1123,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "all-allies"
             }
         ],
-        conditionalEffects: []
-        // Does not consume a turn; Gains +2 Light
+        conditionalEffects: [],
+        consumesStains: [
+            { stain: "Ice", count: 1 },
+            { stain: "Earth", count: 1 }
+        ],
+        gainsStains: ["Light"]
+        // Does not consume a turn
     },
 
     "lune-tremor": {
@@ -1076,9 +1143,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         isGradient: true,
         primaryEffects: [],
         conditionalEffects: [],
-        destroysShields: true
+        destroysShields: true,
+        consumesStains: [{ stain: "Ice", count: 1 }],
+        gainsStains: ["Earth", "Light"]
         // Special: Removes all enemies' Shields
-        // Does not consume a turn; Gains +1 Light
+        // Does not consume a turn
     },
 
     // ==================== VERSO (26 skills) ====================

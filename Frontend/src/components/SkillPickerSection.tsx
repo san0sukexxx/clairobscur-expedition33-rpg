@@ -5,6 +5,9 @@ import type { SkillResponse } from "../api/ResponseModel";
 import SkillModal from "./SkillModal";
 import { getEnrichedCharacterSkills, getPlayerHasSkill, getSkillIsBlocked } from "../utils/SkillUtils";
 import { APISkill } from "../api/APISkill";
+import { renderStainText } from "../utils/StainTextUtils";
+import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
+import { hasRequiredStains } from "../utils/StainUtils";
 
 export interface SkillPickerProps {
     player: GetPlayerResponse | null;
@@ -141,17 +144,30 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }, []);
 
     const highlight = (text: string) => {
+        // First, apply stain text rendering (converts "Mancha de X" to images)
+        const stainRendered = renderStainText(text);
+
+        // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
         const pattern = new RegExp(`\\b(${terms.join("|")})\\b`, "g");
-        return text.split(pattern).map((chunk, i) =>
-            terms.includes(chunk) ? (
-                <span key={i} className="text-amber-300 font-semibold">
-                    {chunk}
-                </span>
-            ) : (
-                <React.Fragment key={i}>{chunk}</React.Fragment>
-            )
-        );
+
+        return stainRendered.map((node, nodeIdx) => {
+            // If it's already a React element (stain image), keep it as is
+            if (typeof node !== "string") {
+                return <React.Fragment key={`stain-${nodeIdx}`}>{node}</React.Fragment>;
+            }
+
+            // Otherwise, apply term highlighting to text chunks
+            return node.split(pattern).map((chunk, chunkIdx) =>
+                terms.includes(chunk) ? (
+                    <span key={`${nodeIdx}-${chunkIdx}`} className="text-amber-300 font-semibold">
+                        {chunk}
+                    </span>
+                ) : (
+                    <React.Fragment key={`${nodeIdx}-${chunkIdx}`}>{chunk}</React.Fragment>
+                )
+            );
+        });
     };
 
     const filtered = useMemo(() => {
@@ -254,10 +270,25 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }
 
     function canUseSkill(skill: SkillResponse): boolean {
+        // Check MP/Gradient cost
         if (skill.isGradient) {
-            return currentGradientCharges >= skill.cost;
+            if (currentGradientCharges < skill.cost) return false;
+        } else {
+            if (currentMP < skill.cost) return false;
         }
-        return currentMP >= skill.cost;
+
+        // Check stain requirements (for skills like Elemental Genesis)
+        const skillMetadata = SkillEffectsRegistry[skill.id];
+        if (skillMetadata?.requiresAllStains) {
+            const source = player?.fightInfo?.characters?.find(
+                c => c.battleID === player.fightInfo?.playerBattleID
+            );
+            if (source && !hasRequiredStains(source, skillMetadata)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     return (

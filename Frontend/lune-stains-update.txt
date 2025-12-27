@@ -1,0 +1,51 @@
+# Lune Skills Stain Metadata Updates
+
+## Skills to update with stain metadata:
+
+1. lune-immolation: consumesStains: [{ stain: "Ice", count: 1 }], gainsStains: ["Fire"], stainEnhancedEffect: "Increased damage"
+
+2. lune-earth-rising: consumesStains: [{ stain: "Lightning", count: 1 }], gainsStains: ["Earth"], stainEnhancedEffect: "Increased damage"
+
+3. lune-electrify: transformsStainToLight: { from: "Fire", to: "Light" }, gainsStains: ["Lightning", "Lightning"]
+
+4. lune-thermal-transfer: consumesStains: [{ stain: "Earth", count: 2 }], gainsStains: ["Ice"], stainEnhancedEffect: "Play second turn"
+
+5. lune-thunderfall: consumesStains: [{ stain: "Fire", count: 1 }], gainsStains: ["Lightning", "Light"], stainEnhancedEffect: "Increased damage"
+
+6. lune-wildfire: consumesStains: [{ stain: "Ice", count: 2 }], gainsStains: ["Fire", "Light"], stainEnhancedEffect: "Increased damage"
+
+7. lune-elemental-trick: gainsStainOnCrit: true
+
+8. lune-mayhem: consumesStains: [{ stain: "Lightning", count: 999 }, { stain: "Earth", count: 999 }, { stain: "Fire", count: 999 }, { stain: "Ice", count: 999 }], canBreakWithStains: true
+
+9. lune-crippling-tsunami: consumesStains: [{ stain: "Earth", count: 1 }, { stain: "Lightning", count: 1 }, { stain: "Fire", count: 1 }], gainsStains: ["Ice", "Light"], stainEnhancedEffect: "Greatly increased damage"
+
+10. lune-rockslide: consumesStains: [{ stain: "Lightning", count: 1 }, { stain: "Ice", count: 1 }, { stain: "Fire", count: 1 }], gainsStains: ["Earth", "Light"], stainEnhancedEffect: "Greatly increased damage"
+
+11. lune-healing-light: consumesStains: [{ stain: "Earth", count: 2 }], gainsStains: ["Light"], stainEnhancedEffect: "Costs 0 AP"
+
+12. lune-rebirth: consumesStains: [{ stain: "Lightning", count: 3 }], gainsStains: ["Light"], stainEnhancedEffect: "Costs 0 AP"
+
+13. lune-revitalization: consumesStains: [{ stain: "Earth", count: 3 }], gainsStains: ["Light"], stainEnhancedEffect: "Also applies Regeneration"
+
+14. lune-lightning-dance: consumesStains: [{ stain: "Earth", count: 1 }, { stain: "Ice", count: 1 }, { stain: "Fire", count: 1 }], gainsStains: ["Lightning", "Light"], stainEnhancedEffect: "Greatly increased damage"
+
+15. lune-storm-caller: consumesStains: [{ stain: "Fire", count: 2 }], gainsStains: ["Lightning", "Light"], stainEnhancedEffect: "Double thunder strikes"
+
+16. lune-terraquake: consumesStains: [{ stain: "Lightning", count: 2 }], gainsStains: ["Earth", "Light"], stainEnhancedEffect: "Duration 3→5 turns"
+
+17. lune-typhoon: consumesStains: [{ stain: "Earth", count: 2 }], gainsStains: ["Ice", "Light"], stainEnhancedEffect: "Duration 3→5 turns"
+
+18. lune-crustal-crush: consumesStains: [{ stain: "Lightning", count: 1 }], gainsStains: ["Earth", "Light"], stainEnhancedEffect: "Increased damage"
+
+19. lune-elemental-genesis: requiresAllStains: true
+
+20. lune-fire-rage: consumesStains: [{ stain: "Ice", count: 2 }], gainsStains: ["Fire", "Light"], stainEnhancedEffect: "Increased damage"
+
+21. lune-hell: consumesStains: [{ stain: "Ice", count: 1 }, { stain: "Earth", count: 1 }, { stain: "Lightning", count: 1 }], gainsStains: ["Fire", "Light"], stainEnhancedEffect: "Greatly increased damage"
+
+22. lune-sky-break: stainDeterminedElement: true (Gradient skill)
+
+23. lune-tree-of-life: (no stain mechanics - Gradient skill)
+
+24. lune-tremor: (no stain mechanics - Gradient skill)
