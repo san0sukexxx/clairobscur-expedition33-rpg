@@ -5,6 +5,7 @@ import com.example.demo.dto.UpdateHpRequest
 import com.example.demo.dto.UpdateMpRequest
 import com.example.demo.dto.UpdateStanceRequest
 import com.example.demo.dto.UpdateStainsRequest
+import com.example.demo.dto.UpdateRankRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.service.BattleCharacterService
 import jakarta.validation.Valid
@@ -70,5 +71,26 @@ class BattleCharacterController(private val service: BattleCharacterService) {
     ): ResponseEntity<Void> {
         service.updateCharacterStains(id, body.stainSlot1, body.stainSlot2, body.stainSlot3, body.stainSlot4)
         return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/rank")
+    fun updateCharacterRank(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateRankRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterRank(id, body.perfectionRank, body.rankProgress)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/characters/{id}/rank-up")
+    fun rankUpCharacter(@PathVariable id: Int): ResponseEntity<Map<String, Boolean>> {
+        val success = service.rankUpCharacter(id)
+        return ResponseEntity.ok(mapOf("success" to success))
+    }
+
+    @PostMapping("/characters/{id}/rank-down")
+    fun rankDownCharacter(@PathVariable id: Int): ResponseEntity<Map<String, Boolean>> {
+        val success = service.rankDownCharacter(id)
+        return ResponseEntity.ok(mapOf("success" to success))
     }
 }

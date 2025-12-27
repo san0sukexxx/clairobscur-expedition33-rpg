@@ -54,6 +54,8 @@ class BattleCharacterService(
                                 stainSlot2 = request.stainSlot2,
                                 stainSlot3 = request.stainSlot3,
                                 stainSlot4 = request.stainSlot4,
+                                perfectionRank = request.perfectionRank,
+                                rankProgress = request.rankProgress,
                                 canRollInitiative = request.canRollInitiative
                         )
 
@@ -223,5 +225,105 @@ class BattleCharacterService(
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "STAINS_CHANGED", eventJson = null)
                 )
+        }
+
+        @Transactional
+        fun updateCharacterRank(id: Int, perfectionRank: String?, rankProgress: Int?) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                entity.perfectionRank = perfectionRank
+                entity.rankProgress = rankProgress
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "RANK_CHANGED", eventJson = null)
+                )
+        }
+
+        @Transactional
+        fun rankUpCharacter(id: Int): Boolean {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return false
+
+                val entity = opt.get()
+                val currentRank = entity.perfectionRank ?: "D"
+                val currentProgress = entity.rankProgress ?: 0
+
+                // Get next rank
+                val nextRank = when (currentRank) {
+                        "D" -> "C"
+                        "C" -> "B"
+                        "B" -> "A"
+                        "A" -> "S"
+                        "S" -> return false  // Already max rank
+                        else -> return false
+                }
+
+                // Rank up: keep current progress (don't reset)
+                entity.perfectionRank = nextRank
+                entity.rankProgress = currentProgress
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "RANK_CHANGED", eventJson = null)
+                )
+
+                return true
+        }
+
+        @Transactional
+        fun rankDownCharacter(id: Int): Boolean {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return false
+
+                val entity = opt.get()
+                val currentRank = entity.perfectionRank ?: "D"
+                val currentProgress = entity.rankProgress ?: 0
+
+                // If already at D rank, reset progress to 0
+                if (currentRank == "D") {
+                        entity.rankProgress = 0
+                        repository.save(entity)
+
+                        val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+                        battleLogRepository.save(
+                                BattleLog(battleId = battleId, eventType = "RANK_CHANGED", eventJson = null)
+                        )
+
+                        return true
+                }
+
+                // Get previous rank
+                val previousRank = when (currentRank) {
+                        "S" -> "A"
+                        "A" -> "B"
+                        "B" -> "C"
+                        "C" -> "D"
+                        "D" -> return false  // Already min rank
+                        else -> return false
+                }
+
+                // Rank down: keep current progress (don't reset)
+                entity.perfectionRank = previousRank
+                entity.rankProgress = currentProgress
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "RANK_CHANGED", eventJson = null)
+                )
+
+                return true
         }
 }

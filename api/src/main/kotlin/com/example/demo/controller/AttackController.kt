@@ -32,7 +32,8 @@ class AttackController(
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val battleService: BattleService,
-        private val damageService: DamageService
+        private val damageService: DamageService,
+        private val battleCharacterService: com.example.demo.service.BattleCharacterService
 ) {
 
         @PostMapping
@@ -74,6 +75,40 @@ class AttackController(
                         }
 
                         sourceBC.magicPoints = next
+
+                        // Verso's Perfection Rank: Increase rankProgress based on action type
+                        if (sourceBC.characterType == "player" &&
+                            sourceBC.externalId.contains("verso", ignoreCase = true)) {
+                                val currentProgress = sourceBC.rankProgress ?: 0
+                                val currentRank = sourceBC.perfectionRank ?: "D"
+
+                                // Calculate progress increase based on action type
+                                val progressIncrease = when (body.attackType) {
+                                        "basic" -> 20      // Basic attack: +20%
+                                        "free-shot" -> 10  // Free shot: +10%
+                                        "skill" -> 40      // Skill: +40%
+                                        else -> 0
+                                }
+
+                                val newProgress = currentProgress + progressIncrease
+
+                                // Check if rank up is needed (progress >= 100)
+                                if (newProgress >= 100 && currentRank != "S") {
+                                        // Rank up automatically
+                                        battleCharacterService.rankUpCharacter(sourceBC.id!!)
+
+                                        // Reload character to get updated rank
+                                        val updatedSourceBC = battleCharacterRepository.findById(sourceBC.id!!).orElse(sourceBC)
+
+                                        // Set remaining progress (overflow) after rank up
+                                        val remainingProgress = newProgress - 100
+                                        updatedSourceBC.rankProgress = remainingProgress
+                                        battleCharacterRepository.save(updatedSourceBC)
+                                } else {
+                                        // Just update progress
+                                        sourceBC.rankProgress = newProgress
+                                }
+                        }
 
                         // Charge system logic (Gustave)
                         if (body.consumesCharge == true) {
@@ -224,6 +259,14 @@ class AttackController(
                                 0
                         } else {
                                 damageService.applyDamage(targetBC, body.totalDamage)
+                        }
+
+                        // Verso's Perfection Rank: Rank down when receiving damage
+                        if (body.totalDamage > 0 &&
+                            targetBC.characterType == "player" &&
+                            targetBC.externalId.contains("verso", ignoreCase = true)) {
+                                // Verso took damage, rank down
+                                battleCharacterService.rankDownCharacter(targetBC.id!!)
                         }
 
                         // Breaking Rules: Destroy all shields and grant AP

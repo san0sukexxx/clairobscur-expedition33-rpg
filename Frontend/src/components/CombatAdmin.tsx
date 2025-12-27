@@ -274,6 +274,10 @@ export default function CombatAdmin({
         const isLune = (entity.characterId?.toLowerCase() === "lune") ||
                       String(entity.externalId).toLowerCase().includes("lune")
 
+        // Detect if character is Verso and initialize perfection rank system
+        const isVerso = (entity.characterId?.toLowerCase() === "verso") ||
+                       String(entity.externalId).toLowerCase().includes("verso")
+
         await APIBattle.addCharacter({
             battleId: campaignInfo.battleId,
             externalId: String(entity.externalId),
@@ -293,6 +297,8 @@ export default function CombatAdmin({
             stainSlot2: isLune ? null : undefined,
             stainSlot3: isLune ? null : undefined,
             stainSlot4: isLune ? null : undefined,
+            perfectionRank: isVerso ? "D" : undefined,
+            rankProgress: isVerso ? 0 : undefined,
             initiative,
             canRollInitiative: entity.type == "player"
         })

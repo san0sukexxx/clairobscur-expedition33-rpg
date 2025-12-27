@@ -14,6 +14,7 @@ import { calculateWeaponVitalityBonus, calculateWeaponAgilityBonus, calculateWea
 import { getPlayerCharacter } from "./CharacterUtils";
 import { PictosList } from "../data/PictosList";
 import { calculatePictoHealth, calculatePictoSpeed, calculatePictoDefense, calculatePictoCritical } from "./PictoUtils";
+import { getVersoPerfectionDamageMultiplier } from "./BattleUtils";
 
 export function playerPictosTotalHealth(player: GetPlayerResponse | null): number {
     let total = 0;
@@ -123,16 +124,16 @@ export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackTyp
     return (calculateWeaponPlusPower(weaponInfo.details?.attributes.power ?? 0, weaponInfo.weapon?.level ?? 0) ?? 0);
 }
 
-export function calculateAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, stance?: Stance | null): number {
+export function calculateAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, stance?: Stance | null, playerChar?: BattleCharacterInfo): number {
     if (hasShield(npcBattleCharacterInfo)) {
         return 0;
     }
 
     let damage = 0;
     if (attackType == "basic") {
-        damage = calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo.id, diceResult);
+        damage = calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo.id, diceResult, playerChar);
     } else if (attackType == "free-shot") {
-        damage = calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType);
+        damage = calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType, playerChar);
     } else {
         damage = 1;
     }
@@ -162,7 +163,7 @@ export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattl
     return 0
 }
 
-export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType): number {
+export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, playerChar?: BattleCharacterInfo): number {
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
     var criticalMulti = calculatePlayerCriticalMulti(diceResult, player)
@@ -179,10 +180,17 @@ export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, 
         damage = Math.floor(damage / 2)
     }
 
+    // Verso's Perfection Rank: Damage multiplier for free-shot attacks
+    const isVerso = playerChar?.id?.toLowerCase().includes("verso");
+    if (isVerso) {
+        const versoPerfectionMultiplier = getVersoPerfectionDamageMultiplier(playerChar?.perfectionRank);
+        damage = Math.floor(damage * versoPerfectionMultiplier);
+    }
+
     return damage;
 }
 
-export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcId: string, diceResult: any): number {
+export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcId: string, diceResult: any, playerChar?: BattleCharacterInfo): number {
     const npcInfo = getNpcById(npcId)
 
     const total = diceTotal(diceResult);
@@ -205,6 +213,13 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     }
 
     attackDamage += (getPlayerFrenzy(player)?.ammount ?? 0);
+
+    // Verso's Perfection Rank: Damage multiplier for basic attacks
+    const isVerso = playerChar?.id?.toLowerCase().includes("verso");
+    if (isVerso) {
+        const versoPerfectionMultiplier = getVersoPerfectionDamageMultiplier(playerChar?.perfectionRank);
+        attackDamage = Math.floor(attackDamage * versoPerfectionMultiplier);
+    }
 
     return attackDamage;
 }

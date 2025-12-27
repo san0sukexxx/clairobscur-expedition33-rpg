@@ -43,6 +43,8 @@ export interface AddBattleCharacterRequest {
     stainSlot2?: string | null
     stainSlot3?: string | null
     stainSlot4?: string | null
+    perfectionRank?: string | null
+    rankProgress?: number | null
     initiative?: AddBattleCharacterInitiativeData,
     canRollInitiative: boolean
 }
@@ -243,6 +245,22 @@ export class APIBattle {
             `battles/characters/${id}/mp`,
             { newMp }
         )
+    }
+
+    static async rankUpCharacter(battleCharacterId: number): Promise<boolean> {
+        const response = await api.post<{}, { success: boolean }>(
+            `battles/characters/${battleCharacterId}/rank-up`,
+            {}
+        );
+        return response.success;
+    }
+
+    static async rankDownCharacter(battleCharacterId: number): Promise<boolean> {
+        const response = await api.post<{}, { success: boolean }>(
+            `battles/characters/${battleCharacterId}/rank-down`,
+            {}
+        );
+        return response.success;
     }
 
     static async updateCharacterStance(id: number, newStance: Stance | null): Promise<void> {

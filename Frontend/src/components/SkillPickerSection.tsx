@@ -149,7 +149,23 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
 
         // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
-        const pattern = new RegExp(`\\b(${terms.join("|")})\\b`, "g");
+
+        // Add Verso's Perfection Ranks with their colors
+        const rankTerms = ["Rank S", "Rank A", "Rank B", "Rank C", "Rank D"];
+        const allTerms = [...terms, ...rankTerms];
+        const pattern = new RegExp(`\\b(${allTerms.join("|")})\\b`, "g");
+
+        // Function to get rank color class
+        const getRankColorClass = (rank: string): string => {
+            switch(rank) {
+                case "Rank S": return "text-red-400 font-bold border-b-2 border-red-400";
+                case "Rank A": return "text-purple-400 font-bold border-b-2 border-purple-400";
+                case "Rank B": return "text-blue-400 font-bold border-b-2 border-blue-400";
+                case "Rank C": return "text-amber-200 font-bold border-b-2 border-amber-200";
+                case "Rank D": return "text-gray-400 font-bold border-b-2 border-gray-400";
+                default: return "text-amber-300 font-semibold";
+            }
+        };
 
         return stainRendered.map((node, nodeIdx) => {
             // If it's already a React element (stain image), keep it as is
@@ -158,15 +174,25 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             }
 
             // Otherwise, apply term highlighting to text chunks
-            return node.split(pattern).map((chunk, chunkIdx) =>
-                terms.includes(chunk) ? (
-                    <span key={`${nodeIdx}-${chunkIdx}`} className="text-amber-300 font-semibold">
-                        {chunk}
-                    </span>
-                ) : (
-                    <React.Fragment key={`${nodeIdx}-${chunkIdx}`}>{chunk}</React.Fragment>
-                )
-            );
+            return node.split(pattern).map((chunk, chunkIdx) => {
+                if (rankTerms.includes(chunk)) {
+                    // Apply rank-specific styling
+                    return (
+                        <span key={`${nodeIdx}-${chunkIdx}`} className={getRankColorClass(chunk)}>
+                            {chunk}
+                        </span>
+                    );
+                } else if (terms.includes(chunk)) {
+                    // Apply general term highlighting
+                    return (
+                        <span key={`${nodeIdx}-${chunkIdx}`} className="text-amber-300 font-semibold">
+                            {chunk}
+                        </span>
+                    );
+                } else {
+                    return <React.Fragment key={`${nodeIdx}-${chunkIdx}`}>{chunk}</React.Fragment>;
+                }
+            });
         });
     };
 

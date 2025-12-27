@@ -61,6 +61,8 @@ export interface BattleCharacterInfo {
     stainSlot2?: StainType | null;
     stainSlot3?: StainType | null;
     stainSlot4?: StainType | null;
+    perfectionRank?: string | null;
+    rankProgress?: number | null;
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;

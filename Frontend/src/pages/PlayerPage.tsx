@@ -23,6 +23,7 @@ import { resolveSkill, calculateSkillHitDamage, applySpecialEffects, getStatusEf
 import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
 import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
 import { executeAllSpecialMechanics } from "../utils/SkillSpecialMechanics";
+import { getVersoPerfectionDamageMultiplier } from "../utils/BattleUtils";
 import { hasRequiredStains, consumeStains, addStains, updateCharacterStains, transformStain } from "../utils/StainUtils";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
@@ -678,7 +679,12 @@ export default function PlayerPage() {
       const rollTotal = diceTotal(result)
       const weaponPower = calculateRawWeaponPower(weaponInfo, attackType)
       const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID)
-      const total = calculateAttackDamage(player, weaponInfo, target, result, attackType, playerChar?.stance)
+      const total = calculateAttackDamage(player, weaponInfo, target, result, attackType, playerChar?.stance, playerChar)
+
+      // Verso's Perfection Rank: Get multiplier for display purposes
+      const isVerso = playerChar?.id?.toLowerCase().includes("verso");
+      const versoPerfectionMultiplier = isVerso ? getVersoPerfectionDamageMultiplier(playerChar?.perfectionRank) : 1.0;
+
       const failures = countFailuresRolls(result)
       const failuresDiv = calculateFailureDiv(result)
       const elementModifier = getWeaponElementModifier(target.id, weaponInfo)
@@ -742,6 +748,11 @@ export default function PlayerPage() {
           {((playerFrenzy?.ammount ?? 0) > 0) && attackType != "free-shot" && (
             <p>
               Frenesi <b>(+{playerFrenzy?.ammount})</b>
+            </p>
+          )}
+          {isVerso && versoPerfectionMultiplier > 1.0 && (
+            <p>
+              Rank {playerChar?.perfectionRank} de Perfeição: <b>(x{versoPerfectionMultiplier})</b>
             </p>
           )}
           {elementModifier != undefined && (
@@ -1053,12 +1064,58 @@ export default function PlayerPage() {
         }
       }
 
-      const resolved = resolveSkill(
+      let resolved = resolveSkill(
         skillId,
         source,
         target,
         player.fightInfo?.characters ?? []
       );
+
+      // Powerful: Roll 1d6 to determine target scope (1-3 = self only, 4-6 = all allies)
+      if (resolved.metadata.rollsForTargetScope) {
+        const diceRoll = Math.floor(Math.random() * 6) + 1;  // 1-6
+        if (diceRoll >= 4) {
+          // 4-6: All allies
+          showToast(`Rolou ${diceRoll}! Powerful afeta toda equipe!`);
+          const newTargetScope = "all-allies";
+          const alliesTargets = (player.fightInfo?.characters ?? [])
+            .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
+            .map(c => c.battleID);
+
+          // Update resolved targets and effects
+          resolved = {
+            ...resolved,
+            targetIds: alliesTargets,
+            effects: resolved.effects.map(eff => ({
+              ...eff,
+              targetType: "all-allies" as any
+            }))
+          };
+        } else {
+          // 1-3: Self only
+          showToast(`Rolou ${diceRoll}! Powerful afeta apenas Verso.`);
+          resolved = {
+            ...resolved,
+            targetIds: [source.battleID]
+          };
+        }
+      }
+
+      // Rank-conditional duration: Change effect duration at specific rank (e.g., Powerful at A: 5 turns)
+      if (resolved.metadata.rankConditionalDuration) {
+        const { rank, duration } = resolved.metadata.rankConditionalDuration;
+        if (source.perfectionRank === rank) {
+          // Update all effects with the new duration
+          resolved = {
+            ...resolved,
+            effects: resolved.effects.map(eff => ({
+              ...eff,
+              remainingTurns: duration
+            }))
+          };
+          showToast(`Rank ${rank} de Perfeição! Duração: ${duration} turnos!`);
+        }
+      }
 
       // Get skill metadata to extract type (sun/moon for Sciel)
       const skillData = getSkillById(skillId);
@@ -1140,9 +1197,11 @@ export default function PlayerPage() {
       // Breaking Rules: Check if target has Unprotected (Defenseless) for conditional effects
       let targetHasUnprotected = false;
       let targetHasNoForetell = false;
+      let targetIsBurning = false;
       if (resolved.metadata.conditionalEffects && resolved.metadata.conditionalEffects.length > 0) {
         const targetStatuses = target.status ?? [];
         targetHasUnprotected = targetStatuses.some(s => s.effectName === "Unprotected");
+        targetIsBurning = targetStatuses.some(s => s.effectName === "Burning");
 
         // Focused Foretell: Check if target has no Foretell stacks
         const foretellStacks = targetStatuses
@@ -1230,6 +1289,9 @@ export default function PlayerPage() {
         }
       }
 
+      // Variable to store last dice result for mechanics that need it (e.g., Elemental Trick)
+      let lastDiceResult: number[] = [];
+
       if (resolved.hitCount > 0) {
         for (let hitIndex = 0; hitIndex < resolved.hitCount; hitIndex++) {
           await new Promise<void>((resolve, reject) => {
@@ -1239,6 +1301,8 @@ export default function PlayerPage() {
               rollCommandForAttack(weaponInfo, "basic"),
               async (result) => {
                 try {
+                  // Store last dice result
+                  lastDiceResult = result;
                   // Calculate base damage similar to basic attack (player power + weapon + dice + criticals)
                   const total = diceTotal(result);
                   const failures = calculateFailureDiv(result);
@@ -1290,6 +1354,30 @@ export default function PlayerPage() {
                   const hasTwilight = sourceStatuses.some(s => s.effectName === "Twilight");
                   const twilightMultiplier = hasTwilight ? 2.5 : 1.0;
 
+                  // Verso's Perfection Rank: Damage multiplier based on current rank
+                  const isVerso = source.id?.toLowerCase().includes("verso");
+                  let versoPerfectionMultiplier = isVerso ? getVersoPerfectionDamageMultiplier(source.perfectionRank) : 1.0;
+
+                  // Rank-conditional bonus: Additional bonus for specific skills at specific ranks (e.g., Assault Zero at B: +50%)
+                  // This is ADDITIVE with the base rank bonus, not multiplicative
+                  if (isVerso && resolved.metadata.rankConditionalBonus) {
+                    const { rank, damageMultiplier } = resolved.metadata.rankConditionalBonus;
+                    if (source.perfectionRank === rank) {
+                      // Add the bonuses together: e.g., B Rank (+40%) + Assault Zero (+50%) = +90% total
+                      const baseBonus = versoPerfectionMultiplier - 1.0;  // e.g., 1.4 - 1.0 = 0.4 (40%)
+                      const conditionalBonus = damageMultiplier - 1.0;    // e.g., 1.5 - 1.0 = 0.5 (50%)
+                      versoPerfectionMultiplier = 1.0 + baseBonus + conditionalBonus;  // 1.0 + 0.4 + 0.5 = 1.9 (90%)
+                      const totalBonusPercent = Math.round((versoPerfectionMultiplier - 1.0) * 100);
+                      showToast(`Rank ${rank} de Perfeição! Dano +${totalBonusPercent}% (bônus da habilidade!)`);
+                    } else if (versoPerfectionMultiplier > 1.0) {
+                      const bonusPercent = Math.round((versoPerfectionMultiplier - 1.0) * 100);
+                      showToast(`Rank ${source.perfectionRank} de Perfeição! Dano +${bonusPercent}%`);
+                    }
+                  } else if (isVerso && versoPerfectionMultiplier > 1.0) {
+                    const bonusPercent = Math.round((versoPerfectionMultiplier - 1.0) * 100);
+                    showToast(`Rank ${source.perfectionRank} de Perfeição! Dano +${bonusPercent}%`);
+                  }
+
                   let primaryTargetDamage = 0;  // Save damage for Searing Bond propagation
 
                   for (const targetId of resolved.targetIds) {
@@ -1298,11 +1386,12 @@ export default function PlayerPage() {
                       ? (resolved.metadata.foretellPerHitMultiplier ?? 3.0)
                       : 1.0;
 
-                    // Apply charge bonus, foretell bonus, HP drained, and all enemies foretell (additive) then per-hit foretell multiplier, twilight, burn multipliers, fire vulnerability, and marked bonus (multiplicative)
+                    // Apply charge bonus, foretell bonus, HP drained, and all enemies foretell (additive) then per-hit foretell multiplier, twilight, Verso's perfection, burn multipliers, fire vulnerability, and marked bonus (multiplicative)
                     const damageWithCharge = baseHitDamage + chargeBonus + foretellBonus + hpDrained + allEnemiesForetellConsumed;
                     const damageWithForetellPerHit = Math.floor(damageWithCharge * targetForetellMultiplier);
                     const damageWithTwilight = Math.floor(damageWithForetellPerHit * twilightMultiplier);
-                    const damageWithBurnScaling = Math.floor(damageWithTwilight * burnMultiplier);
+                    const damageWithPerfection = Math.floor(damageWithTwilight * versoPerfectionMultiplier);
+                    const damageWithBurnScaling = Math.floor(damageWithPerfection * burnMultiplier);
                     const damageWithBurnConsumption = Math.floor(damageWithBurnScaling * burnConsumptionMultiplier);
                     const damageWithFireVulnerability = Math.floor(damageWithBurnConsumption * fireVulnerabilityMultiplier);
                     const hitDamage = Math.floor(damageWithFireVulnerability * markedDamageMultiplier);
@@ -1689,6 +1778,22 @@ export default function PlayerPage() {
         }
       }
 
+      // From Fire: Heal self if target is burning
+      if (targetIsBurning && resolved.metadata.conditionalEffects) {
+        const healEffect = resolved.metadata.conditionalEffects.find(
+          e => e.effectType === "Heal" && e.condition === "target-burning"
+        );
+
+        if (healEffect) {
+          const healPercent = healEffect.amount;  // 20%
+          const maxHp = source.maxHealthPoints;
+          const healAmount = Math.floor(maxHp * (healPercent / 100));
+
+          await APIBattle.heal(source.battleID, healAmount);
+          showToast(`Alvo Queimando! Verso curado em ${healPercent}% (${healAmount} HP)!`);
+        }
+      }
+
       // Swift Stride: Switch to Virtuose if target is burning
       if (resolved.metadata.switchesToVirtuoseIfBurning) {
         const targetStatuses = target.status ?? [];
@@ -1729,7 +1834,7 @@ export default function PlayerPage() {
 
       // Handle Elemental Trick: Gain random stain on crit
       if (skillMetadata.gainsStainOnCrit) {
-        const critRolls = countCriticalRolls(resolved.lastDiceResult ?? []);
+        const critRolls = countCriticalRolls(lastDiceResult);
         if (critRolls > 0) {
           const updatedSource = player.fightInfo?.characters?.find(
             c => c.battleID === player.fightInfo?.playerBattleID
@@ -1768,6 +1873,28 @@ export default function PlayerPage() {
           await checkPlayerLoop(); // Update frontend immediately
 
           showToast(`Mancha ${from} transformada em ${to}!`);
+        }
+      }
+
+      // Handle Assault Zero: Rank up on crit
+      if (skillMetadata.ranksUpOnCrit) {
+        const critRolls = countCriticalRolls(lastDiceResult);
+        if (critRolls > 0) {
+          try {
+            const success = await APIBattle.rankUpCharacter(source.battleID);
+            if (success) {
+              await checkPlayerLoop(); // Update frontend immediately to show new rank
+
+              const updatedSource = player.fightInfo?.characters?.find(
+                c => c.battleID === player.fightInfo?.playerBattleID
+              );
+              const newRank = updatedSource?.perfectionRank ?? "?";
+
+              showToast(`Crítico! Rank subiu para ${newRank}!`);
+            }
+          } catch (error) {
+            console.error("Erro ao subir rank:", error);
+          }
         }
       }
 

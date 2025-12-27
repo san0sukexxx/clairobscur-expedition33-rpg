@@ -1,6 +1,25 @@
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { type AttackType, type AttackResponse, type StatusType, type BattleCharacterInfo, type SkillType, type StatusResponse } from "../api/ResponseModel";
 
+/**
+ * Calcula o multiplicador de dano baseado no Rank de Perfeição do Verso
+ * D: 1.0 (sem bônus)
+ * C: 1.2 (+20%)
+ * B: 1.4 (+40%)
+ * A: 1.5 (+50%)
+ * S: 2.0 (+100%)
+ */
+export function getVersoPerfectionDamageMultiplier(rank: string | null | undefined): number {
+    switch (rank) {
+        case "S": return 2.0;   // +100%
+        case "A": return 1.5;   // +50%
+        case "B": return 1.4;   // +40%
+        case "C": return 1.2;   // +20%
+        case "D": return 1.0;   // sem bônus
+        default: return 1.0;
+    }
+}
+
 export function getBattleStatusLabel(status: string): string {
     switch (status) {
         case "starting":

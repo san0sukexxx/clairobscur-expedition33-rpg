@@ -149,6 +149,12 @@ function resolveTargets(
                 .filter(c => c.isEnemy === primaryTarget.isEnemy)
                 .map(c => c.battleID);
 
+        case "all-allies":
+            // Todos os aliados (mesma equipe do source, excluindo inimigos)
+            return allCharacters
+                .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
+                .map(c => c.battleID);
+
         case "self":
             // O próprio personagem
             return [source.battleID];

@@ -77,6 +77,12 @@ export interface SkillMetadata {
     requiresAllStains?: boolean;         // Requires Lightning, Earth, Fire, and Ice to cast (Elemental Genesis)
     stainDeterminedElement?: boolean;    // Element determined by stain composition (Sky Break)
     canBreakWithStains?: boolean;        // Can Break if 4 stains consumed (Mayhem)
+
+    // Verso's Perfection Rank System
+    ranksUpOnCrit?: boolean;             // Ranks up user by 1 level if at least 1 critical hit occurs (Assault Zero)
+    rankConditionalBonus?: { rank: string; damageMultiplier: number };  // Additional damage multiplier when used at specific rank (Assault Zero at B: +50%)
+    rollsForTargetScope?: boolean;       // Rolls 1d6 to determine target scope: 1-3 = self only, 4-6 = all allies (Powerful)
+    rankConditionalDuration?: { rank: string; duration: number };  // Changes effect duration at specific rank (Powerful at A: 5 turns)
     gainsStainOnCrit?: boolean;          // Gains corresponding stain on critical hits (Elemental Trick)
     transformsStainToLight?: { from: "Fire"; to: "Light" };  // Transforms Fire stain to Light stain (Electrify)
 }
@@ -1164,8 +1170,10 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: B Rank = Increased damage
+        conditionalEffects: [],
+        ranksUpOnCrit: true,  // Ranks up by 1 level if at least 1 critical hit occurs
+        rankConditionalBonus: { rank: "B", damageMultiplier: 1.5 }  // At Rank B: additional +50% damage (stacks with B's base +40%)
+        // Perfection: B Rank = Base +40% damage, PLUS additional +50% = +90% total (1.9x multiplier)
         // Crits generate +1 Perfection rank point
     },
 
@@ -1177,8 +1185,16 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: B Rank = Increased damage
+        conditionalEffects: [
+            {
+                effectType: "Heal",
+                amount: 20,  // 20% HP
+                targetType: "self",
+                condition: "target-burning"  // Only heals if target has Burning status
+            }
+        ],
+        rankConditionalBonus: { rank: "B", damageMultiplier: 1.5 }  // At Rank B: additional +50% damage
+        // Perfection: B Rank = Increased damage (+50% additional, stacks with B's base +40% = +90% total)
         // Heals 20% HP if target Burns
     },
 
@@ -1242,19 +1258,22 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "verso-powerful",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all",  // 1-3 allies
+        targetScope: "self",  // Will be changed to "all-allies" based on dice roll
         damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
                 effectType: "Empowered",
                 amount: 0,
-                remainingTurns: 3,  // 5 at A Rank
-                targetType: "ally"
+                remainingTurns: 3,  // Base duration: 3 turns (5 at A Rank)
+                targetType: "self"  // Will be "all-allies" if dice roll is 4-6
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        rollsForTargetScope: true,  // Rolls 1d6: 1-3 = self only, 4-6 = all allies
+        rankConditionalDuration: { rank: "A", duration: 5 }  // At A Rank: 5 turns instead of 3
         // Perfection: A Rank = Duration extends to 5 turns
+        // Gives 0-2 Perfection
         // Gives 0-2 Perfection
     },
 

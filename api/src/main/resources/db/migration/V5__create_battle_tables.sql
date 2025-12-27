@@ -29,6 +29,8 @@ CREATE TABLE
         stain_slot_2 TEXT,
         stain_slot_3 TEXT,
         stain_slot_4 TEXT,
+        perfection_rank TEXT,
+        rank_progress INTEGER,
         can_roll_initiative BOOLEAN NOT NULL DEFAULT 0,
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE
     );

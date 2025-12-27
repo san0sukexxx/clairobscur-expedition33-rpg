@@ -171,6 +171,72 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     </div>
                 )}
 
+                {/* Verso's Perfection Rank System */}
+                {ch.id.toLowerCase().includes("verso") && ch.perfectionRank && (() => {
+                    const currentRank = ch.perfectionRank; // D, C, B, A, S
+                    const rankProgress = ch.rankProgress ?? 0; // Current progress
+                    const rankMax = 10; // Points needed for next rank (always 10)
+
+                    const getRankColor = (rank: string) => {
+                        switch(rank) {
+                            case "S": return "text-red-400 border-red-400";
+                            case "A": return "text-purple-400 border-purple-400";
+                            case "B": return "text-blue-400 border-blue-400";
+                            case "C": return "text-amber-200 border-amber-200";
+                            case "D": return "text-gray-400 border-gray-400";
+                            default: return "text-gray-400 border-gray-400";
+                        }
+                    };
+
+                    const getRankFillClass = (rank: string) => {
+                        switch(rank) {
+                            case "S": return "bg-red-500";
+                            case "A": return "bg-purple-500";
+                            case "B": return "bg-blue-500";
+                            case "C": return "bg-amber-200";
+                            case "D": return "bg-gray-500";
+                            default: return "bg-gray-500";
+                        }
+                    };
+
+                    const getRankGhostClass = (rank: string) => {
+                        switch(rank) {
+                            case "S": return "bg-red-500/30";
+                            case "A": return "bg-purple-500/30";
+                            case "B": return "bg-blue-500/30";
+                            case "C": return "bg-amber-200/30";
+                            case "D": return "bg-gray-500/30";
+                            default: return "bg-gray-500/30";
+                        }
+                    };
+
+                    return (
+                        <div className="mt-2">
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="text-[10px] opacity-70 uppercase">Perfeição</span>
+                                <div className={`
+                                    px-2 py-0.5 rounded border-2 font-bold text-sm
+                                    ${getRankColor(currentRank)}
+                                `}>
+                                    Rank {currentRank}
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] mb-0.5">
+                                <span className="opacity-50">Progresso</span>
+                                <span className="font-mono text-xs">
+                                    {rankProgress}/{rankMax}
+                                </span>
+                            </div>
+                            <AnimatedStatBar
+                                value={pct(rankProgress, rankMax)}
+                                label="Rank Progress"
+                                fillClass={getRankFillClass(currentRank)}
+                                ghostClass={getRankGhostClass(currentRank)}
+                            />
+                        </div>
+                    );
+                })()}
+
                 {/* Lune's Stain System */}
                 {ch.id.toLowerCase().includes("lune") && (() => {
                     const stains = [ch.stainSlot1, ch.stainSlot2, ch.stainSlot3, ch.stainSlot4];
