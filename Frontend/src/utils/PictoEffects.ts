@@ -3992,50 +3992,195 @@ registerPictoEffect("Critical Vulnerability", async (_ctx) => {
 });
 
 // ==================== IMMUNITY PICTOS ====================
+// ==================== ANTI STATUS IMMUNITY PICTOS ====================
 
-// Anti-Status Effects (Full Immunity)
-const antiStatusPictos: Record<string, StatusType> = {
-    "Anti-Burn": "Burning",
-    "Anti-Freeze": "Frozen",
-    "Anti-Stun": "Stunned",
-    "Anti Inverted": "Inverted",
-    "Anti Curse": "Cursed",
-    "Anti Bound": "Entangled",
-    "Anti Dizzy": "Dizzy",
-    "Anti Exhaust": "Exhausted"
-};
+/**
+ * Anti-Status Pictos: Provide complete immunity to specific status effects
+ * These pictos add an immunity entry to the battle character when equipped
+ */
 
-Object.entries(antiStatusPictos).forEach(([picto, statusType]) => {
-    registerPictoEffect(picto, async (ctx) => {
-        // NOTE: This is a passive immunity effect
-        // When status effects are applied, the system should check if the target has this picto
-        // and prevent the status from being applied
+const antiStatusPictos: { name: string; statusType: string }[] = [
+    { name: "Anti Bound", statusType: "Entangled" },
+    { name: "Anti Curse", statusType: "Cursed" },
+    { name: "Anti Dizzy", statusType: "Dizzy" },
+    { name: "Anti Exhaust", statusType: "Exhausted" },
+    { name: "Anti Inverted", statusType: "Inverted" },
+    { name: "Anti-Blight", statusType: "Plagued" },
+    { name: "Anti-Burn", statusType: "Burning" },
+    { name: "Anti-Charm", statusType: "Confused" },
+    { name: "Anti-Freeze", statusType: "Frozen" },
+    { name: "Anti-Stun", statusType: "Stunned" }
+];
+
+antiStatusPictos.forEach(({ name, statusType }) => {
+    registerPictoEffect(name, async (ctx) => {
         if (ctx.trigger === "on-battle-start") {
+            // Add immunity for this status type
+            await APIBattle.addImmunity(
+                ctx.source.battleID,
+                statusType,
+                "immune"
+            );
             return {
                 success: true,
-                message: `${ctx.source.name} is immune to ${statusType}!`
+                message: `${ctx.source.name} is now immune to ${statusType}!`
             };
         }
         return { success: false };
     });
 });
 
-// Element Resistance Coats (50% damage reduction)
-const elementCoatPictos = [
-    "Physical Coat", "Fire Coat", "Ice Coat", "Thunder Coat",
-    "Earth Coat", "Light Coat", "Dark Coat"
+// ==================== ENERGISING START PICTOS ====================
+
+/**
+ * Energising Start Pictos: Grant +1 AP at the start of battle
+ * These are simple pictos that give 1 AP when the battle begins
+ */
+
+const energisingStartPictos = [
+    "Energising Start I",
+    "Energising Start II",
+    "Energising Start III",
+    "Energising Start IV"
 ];
 
-elementCoatPictos.forEach(picto => {
-    registerPictoEffect(picto, async (ctx) => {
-        // NOTE: This is a passive resistance effect
-        // When damage is calculated, the system should check if the target has this picto
-        // and reduce damage of the matching element by 50%
+energisingStartPictos.forEach((pictoName) => {
+    registerPictoEffect(pictoName, async (ctx) => {
         if (ctx.trigger === "on-battle-start") {
-            const element = picto.replace(" Coat", "");
+            await giveAP(ctx.source.battleID, 1);
             return {
                 success: true,
-                message: `${ctx.source.name} has ${element} resistance! Takes 50% less ${element} damage.`
+                message: `${ctx.source.name} gained +1 AP from ${pictoName}!`
+            };
+        }
+        return { success: false };
+    });
+});
+
+// ==================== ELEMENTAL COAT PICTOS ====================
+
+/**
+ * Elemental Coat Pictos: Provide -50% damage from specific element types
+ * These pictos add elemental resistance to reduce damage by half
+ */
+
+const elementalCoatPictos: { name: string; element: string }[] = [
+    { name: "Physical Coat", element: "Physical" },
+    { name: "Fire Coat", element: "Fire" },
+    { name: "Ice Coat", element: "Ice" },
+    { name: "Thunder Coat", element: "Lightning" },  // Thunder = Lightning
+    { name: "Earth Coat", element: "Earth" },
+    { name: "Light Coat", element: "Light" },
+    { name: "Dark Coat", element: "Dark" },
+    { name: "Void Coat", element: "Void" }  // Added for completeness
+];
+
+elementalCoatPictos.forEach(({ name, element }) => {
+    registerPictoEffect(name, async (ctx) => {
+        if (ctx.trigger === "on-battle-start") {
+            // Add 50% resistance (multiplier 0.5 = half damage)
+            await APIBattle.addResistance(
+                ctx.source.battleID,
+                element,
+                "resist",  // resistance type
+                0.5        // 50% damage (half)
+            );
+            return {
+                success: true,
+                message: `${ctx.source.name} now has ${element} resistance! Takes 50% less ${element} damage.`
+            };
+        }
+        return { success: false };
+    });
+});
+
+// ==================== DEAD ENERGY PICTOS ====================
+
+/**
+ * Dead Energy Pictos: Grant +3 AP when killing an enemy
+ * These pictos reward the player for eliminating enemies
+ */
+
+const deadEnergyPictos = [
+    "Dead Energy I",
+    "Dead Energy II"
+];
+
+deadEnergyPictos.forEach((pictoName) => {
+    registerPictoEffect(pictoName, async (ctx) => {
+        if (ctx.trigger === "on-kill") {
+            // Grant +3 AP for killing an enemy
+            await giveAP(ctx.source.battleID, 3);
+            return {
+                success: true,
+                message: `${ctx.source.name} gained +3 AP for eliminating ${ctx.target?.name || "an enemy"}!`
+            };
+        }
+        return { success: false };
+    });
+});
+
+// ==================== AUGMENTED COUNTER ====================
+// All three Augmented Counter pictos add +50% counterattack damage (multiplier 1.5)
+
+const augmentedCounterPictos = [
+    "Augmented Counter I",
+    "Augmented Counter II",
+    "Augmented Counter III"
+];
+
+augmentedCounterPictos.forEach((pictoName) => {
+    registerPictoEffect(pictoName, async (ctx) => {
+        if (ctx.trigger === "on-battle-start") {
+            await APIBattle.addModifier(
+                ctx.source.battleID,
+                "counter",        // modifierType: applies to counterattacks
+                1.5,              // multiplier: +50% damage (1.0 base + 0.5 bonus = 1.5x)
+                0                 // flatBonus: none
+            );
+            return {
+                success: true,
+                message: `${ctx.source.name} now deals +50% counterattack damage!`
+            };
+        }
+        return { success: false };
+    });
+});
+
+// ==================== COMBO ATTACK ====================
+// All three Combo Attack pictos add +1 extra hit to Base Attacks
+// NOTE: This requires integration in PlayerPage.tsx to check for this modifier
+//       and increase hitCount from 1 to 2 when executing base attacks.
+//
+// Implementation approach:
+// 1. Picto adds a modifier with type "base-attack" and flatBonus = 1 (representing +1 hit)
+// 2. PlayerPage should call getModifiers() before base attack
+// 3. If any active modifier has type "base-attack" and flatBonus > 0, add to hitCount
+//
+// Example integration in PlayerPage.tsx:
+//   const modifiers = await APIBattle.getModifiers(source.battleID);
+//   const comboModifiers = modifiers.filter(m => m.modifierType === "base-attack" && m.flatBonus > 0);
+//   const extraHits = comboModifiers.reduce((sum, m) => sum + m.flatBonus, 0);
+//   const hitCount = 1 + extraHits; // Base 1 hit + extra hits from pictos
+
+const comboAttackPictos = [
+    "Combo Attack I",
+    "Combo Attack II",
+    "Combo Attack III"
+];
+
+comboAttackPictos.forEach((pictoName) => {
+    registerPictoEffect(pictoName, async (ctx) => {
+        if (ctx.trigger === "on-battle-start") {
+            await APIBattle.addModifier(
+                ctx.source.battleID,
+                "base-attack",    // modifierType: applies to base attacks
+                1.0,              // multiplier: no damage change (1.0x = 100%)
+                1                 // flatBonus: represents +1 extra hit (not damage bonus)
+            );
+            return {
+                success: true,
+                message: `${ctx.source.name}'s base attacks now have +1 extra hit!`
             };
         }
         return { success: false };

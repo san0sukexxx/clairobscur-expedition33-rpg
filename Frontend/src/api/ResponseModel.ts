@@ -7,7 +7,8 @@ export type StatusType =
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
-    "FireVulnerability" | "Taunt" | "Foretell" | "Twilight" | "Powerless";
+    "FireVulnerability" | "Taunt" | "Foretell" | "Twilight" | "Powerless" |
+    "Rush" | "Burn" | "Shield" | "Powerful" | "Mark" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
@@ -185,6 +186,7 @@ export interface WeaponResponse {
 }
 
 export interface FightInfoResponse {
+    battleId: number;
     playerBattleID: number;
     initiatives?: InitiativeResponse[];
     characters?: BattleCharacterInfo[];

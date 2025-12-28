@@ -339,6 +339,26 @@ export class APIBattle {
 
     // ==================== Damage Modifiers ====================
 
+    static async addModifier(
+        battleCharacterId: number,
+        modifierType: string,
+        multiplier: number,
+        flatBonus: number = 0,
+        conditionType?: string
+    ): Promise<void> {
+        await api.post<{
+            modifierType: string;
+            multiplier: number;
+            flatBonus: number;
+            conditionType?: string;
+        }, void>(`battle/characters/${battleCharacterId}/modifiers`, {
+            modifierType,
+            multiplier,
+            flatBonus,
+            conditionType
+        })
+    }
+
     static async getModifiers(battleCharacterId: number): Promise<DamageModifier[]> {
         return api.get<DamageModifier[]>(`battle/characters/${battleCharacterId}/modifiers`)
     }
@@ -366,13 +386,16 @@ export class APIBattle {
     static async addResistance(
         battleCharacterId: number,
         element: string,
+        resistanceType: string,
         multiplier: number
     ): Promise<void> {
         await api.post<{
             element: string;
+            resistanceType: string;
             multiplier: number;
         }, void>(`battle/characters/${battleCharacterId}/resistances`, {
             element,
+            resistanceType,
             multiplier
         })
     }

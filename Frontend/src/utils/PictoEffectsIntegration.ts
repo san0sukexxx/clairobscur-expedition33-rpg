@@ -267,6 +267,38 @@ export async function triggerOnHealingTint(
  *    ```
  */
 
+/**
+ * Trigger on-kill effects when an enemy is killed
+ *
+ * Place this AFTER dealing damage that kills an enemy in PlayerPage.tsx
+ */
+export async function triggerOnKill(
+    killer: BattleCharacterInfo,
+    killedEnemy: BattleCharacterInfo,
+    allCharacters: BattleCharacterInfo[],
+    battleId: number,
+    pictos?: PictoResponse[],
+    luminas?: LuminaResponse[]
+) {
+    const results = await executePictoEffects(
+        "on-kill",
+        killer,
+        allCharacters,
+        battleId,
+        pictos,
+        luminas,
+        killedEnemy
+    );
+
+    results.forEach(result => {
+        if (result.success && result.message) {
+            console.log(`[Picto Effect] ${result.message}`);
+        }
+    });
+
+    return results;
+}
+
 // ==================== DISPLAY EFFECT MESSAGES (OPTIONAL) ====================
 
 /**

@@ -25,7 +25,8 @@ import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
 import { executeAllSpecialMechanics } from "../utils/SkillSpecialMechanics";
 import { getVersoPerfectionDamageMultiplier } from "../utils/BattleUtils";
 import { hasRequiredStains, consumeStains, addStains, updateCharacterStains, transformStain } from "../utils/StainUtils";
-import { triggerOnHealAlly, triggerOnFreeAim, triggerOnBattleStart, triggerOnTurnStart } from "../utils/PictoEffectsIntegration";
+import { triggerOnHealAlly, triggerOnFreeAim, triggerOnBattleStart, triggerOnTurnStart, triggerOnKill } from "../utils/PictoEffectsIntegration";
+import { executeWeaponPassives } from "../utils/WeaponPassives_Index";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import {
@@ -610,6 +611,18 @@ export default function PlayerPage() {
             const allChars = player.fightInfo.characters ?? [];
             if (sourceChar && player.fightInfo.battleId) {
               await triggerOnBattleStart(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
+
+              // Trigger weapon passive effects for battle start
+              if (weaponInfo.details?.name && weaponInfo.weapon?.level) {
+                await executeWeaponPassives(
+                  "on-battle-start",
+                  sourceChar,
+                  allChars,
+                  player.fightInfo.battleId,
+                  weaponInfo.details.name,
+                  weaponInfo.weapon.level
+                );
+              }
             }
           }
         } catch (err) {
@@ -686,7 +699,34 @@ export default function PlayerPage() {
     }
 
     setIsExecutingSkill(true);
-    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), result => {
+
+    // Calculate hit count for Combo Attack pictos (only for basic attacks)
+    const executeAttackWithHitCount = async () => {
+      let totalHits = 1; // Base: 1 hit
+
+      // Only check for combo modifiers on basic attacks
+      if (attackType === "basic" && player?.fightInfo?.playerBattleID) {
+        try {
+          const modifiers = await APIBattle.getModifiers(player.fightInfo!.playerBattleID);
+          const comboModifiers = modifiers.filter(
+            m => m.modifierType === "base-attack" && m.isActive && m.flatBonus > 0
+          );
+          const extraHits = comboModifiers.reduce((sum, m) => sum + m.flatBonus, 0);
+          totalHits = 1 + extraHits;
+
+          if (totalHits > 1) {
+            showToast(`Combo Attack! ${totalHits} hits!`);
+          }
+        } catch (error) {
+          console.error("Error getting combo modifiers:", error);
+          // Continue with 1 hit if error
+        }
+      }
+
+      // Execute each hit sequentially
+      for (let hitIndex = 0; hitIndex < totalHits; hitIndex++) {
+        await new Promise<void>((resolve) => {
+          rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), result => {
       const criticalRolls = countCriticalRolls(result)
       const criticalMulti = calculatePlayerCriticalMulti(result, player)
       const rollTotal = diceTotal(result)
@@ -826,16 +866,54 @@ export default function PlayerPage() {
               targetBattleId: target.battleID,
               sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
               attackType: attackType
-              // TODO:
-              // effects: [
-              //     {
-              //         effectType: "burn",
-              //         ammount: 5
-              //     }
-              // ]
             }
 
             await APIBattle.attack(attackInfo)
+          }
+
+          // Check if enemy was killed (Dead Energy picto trigger)
+          if (player.fightInfo?.battleId) {
+            const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
+            if (sourceChar) {
+              // Get updated battle state to check if target died
+              const updatedBattle = await APIBattle.getById(player.fightInfo.battleId);
+              const allChars = updatedBattle.characters ?? [];
+              const targetAfterAttack = allChars.find(c => c.battleID === target.battleID);
+
+              // If target HP is 0 or target no longer exists, they were killed
+              if (!targetAfterAttack || targetAfterAttack.healthPoints <= 0) {
+                if (target.isEnemy) {
+                  // Trigger Dead Energy and other on-kill effects
+                  await triggerOnKill(
+                    sourceChar,
+                    target,
+                    allChars,
+                    player.fightInfo.battleId,
+                    player.pictos,
+                    player.luminas
+                  );
+                }
+              }
+            }
+          }
+
+          // Trigger weapon passive effects for base attack
+          if (attackType === "basic" && player.fightInfo) {
+            const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
+            const allChars = player.fightInfo.characters ?? [];
+            if (sourceChar && player.fightInfo.battleId && weaponInfo.details?.name && weaponInfo.weapon?.level) {
+              const damageAmount = target.type === "npc" ? calculateNpcAttackReceivedDamage(target, total) : total;
+              await executeWeaponPassives(
+                "on-base-attack",
+                sourceChar,
+                allChars,
+                player.fightInfo.battleId,
+                weaponInfo.details.name,
+                weaponInfo.weapon.level,
+                target,
+                { damageAmount }
+              );
+            }
           }
 
           // Trigger picto effects for free aim
@@ -844,17 +922,40 @@ export default function PlayerPage() {
             const allChars = player.fightInfo.characters ?? [];
             if (sourceChar && player.fightInfo.battleId) {
               await triggerOnFreeAim(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
+
+              // Trigger weapon passive effects for free aim
+              if (weaponInfo.details?.name && weaponInfo.weapon?.level) {
+                await executeWeaponPassives(
+                  "on-free-aim",
+                  sourceChar,
+                  allChars,
+                  player.fightInfo.battleId,
+                  weaponInfo.details.name,
+                  weaponInfo.weapon.level,
+                  undefined,
+                  { damageAmount: rollTotal }
+                );
+              }
             }
           }
 
         } catch (e) {
           showToast("Erro ao atacar")
         }
-        setIsExecutingSkill(false);
+
+        resolve(); // Resolve the Promise for this hit
       };
 
       callAttack();
-    });
+    });  // End of rollWithTimeout callback
+        });  // End of Promise
+      }
+
+      setIsExecutingSkill(false);
+    };
+
+    // Execute the attack with hit count
+    executeAttackWithHitCount();
   }
 
   function handleModalClose() {
@@ -1731,6 +1832,50 @@ export default function PlayerPage() {
                         };
 
                     await APIBattle.attack(attackRequest);
+
+                    // Check if enemy was killed (Dead Energy picto trigger)
+                    if (player.fightInfo?.battleId) {
+                      // Get updated battle state to check if target died
+                      const updatedBattle = await APIBattle.getById(player.fightInfo.battleId);
+                      const allChars = updatedBattle.characters ?? [];
+                      const targetAfterAttack = allChars.find(c => c.battleID === targetId);
+
+                      // If target HP is 0 or target no longer exists, they were killed
+                      if (!targetAfterAttack || targetAfterAttack.healthPoints <= 0) {
+                        const killedEnemy = player.fightInfo.characters?.find(c => c.battleID === targetId);
+                        if (killedEnemy && killedEnemy.isEnemy) {
+                          // Trigger Dead Energy and other on-kill effects
+                          await triggerOnKill(
+                            source,
+                            killedEnemy,
+                            allChars,
+                            player.fightInfo.battleId,
+                            player.pictos,
+                            player.luminas
+                          );
+                        }
+                      }
+                    }
+
+                    // Trigger weapon passive effects for skill used (only on first hit)
+                    if (hitIndex === 0 && player.fightInfo?.battleId && weaponInfo.details?.name && weaponInfo.weapon?.level) {
+                      const allChars = player.fightInfo.characters ?? [];
+                      const targetChar = allChars.find(c => c.battleID === targetId);
+                      await executeWeaponPassives(
+                        "on-skill-used",
+                        source,
+                        allChars,
+                        player.fightInfo.battleId,
+                        weaponInfo.details.name,
+                        weaponInfo.weapon.level,
+                        targetChar,
+                        {
+                          damageAmount: hitDamage,
+                          skillElement: resolved.metadata.forcedElement || weaponInfo.details.attributes.element,
+                          skillName: skillId
+                        }
+                      );
+                    }
                   }
 
                   // Searing Bond: Propagate damage to other Burning enemies
@@ -1783,6 +1928,26 @@ export default function PlayerPage() {
                             };
 
                         await APIBattle.attack(propagationRequest);
+
+                        // Check if propagated damage killed the enemy (Dead Energy trigger)
+                        if (player.fightInfo?.battleId) {
+                          const updatedBattle = await APIBattle.getById(player.fightInfo.battleId);
+                          const allChars = updatedBattle.characters ?? [];
+                          const enemyAfterPropagation = allChars.find(c => c.battleID === enemy.battleID);
+
+                          // If enemy HP is 0 or enemy no longer exists, they were killed
+                          if (!enemyAfterPropagation || enemyAfterPropagation.healthPoints <= 0) {
+                            // Trigger Dead Energy and other on-kill effects
+                            await triggerOnKill(
+                              source,
+                              enemy,
+                              allChars,
+                              player.fightInfo.battleId,
+                              player.pictos,
+                              player.luminas
+                            );
+                          }
+                        }
                       }
 
                       showToast(`Vínculo Ardente: ${otherBurningEnemies.length} inimigo(s) afetado(s)!`);
