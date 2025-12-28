@@ -18,9 +18,10 @@ interface CombatsSectionProps {
     forcedTab?: "enemies" | "team" | null;
     onTabChange?: (tab: "enemies" | "team" | null) => void;
     isExecutingSkill?: boolean;
+    isAdmin: boolean;
 }
 
-export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin }: CombatsSectionProps) {
     const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
 
@@ -136,7 +137,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 initiatives={player?.fightInfo?.initiatives}
                 turns={player?.fightInfo?.turns}
                 isStarted={player?.fightInfo?.battleStatus == "started"}
-                showBattleId={false} />
+                showBattleId={false}
+                isAdmin={isAdmin} />
 
             {tab === "enemies" && (
                 <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} />

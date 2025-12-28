@@ -123,4 +123,38 @@ class BattleInitiativeController(
                 val status = if (existing == null) HttpStatus.CREATED else HttpStatus.OK
                 return ResponseEntity.status(status).body(response)
         }
+
+        @PutMapping("/reorder")
+        @Transactional
+        fun reorderInitiatives(@RequestBody body: ReorderInitiativesRequest): ResponseEntity<Void> {
+                // Body contains battleCharacterIds in desired order
+                val allInitiatives = mutableListOf<BattleInitiative>()
+
+                body.battleCharacterIds.forEach { battleCharacterId ->
+                        val initiative = initiativeRepository.findByBattleCharacterId(battleCharacterId)
+                        if (initiative != null) {
+                                allInitiatives.add(initiative)
+                        }
+                }
+
+                // Set initiative values based on order in request
+                allInitiatives.forEachIndexed { index, initiative ->
+                        // Adjust initiative value based on position to maintain order
+                        // Higher index = lower initiative value
+                        val adjustedValue = 1000 - index
+                        initiative.initiativeValue = adjustedValue
+                        initiative.playFirst = false
+                        initiativeRepository.save(initiative)
+                }
+
+                if (allInitiatives.isNotEmpty()) {
+                        battleLogRepository.save(
+                                BattleLog(battleId = allInitiatives.first().battleId, eventType = "INITIATIVES_REORDERED", eventJson = null)
+                        )
+                }
+
+                return ResponseEntity.noContent().build()
+        }
 }
+
+data class ReorderInitiativesRequest(val battleCharacterIds: List<Int>)

@@ -62,8 +62,6 @@ export default function CombatAdmin({
     const [teamB, setTeamB] = useState<CombatEntity[]>([])
     const [justAddedId, setJustAddedId] = useState<string | number | null>(null)
     const [bulkAdded, setBulkAdded] = useState<boolean>(false)
-    const [confirmRemoveOpen, setConfirmRemoveOpen] = useState(false)
-    const [removeTarget, setRemoveTarget] = useState<{ rowId: number; name: string } | null>(null)
     const [lastBattleLog, setLastBattleLog] = useState<number | undefined>();
     const [isSelectingTarget, setIsSelectingTarget] = useState(false)
     const [attackType, setAttackType] = useState<AttackType | null>(null)
@@ -345,22 +343,14 @@ export default function CombatAdmin({
     }
 
 
-    function openRemoveConfirm(rowId?: number, name?: string) {
+    async function handleRemove(rowId: number) {
         if (!rowId) return
-        setRemoveTarget({ rowId, name: name ?? "Personagem" })
-        setConfirmRemoveOpen(true)
-    }
-
-    function closeRemoveConfirm() {
-        setConfirmRemoveOpen(false)
-        setRemoveTarget(null)
-    }
-
-    async function confirmRemove() {
-        if (!removeTarget) return
-        await APIBattle.removeCharacter(removeTarget.rowId)
-        await reloadBattleDetails()
-        closeRemoveConfirm()
+        try {
+            await APIBattle.removeCharacter(rowId)
+            await reloadBattleDetails()
+        } catch (error) {
+            console.error("Erro ao remover personagem:", error)
+        }
     }
 
     function loadWeaponInfo(player: GetPlayerResponse): WeaponInfo | null {
@@ -737,7 +727,7 @@ export default function CombatAdmin({
                                                         {!isRowSelectable && (
                                                             <button
                                                                 className="btn btn-xs btn-error"
-                                                                onClick={() => openRemoveConfirm(m.rowId, m.name)}
+                                                                onClick={() => handleRemove(m.rowId!)}
                                                             >
                                                                 Remover
                                                             </button>
@@ -978,28 +968,6 @@ export default function CombatAdmin({
         )
     }
 
-    function renderRemoveConfirmModal() {
-        if (!confirmRemoveOpen || !removeTarget) return null
-        return (
-            <div className="modal modal-open">
-                <div className="modal-box w-full max-w-md">
-                    <h3 className="font-bold text-lg">Remover do time</h3>
-                    <p className="py-4">
-                        Tem certeza de que deseja remover <span className="font-semibold">{removeTarget.name}</span> do time?
-                    </p>
-                    <div className="modal-action">
-                        <button className="btn btn-sm" onClick={closeRemoveConfirm}>
-                            Cancelar
-                        </button>
-                        <button className="btn btn-sm btn-error" onClick={confirmRemove}>
-                            Remover
-                        </button>
-                    </div>
-                </div>
-                <div className="modal-backdrop bg-black/40" onClick={closeRemoveConfirm} />
-            </div>
-        )
-    }
 
     return (
         <>
@@ -1049,7 +1017,9 @@ export default function CombatAdmin({
                         initiatives={battleDetails?.initiatives}
                         turns={battleDetails?.turns}
                         isStarted={battleStatus == "started"}
-                        showBattleId={true} />
+                        showBattleId={true}
+                        isAdmin={true}
+                        onReorder={reloadBattleDetails} />
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {renderAttackOptions()}
@@ -1063,7 +1033,6 @@ export default function CombatAdmin({
             </div>
 
             {renderAddModal()}
-            {renderRemoveConfirmModal()}
         </>
     )
 
@@ -1075,11 +1044,13 @@ export default function CombatAdmin({
             "ADD_CHARACTER",
             "REMOVE_CHARACTER",
             "SET_INITIATIVE",
+            "INITIATIVES_REORDERED",
             "BATTLE_STARTED",
             "BATTLE_FINISHED",
             "DAMAGE_DEALT",
             "TURN_ADDED",
             "TURN_ENDED",
+            "TURNS_REORDERED",
             "ATTACK_PENDING",
             "ALLOW_COUNTER",
             "COUNTER_RESOLVED",

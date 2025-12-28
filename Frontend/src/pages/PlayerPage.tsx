@@ -306,7 +306,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "combate" && (
-            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} />
+            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} />
           )}
 
           {!loading && !error && tab === "habilidades" && (
@@ -439,10 +439,12 @@ export default function PlayerPage() {
       "ADD_CHARACTER",
       "REMOVE_CHARACTER",
       "SET_INITIATIVE",
+      "INITIATIVES_REORDERED",
       "BATTLE_STARTED",
       "BATTLE_FINISHED",
       "TURN_ENDED",
       "TURN_ADDED",
+      "TURNS_REORDERED",
       "ALLOW_COUNTER",
       "STATUS_ADDED",
       "ATTACK_PENDING",

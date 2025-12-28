@@ -399,4 +399,16 @@ export class APIBattle {
             multiplier
         })
     }
+
+    static async reorderTurns(turnIds: number[]): Promise<void> {
+        await api.put<{ turns: number[] }, void>('battle-turns/reorder', {
+            turns: turnIds
+        })
+    }
+
+    static async reorderInitiatives(battleCharacterIds: number[]): Promise<void> {
+        await api.put<{ battleCharacterIds: number[] }, void>('battle-initiatives/reorder', {
+            battleCharacterIds: battleCharacterIds
+        })
+    }
 }

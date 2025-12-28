@@ -139,9 +139,33 @@ class BattleTurnController(
 
                 return ResponseEntity.noContent().build()
         }
+
+        @PutMapping("/reorder")
+        @Transactional
+        fun reorderTurns(@RequestBody body: ReorderTurnsRequest): ResponseEntity<Void> {
+                body.turns.forEachIndexed { index, turnId ->
+                        val turn = battleTurnRepository.findById(turnId).orElse(null)
+                        if (turn != null) {
+                                turn.playOrder = index + 1
+                                battleTurnRepository.save(turn)
+                        }
+                }
+
+                if (body.turns.isNotEmpty()) {
+                        val firstTurn = battleTurnRepository.findById(body.turns.first()).orElse(null)
+                        if (firstTurn != null) {
+                                battleLogRepository.save(
+                                        BattleLog(battleId = firstTurn.battleId, eventType = "TURNS_REORDERED", eventJson = null)
+                                )
+                        }
+                }
+
+                return ResponseEntity.noContent().build()
+        }
 }
 
 data class DelayTurnRequest(val delayAmount: Int)
+data class ReorderTurnsRequest(val turns: List<Int>)
 
 private fun BattleTurn.toResponse() =
         BattleTurnResponse(
