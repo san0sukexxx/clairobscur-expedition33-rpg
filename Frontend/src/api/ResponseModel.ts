@@ -8,11 +8,11 @@ export type StatusType =
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Taunt" | "Foretell" | "Twilight" | "Powerless" |
-    "Rush" | "Burn" | "Shield" | "Powerful" | "Mark" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow";
+    "Rush" | "Burn" | "Shield" | "Powerful" | "Mark" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
-export type ElementModifierType = "imune" | "weak" | "resistent";
+export type ElementModifierType = "imune" | "weak" | "resistent" | "absorb";
 export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
 export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot" | "skill";
 export type SkillType = "give-status";
@@ -83,10 +83,13 @@ export interface NPCInfo {
     weakTo?: Element;
     resistentTo?: Element;
     imuneTo?: Element;
+    absorbElement?: Element;  // Heals instead of taking damage from this element
     freeShotWeakPoints?: number;
     attackList?: NPCAttack[];
     skillList?: NPCSkill[];
     isFlying?: boolean;
+    initiativeBonus?: number;  // Flat bonus added to initiative roll
+    maxLifeBonus?: number;  // Flat bonus added to max HP calculation (resistance * 5 + bonus)
 }
 
 export interface NPCStatusItem {
@@ -97,7 +100,11 @@ export interface NPCStatusItem {
 
 export interface NPCAttack {
     type: AttackType;
-    statusList: NPCStatusItem[];
+    statusList?: NPCStatusItem[];  // Optional list of status effects to apply
+    quantity?: number;  // Number of times this attack will be used in sequence
+    name?: string;  // Custom name to display on the button (overrides default label)
+    additionalDamage?: number;  // Flat damage bonus added to each attack roll
+    additionalDices?: number;  // Additional dice rolled for this attack (e.g., 2 = roll 3d6 instead of 1d6)
 }
 
 export interface NPCSkill {
@@ -206,6 +213,7 @@ export interface AttackResponse {
     isResolved: boolean;
     allowCounter?: boolean;
     isCounterResolved?: boolean;
+    defenseType?: string;
     effects?: AttackStatusEffectResponse[];
 }
 

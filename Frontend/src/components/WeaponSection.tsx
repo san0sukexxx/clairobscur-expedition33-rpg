@@ -191,6 +191,28 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
     });
   }
 
+  async function handleUnequip() {
+    if (!player) return;
+
+    setPlayer(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        playerSheet: {
+          ...prev.playerSheet,
+          weaponId: undefined,
+        },
+      };
+    });
+
+    await APIPlayer.update(player.id, {
+      playerSheet: {
+        ...player.playerSheet,
+        weaponId: undefined,
+      },
+    });
+  }
+
   async function handlePick(weaponDetails: WeaponDTO, currentLevel: number) {
     if (!player) {
       closeSelector();
@@ -335,9 +357,20 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
             </div>
           ) : (
             <div className="card-body">
-              <h2 className="text-center font-bold text-sm tracking-wide uppercase">
-                Armas
-              </h2>
+              <div className="flex items-center justify-between">
+                <h2 className="flex-1 text-center font-bold text-sm tracking-wide uppercase">
+                  Armas
+                </h2>
+                <button
+                  type="button"
+                  onClick={handleUnequip}
+                  className="btn btn-sm btn-ghost btn-circle"
+                  title="Desequipar arma"
+                  aria-label="Desequipar arma"
+                >
+                  ✕
+                </button>
+              </div>
 
               <div className="mt-2 flex flex-col items-center gap-3">
                 <button

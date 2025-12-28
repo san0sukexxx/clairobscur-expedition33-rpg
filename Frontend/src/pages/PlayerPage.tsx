@@ -1087,14 +1087,28 @@ export default function PlayerPage() {
     setTab("combate");
     setIsUsingSkillMode(false);
 
-    // Set correct tab and activate target glow
+    // Get current character to determine which team they are on
+    const currentCharacter = player?.fightInfo?.characters?.find(
+      c => c.battleID === player.fightInfo?.playerBattleID
+    );
+
+    // Determine correct tab based on target type and character's team
+    // If character is on enemy team (isEnemy = true):
+    //   - targetsEnemies means target opposite team (team A = "team")
+    //   - targetsAllies means target same team (team B = "enemies")
+    // If character is on ally team (isEnemy = false):
+    //   - targetsEnemies means target opposite team (team B = "enemies")
+    //   - targetsAllies means target same team (team A = "team")
+
     if (targetsEnemies && !targetsAllies) {
-      setCombatTab("enemies");
+      // Target enemies (opposite team)
+      setCombatTab(currentCharacter?.isEnemy ? "team" : "enemies");
     } else if (targetsAllies && !targetsEnemies) {
-      setCombatTab("team");
+      // Target allies (same team)
+      setCombatTab(currentCharacter?.isEnemy ? "enemies" : "team");
     } else {
-      // Default to enemies if ambiguous
-      setCombatTab("enemies");
+      // Default to enemies (opposite team) if ambiguous
+      setCombatTab(currentCharacter?.isEnemy ? "team" : "enemies");
     }
 
     setIsSelectingSkillTarget(true);
@@ -2406,105 +2420,119 @@ export default function PlayerPage() {
       return;
     }
 
-    const callDefend = async (payload: CreateDefenseRequest) => {
-      try {
-        await APIBattle.defend(payload);
-      } catch (e) {
-        showToast("Erro ao encerrar o defender");
+    return new Promise<void>(async (resolve, reject) => {
+      const callDefend = async (payload: CreateDefenseRequest) => {
+        try {
+          await APIBattle.defend(payload);
+          // Reload player data after API call
+          const playerInfo = await APIPlayer.get(player.id, lastBattleLog);
+          checkBattleLog(playerInfo);
+          resolve();
+        } catch (e) {
+          showToast("Erro ao encerrar o defender");
+          reject(e);
+        }
+      };
+
+      const callCounter = async (battleCharacterId: number, maxDamage: number) => {
+        try {
+          await APIBattle.applyDefense(battleCharacterId, maxDamage);
+          if (maxDamage > 0) {
+            showToast("Você contra-atacou!");
+          } else {
+            showToast("Você não contra-atacou");
+          }
+          // Reload player data after API call
+          const playerInfo = await APIPlayer.get(player.id, lastBattleLog);
+          checkBattleLog(playerInfo);
+          resolve();
+        } catch (e) {
+          showToast("Erro ao encerrar o executar o counter");
+          reject(e);
+        }
+      };
+
+      const executeDefense = async (result: any | null) => {
+        try {
+          const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID)
+          let defenseValue = attack.totalPower;
+          if (result != null) {
+            defenseValue = calculateDefense(attack.totalPower, player, weaponInfo, result, defense, playerChar?.stance);
+          } else {
+            // When taking damage without rolling, still apply stance modifiers
+            if (playerChar?.stance === "Defensive") {
+              defenseValue = Math.floor(defenseValue * 0.5)  // -50% damage received
+            } else if (playerChar?.stance === "Offensive") {
+              defenseValue = Math.floor(defenseValue * 1.5)  // +50% damage received
+            }
+          }
+
+          let description = "Você recebeu todo o dano.";
+
+          if (defense === "block") {
+            if (defenseValue > 0) {
+              description = `Você não conseguiu aparar, o golpe causou ${defenseValue} de dano`;
+            } else {
+              description = `Você conseguiu aparar o golpe!`;
+            }
+          } else if (defense === "gradient-block") {
+            if (defenseValue > 0) {
+              description = `Você não conseguiu aparar, o golpe causou ${defenseValue} de dano`;
+            } else {
+              description = `Você conseguiu aparar o golpe! É hora de um contra-ataque!`;
+            }
+          } else if (defense === "dodge") {
+            if (defenseValue > 0) {
+              description = `Você não conseguiu desviar, o golpe causou ${defenseValue} de dano`;
+            } else {
+              description = `Você conseguiu desviar do golpe!`;
+            }
+          } else if (defense === "jump") {
+            if (defenseValue > 0) {
+              description = `Você não conseguiu pular do ataque e recebeu ${defenseValue} de dano`;
+            } else {
+              description = `Você conseguiu pular do ataque!`;
+            }
+          }
+
+          if (defenseValue == 0 && playerHasShield(player)) {
+            description = "Um escudo foi usado, você não recebeu dano"
+          }
+
+          const payload: CreateDefenseRequest = {
+            attackId: attack.id,
+            totalDamage: defenseValue,
+            defenseType: defense,
+          };
+
+          await callDefend(payload);
+
+          showToast(description);
+          setIsExecutingSkill(false);
+        } catch (e) {
+          showToast("Falha ao registrar a defesa");
+          setIsExecutingSkill(false);
+          reject(e);
+        }
+      };
+
+      const takeTheDamage = () => {
+        executeDefense(null);
+      };
+
+      if (defense == "counter") {
+        callCounter(attack.targetBattleId, calculateMaxCounterDamage(player, weaponList));
+      } else if (defense == "cancel-counter") {
+        callCounter(attack.targetBattleId, 0);
+      } else if (defense != "take") {
+        setIsExecutingSkill(true);
+        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForDefense(player, weaponInfo, defense), result => {
+          executeDefense(result);
+        });
+      } else {
+        takeTheDamage();
       }
-    };
-
-    const callCounter = async (battleCharacterId: number, maxDamage: number) => {
-      try {
-        await APIBattle.applyDefense(battleCharacterId, maxDamage);
-        if (maxDamage > 0) {
-          showToast("Você contra-atacou!");
-        } else {
-          showToast("Você não contra-atacou");
-        }
-      } catch (e) {
-        showToast("Erro ao encerrar o executar o counter");
-      }
-    };
-
-    const executeDefense = async (result: any | null) => {
-      try {
-        const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID)
-        let defenseValue = attack.totalPower;
-        if (result != null) {
-          defenseValue = calculateDefense(attack.totalPower, player, weaponInfo, result, defense, playerChar?.stance);
-        } else {
-          // When taking damage without rolling, still apply stance modifiers
-          if (playerChar?.stance === "Defensive") {
-            defenseValue = Math.floor(defenseValue * 0.5)  // -50% damage received
-          } else if (playerChar?.stance === "Offensive") {
-            defenseValue = Math.floor(defenseValue * 1.5)  // +50% damage received
-          }
-        }
-
-        let description = "Você recebeu todo o dano.";
-
-        if (defense === "block") {
-          if (defenseValue > 0) {
-            description = `Você não conseguiu aparar, o golpe causou ${defenseValue} de dano`;
-          } else {
-            description = `Você conseguiu aparar o golpe!`;
-          }
-        } else if (defense === "gradient-block") {
-          if (defenseValue > 0) {
-            description = `Você não conseguiu aparar, o golpe causou ${defenseValue} de dano`;
-          } else {
-            description = `Você conseguiu aparar o golpe! É hora de um contra-ataque!`;
-          }
-        } else if (defense === "dodge") {
-          if (defenseValue > 0) {
-            description = `Você não conseguiu desviar, o golpe causou ${defenseValue} de dano`;
-          } else {
-            description = `Você conseguiu desviar do golpe!`;
-          }
-        } else if (defense === "jump") {
-          if (defenseValue > 0) {
-            description = `Você não conseguiu pular do ataque e recebeu ${defenseValue} de dano`;
-          } else {
-            description = `Você conseguiu pular do ataque!`;
-          }
-        }
-
-        if (defenseValue == 0 && playerHasShield(player)) {
-          description = "Um escudo foi usado, você não recebeu dano"
-        }
-
-        const payload: CreateDefenseRequest = {
-          attackId: attack.id,
-          totalDamage: defenseValue,
-        };
-
-        callDefend(payload);
-
-        showToast(description);
-        setIsExecutingSkill(false);
-      } catch (e) {
-        showToast("Falha ao registrar a defesa");
-        setIsExecutingSkill(false);
-      }
-    };
-
-    const takeTheDamage = async () => {
-      executeDefense(null)
-    };
-
-    if (defense == "counter") {
-      callCounter(attack.targetBattleId, calculateMaxCounterDamage(player, weaponList));
-    } else if (defense == "cancel-counter") {
-      callCounter(attack.targetBattleId, 0);
-    } else if (defense != "take") {
-      setIsExecutingSkill(true);
-      rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForDefense(player, weaponInfo, defense), result => {
-        executeDefense(result);
-      });
-    } else {
-      takeTheDamage()
-    }
+    });
   }
 
   function onResolveStatus(status: StatusResponse, currentCharacter: BattleCharacterInfo | undefined) {

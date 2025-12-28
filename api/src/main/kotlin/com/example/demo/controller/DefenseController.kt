@@ -50,6 +50,7 @@ class DefenseController(
 
         attack.totalDefended = body.totalDamage
         attack.isResolved = true
+        attack.defenseType = body.defenseType
         attackRepository.save(attack)
 
         battleLogRepository.save(

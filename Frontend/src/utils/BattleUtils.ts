@@ -105,6 +105,7 @@ export function getStatusLabel(status: StatusType): string {
         case "free-shot": return "Free Shot";
         case "jump": return "Pular";
         case "gradient": return "Gradiente";
+        case "invisible-barrier": return "Barreira Invisível";
         default: return status;
     }
 }
@@ -167,6 +168,7 @@ export function getStatusDescription(status: StatusType): string {
         case "free-shot": return "Acumula bônus para ataques básicos.";
         case "jump": return "Ignora terreno ou obstáculos temporariamente.";
         case "gradient": return "Efeito especial de uso interno.";
+        case "invisible-barrier": return "Barreira mágica invisível que protege o personagem. Visível apenas para o mestre.";
         default: return "Efeito ativo.";
     }
 }

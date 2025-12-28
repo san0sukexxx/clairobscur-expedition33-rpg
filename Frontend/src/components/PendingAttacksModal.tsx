@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { ignoreEffects, type AttackResponse, type DefenseOption } from "../api/ResponseModel";
 import {
@@ -18,7 +19,7 @@ import {
 interface PendingAttacksModalProps {
     player: GetPlayerResponse | null;
     weaponList: WeaponDTO[];
-    onSelectDefense: (attack: AttackResponse, defense: DefenseOption) => void;
+    onSelectDefense: (attack: AttackResponse, defense: DefenseOption) => Promise<void>;
 }
 
 export default function PendingAttacksModal({
@@ -26,11 +27,15 @@ export default function PendingAttacksModal({
     weaponList,
     onSelectDefense,
 }: PendingAttacksModalProps) {
-    const pendingAttacks = player?.fightInfo?.pendingAttacks ?? [];
+    const [isDefending, setIsDefending] = useState(false);
 
-    if (!player || pendingAttacks.length === 0 || player.playerSheet?.hpCurrent == 0) return null;
+    // Early return before accessing player properties
+    if (!player || !player.fightInfo || !player.fightInfo.pendingAttacks || player.fightInfo.pendingAttacks.length === 0 || player.playerSheet?.hpCurrent == 0) {
+        return null;
+    }
 
-    const characters = player.fightInfo?.characters ?? [];
+    const pendingAttacks = player.fightInfo.pendingAttacks;
+    const characters = player.fightInfo.characters ?? [];
 
     const getCharacterNameByBattleId = (battleId: number) => {
         const c = characters.find((x) => x.battleID === battleId);
@@ -44,6 +49,17 @@ export default function PendingAttacksModal({
 
     const canDodge = !playerHasEntangled(player)
 
+    const handleDefenseClick = async (attack: AttackResponse, defense: DefenseOption) => {
+        console.log("Defense clicked, setting isDefending to true");
+        setIsDefending(true);
+        try {
+            await onSelectDefense(attack, defense);
+        } finally {
+            console.log("Defense finished, setting isDefending to false");
+            setIsDefending(false);
+        }
+    };
+
     const counterAttacks = pendingAttacks.filter(isCounterAttack);
     const hasCounter = counterAttacks.length > 0;
     const totalDefendedSum = Math.abs(
@@ -53,6 +69,8 @@ export default function PendingAttacksModal({
         )
     );
     const firstCounterAttack = counterAttacks[0];
+
+    console.log("Rendering PendingAttacksModal, isDefending:", isDefending);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
@@ -85,7 +103,8 @@ export default function PendingAttacksModal({
                             <div className="flex flex-wrap gap-2 justify-center mt-1">
                                 <button
                                     className="btn btn-xs btn-outline gap-2"
-                                    onClick={() => onSelectDefense(firstCounterAttack, "cancel-counter")}
+                                    onClick={() => handleDefenseClick(firstCounterAttack, "cancel-counter")}
+                                    disabled={isDefending}
                                 >
                                     <FaTimes />
                                     Cancelar
@@ -93,7 +112,8 @@ export default function PendingAttacksModal({
 
                                 <button
                                     className="btn btn-xs btn-primary gap-2"
-                                    onClick={() => onSelectDefense(firstCounterAttack, "counter")}
+                                    onClick={() => handleDefenseClick(firstCounterAttack, "counter")}
+                                    disabled={isDefending}
                                 >
                                     <FaShieldAlt />
                                     Counter!
@@ -115,7 +135,8 @@ export default function PendingAttacksModal({
                                 >
                                     <button
                                         className="btn btn-xs btn-ghost absolute top-2 right-2 gap-1"
-                                        onClick={() => onSelectDefense(attack, "take")}
+                                        onClick={() => handleDefenseClick(attack, "take")}
+                                        disabled={isDefending}
                                     >
                                         <FaHeartBroken />
                                         Aceitar dano
@@ -158,7 +179,8 @@ export default function PendingAttacksModal({
                                         {(attackType === "jump" || attackType === "jump-all") && (
                                             <button
                                                 className="btn btn-xs btn-outline gap-2"
-                                                onClick={() => onSelectDefense(attack, "jump")}
+                                                onClick={() => handleDefenseClick(attack, "jump")}
+                                                disabled={isDefending}
                                             >
                                                 <FaArrowUp />
                                                 Pular
@@ -168,7 +190,8 @@ export default function PendingAttacksModal({
                                         {attackType === "gradient" && (
                                             <button
                                                 className="btn btn-xs btn-outline gap-2"
-                                                onClick={() => onSelectDefense(attack, "gradient-block")}
+                                                onClick={() => handleDefenseClick(attack, "gradient-block")}
+                                                disabled={isDefending}
                                             >
                                                 <FaFireAlt />
                                                 Aparar Gradiente
@@ -179,7 +202,8 @@ export default function PendingAttacksModal({
                                             <>
                                                 <button
                                                     className="btn btn-xs btn-outline gap-2"
-                                                    onClick={() => onSelectDefense(attack, "block")}
+                                                    onClick={() => handleDefenseClick(attack, "block")}
+                                                    disabled={isDefending}
                                                 >
                                                     <FaShieldAlt />
                                                     Aparar
@@ -188,7 +212,8 @@ export default function PendingAttacksModal({
                                                 {canDodge && (
                                                     <button
                                                         className="btn btn-xs btn-outline gap-2"
-                                                        onClick={() => onSelectDefense(attack, "dodge")}
+                                                        onClick={() => handleDefenseClick(attack, "dodge")}
+                                                        disabled={isDefending}
                                                     >
                                                         <FaRunning />
                                                         Desviar

@@ -15,6 +15,7 @@ interface BattleGroupStatusProps {
     onSelectTarget?: (target: BattleCharacterInfo) => void;
     isReviveMode?: boolean;
     isExecutingSkill?: boolean;
+    isAdmin?: boolean;
 }
 
 function pct(cur: number, max: number) {
@@ -28,7 +29,8 @@ export default function BattleGroupStatus({
     isAttacking,
     onSelectTarget,
     isReviveMode = false,
-    isExecutingSkill = false
+    isExecutingSkill = false,
+    isAdmin = false
 }: BattleGroupStatusProps) {
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -88,7 +90,11 @@ export default function BattleGroupStatus({
 
                                             <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80">
                                                 {ch.status
-                                                    ?.filter(s => s.effectName !== "free-shot")
+                                                    ?.filter(s => {
+                                                        if (s.effectName === "free-shot") return false;
+                                                        if (s.effectName === "invisible-barrier" && !isAdmin) return false;
+                                                        return true;
+                                                    })
                                                     .map((st, idx) => {
                                                         const showAmmount = shouldShowStatusAmmount(st.effectName);
 

@@ -113,6 +113,20 @@ class BattleTurnController(
 
                 battleTurnService.advanceTurn(battleId)
 
+                // Regenerate 1 MP for the next character at the start of their turn
+                val nextTurn = battleTurnRepository.findByBattleIdOrderByPlayOrderAsc(battleId).firstOrNull()
+                if (nextTurn != null) {
+                        val nextCharacter = battleCharacterRepository.findById(nextTurn.battleCharacterId).orElse(null)
+                        if (nextCharacter != null && nextCharacter.characterType == "player") {
+                                val currentMp = nextCharacter.magicPoints ?: 0
+                                val maxMp = nextCharacter.maxMagicPoints ?: 0
+                                if (maxMp > 0 && currentMp < maxMp) {
+                                        nextCharacter.magicPoints = (currentMp + 1).coerceAtMost(maxMp)
+                                        battleCharacterRepository.save(nextCharacter)
+                                }
+                        }
+                }
+
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "TURN_ENDED", eventJson = null)
                 )

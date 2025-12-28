@@ -13,5 +13,6 @@ data class Attack(
         @Column(name = "total_defended", nullable = true) var totalDefended: Int? = null,
         @Column(name = "is_resolved", nullable = false) var isResolved: Boolean = false,
         @Column(name = "allow_counter", nullable = false) var allowCounter: Boolean = false,
-        @Column(name = "is_counter_resolved", nullable = false) var isCounterResolved: Boolean = false
+        @Column(name = "is_counter_resolved", nullable = false) var isCounterResolved: Boolean = false,
+        @Column(name = "defense_type", nullable = true) var defenseType: String? = null
 )

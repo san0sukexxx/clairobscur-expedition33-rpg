@@ -2999,7 +2999,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        canBreak: true  // ✅ Pode causar Break
+        canBreak: true  // ✅ Pode causar quebra
         // Grants 1 Sun Charge - handled by skillType: "sun" in PlayerPage
     },
 

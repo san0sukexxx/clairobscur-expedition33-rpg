@@ -16,8 +16,9 @@ export function randomizeNpcInitiativeTotal(npc: NPCInfo) {
 
     const criticalMulti = diceResult == 6 ? 2 : 1;
     const failureDiv = diceResult == 1 ? 2 : 1;
+    const initiativeBonus = npc.initiativeBonus ?? 0;
 
-    return diceResult + (npc.hability * criticalMulti / failureDiv);
+    return diceResult + (npc.hability * criticalMulti / failureDiv) + initiativeBonus;
 }
 
 export function randomizeNpcDefenseTotal(npc: NPCInfo, target: BattleCharacterInfo) {
@@ -46,7 +47,9 @@ export function randomizeNpcDefenseTotal(npc: NPCInfo, target: BattleCharacterIn
 }
 
 export function getNPCMaxHealth(npc: NPCInfo) {
-    return npc.resistance * 5;
+    const baseHealth = npc.resistance * 5;
+    const maxLifeBonus = npc.maxLifeBonus ?? 0;
+    return Math.max(1, baseHealth + maxLifeBonus);
 }
 
 export function npcIsFlying(target: BattleCharacterInfo): boolean {
@@ -99,15 +102,24 @@ export function rollCommandForNpcInitiative(id: string) {
     return "1d6";
 }
 
-export function rollCommandForNpcAttack(id: string) {
-    return "1d6";
+export function rollCommandForNpcAttack(id: string, npcAttack?: any) {
+    const baseDice = 1;
+    const additionalDices = npcAttack?.additionalDices ?? 0;
+    const totalDices = baseDice + additionalDices;
+    return `${totalDices}d6`;
 }
 
 export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | null): ElementModifier | undefined {
     const npcInfo = getNpcById(id)
 
-    if (npcInfo?.imuneTo != undefined || npcInfo?.resistentTo != undefined || npcInfo?.weakTo != undefined) {
+    if (npcInfo?.imuneTo != undefined || npcInfo?.resistentTo != undefined || npcInfo?.weakTo != undefined || npcInfo?.absorbElement != undefined) {
         if (weaponInfo != undefined && weaponInfo.details != null) {
+            if (npcInfo?.absorbElement == weaponInfo.details?.attributes.element) {
+                return {
+                    multiplier: -1,  // Negative multiplier = healing
+                    type: "absorb"
+                };
+            }
             if (npcInfo?.imuneTo == weaponInfo.details?.attributes.element) {
                 return {
                     multiplier: 0,

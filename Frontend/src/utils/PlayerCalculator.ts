@@ -280,11 +280,13 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     }
 
     if (defenseOption == "dodge") {
-        playerDefense += (player?.playerSheet?.hability ?? 0) * hastenedMulti;
+        // Reduced from full hability to half for better PvP balance
+        playerDefense += Math.floor((player?.playerSheet?.hability ?? 0) * hastenedMulti * 0.5);
     }
 
     if (defenseOption == "dodge" || defenseOption == "jump") {
-        playerDefense += playerPictosTotalSpeed(player);
+        // Reduced from full speed bonus to half for better PvP balance
+        playerDefense += Math.floor(playerPictosTotalSpeed(player) * 0.5);
     }
 
     if (defenseOption == "block") {

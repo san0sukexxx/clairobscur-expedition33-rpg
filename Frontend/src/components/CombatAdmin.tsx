@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
 import { type GetPlayerResponse } from "../api/APIPlayer"
-import { FaUser, FaSkull, FaEdit } from "react-icons/fa"
+import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
 import { FaArrowsDownToLine } from "react-icons/fa6";
 import { getCharacterLabelById, getActiveTurnCharacterFromBattle } from "../utils/CharacterUtils"
@@ -46,6 +46,55 @@ export interface CombatAdminProps {
 
 type TeamKey = "A" | "B"
 
+function getDefenseSuccessLabel(defenseType: string): string {
+    const labels: Record<string, string> = {
+        "block": "Aparou",
+        "dodge": "Desviou",
+        "jump": "Pulou",
+        "gradient-block": "Aparou o gradiente",
+        "take": "Aceitou o dano",
+        "counter": "Contra-atacou",
+        "cancel-counter": "Cancelou counter"
+    };
+    return labels[defenseType] || "Defendido";
+}
+
+function getDefenseFailLabel(defenseType: string): string {
+    const labels: Record<string, string> = {
+        "block": "Falhou em aparar",
+        "dodge": "Falhou em desviar",
+        "jump": "Falhou em pular",
+        "gradient-block": "Falhou em aparar o gradiente",
+        "take": "Recebeu todo o dano",
+        "counter": "Falhou no counter",
+        "cancel-counter": "Falhou em cancelar counter"
+    };
+    return labels[defenseType] || "Falhou na defesa";
+}
+
+function calculateNPCDifficulty(npcId: string): number {
+    const npc = getNpcById(npcId);
+    if (!npc) return 0;
+
+    // Base: Poder + Habilidade + Resistência
+    let difficulty = npc.power + npc.hability + npc.resistance;
+
+    // Propriedades extras (+1 cada)
+    if (npc.playFirst) difficulty += 1;
+    if (npc.weakTo) difficulty += 1;
+    if (npc.resistentTo) difficulty += 1;
+    if (npc.imuneTo) difficulty += 1;
+    if (npc.absorbElement) difficulty += 1;
+    if (npc.freeShotWeakPoints) difficulty += 1;
+    if (npc.attackList && npc.attackList.length > 0) difficulty += 1;
+    if (npc.skillList && npc.skillList.length > 0) difficulty += 1;
+    if (npc.isFlying) difficulty += 1;
+    if (npc.initiativeBonus) difficulty += 1;
+    if (npc.maxLifeBonus) difficulty += 1;
+
+    return difficulty;
+}
+
 export default function CombatAdmin({
     campaignInfo,
     initialStatus,
@@ -72,6 +121,8 @@ export default function CombatAdmin({
     const { showToast } = useToast();
     const [editingHp, setEditingHp] = useState<CombatEntity | null>(null);
     const [newHpValue, setNewHpValue] = useState("");
+    const [sortColumn, setSortColumn] = useState<"name" | "difficulty" | null>(null);
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
     const processedEffectsRef = useRef<Set<string>>(new Set())
     const lastActiveCharacterIdRef = useRef<number | undefined>(undefined)
@@ -236,6 +287,26 @@ export default function CombatAdmin({
 
     function closeAddModal() {
         setShowAddModal(false)
+    }
+
+    function handleSort(column: "name" | "difficulty") {
+        if (sortColumn === column) {
+            // Toggle direction
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+        } else {
+            // New column, default to ascending
+            setSortColumn(column);
+            setSortDirection("asc");
+        }
+    }
+
+    function getSortIcon(column: "name" | "difficulty") {
+        if (sortColumn !== column) {
+            return <FaSort className="inline ml-1 opacity-50" />;
+        }
+        return sortDirection === "asc"
+            ? <FaSortUp className="inline ml-1" />
+            : <FaSortDown className="inline ml-1" />;
     }
 
     function isPlayerReadyToStart(playerInfo: GetPlayerResponse | undefined): boolean {
@@ -410,9 +481,37 @@ export default function CombatAdmin({
 
     const filteredEnemies = useMemo(() => {
         const f = filterText.trim().toLowerCase()
-        if (!f) return availableEnemies
-        return availableEnemies.filter((e) => e.name.toLowerCase().includes(f))
-    }, [filterText, availableEnemies])
+        let filtered = availableEnemies;
+
+        // Apply filter by name or difficulty
+        if (f) {
+            filtered = availableEnemies.filter((e) => {
+                const matchesName = e.name.toLowerCase().includes(f);
+                const difficulty = calculateNPCDifficulty(e.externalId.toString()).toString();
+                const matchesDifficulty = difficulty.includes(f);
+                return matchesName || matchesDifficulty;
+            });
+        }
+
+        // Apply sorting
+        if (sortColumn) {
+            filtered = [...filtered].sort((a, b) => {
+                let compareResult = 0;
+
+                if (sortColumn === "name") {
+                    compareResult = a.name.localeCompare(b.name);
+                } else if (sortColumn === "difficulty") {
+                    const diffA = calculateNPCDifficulty(a.externalId.toString());
+                    const diffB = calculateNPCDifficulty(b.externalId.toString());
+                    compareResult = diffA - diffB;
+                }
+
+                return sortDirection === "asc" ? compareResult : -compareResult;
+            });
+        }
+
+        return filtered;
+    }, [filterText, availableEnemies, sortColumn, sortDirection])
 
     function renderAvatarCell(entity: CombatEntity) {
         const isPlayerWithImage = entity.type === "player" && entity.avatarUrl;
@@ -490,7 +589,12 @@ export default function CombatAdmin({
                                     className="btn btn-md btn-primary"
                                     onClick={() => npcCustomAttackTapped(atk)}
                                 >
-                                    {getAttackTypeLabel(atk.type)}
+                                    {atk.name || getAttackTypeLabel(atk.type)}
+                                    {atk.quantity && atk.quantity > 1 && (
+                                        <span className="ml-1 badge badge-warning badge-sm">
+                                            x{atk.quantity}
+                                        </span>
+                                    )}
                                 </button>
 
                                 <div className="flex flex-col items-center text-sm opacity-80">
@@ -760,11 +864,15 @@ export default function CombatAdmin({
                                                                             <span className="font-mono">{a.totalDefended ?? 0}</span>
 
                                                                             {!defesaFalhou && (
-                                                                                <span className="badge badge-success badge-sm">Defendido</span>
+                                                                                <span className="badge badge-success badge-sm">
+                                                                                    {a.defenseType ? getDefenseSuccessLabel(a.defenseType) : 'Defendido'}
+                                                                                </span>
                                                                             )}
 
                                                                             {defesaFalhou && (
-                                                                                <span className="badge badge-error badge-sm">Falhou na defesa</span>
+                                                                                <span className="badge badge-error badge-sm">
+                                                                                    {a.defenseType ? getDefenseFailLabel(a.defenseType) : 'Falhou na defesa'}
+                                                                                </span>
                                                                             )}
                                                                         </>
                                                                     )}
@@ -850,11 +958,11 @@ export default function CombatAdmin({
 
                     <div className="form-control">
                         <label className="label flex items-center gap-4">
-                            <span className="label-text text-sm font-semibold">Filtro por nome</span>
+                            <span className="label-text text-sm font-semibold">Filtro</span>
                             <input
                                 type="text"
                                 className="input input-bordered input-sm flex-1"
-                                placeholder="Digite para filtrar..."
+                                placeholder="Digite para filtrar por nome ou dificuldade..."
                                 value={filterText}
                                 onChange={(e) => setFilterText(e.target.value)}
                             />
@@ -915,13 +1023,23 @@ export default function CombatAdmin({
 
                     <div className="border rounded-lg">
                         <div className="px-4 py-2 border-b font-semibold text-sm">NPCs</div>
-                        <div className="overflow-x-auto max-h-[28vh] overflow-y-auto">
+                        <div className="overflow-x-auto max-h-[50vh] overflow-y-auto">
                             <table className="table table-compact w-full">
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Nome</th>
-                                        <th>Personagem</th>
+                                        <th
+                                            className="cursor-pointer hover:bg-base-200 select-none"
+                                            onClick={() => handleSort("name")}
+                                        >
+                                            Nome {getSortIcon("name")}
+                                        </th>
+                                        <th
+                                            className="text-center cursor-pointer hover:bg-base-200 select-none"
+                                            onClick={() => handleSort("difficulty")}
+                                        >
+                                            Dificuldade {getSortIcon("difficulty")}
+                                        </th>
                                         <th className="w-1/6 text-right">Ações</th>
                                     </tr>
                                 </thead>
@@ -937,7 +1055,11 @@ export default function CombatAdmin({
                                             <tr key={`npc-${entity.externalId}-${idx}`}>
                                                 <td>{renderAvatarCell(entity)}</td>
                                                 <td>{entity.name}</td>
-                                                <td>{renderCharacterCell(entity)}</td>
+                                                <td className="text-center">
+                                                    <span className="badge badge-ghost">
+                                                        {calculateNPCDifficulty(entity.externalId.toString())}
+                                                    </span>
+                                                </td>
                                                 <td className="text-right">
                                                     <div className="flex items-center gap-2 justify-end">
                                                         <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
@@ -954,12 +1076,6 @@ export default function CombatAdmin({
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-
-                    <div className="modal-action">
-                        <button className="btn btn-sm" onClick={closeAddModal}>
-                            Cancelar
-                        </button>
                     </div>
                 </div>
 
@@ -1016,7 +1132,7 @@ export default function CombatAdmin({
                         characters={battleDetails?.characters}
                         initiatives={battleDetails?.initiatives}
                         turns={battleDetails?.turns}
-                        isStarted={battleStatus == "started"}
+                        isStarted={battleStatus == "started" || battleStatus == "finished"}
                         showBattleId={true}
                         isAdmin={true}
                         onReorder={reloadBattleDetails} />
@@ -1135,46 +1251,57 @@ export default function CombatAdmin({
         setNPCSkill(null)
         setAttackType(npcAttack.type)
         setNPCAttack(npcAttack)
-        startTargeting()
+        startTargeting(npcAttack.type)
     }
 
     function npcSkillTapped(skill: NPCSkill) {
         setAttackType(null)
         setNPCAttack(null)
         setNPCSkill(skill)
-        startTargeting()
+        startTargeting(undefined)
     }
 
     function npcAttackTapped(type: AttackType) {
         setNPCSkill(null)
         setAttackType(type)
         setNPCAttack(null)
-        startTargeting()
+        startTargeting(type)
     }
 
-    function startTargeting() {
-        if (attackType == "jump-all") {
+    function startTargeting(type?: AttackType) {
+        const currentAttackType = type ?? attackType;
+        if (currentAttackType == "jump-all") {
             handleMultipleAttack()
         } else {
             setIsSelectingTarget(true)
         }
     }
 
-    function handleMultipleAttack() {
+    async function handleMultipleAttack() {
         const character = getActiveTurnCharacter()
         const npcId = character?.id ?? ""
 
-        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcAttack(npcId), result => {
-            const enemies = battleDetails?.characters.filter(c => c.isEnemy != character?.isEnemy)
+        // Get quantity from npcAttack, default to 1
+        const attackQuantity = npcAttack?.quantity ?? 1;
 
-            if (enemies) {
-                for (const enemy of enemies) {
-                    if (character) {
-                        doTheAttack(character, enemy.battleID, enemy.type, result)
+        // Execute attack multiple times based on quantity
+        for (let i = 0; i < attackQuantity; i++) {
+            await new Promise<void>((resolve) => {
+                const rollCommand = rollCommandForNpcAttack(npcId, npcAttack);
+                rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommand, async (result) => {
+                    const enemies = battleDetails?.characters.filter(c => c.isEnemy != character?.isEnemy)
+
+                    if (enemies) {
+                        for (const enemy of enemies) {
+                            if (character) {
+                                await doTheAttack(character, enemy.battleID, enemy.type, result, i + 1, attackQuantity)
+                            }
+                        }
                     }
-                }
-            }
-        })
+                    resolve();
+                });
+            });
+        }
     }
 
     function handleTargetSelected(targetEntity: CombatEntity) {
@@ -1189,11 +1316,25 @@ export default function CombatAdmin({
         const character = getActiveTurnCharacter()
         const npcId = character?.id ?? ""
 
-        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForNpcAttack(npcId), result => {
-            if (character) {
-                doTheAttack(character, targetEntity.rowId ?? 0, targetEntity.type, result)
+        // Get quantity from npcAttack, default to 1
+        const attackQuantity = npcAttack?.quantity ?? 1;
+
+        // Execute attack multiple times based on quantity
+        const executeAttacks = async () => {
+            for (let i = 0; i < attackQuantity; i++) {
+                await new Promise<void>((resolve) => {
+                    const rollCommand = rollCommandForNpcAttack(npcId, npcAttack);
+                    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommand, async (result) => {
+                        if (character) {
+                            await doTheAttack(character, targetEntity.rowId ?? 0, targetEntity.type, result, i + 1, attackQuantity)
+                        }
+                        resolve();
+                    });
+                });
             }
-        });
+        };
+
+        executeAttacks();
     }
 
     function handleSkillTargetSelected(targetEntity: CombatEntity) {
@@ -1221,7 +1362,7 @@ export default function CombatAdmin({
         callAddStatus();
     }
 
-    function doTheAttack(sourceInfo: BattleCharacterInfo, targetID: number, targetType: BattleCharacterType, result: any) {
+    async function doTheAttack(sourceInfo: BattleCharacterInfo, targetID: number, targetType: BattleCharacterType, result: any, attackNumber?: number, totalAttacks?: number) {
         var effects: AttackStatusEffectRequest[] = [];
 
         if (attackType == "jump" || attackType == "jump-all") {
@@ -1235,7 +1376,7 @@ export default function CombatAdmin({
             })
         }
         if (npcAttack) {
-            npcAttack.statusList.forEach(s => {
+            npcAttack.statusList?.forEach(s => {
                 effects.push({
                     effectType: s.type,
                     ammount: s.ammount,
@@ -1250,24 +1391,32 @@ export default function CombatAdmin({
             effects: effects
         }
 
-        const totalPower = calculateNpcAttackPower(sourceInfo, result);
-        if (targetType == "npc") {
-            attackInfo.totalDamage = calculateNpcAttackReceivedDamage(sourceInfo, totalPower);
-            showToast(`Causou ${attackInfo.totalDamage} de dano`);
-        } else {
-            attackInfo.totalPower = totalPower;
-            showToast(`Atacou com ${attackInfo.totalPower} de dano`);
+        let totalPower = calculateNpcAttackPower(sourceInfo, result);
+
+        // Apply additional damage from npcAttack
+        if (npcAttack?.additionalDamage) {
+            totalPower += npcAttack.additionalDamage;
         }
 
-        const callAttack = async () => {
-            try {
-                await APIBattle.attack(attackInfo)
-            } catch (e) {
-                showToast("Erro ao encerrar o atacar");
-            }
-        };
+        if (targetType == "npc") {
+            attackInfo.totalDamage = calculateNpcAttackReceivedDamage(sourceInfo, totalPower);
+            const attackLabel = totalAttacks && totalAttacks > 1
+                ? `Ataque ${attackNumber}/${totalAttacks}: Causou ${attackInfo.totalDamage} de dano`
+                : `Causou ${attackInfo.totalDamage} de dano`;
+            showToast(attackLabel);
+        } else {
+            attackInfo.totalPower = totalPower;
+            const attackLabel = totalAttacks && totalAttacks > 1
+                ? `Ataque ${attackNumber}/${totalAttacks}: Atacou com ${attackInfo.totalPower} de dano`
+                : `Atacou com ${attackInfo.totalPower} de dano`;
+            showToast(attackLabel);
+        }
 
-        callAttack();
+        try {
+            await APIBattle.attack(attackInfo)
+        } catch (e) {
+            showToast("Erro ao encerrar o atacar");
+        }
     }
 
     function npcPassTurnTapped() {

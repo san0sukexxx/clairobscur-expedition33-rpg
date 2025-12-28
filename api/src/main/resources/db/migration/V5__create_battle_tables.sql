@@ -90,6 +90,7 @@ CREATE TABLE
         is_resolved BOOLEAN DEFAULT 0,
         allow_counter BOOLEAN DEFAULT 0,
         is_counter_resolved BOOLEAN DEFAULT 0,
+        defense_type TEXT,
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE,
         FOREIGN KEY (target_battle_id) REFERENCES battle_character (id) ON DELETE CASCADE,
         FOREIGN KEY (source_battle_id) REFERENCES battle_character (id) ON DELETE CASCADE

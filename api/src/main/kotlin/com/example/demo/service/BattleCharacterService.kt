@@ -335,22 +335,18 @@ class BattleCharacterService(
 
                 val entity = opt.get()
 
-                // Get current charge points (used for AP), default to 0 if null
-                val currentAP = entity.chargePoints ?: 0
-                val maxAP = entity.maxChargePoints
+                // AP system uses Magic Points
+                val currentMP = entity.magicPoints ?: 0
+                val maxMP = entity.maxMagicPoints ?: 0
 
-                // Calculate new AP value
-                var newAP = currentAP + amount
-
-                // If maxAP is set, enforce the limit
-                if (maxAP != null) {
-                        newAP = newAP.coerceIn(0, maxAP)
+                // Calculate new MP value
+                val newMP = if (maxMP > 0) {
+                        (currentMP + amount).coerceIn(0, maxMP)
                 } else {
-                        // Otherwise, just ensure it's not negative
-                        newAP = newAP.coerceAtLeast(0)
+                        (currentMP + amount).coerceAtLeast(0)
                 }
 
-                entity.chargePoints = newAP
+                entity.magicPoints = newMP
 
                 repository.save(entity)
 
@@ -370,8 +366,8 @@ class BattleCharacterService(
                 val entity = opt.get()
 
                 return mapOf(
-                        "actionPoints" to entity.chargePoints,
-                        "maxActionPoints" to entity.maxChargePoints
+                        "actionPoints" to entity.magicPoints,
+                        "maxActionPoints" to entity.maxMagicPoints
                 )
         }
 }

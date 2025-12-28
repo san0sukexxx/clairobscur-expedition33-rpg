@@ -29,7 +29,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Sobrecarga",
     cost: 4,
     unlockCost: 0,
-    description: "Causa dano de Raio alto baseado na quantidade de Cargas. 1 acerto. Pode causar Break.",
+    description: "Causa dano de Raio alto baseado na quantidade de Cargas. 1 acerto. Pode causar quebra.",
     image: "Gustave_Overcharge.webp"
   },
   {
@@ -68,7 +68,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Shatter",
     cost: 5,
     unlockCost: 6,
-    description: "Causa dano de Raio alto em todos os inimigos. 1 acerto. Pode causar Break. Se um alvo sofrer Break pelo acerto, Overcharge é totalmente carregado.",
+    description: "Causa dano de Raio alto em todos os inimigos. 1 acerto. Pode causar quebra. Se um alvo sofrer Break pelo acerto, Overcharge é totalmente carregado.",
     image: "Gustave_Shatter.webp",
     preRequisite: ["gustave-recovery"]
   },
@@ -160,7 +160,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Mayhem",
     cost: 3,
     unlockCost: 0,
-    description: "Efeito da Habilidade: Consome todas as Manchas para causar dano elemental alto ao alvo.\n\nPode causar Break se 4 Manchas forem consumidas.",
+    description: "Efeito da Habilidade: Consome todas as Manchas para causar dano elemental alto ao alvo.\n\nPode causar quebra se 4 Manchas forem consumidas.",
     image: "Lune_Mayhem.webp",
     preRequisite: ["lune-electrify","lune-thermal-transfer"]
   },
@@ -200,7 +200,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Rockslide",
     cost: 5,
     unlockCost: 2,
-    description: "Efeito da Habilidade: Causa dano médio de Terra a um único alvo. 2 acertos. Pode causar Break.\n\nConsome todos os três tipos de Manchas para causar dano muito aumentado.\n\nUsar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz.",
+    description: "Efeito da Habilidade: Causa dano médio de Terra a um único alvo. 2 acertos. Pode causar quebra.\n\nConsome todos os três tipos de Manchas para causar dano muito aumentado.\n\nUsar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz.",
     image: "Lune_Rockslide.webp",
     preRequisite: ["lune-earth-rising"]
   },
@@ -310,7 +310,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Sky Break",
     cost: 3,
     unlockCost: 0,
-    description: "Efeito da Habilidade: Causa dano extremo a todos os inimigos. 1 acerto. Pode causar Break.\n\nO elemento depende de qual Mancha Lune possui mais.\n\nUsar esta habilidade concede 3 Manchas de Luz.",
+    description: "Efeito da Habilidade: Causa dano extremo a todos os inimigos. 1 acerto. Pode causar quebra.\n\nO elemento depende de qual Mancha Lune possui mais.\n\nUsar esta habilidade concede 3 Manchas de Luz.",
     isGradient: true,
     masterUnlock: true,
     image: "Lune_SkyBreak.webp"
@@ -455,7 +455,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Fleuret Fury",
     cost: 6,
     unlockCost: 2,
-    description: "Causa dano Físico alto em alvo único. 3 acertos. Se estiver em postura Virtuosa, mantém postura Virtuosa. Pode causar Break.",
+    description: "Causa dano Físico alto em alvo único. 3 acertos. Se estiver em postura Virtuosa, mantém postura Virtuosa. Pode causar quebra.",
     image: "Maelle_FleuretFury.webp",
     preRequisite: ["maelle-guard-up"]
   },
@@ -505,7 +505,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Revenge",
     cost: 5,
     unlockCost: 6,
-    description: "Causa dano de Fogo alto em alvo único. 1 acerto. Dano aumenta proporcionalmente ao número de acertos recebidos desde o último turno de Maelle. Pode causar Break. Muda a postura para Defensiva. Recompensa estilo defensivo/tanque.",
+    description: "Causa dano de Fogo alto em alvo único. 1 acerto. Dano aumenta proporcionalmente ao número de acertos recebidos desde o último turno de Maelle. Pode causar quebra. Muda a postura para Defensiva. Recompensa estilo defensivo/tanque.",
     image: "Maelle_Revenge.webp",
     preRequisite: ["maelle-combustion"]
   },
@@ -545,7 +545,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Payback",
     cost: 9,
     unlockCost: 8,
-    description: "Causa dano Físico muito alto em alvo único. 1 acerto. Dano aumenta por acertos recebidos desde o último turno. Custo de PA reduzido em 1 para cada ataque aparado com sucesso. Pode causar Break. Muda a postura para Defensiva.",
+    description: "Causa dano Físico muito alto em alvo único. 1 acerto. Dano aumenta por acertos recebidos desde o último turno. Custo de PA reduzido em 1 para cada ataque aparado com sucesso. Pode causar quebra. Muda a postura para Defensiva.",
     image: "Maelle_Payback.webp",
     preRequisite: ["maelle-last-chance","maelle-momentum-strike"]
   },
@@ -729,7 +729,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Phantom Blade",
     cost: 5,
     unlockCost: 2,
-    description: "Causa dano das Trevas alto em alvo único. 1 acerto. Consome todas as Predições para aumentar o dano. Pode causar Break.",
+    description: "Causa dano das Trevas alto em alvo único. 1 acerto. Consome todas as Predições para aumentar o dano. Pode causar quebra.",
     type: "moon",
     image: "Sciel_PhantomBlade.webp",
     preRequisite: ["sciel-twilight-slash"]
@@ -850,7 +850,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Final Path",
     cost: 9,
     unlockCost: 10,
-    description: "Causa dano das Trevas extremo em alvo único. 1 acerto. Aplica 10 Predições. Pode causar Break.",
+    description: "Causa dano das Trevas extremo em alvo único. 1 acerto. Aplica 10 Predições. Pode causar quebra.",
     type: "sun",
     image: "Sciel_FinalPath.webp",
     isBlocked: true,
@@ -885,7 +885,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Doom",
     cost: 2,
     unlockCost: 0,
-    description: "Habilidade Gradiente. Causa dano das Trevas muito alto em alvo único. 3 acertos. Aplica Fraco, Indefeso e Lento por 3 turnos. Pode causar Break.",
+    description: "Habilidade Gradiente. Causa dano das Trevas muito alto em alvo único. 3 acertos. Aplica Fraco, Indefeso e Lento por 3 turnos. Pode causar quebra.",
     isGradient: true,
     masterUnlock: true,
     type: "moon",
@@ -1259,7 +1259,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Burning bash attack.\n\nEfeito: Causa dano Físico médio em alvo único. 3 acertos. Pode causar Break. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Bruler enquanto Monoco estiver no grupo ativo.",
+    description: "Burning bash attack.\n\nEfeito: Causa dano Físico médio em alvo único. 3 acertos. Pode causar quebra. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Bruler enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_BrulerBash.webp"
   },
   {
@@ -1399,7 +1399,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Dual-wielding storm attack.\n\nEfeito: Causa dano Físico extremo em alvo único. 4 acertos. Pode causar Break. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.\nPré-requisito: Derrote e adquira o pé de um inimigo Dualliste enquanto Monoco estiver no grupo ativo.",
+    description: "Dual-wielding storm attack.\n\nEfeito: Causa dano Físico extremo em alvo único. 4 acertos. Pode causar quebra. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.\nPré-requisito: Derrote e adquira o pé de um inimigo Dualliste enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_DuallistStorm.webp"
   },
   {
@@ -1509,7 +1509,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Harvesting reaper attack.\n\nEfeito: Causa dano Físico alto em alvo único. 3 acertos. Pode causar Break. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Moissoneusse enquanto Monoco estiver no grupo ativo.",
+    description: "Harvesting reaper attack.\n\nEfeito: Causa dano Físico alto em alvo único. 3 acertos. Pode causar quebra. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Moissoneusse enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_MoissonneuseVendange.webp"
   },
   {
@@ -1549,7 +1549,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Door-breaking crash attack.\n\nEfeito: Causa dano Físico alto em todos os inimigos. 1 acerto. Pode causar Break. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo.",
+    description: "Door-breaking crash attack.\n\nEfeito: Causa dano Físico alto em todos os inimigos. 1 acerto. Pode causar quebra. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_PortierCrash.webp"
   },
   {
@@ -1569,7 +1569,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Collector's bonking attack.\n\nEfeito: Causa dano das Trevas baixo em alvo único. 1 acerto. Pode causar Break. Efeito Máscara Ágil preenche 20% da Barra de Break do alvo. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, preenche a Barra de Break do inimigo em 20% ao acertar.\nPré-requisito: Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo.",
+    description: "Collector's bonking attack.\n\nEfeito: Causa dano das Trevas baixo em alvo único. 1 acerto. Pode causar quebra. Efeito Máscara Ágil preenche 20% da Barra de Break do alvo. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, preenche a Barra de Break do inimigo em 20% ao acertar.\nPré-requisito: Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_RamasseurBonk.webp"
   },
   {
@@ -1579,7 +1579,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Rock hammering attack.\n\nEfeito: Causa dano Físico médio em alvo único. 4 acertos. Pode causar Break. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Rocher enquanto Monoco estiver no grupo ativo.",
+    description: "Rock hammering attack.\n\nEfeito: Causa dano Físico médio em alvo único. 4 acertos. Pode causar quebra. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Rocher enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_RocherHammering.webp"
   },
   {

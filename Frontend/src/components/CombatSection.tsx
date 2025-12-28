@@ -126,6 +126,13 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 </div>
             )}
 
+            {player?.fightInfo?.battleStatus == "finished" && (
+                <div className="alert alert-success shadow-lg mt-1 mb-5 gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span className="font-semibold">Batalha finalizada</span>
+                </div>
+            )}
+
             <PlayerStatusFloating
                 player={player}
             />
@@ -136,16 +143,16 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 characters={player?.fightInfo?.characters}
                 initiatives={player?.fightInfo?.initiatives}
                 turns={player?.fightInfo?.turns}
-                isStarted={player?.fightInfo?.battleStatus == "started"}
+                isStarted={player?.fightInfo?.battleStatus == "started" || player?.fightInfo?.battleStatus == "finished"}
                 showBattleId={false}
                 isAdmin={isAdmin} />
 
             {tab === "enemies" && (
-                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} />
+                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} />
             )}
 
             {tab === "team" && (
-                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} />
+                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} />
             )}
 
             <CombatMenu

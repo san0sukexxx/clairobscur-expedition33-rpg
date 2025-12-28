@@ -199,22 +199,22 @@ export function calculateSkillHitDamage(
         case "none":
             return 0;  // Sem dano
         case "low":
-            multiplier = 0.5;  // 50% do dano base
+            multiplier = 1.0;  // 100% do dano base (era 50%)
             break;
         case "medium":
-            multiplier = 1.0;  // 100% do dano base
+            multiplier = 1.5;  // 150% do dano base (era 100%)
             break;
         case "high":
-            multiplier = 1.5;  // 150% do dano base
+            multiplier = 2.0;  // 200% do dano base (era 150%)
             break;
         case "very-high":
-            multiplier = 2.0;  // 200% do dano base
+            multiplier = 2.5;  // 250% do dano base (era 200%)
             break;
         case "extreme":
-            multiplier = 2.5;  // 250% do dano base
+            multiplier = 3.0;  // 300% do dano base (era 250%)
             break;
         default:
-            multiplier = 1.0;
+            multiplier = 1.5;
     }
 
     let damage = Math.floor(weaponPower * multiplier);

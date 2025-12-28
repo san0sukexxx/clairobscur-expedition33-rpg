@@ -106,6 +106,7 @@ export interface GetAttacksResponse {
 export interface CreateDefenseRequest {
     attackId: number
     totalDamage: number
+    defenseType?: string  // "block", "dodge", "jump", "gradient-block", "take"
 }
 
 export interface ResolveStatusRequest {
@@ -290,16 +291,16 @@ export class APIBattle {
         )
     }
 
-    // ==================== AP/Energy Management ====================
+    // ==================== MP/Energy Management ====================
 
-    static async giveAP(battleCharacterId: number, amount: number): Promise<void> {
+    static async giveMP(battleCharacterId: number, amount: number): Promise<void> {
         await api.post<{ amount: number }, void>(
             `battle/characters/${battleCharacterId}/ap`,
             { amount }
         )
     }
 
-    static async getAP(battleCharacterId: number): Promise<number> {
+    static async getMP(battleCharacterId: number): Promise<number> {
         return api.get<number>(`battle/characters/${battleCharacterId}/ap`)
     }
 

@@ -34,7 +34,7 @@ class PlayerController(
                                 Player(
                                         name = null,
                                         characterId = null,
-                                        totalPoints = 0,
+                                        totalPoints = 5,  // Start at level 5
                                         xp = 0,
                                         power = 0,
                                         hability = 0,
@@ -51,6 +51,25 @@ class PlayerController(
                 campaignPlayerRepository.save(
                         CampaignPlayer(campaignId = req.campaign, playerId = playerId)
                 )
+
+                // Grant starting potions (1 of each type) to new players
+                val startingPotions = listOf(
+                        "chroma-elixir",
+                        "healing-elixir",
+                        "energy-elixir",
+                        "revive-elixir"
+                )
+
+                startingPotions.forEach { potionId ->
+                        playerItemRepository.save(
+                                com.example.demo.model.PlayerItem(
+                                        playerId = playerId,
+                                        itemId = potionId,
+                                        quantity = 1,
+                                        maxQuantity = 1
+                                )
+                        )
+                }
 
                 return ResponseEntity.ok(CreatePlayerResponse(id = playerId))
         }
@@ -161,9 +180,6 @@ class PlayerController(
                         val skills = playerSkillRepository.findByPlayerId(id)
                         playerSkillRepository.deleteAll(skills)
 
-                        // Unequip weapon
-                        p.weaponId = null
-
                         // Grant starting weapon for the new character
                         val startingWeaponId = getStartingWeaponForCharacter(newCharacterId)
                         if (startingWeaponId != null) {
@@ -178,6 +194,37 @@ class PlayerController(
                                                         playerId = id,
                                                         weaponId = startingWeaponId,
                                                         weaponLevel = 1
+                                                )
+                                        )
+                                }
+
+                                // Equip the starting weapon automatically
+                                p.weaponId = startingWeaponId
+                        } else {
+                                // If no starting weapon found, unequip current weapon
+                                p.weaponId = null
+                        }
+
+                        // Grant starting potions (1 of each type)
+                        val startingPotions = listOf(
+                                "chroma-elixir",
+                                "healing-elixir",
+                                "energy-elixir",
+                                "revive-elixir"
+                        )
+
+                        startingPotions.forEach { potionId ->
+                                val existingPotion = playerItemRepository.findByPlayerId(id)
+                                        .find { it.itemId == potionId }
+
+                                if (existingPotion == null) {
+                                        // Add 1 of each potion to player's inventory
+                                        playerItemRepository.save(
+                                                com.example.demo.model.PlayerItem(
+                                                        playerId = id,
+                                                        itemId = potionId,
+                                                        quantity = 1,
+                                                        maxQuantity = 1
                                                 )
                                         )
                                 }

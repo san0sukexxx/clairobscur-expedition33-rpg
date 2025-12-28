@@ -18,6 +18,44 @@ class DamageService(
 
     @Transactional
     fun applyDamage(targetBC: BattleCharacter, rawDamage: Int): Int {
+        // Handle element absorption healing (negative damage)
+        if (rawDamage < 0) {
+            // Convert negative damage to healing (absolute value)
+            val healAmount = kotlin.math.abs(rawDamage)
+            val newHp = (targetBC.healthPoints + healAmount).coerceAtMost(targetBC.maxHealthPoints)
+            targetBC.healthPoints = newHp
+            battleCharacterRepository.save(targetBC)
+
+            // Sync HP with player repository if applicable
+            val playerId = targetBC.externalId.toIntOrNull()
+            if (playerId != null) {
+                val player = playerRepository.findById(playerId).orElse(null)
+                if (player != null) {
+                    player.hpCurrent = targetBC.healthPoints
+                    if (targetBC.magicPoints != null) {
+                        player.mpCurrent = targetBC.magicPoints!!
+                    }
+                    playerRepository.save(player)
+                }
+            }
+
+            return newHp
+        }
+
+        // Normal damage flow (rawDamage >= 0)
+        // Check if target has invisible-barrier status for 90% damage reduction
+        val invisibleBarrierEffects = battleStatusEffectRepository
+                .findByBattleCharacterIdAndEffectType(targetBC.id!!, "invisible-barrier")
+
+        val hasInvisibleBarrier = invisibleBarrierEffects.isNotEmpty()
+
+        // Apply invisible-barrier reduction first (90% reduction = 10% damage)
+        val damageAfterBarrier = if (hasInvisibleBarrier) {
+            (rawDamage * 0.1).toInt()  // 90% reduction
+        } else {
+            rawDamage
+        }
+
         // Check if target has Unprotected (Defenseless) status for +25% damage
         val hasUnprotected = battleStatusEffectRepository
                 .findByBattleCharacterIdAndEffectType(targetBC.id!!, "Unprotected")
@@ -25,9 +63,9 @@ class DamageService(
 
         // Apply Defenseless bonus if present
         val damageWithDefenseless = if (hasUnprotected) {
-            (rawDamage * 1.25).toInt()  // +25% damage
+            (damageAfterBarrier * 1.25).toInt()  // +25% damage
         } else {
-            rawDamage
+            damageAfterBarrier
         }
 
         // Apply minimum damage rules:
@@ -36,6 +74,17 @@ class DamageService(
         val damage = when {
             targetBC.characterType == "npc" -> damageWithDefenseless.coerceAtLeast(1)
             else -> damageWithDefenseless.coerceAtLeast(0)
+        }
+
+        // Reduce invisible-barrier amount by 1 after taking damage
+        if (hasInvisibleBarrier && damage > 0) {
+            val barrierEffect = invisibleBarrierEffects.first()
+            if (barrierEffect.ammount > 1) {
+                barrierEffect.ammount -= 1
+                battleStatusEffectRepository.save(barrierEffect)
+            } else {
+                battleStatusEffectRepository.delete(barrierEffect)
+            }
         }
 
         val newHp = (targetBC.healthPoints - damage).coerceAtLeast(0)

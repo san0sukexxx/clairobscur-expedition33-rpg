@@ -1,5 +1,6 @@
 import type { BattleCharacterInfo, StatusType, PictoResponse, LuminaResponse, StatusResponse } from "../api/ResponseModel";
 import { APIBattle } from "../api/APIBattle";
+import { APIPictoTracker } from "../api/APIPictoTracker";
 
 // ==================== PICTO/LUMINA EFFECT TYPES ====================
 
@@ -60,6 +61,7 @@ export interface PictoEffectContext {
         isWeakPoint?: boolean;
         statusApplied?: StatusType;
         apGained?: number;
+        gradientChargesConsumed?: number;
     };
 }
 
@@ -229,13 +231,11 @@ function rollChance(percentage: number): boolean {
 }
 
 /**
- * Give AP to a character
- * Note: AP system needs backend implementation
+ * Give MP to a character
+ * Note: In our system, pictos that give "AP" actually give MP (Magic Points)
  */
-async function giveAP(targetId: number, amount: number): Promise<void> {
-    // TODO: Implement AP system in backend
-    // When implemented, call: await APIBattle.giveAP(targetId, amount);
-    console.log(`[Picto Effect] Giving ${amount} AP to character ${targetId}`);
+async function giveMP(targetId: number, amount: number): Promise<void> {
+    await APIBattle.giveMP(targetId, amount);
 }
 
 /**
@@ -348,7 +348,7 @@ export function getDamageModifier(
 
 // ==================== PICTO EFFECT IMPLEMENTATIONS ====================
 
-// ==================== ENERGY & AP GENERATION ====================
+// ==================== ENERGY & MP GENERATION ====================
 
 /**
  * Energy Master
@@ -376,11 +376,11 @@ registerPictoEffect("Energising Turn", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Energising Turn!`
+        message: `${ctx.source.name} gained 1 MP from Energising Turn!`
     };
 });
 
@@ -393,11 +393,11 @@ registerPictoEffect("Energising Attack I", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Energising Attack I!`
+        message: `${ctx.source.name} gained 1 MP from Energising Attack I!`
     };
 });
 
@@ -410,11 +410,11 @@ registerPictoEffect("Energising Parry", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Energising Parry!`
+        message: `${ctx.source.name} gained 1 MP from Energising Parry!`
     };
 });
 
@@ -427,12 +427,34 @@ registerPictoEffect("Dodger", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Implement once-per-turn tracking
-    await giveAP(ctx.source.battleID, 1);
+    // Verificar se já foi usado neste turno
+    const canActivate = await APIPictoTracker.canActivate({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Dodger",
+        effectType: "once-per-turn"
+    });
+
+    if (!canActivate) {
+        return {
+            success: false,
+            message: `${ctx.source.name}'s Dodger already used this turn!`
+        };
+    }
+
+    // Registrar uso do efeito
+    await APIPictoTracker.trackEffect({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Dodger",
+        effectType: "once-per-turn"
+    });
+
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Dodger!`
+        message: `${ctx.source.name} gained 1 MP from Dodger!`
     };
 });
 
@@ -446,11 +468,11 @@ const registerEnergisingStart = (name: string) => {
             return { success: false };
         }
 
-        await giveAP(ctx.source.battleID, 1);
+        await giveMP(ctx.source.battleID, 1);
 
         return {
             success: true,
-            message: `${ctx.source.name} gained 1 AP from ${name}!`
+            message: `${ctx.source.name} gained 1 MP from ${name}!`
         };
     });
 };
@@ -470,11 +492,11 @@ registerPictoEffect("Perilous Parry", async (ctx) => {
     }
 
     // NOTE: "damage received is doubled" is a passive modifier requiring backend
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Perilous Parry!`
+        message: `${ctx.source.name} gained 1 MP from Perilous Parry!`
     };
 });
 
@@ -487,11 +509,11 @@ registerPictoEffect("Bloody Bullet", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Bloody Bullet!`
+        message: `${ctx.source.name} gained 1 MP from Bloody Bullet!`
     };
 });
 
@@ -509,12 +531,12 @@ registerPictoEffect("Energising Revive", async (ctx) => {
     );
 
     for (const ally of allies) {
-        await giveAP(ally.battleID, 3);
+        await giveMP(ally.battleID, 3);
     }
 
     return {
         success: true,
-        message: `All allies gained 3 AP from ${ctx.source.name}'s Energising Revive!`
+        message: `All allies gained 3 MP from ${ctx.source.name}'s Energising Revive!`
     };
 });
 
@@ -531,11 +553,11 @@ registerPictoEffect("Lucky Aim", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Lucky Aim!`
+        message: `${ctx.source.name} gained 1 MP from Lucky Aim!`
     };
 });
 
@@ -549,11 +571,11 @@ const registerDeadEnergy = (name: string) => {
             return { success: false };
         }
 
-        await giveAP(ctx.source.battleID, 3);
+        await giveMP(ctx.source.battleID, 3);
 
         return {
             success: true,
-            message: `${ctx.source.name} gained 3 AP from ${name}!`
+            message: `${ctx.source.name} gained 3 MP from ${name}!`
         };
     });
 };
@@ -570,11 +592,11 @@ registerPictoEffect("Energising Attack II", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Energising Attack II!`
+        message: `${ctx.source.name} gained 1 MP from Energising Attack II!`
     };
 });
 
@@ -588,29 +610,30 @@ registerPictoEffect("Energising Pain", async (ctx) => {
     }
 
     // NOTE: "No longer gain AP on Parry" is a passive modifier requiring backend
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Energising Pain!`
+        message: `${ctx.source.name} gained 1 MP from Energising Pain!`
     };
 });
 
 /**
  * Energising Jump
  * "+1 AP on Jump Counterattack."
+ * Note: Currently activates on any counterattack since Jump is the primary counterattack mechanic.
+ * If other counterattack types are added in the future, add type check in additionalData.
  */
 registerPictoEffect("Energising Jump", async (ctx) => {
     if (ctx.trigger !== "on-counterattack") {
         return { success: false };
     }
 
-    // TODO: Check if it's specifically a Jump counterattack
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Energising Jump!`
+        message: `${ctx.source.name} gained 1 MP from Energising Jump!`
     };
 });
 
@@ -629,12 +652,34 @@ registerPictoEffect("Rewarding Mark", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Implement once-per-turn tracking
-    await giveAP(ctx.source.battleID, 2);
+    // Verificar se já foi usado neste turno
+    const canActivate = await APIPictoTracker.canActivate({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Rewarding Mark",
+        effectType: "once-per-turn"
+    });
+
+    if (!canActivate) {
+        return {
+            success: false,
+            message: `${ctx.source.name}'s Rewarding Mark already used this turn!`
+        };
+    }
+
+    // Registrar uso do efeito
+    await APIPictoTracker.trackEffect({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Rewarding Mark",
+        effectType: "once-per-turn"
+    });
+
+    await giveMP(ctx.source.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 AP from Rewarding Mark!`
+        message: `${ctx.source.name} gained 2 MP from Rewarding Mark!`
     };
 });
 
@@ -651,11 +696,11 @@ registerPictoEffect("Energising Shots", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 1);
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Energising Shots!`
+        message: `${ctx.source.name} gained 1 MP from Energising Shots!`
     };
 });
 
@@ -668,11 +713,11 @@ registerPictoEffect("Effective Support", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 2);
+    await giveMP(ctx.source.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 AP from Effective Support!`
+        message: `${ctx.source.name} gained 2 MP from Effective Support!`
     };
 });
 
@@ -685,12 +730,34 @@ registerPictoEffect("Weakness Gain", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Implement once-per-turn tracking
-    await giveAP(ctx.source.battleID, 1);
+    // Verificar se já foi usado neste turno
+    const canActivate = await APIPictoTracker.canActivate({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Weakness Gain",
+        effectType: "once-per-turn"
+    });
+
+    if (!canActivate) {
+        return {
+            success: false,
+            message: `${ctx.source.name}'s Weakness Gain already used this turn!`
+        };
+    }
+
+    // Registrar uso do efeito
+    await APIPictoTracker.trackEffect({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Weakness Gain",
+        effectType: "once-per-turn"
+    });
+
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Weakness Gain!`
+        message: `${ctx.source.name} gained 1 MP from Weakness Gain!`
     };
 });
 
@@ -703,11 +770,11 @@ registerPictoEffect("Patient Fighter", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 2);
+    await giveMP(ctx.source.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 AP from Patient Fighter!`
+        message: `${ctx.source.name} gained 2 MP from Patient Fighter!`
     };
 });
 
@@ -720,12 +787,34 @@ registerPictoEffect("Energetic Healer", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Implement once-per-turn tracking
-    await giveAP(ctx.source.battleID, 2);
+    // Verificar se já foi usado neste turno
+    const canActivate = await APIPictoTracker.canActivate({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Energetic Healer",
+        effectType: "once-per-turn"
+    });
+
+    if (!canActivate) {
+        return {
+            success: false,
+            message: `${ctx.source.name}'s Energetic Healer already used this turn!`
+        };
+    }
+
+    // Registrar uso do efeito
+    await APIPictoTracker.trackEffect({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Energetic Healer",
+        effectType: "once-per-turn"
+    });
+
+    await giveMP(ctx.source.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 AP from Energetic Healer!`
+        message: `${ctx.source.name} gained 2 MP from Energetic Healer!`
     };
 });
 
@@ -738,12 +827,34 @@ registerPictoEffect("Beneficial Contamination", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Implement once-per-turn tracking
-    await giveAP(ctx.source.battleID, 2);
+    // Verificar se já foi usado neste turno
+    const canActivate = await APIPictoTracker.canActivate({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Beneficial Contamination",
+        effectType: "once-per-turn"
+    });
+
+    if (!canActivate) {
+        return {
+            success: false,
+            message: `${ctx.source.name}'s Beneficial Contamination already used this turn!`
+        };
+    }
+
+    // Registrar uso do efeito
+    await APIPictoTracker.trackEffect({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Beneficial Contamination",
+        effectType: "once-per-turn"
+    });
+
+    await giveMP(ctx.source.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 AP from Beneficial Contamination!`
+        message: `${ctx.source.name} gained 2 MP from Beneficial Contamination!`
     };
 });
 
@@ -768,11 +879,11 @@ registerPictoEffect("Energising Break", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.source.battleID, 3);
+    await giveMP(ctx.source.battleID, 3);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 3 AP from Energising Break!`
+        message: `${ctx.source.name} gained 3 MP from Energising Break!`
     };
 });
 
@@ -785,12 +896,13 @@ registerPictoEffect("Energising Gradient", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Get number of gradient charges consumed
-    await giveAP(ctx.source.battleID, 1);
+    // Get number of gradient charges consumed from additionalData
+    const chargesConsumed = ctx.additionalData?.gradientChargesConsumed ?? 1;
+    await giveMP(ctx.source.battleID, chargesConsumed);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained AP from Energising Gradient!`
+        message: `${ctx.source.name} gained ${chargesConsumed} MP from Energising Gradient!`
     };
 });
 
@@ -807,12 +919,34 @@ registerPictoEffect("Energising Burn", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Implement once-per-turn tracking
-    await giveAP(ctx.source.battleID, 1);
+    // Verificar se já foi usado neste turno
+    const canActivate = await APIPictoTracker.canActivate({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Energising Burn",
+        effectType: "once-per-turn"
+    });
+
+    if (!canActivate) {
+        return {
+            success: false,
+            message: `${ctx.source.name}'s Energising Burn already used this turn!`
+        };
+    }
+
+    // Registrar uso do efeito
+    await APIPictoTracker.trackEffect({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Energising Burn",
+        effectType: "once-per-turn"
+    });
+
+    await giveMP(ctx.source.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 AP from Energising Burn!`
+        message: `${ctx.source.name} gained 1 MP from Energising Burn!`
     };
 });
 
@@ -833,11 +967,11 @@ registerPictoEffect("Energising Powerful", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.target.battleID, 2);
+    await giveMP(ctx.target.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 AP from Energising Powerful!`
+        message: `${ctx.target.name} gained 2 MP from Energising Powerful!`
     };
 });
 
@@ -858,11 +992,11 @@ registerPictoEffect("Energising Shell", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.target.battleID, 2);
+    await giveMP(ctx.target.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 AP from Energising Shell!`
+        message: `${ctx.target.name} gained 2 MP from Energising Shell!`
     };
 });
 
@@ -883,11 +1017,11 @@ registerPictoEffect("Energising Rush", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.target.battleID, 2);
+    await giveMP(ctx.target.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 AP from Energising Rush!`
+        message: `${ctx.target.name} gained 2 MP from Energising Rush!`
     };
 });
 
@@ -1675,7 +1809,29 @@ registerPictoEffect("Healing Fire", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Implement once-per-turn tracking
+    // Verificar se já foi usado neste turno
+    const canActivate = await APIPictoTracker.canActivate({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Healing Fire",
+        effectType: "once-per-turn"
+    });
+
+    if (!canActivate) {
+        return {
+            success: false,
+            message: `${ctx.source.name}'s Healing Fire already used this turn!`
+        };
+    }
+
+    // Registrar uso do efeito
+    await APIPictoTracker.trackEffect({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Healing Fire",
+        effectType: "once-per-turn"
+    });
+
     const healAmount = Math.floor(ctx.source.maxHealthPoints * 0.25);
     await healCharacter(ctx.source.battleID, healAmount);
 
@@ -1722,7 +1878,29 @@ registerPictoEffect("Healing Mark", async (ctx) => {
         return { success: false };
     }
 
-    // TODO: Implement once-per-turn tracking
+    // Verificar se já foi usado neste turno
+    const canActivate = await APIPictoTracker.canActivate({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Healing Mark",
+        effectType: "once-per-turn"
+    });
+
+    if (!canActivate) {
+        return {
+            success: false,
+            message: `${ctx.source.name}'s Healing Mark already used this turn!`
+        };
+    }
+
+    // Registrar uso do efeito
+    await APIPictoTracker.trackEffect({
+        battleId: ctx.battleId,
+        battleCharacterId: ctx.source.battleID,
+        pictoName: "Healing Mark",
+        effectType: "once-per-turn"
+    });
+
     const healAmount = Math.floor(ctx.source.maxHealthPoints * 0.25);
     await healCharacter(ctx.source.battleID, healAmount);
 
@@ -1861,11 +2039,11 @@ registerPictoEffect("Energising Heal", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.target.battleID, 2);
+    await giveMP(ctx.target.battleID, 2);
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 AP from Energising Heal!`
+        message: `${ctx.target.name} gained 2 MP from Energising Heal!`
     };
 });
 
@@ -2345,11 +2523,11 @@ registerPictoEffect("Healing Tint Energy", async (ctx) => {
         return { success: false };
     }
 
-    await giveAP(ctx.target.battleID, 1);
+    await giveMP(ctx.target.battleID, 1);
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 1 AP from Healing Tint Energy!`
+        message: `${ctx.target.name} gained 1 MP from Healing Tint Energy!`
     };
 });
 
@@ -2756,12 +2934,12 @@ registerPictoEffect("Energising Death", async (ctx) => {
     );
 
     for (const ally of allies) {
-        await giveAP(ally.battleID, 4);
+        await giveMP(ally.battleID, 4);
     }
 
     return {
         success: true,
-        message: `All allies gained 4 AP from ${ctx.source.name}'s Energising Death!`
+        message: `All allies gained 4 MP from ${ctx.source.name}'s Energising Death!`
     };
 });
 
@@ -4047,10 +4225,10 @@ const energisingStartPictos = [
 energisingStartPictos.forEach((pictoName) => {
     registerPictoEffect(pictoName, async (ctx) => {
         if (ctx.trigger === "on-battle-start") {
-            await giveAP(ctx.source.battleID, 1);
+            await giveMP(ctx.source.battleID, 1);
             return {
                 success: true,
-                message: `${ctx.source.name} gained +1 AP from ${pictoName}!`
+                message: `${ctx.source.name} gained +1 MP from ${pictoName}!`
             };
         }
         return { success: false };
@@ -4110,10 +4288,10 @@ deadEnergyPictos.forEach((pictoName) => {
     registerPictoEffect(pictoName, async (ctx) => {
         if (ctx.trigger === "on-kill") {
             // Grant +3 AP for killing an enemy
-            await giveAP(ctx.source.battleID, 3);
+            await giveMP(ctx.source.battleID, 3);
             return {
                 success: true,
-                message: `${ctx.source.name} gained +3 AP for eliminating ${ctx.target?.name || "an enemy"}!`
+                message: `${ctx.source.name} gained +3 MP for eliminating ${ctx.target?.name || "an enemy"}!`
             };
         }
         return { success: false };
@@ -4195,6 +4373,6 @@ export {
     isFightingAlone,
     allAlliesAlive,
     rollChance,
-    giveAP,
+    giveMP,
     healCharacter
 };
