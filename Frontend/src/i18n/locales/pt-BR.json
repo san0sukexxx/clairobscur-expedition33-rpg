@@ -2,19 +2,19 @@
   "pictos": {
     "energy-master": {
       "name": "Mestre de Energia",
-      "description": "Cada ganho de PA é aumentado em 1."
+      "description": "Cada ganho de PM é aumentado em 1."
     },
     "energising-turn": {
       "name": "Turno Energizante",
-      "description": "+1 PA no início do turno."
+      "description": "+1 PM no início do turno."
     },
     "energising-attack-i": {
       "name": "Ataque Energizante I",
-      "description": "+1 PA no Ataque Base."
+      "description": "+1 PM no Ataque Base."
     },
     "energising-parry": {
       "name": "Aparar Energizante",
-      "description": "+1 PA ao Aparar com sucesso."
+      "description": "+1 PM ao Aparar com sucesso."
     },
     "augmented-first-strike": {
       "name": "Primeiro Golpe Aumentado",
@@ -34,7 +34,7 @@
     },
     "lucky-aim": {
       "name": "Mira da Sorte",
-      "description": "30% de chance de recuperar 1 PA ao acertar um Ponto Fraco."
+      "description": "30% de chance de recuperar 1 PM ao acertar um Ponto Fraco."
     },
     "augmented-counter-i": {
       "name": "Contra-Ataque Aumentado I",
@@ -158,27 +158,27 @@
     },
     "dodger": {
       "name": "Esquivador",
-      "description": "Ganha 1 PA ao Esquivar Perfeitamente. Uma vez por turno."
+      "description": "Ganha 1 PM ao Esquivar Perfeitamente. Uma vez por turno."
     },
     "energising-start-i": {
       "name": "Início Energizante I",
-      "description": "+1 PA no início da batalha."
+      "description": "+1 PM no início da batalha."
     },
     "energising-start-ii": {
       "name": "Início Energizante II",
-      "description": "+1 PA no início da batalha."
+      "description": "+1 PM no início da batalha."
     },
     "energising-start-iii": {
       "name": "Início Energizante III",
-      "description": "+1 PA no início da batalha."
+      "description": "+1 PM no início da batalha."
     },
     "energising-start-iv": {
       "name": "Início Energizante IV",
-      "description": "+1 PA no início da batalha."
+      "description": "+1 PM no início da batalha."
     },
     "perilous-parry": {
       "name": "Aparar Perigoso",
-      "description": "+1 PA ao Aparar, mas o dano recebido é dobrado."
+      "description": "+1 PM ao Aparar, mas o dano recebido é dobrado."
     },
     "confident": {
       "name": "Confiante",
@@ -186,11 +186,11 @@
     },
     "bloody-bullet": {
       "name": "Bala Sangrenta",
-      "description": "+1 PA ao acertar um Ponto Fraco."
+      "description": "+1 PM ao acertar um Ponto Fraco."
     },
     "energising-revive": {
       "name": "Reviver Energizante",
-      "description": "+3 PA para todos os aliados ao ser revivido."
+      "description": "+3 PM para todos os aliados ao ser revivido."
     },
     "rejuvenating-revive": {
       "name": "Reviver Rejuvenescedor",
@@ -218,7 +218,7 @@
     },
     "dead-energy-ii": {
       "name": "Energia Mortal II",
-      "description": "+3 PA ao matar um inimigo."
+      "description": "+3 PM ao matar um inimigo."
     },
     "frozen-shot": {
       "name": "Disparo Congelante",
@@ -262,7 +262,7 @@
     },
     "energising-death": {
       "name": "Morte Energizante",
-      "description": "Ao morrer, +4 PA para aliados."
+      "description": "Ao morrer, +4 PM para aliados."
     },
     "shielding-death": {
       "name": "Morte Protetora",
@@ -346,7 +346,7 @@
     },
     "rewarding-mark": {
       "name": "Marca Recompensadora",
-      "description": "+2 PA ao causar dano a um alvo Marcado. Uma vez por turno."
+      "description": "+2 PM ao causar dano a um alvo Marcado. Uma vez por turno."
     },
     "double-mark": {
       "name": "Marca Dupla",
@@ -362,7 +362,7 @@
     },
     "energising-attack-ii": {
       "name": "Ataque Energizante II",
-      "description": "+1 PA no Ataque Base."
+      "description": "+1 PM no Ataque Base."
     },
     "cheater": {
       "name": "Trapaceiro",
@@ -414,7 +414,7 @@
     },
     "defensive-mode": {
       "name": "Modo Defensivo",
-      "description": "Ao receber dano, consome 1 PA para receber 30% menos dano, se possível."
+      "description": "Ao receber dano, consome 1 PM para receber 30% menos dano, se possível."
     },
     "greater-powerful": {
       "name": "Poder Maior",
@@ -454,7 +454,7 @@
     },
     "energising-heal": {
       "name": "Cura Energizante",
-      "description": "Ao Curar um aliado, também dá 2 PA."
+      "description": "Ao Curar um aliado, também dá 2 PM."
     },
     "protecting-heal": {
       "name": "Cura Protetora",
@@ -470,31 +470,31 @@
     },
     "dead-energy-i": {
       "name": "Energia Mortal I",
-      "description": "+3 PA ao matar um inimigo."
+      "description": "+3 PM ao matar um inimigo."
     },
     "effective-support": {
       "name": "Suporte Eficaz",
-      "description": "+2 PA ao usar um item."
+      "description": "+2 PM ao usar um item."
     },
     "weakness-gain": {
       "name": "Ganho de Fraqueza",
-      "description": "+1 PA ao acertar a Fraqueza de um inimigo. Uma vez por turno."
+      "description": "+1 PM ao acertar a Fraqueza de um inimigo. Uma vez por turno."
     },
     "patient-fighter": {
       "name": "Lutador Paciente",
-      "description": "+2 PA ao pular um turno."
+      "description": "+2 PM ao pular um turno."
     },
     "energetic-healer": {
       "name": "Curador Energético",
-      "description": "+2 PA ao Curar um aliado. Uma vez por turno."
+      "description": "+2 PM ao Curar um aliado. Uma vez por turno."
     },
     "beneficial-contamination": {
       "name": "Contaminação Benéfica",
-      "description": "+2 PA ao aplicar um Efeito de Status. Uma vez por turno."
+      "description": "+2 PM ao aplicar um Efeito de Status. Uma vez por turno."
     },
     "perfect-reward": {
       "name": "Recompensa Perfeita",
-      "description": "Ritmos Perfeitos dão 1 PA."
+      "description": "Ritmos Perfeitos dão 1 PM."
     },
     "roulette": {
       "name": "Roleta",
@@ -578,7 +578,7 @@
     },
     "energising-shots": {
       "name": "Disparos Energizantes",
-      "description": "20% de chance de ganhar 1 PA no disparo de Mira Livre."
+      "description": "20% de chance de ganhar 1 PM no disparo de Mira Livre."
     },
     "versatile": {
       "name": "Versátil",
@@ -618,15 +618,15 @@
     },
     "energising-pain": {
       "name": "Dor Energizante",
-      "description": "Não ganha mais PA ao Aparar. +1 PA ao ser atingido."
+      "description": "Não ganha mais PM ao Aparar. +1 PM ao ser atingido."
     },
     "energising-jump": {
       "name": "Salto Energizante",
-      "description": "+1 PA no Contra-Ataque de Salto."
+      "description": "+1 PM no Contra-Ataque de Salto."
     },
     "powered-attack": {
       "name": "Ataque Potencializado",
-      "description": "A cada dano causado, tenta consumir 1 PA. Se bem-sucedido, aumenta o dano em 20%."
+      "description": "A cada dano causado, tenta consumir 1 PM. Se bem-sucedido, aumenta o dano em 20%."
     },
     "combo-attack-ii": {
       "name": "Ataque em Combo II",
@@ -646,7 +646,7 @@
     },
     "energising-break": {
       "name": "Quebra Energizante",
-      "description": "+3 PA ao Quebrar um alvo."
+      "description": "+3 PM ao Quebrar um alvo."
     },
     "quick-break": {
       "name": "Quebra Rápida",
@@ -674,7 +674,7 @@
     },
     "energising-gradient": {
       "name": "Gradiente Energizante",
-      "description": "+1 PA por Carga de Gradiente consumida."
+      "description": "+1 PM por Carga de Gradiente consumida."
     },
     "charging-attack": {
       "name": "Ataque Carregador",
@@ -706,11 +706,11 @@
     },
     "revive-tint-energy": {
       "name": "Energia de Tintura de Reviver",
-      "description": "Tinturas de Reviver também dão 3 PA."
+      "description": "Tinturas de Reviver também dão 3 PM."
     },
     "healing-tint-energy": {
       "name": "Energia de Tintura Curativa",
-      "description": "Tinturas Curativas também dão 1 PA."
+      "description": "Tinturas Curativas também dão 1 PM."
     },
     "empowering-tint": {
       "name": "Tintura Fortalecedora",
@@ -754,7 +754,7 @@
     },
     "energising-burn": {
       "name": "Queimadura Energizante",
-      "description": "+1 PA ao aplicar Burn. Uma vez por turno."
+      "description": "+1 PM ao aplicar Burn. Uma vez por turno."
     },
     "breaking-burn": {
       "name": "Queimadura Quebradora",
@@ -822,15 +822,15 @@
     },
     "energising-powerful": {
       "name": "Poder Energizante",
-      "description": "Dá 2 PA ao aplicar Powerful."
+      "description": "Dá 2 PM ao aplicar Powerful."
     },
     "energising-shell": {
       "name": "Escudo Energizante",
-      "description": "Dá 2 PA ao aplicar Shell."
+      "description": "Dá 2 PM ao aplicar Shell."
     },
     "energising-rush": {
       "name": "Ímpeto Energizante",
-      "description": "Dá 2 PA ao aplicar Rush."
+      "description": "Dá 2 PM ao aplicar Rush."
     },
     "healing-boon": {
       "name": "Bênção Curativa",
@@ -850,11 +850,11 @@
     },
     "energising-cleanse": {
       "name": "Purificação Energizante",
-      "description": "Dissipa o primeiro Efeito de Status negativo recebido e ganha 2 PA."
+      "description": "Dissipa o primeiro Efeito de Status negativo recebido e ganha 2 PM."
     },
     "draining-cleanse": {
       "name": "Purificação Drenante",
-      "description": "Consome 1 PA para prevenir aplicação de Efeitos de Status, se possível."
+      "description": "Consome 1 PM para prevenir aplicação de Efeitos de Status, se possível."
     },
     "anti-blight": {
       "name": "Anti-Praga",
@@ -923,7 +923,7 @@
       "passives": {
         "4": "Perfeição agora é baseada na Vida atual. Ganha 1 Rank a cada 20% de Vida faltante.",
         "10": "20% de dano de Luz aumentado com Habilidades.",
-        "20": "+1 PA ao subir de Rank."
+        "20": "+1 PM ao subir de Rank."
       }
     },
     "chevalam": {
@@ -954,7 +954,7 @@
       "name": "Corpeso",
       "passives": {
         "4": "Ataque Base aplica 2 acúmulos de Queimadura por Rank.",
-        "10": "+1 PA ao subir de Rank.",
+        "10": "+1 PM ao subir de Rank.",
         "20": "Aumenta o dano de Queimadura em 50% por Rank, até 300% no Rank S."
       }
     },
@@ -970,7 +970,7 @@
       "name": "Cultam",
       "passives": {
         "4": "Sem perda de Perfeição ao receber dano. Perfeição é perdida ao ser Curado.",
-        "10": "Ganha 2 PA no Contra-ataque.",
+        "10": "Ganha 2 PM no Contra-ataque.",
         "20": "Ganha 1 Rank no Contra-ataque."
       }
     },
@@ -979,7 +979,7 @@
       "passives": {
         "4": "Ataque Base dá 1 Perfeição por Queimadura no alvo.",
         "10": "Enquanto Poderoso, 20% de chance de Queimar ao acertar.",
-        "20": "+1 PA ao subir de Rank."
+        "20": "+1 PM ao subir de Rank."
       }
     },
     "delaram": {
@@ -1003,7 +1003,7 @@
       "passives": {
         "4": "Ganha 1 Rank no Contra-ataque.",
         "10": "50% de dano aumentado no Contra-ataque.",
-        "20": "Ganha 2 PA no Contra-ataque."
+        "20": "Ganha 2 PM no Contra-ataque."
       }
     },
     "dualiso": {
@@ -1027,7 +1027,7 @@
       "passives": {
         "4": "Converte dano de Luz das Habilidades em dano Físico.",
         "10": "20% de dano Físico aumentado com Habilidades.",
-        "20": "-1 PA de custo para Habilidades Físicas."
+        "20": "-1 PM de custo para Habilidades Físicas."
       }
     },
     "glaceso": {
@@ -1095,7 +1095,7 @@
       "passives": {
         "4": "Dano bônus da Perfeição se aplica a todos os aliados pela metade. Dano bônus não se aplica mais a Verso.",
         "10": "Perfeição ganha é aumentada em 1 enquanto Poderoso.",
-        "20": "Habilidades de Suporte custam 1 PA a menos."
+        "20": "Habilidades de Suporte custam 1 PM a menos."
       }
     },
     "tireso": {
@@ -1129,7 +1129,7 @@
     "benisim": {
       "name": "Benisim",
       "passives": {
-        "4": "Habilidades de Cura custam 1 PA a menos.",
+        "4": "Habilidades de Cura custam 1 PM a menos.",
         "10": "Gera uma Mancha de Terra no início de cada turno.",
         "20": "Joga novamente instantaneamente ao consumir Manchas com uma Habilidade de Cura."
       }
@@ -1139,7 +1139,7 @@
       "passives": {
         "4": "Usar uma Habilidade que consome Manchas aumenta o dano em 20%. Pode acumular até 5 vezes. Reseta ao usar uma Habilidade sem consumir Manchas.",
         "10": "No início do turno, se não houver Manchas, 2 Manchas aleatórias são geradas.",
-        "20": "+1 PA quando Manchas são consumidas."
+        "20": "+1 PM quando Manchas são consumidas."
       }
     },
     "braselim": {
@@ -1154,7 +1154,7 @@
       "name": "Chapelim",
       "passives": {
         "4": "30% de dano de Quebra aumentado por Mancha de Terra.",
-        "10": "Ganha 9 PA ao Quebrar um inimigo.",
+        "10": "Ganha 9 PM ao Quebrar um inimigo.",
         "20": "Gera uma Mancha de Terra no início de cada turno."
       }
     },
@@ -1170,14 +1170,14 @@
       "name": "Colim",
       "passives": {
         "4": "50% de chance de gerar uma Mancha de Luz ao consumir Manchas.",
-        "10": "+1 PA ao consumir uma Mancha de Luz.",
+        "10": "+1 PM ao consumir uma Mancha de Luz.",
         "20": "20% de dano aumentado com Habilidades por Mancha de Luz ativa."
       }
     },
     "coralim": {
       "name": "Coralim",
       "passives": {
-        "4": "Habilidades de Gelo custam 1 PA a menos.",
+        "4": "Habilidades de Gelo custam 1 PM a menos.",
         "10": "20% de dano de Gelo aumentado com Habilidades.",
         "20": "Começa a batalha com 1 Mancha de Terra."
       }
@@ -1185,7 +1185,7 @@
     "deminerim": {
       "name": "Deminerim",
       "passives": {
-        "4": "Habilidades de Raio custam 1 PA a menos.",
+        "4": "Habilidades de Raio custam 1 PM a menos.",
         "10": "20% de dano de Raio aumentado com Habilidades.",
         "20": "Começa a batalha com 1 Mancha de Fogo."
       }
@@ -1203,13 +1203,13 @@
       "passives": {
         "4": "Usar uma Habilidade aumenta o dano de Habilidade de todos os outros elementos em 20%. Reseta ao usar uma Habilidade de um elemento anterior.",
         "10": "No início do turno, se não houver Manchas, 2 Manchas aleatórias são geradas.",
-        "20": "+1 PA quando Manchas são consumidas."
+        "20": "+1 PM quando Manchas são consumidas."
       }
     },
     "lighterim": {
       "name": "Lighterim",
       "passives": {
-        "4": "Habilidades de Fogo custam 1 PA a menos.",
+        "4": "Habilidades de Fogo custam 1 PM a menos.",
         "10": "20% de dano de Fogo aumentado com Habilidades.",
         "20": "Começa a batalha com 1 Mancha de Gelo."
       }
@@ -1218,7 +1218,7 @@
       "name": "Lithelim",
       "passives": {
         "4": "50% de chance de gerar uma Mancha Sombria ou de Luz ao consumir Manchas. Causa 50% mais dano com Habilidades por Mancha Sombria ativa.",
-        "10": "+1 PA ao consumir uma Mancha de Luz.",
+        "10": "+1 PM ao consumir uma Mancha de Luz.",
         "20": "Ataques Base podem consumir uma Mancha Sombria para causar 200% mais dano."
       }
     },
@@ -1229,7 +1229,7 @@
     "painerim": {
       "name": "Painerim",
       "passives": {
-        "4": "Habilidades de Terra custam 1 PA a menos.",
+        "4": "Habilidades de Terra custam 1 PM a menos.",
         "10": "20% de dano de Terra aumentado com Habilidades.",
         "20": "Começa a batalha com 1 Mancha de Raio."
       }
@@ -1271,14 +1271,14 @@
       "passives": {
         "4": "Congela a si mesmo ao cair abaixo de 30% de vida. Previne a próxima instância de dano enquanto Congelado.",
         "10": "No início do turno, se Congelado, remove Congelamento e recupera 60% de Vida.",
-        "20": "Ganha 2 Manchas de Gelo e 3 PA quando Congelado."
+        "20": "Ganha 2 Manchas de Gelo e 3 PM quando Congelado."
       }
     },
     "trebuchim": {
       "name": "Trebuchim",
       "passives": {
         "4": "Gera uma Mancha aleatória em tiro de Mira Livre.",
-        "10": "+1 PA quando Manchas são consumidas.",
+        "10": "+1 PM quando Manchas são consumidas.",
         "20": "Ataque Base gera 2 Manchas aleatórias."
       }
     },
@@ -1334,14 +1334,14 @@
       "name": "Chantenum",
       "passives": {
         "4": "No início do turno, se Sem Postura, muda para Postura Ofensiva.",
-        "10": "Habilidades de Fogo custam 1 PA a menos.",
+        "10": "Habilidades de Fogo custam 1 PM a menos.",
         "20": "+1 Escudo ao mudar para Postura Ofensiva."
       }
     },
     "clierum": {
       "name": "Clierum",
       "passives": {
-        "4": "Acertos Críticos com Habilidades dão 2 PA. Uma vez por turno.",
+        "4": "Acertos Críticos com Habilidades dão 2 PM. Uma vez por turno.",
         "10": "20% de dano de Raio aumentado com Habilidades.",
         "20": "+50% de Chance Crítica enquanto em Postura Ofensiva."
       }
@@ -1357,9 +1357,9 @@
     "duenum": {
       "name": "Duenum",
       "passives": {
-        "4": "Na Postura Defensiva, ganhar PA também dá 1 PA aos aliados.",
+        "4": "Na Postura Defensiva, ganhar PM também dá 1 PM aos aliados.",
         "10": "Se Sem Postura, Ataque Base muda para Postura Defensiva.",
-        "20": "+1 PA ao trocar de Postura."
+        "20": "+1 PM ao trocar de Postura."
       }
     },
     "facesum": {
@@ -1419,7 +1419,7 @@
       "passives": {
         "4": "No início do turno, se Sem Postura, muda para Postura Defensiva.",
         "10": "Na Postura Defensiva, dobra o dano de Quebra.",
-        "20": "Habilidades de Suporte custam 1 PA a menos."
+        "20": "Habilidades de Suporte custam 1 PM a menos."
       }
     },
     "seashelum": {
@@ -1450,7 +1450,7 @@
       "name": "Tissenum",
       "passives": {
         "4": "Na Postura Defensiva, dobra o dano de Quebra.",
-        "10": "Ganha 9 PA ao Quebrar um inimigo.",
+        "10": "Ganha 9 PM ao Quebrar um inimigo.",
         "20": "Quebrar um inimigo causa uma grande quantidade de dano de Terra."
       }
     },
@@ -1465,7 +1465,7 @@
     "volesterum": {
       "name": "Volesterum",
       "passives": {
-        "4": "+1 PA ao trocar de Postura.",
+        "4": "+1 PM ao trocar de Postura.",
         "10": "Se Sem Postura, Ataque Base muda para Postura Defensiva.",
         "20": "Recupera 5% de Vida ao trocar de Postura."
       }
@@ -1474,7 +1474,7 @@
       "name": "Yeverum",
       "passives": {
         "4": "Aplicar Carapaça também aplica 1 Escudo.",
-        "10": "Ao aplicar Escudos, também dá 1 PA.",
+        "10": "Ao aplicar Escudos, também dá 1 PM.",
         "20": "Ao mudar para Postura Virtuosa, dobra todos os Escudos nos aliados."
       }
     },
@@ -1490,8 +1490,8 @@
       "name": "Ballaro",
       "passives": {
         "4": "Reverte a ordem da Roda Bestial.",
-        "10": "Usar uma Habilidade Aprimorada dá 1 PA a todos os outros aliados.",
-        "20": "Máscara Todo-Poderosa dá 2 PA a todos os aliados."
+        "10": "Usar uma Habilidade Aprimorada dá 1 PM a todos os outros aliados.",
+        "20": "Máscara Todo-Poderosa dá 2 PM a todos os aliados."
       }
     },
     "boucharo": {
@@ -1506,7 +1506,7 @@
       "name": "Brumaro",
       "passives": {
         "4": "Joga novamente instantaneamente quando na Máscara Todo-Poderosa.",
-        "10": "+3 PA quando na Máscara Todo-Poderosa.",
+        "10": "+3 PM quando na Máscara Todo-Poderosa.",
         "20": "Revive instantaneamente com Vida cheia se morrer enquanto na Máscara Todo-Poderosa. Uma vez por Batalha."
       }
     },
@@ -1515,7 +1515,7 @@
       "passives": {
         "4": "Começa a batalha na Máscara Conjuradora.",
         "10": "Máscara Conjuradora aplica Regeneração por 3 turnos.",
-        "20": "Habilidades custam 1 PA a menos enquanto na Máscara Conjuradora."
+        "20": "Habilidades custam 1 PM a menos enquanto na Máscara Conjuradora."
       }
     },
     "fragaro": {
@@ -1531,7 +1531,7 @@
       "passives": {
         "4": "Começa a batalha na Máscara Pesada.",
         "10": "Máscara Pesada aplica Carapaça por 3 turnos.",
-        "20": "+1 PA por acerto recebido."
+        "20": "+1 PM por acerto recebido."
       }
     },
     "joyaro": {
@@ -1555,7 +1555,7 @@
       "passives": {
         "4": "Aparar aumenta a Roda Bestial em 1. Receber dano reseta a Roda Bestial.",
         "10": "Habilidades Aprimoradas causam 30% mais dano.",
-        "20": "+1 PA ao trocar de Máscara."
+        "20": "+1 PM ao trocar de Máscara."
       }
     },
     "sidaro": {
@@ -1563,14 +1563,14 @@
       "passives": {
         "4": "30% de dano aumentado por Habilidade Aprimorada usada. Reseta ao usar uma Habilidade não-Aprimorada.",
         "10": "Ataque Base gira a Roda Bestial para um valor aleatório.",
-        "20": "Usar uma Habilidade Aprimorada dá 1 PA a todos os outros aliados."
+        "20": "Usar uma Habilidade Aprimorada dá 1 PM a todos os outros aliados."
       }
     },
     "urnaro": {
       "name": "Urnaro",
       "passives": {
         "4": "Muda para Máscara Todo-Poderosa ao Quebrar um inimigo.",
-        "10": "Máscara Todo-Poderosa dá 2 PA a todos os aliados.",
+        "10": "Máscara Todo-Poderosa dá 2 PM a todos os aliados.",
         "20": "50% de dano de Quebra aumentado."
       }
     },
@@ -1633,9 +1633,9 @@
     "direton": {
       "name": "Direton",
       "passives": {
-        "4": "+1 PA por carga de Lua no início do turno.",
+        "4": "+1 PM por carga de Lua no início do turno.",
         "10": "Ataque Base dá 1 carga de Lua.",
-        "20": "Durante o Crepúsculo, Ataque Base consome todo PA. Ataque Base aplica 1 Prenúncio e causa 50% de dano aumentado por PA consumido."
+        "20": "Durante o Crepúsculo, Ataque Base consome todo PA. Ataque Base aplica 1 Prenúncio e causa 50% de dano aumentado por PM consumido."
       }
     },
     "garganon": {
@@ -1666,7 +1666,7 @@
       "name": "Hevason",
       "passives": {
         "4": "Tiros de Mira Livre podem consumir uma carga de Sol para aplicar 5 Prenúncios e consumir uma carga de Lua para causar 400% mais dano.",
-        "10": "Consumir uma carga de Sol ou Lua dá 1 PA.",
+        "10": "Consumir uma carga de Sol ou Lua dá 1 PM.",
         "20": "Ataque Base dá 1 carga de Lua."
       }
     },
@@ -1675,7 +1675,7 @@
       "passives": {
         "4": "Durante a Lua, todos os aliados têm Velocidade Superior. Durante o Sol, todos os inimigos têm Lentidão Superior.",
         "10": "Durante o Crepúsculo, todos os aliados têm Velocidade Superior e todos os inimigos têm Lentidão Superior.",
-        "20": "+3 PA ao aplicar um Buff ou Debuff. Uma vez por turno."
+        "20": "+3 PM ao aplicar um Buff ou Debuff. Uma vez por turno."
       }
     },
     "lusteson": {
@@ -1698,7 +1698,7 @@
       "name": "Minason",
       "passives": {
         "4": "Habilidades do Sol têm dano aumentado para cada Prenúncio no alvo. Habilidades da Lua não geram mais cargas de Lua.",
-        "10": "Com pelo menos 1 carga de Sol ativa, ganha um PA adicional por Prenúncio consumido.",
+        "10": "Com pelo menos 1 carga de Sol ativa, ganha um PM adicional por Prenúncio consumido.",
         "20": "Ataque Base pode consumir 1 carga de Sol para aplicar 5 Prenúncios."
       }
     },
@@ -1722,7 +1722,7 @@
       "name": "Rangeson",
       "passives": {
         "4": "Recupera 5% de Vida por Prenúncio aplicado.",
-        "10": "Habilidades de Cura custam 1 PA a menos.",
+        "10": "Habilidades de Cura custam 1 PM a menos.",
         "20": "30% de eficiência de Cura aumentada por carga de Lua. Ataque Base dá 1 carga de Lua."
       }
     },

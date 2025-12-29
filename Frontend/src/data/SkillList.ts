@@ -130,7 +130,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Thermal Transfer",
     cost: 2,
     unlockCost: 0,
-    description: "Efeito da Habilidade: Causa dano baixo de Gelo a um único alvo. 2 acertos. Ganha 4 PA se o alvo estiver Queimando.\n\nConsome 2 Manchas de Terra para jogar um segundo turno.\n\nUsar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz.",
+    description: "Efeito da Habilidade: Causa dano baixo de Gelo a um único alvo. 2 acertos. Ganha 4 PM se o alvo estiver Queimando.\n\nConsome 2 Manchas de Terra para jogar um segundo turno.\n\nUsar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz.",
     image: "Lune_ThermalTransfer.webp",
     preRequisite: ["lune-earth-rising"]
   },
@@ -220,7 +220,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Healing Light",
     cost: 3,
     unlockCost: 0,
-    description: "Efeito da Habilidade: Cura o aliado alvo e dissipa Efeitos de Status.\n\nConsome 2 Manchas de Terra para custar 0 PA.\n\nUsar esta habilidade concede 1 Mancha de Luz.",
+    description: "Efeito da Habilidade: Cura o aliado alvo e dissipa Efeitos de Status.\n\nConsome 2 Manchas de Terra para custar 0 PM.\n\nUsar esta habilidade concede 1 Mancha de Luz.",
     image: "Lune_HealingLight.webp",
     preRequisite: ["lune-ice-lance","lune-immolation"]
   },
@@ -270,7 +270,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Rebirth",
     cost: 5,
     unlockCost: 4,
-    description: "Efeito da Habilidade: Revive um aliado com 30-70% de Vida e 2 PA adicionais.\n\nConsome 3 Manchas de Raio para custar 0 PA.\n\nUsar esta habilidade concede 1 Mancha de Luz.",
+    description: "Efeito da Habilidade: Revive um aliado com 30-70% de Vida e 2 PM adicionais.\n\nConsome 3 Manchas de Raio para custar 0 PM.\n\nUsar esta habilidade concede 1 Mancha de Luz.",
     image: "Lune_Rebirth.webp",
     preRequisite: ["lune-healing-light"]
   },
@@ -356,7 +356,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Mezzo Forte",
     cost: 1,
     unlockCost: 4,
-    description: "Reaplica a postura atual de Maelle, mantendo suas vantagens táticas. Concede 2-4 PA aleatoriamente. Útil para manter momentum e gerar recursos para combos contínuos.",
+    description: "Reaplica a postura atual de Maelle, mantendo suas vantagens táticas. Concede 2-4 PM aleatoriamente. Útil para manter momentum e gerar recursos para combos contínuos.",
     image: "Maelle_MezzoForte.webp",
     preRequisite: ["maelle-degagement"]
   },
@@ -395,7 +395,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Swift Stride",
     cost: 3,
     unlockCost: 1,
-    description: "Causa dano Físico baixo em alvo único. 1 acerto. Muda para postura Virtuosa se o alvo estiver Queimando. Recupera 0 a 2 PA.",
+    description: "Causa dano Físico baixo em alvo único. 1 acerto. Muda para postura Virtuosa se o alvo estiver Queimando. Recupera 0 a 2 PM.",
     image: "Maelle_SwiftStride.webp",
     preRequisite: ["maelle-percee"]
   },
@@ -525,7 +525,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Last Chance",
     cost: 1,
     unlockCost: 6,
-    description: "Reduz a Vida própria para 1, mas recarrega todos os PA (Pontos de Ação) para o máximo. Muda a postura para Virtuosa. Útil para combos devastadores, mas deixa Maelle extremamente vulnerável.",
+    description: "Reduz a Vida própria para 1, mas recarrega todos os PM (Pontos de Ação) para o máximo. Muda a postura para Virtuosa. Útil para combos devastadores, mas deixa Maelle extremamente vulnerável.",
     image: "Maelle_LastChance.webp",
     preRequisite: ["maelle-mezzo-forte"]
   },
@@ -535,7 +535,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Momentum Strike",
     cost: 7,
     unlockCost: 6,
-    description: "Causa dano alto em alvo único usando elemento da arma. 1 acerto. +50% de dano contra alvos Marcados. Custo: 7 PA (reduzido para 4 PA quando usado da postura Virtuosa). Muda a postura para Defensiva.",
+    description: "Causa dano alto em alvo único usando elemento da arma. 1 acerto. +50% de dano contra alvos Marcados. Custo: 7 PM (reduzido para 4 PM quando usado da postura Virtuosa). Muda a postura para Defensiva.",
     image: "Maelle_MomentumStrike.webp",
     preRequisite: ["maelle-egide"]
   },
@@ -545,7 +545,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Payback",
     cost: 9,
     unlockCost: 8,
-    description: "Causa dano Físico muito alto em alvo único. 1 acerto. Dano aumenta por acertos recebidos desde o último turno. Custo de PA reduzido em 1 para cada ataque aparado com sucesso. Pode causar quebra. Muda a postura para Defensiva.",
+    description: "Causa dano Físico muito alto em alvo único. 1 acerto. Dano aumenta por acertos recebidos desde o último turno. Custo de PM reduzido em 1 para cada ataque aparado com sucesso. Pode causar quebra. Muda a postura para Defensiva.",
     image: "Maelle_Payback.webp",
     preRequisite: ["maelle-last-chance","maelle-momentum-strike"]
   },
@@ -795,7 +795,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Plentiful Harvest",
     cost: 4,
     unlockCost: 4,
-    description: "Causa dano Físico médio em alvo único. 2 acertos. Consome todas as Predições do alvo e concede 1 PA a um aliado por Predição consumida.",
+    description: "Causa dano Físico médio em alvo único. 2 acertos. Consome todas as Predições do alvo e concede 1 PM a um aliado por Predição consumida.",
     type: "moon",
     image: "Sciel_PlentifulHarvest.webp",
     preRequisite: ["sciel-firing-shadow"]
@@ -828,7 +828,7 @@ export const SkillsList: SkillResponse[] = [
     name: "Intervention",
     cost: 5,
     unlockCost: 6,
-    description: "Um aliado alvo joga imediatamente e ganha 4 PA.",
+    description: "Um aliado alvo joga imediatamente e ganha 4 PM.",
     type: "moon",
     image: "Sciel_Intervention.webp",
     preRequisite: ["sciel-dark-cleansing"]
@@ -1188,7 +1188,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Wind-based attack.\n\nEfeito: Causa dano Físico baixo em alvo único. 1 acerto. Joga um segundo turno. Normalmente custa 2 PA, mas quando o Ponteiro da Roda Bestial está posicionado em uma Máscara Ágil ou Máscara Onipotente, o custo reduz para 0 PA. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Abbest enquanto Monoco estiver no grupo ativo.",
+    description: "Wind-based attack.\n\nEfeito: Causa dano Físico baixo em alvo único. 1 acerto. Joga um segundo turno. Normalmente custa 2 PM, mas quando o Ponteiro da Roda Bestial está posicionado em uma Máscara Ágil ou Máscara Onipotente, o custo reduz para 0 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Abbest enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_AbbestWind.webp"
   },
   {
@@ -1198,7 +1198,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 7,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Aberration light attack.\n\nEfeito: Causa dano de Luz alto em todos os inimigos. 2 acertos. Aplica 4 Queimaduras por acerto. Máscara Ágil: Aplica 2 Queimaduras adicionais por acerto. Custa 7 PA. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Aberration enquanto Monoco estiver no grupo ativo.",
+    description: "Aberration light attack.\n\nEfeito: Causa dano de Luz alto em todos os inimigos. 2 acertos. Aplica 4 Queimaduras por acerto. Máscara Ágil: Aplica 2 Queimaduras adicionais por acerto. Custa 7 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Aberration enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_AberrationLight.webp"
   },
   {
@@ -1349,7 +1349,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Protective barrier skill.\n\nEfeito: Aplica 1-2 Escudos no alvo. Máscara Pesada: Concede 2 PA ao alvo. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições. Quando ativado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 2 PA adicionais ao alvo.\nPré-requisito: Derrote e adquira o pé de um inimigo Cruler enquanto Monoco estiver no grupo ativo.",
+    description: "Protective barrier skill.\n\nEfeito: Aplica 1-2 Escudos no alvo. Máscara Pesada: Concede 2 PM ao alvo. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições. Quando ativado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 2 PM adicionais ao alvo.\nPré-requisito: Derrote e adquira o pé de um inimigo Cruler enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_CrulerBarrier.webp"
   },
   {
@@ -1449,7 +1449,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Crushing hex attack.\n\nEfeito: Causa dano de Terra médio em alvo único. 2 acertos. Aplica Indefeso no alvo por 3 turnos. Modificador de Máscara Pesada aumenta o dano. Requer 5 PA para lançar e avança o Ponteiro da Roda Bestial em 6 posições. Quando usado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, a duração do debuff aumenta para 5 turnos.\nPré-requisito: Derrote e adquira o pé de um inimigo Hexga enquanto Monoco estiver no grupo ativo.",
+    description: "Crushing hex attack.\n\nEfeito: Causa dano de Terra médio em alvo único. 2 acertos. Aplica Indefeso no alvo por 3 turnos. Modificador de Máscara Pesada aumenta o dano. Requer 5 PM para lançar e avança o Ponteiro da Roda Bestial em 6 posições. Quando usado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, a duração do debuff aumenta para 5 turnos.\nPré-requisito: Derrote e adquira o pé de um inimigo Hexga enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_HexgaCrush.webp"
   },
   {
@@ -1529,7 +1529,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Orphan's cheerful buff.\n\nEfeito: Aplica Fortalecido em 1-3 aliados. Máscara de Conjurador: Também concede 3 PA aos alvos. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições. Quando o ponteiro está em Máscara de Conjurador ou Máscara Onipotente, aliados afetados recebem benefícios triplicados.\nPré-requisito: Derrote e adquira o pé de um inimigo Orphelin enquanto Monoco estiver no grupo ativo.",
+    description: "Orphan's cheerful buff.\n\nEfeito: Aplica Fortalecido em 1-3 aliados. Máscara de Conjurador: Também concede 3 PM aos alvos. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições. Quando o ponteiro está em Máscara de Conjurador ou Máscara Onipotente, aliados afetados recebem benefícios triplicados.\nPré-requisito: Derrote e adquira o pé de um inimigo Orphelin enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_OrphelinCheers.webp"
   },
   {
@@ -1559,7 +1559,7 @@ export const SkillsList: SkillResponse[] = [
     cost: 3,
     unlockCost: 0,
     masterUnlock: true,
-    description: "Potter's energy skill.\n\nEfeito: Concede 1-3 PA a todos os aliados. Com aprimoramento de Máscara de Conjurador, fornece 1 PA adicional. Usar esta habilidade avança o Ponteiro da Roda Bestial em 6 posições. Quando ativado em Máscara de Conjurador ou Máscara Onipotente, aliados recebem um PA extra.\nPré-requisito: Derrote e adquira o pé de um inimigo Potier enquanto Monoco estiver no grupo ativo.",
+    description: "Potter's energy skill.\n\nEfeito: Concede 1-3 PM a todos os aliados. Com aprimoramento de Máscara de Conjurador, fornece 1 PM adicional. Usar esta habilidade avança o Ponteiro da Roda Bestial em 6 posições. Quando ativado em Máscara de Conjurador ou Máscara Onipotente, aliados recebem um PM extra.\nPré-requisito: Derrote e adquira o pé de um inimigo Potier enquanto Monoco estiver no grupo ativo.",
     image: "Monoco_PotierEnergy.webp"
   },
   {

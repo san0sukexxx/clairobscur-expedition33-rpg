@@ -95,8 +95,8 @@ class BattleCharacterController(private val service: BattleCharacterService) {
         return ResponseEntity.ok(mapOf("success" to success))
     }
 
-    @PostMapping("/characters/{id}/ap")
-    fun updateCharacterAP(
+    @PostMapping("/characters/{id}/mp")
+    fun giveMP(
             @PathVariable id: Int,
             @RequestBody body: UpdateAPRequest
     ): ResponseEntity<Void> {
@@ -104,8 +104,8 @@ class BattleCharacterController(private val service: BattleCharacterService) {
         return ResponseEntity.noContent().build()
     }
 
-    @GetMapping("/characters/{id}/ap")
-    fun getCharacterAP(@PathVariable id: Int): ResponseEntity<Map<String, Int?>> {
+    @GetMapping("/characters/{id}/mp")
+    fun getMP(@PathVariable id: Int): ResponseEntity<Map<String, Int?>> {
         val ap = service.getCharacterAP(id)
         return ResponseEntity.ok(ap)
     }

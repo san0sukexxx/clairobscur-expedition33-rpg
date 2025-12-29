@@ -295,13 +295,13 @@ export class APIBattle {
 
     static async giveMP(battleCharacterId: number, amount: number): Promise<void> {
         await api.post<{ amount: number }, void>(
-            `battle/characters/${battleCharacterId}/ap`,
+            `battles/characters/${battleCharacterId}/mp`,
             { amount }
         )
     }
 
     static async getMP(battleCharacterId: number): Promise<number> {
-        return api.get<number>(`battle/characters/${battleCharacterId}/ap`)
+        return api.get<number>(`battles/characters/${battleCharacterId}/mp`)
     }
 
     // ==================== Picto Effect Tracking ====================

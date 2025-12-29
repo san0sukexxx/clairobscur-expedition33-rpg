@@ -299,6 +299,45 @@ export async function triggerOnKill(
     return results;
 }
 
+/**
+ * Integrate with Dodge Action (Dodger picto)
+ *
+ * Place this AFTER a successful dodge in PlayerPage.tsx
+ */
+export async function triggerOnDodge(
+    dodger: BattleCharacterInfo,
+    attacker: BattleCharacterInfo | undefined,
+    allCharacters: BattleCharacterInfo[],
+    battleId: number,
+    pictos?: PictoResponse[],
+    luminas?: LuminaResponse[]
+) {
+    console.log("[Dodger Debug] Triggering on-dodge effects");
+    console.log("[Dodger Debug] Dodger:", dodger.name);
+    console.log("[Dodger Debug] Pictos:", pictos);
+    console.log("[Dodger Debug] Luminas:", luminas);
+
+    const results = await executePictoEffects(
+        "on-dodge",
+        dodger,
+        allCharacters,
+        battleId,
+        pictos,
+        luminas,
+        attacker
+    );
+
+    console.log("[Dodger Debug] Results:", results);
+
+    results.forEach(result => {
+        if (result.success && result.message) {
+            console.log(`[Picto Effect] ${result.message}`);
+        }
+    });
+
+    return results;
+}
+
 // ==================== DISPLAY EFFECT MESSAGES (OPTIONAL) ====================
 
 /**

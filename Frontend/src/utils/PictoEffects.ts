@@ -152,10 +152,17 @@ export async function executePictoEffects(
     // Get all equipped picto/lumina names
     const equippedEffects = getEquippedEffectNames(pictos, luminas);
 
+    console.log("[executePictoEffects] Trigger:", trigger);
+    console.log("[executePictoEffects] Equipped effects:", equippedEffects);
+    console.log("[executePictoEffects] Available handlers:", Object.keys(pictoEffectHandlers));
+
     const results: PictoEffectResult[] = [];
 
     for (const pictoName of equippedEffects) {
-        const handler = pictoEffectHandlers[pictoName.toLowerCase()];
+        const handlerKey = pictoName.toLowerCase();
+        const handler = pictoEffectHandlers[handlerKey];
+        console.log(`[executePictoEffects] Looking for handler: "${handlerKey}", found: ${!!handler}`);
+
         if (handler) {
             try {
                 const result = await handler({
@@ -167,6 +174,8 @@ export async function executePictoEffects(
                     battleId,
                     additionalData
                 });
+
+                console.log(`[executePictoEffects] Result for ${pictoName}:`, result);
 
                 // Only add to results if effect actually activated
                 if (result.success) {
@@ -435,6 +444,8 @@ registerPictoEffect("dodger", async (ctx) => {
         pictoName: "Dodger",
         effectType: "once-per-turn"
     });
+
+    console.log("[Dodger] canActivate response:", canActivate);
 
     if (!canActivate) {
         return {

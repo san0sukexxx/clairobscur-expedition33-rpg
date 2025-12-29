@@ -26,7 +26,7 @@ import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
 import { executeAllSpecialMechanics } from "../utils/SkillSpecialMechanics";
 import { getVersoPerfectionDamageMultiplier } from "../utils/BattleUtils";
 import { hasRequiredStains, consumeStains, addStains, updateCharacterStains, transformStain } from "../utils/StainUtils";
-import { triggerOnHealAlly, triggerOnFreeAim, triggerOnBattleStart, triggerOnTurnStart, triggerOnKill } from "../utils/PictoEffectsIntegration";
+import { triggerOnHealAlly, triggerOnFreeAim, triggerOnBattleStart, triggerOnTurnStart, triggerOnKill, triggerOnDodge } from "../utils/PictoEffectsIntegration";
 import { executeWeaponPassives } from "../utils/WeaponPassives_Index";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
@@ -2065,7 +2065,7 @@ export default function PlayerPage() {
           const apToGrant = resolved.metadata.grantsApAtCasterMask;
           for (const targetId of resolved.targetIds) {
             // Grant AP logic would need backend support - for now, just show toast
-            showToast(`${apToGrant} PA concedidos ao aliado!`);
+            showToast(`${apToGrant} PM concedidos ao aliado!`);
           }
         }
       }
@@ -2182,7 +2182,7 @@ export default function PlayerPage() {
         const newMp = Math.min(currentMp + apGranted, maxMp);
         await APIBattle.updateCharacterMp(source.battleID, newMp);
         if (apGranted > 0) {
-          showToast(`+${apGranted} PA concedidos! (${currentMp} → ${newMp})`);
+          showToast(`+${apGranted} PM concedidos! (${currentMp} → ${newMp})`);
         }
       }
 
@@ -2491,6 +2491,19 @@ export default function PlayerPage() {
               description = `Você não conseguiu desviar, o golpe causou ${defenseValue} de dano`;
             } else {
               description = `Você conseguiu desviar do golpe!`;
+
+              // Trigger picto effects on successful dodge
+              if (playerChar && player.fightInfo?.battleId) {
+                const attacker = player.fightInfo?.characters?.find(c => c.battleID === attack.sourceBattleId);
+                await triggerOnDodge(
+                  playerChar,
+                  attacker,
+                  player.fightInfo.characters ?? [],
+                  player.fightInfo.battleId,
+                  player.pictos,
+                  player.luminas
+                );
+              }
             }
           } else if (defense === "jump") {
             if (defenseValue > 0) {

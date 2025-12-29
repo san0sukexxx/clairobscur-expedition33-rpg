@@ -80,6 +80,22 @@ class PictoEffectTrackerController(
     }
 
     /**
+     * POST /api/battle/picto-effects/can-activate
+     * Verificar se efeito pode ser ativado
+     */
+    @PostMapping("/can-activate")
+    fun canActivate(@RequestBody request: TrackEffectRequest): ResponseEntity<Boolean> {
+        val canActivate = pictoEffectTrackerService.canActivate(
+                request.battleId,
+                request.battleCharacterId,
+                request.pictoName,
+                request.effectType
+        )
+
+        return ResponseEntity.ok(canActivate)
+    }
+
+    /**
      * GET /api/battle/picto-effects/check/{battleCharacterId}/{pictoName}
      * Verificar se efeito pode ser ativado
      */
