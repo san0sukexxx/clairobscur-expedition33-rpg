@@ -454,8 +454,9 @@ function PlusDiamond({
     isBig?: boolean
 }) {
     const name = pictoName ?? ""
-    const maskBase = name ? encodeURI(`/pictos/${name}.webp`) : null
     const pictoInfo = getPictoByName(name)
+    const imageId = pictoInfo?.imageId ?? name
+    const maskBase = imageId ? encodeURI(`/pictos/${imageId}.webp`) : null
     const wrapperSize = isBig ? "w-14 h-14" : "w-9 h-9"
     const innerSize = isBig ? "w-11 h-11" : "w-7 h-7"
     const iconSize = isBig ? "text-x2" : "text-lg"

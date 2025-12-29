@@ -1,6 +1,7 @@
 import type { BattleCharacterInfo, StatusType, PictoResponse, LuminaResponse, StatusResponse } from "../api/ResponseModel";
 import { APIBattle } from "../api/APIBattle";
 import { APIPictoTracker } from "../api/APIPictoTracker";
+import { getPictoName } from "../i18n";
 
 // ==================== PICTO/LUMINA EFFECT TYPES ====================
 
@@ -355,13 +356,13 @@ export function getDamageModifier(
  * "Every AP gain is increased by 1."
  * NOTE: This is a passive modifier - marker effect for other systems to check
  */
-registerPictoEffect("Energy Master", async (ctx) => {
+registerPictoEffect("energy-master", async (ctx) => {
     // This is a passive modifier - systems granting AP should check for this effect
     // and add +1 AP to all AP gains for characters with this picto equipped
     if (ctx.trigger === "on-battle-start") {
         return {
             success: true,
-            message: `${ctx.source.name} has Energy Master active! All AP gains +1.`
+            message: `${ctx.source.name} has ${getPictoName("energy-master")} active! All AP gains +1.`
         };
     }
     return { success: false };
@@ -371,7 +372,7 @@ registerPictoEffect("Energy Master", async (ctx) => {
  * Energising Turn
  * "+1 AP on turn start."
  */
-registerPictoEffect("Energising Turn", async (ctx) => {
+registerPictoEffect("energising-turn", async (ctx) => {
     if (ctx.trigger !== "on-turn-start") {
         return { success: false };
     }
@@ -380,7 +381,7 @@ registerPictoEffect("Energising Turn", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Energising Turn!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("energising-turn")}!`
     };
 });
 
@@ -388,7 +389,7 @@ registerPictoEffect("Energising Turn", async (ctx) => {
  * Energising Attack I
  * "+1 AP on Base Attack."
  */
-registerPictoEffect("Energising Attack I", async (ctx) => {
+registerPictoEffect("energising-attack-i", async (ctx) => {
     if (ctx.trigger !== "on-attack") {
         return { success: false };
     }
@@ -397,7 +398,7 @@ registerPictoEffect("Energising Attack I", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Energising Attack I!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("energising-attack-i")}!`
     };
 });
 
@@ -405,7 +406,7 @@ registerPictoEffect("Energising Attack I", async (ctx) => {
  * Energising Parry
  * "+1 AP on successful Parry."
  */
-registerPictoEffect("Energising Parry", async (ctx) => {
+registerPictoEffect("energising-parry", async (ctx) => {
     if (ctx.trigger !== "on-parry") {
         return { success: false };
     }
@@ -414,7 +415,7 @@ registerPictoEffect("Energising Parry", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Energising Parry!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("energising-parry")}!`
     };
 });
 
@@ -422,7 +423,7 @@ registerPictoEffect("Energising Parry", async (ctx) => {
  * Dodger
  * "Gain 1 AP on Perfect Dodge. Once per turn."
  */
-registerPictoEffect("Dodger", async (ctx) => {
+registerPictoEffect("dodger", async (ctx) => {
     if (ctx.trigger !== "on-dodge") {
         return { success: false };
     }
@@ -438,7 +439,7 @@ registerPictoEffect("Dodger", async (ctx) => {
     if (!canActivate) {
         return {
             success: false,
-            message: `${ctx.source.name}'s Dodger already used this turn!`
+            message: `${ctx.source.name}'s ${getPictoName("dodger")} already used this turn!`
         };
     }
 
@@ -454,7 +455,7 @@ registerPictoEffect("Dodger", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Dodger!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("dodger")}!`
     };
 });
 
@@ -472,21 +473,21 @@ const registerEnergisingStart = (name: string) => {
 
         return {
             success: true,
-            message: `${ctx.source.name} gained 1 MP from ${name}!`
+            message: `${ctx.source.name} gained 1 MP from ${getPictoName(name)}!`
         };
     });
 };
 
-registerEnergisingStart("Energising Start I");
-registerEnergisingStart("Energising Start II");
-registerEnergisingStart("Energising Start III");
-registerEnergisingStart("Energising Start IV");
+registerEnergisingStart("energising-start-i");
+registerEnergisingStart("energising-start-ii");
+registerEnergisingStart("energising-start-iii");
+registerEnergisingStart("energising-start-iv");
 
 /**
  * Perilous Parry
  * "+1 AP on Parry, but damage received is doubled."
  */
-registerPictoEffect("Perilous Parry", async (ctx) => {
+registerPictoEffect("perilous-parry", async (ctx) => {
     if (ctx.trigger !== "on-parry") {
         return { success: false };
     }
@@ -496,7 +497,7 @@ registerPictoEffect("Perilous Parry", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Perilous Parry!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("perilous-parry")}!`
     };
 });
 
@@ -504,7 +505,7 @@ registerPictoEffect("Perilous Parry", async (ctx) => {
  * Bloody Bullet
  * "+1 AP on Weak Point hit."
  */
-registerPictoEffect("Bloody Bullet", async (ctx) => {
+registerPictoEffect("bloody-bullet", async (ctx) => {
     if (ctx.trigger !== "on-weak-point") {
         return { success: false };
     }
@@ -513,7 +514,7 @@ registerPictoEffect("Bloody Bullet", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Bloody Bullet!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("bloody-bullet")}!`
     };
 });
 
@@ -521,7 +522,7 @@ registerPictoEffect("Bloody Bullet", async (ctx) => {
  * Energising Revive
  * "+3 AP to all allies when revived."
  */
-registerPictoEffect("Energising Revive", async (ctx) => {
+registerPictoEffect("energising-revive", async (ctx) => {
     if (ctx.trigger !== "on-revived") {
         return { success: false };
     }
@@ -536,7 +537,7 @@ registerPictoEffect("Energising Revive", async (ctx) => {
 
     return {
         success: true,
-        message: `All allies gained 3 MP from ${ctx.source.name}'s Energising Revive!`
+        message: `All allies gained 3 MP from ${ctx.source.name}'s ${getPictoName("energising-revive")}!`
     };
 });
 
@@ -544,7 +545,7 @@ registerPictoEffect("Energising Revive", async (ctx) => {
  * Lucky Aim
  * "30% chance to recover 1 AP on hitting a Weak Point."
  */
-registerPictoEffect("Lucky Aim", async (ctx) => {
+registerPictoEffect("lucky-aim", async (ctx) => {
     if (ctx.trigger !== "on-weak-point") {
         return { success: false };
     }
@@ -557,7 +558,7 @@ registerPictoEffect("Lucky Aim", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Lucky Aim!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("lucky-aim")}!`
     };
 });
 
@@ -575,19 +576,19 @@ const registerDeadEnergy = (name: string) => {
 
         return {
             success: true,
-            message: `${ctx.source.name} gained 3 MP from ${name}!`
+            message: `${ctx.source.name} gained 3 MP from ${getPictoName(name)}!`
         };
     });
 };
 
-registerDeadEnergy("Dead Energy I");
-registerDeadEnergy("Dead Energy II");
+registerDeadEnergy("dead-energy-i");
+registerDeadEnergy("dead-energy-ii");
 
 /**
  * Energising Attack II
  * "+1 AP on Base Attack."
  */
-registerPictoEffect("Energising Attack II", async (ctx) => {
+registerPictoEffect("energising-attack-ii", async (ctx) => {
     if (ctx.trigger !== "on-attack") {
         return { success: false };
     }
@@ -596,7 +597,7 @@ registerPictoEffect("Energising Attack II", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Energising Attack II!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("energising-attack-ii")}!`
     };
 });
 
@@ -604,7 +605,7 @@ registerPictoEffect("Energising Attack II", async (ctx) => {
  * Energising Pain
  * "No longer gain AP on Parry. +1 AP on getting hit."
  */
-registerPictoEffect("Energising Pain", async (ctx) => {
+registerPictoEffect("energising-pain", async (ctx) => {
     if (ctx.trigger !== "on-damage-taken") {
         return { success: false };
     }
@@ -614,7 +615,7 @@ registerPictoEffect("Energising Pain", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Energising Pain!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("energising-pain")}!`
     };
 });
 
@@ -624,7 +625,7 @@ registerPictoEffect("Energising Pain", async (ctx) => {
  * Note: Currently activates on any counterattack since Jump is the primary counterattack mechanic.
  * If other counterattack types are added in the future, add type check in additionalData.
  */
-registerPictoEffect("Energising Jump", async (ctx) => {
+registerPictoEffect("energising-jump", async (ctx) => {
     if (ctx.trigger !== "on-counterattack") {
         return { success: false };
     }
@@ -633,7 +634,7 @@ registerPictoEffect("Energising Jump", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Energising Jump!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("energising-jump")}!`
     };
 });
 
@@ -641,7 +642,7 @@ registerPictoEffect("Energising Jump", async (ctx) => {
  * Rewarding Mark
  * "+2 AP on dealing damage to a Marked target. Once per turn."
  */
-registerPictoEffect("Rewarding Mark", async (ctx) => {
+registerPictoEffect("rewarding-mark", async (ctx) => {
     if (ctx.trigger !== "on-attack" || !ctx.target) {
         return { success: false };
     }
@@ -663,7 +664,7 @@ registerPictoEffect("Rewarding Mark", async (ctx) => {
     if (!canActivate) {
         return {
             success: false,
-            message: `${ctx.source.name}'s Rewarding Mark already used this turn!`
+            message: `${ctx.source.name}'s ${getPictoName("rewarding-mark")} already used this turn!`
         };
     }
 
@@ -679,7 +680,7 @@ registerPictoEffect("Rewarding Mark", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 MP from Rewarding Mark!`
+        message: `${ctx.source.name} gained 2 MP from ${getPictoName("rewarding-mark")}!`
     };
 });
 
@@ -687,7 +688,7 @@ registerPictoEffect("Rewarding Mark", async (ctx) => {
  * Energising Shots
  * "20% chance to gain 1 AP on Free Aim shot."
  */
-registerPictoEffect("Energising Shots", async (ctx) => {
+registerPictoEffect("energising-shots", async (ctx) => {
     if (ctx.trigger !== "on-free-aim") {
         return { success: false };
     }
@@ -700,7 +701,7 @@ registerPictoEffect("Energising Shots", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Energising Shots!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("energising-shots")}!`
     };
 });
 
@@ -708,7 +709,7 @@ registerPictoEffect("Energising Shots", async (ctx) => {
  * Effective Support
  * "+2 AP on using an item."
  */
-registerPictoEffect("Effective Support", async (ctx) => {
+registerPictoEffect("effective-support", async (ctx) => {
     if (ctx.trigger !== "on-item-use") {
         return { success: false };
     }
@@ -717,7 +718,7 @@ registerPictoEffect("Effective Support", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 MP from Effective Support!`
+        message: `${ctx.source.name} gained 2 MP from ${getPictoName("effective-support")}!`
     };
 });
 
@@ -725,7 +726,7 @@ registerPictoEffect("Effective Support", async (ctx) => {
  * Weakness Gain
  * "+1 AP on hitting an enemy's Weakness. Once per turn."
  */
-registerPictoEffect("Weakness Gain", async (ctx) => {
+registerPictoEffect("weakness-gain", async (ctx) => {
     if (ctx.trigger !== "on-weak-point") {
         return { success: false };
     }
@@ -741,7 +742,7 @@ registerPictoEffect("Weakness Gain", async (ctx) => {
     if (!canActivate) {
         return {
             success: false,
-            message: `${ctx.source.name}'s Weakness Gain already used this turn!`
+            message: `${ctx.source.name}'s ${getPictoName("weakness-gain")} already used this turn!`
         };
     }
 
@@ -757,7 +758,7 @@ registerPictoEffect("Weakness Gain", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Weakness Gain!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("weakness-gain")}!`
     };
 });
 
@@ -765,7 +766,7 @@ registerPictoEffect("Weakness Gain", async (ctx) => {
  * Patient Fighter
  * "+2 AP on skipping a turn."
  */
-registerPictoEffect("Patient Fighter", async (ctx) => {
+registerPictoEffect("patient-fighter", async (ctx) => {
     if (ctx.trigger !== "on-pass-turn") {
         return { success: false };
     }
@@ -774,7 +775,7 @@ registerPictoEffect("Patient Fighter", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 MP from Patient Fighter!`
+        message: `${ctx.source.name} gained 2 MP from ${getPictoName("patient-fighter")}!`
     };
 });
 
@@ -782,7 +783,7 @@ registerPictoEffect("Patient Fighter", async (ctx) => {
  * Energetic Healer
  * "+2 AP on Healing an ally. Once per turn."
  */
-registerPictoEffect("Energetic Healer", async (ctx) => {
+registerPictoEffect("energetic-healer", async (ctx) => {
     if (ctx.trigger !== "on-heal-ally") {
         return { success: false };
     }
@@ -798,7 +799,7 @@ registerPictoEffect("Energetic Healer", async (ctx) => {
     if (!canActivate) {
         return {
             success: false,
-            message: `${ctx.source.name}'s Energetic Healer already used this turn!`
+            message: `${ctx.source.name}'s ${getPictoName("energetic-healer")} already used this turn!`
         };
     }
 
@@ -814,7 +815,7 @@ registerPictoEffect("Energetic Healer", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 MP from Energetic Healer!`
+        message: `${ctx.source.name} gained 2 MP from ${getPictoName("energetic-healer")}!`
     };
 });
 
@@ -822,7 +823,7 @@ registerPictoEffect("Energetic Healer", async (ctx) => {
  * Beneficial Contamination
  * "+2 AP on applying a Status Effect. Once per turn."
  */
-registerPictoEffect("Beneficial Contamination", async (ctx) => {
+registerPictoEffect("beneficial-contamination", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -838,7 +839,7 @@ registerPictoEffect("Beneficial Contamination", async (ctx) => {
     if (!canActivate) {
         return {
             success: false,
-            message: `${ctx.source.name}'s Beneficial Contamination already used this turn!`
+            message: `${ctx.source.name}'s ${getPictoName("beneficial-contamination")} already used this turn!`
         };
     }
 
@@ -854,7 +855,7 @@ registerPictoEffect("Beneficial Contamination", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 2 MP from Beneficial Contamination!`
+        message: `${ctx.source.name} gained 2 MP from ${getPictoName("beneficial-contamination")}!`
     };
 });
 
@@ -862,7 +863,7 @@ registerPictoEffect("Beneficial Contamination", async (ctx) => {
  * Perfect Reward
  * "Perfect Rythms give 1 AP."
  */
-registerPictoEffect("Perfect Reward", async (_ctx) => {
+registerPictoEffect("perfect-reward", async (_ctx) => {
     // NOTE: Requires backend implementation for rhythm game integration
     return {
         success: false,
@@ -874,7 +875,7 @@ registerPictoEffect("Perfect Reward", async (_ctx) => {
  * Energising Break
  * "+3 AP on Breaking a target."
  */
-registerPictoEffect("Energising Break", async (ctx) => {
+registerPictoEffect("energising-break", async (ctx) => {
     if (ctx.trigger !== "on-break") {
         return { success: false };
     }
@@ -883,7 +884,7 @@ registerPictoEffect("Energising Break", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 3 MP from Energising Break!`
+        message: `${ctx.source.name} gained 3 MP from ${getPictoName("energising-break")}!`
     };
 });
 
@@ -891,7 +892,7 @@ registerPictoEffect("Energising Break", async (ctx) => {
  * Energising Gradient
  * "+1 AP per Gradient Charge consumed."
  */
-registerPictoEffect("Energising Gradient", async (ctx) => {
+registerPictoEffect("energising-gradient", async (ctx) => {
     if (ctx.trigger !== "on-gradient-use") {
         return { success: false };
     }
@@ -902,7 +903,7 @@ registerPictoEffect("Energising Gradient", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained ${chargesConsumed} MP from Energising Gradient!`
+        message: `${ctx.source.name} gained ${chargesConsumed} MP from ${getPictoName("energising-gradient")}!`
     };
 });
 
@@ -910,7 +911,7 @@ registerPictoEffect("Energising Gradient", async (ctx) => {
  * Energising Burn
  * "+1 AP on applying Burn. Once per turn."
  */
-registerPictoEffect("Energising Burn", async (ctx) => {
+registerPictoEffect("energising-burn", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -930,7 +931,7 @@ registerPictoEffect("Energising Burn", async (ctx) => {
     if (!canActivate) {
         return {
             success: false,
-            message: `${ctx.source.name}'s Energising Burn already used this turn!`
+            message: `${ctx.source.name}'s ${getPictoName("energising-burn")} already used this turn!`
         };
     }
 
@@ -946,7 +947,7 @@ registerPictoEffect("Energising Burn", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 1 MP from Energising Burn!`
+        message: `${ctx.source.name} gained 1 MP from ${getPictoName("energising-burn")}!`
     };
 });
 
@@ -954,7 +955,7 @@ registerPictoEffect("Energising Burn", async (ctx) => {
  * Energising Powerful
  * "Give 2 AP on applying Powerful."
  */
-registerPictoEffect("Energising Powerful", async (ctx) => {
+registerPictoEffect("energising-powerful", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -971,7 +972,7 @@ registerPictoEffect("Energising Powerful", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 MP from Energising Powerful!`
+        message: `${ctx.target.name} gained 2 MP from ${getPictoName("energising-powerful")}!`
     };
 });
 
@@ -979,7 +980,7 @@ registerPictoEffect("Energising Powerful", async (ctx) => {
  * Energising Shell
  * "Give 2 AP on applying Shell."
  */
-registerPictoEffect("Energising Shell", async (ctx) => {
+registerPictoEffect("energising-shell", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -996,7 +997,7 @@ registerPictoEffect("Energising Shell", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 MP from Energising Shell!`
+        message: `${ctx.target.name} gained 2 MP from ${getPictoName("energising-shell")}!`
     };
 });
 
@@ -1004,7 +1005,7 @@ registerPictoEffect("Energising Shell", async (ctx) => {
  * Energising Rush
  * "Give 2 AP on applying Rush."
  */
-registerPictoEffect("Energising Rush", async (ctx) => {
+registerPictoEffect("energising-rush", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -1021,7 +1022,7 @@ registerPictoEffect("Energising Rush", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 MP from Energising Rush!`
+        message: `${ctx.target.name} gained 2 MP from ${getPictoName("energising-rush")}!`
     };
 });
 
@@ -1029,7 +1030,7 @@ registerPictoEffect("Energising Rush", async (ctx) => {
  * Energising Cleanse
  * "Dispel the first negative Status Effect received and gain 2 AP."
  */
-registerPictoEffect("Energising Cleanse", async (_ctx) => {
+registerPictoEffect("energising-cleanse", async (_ctx) => {
     // NOTE: Requires backend implementation to intercept status effect application
     return {
         success: false,
@@ -1044,7 +1045,7 @@ registerPictoEffect("Energising Cleanse", async (_ctx) => {
  * "Survive fatal damage with 1 Health. Once per battle."
  * NOTE: This effect needs to be checked when damage would reduce HP to 0 or below
  */
-registerPictoEffect("Survivor", async (ctx) => {
+registerPictoEffect("survivor", async (ctx) => {
     if (ctx.trigger === "on-damage-taken") {
         const damageAmount = ctx.additionalData?.damageAmount ?? 0;
         const wouldDie = ctx.source.healthPoints - damageAmount <= 0;
@@ -1072,7 +1073,7 @@ registerPictoEffect("Survivor", async (ctx) => {
 
                 return {
                     success: true,
-                    message: `${ctx.source.name} survived with 1 HP thanks to Survivor!`
+                    message: `${ctx.source.name} survived with 1 HP thanks to ${getPictoName("survivor")}!`
                 };
             }
         }
@@ -1085,7 +1086,7 @@ registerPictoEffect("Survivor", async (ctx) => {
  * "Revive with 100% Health. Once per battle."
  * NOTE: This should trigger automatically when character would die
  */
-registerPictoEffect("Second Chance", async (ctx) => {
+registerPictoEffect("second-chance", async (ctx) => {
     if (ctx.trigger === "on-death") {
         const canActivate = canActivateEffect(
             ctx.battleId,
@@ -1108,7 +1109,7 @@ registerPictoEffect("Second Chance", async (ctx) => {
 
             return {
                 success: true,
-                message: `${ctx.source.name} revived with full HP thanks to Second Chance!`
+                message: `${ctx.source.name} revived with full HP thanks to ${getPictoName("second-chance")}!`
             };
         }
     }
@@ -1119,7 +1120,7 @@ registerPictoEffect("Second Chance", async (ctx) => {
  * Aegis Revival
  * "+1 Shield on being revived."
  */
-registerPictoEffect("Aegis Revival", async (ctx) => {
+registerPictoEffect("aegis-revival", async (ctx) => {
     if (ctx.trigger !== "on-revived") {
         return { success: false };
     }
@@ -1128,7 +1129,7 @@ registerPictoEffect("Aegis Revival", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shield from Aegis Revival!`,
+        message: `${ctx.source.name} gained Shield from ${getPictoName("aegis-revival")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Shielded",
@@ -1141,7 +1142,7 @@ registerPictoEffect("Aegis Revival", async (ctx) => {
  * Recovery
  * "Recovers 10% Health on turn start."
  */
-registerPictoEffect("Recovery", async (ctx) => {
+registerPictoEffect("recovery", async (ctx) => {
     if (ctx.trigger !== "on-turn-start") {
         return { success: false };
     }
@@ -1151,7 +1152,7 @@ registerPictoEffect("Recovery", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Recovery!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("recovery")}!`
     };
 });
 
@@ -1159,7 +1160,7 @@ registerPictoEffect("Recovery", async (ctx) => {
  * Solidifying
  * "+2 Shields when the character's Health falls below 50%. Once per battle."
  */
-registerPictoEffect("Solidifying", async (_ctx) => {
+registerPictoEffect("solidifying", async (_ctx) => {
     // NOTE: Requires backend implementation to track health threshold
     return {
         success: false,
@@ -1171,7 +1172,7 @@ registerPictoEffect("Solidifying", async (_ctx) => {
  * Rejuvenating Revive
  * "Apply Regen for 3 turns when revived."
  */
-registerPictoEffect("Rejuvenating Revive", async (ctx) => {
+registerPictoEffect("rejuvenating-revive", async (ctx) => {
     if (ctx.trigger !== "on-revived") {
         return { success: false };
     }
@@ -1180,7 +1181,7 @@ registerPictoEffect("Rejuvenating Revive", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Regen from Rejuvenating Revive!`,
+        message: `${ctx.source.name} gained Regen from ${getPictoName("rejuvenating-revive")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Regeneration",
@@ -1194,7 +1195,7 @@ registerPictoEffect("Rejuvenating Revive", async (ctx) => {
  * Revive With Shell
  * "Apply Shell for 3 turns on revive."
  */
-registerPictoEffect("Revive With Shell", async (ctx) => {
+registerPictoEffect("revive-with-shell", async (ctx) => {
     if (ctx.trigger !== "on-revived") {
         return { success: false };
     }
@@ -1203,7 +1204,7 @@ registerPictoEffect("Revive With Shell", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shell from Revive With Shell!`,
+        message: `${ctx.source.name} gained Shell from ${getPictoName("revive-with-shell")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Protected",
@@ -1217,7 +1218,7 @@ registerPictoEffect("Revive With Shell", async (ctx) => {
  * Powerful Revive
  * "Apply Powerful for 3 turns when revived."
  */
-registerPictoEffect("Powerful Revive", async (ctx) => {
+registerPictoEffect("powerful-revive", async (ctx) => {
     if (ctx.trigger !== "on-revived") {
         return { success: false };
     }
@@ -1226,7 +1227,7 @@ registerPictoEffect("Powerful Revive", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Powerful from Powerful Revive!`,
+        message: `${ctx.source.name} gained Powerful from ${getPictoName("powerful-revive")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Empowered",
@@ -1240,7 +1241,7 @@ registerPictoEffect("Powerful Revive", async (ctx) => {
  * Revive With Rush
  * "Apply Rush for 3 turns on revive."
  */
-registerPictoEffect("Revive With Rush", async (ctx) => {
+registerPictoEffect("revive-with-rush", async (ctx) => {
     if (ctx.trigger !== "on-revived") {
         return { success: false };
     }
@@ -1249,7 +1250,7 @@ registerPictoEffect("Revive With Rush", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Rush from Revive With Rush!`,
+        message: `${ctx.source.name} gained Rush from ${getPictoName("revive-with-rush")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Hastened",
@@ -1263,7 +1264,7 @@ registerPictoEffect("Revive With Rush", async (ctx) => {
  * Confident
  * "Take 50% less damage, but can't be Healed."
  */
-registerPictoEffect("Confident", async (_ctx) => {
+registerPictoEffect("confident", async (_ctx) => {
     // NOTE: Passive modifier requiring backend implementation
     return {
         success: false,
@@ -1275,7 +1276,7 @@ registerPictoEffect("Confident", async (_ctx) => {
  * SOS Shell
  * "Apply Shell when falling below 50% Health."
  */
-registerPictoEffect("SOS Shell", async (ctx) => {
+registerPictoEffect("sos-shell", async (ctx) => {
     if (ctx.trigger === "on-damage-taken") {
         const healthPercent = (ctx.source.healthPoints / ctx.source.maxHealthPoints) * 100;
         const healthAfterDamage = ctx.source.healthPoints - (ctx.additionalData?.damageAmount ?? 0);
@@ -1302,7 +1303,7 @@ registerPictoEffect("SOS Shell", async (ctx) => {
 
                 return {
                     success: true,
-                    message: `${ctx.source.name} gained Shell from SOS Shell!`,
+                    message: `${ctx.source.name} gained Shell from ${getPictoName("sos-shell")}!`,
                     appliedEffects: [{
                         targetId: ctx.source.battleID,
                         effect: "Protected",
@@ -1320,7 +1321,7 @@ registerPictoEffect("SOS Shell", async (ctx) => {
  * SOS Power
  * "Apply Powerful when falling below 50% Health."
  */
-registerPictoEffect("SOS Power", async (ctx) => {
+registerPictoEffect("sos-power", async (ctx) => {
     if (ctx.trigger === "on-damage-taken") {
         const healthPercent = (ctx.source.healthPoints / ctx.source.maxHealthPoints) * 100;
         const healthAfterDamage = ctx.source.healthPoints - (ctx.additionalData?.damageAmount ?? 0);
@@ -1347,7 +1348,7 @@ registerPictoEffect("SOS Power", async (ctx) => {
 
                 return {
                     success: true,
-                    message: `${ctx.source.name} gained Powerful from SOS Power!`,
+                    message: `${ctx.source.name} gained Powerful from ${getPictoName("sos-power")}!`,
                     appliedEffects: [{
                         targetId: ctx.source.battleID,
                         effect: "Empowered",
@@ -1365,7 +1366,7 @@ registerPictoEffect("SOS Power", async (ctx) => {
  * SOS Rush
  * "Apply Rush when falling below 50% Health."
  */
-registerPictoEffect("SOS Rush", async (ctx) => {
+registerPictoEffect("sos-rush", async (ctx) => {
     if (ctx.trigger === "on-damage-taken") {
         const healthPercent = (ctx.source.healthPoints / ctx.source.maxHealthPoints) * 100;
         const healthAfterDamage = ctx.source.healthPoints - (ctx.additionalData?.damageAmount ?? 0);
@@ -1392,7 +1393,7 @@ registerPictoEffect("SOS Rush", async (ctx) => {
 
                 return {
                     success: true,
-                    message: `${ctx.source.name} gained Rush from SOS Rush!`,
+                    message: `${ctx.source.name} gained Rush from ${getPictoName("sos-rush")}!`,
                     appliedEffects: [{
                         targetId: ctx.source.battleID,
                         effect: "Hastened",
@@ -1410,7 +1411,7 @@ registerPictoEffect("SOS Rush", async (ctx) => {
  * Solidifying Meditation
  * "+1 Shield when passing turn."
  */
-registerPictoEffect("Solidifying Meditation", async (ctx) => {
+registerPictoEffect("solidifying-meditation", async (ctx) => {
     if (ctx.trigger !== "on-pass-turn") {
         return { success: false };
     }
@@ -1419,7 +1420,7 @@ registerPictoEffect("Solidifying Meditation", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shield from Solidifying Meditation!`,
+        message: `${ctx.source.name} gained Shield from ${getPictoName("solidifying-meditation")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Shielded",
@@ -1432,7 +1433,7 @@ registerPictoEffect("Solidifying Meditation", async (ctx) => {
  * Base Shield
  * "+1 Shield if not affected by any Shield on turn start."
  */
-registerPictoEffect("Base Shield", async (ctx) => {
+registerPictoEffect("base-shield", async (ctx) => {
     if (ctx.trigger !== "on-turn-start") {
         return { success: false };
     }
@@ -1446,7 +1447,7 @@ registerPictoEffect("Base Shield", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shield from Base Shield!`,
+        message: `${ctx.source.name} gained Shield from ${getPictoName("base-shield")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Shielded",
@@ -1459,7 +1460,7 @@ registerPictoEffect("Base Shield", async (ctx) => {
  * In Medias Res
  * "+3 Shields on Battle Start, but max Health is halved."
  */
-registerPictoEffect("In Medias Res", async (ctx) => {
+registerPictoEffect("in-medias-res", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1469,7 +1470,7 @@ registerPictoEffect("In Medias Res", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained 3 Shields from In Medias Res!`,
+        message: `${ctx.source.name} gained 3 Shields from ${getPictoName("in-medias-res")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Shielded",
@@ -1482,7 +1483,7 @@ registerPictoEffect("In Medias Res", async (ctx) => {
  * Defensive Mode
  * "On receiving damage, consume 1 AP to take 30% less damage, if possible."
  */
-registerPictoEffect("Defensive Mode", async (_ctx) => {
+registerPictoEffect("defensive-mode", async (_ctx) => {
     // NOTE: Requires backend implementation to intercept damage
     return {
         success: false,
@@ -1494,7 +1495,7 @@ registerPictoEffect("Defensive Mode", async (_ctx) => {
  * Revive Paradox
  * "Play immediately when revived."
  */
-registerPictoEffect("Revive Paradox", async (_ctx) => {
+registerPictoEffect("revive-paradox", async (_ctx) => {
     // NOTE: Requires backend implementation for turn order manipulation
     return {
         success: false,
@@ -1506,7 +1507,7 @@ registerPictoEffect("Revive Paradox", async (_ctx) => {
  * Effective Heal
  * "Double all Heals received."
  */
-registerPictoEffect("Effective Heal", async (_ctx) => {
+registerPictoEffect("effective-heal", async (_ctx) => {
     // NOTE: Passive modifier requiring backend implementation
     return {
         success: false,
@@ -1518,7 +1519,7 @@ registerPictoEffect("Effective Heal", async (_ctx) => {
  * Shortcut
  * "Immediately play when falling below 30% Health. Once per battle."
  */
-registerPictoEffect("Shortcut", async (_ctx) => {
+registerPictoEffect("shortcut", async (_ctx) => {
     // NOTE: Requires backend implementation for turn order manipulation
     return {
         success: false,
@@ -1530,7 +1531,7 @@ registerPictoEffect("Shortcut", async (_ctx) => {
  * Clea's Life
  * "On turn start, if no damage taken since last turn, recover 100% Health."
  */
-registerPictoEffect("Clea's Life", async (ctx) => {
+registerPictoEffect("cleas-life", async (ctx) => {
     if (ctx.trigger !== "on-turn-start") {
         return { success: false };
     }
@@ -1548,7 +1549,7 @@ registerPictoEffect("Clea's Life", async (ctx) => {
  * Auto Powerful
  * "Apply Powerful for 3 turns on battle start."
  */
-registerPictoEffect("Auto Powerful", async (ctx) => {
+registerPictoEffect("auto-powerful", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1557,7 +1558,7 @@ registerPictoEffect("Auto Powerful", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Powerful from Auto Powerful!`,
+        message: `${ctx.source.name} gained Powerful from ${getPictoName("auto-powerful")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Empowered",
@@ -1571,7 +1572,7 @@ registerPictoEffect("Auto Powerful", async (ctx) => {
  * Auto Shell
  * "Apply Shell for 3 turns on battle start."
  */
-registerPictoEffect("Auto Shell", async (ctx) => {
+registerPictoEffect("auto-shell", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1580,7 +1581,7 @@ registerPictoEffect("Auto Shell", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shell from Auto Shell!`,
+        message: `${ctx.source.name} gained Shell from ${getPictoName("auto-shell")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Protected",
@@ -1594,7 +1595,7 @@ registerPictoEffect("Auto Shell", async (ctx) => {
  * Auto Rush
  * "Apply Rush for 3 turns on battle start."
  */
-registerPictoEffect("Auto Rush", async (ctx) => {
+registerPictoEffect("auto-rush", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1603,7 +1604,7 @@ registerPictoEffect("Auto Rush", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Rush from Auto Rush!`,
+        message: `${ctx.source.name} gained Rush from ${getPictoName("auto-rush")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Hastened",
@@ -1617,7 +1618,7 @@ registerPictoEffect("Auto Rush", async (ctx) => {
  * Auto Regen
  * "Apply Regen for 3 turns on battle start."
  */
-registerPictoEffect("Auto Regen", async (ctx) => {
+registerPictoEffect("auto-regen", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1626,7 +1627,7 @@ registerPictoEffect("Auto Regen", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Regen from Auto Regen!`,
+        message: `${ctx.source.name} gained Regen from ${getPictoName("auto-regen")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Regeneration",
@@ -1640,7 +1641,7 @@ registerPictoEffect("Auto Regen", async (ctx) => {
  * Auto Curse
  * "Self apply Curse on battle start."
  */
-registerPictoEffect("Auto Curse", async (ctx) => {
+registerPictoEffect("auto-curse", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1649,7 +1650,7 @@ registerPictoEffect("Auto Curse", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} cursed themselves with Auto Curse!`,
+        message: `${ctx.source.name} cursed themselves with ${getPictoName("auto-curse")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Cursed",
@@ -1663,7 +1664,7 @@ registerPictoEffect("Auto Curse", async (ctx) => {
  * Auto Burn
  * "Self apply Burn on battle start."
  */
-registerPictoEffect("Auto Burn", async (ctx) => {
+registerPictoEffect("auto-burn", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1672,7 +1673,7 @@ registerPictoEffect("Auto Burn", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} burned themselves with Auto Burn!`,
+        message: `${ctx.source.name} burned themselves with ${getPictoName("auto-burn")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Burning",
@@ -1686,7 +1687,7 @@ registerPictoEffect("Auto Burn", async (ctx) => {
  * Auto Death
  * "Kill self on battle start."
  */
-registerPictoEffect("Auto Death", async (ctx) => {
+registerPictoEffect("auto-death", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1702,7 +1703,7 @@ registerPictoEffect("Auto Death", async (ctx) => {
  * Inverted Affinity
  * "Apply Inverted on self for 3 turns on battle start. 50% increased damage while Inverted."
  */
-registerPictoEffect("Inverted Affinity", async (ctx) => {
+registerPictoEffect("inverted-affinity", async (ctx) => {
     if (ctx.trigger !== "on-battle-start") {
         return { success: false };
     }
@@ -1711,7 +1712,7 @@ registerPictoEffect("Inverted Affinity", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} inverted themselves!`,
+        message: `${ctx.source.name} inverted themselves with ${getPictoName("inverted-affinity")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Inverted",
@@ -1727,7 +1728,7 @@ registerPictoEffect("Inverted Affinity", async (ctx) => {
  * Attack Lifesteal
  * "Recover 15% Health on Base Attack."
  */
-registerPictoEffect("Attack Lifesteal", async (ctx) => {
+registerPictoEffect("attack-lifesteal", async (ctx) => {
     if (ctx.trigger !== "on-attack") {
         return { success: false };
     }
@@ -1737,7 +1738,7 @@ registerPictoEffect("Attack Lifesteal", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Attack Lifesteal!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("attack-lifesteal")}!`
     };
 });
 
@@ -1745,7 +1746,7 @@ registerPictoEffect("Attack Lifesteal", async (ctx) => {
  * Healing Parry
  * "Recover 3% Health on Parry."
  */
-registerPictoEffect("Healing Parry", async (ctx) => {
+registerPictoEffect("healing-parry", async (ctx) => {
     if (ctx.trigger !== "on-parry") {
         return { success: false };
     }
@@ -1755,7 +1756,7 @@ registerPictoEffect("Healing Parry", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Healing Parry!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("healing-parry")}!`
     };
 });
 
@@ -1763,7 +1764,7 @@ registerPictoEffect("Healing Parry", async (ctx) => {
  * Sweet Kill
  * "Recover 50% Health on killing an enemy."
  */
-registerPictoEffect("Sweet Kill", async (ctx) => {
+registerPictoEffect("sweet-kill", async (ctx) => {
     if (ctx.trigger !== "on-kill") {
         return { success: false };
     }
@@ -1773,7 +1774,7 @@ registerPictoEffect("Sweet Kill", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Sweet Kill!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("sweet-kill")}!`
     };
 });
 
@@ -1781,7 +1782,7 @@ registerPictoEffect("Sweet Kill", async (ctx) => {
  * Healing Counter
  * "Recover 25% Health on Counterattack."
  */
-registerPictoEffect("Healing Counter", async (ctx) => {
+registerPictoEffect("healing-counter", async (ctx) => {
     if (ctx.trigger !== "on-counterattack") {
         return { success: false };
     }
@@ -1791,7 +1792,7 @@ registerPictoEffect("Healing Counter", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Healing Counter!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("healing-counter")}!`
     };
 });
 
@@ -1799,7 +1800,7 @@ registerPictoEffect("Healing Counter", async (ctx) => {
  * Healing Fire
  * "Recover 25% Health when attacking a Burning target. Once per turn."
  */
-registerPictoEffect("Healing Fire", async (ctx) => {
+registerPictoEffect("healing-fire", async (ctx) => {
     if (ctx.trigger !== "on-attack" || !ctx.target) {
         return { success: false };
     }
@@ -1820,7 +1821,7 @@ registerPictoEffect("Healing Fire", async (ctx) => {
     if (!canActivate) {
         return {
             success: false,
-            message: `${ctx.source.name}'s Healing Fire already used this turn!`
+            message: `${ctx.source.name}'s ${getPictoName("healing-fire")} already used this turn!`
         };
     }
 
@@ -1837,7 +1838,7 @@ registerPictoEffect("Healing Fire", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Healing Fire!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("healing-fire")}!`
     };
 });
 
@@ -1845,7 +1846,7 @@ registerPictoEffect("Healing Fire", async (ctx) => {
  * Healing Death
  * "On death, the rest of the Expedition recover all Health."
  */
-registerPictoEffect("Healing Death", async (ctx) => {
+registerPictoEffect("healing-death", async (ctx) => {
     if (ctx.trigger !== "on-death") {
         return { success: false };
     }
@@ -1860,7 +1861,7 @@ registerPictoEffect("Healing Death", async (ctx) => {
 
     return {
         success: true,
-        message: `All allies fully healed from ${ctx.source.name}'s Healing Death!`
+        message: `All allies fully healed from ${ctx.source.name}'s ${getPictoName("healing-death")}!`
     };
 });
 
@@ -1868,7 +1869,7 @@ registerPictoEffect("Healing Death", async (ctx) => {
  * Healing Mark
  * "Recover 25% Health on hitting a Marked enemy. Once per turn."
  */
-registerPictoEffect("Healing Mark", async (ctx) => {
+registerPictoEffect("healing-mark", async (ctx) => {
     if (ctx.trigger !== "on-attack" || !ctx.target) {
         return { success: false };
     }
@@ -1889,7 +1890,7 @@ registerPictoEffect("Healing Mark", async (ctx) => {
     if (!canActivate) {
         return {
             success: false,
-            message: `${ctx.source.name}'s Healing Mark already used this turn!`
+            message: `${ctx.source.name}'s ${getPictoName("healing-mark")} already used this turn!`
         };
     }
 
@@ -1906,7 +1907,7 @@ registerPictoEffect("Healing Mark", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Healing Mark!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("healing-mark")}!`
     };
 });
 
@@ -1914,7 +1915,7 @@ registerPictoEffect("Healing Mark", async (ctx) => {
  * Shared Care
  * "When Healing an ally, also Heal self for 50% of that value."
  */
-registerPictoEffect("Shared Care", async (ctx) => {
+registerPictoEffect("shared-care", async (ctx) => {
     if (ctx.trigger !== "on-heal-ally") {
         return { success: false };
     }
@@ -1924,7 +1925,7 @@ registerPictoEffect("Shared Care", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} healed themselves for ${healAmount} HP from Shared Care!`
+        message: `${ctx.source.name} healed themselves for ${healAmount} HP from ${getPictoName("shared-care")}!`
     };
 });
 
@@ -1932,7 +1933,7 @@ registerPictoEffect("Shared Care", async (ctx) => {
  * Healing Share
  * "Receive 15% of all Heals affecting other characters."
  */
-registerPictoEffect("Healing Share", async (_ctx) => {
+registerPictoEffect("healing-share", async (_ctx) => {
     // NOTE: Requires backend implementation to intercept all heals
     return {
         success: false,
@@ -1944,7 +1945,7 @@ registerPictoEffect("Healing Share", async (_ctx) => {
  * Gradient Recovery
  * "Recover 10% Health on using a Gradient Charge."
  */
-registerPictoEffect("Gradient Recovery", async (ctx) => {
+registerPictoEffect("gradient-recovery", async (ctx) => {
     if (ctx.trigger !== "on-gradient-use") {
         return { success: false };
     }
@@ -1954,7 +1955,7 @@ registerPictoEffect("Gradient Recovery", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Gradient Recovery!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("gradient-recovery")}!`
     };
 });
 
@@ -1962,7 +1963,7 @@ registerPictoEffect("Gradient Recovery", async (ctx) => {
  * Healing Boon
  * "Heal 15% HP on applying a buff."
  */
-registerPictoEffect("Healing Boon", async (ctx) => {
+registerPictoEffect("healing-boon", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -1978,7 +1979,7 @@ registerPictoEffect("Healing Boon", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} recovered ${healAmount} HP from Healing Boon!`
+        message: `${ctx.source.name} recovered ${healAmount} HP from ${getPictoName("healing-boon")}!`
     };
 });
 
@@ -1988,7 +1989,7 @@ registerPictoEffect("Healing Boon", async (ctx) => {
  * Accelerating Heal
  * "Healing an ally also applies Rush for 1 turn."
  */
-registerPictoEffect("Accelerating Heal", async (ctx) => {
+registerPictoEffect("accelerating-heal", async (ctx) => {
     if (ctx.trigger !== "on-heal-ally" || !ctx.target) {
         return { success: false };
     }
@@ -1997,7 +1998,7 @@ registerPictoEffect("Accelerating Heal", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Rush from Accelerating Heal!`,
+        message: `${ctx.target.name} gained Rush from ${getPictoName("accelerating-heal")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Hastened",
@@ -2011,7 +2012,7 @@ registerPictoEffect("Accelerating Heal", async (ctx) => {
  * Powerful Heal
  * "Healing an ally also applies Powerful for 1 turn."
  */
-registerPictoEffect("Powerful Heal", async (ctx) => {
+registerPictoEffect("powerful-heal", async (ctx) => {
     if (ctx.trigger !== "on-heal-ally" || !ctx.target) {
         return { success: false };
     }
@@ -2020,7 +2021,7 @@ registerPictoEffect("Powerful Heal", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Powerful from Powerful Heal!`,
+        message: `${ctx.target.name} gained Powerful from ${getPictoName("powerful-heal")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Empowered",
@@ -2034,7 +2035,7 @@ registerPictoEffect("Powerful Heal", async (ctx) => {
  * Energising Heal
  * "On Healing an ally, also give 2 AP."
  */
-registerPictoEffect("Energising Heal", async (ctx) => {
+registerPictoEffect("energising-heal", async (ctx) => {
     if (ctx.trigger !== "on-heal-ally" || !ctx.target) {
         return { success: false };
     }
@@ -2043,7 +2044,7 @@ registerPictoEffect("Energising Heal", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 MP from Energising Heal!`
+        message: `${ctx.target.name} gained 2 MP from ${getPictoName("energising-heal")}!`
     };
 });
 
@@ -2051,7 +2052,7 @@ registerPictoEffect("Energising Heal", async (ctx) => {
  * Protecting Heal
  * "Healing an ally also applies Shell for 1 turn."
  */
-registerPictoEffect("Protecting Heal", async (ctx) => {
+registerPictoEffect("protecting-heal", async (ctx) => {
     if (ctx.trigger !== "on-heal-ally" || !ctx.target) {
         return { success: false };
     }
@@ -2060,7 +2061,7 @@ registerPictoEffect("Protecting Heal", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Shell from Protecting Heal!`,
+        message: `${ctx.target.name} gained Shell from ${getPictoName("protecting-heal")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Protected",
@@ -2076,7 +2077,7 @@ registerPictoEffect("Protecting Heal", async (ctx) => {
  * Accelerating Last Stand
  * "Gain Rush if fighting alone."
  */
-registerPictoEffect("Accelerating Last Stand", async (ctx) => {
+registerPictoEffect("accelerating-last-stand", async (ctx) => {
     if (ctx.trigger !== "on-battle-start" && ctx.trigger !== "on-turn-start") {
         return { success: false };
     }
@@ -2089,7 +2090,7 @@ registerPictoEffect("Accelerating Last Stand", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Rush from Accelerating Last Stand!`,
+        message: `${ctx.source.name} gained Rush from ${getPictoName("accelerating-last-stand")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Hastened",
@@ -2103,7 +2104,7 @@ registerPictoEffect("Accelerating Last Stand", async (ctx) => {
  * Empowering Last Stand
  * "Gain Powerful if fighting alone."
  */
-registerPictoEffect("Empowering Last Stand", async (ctx) => {
+registerPictoEffect("empowering-last-stand", async (ctx) => {
     if (ctx.trigger !== "on-battle-start" && ctx.trigger !== "on-turn-start") {
         return { success: false };
     }
@@ -2116,7 +2117,7 @@ registerPictoEffect("Empowering Last Stand", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Powerful from Empowering Last Stand!`,
+        message: `${ctx.source.name} gained Powerful from ${getPictoName("empowering-last-stand")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Empowered",
@@ -2130,7 +2131,7 @@ registerPictoEffect("Empowering Last Stand", async (ctx) => {
  * Protecting Last Stand
  * "Gain Shell if fighting alone."
  */
-registerPictoEffect("Protecting Last Stand", async (ctx) => {
+registerPictoEffect("protecting-last-stand", async (ctx) => {
     if (ctx.trigger !== "on-battle-start" && ctx.trigger !== "on-turn-start") {
         return { success: false };
     }
@@ -2143,7 +2144,7 @@ registerPictoEffect("Protecting Last Stand", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shell from Protecting Last Stand!`,
+        message: `${ctx.source.name} gained Shell from ${getPictoName("protecting-last-stand")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Protected",
@@ -2157,7 +2158,7 @@ registerPictoEffect("Protecting Last Stand", async (ctx) => {
  * Solo Fighter
  * "Deal 50% more damage if fighting alone."
  */
-registerPictoEffect("Solo Fighter", async (_ctx) => {
+registerPictoEffect("solo-fighter", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -2169,7 +2170,7 @@ registerPictoEffect("Solo Fighter", async (_ctx) => {
  * Last Stand Critical
  * "100% Critical Chance while fighting alone."
  */
-registerPictoEffect("Last Stand Critical", async (_ctx) => {
+registerPictoEffect("last-stand-critical", async (_ctx) => {
     // NOTE: Passive critical modifier requiring backend implementation
     return {
         success: false,
@@ -2183,7 +2184,7 @@ registerPictoEffect("Last Stand Critical", async (_ctx) => {
  * Accelerating Shots
  * "20% chance to gain Rush on Free Aim shot."
  */
-registerPictoEffect("Accelerating Shots", async (ctx) => {
+registerPictoEffect("accelerating-shots", async (ctx) => {
     if (ctx.trigger !== "on-free-aim") {
         return { success: false };
     }
@@ -2196,7 +2197,7 @@ registerPictoEffect("Accelerating Shots", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Rush from Accelerating Shots!`,
+        message: `${ctx.source.name} gained Rush from ${getPictoName("accelerating-shots")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Hastened",
@@ -2210,7 +2211,7 @@ registerPictoEffect("Accelerating Shots", async (ctx) => {
  * Powerful Shots
  * "20% chance to gain Powerful on Free Aim shot."
  */
-registerPictoEffect("Powerful Shots", async (ctx) => {
+registerPictoEffect("powerful-shots", async (ctx) => {
     if (ctx.trigger !== "on-free-aim") {
         return { success: false };
     }
@@ -2223,7 +2224,7 @@ registerPictoEffect("Powerful Shots", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Powerful from Powerful Shots!`,
+        message: `${ctx.source.name} gained Powerful from ${getPictoName("powerful-shots")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Empowered",
@@ -2237,7 +2238,7 @@ registerPictoEffect("Powerful Shots", async (ctx) => {
  * Protecting Shots
  * "20% chance to gain Shell on Free Aim shot."
  */
-registerPictoEffect("Protecting Shots", async (ctx) => {
+registerPictoEffect("protecting-shots", async (ctx) => {
     if (ctx.trigger !== "on-free-aim") {
         return { success: false };
     }
@@ -2250,7 +2251,7 @@ registerPictoEffect("Protecting Shots", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shell from Protecting Shots!`,
+        message: `${ctx.source.name} gained Shell from ${getPictoName("protecting-shots")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Protected",
@@ -2264,7 +2265,7 @@ registerPictoEffect("Protecting Shots", async (ctx) => {
  * Burning Shots
  * "20% chance to Burn on Free Aim shot."
  */
-registerPictoEffect("Burning Shots", async (ctx) => {
+registerPictoEffect("burning-shots", async (ctx) => {
     if (ctx.trigger !== "on-free-aim" || !ctx.target) {
         return { success: false };
     }
@@ -2277,7 +2278,7 @@ registerPictoEffect("Burning Shots", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was burned by Burning Shots!`,
+        message: `${ctx.target.name} was burned by ${getPictoName("burning-shots")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Burning",
@@ -2291,7 +2292,7 @@ registerPictoEffect("Burning Shots", async (ctx) => {
  * Marking Shots
  * "20% chance to apply Mark on Free Aim shot."
  */
-registerPictoEffect("Marking Shots", async (ctx) => {
+registerPictoEffect("marking-shots", async (ctx) => {
     if (ctx.trigger !== "on-free-aim" || !ctx.target) {
         return { success: false };
     }
@@ -2304,7 +2305,7 @@ registerPictoEffect("Marking Shots", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was marked by Marking Shots!`,
+        message: `${ctx.target.name} was marked by ${getPictoName("marking-shots")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Marked",
@@ -2318,7 +2319,7 @@ registerPictoEffect("Marking Shots", async (ctx) => {
  * Frozen Shot
  * "Free Aim shots can Freeze."
  */
-registerPictoEffect("Frozen Shot", async (ctx) => {
+registerPictoEffect("frozen-shot", async (ctx) => {
     if (ctx.trigger !== "on-free-aim" || !ctx.target) {
         return { success: false };
     }
@@ -2328,7 +2329,7 @@ registerPictoEffect("Frozen Shot", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was frozen by Frozen Shot!`,
+        message: `${ctx.target.name} was frozen by ${getPictoName("frozen-shot")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Frozen",
@@ -2342,7 +2343,7 @@ registerPictoEffect("Frozen Shot", async (ctx) => {
  * Free Aim Inverted Shot
  * "Free Aim shots can apply Inverted."
  */
-registerPictoEffect("Free Aim Inverted Shot", async (ctx) => {
+registerPictoEffect("free-aim-inverted-shot", async (ctx) => {
     if (ctx.trigger !== "on-free-aim" || !ctx.target) {
         return { success: false };
     }
@@ -2351,7 +2352,7 @@ registerPictoEffect("Free Aim Inverted Shot", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was inverted by Free Aim Inverted Shot!`,
+        message: `${ctx.target.name} was inverted by ${getPictoName("free-aim-inverted-shot")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Inverted",
@@ -2365,7 +2366,7 @@ registerPictoEffect("Free Aim Inverted Shot", async (ctx) => {
  * Augmented Aim
  * "50% increased Free Aim damage."
  */
-registerPictoEffect("Augmented Aim", async (_ctx) => {
+registerPictoEffect("augmented-aim", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -2377,7 +2378,7 @@ registerPictoEffect("Augmented Aim", async (_ctx) => {
  * Piercing Shot
  * "25% increased Free Aim damage. Free Aim shots ignore Shields."
  */
-registerPictoEffect("Piercing Shot", async (_ctx) => {
+registerPictoEffect("piercing-shot", async (_ctx) => {
     // NOTE: Passive damage modifier and shield penetration requiring backend implementation
     return {
         success: false,
@@ -2389,7 +2390,7 @@ registerPictoEffect("Piercing Shot", async (_ctx) => {
  * Sniper
  * "First Free Aim shot each turn deals 200% increased damage and can Break."
  */
-registerPictoEffect("Sniper", async (_ctx) => {
+registerPictoEffect("sniper", async (_ctx) => {
     // NOTE: Requires backend implementation with turn tracking
     return {
         success: false,
@@ -2401,7 +2402,7 @@ registerPictoEffect("Sniper", async (_ctx) => {
  * Versatile
  * "After a Free Aim hit, Base Attack damage is increased by 50% for 1 turn."
  */
-registerPictoEffect("Versatile", async (_ctx) => {
+registerPictoEffect("versatile", async (_ctx) => {
     // NOTE: Requires backend implementation with turn tracking
     return {
         success: false,
@@ -2413,7 +2414,7 @@ registerPictoEffect("Versatile", async (_ctx) => {
  * Breaking Shots
  * "50% increased Break damage with Free Aim shots."
  */
-registerPictoEffect("Breaking Shots", async (_ctx) => {
+registerPictoEffect("breaking-shots", async (_ctx) => {
     // NOTE: Passive break modifier requiring backend implementation
     return {
         success: false,
@@ -2427,7 +2428,7 @@ registerPictoEffect("Breaking Shots", async (_ctx) => {
  * Accelerating Tint
  * "Healing Tints also apply Rush."
  */
-registerPictoEffect("Accelerating Tint", async (ctx) => {
+registerPictoEffect("accelerating-tint", async (ctx) => {
     if (ctx.trigger !== "on-healing-tint" || !ctx.target) {
         return { success: false };
     }
@@ -2436,7 +2437,7 @@ registerPictoEffect("Accelerating Tint", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Rush from Accelerating Tint!`,
+        message: `${ctx.target.name} gained Rush from ${getPictoName("accelerating-tint")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Hastened",
@@ -2450,7 +2451,7 @@ registerPictoEffect("Accelerating Tint", async (ctx) => {
  * Empowering Tint
  * "Healing Tints also apply Powerful."
  */
-registerPictoEffect("Empowering Tint", async (ctx) => {
+registerPictoEffect("empowering-tint", async (ctx) => {
     if (ctx.trigger !== "on-healing-tint" || !ctx.target) {
         return { success: false };
     }
@@ -2459,7 +2460,7 @@ registerPictoEffect("Empowering Tint", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Powerful from Empowering Tint!`,
+        message: `${ctx.target.name} gained Powerful from ${getPictoName("empowering-tint")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Empowered",
@@ -2473,7 +2474,7 @@ registerPictoEffect("Empowering Tint", async (ctx) => {
  * Protecting Tint
  * "Healing Tints also apply Shell."
  */
-registerPictoEffect("Protecting Tint", async (ctx) => {
+registerPictoEffect("protecting-tint", async (ctx) => {
     if (ctx.trigger !== "on-healing-tint" || !ctx.target) {
         return { success: false };
     }
@@ -2482,7 +2483,7 @@ registerPictoEffect("Protecting Tint", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Shell from Protecting Tint!`,
+        message: `${ctx.target.name} gained Shell from ${getPictoName("protecting-tint")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Protected",
@@ -2496,7 +2497,7 @@ registerPictoEffect("Protecting Tint", async (ctx) => {
  * Shielding Tint
  * "Healing Tints also add 2 Shields."
  */
-registerPictoEffect("Shielding Tint", async (ctx) => {
+registerPictoEffect("shielding-tint", async (ctx) => {
     if (ctx.trigger !== "on-healing-tint" || !ctx.target) {
         return { success: false };
     }
@@ -2505,7 +2506,7 @@ registerPictoEffect("Shielding Tint", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 2 Shields from Shielding Tint!`,
+        message: `${ctx.target.name} gained 2 Shields from ${getPictoName("shielding-tint")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Shielded",
@@ -2518,7 +2519,7 @@ registerPictoEffect("Shielding Tint", async (ctx) => {
  * Healing Tint Energy
  * "Healing Tints also give 1 AP."
  */
-registerPictoEffect("Healing Tint Energy", async (ctx) => {
+registerPictoEffect("healing-tint-energy", async (ctx) => {
     if (ctx.trigger !== "on-healing-tint" || !ctx.target) {
         return { success: false };
     }
@@ -2527,7 +2528,7 @@ registerPictoEffect("Healing Tint Energy", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained 1 MP from Healing Tint Energy!`
+        message: `${ctx.target.name} gained 1 MP from ${getPictoName("healing-tint-energy")}!`
     };
 });
 
@@ -2535,7 +2536,7 @@ registerPictoEffect("Healing Tint Energy", async (ctx) => {
  * Revive Tint Energy
  * "Revive Tints also give 3 AP."
  */
-registerPictoEffect("Revive Tint Energy", async (_ctx) => {
+registerPictoEffect("revive-tint-energy", async (_ctx) => {
     // NOTE: Requires backend implementation for revive tint detection
     return {
         success: false,
@@ -2547,7 +2548,7 @@ registerPictoEffect("Revive Tint Energy", async (_ctx) => {
  * Better Healing Tint
  * "Healing Tints have double the Healing effect."
  */
-registerPictoEffect("Better Healing Tint", async (_ctx) => {
+registerPictoEffect("better-healing-tint", async (_ctx) => {
     // NOTE: Passive heal modifier requiring backend implementation
     return {
         success: false,
@@ -2559,7 +2560,7 @@ registerPictoEffect("Better Healing Tint", async (_ctx) => {
  * Cleansing Tint
  * "Healing Tints also remove all Status Effects from the target."
  */
-registerPictoEffect("Cleansing Tint", async (_ctx) => {
+registerPictoEffect("cleansing-tint", async (_ctx) => {
     // NOTE: Requires backend implementation for status cleansing
     return {
         success: false,
@@ -2571,7 +2572,7 @@ registerPictoEffect("Cleansing Tint", async (_ctx) => {
  * Great Healing Tint
  * "Healing Tints now affect the whole Expedition."
  */
-registerPictoEffect("Great Healing Tint", async (_ctx) => {
+registerPictoEffect("great-healing-tint", async (_ctx) => {
     // NOTE: Requires backend implementation to change tint target
     return {
         success: false,
@@ -2583,7 +2584,7 @@ registerPictoEffect("Great Healing Tint", async (_ctx) => {
  * Great Energy Tint
  * "Energy Tints now affect the whole Expedition."
  */
-registerPictoEffect("Great Energy Tint", async (_ctx) => {
+registerPictoEffect("great-energy-tint", async (_ctx) => {
     // NOTE: Requires backend implementation to change tint target
     return {
         success: false,
@@ -2595,7 +2596,7 @@ registerPictoEffect("Great Energy Tint", async (_ctx) => {
  * Charging Tint
  * "+5% of a Gradient Charge on using an item."
  */
-registerPictoEffect("Charging Tint", async (_ctx) => {
+registerPictoEffect("charging-tint", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -2607,7 +2608,7 @@ registerPictoEffect("Charging Tint", async (_ctx) => {
  * Time Tint
  * "Energy Tints also apply Rush."
  */
-registerPictoEffect("Time Tint", async (_ctx) => {
+registerPictoEffect("time-tint", async (_ctx) => {
     // NOTE: Requires backend implementation for energy tint detection
     return {
         success: false,
@@ -2621,7 +2622,7 @@ registerPictoEffect("Time Tint", async (_ctx) => {
  * Empowering Attack
  * "Gain Powerful for 1 turn on Base Attack."
  */
-registerPictoEffect("Empowering Attack", async (ctx) => {
+registerPictoEffect("empowering-attack", async (ctx) => {
     if (ctx.trigger !== "on-attack") {
         return { success: false };
     }
@@ -2630,7 +2631,7 @@ registerPictoEffect("Empowering Attack", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Powerful from Empowering Attack!`,
+        message: `${ctx.source.name} gained Powerful from ${getPictoName("empowering-attack")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Empowered",
@@ -2644,7 +2645,7 @@ registerPictoEffect("Empowering Attack", async (ctx) => {
  * Protecting Attack
  * "Gain Shell for 1 turn on Base Attack."
  */
-registerPictoEffect("Protecting Attack", async (ctx) => {
+registerPictoEffect("protecting-attack", async (ctx) => {
     if (ctx.trigger !== "on-attack") {
         return { success: false };
     }
@@ -2653,7 +2654,7 @@ registerPictoEffect("Protecting Attack", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shell from Protecting Attack!`,
+        message: `${ctx.source.name} gained Shell from ${getPictoName("protecting-attack")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Protected",
@@ -2667,7 +2668,7 @@ registerPictoEffect("Protecting Attack", async (ctx) => {
  * Enfeebling Attack
  * "Base Attack applies Powerless for 1 turn."
  */
-registerPictoEffect("Enfeebling Attack", async (ctx) => {
+registerPictoEffect("enfeebling-attack", async (ctx) => {
     if (ctx.trigger !== "on-attack" || !ctx.target) {
         return { success: false };
     }
@@ -2676,7 +2677,7 @@ registerPictoEffect("Enfeebling Attack", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was weakened by Enfeebling Attack!`,
+        message: `${ctx.target.name} was weakened by ${getPictoName("enfeebling-attack")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Powerless",
@@ -2690,7 +2691,7 @@ registerPictoEffect("Enfeebling Attack", async (ctx) => {
  * Exposing Attack
  * "Base Attack applies Defenseless for 1 turn."
  */
-registerPictoEffect("Exposing Attack", async (ctx) => {
+registerPictoEffect("exposing-attack", async (ctx) => {
     if (ctx.trigger !== "on-attack" || !ctx.target) {
         return { success: false };
     }
@@ -2699,7 +2700,7 @@ registerPictoEffect("Exposing Attack", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was exposed by Exposing Attack!`,
+        message: `${ctx.target.name} was exposed by ${getPictoName("exposing-attack")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Unprotected",
@@ -2713,7 +2714,7 @@ registerPictoEffect("Exposing Attack", async (ctx) => {
  * Augmented Attack
  * "50% increased Base Attack damage."
  */
-registerPictoEffect("Augmented Attack", async (_ctx) => {
+registerPictoEffect("augmented-attack", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -2725,7 +2726,7 @@ registerPictoEffect("Augmented Attack", async (_ctx) => {
  * Augmented First Strike
  * "50% increased damage on the first hit. Once per battle."
  */
-registerPictoEffect("Augmented First Strike", async (_ctx) => {
+registerPictoEffect("augmented-first-strike", async (_ctx) => {
     // NOTE: Requires backend implementation with battle tracking
     return {
         success: false,
@@ -2755,7 +2756,7 @@ registerComboAttack("Combo Attack III");
  * Powered Attack
  * "On every damage dealt, try to consume 1 AP. If successful, increase damage by 20%."
  */
-registerPictoEffect("Powered Attack", async (_ctx) => {
+registerPictoEffect("powered-attack", async (_ctx) => {
     // NOTE: Requires backend implementation to consume AP and modify damage
     return {
         success: false,
@@ -2767,7 +2768,7 @@ registerPictoEffect("Powered Attack", async (_ctx) => {
  * Breaking Attack
  * "Base Attack can Break."
  */
-registerPictoEffect("Breaking Attack", async (_ctx) => {
+registerPictoEffect("breaking-attack", async (_ctx) => {
     // NOTE: Passive attack modifier requiring backend implementation
     return {
         success: false,
@@ -2779,7 +2780,7 @@ registerPictoEffect("Breaking Attack", async (_ctx) => {
  * Staggering Attack
  * "50% increased Break damage on Base Attack."
  */
-registerPictoEffect("Staggering Attack", async (_ctx) => {
+registerPictoEffect("staggering-attack", async (_ctx) => {
     // NOTE: Passive break modifier requiring backend implementation
     return {
         success: false,
@@ -2791,7 +2792,7 @@ registerPictoEffect("Staggering Attack", async (_ctx) => {
  * Charging Attack
  * "+15% of a Gradient Charge on Base Attack."
  */
-registerPictoEffect("Charging Attack", async (_ctx) => {
+registerPictoEffect("charging-attack", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -2805,7 +2806,7 @@ registerPictoEffect("Charging Attack", async (_ctx) => {
  * Empowering Parry
  * "Each successful Parry increases damage by 5% until end of the following turn. Taking any damage removes this buff."
  */
-registerPictoEffect("Empowering Parry", async (_ctx) => {
+registerPictoEffect("empowering-parry", async (_ctx) => {
     // NOTE: Requires backend implementation with damage tracking and stacking buffs
     return {
         success: false,
@@ -2817,7 +2818,7 @@ registerPictoEffect("Empowering Parry", async (_ctx) => {
  * Burning Dodge
  * "Successful Dodges can Burn the attacker."
  */
-registerPictoEffect("Burning Dodge", async (ctx) => {
+registerPictoEffect("burning-dodge", async (ctx) => {
     if (ctx.trigger !== "on-dodge" || !ctx.target) {
         return { success: false };
     }
@@ -2826,7 +2827,7 @@ registerPictoEffect("Burning Dodge", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was burned by Burning Dodge!`,
+        message: `${ctx.target.name} was burned by ${getPictoName("burning-dodge")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Burning",
@@ -2840,7 +2841,7 @@ registerPictoEffect("Burning Dodge", async (ctx) => {
  * Defense Breaker Dodge
  * "Successful Dodges can apply Defenseless to the attacker."
  */
-registerPictoEffect("Defense Breaker Dodge", async (ctx) => {
+registerPictoEffect("defense-breaker-dodge", async (ctx) => {
     if (ctx.trigger !== "on-dodge" || !ctx.target) {
         return { success: false };
     }
@@ -2849,7 +2850,7 @@ registerPictoEffect("Defense Breaker Dodge", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was exposed by Defense Breaker Dodge!`,
+        message: `${ctx.target.name} was exposed by ${getPictoName("defense-breaker-dodge")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Unprotected",
@@ -2863,7 +2864,7 @@ registerPictoEffect("Defense Breaker Dodge", async (ctx) => {
  * Defense Riser Dodge
  * "Successfully Dodging can apply Shell."
  */
-registerPictoEffect("Defense Riser Dodge", async (ctx) => {
+registerPictoEffect("defense-riser-dodge", async (ctx) => {
     if (ctx.trigger !== "on-dodge") {
         return { success: false };
     }
@@ -2872,7 +2873,7 @@ registerPictoEffect("Defense Riser Dodge", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Shell from Defense Riser Dodge!`,
+        message: `${ctx.source.name} gained Shell from ${getPictoName("defense-riser-dodge")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Protected",
@@ -2886,7 +2887,7 @@ registerPictoEffect("Defense Riser Dodge", async (ctx) => {
  * Empowering Dodge
  * "5% increased damage for each consecutive successful Dodge. Can stack up to 10 times."
  */
-registerPictoEffect("Empowering Dodge", async (_ctx) => {
+registerPictoEffect("empowering-dodge", async (_ctx) => {
     // NOTE: Requires backend implementation with stacking buffs
     return {
         success: false,
@@ -2898,7 +2899,7 @@ registerPictoEffect("Empowering Dodge", async (_ctx) => {
  * Successive Parry
  * "Can't Dodge. +5% increased damage per Parry until damage taken."
  */
-registerPictoEffect("Successive Parry", async (_ctx) => {
+registerPictoEffect("successive-parry", async (_ctx) => {
     // NOTE: Requires backend implementation with damage tracking and stacking buffs
     return {
         success: false,
@@ -2912,7 +2913,7 @@ registerPictoEffect("Successive Parry", async (_ctx) => {
  * Death Bomb
  * "On Death, deal damage to all enemies."
  */
-registerPictoEffect("Death Bomb", async (_ctx) => {
+registerPictoEffect("death-bomb", async (_ctx) => {
     // NOTE: Requires backend implementation for damage dealing
     return {
         success: false,
@@ -2924,7 +2925,7 @@ registerPictoEffect("Death Bomb", async (_ctx) => {
  * Energising Death
  * "On death, +4 AP to allies."
  */
-registerPictoEffect("Energising Death", async (ctx) => {
+registerPictoEffect("energising-death", async (ctx) => {
     if (ctx.trigger !== "on-death") {
         return { success: false };
     }
@@ -2939,7 +2940,7 @@ registerPictoEffect("Energising Death", async (ctx) => {
 
     return {
         success: true,
-        message: `All allies gained 4 MP from ${ctx.source.name}'s Energising Death!`
+        message: `All allies gained 4 MP from ${ctx.source.name}'s ${getPictoName("energising-death")}!`
     };
 });
 
@@ -2947,7 +2948,7 @@ registerPictoEffect("Energising Death", async (ctx) => {
  * Shielding Death
  * "On death, allies gain 3 Shield points."
  */
-registerPictoEffect("Shielding Death", async (ctx) => {
+registerPictoEffect("shielding-death", async (ctx) => {
     if (ctx.trigger !== "on-death") {
         return { success: false };
     }
@@ -2968,7 +2969,7 @@ registerPictoEffect("Shielding Death", async (ctx) => {
 
     return {
         success: true,
-        message: `All allies gained 3 Shields from ${ctx.source.name}'s Shielding Death!`,
+        message: `All allies gained 3 Shields from ${ctx.source.name}'s ${getPictoName("shielding-death")}!`,
         appliedEffects: effects
     };
 });
@@ -2977,7 +2978,7 @@ registerPictoEffect("Shielding Death", async (ctx) => {
  * Protecting Death
  * "On death, allies gain Shell."
  */
-registerPictoEffect("Protecting Death", async (ctx) => {
+registerPictoEffect("protecting-death", async (ctx) => {
     if (ctx.trigger !== "on-death") {
         return { success: false };
     }
@@ -2999,7 +3000,7 @@ registerPictoEffect("Protecting Death", async (ctx) => {
 
     return {
         success: true,
-        message: `All allies gained Shell from ${ctx.source.name}'s Protecting Death!`,
+        message: `All allies gained Shell from ${ctx.source.name}'s ${getPictoName("protecting-death")}!`,
         appliedEffects: effects
     };
 });
@@ -3008,7 +3009,7 @@ registerPictoEffect("Protecting Death", async (ctx) => {
  * Empowering Death
  * "On death, allies gain Powerful."
  */
-registerPictoEffect("Empowering Death", async (ctx) => {
+registerPictoEffect("empowering-death", async (ctx) => {
     if (ctx.trigger !== "on-death") {
         return { success: false };
     }
@@ -3030,7 +3031,7 @@ registerPictoEffect("Empowering Death", async (ctx) => {
 
     return {
         success: true,
-        message: `All allies gained Powerful from ${ctx.source.name}'s Empowering Death!`,
+        message: `All allies gained Powerful from ${ctx.source.name}'s ${getPictoName("empowering-death")}!`,
         appliedEffects: effects
     };
 });
@@ -3039,7 +3040,7 @@ registerPictoEffect("Empowering Death", async (ctx) => {
  * Burning Death
  * "Apply 3 Burn to all enemies on Death."
  */
-registerPictoEffect("Burning Death", async (ctx) => {
+registerPictoEffect("burning-death", async (ctx) => {
     if (ctx.trigger !== "on-death") {
         return { success: false };
     }
@@ -3061,7 +3062,7 @@ registerPictoEffect("Burning Death", async (ctx) => {
 
     return {
         success: true,
-        message: `All enemies burned from ${ctx.source.name}'s Burning Death!`,
+        message: `All enemies burned from ${ctx.source.name}'s ${getPictoName("burning-death")}!`,
         appliedEffects: effects
     };
 });
@@ -3072,7 +3073,7 @@ registerPictoEffect("Burning Death", async (ctx) => {
  * Quick Break
  * "Play again on Breaking a target."
  */
-registerPictoEffect("Quick Break", async (_ctx) => {
+registerPictoEffect("quick-break", async (_ctx) => {
     // NOTE: Requires backend implementation for turn order manipulation
     return {
         success: false,
@@ -3084,7 +3085,7 @@ registerPictoEffect("Quick Break", async (_ctx) => {
  * Empowering Break
  * "Gain Powerful on Breaking a target."
  */
-registerPictoEffect("Empowering Break", async (ctx) => {
+registerPictoEffect("empowering-break", async (ctx) => {
     if (ctx.trigger !== "on-break") {
         return { success: false };
     }
@@ -3093,7 +3094,7 @@ registerPictoEffect("Empowering Break", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Powerful from Empowering Break!`,
+        message: `${ctx.source.name} gained Powerful from ${getPictoName("empowering-break")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Empowered",
@@ -3107,7 +3108,7 @@ registerPictoEffect("Empowering Break", async (ctx) => {
  * Marking Break
  * "Apply Mark on Break."
  */
-registerPictoEffect("Marking Break", async (ctx) => {
+registerPictoEffect("marking-break", async (ctx) => {
     if (ctx.trigger !== "on-break" || !ctx.target) {
         return { success: false };
     }
@@ -3116,7 +3117,7 @@ registerPictoEffect("Marking Break", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was marked by Marking Break!`,
+        message: `${ctx.target.name} was marked by ${getPictoName("marking-break")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Marked",
@@ -3130,7 +3131,7 @@ registerPictoEffect("Marking Break", async (ctx) => {
  * Slowing Break
  * "Apply Slow on Break."
  */
-registerPictoEffect("Slowing Break", async (ctx) => {
+registerPictoEffect("slowing-break", async (ctx) => {
     if (ctx.trigger !== "on-break" || !ctx.target) {
         return { success: false };
     }
@@ -3139,7 +3140,7 @@ registerPictoEffect("Slowing Break", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was slowed by Slowing Break!`,
+        message: `${ctx.target.name} was slowed by ${getPictoName("slowing-break")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Slowed",
@@ -3153,7 +3154,7 @@ registerPictoEffect("Slowing Break", async (ctx) => {
  * Fueling Break
  * "Breaking a target doubles its Burn amount."
  */
-registerPictoEffect("Fueling Break", async (_ctx) => {
+registerPictoEffect("fueling-break", async (_ctx) => {
     // NOTE: Requires backend implementation to modify burn stacks
     return {
         success: false,
@@ -3165,7 +3166,7 @@ registerPictoEffect("Fueling Break", async (_ctx) => {
  * Breaker
  * "25% increased Break damage."
  */
-registerPictoEffect("Breaker", async (_ctx) => {
+registerPictoEffect("breaker", async (_ctx) => {
     // NOTE: Passive break modifier requiring backend implementation
     return {
         success: false,
@@ -3177,7 +3178,7 @@ registerPictoEffect("Breaker", async (_ctx) => {
  * Critical Break
  * "25% increased Break damage on Critical hits."
  */
-registerPictoEffect("Critical Break", async (_ctx) => {
+registerPictoEffect("critical-break", async (_ctx) => {
     // NOTE: Passive break modifier requiring backend implementation
     return {
         success: false,
@@ -3189,7 +3190,7 @@ registerPictoEffect("Critical Break", async (_ctx) => {
  * Breaking Burn
  * "25% increased Break damage on Burning enemies."
  */
-registerPictoEffect("Breaking Burn", async (_ctx) => {
+registerPictoEffect("breaking-burn", async (_ctx) => {
     // NOTE: Passive break modifier requiring backend implementation
     return {
         success: false,
@@ -3203,7 +3204,7 @@ registerPictoEffect("Breaking Burn", async (_ctx) => {
  * Powerful Mark
  * "Gain Powerful on hitting a Marked enemy."
  */
-registerPictoEffect("Powerful Mark", async (ctx) => {
+registerPictoEffect("powerful-mark", async (ctx) => {
     if (ctx.trigger !== "on-attack" || !ctx.target) {
         return { success: false };
     }
@@ -3217,7 +3218,7 @@ registerPictoEffect("Powerful Mark", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.source.name} gained Powerful from Powerful Mark!`,
+        message: `${ctx.source.name} gained Powerful from ${getPictoName("powerful-mark")}!`,
         appliedEffects: [{
             targetId: ctx.source.battleID,
             effect: "Empowered",
@@ -3231,7 +3232,7 @@ registerPictoEffect("Powerful Mark", async (ctx) => {
  * Burning Mark
  * "Apply Burn on hitting a Marked enemy."
  */
-registerPictoEffect("Burning Mark", async (ctx) => {
+registerPictoEffect("burning-mark", async (ctx) => {
     if (ctx.trigger !== "on-attack" || !ctx.target) {
         return { success: false };
     }
@@ -3245,7 +3246,7 @@ registerPictoEffect("Burning Mark", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} was burned by Burning Mark!`,
+        message: `${ctx.target.name} was burned by ${getPictoName("burning-mark")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Burning",
@@ -3259,7 +3260,7 @@ registerPictoEffect("Burning Mark", async (ctx) => {
  * Stay Marked
  * "50% chance to apply Mark when attacking a Marked target."
  */
-registerPictoEffect("Stay Marked", async (ctx) => {
+registerPictoEffect("stay-marked", async (ctx) => {
     if (ctx.trigger !== "on-attack" || !ctx.target) {
         return { success: false };
     }
@@ -3277,7 +3278,7 @@ registerPictoEffect("Stay Marked", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} stayed marked by Stay Marked!`,
+        message: `${ctx.target.name} stayed marked by ${getPictoName("stay-marked")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Marked",
@@ -3291,7 +3292,7 @@ registerPictoEffect("Stay Marked", async (ctx) => {
  * Charybde To Scylla
  * "Apply Mark on Stun removed."
  */
-registerPictoEffect("Charybde To Scylla", async (_ctx) => {
+registerPictoEffect("charybde-to-scylla", async (_ctx) => {
     // NOTE: Requires backend implementation to detect status removal
     return {
         success: false,
@@ -3304,7 +3305,7 @@ registerPictoEffect("Charybde To Scylla", async (_ctx) => {
  * "Mark requires 1 more hit to be removed."
  * NOTE: This is a passive modifier checked when Mark is applied/removed
  */
-registerPictoEffect("Double Mark", async (ctx) => {
+registerPictoEffect("double-mark", async (ctx) => {
     // This is a passive modifier - when applying Mark status,
     // the system should check for this picto and apply 2 stacks instead of 1
     if (ctx.trigger === "on-apply-status" && ctx.additionalData?.statusApplied === "Marked") {
@@ -3313,7 +3314,7 @@ registerPictoEffect("Double Mark", async (ctx) => {
             await applyStatus(ctx.target.battleID, "Marked", 1, undefined);
             return {
                 success: true,
-                message: `${ctx.source.name}'s Double Mark applied an extra Mark stack!`
+                message: `${ctx.source.name}'s ${getPictoName("double-mark")} applied an extra Mark stack!`
             };
         }
     }
@@ -3324,7 +3325,7 @@ registerPictoEffect("Double Mark", async (ctx) => {
  * Enfeebling Mark
  * "Marked targets deal 30% less damage."
  */
-registerPictoEffect("Enfeebling Mark", async (_ctx) => {
+registerPictoEffect("enfeebling-mark", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3338,14 +3339,14 @@ registerPictoEffect("Enfeebling Mark", async (_ctx) => {
  * Double Burn
  * "On applying a Burn stack, apply a second one."
  */
-registerPictoEffect("Double Burn", async (ctx) => {
+registerPictoEffect("double-burn", async (ctx) => {
     if (ctx.trigger === "on-apply-status" && ctx.additionalData?.statusApplied === "Burning") {
         // Apply an additional Burn stack
         if (ctx.target) {
             await applyStatus(ctx.target.battleID, "Burning", 1, 3);
             return {
                 success: true,
-                message: `${ctx.source.name}'s Double Burn applied an extra Burn stack!`,
+                message: `${ctx.source.name}'s ${getPictoName("double-burn")} applied an extra Burn stack!`,
                 appliedEffects: [{
                     targetId: ctx.target.battleID,
                     effect: "Burning",
@@ -3363,7 +3364,7 @@ registerPictoEffect("Double Burn", async (ctx) => {
  * "Burn duration is increased by 2."
  * NOTE: This is a passive modifier - when applying Burn, add +2 to duration
  */
-registerPictoEffect("Longer Burn", async (ctx) => {
+registerPictoEffect("longer-burn", async (ctx) => {
     // This is a passive modifier - when applying Burn status,
     // the system should check for this picto and add +2 turns to the duration
     if (ctx.trigger === "on-apply-status" && ctx.additionalData?.statusApplied === "Burning") {
@@ -3372,7 +3373,7 @@ registerPictoEffect("Longer Burn", async (ctx) => {
             await APIBattle.extendStatusDuration(ctx.target.battleID, "Burning", 2);
             return {
                 success: true,
-                message: `${ctx.source.name}'s Longer Burn extended the burn duration!`
+                message: `${ctx.source.name}'s ${getPictoName("longer-burn")} extended the burn duration!`
             };
         }
     }
@@ -3383,7 +3384,7 @@ registerPictoEffect("Longer Burn", async (ctx) => {
  * Burn Affinity
  * "25% increased damage on Burning targets."
  */
-registerPictoEffect("Burn Affinity", async (_ctx) => {
+registerPictoEffect("burn-affinity", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3395,7 +3396,7 @@ registerPictoEffect("Burn Affinity", async (_ctx) => {
  * Frozen Affinity
  * "25% increased damage on Frozen targets."
  */
-registerPictoEffect("Frozen Affinity", async (_ctx) => {
+registerPictoEffect("frozen-affinity", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3407,7 +3408,7 @@ registerPictoEffect("Frozen Affinity", async (_ctx) => {
  * Critical Burn
  * "25% increased Critical Chance on Burning enemies."
  */
-registerPictoEffect("Critical Burn", async (_ctx) => {
+registerPictoEffect("critical-burn", async (_ctx) => {
     // NOTE: Passive critical modifier requiring backend implementation
     return {
         success: false,
@@ -3421,7 +3422,7 @@ registerPictoEffect("Critical Burn", async (_ctx) => {
  * Powerful On Shell
  * "Apply Powerful on applying Shell."
  */
-registerPictoEffect("Powerful On Shell", async (ctx) => {
+registerPictoEffect("powerful-on-shell", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -3438,7 +3439,7 @@ registerPictoEffect("Powerful On Shell", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Powerful from Powerful On Shell!`,
+        message: `${ctx.target.name} gained Powerful from ${getPictoName("powerful-on-shell")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Empowered",
@@ -3452,7 +3453,7 @@ registerPictoEffect("Powerful On Shell", async (ctx) => {
  * Rush On Powerful
  * "Apply Rush on applying Powerful."
  */
-registerPictoEffect("Rush On Powerful", async (ctx) => {
+registerPictoEffect("rush-on-powerful", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -3469,7 +3470,7 @@ registerPictoEffect("Rush On Powerful", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Rush from Rush On Powerful!`,
+        message: `${ctx.target.name} gained Rush from ${getPictoName("rush-on-powerful")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Hastened",
@@ -3483,7 +3484,7 @@ registerPictoEffect("Rush On Powerful", async (ctx) => {
  * Shell On Rush
  * "Apply Shell on applying Rush."
  */
-registerPictoEffect("Shell On Rush", async (ctx) => {
+registerPictoEffect("shell-on-rush", async (ctx) => {
     if (ctx.trigger !== "on-apply-status") {
         return { success: false };
     }
@@ -3500,7 +3501,7 @@ registerPictoEffect("Shell On Rush", async (ctx) => {
 
     return {
         success: true,
-        message: `${ctx.target.name} gained Shell from Shell On Rush!`,
+        message: `${ctx.target.name} gained Shell from ${getPictoName("shell-on-rush")}!`,
         appliedEffects: [{
             targetId: ctx.target.battleID,
             effect: "Protected",
@@ -3514,7 +3515,7 @@ registerPictoEffect("Shell On Rush", async (ctx) => {
  * Longer Rush
  * "On applying Rush, its duration is increased by 2."
  */
-registerPictoEffect("Longer Rush", async (_ctx) => {
+registerPictoEffect("longer-rush", async (_ctx) => {
     // NOTE: Passive duration modifier requiring backend implementation
     return {
         success: false,
@@ -3531,13 +3532,13 @@ registerPictoEffect("Longer Rush", async (_ctx) => {
  * "Play first."
  * NOTE: This should be handled during initiative calculation
  */
-registerPictoEffect("First Strike", async (ctx) => {
+registerPictoEffect("first-strike", async (ctx) => {
     // This effect is passive - it affects initiative order
     // The initiative system should check for this picto and set playFirst to true
     if (ctx.trigger === "on-battle-start") {
         return {
             success: true,
-            message: `${ctx.source.name} has First Strike! Will play first.`
+            message: `${ctx.source.name} has ${getPictoName("first-strike")}! Will play first.`
         };
     }
     return { success: false };
@@ -3547,7 +3548,7 @@ registerPictoEffect("First Strike", async (ctx) => {
  * Cheater
  * "Always play twice in a row."
  */
-registerPictoEffect("Cheater", async (_ctx) => {
+registerPictoEffect("cheater", async (_ctx) => {
     // NOTE: Requires backend implementation for turn order manipulation
     return {
         success: false,
@@ -3559,7 +3560,7 @@ registerPictoEffect("Cheater", async (_ctx) => {
  * Faster Than Strong
  * "Always play twice in a row, but deal 50% less damage."
  */
-registerPictoEffect("Faster Than Strong", async (_ctx) => {
+registerPictoEffect("faster-than-strong", async (_ctx) => {
     // NOTE: Requires backend implementation for turn order manipulation and damage modification
     return {
         success: false,
@@ -3571,7 +3572,7 @@ registerPictoEffect("Faster Than Strong", async (_ctx) => {
  * Teamwork
  * "10% increased damage while all allies are alive."
  */
-registerPictoEffect("Teamwork", async (_ctx) => {
+registerPictoEffect("teamwork", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3583,7 +3584,7 @@ registerPictoEffect("Teamwork", async (_ctx) => {
  * The One
  * "Max Health is reduced to 1."
  */
-registerPictoEffect("The One", async (_ctx) => {
+registerPictoEffect("the-one", async (_ctx) => {
     // NOTE: Requires backend implementation for max health modification
     return {
         success: false,
@@ -3595,7 +3596,7 @@ registerPictoEffect("The One", async (_ctx) => {
  * Hazardous Choice
  * "33% chance to skip own turn, but deal 50% more damage."
  */
-registerPictoEffect("Hazardous Choice", async (_ctx) => {
+registerPictoEffect("hazardous-choice", async (_ctx) => {
     // NOTE: Requires backend implementation for turn skipping and damage modification
     return {
         success: false,
@@ -3625,7 +3626,7 @@ registerAugmentedCounter("Augmented Counter III");
  * Back At You
  * "50% increased Counter Attack damage."
  */
-registerPictoEffect("Back At You", async (_ctx) => {
+registerPictoEffect("back-at-you", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3637,7 +3638,7 @@ registerPictoEffect("Back At You", async (_ctx) => {
  * Powerful Shield
  * "10% increased damage per Shield Point on self."
  */
-registerPictoEffect("Powerful Shield", async (_ctx) => {
+registerPictoEffect("powerful-shield", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3649,7 +3650,7 @@ registerPictoEffect("Powerful Shield", async (_ctx) => {
  * Shield Breaker
  * "All hits break 1 more Shield."
  */
-registerPictoEffect("Shield Breaker", async (_ctx) => {
+registerPictoEffect("shield-breaker", async (_ctx) => {
     // NOTE: Passive shield break modifier requiring backend implementation
     return {
         success: false,
@@ -3661,7 +3662,7 @@ registerPictoEffect("Shield Breaker", async (_ctx) => {
  * Shield Affinity
  * "30% increased damage while having Shields, but receiving any damage always removes all Shields."
  */
-registerPictoEffect("Shield Affinity", async (_ctx) => {
+registerPictoEffect("shield-affinity", async (_ctx) => {
     // NOTE: Requires backend implementation for conditional damage and shield removal
     return {
         success: false,
@@ -3673,7 +3674,7 @@ registerPictoEffect("Shield Affinity", async (_ctx) => {
  * Warming Up
  * "5% increased damage per turn. Can stack up to 5 times."
  */
-registerPictoEffect("Warming Up", async (_ctx) => {
+registerPictoEffect("warming-up", async (_ctx) => {
     // NOTE: Requires backend implementation with stacking buffs
     return {
         success: false,
@@ -3685,7 +3686,7 @@ registerPictoEffect("Warming Up", async (_ctx) => {
  * Glass Canon
  * "Deal 25% more damage, but take 25% more damage."
  */
-registerPictoEffect("Glass Canon", async (_ctx) => {
+registerPictoEffect("glass-canon", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3697,7 +3698,7 @@ registerPictoEffect("Glass Canon", async (_ctx) => {
  * Critical Moment
  * "50% increased Critical Chance if Health is below 30%."
  */
-registerPictoEffect("Critical Moment", async (_ctx) => {
+registerPictoEffect("critical-moment", async (_ctx) => {
     // NOTE: Passive critical modifier requiring backend implementation
     return {
         success: false,
@@ -3709,7 +3710,7 @@ registerPictoEffect("Critical Moment", async (_ctx) => {
  * At Death's Door
  * "Deal 50% more damage if Health is below 10%."
  */
-registerPictoEffect("At Death's Door", async (_ctx) => {
+registerPictoEffect("at-deaths-door", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3721,7 +3722,7 @@ registerPictoEffect("At Death's Door", async (_ctx) => {
  * Full Strength
  * "25% increased damage on full Health."
  */
-registerPictoEffect("Full Strength", async (_ctx) => {
+registerPictoEffect("full-strength", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3733,7 +3734,7 @@ registerPictoEffect("Full Strength", async (_ctx) => {
  * Painted Power
  * "Damage can exceed 9,999."
  */
-registerPictoEffect("Painted Power", async (_ctx) => {
+registerPictoEffect("painted-power", async (_ctx) => {
     // NOTE: Passive damage cap modifier requiring backend implementation
     return {
         success: false,
@@ -3745,7 +3746,7 @@ registerPictoEffect("Painted Power", async (_ctx) => {
  * Exhausting Power
  * "50% increased damage if Exhausted."
  */
-registerPictoEffect("Exhausting Power", async (_ctx) => {
+registerPictoEffect("exhausting-power", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3757,7 +3758,7 @@ registerPictoEffect("Exhausting Power", async (_ctx) => {
  * Cursed Power
  * "30% increased damage while Cursed."
  */
-registerPictoEffect("Cursed Power", async (_ctx) => {
+registerPictoEffect("cursed-power", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3769,7 +3770,7 @@ registerPictoEffect("Cursed Power", async (_ctx) => {
  * Confident Fighter
  * "30% increased damage, but can't be Healed."
  */
-registerPictoEffect("Confident Fighter", async (_ctx) => {
+registerPictoEffect("confident-fighter", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3781,7 +3782,7 @@ registerPictoEffect("Confident Fighter", async (_ctx) => {
  * Stun Boost
  * "30% increased damage on Stunned targets."
  */
-registerPictoEffect("Stun Boost", async (_ctx) => {
+registerPictoEffect("stun-boost", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3793,7 +3794,7 @@ registerPictoEffect("Stun Boost", async (_ctx) => {
  * Roulette
  * "Every hit has a 50% chance to deal either 50% or 200% of its damage."
  */
-registerPictoEffect("Roulette", async (_ctx) => {
+registerPictoEffect("roulette", async (_ctx) => {
     // NOTE: Requires backend implementation for damage variance
     return {
         success: false,
@@ -3805,7 +3806,7 @@ registerPictoEffect("Roulette", async (_ctx) => {
  * Soul Eater
  * "Deal 30% more damage, but lose 20% Health per turn."
  */
-registerPictoEffect("Soul Eater", async (ctx) => {
+registerPictoEffect("soul-eater", async (ctx) => {
     if (ctx.trigger === "on-turn-start") {
         // const damageAmount = Math.floor(ctx.source.maxHealthPoints * 0.20);
         // NOTE: Requires backend implementation for self-damage
@@ -3825,7 +3826,7 @@ registerPictoEffect("Soul Eater", async (ctx) => {
  * Painter
  * "Convert all Physical damage to Void damage."
  */
-registerPictoEffect("Painter", async (_ctx) => {
+registerPictoEffect("painter", async (_ctx) => {
     // NOTE: Requires backend implementation for damage type conversion
     return {
         success: false,
@@ -3837,7 +3838,7 @@ registerPictoEffect("Painter", async (_ctx) => {
  * Immaculate
  * "30% increased damage until a hit is received."
  */
-registerPictoEffect("Immaculate", async (_ctx) => {
+registerPictoEffect("immaculate", async (_ctx) => {
     // NOTE: Requires backend implementation with damage tracking
     return {
         success: false,
@@ -3849,7 +3850,7 @@ registerPictoEffect("Immaculate", async (_ctx) => {
  * Tainted
  * "15% increased damage for each Status Effect on self."
  */
-registerPictoEffect("Tainted", async (_ctx) => {
+registerPictoEffect("tainted", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3861,7 +3862,7 @@ registerPictoEffect("Tainted", async (_ctx) => {
  * First Offensive
  * "First hit dealt and taken deals 50% more damage."
  */
-registerPictoEffect("First Offensive", async (_ctx) => {
+registerPictoEffect("first-offensive", async (_ctx) => {
     // NOTE: Requires backend implementation with battle tracking
     return {
         success: false,
@@ -3873,7 +3874,7 @@ registerPictoEffect("First Offensive", async (_ctx) => {
  * Pro Retreat
  * "Allows Flee to be instantaneous."
  */
-registerPictoEffect("Pro Retreat", async (_ctx) => {
+registerPictoEffect("pro-retreat", async (_ctx) => {
     // NOTE: Requires backend implementation for flee mechanics
     return {
         success: false,
@@ -3885,7 +3886,7 @@ registerPictoEffect("Pro Retreat", async (_ctx) => {
  * Greater Powerful
  * "+15% to Powerful damage increase."
  */
-registerPictoEffect("Greater Powerful", async (_ctx) => {
+registerPictoEffect("greater-powerful", async (_ctx) => {
     // NOTE: Passive buff modifier requiring backend implementation
     return {
         success: false,
@@ -3897,7 +3898,7 @@ registerPictoEffect("Greater Powerful", async (_ctx) => {
  * Greater Shell
  * "+10% to Shell damage reduction."
  */
-registerPictoEffect("Greater Shell", async (_ctx) => {
+registerPictoEffect("greater-shell", async (_ctx) => {
     // NOTE: Passive buff modifier requiring backend implementation
     return {
         success: false,
@@ -3909,7 +3910,7 @@ registerPictoEffect("Greater Shell", async (_ctx) => {
  * Greater Rush
  * "+25% to Rush Speed increase."
  */
-registerPictoEffect("Greater Rush", async (_ctx) => {
+registerPictoEffect("greater-rush", async (_ctx) => {
     // NOTE: Passive buff modifier requiring backend implementation
     return {
         success: false,
@@ -3921,7 +3922,7 @@ registerPictoEffect("Greater Rush", async (_ctx) => {
  * Greater Powerless
  * "+15% to Powerless damage reduction."
  */
-registerPictoEffect("Greater Powerless", async (_ctx) => {
+registerPictoEffect("greater-powerless", async (_ctx) => {
     // NOTE: Passive debuff modifier requiring backend implementation
     return {
         success: false,
@@ -3933,7 +3934,7 @@ registerPictoEffect("Greater Powerless", async (_ctx) => {
  * Greater Defenceless
  * "+15% to Defenceless damage amplification."
  */
-registerPictoEffect("Greater Defenceless", async (_ctx) => {
+registerPictoEffect("greater-defenceless", async (_ctx) => {
     // NOTE: Passive debuff modifier requiring backend implementation
     return {
         success: false,
@@ -3945,7 +3946,7 @@ registerPictoEffect("Greater Defenceless", async (_ctx) => {
  * Greater Slow
  * "+15% to Slow Speed reduction."
  */
-registerPictoEffect("Greater Slow", async (_ctx) => {
+registerPictoEffect("greater-slow", async (_ctx) => {
     // NOTE: Passive debuff modifier requiring backend implementation
     return {
         success: false,
@@ -3957,7 +3958,7 @@ registerPictoEffect("Greater Slow", async (_ctx) => {
  * Evasive Healer
  * "Heals provided are doubled until any damage is taken."
  */
-registerPictoEffect("Evasive Healer", async (_ctx) => {
+registerPictoEffect("evasive-healer", async (_ctx) => {
     // NOTE: Requires backend implementation with damage tracking
     return {
         success: false,
@@ -3969,7 +3970,7 @@ registerPictoEffect("Evasive Healer", async (_ctx) => {
  * Draining Cleanse
  * "Consume 1 AP to prevent Status Effects application, if possible."
  */
-registerPictoEffect("Draining Cleanse", async (_ctx) => {
+registerPictoEffect("draining-cleanse", async (_ctx) => {
     // NOTE: Requires backend implementation to intercept status effects
     return {
         success: false,
@@ -3981,7 +3982,7 @@ registerPictoEffect("Draining Cleanse", async (_ctx) => {
  * Gradient Fighter
  * "25% increased damage with Gradient Attacks."
  */
-registerPictoEffect("Gradient Fighter", async (_ctx) => {
+registerPictoEffect("gradient-fighter", async (_ctx) => {
     // NOTE: Passive damage modifier requiring backend implementation
     return {
         success: false,
@@ -3993,7 +3994,7 @@ registerPictoEffect("Gradient Fighter", async (_ctx) => {
  * Gradient Breaker
  * "50% increased Break damage with Gradient Attacks."
  */
-registerPictoEffect("Gradient Breaker", async (_ctx) => {
+registerPictoEffect("gradient-breaker", async (_ctx) => {
     // NOTE: Passive break modifier requiring backend implementation
     return {
         success: false,
@@ -4005,7 +4006,7 @@ registerPictoEffect("Gradient Breaker", async (_ctx) => {
  * Post Gradient
  * "Play immediately after using a Gradient Attack."
  */
-registerPictoEffect("Post Gradient", async (_ctx) => {
+registerPictoEffect("post-gradient", async (_ctx) => {
     // NOTE: Requires backend implementation for turn order manipulation
     return {
         success: false,
@@ -4017,7 +4018,7 @@ registerPictoEffect("Post Gradient", async (_ctx) => {
  * Charging Recovery
  * "50% increased Gradient Generation with Healing Skills."
  */
-registerPictoEffect("Charging Recovery", async (_ctx) => {
+registerPictoEffect("charging-recovery", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -4029,7 +4030,7 @@ registerPictoEffect("Charging Recovery", async (_ctx) => {
  * Charging Counter
  * "+10% of a Gradient Charge on Counterattack."
  */
-registerPictoEffect("Charging Counter", async (_ctx) => {
+registerPictoEffect("charging-counter", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -4041,7 +4042,7 @@ registerPictoEffect("Charging Counter", async (_ctx) => {
  * Charging Weakness
  * "+15% of a Gradient Charge on hitting a Weakness. Once per turn."
  */
-registerPictoEffect("Charging Weakness", async (_ctx) => {
+registerPictoEffect("charging-weakness", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -4053,7 +4054,7 @@ registerPictoEffect("Charging Weakness", async (_ctx) => {
  * Charging Mark
  * "+20% of a Gradient Charge on hitting a Marked target. Once per turn."
  */
-registerPictoEffect("Charging Mark", async (_ctx) => {
+registerPictoEffect("charging-mark", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -4065,7 +4066,7 @@ registerPictoEffect("Charging Mark", async (_ctx) => {
  * Charging Critical
  * "+20% of a Gradient Charge on Critical Hit. Once per turn."
  */
-registerPictoEffect("Charging Critical", async (_ctx) => {
+registerPictoEffect("charging-critical", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -4077,7 +4078,7 @@ registerPictoEffect("Charging Critical", async (_ctx) => {
  * Charging Burn
  * "+20% of a Gradient Charge on applying Burn. Once per turn."
  */
-registerPictoEffect("Charging Burn", async (_ctx) => {
+registerPictoEffect("charging-burn", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -4089,7 +4090,7 @@ registerPictoEffect("Charging Burn", async (_ctx) => {
  * Charging Stun
  * "+5% of a Gradient Charge on hitting a Stunned enemy."
  */
-registerPictoEffect("Charging Stun", async (_ctx) => {
+registerPictoEffect("charging-stun", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -4101,7 +4102,7 @@ registerPictoEffect("Charging Stun", async (_ctx) => {
  * Charging Alteration
  * "+10% of a Gradient Charge on applying a Buff. Once per turn."
  */
-registerPictoEffect("Charging Alteration", async (_ctx) => {
+registerPictoEffect("charging-alteration", async (_ctx) => {
     // NOTE: Requires backend implementation for gradient charging
     return {
         success: false,
@@ -4113,7 +4114,7 @@ registerPictoEffect("Charging Alteration", async (_ctx) => {
  * The Best Defense
  * "Deal 50% more damage, but can't Parry or Dodge."
  */
-registerPictoEffect("The Best Defense", async (_ctx) => {
+registerPictoEffect("the-best-defense", async (_ctx) => {
     // NOTE: Requires backend implementation for defensive action blocking
     return {
         success: false,
@@ -4125,7 +4126,7 @@ registerPictoEffect("The Best Defense", async (_ctx) => {
  * Passive Defense
  * "Reduce damage taken by 50%, but can't Parry or Dodge."
  */
-registerPictoEffect("Passive Defense", async (_ctx) => {
+registerPictoEffect("passive-defense", async (_ctx) => {
     // NOTE: Requires backend implementation for defensive action blocking
     return {
         success: false,
@@ -4137,7 +4138,7 @@ registerPictoEffect("Passive Defense", async (_ctx) => {
  * Critical Weakness
  * "25% increased Critical Chance on Weakness."
  */
-registerPictoEffect("Critical Weakness", async (_ctx) => {
+registerPictoEffect("critical-weakness", async (_ctx) => {
     // NOTE: Passive critical modifier requiring backend implementation
     return {
         success: false,
@@ -4149,7 +4150,7 @@ registerPictoEffect("Critical Weakness", async (_ctx) => {
  * Critical Stun
  * "Increased critical hit chance against stunned enemies."
  */
-registerPictoEffect("Critical Stun", async (_ctx) => {
+registerPictoEffect("critical-stun", async (_ctx) => {
     // NOTE: Passive critical modifier requiring backend implementation
     return {
         success: false,
@@ -4161,7 +4162,7 @@ registerPictoEffect("Critical Stun", async (_ctx) => {
  * Critical Vulnerability
  * "25% increased Critical Chance on Defenceless enemies."
  */
-registerPictoEffect("Critical Vulnerability", async (_ctx) => {
+registerPictoEffect("critical-vulnerability", async (_ctx) => {
     // NOTE: Passive critical modifier requiring backend implementation
     return {
         success: false,
@@ -4201,7 +4202,7 @@ antiStatusPictos.forEach(({ name, statusType }) => {
             );
             return {
                 success: true,
-                message: `${ctx.source.name} is now immune to ${statusType}!`
+                message: `${ctx.source.name} is now immune to ${statusType} thanks to ${getPictoName(name)}!`
             };
         }
         return { success: false };
@@ -4228,7 +4229,7 @@ energisingStartPictos.forEach((pictoName) => {
             await giveMP(ctx.source.battleID, 1);
             return {
                 success: true,
-                message: `${ctx.source.name} gained +1 MP from ${pictoName}!`
+                message: `${ctx.source.name} gained +1 MP from ${getPictoName(pictoName)}!`
             };
         }
         return { success: false };
@@ -4265,7 +4266,7 @@ elementalCoatPictos.forEach(({ name, element }) => {
             );
             return {
                 success: true,
-                message: `${ctx.source.name} now has ${element} resistance! Takes 50% less ${element} damage.`
+                message: `${ctx.source.name} now has ${element} resistance from ${getPictoName(name)}! Takes 50% less ${element} damage.`
             };
         }
         return { success: false };
@@ -4291,7 +4292,7 @@ deadEnergyPictos.forEach((pictoName) => {
             await giveMP(ctx.source.battleID, 3);
             return {
                 success: true,
-                message: `${ctx.source.name} gained +3 MP for eliminating ${ctx.target?.name || "an enemy"}!`
+                message: `${ctx.source.name} gained +3 MP from ${getPictoName(pictoName)} for eliminating ${ctx.target?.name || "an enemy"}!`
             };
         }
         return { success: false };
@@ -4318,7 +4319,7 @@ augmentedCounterPictos.forEach((pictoName) => {
             );
             return {
                 success: true,
-                message: `${ctx.source.name} now deals +50% counterattack damage!`
+                message: `${ctx.source.name} now deals +50% counterattack damage from ${getPictoName(pictoName)}!`
             };
         }
         return { success: false };
@@ -4358,7 +4359,7 @@ comboAttackPictos.forEach((pictoName) => {
             );
             return {
                 success: true,
-                message: `${ctx.source.name}'s base attacks now have +1 extra hit!`
+                message: `${ctx.source.name}'s base attacks now have +1 extra hit from ${getPictoName(pictoName)}!`
             };
         }
         return { success: false };

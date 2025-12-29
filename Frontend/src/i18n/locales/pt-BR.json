@@ -1,0 +1,904 @@
+{
+  "pictos": {
+    "energy-master": {
+      "name": "Mestre de Energia",
+      "description": "Cada ganho de PA é aumentado em 1."
+    },
+    "energising-turn": {
+      "name": "Turno Energizante",
+      "description": "+1 PA no início do turno."
+    },
+    "energising-attack-i": {
+      "name": "Ataque Energizante I",
+      "description": "+1 PA no Ataque Base."
+    },
+    "energising-parry": {
+      "name": "Aparar Energizante",
+      "description": "+1 PA ao Aparar com sucesso."
+    },
+    "augmented-first-strike": {
+      "name": "Primeiro Golpe Aumentado",
+      "description": "50% de dano aumentado no primeiro golpe. Uma vez por batalha."
+    },
+    "survivor": {
+      "name": "Sobrevivente",
+      "description": "Sobrevive a dano fatal com 1 de Vida. Uma vez por batalha."
+    },
+    "aegis-revival": {
+      "name": "Reviver da Égide",
+      "description": "+1 Escudo ao ser revivido."
+    },
+    "recovery": {
+      "name": "Recuperação",
+      "description": "Recupera 10% de Vida no início do turno."
+    },
+    "lucky-aim": {
+      "name": "Mira da Sorte",
+      "description": "30% de chance de recuperar 1 PA ao acertar um Ponto Fraco."
+    },
+    "augmented-counter-i": {
+      "name": "Contra-Ataque Aumentado I",
+      "description": "50% de dano de Contra-Ataque aumentado."
+    },
+    "second-chance": {
+      "name": "Segunda Chance",
+      "description": "Revive com 100% de Vida. Uma vez por batalha."
+    },
+    "first-strike": {
+      "name": "Primeiro Golpe",
+      "description": "Joga primeiro."
+    },
+    "solo-fighter": {
+      "name": "Lutador Solitário",
+      "description": "Causa 50% mais dano se estiver lutando sozinho."
+    },
+    "teamwork": {
+      "name": "Trabalho em Equipe",
+      "description": "10% de dano aumentado enquanto todos os aliados estiverem vivos."
+    },
+    "sweet-kill": {
+      "name": "Morte Doce",
+      "description": "Recupera 50% de Vida ao matar um inimigo."
+    },
+    "augmented-attack": {
+      "name": "Ataque Aumentado",
+      "description": "50% de dano de Ataque Base aumentado."
+    },
+    "attack-lifesteal": {
+      "name": "Roubo de Vida no Ataque",
+      "description": "Recupera 15% de Vida no Ataque Base."
+    },
+    "augmented-aim": {
+      "name": "Mira Aumentada",
+      "description": "50% de dano de Mira Livre aumentado."
+    },
+    "combo-attack-i": {
+      "name": "Ataque em Combo I",
+      "description": "Ataque Base tem 1 golpe extra."
+    },
+    "healing-parry": {
+      "name": "Aparar Curativo",
+      "description": "Recupera 3% de Vida ao Aparar."
+    },
+    "auto-powerful": {
+      "name": "Poder Automático",
+      "description": "Aplica Powerful por 3 turnos no início da batalha."
+    },
+    "auto-shell": {
+      "name": "Escudo Automático",
+      "description": "Aplica Shell por 3 turnos no início da batalha."
+    },
+    "auto-rush": {
+      "name": "Ímpeto Automático",
+      "description": "Aplica Rush por 3 turnos no início da batalha."
+    },
+    "auto-regen": {
+      "name": "Regeneração Automática",
+      "description": "Aplica Regen por 3 turnos no início da batalha."
+    },
+    "anti-burn": {
+      "name": "Anti-Queimadura",
+      "description": "Imune a Burn."
+    },
+    "anti-freeze": {
+      "name": "Anti-Congelamento",
+      "description": "Imune a Freeze."
+    },
+    "anti-stun": {
+      "name": "Anti-Atordoamento",
+      "description": "Imune a Stun."
+    },
+    "anti-inverted": {
+      "name": "Anti-Inversão",
+      "description": "Não pode ser Inverted."
+    },
+    "anti-curse": {
+      "name": "Anti-Maldição",
+      "description": "Não pode ser Cursed."
+    },
+    "anti-bound": {
+      "name": "Anti-Aprisionamento",
+      "description": "Não pode ser Bound."
+    },
+    "anti-dizzy": {
+      "name": "Anti-Tontura",
+      "description": "Não pode ser Dizzy."
+    },
+    "physical-coat": {
+      "name": "Proteção Física",
+      "description": "Resistência a dano Físico."
+    },
+    "fire-coat": {
+      "name": "Proteção de Fogo",
+      "description": "Resistência a dano de Fogo."
+    },
+    "ice-coat": {
+      "name": "Proteção de Gelo",
+      "description": "Resistência a dano de Gelo."
+    },
+    "thunder-coat": {
+      "name": "Proteção de Raio",
+      "description": "Resistência a dano de Raio."
+    },
+    "earth-coat": {
+      "name": "Proteção de Terra",
+      "description": "Resistência a dano de Terra."
+    },
+    "light-coat": {
+      "name": "Proteção de Luz",
+      "description": "Resistência a dano de Luz."
+    },
+    "dark-coat": {
+      "name": "Proteção das Trevas",
+      "description": "Resistência a dano das Trevas."
+    },
+    "back-at-you": {
+      "name": "De Volta para Você",
+      "description": "50% de dano de Contra-Ataque aumentado."
+    },
+    "dodger": {
+      "name": "Esquivador",
+      "description": "Ganha 1 PA ao Esquivar Perfeitamente. Uma vez por turno."
+    },
+    "energising-start-i": {
+      "name": "Início Energizante I",
+      "description": "+1 PA no início da batalha."
+    },
+    "energising-start-ii": {
+      "name": "Início Energizante II",
+      "description": "+1 PA no início da batalha."
+    },
+    "energising-start-iii": {
+      "name": "Início Energizante III",
+      "description": "+1 PA no início da batalha."
+    },
+    "energising-start-iv": {
+      "name": "Início Energizante IV",
+      "description": "+1 PA no início da batalha."
+    },
+    "perilous-parry": {
+      "name": "Aparar Perigoso",
+      "description": "+1 PA ao Aparar, mas o dano recebido é dobrado."
+    },
+    "confident": {
+      "name": "Confiante",
+      "description": "Recebe 50% menos dano, mas não pode ser Curado."
+    },
+    "bloody-bullet": {
+      "name": "Bala Sangrenta",
+      "description": "+1 PA ao acertar um Ponto Fraco."
+    },
+    "energising-revive": {
+      "name": "Reviver Energizante",
+      "description": "+3 PA para todos os aliados ao ser revivido."
+    },
+    "rejuvenating-revive": {
+      "name": "Reviver Rejuvenescedor",
+      "description": "Aplica Regen por 3 turnos ao ser revivido."
+    },
+    "revive-with-shell": {
+      "name": "Reviver com Escudo",
+      "description": "Aplica Shell por 3 turnos ao reviver."
+    },
+    "solidifying": {
+      "name": "Solidificação",
+      "description": "+2 Escudos quando a Vida do personagem cai abaixo de 50%. Uma vez por batalha."
+    },
+    "powerful-revive": {
+      "name": "Reviver Poderoso",
+      "description": "Aplica Powerful por 3 turnos ao ser revivido."
+    },
+    "revive-with-rush": {
+      "name": "Reviver com Ímpeto",
+      "description": "Aplica Rush por 3 turnos ao reviver."
+    },
+    "the-one": {
+      "name": "O Único",
+      "description": "Vida Máxima é reduzida para 1."
+    },
+    "dead-energy-ii": {
+      "name": "Energia Mortal II",
+      "description": "+3 PA ao matar um inimigo."
+    },
+    "frozen-shot": {
+      "name": "Disparo Congelante",
+      "description": "Disparos de Mira Livre podem aplicar Freeze."
+    },
+    "piercing-shot": {
+      "name": "Disparo Perfurante",
+      "description": "25% de dano de Mira Livre aumentado. Disparos de Mira Livre ignoram Escudos."
+    },
+    "burning-dodge": {
+      "name": "Esquiva Ardente",
+      "description": "Esquivas bem-sucedidas podem aplicar Burn no atacante."
+    },
+    "defense-breaker-dodge": {
+      "name": "Esquiva Quebradora de Defesa",
+      "description": "Esquivas bem-sucedidas podem aplicar Defenseless no atacante."
+    },
+    "defense-riser-dodge": {
+      "name": "Esquiva Elevadora de Defesa",
+      "description": "Esquivar com sucesso pode aplicar Shell."
+    },
+    "hazardous-choice": {
+      "name": "Escolha Perigosa",
+      "description": "33% de chance de pular o próprio turno, mas causa 50% mais dano."
+    },
+    "healing-death": {
+      "name": "Morte Curativa",
+      "description": "Ao morrer, o resto da Expedição recupera toda a Vida."
+    },
+    "auto-death": {
+      "name": "Morte Automática",
+      "description": "Mata a si mesmo no início da batalha."
+    },
+    "auto-curse": {
+      "name": "Maldição Automática",
+      "description": "Aplica Curse em si mesmo no início da batalha."
+    },
+    "death-bomb": {
+      "name": "Bomba da Morte",
+      "description": "Ao morrer, causa dano a todos os inimigos."
+    },
+    "energising-death": {
+      "name": "Morte Energizante",
+      "description": "Ao morrer, +4 PA para aliados."
+    },
+    "shielding-death": {
+      "name": "Morte Protetora",
+      "description": "Ao morrer, aliados ganham 3 pontos de Escudo."
+    },
+    "protecting-death": {
+      "name": "Morte Defensiva",
+      "description": "Ao morrer, aliados ganham Shell."
+    },
+    "empowering-death": {
+      "name": "Morte Fortalecedora",
+      "description": "Ao morrer, aliados ganham Powerful."
+    },
+    "burn-affinity": {
+      "name": "Afinidade com Queimadura",
+      "description": "25% de dano aumentado em alvos com Burn."
+    },
+    "frozen-affinity": {
+      "name": "Afinidade com Congelamento",
+      "description": "25% de dano aumentado em alvos com Freeze."
+    },
+    "inverted-affinity": {
+      "name": "Afinidade com Inversão",
+      "description": "Aplica Inverted em si mesmo por 3 turnos no início da batalha. 50% de dano aumentado enquanto Inverted."
+    },
+    "exhausting-power": {
+      "name": "Poder Exauridor",
+      "description": "50% de dano aumentado se Exhausted."
+    },
+    "auto-burn": {
+      "name": "Queimadura Automática",
+      "description": "Aplica Burn em si mesmo no início da batalha."
+    },
+    "at-deaths-door": {
+      "name": "À Porta da Morte",
+      "description": "Causa 50% mais dano se a Vida estiver abaixo de 10%."
+    },
+    "full-strength": {
+      "name": "Força Total",
+      "description": "25% de dano aumentado com Vida cheia."
+    },
+    "painted-power": {
+      "name": "Poder Pintado",
+      "description": "Dano pode exceder 9.999."
+    },
+    "sos-shell": {
+      "name": "Escudo SOS",
+      "description": "Aplica Shell ao cair abaixo de 50% de Vida."
+    },
+    "sos-power": {
+      "name": "Poder SOS",
+      "description": "Aplica Powerful ao cair abaixo de 50% de Vida."
+    },
+    "augmented-counter-ii": {
+      "name": "Contra-Ataque Aumentado II",
+      "description": "50% de dano de Contra-Ataque aumentado."
+    },
+    "augmented-counter-iii": {
+      "name": "Contra-Ataque Aumentado III",
+      "description": "50% de dano de Contra-Ataque aumentado."
+    },
+    "anti-exhaust": {
+      "name": "Anti-Exaustão",
+      "description": "Imune a Exhaust."
+    },
+    "sos-rush": {
+      "name": "Ímpeto SOS",
+      "description": "Aplica Rush ao cair abaixo de 50% de Vida."
+    },
+    "solidifying-meditation": {
+      "name": "Meditação Solidificadora",
+      "description": "+1 Escudo ao passar o turno."
+    },
+    "double-burn": {
+      "name": "Queimadura Dupla",
+      "description": "Ao aplicar uma camada de Burn, aplica uma segunda."
+    },
+    "healing-fire": {
+      "name": "Fogo Curativo",
+      "description": "Recupera 25% de Vida ao atacar um alvo com Burn. Uma vez por turno."
+    },
+    "rewarding-mark": {
+      "name": "Marca Recompensadora",
+      "description": "+2 PA ao causar dano a um alvo Marcado. Uma vez por turno."
+    },
+    "double-mark": {
+      "name": "Marca Dupla",
+      "description": "Mark requer 1 golpe a mais para ser removida."
+    },
+    "stun-boost": {
+      "name": "Impulso de Atordoamento",
+      "description": "30% de dano aumentado em alvos com Stun."
+    },
+    "sniper": {
+      "name": "Atirador de Elite",
+      "description": "Primeiro disparo de Mira Livre em cada turno causa 200% de dano aumentado e pode Quebrar."
+    },
+    "energising-attack-ii": {
+      "name": "Ataque Energizante II",
+      "description": "+1 PA no Ataque Base."
+    },
+    "cheater": {
+      "name": "Trapaceiro",
+      "description": "Sempre joga duas vezes seguidas."
+    },
+    "healing-counter": {
+      "name": "Contra-Ataque Curativo",
+      "description": "Recupera 25% de Vida no Contra-Ataque."
+    },
+    "powerful-shield": {
+      "name": "Escudo Poderoso",
+      "description": "10% de dano aumentado por Ponto de Escudo em si mesmo."
+    },
+    "base-shield": {
+      "name": "Escudo Base",
+      "description": "+1 Escudo se não estiver afetado por nenhum Escudo no início do turno."
+    },
+    "in-medias-res": {
+      "name": "No Meio das Coisas",
+      "description": "+3 Escudos no Início da Batalha, mas Vida máxima é reduzida à metade."
+    },
+    "shield-breaker": {
+      "name": "Quebrador de Escudo",
+      "description": "Todos os golpes quebram 1 Escudo a mais."
+    },
+    "shield-affinity": {
+      "name": "Afinidade com Escudo",
+      "description": "30% de dano aumentado enquanto tiver Escudos, mas receber qualquer dano sempre remove todos os Escudos."
+    },
+    "critical-moment": {
+      "name": "Momento Crítico",
+      "description": "50% de Chance Crítica aumentada se a Vida estiver abaixo de 30%."
+    },
+    "warming-up": {
+      "name": "Aquecimento",
+      "description": "5% de dano aumentado por turno. Pode acumular até 5 vezes."
+    },
+    "glass-canon": {
+      "name": "Canhão de Vidro",
+      "description": "Causa 25% mais dano, mas recebe 25% mais dano."
+    },
+    "faster-than-strong": {
+      "name": "Rápido ao Invés de Forte",
+      "description": "Sempre joga duas vezes seguidas, mas causa 50% menos dano."
+    },
+    "shortcut": {
+      "name": "Atalho",
+      "description": "Joga imediatamente ao cair abaixo de 30% de Vida. Uma vez por batalha."
+    },
+    "defensive-mode": {
+      "name": "Modo Defensivo",
+      "description": "Ao receber dano, consome 1 PA para receber 30% menos dano, se possível."
+    },
+    "greater-powerful": {
+      "name": "Poder Maior",
+      "description": "+15% ao aumento de dano de Powerful."
+    },
+    "greater-shell": {
+      "name": "Escudo Maior",
+      "description": "+10% à redução de dano de Shell."
+    },
+    "revive-paradox": {
+      "name": "Paradoxo do Reviver",
+      "description": "Joga imediatamente ao ser revivido."
+    },
+    "greater-rush": {
+      "name": "Ímpeto Maior",
+      "description": "+25% ao aumento de Velocidade de Rush."
+    },
+    "last-stand-critical": {
+      "name": "Crítico da Última Resistência",
+      "description": "100% de Chance Crítica enquanto luta sozinho."
+    },
+    "effective-heal": {
+      "name": "Cura Eficaz",
+      "description": "Dobra todas as Curas recebidas."
+    },
+    "shared-care": {
+      "name": "Cuidado Compartilhado",
+      "description": "Ao Curar um aliado, também Cura a si mesmo por 50% desse valor."
+    },
+    "powerful-heal": {
+      "name": "Cura Poderosa",
+      "description": "Curar um aliado também aplica Powerful por 1 turno."
+    },
+    "accelerating-heal": {
+      "name": "Cura Aceleradora",
+      "description": "Curar um aliado também aplica Rush por 1 turno."
+    },
+    "energising-heal": {
+      "name": "Cura Energizante",
+      "description": "Ao Curar um aliado, também dá 2 PA."
+    },
+    "protecting-heal": {
+      "name": "Cura Protetora",
+      "description": "Curar um aliado também aplica Shell por 1 turno."
+    },
+    "confident-fighter": {
+      "name": "Lutador Confiante",
+      "description": "30% de dano aumentado, mas não pode ser Curado."
+    },
+    "healing-share": {
+      "name": "Compartilhamento Curativo",
+      "description": "Recebe 15% de todas as Curas que afetam outros personagens."
+    },
+    "dead-energy-i": {
+      "name": "Energia Mortal I",
+      "description": "+3 PA ao matar um inimigo."
+    },
+    "effective-support": {
+      "name": "Suporte Eficaz",
+      "description": "+2 PA ao usar um item."
+    },
+    "weakness-gain": {
+      "name": "Ganho de Fraqueza",
+      "description": "+1 PA ao acertar a Fraqueza de um inimigo. Uma vez por turno."
+    },
+    "patient-fighter": {
+      "name": "Lutador Paciente",
+      "description": "+2 PA ao pular um turno."
+    },
+    "energetic-healer": {
+      "name": "Curador Energético",
+      "description": "+2 PA ao Curar um aliado. Uma vez por turno."
+    },
+    "beneficial-contamination": {
+      "name": "Contaminação Benéfica",
+      "description": "+2 PA ao aplicar um Efeito de Status. Uma vez por turno."
+    },
+    "perfect-reward": {
+      "name": "Recompensa Perfeita",
+      "description": "Ritmos Perfeitos dão 1 PA."
+    },
+    "roulette": {
+      "name": "Roleta",
+      "description": "Cada golpe tem 50% de chance de causar 50% ou 200% do seu dano."
+    },
+    "soul-eater": {
+      "name": "Devorador de Almas",
+      "description": "Causa 30% mais dano, mas perde 20% de Vida por turno."
+    },
+    "painter": {
+      "name": "Pintor",
+      "description": "Converte todo dano Físico em dano Vazio."
+    },
+    "immaculate": {
+      "name": "Imaculado",
+      "description": "30% de dano aumentado até receber um golpe."
+    },
+    "tainted": {
+      "name": "Contaminado",
+      "description": "15% de dano aumentado para cada Efeito de Status em si mesmo."
+    },
+    "first-offensive": {
+      "name": "Primeira Ofensiva",
+      "description": "Primeiro golpe causado e recebido causa 50% mais dano."
+    },
+    "cursed-power": {
+      "name": "Poder Amaldiçoado",
+      "description": "30% de dano aumentado enquanto Cursed."
+    },
+    "pro-retreat": {
+      "name": "Retirada Profissional",
+      "description": "Permite que Fuga seja instantânea."
+    },
+    "enfeebling-mark": {
+      "name": "Marca Enfraquecedora",
+      "description": "Alvos Marcados causam 30% menos dano."
+    },
+    "burning-mark": {
+      "name": "Marca Ardente",
+      "description": "Aplica Burn ao acertar um inimigo Marcado."
+    },
+    "powerful-mark": {
+      "name": "Marca Poderosa",
+      "description": "Ganha Powerful ao acertar um inimigo Marcado."
+    },
+    "healing-mark": {
+      "name": "Marca Curativa",
+      "description": "Recupera 25% de Vida ao acertar um inimigo Marcado. Uma vez por turno."
+    },
+    "stay-marked": {
+      "name": "Permanecer Marcado",
+      "description": "50% de chance de aplicar Mark ao atacar um alvo Marcado."
+    },
+    "charybde-to-scylla": {
+      "name": "De Caribde a Cila",
+      "description": "Aplica Mark ao remover Stun."
+    },
+    "burning-shots": {
+      "name": "Disparos Ardentes",
+      "description": "20% de chance de aplicar Burn no disparo de Mira Livre."
+    },
+    "free-aim-inverted-shot": {
+      "name": "Disparo Livre Invertido",
+      "description": "Disparos de Mira Livre podem aplicar Inverted."
+    },
+    "marking-shots": {
+      "name": "Disparos Marcadores",
+      "description": "20% de chance de aplicar Mark no disparo de Mira Livre."
+    },
+    "powerful-shots": {
+      "name": "Disparos Poderosos",
+      "description": "20% de chance de ganhar Powerful no disparo de Mira Livre."
+    },
+    "protecting-shots": {
+      "name": "Disparos Protetores",
+      "description": "20% de chance de ganhar Shell no disparo de Mira Livre."
+    },
+    "accelerating-shots": {
+      "name": "Disparos Aceleradores",
+      "description": "20% de chance de ganhar Rush no disparo de Mira Livre."
+    },
+    "energising-shots": {
+      "name": "Disparos Energizantes",
+      "description": "20% de chance de ganhar 1 PA no disparo de Mira Livre."
+    },
+    "versatile": {
+      "name": "Versátil",
+      "description": "Após um acerto de Mira Livre, dano de Ataque Base é aumentado em 50% por 1 turno."
+    },
+    "empowering-attack": {
+      "name": "Ataque Fortalecedor",
+      "description": "Ganha Powerful por 1 turno no Ataque Base."
+    },
+    "protecting-attack": {
+      "name": "Ataque Protetor",
+      "description": "Ganha Shell por 1 turno no Ataque Base."
+    },
+    "enfeebling-attack": {
+      "name": "Ataque Enfraquecedor",
+      "description": "Ataque Base aplica Powerless por 1 turno."
+    },
+    "exposing-attack": {
+      "name": "Ataque Expositivo",
+      "description": "Ataque Base aplica Defenseless por 1 turno."
+    },
+    "empowering-parry": {
+      "name": "Aparar Fortalecedor",
+      "description": "Cada Aparar bem-sucedido aumenta o dano em 5% até o fim do turno seguinte. Receber qualquer dano remove este bônus."
+    },
+    "accelerating-last-stand": {
+      "name": "Última Resistência Aceleradora",
+      "description": "Ganha Rush se estiver lutando sozinho."
+    },
+    "empowering-last-stand": {
+      "name": "Última Resistência Fortalecedora",
+      "description": "Ganha Powerful se estiver lutando sozinho."
+    },
+    "protecting-last-stand": {
+      "name": "Última Resistência Protetora",
+      "description": "Ganha Shell se estiver lutando sozinho."
+    },
+    "energising-pain": {
+      "name": "Dor Energizante",
+      "description": "Não ganha mais PA ao Aparar. +1 PA ao ser atingido."
+    },
+    "energising-jump": {
+      "name": "Salto Energizante",
+      "description": "+1 PA no Contra-Ataque de Salto."
+    },
+    "powered-attack": {
+      "name": "Ataque Potencializado",
+      "description": "A cada dano causado, tenta consumir 1 PA. Se bem-sucedido, aumenta o dano em 20%."
+    },
+    "combo-attack-ii": {
+      "name": "Ataque em Combo II",
+      "description": "Ataque Base tem 1 golpe extra."
+    },
+    "combo-attack-iii": {
+      "name": "Ataque em Combo III",
+      "description": "Ataque Base tem 1 golpe extra."
+    },
+    "breaker": {
+      "name": "Quebrador",
+      "description": "25% de dano de Quebra aumentado."
+    },
+    "staggering-attack": {
+      "name": "Ataque Cambaleante",
+      "description": "50% de dano de Quebra aumentado no Ataque Base."
+    },
+    "energising-break": {
+      "name": "Quebra Energizante",
+      "description": "+3 PA ao Quebrar um alvo."
+    },
+    "quick-break": {
+      "name": "Quebra Rápida",
+      "description": "Joga novamente ao Quebrar um alvo."
+    },
+    "empowering-break": {
+      "name": "Quebra Fortalecedora",
+      "description": "Ganha Powerful ao Quebrar um alvo."
+    },
+    "breaking-shots": {
+      "name": "Disparos Quebradores",
+      "description": "50% de dano de Quebra aumentado com disparos de Mira Livre."
+    },
+    "fueling-break": {
+      "name": "Quebra Combustível",
+      "description": "Quebrar um alvo dobra sua quantidade de Burn."
+    },
+    "gradient-fighter": {
+      "name": "Lutador de Gradiente",
+      "description": "25% de dano aumentado com Ataques de Gradiente."
+    },
+    "gradient-recovery": {
+      "name": "Recuperação de Gradiente",
+      "description": "Recupera 10% de Vida ao usar uma Carga de Gradiente."
+    },
+    "energising-gradient": {
+      "name": "Gradiente Energizante",
+      "description": "+1 PA por Carga de Gradiente consumida."
+    },
+    "charging-attack": {
+      "name": "Ataque Carregador",
+      "description": "+15% de uma Carga de Gradiente no Ataque Base."
+    },
+    "gradient-breaker": {
+      "name": "Quebrador de Gradiente",
+      "description": "50% de dano de Quebra aumentado com Ataques de Gradiente."
+    },
+    "post-gradient": {
+      "name": "Pós-Gradiente",
+      "description": "Joga imediatamente após usar um Ataque de Gradiente."
+    },
+    "charging-recovery": {
+      "name": "Recuperação Carregadora",
+      "description": "50% de Geração de Gradiente aumentada com Habilidades de Cura."
+    },
+    "charging-counter": {
+      "name": "Contra-Ataque Carregador",
+      "description": "+10% de uma Carga de Gradiente no Contra-Ataque."
+    },
+    "charging-weakness": {
+      "name": "Fraqueza Carregadora",
+      "description": "+15% de uma Carga de Gradiente ao acertar uma Fraqueza. Uma vez por turno."
+    },
+    "charging-mark": {
+      "name": "Marca Carregadora",
+      "description": "+20% de uma Carga de Gradiente ao acertar um alvo Marcado. Uma vez por turno."
+    },
+    "revive-tint-energy": {
+      "name": "Energia de Tintura de Reviver",
+      "description": "Tinturas de Reviver também dão 3 PA."
+    },
+    "healing-tint-energy": {
+      "name": "Energia de Tintura Curativa",
+      "description": "Tinturas Curativas também dão 1 PA."
+    },
+    "empowering-tint": {
+      "name": "Tintura Fortalecedora",
+      "description": "Tinturas Curativas também aplicam Powerful."
+    },
+    "protecting-tint": {
+      "name": "Tintura Protetora",
+      "description": "Tinturas Curativas também aplicam Shell."
+    },
+    "shielding-tint": {
+      "name": "Tintura de Escudo",
+      "description": "Tinturas Curativas também adicionam 2 Escudos."
+    },
+    "accelerating-tint": {
+      "name": "Tintura Aceleradora",
+      "description": "Tinturas Curativas também aplicam Rush."
+    },
+    "better-healing-tint": {
+      "name": "Tintura Curativa Melhor",
+      "description": "Tinturas Curativas têm o dobro do efeito de Cura."
+    },
+    "cleansing-tint": {
+      "name": "Tintura Purificadora",
+      "description": "Tinturas Curativas também removem todos os Efeitos de Status do alvo."
+    },
+    "great-healing-tint": {
+      "name": "Grande Tintura Curativa",
+      "description": "Tinturas Curativas agora afetam toda a Expedição."
+    },
+    "great-energy-tint": {
+      "name": "Grande Tintura de Energia",
+      "description": "Tinturas de Energia agora afetam toda a Expedição."
+    },
+    "charging-tint": {
+      "name": "Tintura Carregadora",
+      "description": "+5% de uma Carga de Gradiente ao usar um item."
+    },
+    "time-tint": {
+      "name": "Tintura do Tempo",
+      "description": "Tinturas de Energia também aplicam Rush."
+    },
+    "energising-burn": {
+      "name": "Queimadura Energizante",
+      "description": "+1 PA ao aplicar Burn. Uma vez por turno."
+    },
+    "breaking-burn": {
+      "name": "Queimadura Quebradora",
+      "description": "25% de dano de Quebra aumentado em inimigos com Burn."
+    },
+    "critical-burn": {
+      "name": "Queimadura Crítica",
+      "description": "25% de Chance Crítica aumentada em inimigos com Burn."
+    },
+    "burning-death": {
+      "name": "Morte Ardente",
+      "description": "Aplica 3 de Burn a todos os inimigos ao morrer."
+    },
+    "longer-burn": {
+      "name": "Queimadura Prolongada",
+      "description": "Duração de Burn é aumentada em 2."
+    },
+    "critical-break": {
+      "name": "Quebra Crítica",
+      "description": "25% de dano de Quebra aumentado em acertos Críticos."
+    },
+    "critical-weakness": {
+      "name": "Fraqueza Crítica",
+      "description": "25% de Chance Crítica aumentada ao acertar Fraqueza."
+    },
+    "critical-stun": {
+      "name": "Atordoamento Crítico",
+      "description": "Chance de acerto crítico aumentada contra inimigos atordoados."
+    },
+    "critical-vulnerability": {
+      "name": "Vulnerabilidade Crítica",
+      "description": "25% de Chance Crítica aumentada em inimigos Defenseless."
+    },
+    "empowering-dodge": {
+      "name": "Esquiva Fortalecedora",
+      "description": "5% de dano aumentado para cada Esquiva consecutiva bem-sucedida. Pode acumular até 10 vezes."
+    },
+    "marking-break": {
+      "name": "Quebra Marcadora",
+      "description": "Aplica Mark ao Quebrar."
+    },
+    "slowing-break": {
+      "name": "Quebra Lenta",
+      "description": "Aplica Slow ao Quebrar."
+    },
+    "longer-rush": {
+      "name": "Ímpeto Prolongado",
+      "description": "Ao aplicar Rush, sua duração é aumentada em 2."
+    },
+    "powerful-on-shell": {
+      "name": "Poder ao Escudo",
+      "description": "Aplica Powerful ao aplicar Shell."
+    },
+    "rush-on-powerful": {
+      "name": "Ímpeto ao Poder",
+      "description": "Aplica Rush ao aplicar Powerful."
+    },
+    "shell-on-rush": {
+      "name": "Escudo ao Ímpeto",
+      "description": "Aplica Shell ao aplicar Rush."
+    },
+    "evasive-healer": {
+      "name": "Curador Evasivo",
+      "description": "Curas fornecidas são dobradas até que qualquer dano seja recebido."
+    },
+    "energising-powerful": {
+      "name": "Poder Energizante",
+      "description": "Dá 2 PA ao aplicar Powerful."
+    },
+    "energising-shell": {
+      "name": "Escudo Energizante",
+      "description": "Dá 2 PA ao aplicar Shell."
+    },
+    "energising-rush": {
+      "name": "Ímpeto Energizante",
+      "description": "Dá 2 PA ao aplicar Rush."
+    },
+    "healing-boon": {
+      "name": "Bênção Curativa",
+      "description": "Cura 15% de Vida ao aplicar um bônus."
+    },
+    "greater-powerless": {
+      "name": "Impotência Maior",
+      "description": "+15% à redução de dano de Powerless."
+    },
+    "greater-defenceless": {
+      "name": "Desprotegido Maior",
+      "description": "+15% à amplificação de dano de Defenseless."
+    },
+    "greater-slow": {
+      "name": "Lentidão Maior",
+      "description": "+15% à redução de Velocidade de Slow."
+    },
+    "energising-cleanse": {
+      "name": "Purificação Energizante",
+      "description": "Dissipa o primeiro Efeito de Status negativo recebido e ganha 2 PA."
+    },
+    "draining-cleanse": {
+      "name": "Purificação Drenante",
+      "description": "Consome 1 PA para prevenir aplicação de Efeitos de Status, se possível."
+    },
+    "anti-blight": {
+      "name": "Anti-Praga",
+      "description": "Imune a Blight."
+    },
+    "charging-critical": {
+      "name": "Crítico Carregador",
+      "description": "+20% de uma Carga de Gradiente em Acerto Crítico. Uma vez por turno."
+    },
+    "charging-burn": {
+      "name": "Queimadura Carregadora",
+      "description": "+20% de uma Carga de Gradiente ao aplicar Burn. Uma vez por turno."
+    },
+    "charging-stun": {
+      "name": "Atordoamento Carregador",
+      "description": "+5% de uma Carga de Gradiente ao acertar um inimigo com Stun."
+    },
+    "charging-alteration": {
+      "name": "Alteração Carregadora",
+      "description": "+10% de uma Carga de Gradiente ao aplicar um Bônus. Uma vez por turno."
+    },
+    "the-best-defense": {
+      "name": "A Melhor Defesa",
+      "description": "Causa 50% mais dano, mas não pode Aparar ou Esquivar."
+    },
+    "passive-defense": {
+      "name": "Defesa Passiva",
+      "description": "Reduz o dano recebido em 50%, mas não pode Aparar ou Esquivar."
+    },
+    "successive-parry": {
+      "name": "Aparar Sucessivo",
+      "description": "Não pode Esquivar. +5% de dano aumentado por Aparar até receber dano."
+    },
+    "breaking-attack": {
+      "name": "Ataque Quebrador",
+      "description": "Ataque Base pode Quebrar."
+    },
+    "anti-charm": {
+      "name": "Anti-Encanto",
+      "description": "Imune a Charm."
+    },
+    "cleas-life": {
+      "name": "Vida de Cléa",
+      "description": "No início do turno, se nenhum dano foi recebido desde o último turno, recupera 100% de Vida."
+    }
+  }
+}

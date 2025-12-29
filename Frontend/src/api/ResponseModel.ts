@@ -136,7 +136,9 @@ export type PictoTrigger =
     | "on-damage-taken";
 
 export interface PictoInfo {
-    name: string;
+    id: string;  // kebab-case ID (e.g., "energy-master")
+    imageId: string;  // English name for image filename (e.g., "Energy Master")
+    name: string;  // Localized name (e.g., "Mestre de Energia" or "Energy Master")
     status: PictoStatusResponse;
     description: string;
     color: PictoColor;

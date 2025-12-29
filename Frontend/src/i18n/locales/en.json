@@ -1,0 +1,904 @@
+{
+  "pictos": {
+    "energy-master": {
+      "name": "Energy Master",
+      "description": "Every AP gain is increased by 1."
+    },
+    "energising-turn": {
+      "name": "Energising Turn",
+      "description": "+1 AP on turn start."
+    },
+    "energising-attack-i": {
+      "name": "Energising Attack I",
+      "description": "+1 AP on Base Attack."
+    },
+    "energising-parry": {
+      "name": "Energising Parry",
+      "description": "+1 AP on successful Parry."
+    },
+    "augmented-first-strike": {
+      "name": "Augmented First Strike",
+      "description": "50% increased damage on the first hit. Once per battle."
+    },
+    "survivor": {
+      "name": "Survivor",
+      "description": "Survive fatal damage with 1 Health. Once per battle."
+    },
+    "aegis-revival": {
+      "name": "Aegis Revival",
+      "description": "+1 Shield on being revived."
+    },
+    "recovery": {
+      "name": "Recovery",
+      "description": "Recovers 10% Health on turn start."
+    },
+    "lucky-aim": {
+      "name": "Lucky Aim",
+      "description": "30% chance to recover 1 AP on hitting a Weak Point."
+    },
+    "augmented-counter-i": {
+      "name": "Augmented Counter I",
+      "description": "50% increased Counterattack damage."
+    },
+    "second-chance": {
+      "name": "Second Chance",
+      "description": "Revive with 100% Health. Once per battle."
+    },
+    "first-strike": {
+      "name": "First Strike",
+      "description": "Play first."
+    },
+    "solo-fighter": {
+      "name": "Solo Fighter",
+      "description": "Deal 50% more damage if fighting alone."
+    },
+    "teamwork": {
+      "name": "Teamwork",
+      "description": "10% increased damage while all allies are alive."
+    },
+    "sweet-kill": {
+      "name": "Sweet Kill",
+      "description": "Recover 50% Health on killing an enemy."
+    },
+    "augmented-attack": {
+      "name": "Augmented Attack",
+      "description": "50% increased Base Attack damage."
+    },
+    "attack-lifesteal": {
+      "name": "Attack Lifesteal",
+      "description": "Recover 15% Health on Base Attack."
+    },
+    "augmented-aim": {
+      "name": "Augmented Aim",
+      "description": "50% increased Free Aim damage."
+    },
+    "combo-attack-i": {
+      "name": "Combo Attack I",
+      "description": "Base Attack has 1 extra hit."
+    },
+    "healing-parry": {
+      "name": "Healing Parry",
+      "description": "Recover 3% Health on Parry."
+    },
+    "auto-powerful": {
+      "name": "Auto Powerful",
+      "description": "Apply Powerful for 3 turns on battle start."
+    },
+    "auto-shell": {
+      "name": "Auto Shell",
+      "description": "Apply Shell for 3 turns on battle start."
+    },
+    "auto-rush": {
+      "name": "Auto Rush",
+      "description": "Apply Rush for 3 turns on battle start."
+    },
+    "auto-regen": {
+      "name": "Auto Regen",
+      "description": "Apply Regen for 3 turns on battle start."
+    },
+    "anti-burn": {
+      "name": "Anti-Burn",
+      "description": "Immune to Burn."
+    },
+    "anti-freeze": {
+      "name": "Anti-Freeze",
+      "description": "Immune to Freeze."
+    },
+    "anti-stun": {
+      "name": "Anti-Stun",
+      "description": "Immune to Stun."
+    },
+    "anti-inverted": {
+      "name": "Anti Inverted",
+      "description": "Can't be Inverted."
+    },
+    "anti-curse": {
+      "name": "Anti Curse",
+      "description": "Can't be Cursed."
+    },
+    "anti-bound": {
+      "name": "Anti Bound",
+      "description": "Can't be Bound."
+    },
+    "anti-dizzy": {
+      "name": "Anti Dizzy",
+      "description": "Can't be Dizzied."
+    },
+    "physical-coat": {
+      "name": "Physical Coat",
+      "description": "Resist to Physical damage."
+    },
+    "fire-coat": {
+      "name": "Fire Coat",
+      "description": "Resist to Fire damage."
+    },
+    "ice-coat": {
+      "name": "Ice Coat",
+      "description": "Resist to Ice damage."
+    },
+    "thunder-coat": {
+      "name": "Thunder Coat",
+      "description": "Resist to Lightning damage."
+    },
+    "earth-coat": {
+      "name": "Earth Coat",
+      "description": "Resist to Earth damage."
+    },
+    "light-coat": {
+      "name": "Light Coat",
+      "description": "Resist to Light damage."
+    },
+    "dark-coat": {
+      "name": "Dark Coat",
+      "description": "Resist to Dark damage."
+    },
+    "back-at-you": {
+      "name": "Back At You",
+      "description": "50% increased Counter Attack damage."
+    },
+    "dodger": {
+      "name": "Dodger",
+      "description": "Gain 1 AP on Perfect Dodge. Once per turn."
+    },
+    "energising-start-i": {
+      "name": "Energising Start I",
+      "description": "+1 AP on battle start."
+    },
+    "energising-start-ii": {
+      "name": "Energising Start II",
+      "description": "+1 AP on battle start."
+    },
+    "energising-start-iii": {
+      "name": "Energising Start III",
+      "description": "+1 AP on battle start."
+    },
+    "energising-start-iv": {
+      "name": "Energising Start IV",
+      "description": "+1 AP on battle start."
+    },
+    "perilous-parry": {
+      "name": "Perilous Parry",
+      "description": "+1 AP on Parry, but damage received is doubled."
+    },
+    "confident": {
+      "name": "Confident",
+      "description": "Take 50% less damage, but can't be Healed."
+    },
+    "bloody-bullet": {
+      "name": "Bloody Bullet",
+      "description": "+1 AP on Weak Point hit."
+    },
+    "energising-revive": {
+      "name": "Energising Revive",
+      "description": "+3 AP to all allies when revived."
+    },
+    "rejuvenating-revive": {
+      "name": "Rejuvenating Revive",
+      "description": "Apply Regen for 3 turns when revived."
+    },
+    "revive-with-shell": {
+      "name": "Revive With Shell",
+      "description": "Apply Shell for 3 turns on revive."
+    },
+    "solidifying": {
+      "name": "Solidifying",
+      "description": "+2 Shields when the character's Health falls below 50%. Once per battle."
+    },
+    "powerful-revive": {
+      "name": "Powerful Revive",
+      "description": "Apply Powerful for 3 turns when revived."
+    },
+    "revive-with-rush": {
+      "name": "Revive With Rush",
+      "description": "Apply Rush for 3 turns on revive."
+    },
+    "the-one": {
+      "name": "The One",
+      "description": "Max Health is reduced to 1."
+    },
+    "dead-energy-ii": {
+      "name": "Dead Energy II",
+      "description": "+3 AP on killing an enemy."
+    },
+    "frozen-shot": {
+      "name": "Frozen Shot",
+      "description": "Free Aim shots can Freeze."
+    },
+    "piercing-shot": {
+      "name": "Piercing Shot",
+      "description": "25% increased Free Aim damage. Free Aim shots ignore Shields."
+    },
+    "burning-dodge": {
+      "name": "Burning Dodge",
+      "description": "Successful Dodges can Burn the attacker."
+    },
+    "defense-breaker-dodge": {
+      "name": "Defense Breaker Dodge",
+      "description": "Successful Dodges can apply Defenseless to the attacker."
+    },
+    "defense-riser-dodge": {
+      "name": "Defense Riser Dodge",
+      "description": "Successfully Dodging can apply Shell."
+    },
+    "hazardous-choice": {
+      "name": "Hazardous Choice",
+      "description": "33% chance to skip own turn, but deal 50% more damage."
+    },
+    "healing-death": {
+      "name": "Healing Death",
+      "description": "On death, the rest of the Expedition recover all Health."
+    },
+    "auto-death": {
+      "name": "Auto Death",
+      "description": "Kill self on battle start."
+    },
+    "auto-curse": {
+      "name": "Auto Curse",
+      "description": "Self apply Curse on battle start."
+    },
+    "death-bomb": {
+      "name": "Death Bomb",
+      "description": "On Death, deal damage to all enemies."
+    },
+    "energising-death": {
+      "name": "Energising Death",
+      "description": "On death, +4 AP to allies."
+    },
+    "shielding-death": {
+      "name": "Shielding Death",
+      "description": "On death, allies gain 3 Shield points."
+    },
+    "protecting-death": {
+      "name": "Protecting Death",
+      "description": "On death, allies gain Shell."
+    },
+    "empowering-death": {
+      "name": "Empowering Death",
+      "description": "On death, allies gain Powerful."
+    },
+    "burn-affinity": {
+      "name": "Burn Affinity",
+      "description": "25% increased damage on Burning targets."
+    },
+    "frozen-affinity": {
+      "name": "Frozen Affinity",
+      "description": "25% increased damage on Frozen targets."
+    },
+    "inverted-affinity": {
+      "name": "Inverted Affinity",
+      "description": "Apply Inverted on self for 3 turns on battle start. 50% increased damage while Inverted."
+    },
+    "exhausting-power": {
+      "name": "Exhausting Power",
+      "description": "50% increased damage if Exhausted."
+    },
+    "auto-burn": {
+      "name": "Auto Burn",
+      "description": "Self apply Burn on battle start."
+    },
+    "at-deaths-door": {
+      "name": "At Death's Door",
+      "description": "Deal 50% more damage if Health is below 10%."
+    },
+    "full-strength": {
+      "name": "Full Strength",
+      "description": "25% increased damage on full Health."
+    },
+    "painted-power": {
+      "name": "Painted Power",
+      "description": "Damage can exceed 9,999."
+    },
+    "sos-shell": {
+      "name": "SOS Shell",
+      "description": "Apply Shell when falling below 50% Health."
+    },
+    "sos-power": {
+      "name": "SOS Power",
+      "description": "Apply Powerful when falling below 50% Health."
+    },
+    "augmented-counter-ii": {
+      "name": "Augmented Counter II",
+      "description": "50% increased Counterattack damage."
+    },
+    "augmented-counter-iii": {
+      "name": "Augmented Counter III",
+      "description": "50% increased Counterattack damage."
+    },
+    "anti-exhaust": {
+      "name": "Anti Exhaust",
+      "description": "Immune to Exhaust."
+    },
+    "sos-rush": {
+      "name": "SOS Rush",
+      "description": "Apply Rush when falling below 50% Health."
+    },
+    "solidifying-meditation": {
+      "name": "Solidifying Meditation",
+      "description": "+1 Shield when passing turn."
+    },
+    "double-burn": {
+      "name": "Double Burn",
+      "description": "On applying a Burn stack, apply a second one."
+    },
+    "healing-fire": {
+      "name": "Healing Fire",
+      "description": "Recover 25% Health when attacking a Burning target. Once per turn."
+    },
+    "rewarding-mark": {
+      "name": "Rewarding Mark",
+      "description": "+2 AP on dealing damage to a Marked target. Once per turn."
+    },
+    "double-mark": {
+      "name": "Double Mark",
+      "description": "Mark requires 1 more hit to be removed."
+    },
+    "stun-boost": {
+      "name": "Stun Boost",
+      "description": "30% increased damage on Stunned targets."
+    },
+    "sniper": {
+      "name": "Sniper",
+      "description": "First Free Aim shot each turn deals 200% increased damage and can Break."
+    },
+    "energising-attack-ii": {
+      "name": "Energising Attack II",
+      "description": "+1 AP on Base Attack."
+    },
+    "cheater": {
+      "name": "Cheater",
+      "description": "Always play twice in a row."
+    },
+    "healing-counter": {
+      "name": "Healing Counter",
+      "description": "Recover 25% Health on Counterattack."
+    },
+    "powerful-shield": {
+      "name": "Powerful Shield",
+      "description": "10% increased damage per Shield Point on self."
+    },
+    "base-shield": {
+      "name": "Base Shield",
+      "description": "+1 Shield if not affected by any Shield on turn start."
+    },
+    "in-medias-res": {
+      "name": "In Medias Res",
+      "description": "+3 Shields on Battle Start, but max Health is halved."
+    },
+    "shield-breaker": {
+      "name": "Shield Breaker",
+      "description": "All hits break 1 more Shield."
+    },
+    "shield-affinity": {
+      "name": "Shield Affinity",
+      "description": "30% increased damage while having Shields, but receiving any damage always removes all Shields."
+    },
+    "critical-moment": {
+      "name": "Critical Moment",
+      "description": "50% increased Critical Chance if Health is below 30%."
+    },
+    "warming-up": {
+      "name": "Warming Up",
+      "description": "5% increased damage per turn. Can stack up to 5 times."
+    },
+    "glass-canon": {
+      "name": "Glass Canon",
+      "description": "Deal 25% more damage, but take 25% more damage."
+    },
+    "faster-than-strong": {
+      "name": "Faster Than Strong",
+      "description": "Always play twice in a row, but deal 50% less damage."
+    },
+    "shortcut": {
+      "name": "Shortcut",
+      "description": "Immediately play when falling below 30% Health. Once per battle."
+    },
+    "defensive-mode": {
+      "name": "Defensive Mode",
+      "description": "On receiving damage, consume 1 AP to take 30% less damage, if possible."
+    },
+    "greater-powerful": {
+      "name": "Greater Powerful",
+      "description": "+15% to Powerful damage increase."
+    },
+    "greater-shell": {
+      "name": "Greater Shell",
+      "description": "+10% to Shell damage reduction."
+    },
+    "revive-paradox": {
+      "name": "Revive Paradox",
+      "description": "Play immediately when revived."
+    },
+    "greater-rush": {
+      "name": "Greater Rush",
+      "description": "+25% to Rush Speed increase."
+    },
+    "last-stand-critical": {
+      "name": "Last Stand Critical",
+      "description": "100% Critical Chance while fighting alone."
+    },
+    "effective-heal": {
+      "name": "Effective Heal",
+      "description": "Double all Heals received."
+    },
+    "shared-care": {
+      "name": "Shared Care",
+      "description": "When Healing an ally, also Heal self for 50% of that value."
+    },
+    "powerful-heal": {
+      "name": "Powerful Heal",
+      "description": "Healing an ally also applies Powerful for 1 turn."
+    },
+    "accelerating-heal": {
+      "name": "Accelerating Heal",
+      "description": "Healing an ally also applies Rush for 1 turn."
+    },
+    "energising-heal": {
+      "name": "Energising Heal",
+      "description": "On Healing an ally, also give 2 AP."
+    },
+    "protecting-heal": {
+      "name": "Protecting Heal",
+      "description": "Healing an ally also applies Shell for 1 turn."
+    },
+    "confident-fighter": {
+      "name": "Confident Fighter",
+      "description": "30% increased damage, but can't be Healed."
+    },
+    "healing-share": {
+      "name": "Healing Share",
+      "description": "Receive 15% of all Heals affecting other characters."
+    },
+    "dead-energy-i": {
+      "name": "Dead Energy I",
+      "description": "+3 AP on killing an enemy."
+    },
+    "effective-support": {
+      "name": "Effective Support",
+      "description": "+2 AP on using an item."
+    },
+    "weakness-gain": {
+      "name": "Weakness Gain",
+      "description": "+1 AP on hitting an enemy's Weakness. Once per turn."
+    },
+    "patient-fighter": {
+      "name": "Patient Fighter",
+      "description": "+2 AP on skipping a turn."
+    },
+    "energetic-healer": {
+      "name": "Energetic Healer",
+      "description": "+2 AP on Healing an ally. Once per turn."
+    },
+    "beneficial-contamination": {
+      "name": "Beneficial Contamination",
+      "description": "+2 AP on applying a Status Effect. Once per turn."
+    },
+    "perfect-reward": {
+      "name": "Perfect Reward",
+      "description": "Perfect Rythms give 1 AP."
+    },
+    "roulette": {
+      "name": "Roulette",
+      "description": "Every hit has a 50% chance to deal either 50% or 200% of its damage."
+    },
+    "soul-eater": {
+      "name": "Soul Eater",
+      "description": "Deal 30% more damage, but lose 20% Health per turn."
+    },
+    "painter": {
+      "name": "Painter",
+      "description": "Convert all Physical damage to Void damage."
+    },
+    "immaculate": {
+      "name": "Immaculate",
+      "description": "30% increased damage until a hit is received."
+    },
+    "tainted": {
+      "name": "Tainted",
+      "description": "15% increased damage for each Status Effect on self."
+    },
+    "first-offensive": {
+      "name": "First Offensive",
+      "description": "First hit dealt and taken deals 50% more damage."
+    },
+    "cursed-power": {
+      "name": "Cursed Power",
+      "description": "30% increased damage while Cursed."
+    },
+    "pro-retreat": {
+      "name": "Pro Retreat",
+      "description": "Allows Flee to be instantaneous."
+    },
+    "enfeebling-mark": {
+      "name": "Enfeebling Mark",
+      "description": "Marked targets deal 30% less damage."
+    },
+    "burning-mark": {
+      "name": "Burning Mark",
+      "description": "Apply Burn on hitting a Marked enemy."
+    },
+    "powerful-mark": {
+      "name": "Powerful Mark",
+      "description": "Gain Powerful on hitting a Marked enemy."
+    },
+    "healing-mark": {
+      "name": "Healing Mark",
+      "description": "Recover 25% Health on hitting a Marked enemy. Once per turn."
+    },
+    "stay-marked": {
+      "name": "Stay Marked",
+      "description": "50% chance to apply Mark when attacking a Marked target."
+    },
+    "charybde-to-scylla": {
+      "name": "Charybde To Scylla",
+      "description": "Apply Mark on Stun removed."
+    },
+    "burning-shots": {
+      "name": "Burning Shots",
+      "description": "20% chance to Burn on Free Aim shot."
+    },
+    "free-aim-inverted-shot": {
+      "name": "Free Aim Inverted Shot",
+      "description": "Free Aim shots can apply Inverted."
+    },
+    "marking-shots": {
+      "name": "Marking Shots",
+      "description": "20% chance to apply Mark on Free Aim shot."
+    },
+    "powerful-shots": {
+      "name": "Powerful Shots",
+      "description": "20% chance to gain Powerful on Free Aim shot."
+    },
+    "protecting-shots": {
+      "name": "Protecting Shots",
+      "description": "20% chance to gain Shell on Free Aim shot."
+    },
+    "accelerating-shots": {
+      "name": "Accelerating Shots",
+      "description": "20% chance to gain Rush on Free Aim shot."
+    },
+    "energising-shots": {
+      "name": "Energising Shots",
+      "description": "20% chance to gain 1 AP on Free Aim shot."
+    },
+    "versatile": {
+      "name": "Versatile",
+      "description": "After a Free Aim hit, Base Attack damage is increased by 50% for 1 turn."
+    },
+    "empowering-attack": {
+      "name": "Empowering Attack",
+      "description": "Gain Powerful for 1 turn on Base Attack."
+    },
+    "protecting-attack": {
+      "name": "Protecting Attack",
+      "description": "Gain Shell for 1 turn on Base Attack."
+    },
+    "enfeebling-attack": {
+      "name": "Enfeebling Attack",
+      "description": "Base Attack applies Powerless for 1 turn."
+    },
+    "exposing-attack": {
+      "name": "Exposing Attack",
+      "description": "Base Attack applies Defenseless for 1 turn."
+    },
+    "empowering-parry": {
+      "name": "Empowering Parry",
+      "description": "Each successful Parry increases damage by 5% until end of the following turn. Taking any damage removes this buff."
+    },
+    "accelerating-last-stand": {
+      "name": "Accelerating Last Stand",
+      "description": "Gain Rush if fighting alone."
+    },
+    "empowering-last-stand": {
+      "name": "Empowering Last Stand",
+      "description": "Gain Powerful if fighting alone."
+    },
+    "protecting-last-stand": {
+      "name": "Protecting Last Stand",
+      "description": "Gain Shell if fighting alone."
+    },
+    "energising-pain": {
+      "name": "Energising Pain",
+      "description": "No longer gain AP on Parry. +1 AP on getting hit."
+    },
+    "energising-jump": {
+      "name": "Energising Jump",
+      "description": "+1 AP on Jump Counterattack."
+    },
+    "powered-attack": {
+      "name": "Powered Attack",
+      "description": "On every damage dealt, try to consume 1 AP. If successful, increase damage by 20%."
+    },
+    "combo-attack-ii": {
+      "name": "Combo Attack II",
+      "description": "Base Attack has 1 extra hit."
+    },
+    "combo-attack-iii": {
+      "name": "Combo Attack III",
+      "description": "Base Attack has 1 extra hit."
+    },
+    "breaker": {
+      "name": "Breaker",
+      "description": "25% increased Break damage."
+    },
+    "staggering-attack": {
+      "name": "Staggering Attack",
+      "description": "50% increased Break damage on Base Attack."
+    },
+    "energising-break": {
+      "name": "Energising Break",
+      "description": "+3 AP on Breaking a target."
+    },
+    "quick-break": {
+      "name": "Quick Break",
+      "description": "Play again on Breaking a target."
+    },
+    "empowering-break": {
+      "name": "Empowering Break",
+      "description": "Gain Powerful on Breaking a target."
+    },
+    "breaking-shots": {
+      "name": "Breaking Shots",
+      "description": "50% increased Break damage with Free Aim shots."
+    },
+    "fueling-break": {
+      "name": "Fueling Break",
+      "description": "Breaking a target doubles its Burn amount."
+    },
+    "gradient-fighter": {
+      "name": "Gradient Fighter",
+      "description": "25% increased damage with Gradient Attacks."
+    },
+    "gradient-recovery": {
+      "name": "Gradient Recovery",
+      "description": "Recover 10% Health on using a Gradient Charge."
+    },
+    "energising-gradient": {
+      "name": "Energising Gradient",
+      "description": "+1 AP per Gradient Charge consumed."
+    },
+    "charging-attack": {
+      "name": "Charging Attack",
+      "description": "+15% of a Gradient Charge on Base Attack."
+    },
+    "gradient-breaker": {
+      "name": "Gradient Breaker",
+      "description": "50% increased Break damage with Gradient Attacks."
+    },
+    "post-gradient": {
+      "name": "Post Gradient",
+      "description": "Play immediately after using a Gradient Attack."
+    },
+    "charging-recovery": {
+      "name": "Charging Recovery",
+      "description": "50% increased Gradient Generation with Healing Skills."
+    },
+    "charging-counter": {
+      "name": "Charging Counter",
+      "description": "+10% of a Gradient Charge on Counterattack."
+    },
+    "charging-weakness": {
+      "name": "Charging Weakness",
+      "description": "+15% of a Gradient Charge on hitting a Weakness. Once per turn."
+    },
+    "charging-mark": {
+      "name": "Charging Mark",
+      "description": "+20% of a Gradient Charge on hitting a Marked target. Once per turn."
+    },
+    "revive-tint-energy": {
+      "name": "Revive Tint Energy",
+      "description": "Revive Tints also give 3 AP."
+    },
+    "healing-tint-energy": {
+      "name": "Healing Tint Energy",
+      "description": "Healing Tints also give 1 AP."
+    },
+    "empowering-tint": {
+      "name": "Empowering Tint",
+      "description": "Healing Tints also apply Powerful."
+    },
+    "protecting-tint": {
+      "name": "Protecting Tint",
+      "description": "Healing Tints also apply Shell."
+    },
+    "shielding-tint": {
+      "name": "Shielding Tint",
+      "description": "Healing Tints also add 2 Shields."
+    },
+    "accelerating-tint": {
+      "name": "Accelerating Tint",
+      "description": "Healing Tints also apply Rush."
+    },
+    "better-healing-tint": {
+      "name": "Better Healing Tint",
+      "description": "Healing Tints have double the Healing effect."
+    },
+    "cleansing-tint": {
+      "name": "Cleansing Tint",
+      "description": "Healing Tints also remove all Status Effects from the target."
+    },
+    "great-healing-tint": {
+      "name": "Great Healing Tint",
+      "description": "Healing Tints now affect the whole Expedition."
+    },
+    "great-energy-tint": {
+      "name": "Great Energy Tint",
+      "description": "Energy Tints now affect the whole Expedition."
+    },
+    "charging-tint": {
+      "name": "Charging Tint",
+      "description": "+5% of a Gradient Charge on using an item."
+    },
+    "time-tint": {
+      "name": "Time Tint",
+      "description": "Energy Tints also apply Rush."
+    },
+    "energising-burn": {
+      "name": "Energising Burn",
+      "description": "+1 AP on applying Burn. Once per turn."
+    },
+    "breaking-burn": {
+      "name": "Breaking Burn",
+      "description": "25% increased Break damage on Burning enemies."
+    },
+    "critical-burn": {
+      "name": "Critical Burn",
+      "description": "25% increased Critical Chance on Burning enemies."
+    },
+    "burning-death": {
+      "name": "Burning Death",
+      "description": "Apply 3 Burn to all enemies on Death."
+    },
+    "longer-burn": {
+      "name": "Longer Burn",
+      "description": "Burn duration is increased by 2."
+    },
+    "critical-break": {
+      "name": "Critical Break",
+      "description": "25% increased Break damage on Critical hits."
+    },
+    "critical-weakness": {
+      "name": "Critical Weakness",
+      "description": "25% increased Critical Chance on Weakness."
+    },
+    "critical-stun": {
+      "name": "Critical Stun",
+      "description": "Increased critical hit chance against stunned enemies."
+    },
+    "critical-vulnerability": {
+      "name": "Critical Vulnerability",
+      "description": "25% increased Critical Chance on Defenceless enemies."
+    },
+    "empowering-dodge": {
+      "name": "Empowering Dodge",
+      "description": "5% increased damage for each consecutive successful Dodge. Can stack up to 10 times."
+    },
+    "marking-break": {
+      "name": "Marking Break",
+      "description": "Apply Mark on Break."
+    },
+    "slowing-break": {
+      "name": "Slowing Break",
+      "description": "Apply Slow on Break."
+    },
+    "longer-rush": {
+      "name": "Longer Rush",
+      "description": "On applying Rush, its duration is increased by 2."
+    },
+    "powerful-on-shell": {
+      "name": "Powerful On Shell",
+      "description": "Apply Powerful on applying Shell."
+    },
+    "rush-on-powerful": {
+      "name": "Rush On Powerful",
+      "description": "Apply Rush on applying Powerful."
+    },
+    "shell-on-rush": {
+      "name": "Shell On Rush",
+      "description": "Apply Shell on applying Rush."
+    },
+    "evasive-healer": {
+      "name": "Evasive Healer",
+      "description": "Heals provided are doubled until any damage is taken."
+    },
+    "energising-powerful": {
+      "name": "Energising Powerful",
+      "description": "Give 2 AP on applying Powerful."
+    },
+    "energising-shell": {
+      "name": "Energising Shell",
+      "description": "Give 2 AP on applying Shell."
+    },
+    "energising-rush": {
+      "name": "Energising Rush",
+      "description": "Give 2 AP on applying Rush."
+    },
+    "healing-boon": {
+      "name": "Healing Boon",
+      "description": "Heal 15% HP on applying a buff."
+    },
+    "greater-powerless": {
+      "name": "Greater Powerless",
+      "description": "+15% to Powerless damage reduction."
+    },
+    "greater-defenceless": {
+      "name": "Greater Defenceless",
+      "description": "+15% to Defenceless damage amplification."
+    },
+    "greater-slow": {
+      "name": "Greater Slow",
+      "description": "+15% to Slow Speed reduction."
+    },
+    "energising-cleanse": {
+      "name": "Energising Cleanse",
+      "description": "Dispel the first negative Status Effect received and gain 2 AP."
+    },
+    "draining-cleanse": {
+      "name": "Draining Cleanse",
+      "description": "Consume 1 AP to prevent Status Effects application, if possible."
+    },
+    "anti-blight": {
+      "name": "Anti-Blight",
+      "description": "Immune to Blight."
+    },
+    "charging-critical": {
+      "name": "Charging Critical",
+      "description": "+20% of a Gradient Charge on Critical Hit. Once per turn."
+    },
+    "charging-burn": {
+      "name": "Charging Burn",
+      "description": "+20% of a Gradient Charge on applying Burn. Once per turn."
+    },
+    "charging-stun": {
+      "name": "Charging Stun",
+      "description": "+5% of a Gradient Charge on hitting a Stunned enemy."
+    },
+    "charging-alteration": {
+      "name": "Charging Alteration",
+      "description": "+10% of a Gradient Charge on applying a Buff. Once per turn."
+    },
+    "the-best-defense": {
+      "name": "The Best Defense",
+      "description": "Deal 50% more damage, but can't Parry or Dodge."
+    },
+    "passive-defense": {
+      "name": "Passive Defense",
+      "description": "Reduce damage taken by 50%, but can't Parry or Dodge."
+    },
+    "successive-parry": {
+      "name": "Successive Parry",
+      "description": "Can't Dodge. +5% increased damage per Parry until damage taken."
+    },
+    "breaking-attack": {
+      "name": "Breaking Attack",
+      "description": "Base Attack can Break."
+    },
+    "anti-charm": {
+      "name": "Anti-Charm",
+      "description": "Immune to Charm."
+    },
+    "cleas-life": {
+      "name": "Clea's Life",
+      "description": "On turn start, if no damage taken since last turn, recover 100% Health."
+    }
+  }
+}

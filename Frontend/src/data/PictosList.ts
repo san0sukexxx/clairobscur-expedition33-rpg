@@ -1,1800 +1,2251 @@
 import type { PictoInfo } from "../api/ResponseModel";
+import { getPictoName, getPictoDescription, getPictoEnglishName } from "../i18n";
 
 export const PictosList: PictoInfo[] = [
     {
-        name: "Energy Master",
+        id: "energy-master",
+        imageId: getPictoEnglishName("energy-master"),
+        name: getPictoName("energy-master"),
         status: {
             health: 2245
         },
-        description: "Every AP gain is increased by 1.",
+        description: getPictoDescription("energy-master"),
         color: "green",
         luminaCost: 30,
         effectTriggers: ["on-turn-start", "on-attack", "on-parry", "on-dodge", "on-skill-use"]
     },
     {
-        name: "Energising Turn",
+        id: "energising-turn",
+        imageId: getPictoEnglishName("energising-turn"),
+        name: getPictoName("energising-turn"),
         status: {
             speed: 532
         },
-        description: "+1 AP on turn start.",
+        description: getPictoDescription("energising-turn"),
         color: "green",
         luminaCost: 32
     },
     {
-        name: "Energising Attack I",
+        id: "energising-attack-i",
+        imageId: getPictoEnglishName("energising-attack-i"),
+        name: getPictoName("energising-attack-i"),
         status: {
             speed: 399,
             criticalRate: 11
         },
-        description: "+1 AP on Base Attack.",
+        description: getPictoDescription("energising-attack-i"),
         color: "green",
         luminaCost: 33
     },
     {
-        name: "Energising Parry",
+        id: "energising-parry",
+        imageId: getPictoEnglishName("energising-parry"),
+        name: getPictoName("energising-parry"),
         status: {
             health: 2666
         },
-        description: "+1 AP on successful Parry.",
+        description: getPictoDescription("energising-parry"),
         color: "green",
         luminaCost: 34
     },
     {
-        name: "Augmented First Strike",
+        id: "augmented-first-strike",
+        imageId: getPictoEnglishName("augmented-first-strike"),
+        name: getPictoName("augmented-first-strike"),
         status: {
             speed: 420,
             criticalRate: 12
         },
-        description: "50% increased damage on the first hit. Once per battle.",
+        description: getPictoDescription("augmented-first-strike"),
         color: "red",
         luminaCost: 35
     },
     {
-        name: "Survivor",
+        id: "survivor",
+        imageId: getPictoEnglishName("survivor"),
+        name: getPictoName("survivor"),
         status: {
             speed: 399,
             criticalRate: 11
         },
-        description: "Survive fatal damage with 1 Health. Once per battle.",
+        description: getPictoDescription("survivor"),
         color: "blue",
         luminaCost: 36
     },
     {
-        name: "Aegis Revival",
+        id: "aegis-revival",
+        imageId: getPictoEnglishName("aegis-revival"),
+        name: getPictoName("aegis-revival"),
         status: {
             defense: 681,
             speed: 280
         },
-        description: "+1 Shield on being revived.",
+        description: getPictoDescription("aegis-revival"),
         color: "green",
         luminaCost: 15,
         effectTriggers: ["on-revived"]
     },
     {
-        name: "Recovery",
+        id: "recovery",
+        imageId: getPictoEnglishName("recovery"),
+        name: getPictoName("recovery"),
         status: {
             health: 2000,
             defense: 324
         },
-        description: "Recovers 10% Health on turn start.",
+        description: getPictoDescription("recovery"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Lucky Aim",
+        id: "lucky-aim",
+        imageId: getPictoEnglishName("lucky-aim"),
+        name: getPictoName("lucky-aim"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "30% chance to recover 1 AP on hitting a Weak Point.",
+        description: getPictoDescription("lucky-aim"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Augmented Counter I",
+        id: "augmented-counter-i",
+        imageId: getPictoEnglishName("augmented-counter-i"),
+        name: getPictoName("augmented-counter-i"),
         status: {
             health: 2000,
             criticalRate: 11
         },
-        description: "50% increased Counterattack damage.",
+        description: getPictoDescription("augmented-counter-i"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Second Chance",
+        id: "second-chance",
+        imageId: getPictoEnglishName("second-chance"),
+        name: getPictoName("second-chance"),
         status: {
             health: 1684,
             criticalRate: 10
         },
-        description: "Revive with 100% Health. Once per battle.",
+        description: getPictoDescription("second-chance"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "First Strike",
+        id: "first-strike",
+        imageId: getPictoEnglishName("first-strike"),
+        name: getPictoName("first-strike"),
         status: {
             speed: 266,
             criticalRate: 22
         },
-        description: "Play first.",
+        description: getPictoDescription("first-strike"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Solo Fighter",
+        id: "solo-fighter",
+        imageId: getPictoEnglishName("solo-fighter"),
+        name: getPictoName("solo-fighter"),
         status: {
             health: 1403,
             defense: 681
         },
-        description: "Deal 50% more damage if fighting alone.",
+        description: getPictoDescription("solo-fighter"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Teamwork",
+        id: "teamwork",
+        imageId: getPictoEnglishName("teamwork"),
+        name: getPictoName("teamwork"),
         status: {
             health: 1403,
             defense: 681
         },
-        description: "10% increased damage while all allies are alive.",
+        description: getPictoDescription("teamwork"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Sweet Kill",
+        id: "sweet-kill",
+        imageId: getPictoEnglishName("sweet-kill"),
+        name: getPictoName("sweet-kill"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "Recover 50% Health on killing an enemy.",
+        description: getPictoDescription("sweet-kill"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Augmented Attack",
+        id: "augmented-attack",
+        imageId: getPictoEnglishName("augmented-attack"),
+        name: getPictoName("augmented-attack"),
         status: {
             defense: 681,
             speed: 280
         },
-        description: "50% increased Base Attack damage.",
+        description: getPictoDescription("augmented-attack"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Attack Lifesteal",
+        id: "attack-lifesteal",
+        imageId: getPictoEnglishName("attack-lifesteal"),
+        name: getPictoName("attack-lifesteal"),
         status: {
             health: 1333,
             criticalRate: 22
         },
-        description: "Recover 15% Health on Base Attack.",
+        description: getPictoDescription("attack-lifesteal"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Augmented Aim",
+        id: "augmented-aim",
+        imageId: getPictoEnglishName("augmented-aim"),
+        name: getPictoName("augmented-aim"),
         status: {
             speed: 420,
             criticalRate: 12
         },
-        description: "50% increased Free Aim damage.",
+        description: getPictoDescription("augmented-aim"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Combo Attack I",
+        id: "combo-attack-i",
+        imageId: getPictoEnglishName("combo-attack-i"),
+        name: getPictoName("combo-attack-i"),
         status: {
             speed: 399,
             criticalRate: 11
         },
-        description: "Base Attack has 1 extra hit.",
+        description: getPictoDescription("combo-attack-i"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Healing Parry",
+        id: "healing-parry",
+        imageId: getPictoEnglishName("healing-parry"),
+        name: getPictoName("healing-parry"),
         status: {
             health: 1403,
             defense: 681
         },
-        description: "Recover 3% Health on Parry.",
+        description: getPictoDescription("healing-parry"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Auto Powerful",
+        id: "auto-powerful",
+        imageId: getPictoEnglishName("auto-powerful"),
+        name: getPictoName("auto-powerful"),
         status: {
             speed: 266,
             criticalRate: 22
         },
-        description: "Apply Powerful for 3 turns on battle start.",
+        description: getPictoDescription("auto-powerful"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Auto Shell",
+        id: "auto-shell",
+        imageId: getPictoEnglishName("auto-shell"),
+        name: getPictoName("auto-shell"),
         status: {
             health: 2666
         },
-        description: "Apply Shell for 3 turns on battle start.",
+        description: getPictoDescription("auto-shell"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Auto Rush",
+        id: "auto-rush",
+        imageId: getPictoEnglishName("auto-rush"),
+        name: getPictoName("auto-rush"),
         status: {
             speed: 399,
             criticalRate: 11
         },
-        description: "Apply Rush for 3 turns on battle start.",
+        description: getPictoDescription("auto-rush"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Auto Regen",
+        id: "auto-regen",
+        imageId: getPictoEnglishName("auto-regen"),
+        name: getPictoName("auto-regen"),
         status: {
             defense: 1294
         },
-        description: "Apply Regen for 3 turns on battle start.",
+        description: getPictoDescription("auto-regen"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Anti-Burn",
+        id: "anti-burn",
+        imageId: getPictoEnglishName("anti-burn"),
+        name: getPictoName("anti-burn"),
         status: {
             health: 1333,
             defense: 647
         },
-        description: "Immune to Burn.",
+        description: getPictoDescription("anti-burn"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Anti-Freeze",
+        id: "anti-freeze",
+        imageId: getPictoEnglishName("anti-freeze"),
+        name: getPictoName("anti-freeze"),
         status: {
             health: 1333,
             defense: 647
         },
-        description: "Immune to Freeze.",
+        description: getPictoDescription("anti-freeze"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Anti-Stun",
+        id: "anti-stun",
+        imageId: getPictoEnglishName("anti-stun"),
+        name: getPictoName("anti-stun"),
         status: {
             health: 1333,
             defense: 647
         },
-        description: "Immune to Stun.",
+        description: getPictoDescription("anti-stun"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Anti Inverted",
+        id: "anti-inverted",
+        imageId: getPictoEnglishName("anti-inverted"),
+        name: getPictoName("anti-inverted"),
         status: {},
-        description: "Can't be Inverted.",
+        description: getPictoDescription("anti-inverted"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Anti Curse",
+        id: "anti-curse",
+        imageId: getPictoEnglishName("anti-curse"),
+        name: getPictoName("anti-curse"),
         status: {},
-        description: "Can't be Cursed.",
+        description: getPictoDescription("anti-curse"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Anti Bound",
+        id: "anti-bound",
+        imageId: getPictoEnglishName("anti-bound"),
+        name: getPictoName("anti-bound"),
         status: {},
-        description: "Can't be Bound.",
+        description: getPictoDescription("anti-bound"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Anti Dizzy",
+        id: "anti-dizzy",
+        imageId: getPictoEnglishName("anti-dizzy"),
+        name: getPictoName("anti-dizzy"),
         status: {},
-        description: "Can't be Dizzied.",
+        description: getPictoDescription("anti-dizzy"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Physical Coat",
+        id: "physical-coat",
+        imageId: getPictoEnglishName("physical-coat"),
+        name: getPictoName("physical-coat"),
         status: {},
-        description: "Resist to Physical damage.",
+        description: getPictoDescription("physical-coat"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Fire Coat",
+        id: "fire-coat",
+        imageId: getPictoEnglishName("fire-coat"),
+        name: getPictoName("fire-coat"),
         status: {},
-        description: "Resist to Fire damage.",
+        description: getPictoDescription("fire-coat"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Ice Coat",
+        id: "ice-coat",
+        imageId: getPictoEnglishName("ice-coat"),
+        name: getPictoName("ice-coat"),
         status: {},
-        description: "Resist to Ice damage.",
+        description: getPictoDescription("ice-coat"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Thunder Coat",
+        id: "thunder-coat",
+        imageId: getPictoEnglishName("thunder-coat"),
+        name: getPictoName("thunder-coat"),
         status: {},
-        description: "Resist to Lightning damage.",
+        description: getPictoDescription("thunder-coat"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Earth Coat",
+        id: "earth-coat",
+        imageId: getPictoEnglishName("earth-coat"),
+        name: getPictoName("earth-coat"),
         status: {},
-        description: "Resist to Earth damage.",
+        description: getPictoDescription("earth-coat"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Light Coat",
+        id: "light-coat",
+        imageId: getPictoEnglishName("light-coat"),
+        name: getPictoName("light-coat"),
         status: {},
-        description: "Resist to Light damage.",
+        description: getPictoDescription("light-coat"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Dark Coat",
+        id: "dark-coat",
+        imageId: getPictoEnglishName("dark-coat"),
+        name: getPictoName("dark-coat"),
         status: {},
-        description: "Resist to Dark damage.",
+        description: getPictoDescription("dark-coat"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Back At You",
+        id: "back-at-you",
+        imageId: getPictoEnglishName("back-at-you"),
+        name: getPictoName("back-at-you"),
         status: {},
-        description: "50% increased Counter Attack damage.",
+        description: getPictoDescription("back-at-you"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Dodger",
+        id: "dodger",
+        imageId: getPictoEnglishName("dodger"),
+        name: getPictoName("dodger"),
         status: {
             speed: 420,
             criticalRate: 12
         },
-        description: "Gain 1 AP on Perfect Dodge. Once per turn.",
+        description: getPictoDescription("dodger"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Start I",
+        id: "energising-start-i",
+        imageId: getPictoEnglishName("energising-start-i"),
+        name: getPictoName("energising-start-i"),
         status: {
             health: 2666
         },
-        description: "+1 AP on battle start.",
+        description: getPictoDescription("energising-start-i"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Start II",
+        id: "energising-start-ii",
+        imageId: getPictoEnglishName("energising-start-ii"),
+        name: getPictoName("energising-start-ii"),
         status: {
             health: 2666
         },
-        description: "+1 AP on battle start.",
+        description: getPictoDescription("energising-start-ii"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Start III",
+        id: "energising-start-iii",
+        imageId: getPictoEnglishName("energising-start-iii"),
+        name: getPictoName("energising-start-iii"),
         status: {
             health: 2666
         },
-        description: "+1 AP on battle start.",
+        description: getPictoDescription("energising-start-iii"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Start IV",
+        id: "energising-start-iv",
+        imageId: getPictoEnglishName("energising-start-iv"),
+        name: getPictoName("energising-start-iv"),
         status: {
             health: 2666
         },
-        description: "+1 AP on battle start.",
+        description: getPictoDescription("energising-start-iv"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Perilous Parry",
+        id: "perilous-parry",
+        imageId: getPictoEnglishName("perilous-parry"),
+        name: getPictoName("perilous-parry"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "+1 AP on Parry, but damage received is doubled.",
+        description: getPictoDescription("perilous-parry"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Confident",
+        id: "confident",
+        imageId: getPictoEnglishName("confident"),
+        name: getPictoName("confident"),
         status: {
             speed: 266,
             criticalRate: 22
         },
-        description: "Take 50% less damage, but can't be Healed.",
+        description: getPictoDescription("confident"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Bloody Bullet",
+        id: "bloody-bullet",
+        imageId: getPictoEnglishName("bloody-bullet"),
+        name: getPictoName("bloody-bullet"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "+1 AP on Weak Point hit.",
+        description: getPictoDescription("bloody-bullet"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Revive",
+        id: "energising-revive",
+        imageId: getPictoEnglishName("energising-revive"),
+        name: getPictoName("energising-revive"),
         status: {
             health: 1403,
             defense: 681
         },
-        description: "+3 AP to all allies when revived.",
+        description: getPictoDescription("energising-revive"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Rejuvenating Revive",
+        id: "rejuvenating-revive",
+        imageId: getPictoEnglishName("rejuvenating-revive"),
+        name: getPictoName("rejuvenating-revive"),
         status: {
             health: 1403,
             defense: 681
         },
-        description: "Apply Regen for 3 turns when revived.",
+        description: getPictoDescription("rejuvenating-revive"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Revive With Shell",
+        id: "revive-with-shell",
+        imageId: getPictoEnglishName("revive-with-shell"),
+        name: getPictoName("revive-with-shell"),
         status: {},
-        description: "Apply Shell for 3 turns on revive.",
+        description: getPictoDescription("revive-with-shell"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Solidifying",
+        id: "solidifying",
+        imageId: getPictoEnglishName("solidifying"),
+        name: getPictoName("solidifying"),
         status: {
             defense: 647,
             speed: 266
         },
-        description: "+2 Shields when the character's Health falls below 50%. Once per battle.",
+        description: getPictoDescription("solidifying"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Powerful Revive",
+        id: "powerful-revive",
+        imageId: getPictoEnglishName("powerful-revive"),
+        name: getPictoName("powerful-revive"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "Apply Powerful for 3 turns when revived.",
+        description: getPictoDescription("powerful-revive"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Revive With Rush",
+        id: "revive-with-rush",
+        imageId: getPictoEnglishName("revive-with-rush"),
+        name: getPictoName("revive-with-rush"),
         status: {},
-        description: "Apply Rush for 3 turns on revive.",
+        description: getPictoDescription("revive-with-rush"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "The One",
+        id: "the-one",
+        imageId: getPictoEnglishName("the-one"),
+        name: getPictoName("the-one"),
         status: {
             criticalRate: 69
         },
-        description: "Max Health is reduced to 1.",
+        description: getPictoDescription("the-one"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Dead Energy II",
+        id: "dead-energy-ii",
+        imageId: getPictoEnglishName("dead-energy-ii"),
+        name: getPictoName("dead-energy-ii"),
         status: {
             speed: 140,
             criticalRate: 35
         },
-        description: "+3 AP on killing an enemy.",
+        description: getPictoDescription("dead-energy-ii"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Frozen Shot",
+        id: "frozen-shot",
+        imageId: getPictoEnglishName("frozen-shot"),
+        name: getPictoName("frozen-shot"),
         status: {},
-        description: "Free Aim shots can Freeze.",
+        description: getPictoDescription("frozen-shot"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Piercing Shot",
+        id: "piercing-shot",
+        imageId: getPictoEnglishName("piercing-shot"),
+        name: getPictoName("piercing-shot"),
         status: {
             health: 1403,
             criticalRate: 23
         },
-        description: "25% increased Free Aim damage. Free Aim shots ignore Shields.",
+        description: getPictoDescription("piercing-shot"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Burning Dodge",
+        id: "burning-dodge",
+        imageId: getPictoEnglishName("burning-dodge"),
+        name: getPictoName("burning-dodge"),
         status: {},
-        description: "Successful Dodges can Burn the attacker.",
+        description: getPictoDescription("burning-dodge"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Defense Breaker Dodge",
+        id: "defense-breaker-dodge",
+        imageId: getPictoEnglishName("defense-breaker-dodge"),
+        name: getPictoName("defense-breaker-dodge"),
         status: {},
-        description: "Successful Dodges can apply Defenseless to the attacker.",
+        description: getPictoDescription("defense-breaker-dodge"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Defense Riser Dodge",
+        id: "defense-riser-dodge",
+        imageId: getPictoEnglishName("defense-riser-dodge"),
+        name: getPictoName("defense-riser-dodge"),
         status: {},
-        description: "Successfully Dodging can apply Shell.",
+        description: getPictoDescription("defense-riser-dodge"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Hazardous Choice",
+        id: "hazardous-choice",
+        imageId: getPictoEnglishName("hazardous-choice"),
+        name: getPictoName("hazardous-choice"),
         status: {},
-        description: "33% chance to skip own turn, but deal 50% more damage.",
+        description: getPictoDescription("hazardous-choice"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Healing Death",
+        id: "healing-death",
+        imageId: getPictoEnglishName("healing-death"),
+        name: getPictoName("healing-death"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "On death, the rest of the Expedition recover all Health.",
+        description: getPictoDescription("healing-death"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Auto Death",
+        id: "auto-death",
+        imageId: getPictoEnglishName("auto-death"),
+        name: getPictoName("auto-death"),
         status: {
             criticalRate: 60
         },
-        description: "Kill self on battle start.",
+        description: getPictoDescription("auto-death"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Auto Curse",
+        id: "auto-curse",
+        imageId: getPictoEnglishName("auto-curse"),
+        name: getPictoName("auto-curse"),
         status: {
             speed: 140,
             criticalRate: 35
         },
-        description: "Self apply Curse on battle start.",
+        description: getPictoDescription("auto-curse"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Death Bomb",
+        id: "death-bomb",
+        imageId: getPictoEnglishName("death-bomb"),
+        name: getPictoName("death-bomb"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "On Death, deal damage to all enemies.",
+        description: getPictoDescription("death-bomb"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Energising Death",
+        id: "energising-death",
+        imageId: getPictoEnglishName("energising-death"),
+        name: getPictoName("energising-death"),
         status: {
             defense: 681,
             speed: 280
         },
-        description: "On death, +4 AP to allies.",
+        description: getPictoDescription("energising-death"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Shielding Death",
+        id: "shielding-death",
+        imageId: getPictoEnglishName("shielding-death"),
+        name: getPictoName("shielding-death"),
         status: {
             defense: 647,
             speed: 133
         },
-        description: "On death, allies gain 3 Shield points.",
+        description: getPictoDescription("shielding-death"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Protecting Death",
+        id: "protecting-death",
+        imageId: getPictoEnglishName("protecting-death"),
+        name: getPictoName("protecting-death"),
         status: {
             health: 1333,
             speed: 266
         },
-        description: "On death, allies gain Shell.",
+        description: getPictoDescription("protecting-death"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Empowering Death",
+        id: "empowering-death",
+        imageId: getPictoEnglishName("empowering-death"),
+        name: getPictoName("empowering-death"),
         status: {},
-        description: "On death, allies gain Powerful.",
+        description: getPictoDescription("empowering-death"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Burn Affinity",
+        id: "burn-affinity",
+        imageId: getPictoEnglishName("burn-affinity"),
+        name: getPictoName("burn-affinity"),
         status: {
             speed: 399,
             criticalRate: 11
         },
-        description: "25% increased damage on Burning targets.",
+        description: getPictoDescription("burn-affinity"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Frozen Affinity",
+        id: "frozen-affinity",
+        imageId: getPictoEnglishName("frozen-affinity"),
+        name: getPictoName("frozen-affinity"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "25% increased damage on Frozen targets.",
+        description: getPictoDescription("frozen-affinity"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Inverted Affinity",
+        id: "inverted-affinity",
+        imageId: getPictoEnglishName("inverted-affinity"),
+        name: getPictoName("inverted-affinity"),
         status: {
             health: 1403,
             criticalRate: 23
         },
-        description: "Apply Inverted on self for 3 turns on battle start. 50% increased damage while Inverted.",
+        description: getPictoDescription("inverted-affinity"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Exhausting Power",
+        id: "exhausting-power",
+        imageId: getPictoEnglishName("exhausting-power"),
+        name: getPictoName("exhausting-power"),
         status: {
             health: 1403,
             defense: 681
         },
-        description: "50% increased damage if Exhausted.",
+        description: getPictoDescription("exhausting-power"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Auto Burn",
+        id: "auto-burn",
+        imageId: getPictoEnglishName("auto-burn"),
+        name: getPictoName("auto-burn"),
         status: {
             speed: 560
         },
-        description: "Self apply Burn on battle start.",
+        description: getPictoDescription("auto-burn"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "At Death's Door",
+        id: "at-deaths-door",
+        imageId: getPictoEnglishName("at-deaths-door"),
+        name: getPictoName("at-deaths-door"),
         status: {
             defense: 681,
             criticalRate: 23
         },
-        description: "Deal 50% more damage if Health is below 10%.",
+        description: getPictoDescription("at-deaths-door"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Full Strength",
+        id: "full-strength",
+        imageId: getPictoEnglishName("full-strength"),
+        name: getPictoName("full-strength"),
         status: {
             health: 1333,
             defense: 647
         },
-        description: "25% increased damage on full Health.",
+        description: getPictoDescription("full-strength"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Painted Power",
+        id: "painted-power",
+        imageId: getPictoEnglishName("painted-power"),
+        name: getPictoName("painted-power"),
         status: {
             health: 2806
         },
-        description: "Damage can exceed 9,999.",
+        description: getPictoDescription("painted-power"),
         color: "yellow",
         luminaCost: 15
     },
     {
-        name: "SOS Shell",
+        id: "sos-shell",
+        imageId: getPictoEnglishName("sos-shell"),
+        name: getPictoName("sos-shell"),
         status: {
             defense: 681,
             speed: 280
         },
-        description: "Apply Shell when falling below 50% Health.",
+        description: getPictoDescription("sos-shell"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "SOS Power",
+        id: "sos-power",
+        imageId: getPictoEnglishName("sos-power"),
+        name: getPictoName("sos-power"),
         status: {
             speed: 280,
             criticalRate: 23
         },
-        description: "Apply Powerful when falling below 50% Health.",
+        description: getPictoDescription("sos-power"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Augmented Counter II",
+        id: "augmented-counter-ii",
+        imageId: getPictoEnglishName("augmented-counter-ii"),
+        name: getPictoName("augmented-counter-ii"),
         status: {
             defense: 647,
             criticalRate: 22
         },
-        description: "50% increased Counterattack damage.",
+        description: getPictoDescription("augmented-counter-ii"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Augmented Counter III",
+        id: "augmented-counter-iii",
+        imageId: getPictoEnglishName("augmented-counter-iii"),
+        name: getPictoName("augmented-counter-iii"),
         status: {
             defense: 647,
             criticalRate: 22
         },
-        description: "50% increased Counterattack damage.",
+        description: getPictoDescription("augmented-counter-iii"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Anti Exhaust",
+        id: "anti-exhaust",
+        imageId: getPictoEnglishName("anti-exhaust"),
+        name: getPictoName("anti-exhaust"),
         status: {},
-        description: "Immune to Exhaust.",
+        description: getPictoDescription("anti-exhaust"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "SOS Rush",
+        id: "sos-rush",
+        imageId: getPictoEnglishName("sos-rush"),
+        name: getPictoName("sos-rush"),
         status: {
             defense: 681,
             speed: 280
         },
-        description: "Apply Rush when falling below 50% Health.",
+        description: getPictoDescription("sos-rush"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Solidifying Meditation",
+        id: "solidifying-meditation",
+        imageId: getPictoEnglishName("solidifying-meditation"),
+        name: getPictoName("solidifying-meditation"),
         status: {
             health: 2105,
             defense: 341
         },
-        description: "+1 Shield when passing turn.",
+        description: getPictoDescription("solidifying-meditation"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Double Burn",
+        id: "double-burn",
+        imageId: getPictoEnglishName("double-burn"),
+        name: getPictoName("double-burn"),
         status: {
             speed: 399,
             criticalRate: 11
         },
-        description: "On applying a Burn stack, apply a second one.",
+        description: getPictoDescription("double-burn"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Healing Fire",
+        id: "healing-fire",
+        imageId: getPictoEnglishName("healing-fire"),
+        name: getPictoName("healing-fire"),
         status: {
             defense: 647,
             speed: 266
         },
-        description: "Recover 25% Health when attacking a Burning target. Once per turn.",
+        description: getPictoDescription("healing-fire"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Rewarding Mark",
+        id: "rewarding-mark",
+        imageId: getPictoEnglishName("rewarding-mark"),
+        name: getPictoName("rewarding-mark"),
         status: {
             defense: 1022,
             speed: 140
         },
-        description: "+2 AP on dealing damage to a Marked target. Once per turn.",
+        description: getPictoDescription("rewarding-mark"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Double Mark",
+        id: "double-mark",
+        imageId: getPictoEnglishName("double-mark"),
+        name: getPictoName("double-mark"),
         status: {
             speed: 532
         },
-        description: "Mark requires 1 more hit to be removed.",
+        description: getPictoDescription("double-mark"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Stun Boost",
+        id: "stun-boost",
+        imageId: getPictoEnglishName("stun-boost"),
+        name: getPictoName("stun-boost"),
         status: {
             speed: 479,
             criticalRate: 5
         },
-        description: "30% increased damage on Stunned targets.",
+        description: getPictoDescription("stun-boost"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Sniper",
+        id: "sniper",
+        imageId: getPictoEnglishName("sniper"),
+        name: getPictoName("sniper"),
         status: {
             speed: 420,
             criticalRate: 12
         },
-        description: "First Free Aim shot each turn deals 200% increased damage and can Break.",
+        description: getPictoDescription("sniper"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Energising Attack II",
+        id: "energising-attack-ii",
+        imageId: getPictoEnglishName("energising-attack-ii"),
+        name: getPictoName("energising-attack-ii"),
         status: {
             defense: 324,
             speed: 399
         },
-        description: "+1 AP on Base Attack.",
+        description: getPictoDescription("energising-attack-ii"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Cheater",
+        id: "cheater",
+        imageId: getPictoEnglishName("cheater"),
+        name: getPictoName("cheater"),
         status: {
             health: 842,
             speed: 280
         },
-        description: "Always play twice in a row.",
+        description: getPictoDescription("cheater"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Healing Counter",
+        id: "healing-counter",
+        imageId: getPictoEnglishName("healing-counter"),
+        name: getPictoName("healing-counter"),
         status: {
             health: 2666
         },
-        description: "Recover 25% Health on Counterattack.",
+        description: getPictoDescription("healing-counter"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Powerful Shield",
+        id: "powerful-shield",
+        imageId: getPictoEnglishName("powerful-shield"),
+        name: getPictoName("powerful-shield"),
         status: {
             speed: 420,
             criticalRate: 12
         },
-        description: "10% increased damage per Shield Point on self.",
+        description: getPictoDescription("powerful-shield"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Base Shield",
+        id: "base-shield",
+        imageId: getPictoEnglishName("base-shield"),
+        name: getPictoName("base-shield"),
         status: {
             speed: 378,
             criticalRate: 11
         },
-        description: "+1 Shield if not affected by any Shield on turn start.",
+        description: getPictoDescription("base-shield"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "In Medias Res",
+        id: "in-medias-res",
+        imageId: getPictoEnglishName("in-medias-res"),
+        name: getPictoName("in-medias-res"),
         status: {
             defense: 971,
             criticalRate: 11
         },
-        description: "+3 Shields on Battle Start, but max Health is halved.",
+        description: getPictoDescription("in-medias-res"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Shield Breaker",
+        id: "shield-breaker",
+        imageId: getPictoEnglishName("shield-breaker"),
+        name: getPictoName("shield-breaker"),
         status: {
             defense: 971,
             criticalRate: 11
         },
-        description: "All hits break 1 more Shield.",
+        description: getPictoDescription("shield-breaker"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Shield Affinity",
+        id: "shield-affinity",
+        imageId: getPictoEnglishName("shield-affinity"),
+        name: getPictoName("shield-affinity"),
         status: {
             speed: 266,
             criticalRate: 22
         },
-        description: "30% increased damage while having Shields, but receiving any damage always removes all Shields.",
+        description: getPictoDescription("shield-affinity"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Critical Moment",
+        id: "critical-moment",
+        imageId: getPictoEnglishName("critical-moment"),
+        name: getPictoName("critical-moment"),
         status: { speed: 280, criticalRate: 23 },
-        description: "50% increased Critical Chance if Health is below 30%.",
+        description: getPictoDescription("critical-moment"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Warming Up",
+        id: "warming-up",
+        imageId: getPictoEnglishName("warming-up"),
+        name: getPictoName("warming-up"),
         status: { health: 2000, criticalRate: 11 },
-        description: "5% increased damage per turn. Can stack up to 5 times.",
+        description: getPictoDescription("warming-up"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Glass Canon",
+        id: "glass-canon",
+        imageId: getPictoEnglishName("glass-canon"),
+        name: getPictoName("glass-canon"),
         status: { speed: 532 },
-        description: "Deal 25% more damage, but take 25% more damage.",
+        description: getPictoDescription("glass-canon"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Faster Than Strong",
+        id: "faster-than-strong",
+        imageId: getPictoEnglishName("faster-than-strong"),
+        name: getPictoName("faster-than-strong"),
         status: { health: 1333, defense: 647 },
-        description: "Always play twice in a row, but deal 50% less damage.",
+        description: getPictoDescription("faster-than-strong"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Shortcut",
+        id: "shortcut",
+        imageId: getPictoEnglishName("shortcut"),
+        name: getPictoName("shortcut"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Immediately play when falling below 30% Health. Once per battle.",
+        description: getPictoDescription("shortcut"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Defensive Mode",
+        id: "defensive-mode",
+        imageId: getPictoEnglishName("defensive-mode"),
+        name: getPictoName("defensive-mode"),
         status: { health: 1403, defense: 681 },
-        description: "On receiving damage, consume 1 AP to take 30% less damage, if possible.",
+        description: getPictoDescription("defensive-mode"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Greater Powerful",
+        id: "greater-powerful",
+        imageId: getPictoEnglishName("greater-powerful"),
+        name: getPictoName("greater-powerful"),
         status: { speed: 133, criticalRate: 33 },
-        description: "+15% to Powerful damage increase.",
+        description: getPictoDescription("greater-powerful"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Greater Shell",
+        id: "greater-shell",
+        imageId: getPictoEnglishName("greater-shell"),
+        name: getPictoName("greater-shell"),
         status: { health: 1333, defense: 647 },
-        description: "+10% to Shell damage reduction.",
+        description: getPictoDescription("greater-shell"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Revive Paradox",
+        id: "revive-paradox",
+        imageId: getPictoEnglishName("revive-paradox"),
+        name: getPictoName("revive-paradox"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Play immediately when revived.",
+        description: getPictoDescription("revive-paradox"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Greater Rush",
+        id: "greater-rush",
+        imageId: getPictoEnglishName("greater-rush"),
+        name: getPictoName("greater-rush"),
         status: { speed: 399, criticalRate: 11 },
-        description: "+25% to Rush Speed increase.",
+        description: getPictoDescription("greater-rush"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Last Stand Critical",
+        id: "last-stand-critical",
+        imageId: getPictoEnglishName("last-stand-critical"),
+        name: getPictoName("last-stand-critical"),
         status: { health: 1403, defense: 681 },
-        description: "100% Critical Chance while fighting alone.",
+        description: getPictoDescription("last-stand-critical"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Effective Heal",
+        id: "effective-heal",
+        imageId: getPictoEnglishName("effective-heal"),
+        name: getPictoName("effective-heal"),
         status: { health: 632, defense: 920 },
-        description: "Double all Heals received.",
+        description: getPictoDescription("effective-heal"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Shared Care",
+        id: "shared-care",
+        imageId: getPictoEnglishName("shared-care"),
+        name: getPictoName("shared-care"),
         status: { health: 1333, defense: 647 },
-        description: "When Healing an ally, also Heal self for 50% of that value.",
+        description: getPictoDescription("shared-care"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Powerful Heal",
+        id: "powerful-heal",
+        imageId: getPictoEnglishName("powerful-heal"),
+        name: getPictoName("powerful-heal"),
         status: { health: 1403, speed: 280 },
-        description: "Healing an ally also applies Powerful for 1 turn.",
+        description: getPictoDescription("powerful-heal"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Accelerating Heal",
+        id: "accelerating-heal",
+        imageId: getPictoEnglishName("accelerating-heal"),
+        name: getPictoName("accelerating-heal"),
         status: { health: 1403, speed: 280 },
-        description: "Healing an ally also applies Rush for 1 turn.",
+        description: getPictoDescription("accelerating-heal"),
         color: "green",
         luminaCost: 15,
         effectTriggers: ["on-heal-ally"]
     },
     {
-        name: "Energising Heal",
+        id: "energising-heal",
+        imageId: getPictoEnglishName("energising-heal"),
+        name: getPictoName("energising-heal"),
         status: { health: 1333, speed: 266 },
-        description: "On Healing an ally, also give 2 AP.",
+        description: getPictoDescription("energising-heal"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Protecting Heal",
+        id: "protecting-heal",
+        imageId: getPictoEnglishName("protecting-heal"),
+        name: getPictoName("protecting-heal"),
         status: { health: 1403, speed: 280 },
-        description: "Healing an ally also applies Shell for 1 turn.",
+        description: getPictoDescription("protecting-heal"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Confident Fighter",
+        id: "confident-fighter",
+        imageId: getPictoEnglishName("confident-fighter"),
+        name: getPictoName("confident-fighter"),
         status: { health: 667, criticalRate: 33 },
-        description: "30% increased damage, but can't be Healed.",
+        description: getPictoDescription("confident-fighter"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Healing Share",
+        id: "healing-share",
+        imageId: getPictoEnglishName("healing-share"),
+        name: getPictoName("healing-share"),
         status: { health: 1403, criticalRate: 23 },
-        description: "Receive 15% of all Heals affecting other characters.",
+        description: getPictoDescription("healing-share"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Dead Energy I",
+        id: "dead-energy-i",
+        imageId: getPictoEnglishName("dead-energy-i"),
+        name: getPictoName("dead-energy-i"),
         status: { speed: 280, criticalRate: 23 },
-        description: "+3 AP on killing an enemy.",
+        description: getPictoDescription("dead-energy-i"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Effective Support",
+        id: "effective-support",
+        imageId: getPictoEnglishName("effective-support"),
+        name: getPictoName("effective-support"),
         status: { health: 1403, speed: 280 },
-        description: "+2 AP on using an item.",
+        description: getPictoDescription("effective-support"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Weakness Gain",
+        id: "weakness-gain",
+        imageId: getPictoEnglishName("weakness-gain"),
+        name: getPictoName("weakness-gain"),
         status: { speed: 280, criticalRate: 23 },
-        description: "+1 AP on hitting an enemy's Weakness. Once per turn.",
+        description: getPictoDescription("weakness-gain"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Patient Fighter",
+        id: "patient-fighter",
+        imageId: getPictoEnglishName("patient-fighter"),
+        name: getPictoName("patient-fighter"),
         status: {},
-        description: "+2 AP on skipping a turn.",
+        description: getPictoDescription("patient-fighter"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energetic Healer",
+        id: "energetic-healer",
+        imageId: getPictoEnglishName("energetic-healer"),
+        name: getPictoName("energetic-healer"),
         status: { defense: 647, speed: 266 },
-        description: "+2 AP on Healing an ally. Once per turn.",
+        description: getPictoDescription("energetic-healer"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Beneficial Contamination",
+        id: "beneficial-contamination",
+        imageId: getPictoEnglishName("beneficial-contamination"),
+        name: getPictoName("beneficial-contamination"),
         status: { defense: 647, speed: 266 },
-        description: "+2 AP on applying a Status Effect. Once per turn.",
+        description: getPictoDescription("beneficial-contamination"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Perfect Reward",
+        id: "perfect-reward",
+        imageId: getPictoEnglishName("perfect-reward"),
+        name: getPictoName("perfect-reward"),
         status: {},
-        description: "Perfect Rythms give 1 AP.",
+        description: getPictoDescription("perfect-reward"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Roulette",
+        id: "roulette",
+        imageId: getPictoEnglishName("roulette"),
+        name: getPictoName("roulette"),
         status: { defense: 681, criticalRate: 23 },
-        description: "Every hit has a 50% chance to deal either 50% or 200% of its damage.",
+        description: getPictoDescription("roulette"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Soul Eater",
+        id: "soul-eater",
+        imageId: getPictoEnglishName("soul-eater"),
+        name: getPictoName("soul-eater"),
         status: { criticalRate: 46 },
-        description: "Deal 30% more damage, but lose 20% Health per turn.",
+        description: getPictoDescription("soul-eater"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Painter",
+        id: "painter",
+        imageId: getPictoEnglishName("painter"),
+        name: getPictoName("painter"),
         status: { speed: 266, criticalRate: 22 },
-        description: "Convert all Physical damage to Void damage.",
+        description: getPictoDescription("painter"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Immaculate",
+        id: "immaculate",
+        imageId: getPictoEnglishName("immaculate"),
+        name: getPictoName("immaculate"),
         status: { speed: 266, criticalRate: 22 },
-        description: "30% increased damage until a hit is received.",
+        description: getPictoDescription("immaculate"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Tainted",
+        id: "tainted",
+        imageId: getPictoEnglishName("tainted"),
+        name: getPictoName("tainted"),
         status: { defense: 1022, criticalRate: 12 },
-        description: "15% increased damage for each Status Effect on self.",
+        description: getPictoDescription("tainted"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "First Offensive",
+        id: "first-offensive",
+        imageId: getPictoEnglishName("first-offensive"),
+        name: getPictoName("first-offensive"),
         status: { speed: 266, criticalRate: 22 },
-        description: "First hit dealt and taken deals 50% more damage.",
+        description: getPictoDescription("first-offensive"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Cursed Power",
+        id: "cursed-power",
+        imageId: getPictoEnglishName("cursed-power"),
+        name: getPictoName("cursed-power"),
         status: { health: 702, speed: 280, criticalRate: 12 },
-        description: "30% increased damage while Cursed.",
+        description: getPictoDescription("cursed-power"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Pro Retreat",
+        id: "pro-retreat",
+        imageId: getPictoEnglishName("pro-retreat"),
+        name: getPictoName("pro-retreat"),
         status: { health: 1123, speed: 224 },
-        description: "Allows Flee to be instantaneous.",
+        description: getPictoDescription("pro-retreat"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Enfeebling Mark",
+        id: "enfeebling-mark",
+        imageId: getPictoEnglishName("enfeebling-mark"),
+        name: getPictoName("enfeebling-mark"),
         status: { defense: 971, speed: 133 },
-        description: "Marked targets deal 30% less damage.",
+        description: getPictoDescription("enfeebling-mark"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Burning Mark",
+        id: "burning-mark",
+        imageId: getPictoEnglishName("burning-mark"),
+        name: getPictoName("burning-mark"),
         status: { health: 667, defense: 971 },
-        description: "Apply Burn on hitting a Marked enemy.",
+        description: getPictoDescription("burning-mark"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Powerful Mark",
+        id: "powerful-mark",
+        imageId: getPictoEnglishName("powerful-mark"),
+        name: getPictoName("powerful-mark"),
         status: { speed: 399, criticalRate: 11 },
-        description: "Gain Powerful on hitting a Marked enemy.",
+        description: getPictoDescription("powerful-mark"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Healing Mark",
+        id: "healing-mark",
+        imageId: getPictoEnglishName("healing-mark"),
+        name: getPictoName("healing-mark"),
         status: { defense: 1294 },
-        description: "Recover 25% Health on hitting a Marked enemy. Once per turn.",
+        description: getPictoDescription("healing-mark"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Stay Marked",
+        id: "stay-marked",
+        imageId: getPictoEnglishName("stay-marked"),
+        name: getPictoName("stay-marked"),
         status: { speed: 346, criticalRate: 16 },
-        description: "50% chance to apply Mark when attacking a Marked target.",
+        description: getPictoDescription("stay-marked"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charybde To Scylla",
+        id: "charybde-to-scylla",
+        imageId: getPictoEnglishName("charybde-to-scylla"),
+        name: getPictoName("charybde-to-scylla"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Apply Mark on Stun removed.",
+        description: getPictoDescription("charybde-to-scylla"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Burning Shots",
+        id: "burning-shots",
+        imageId: getPictoEnglishName("burning-shots"),
+        name: getPictoName("burning-shots"),
         status: { speed: 504, criticalRate: 5 },
-        description: "20% chance to Burn on Free Aim shot.",
+        description: getPictoDescription("burning-shots"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Free Aim Inverted Shot",
+        id: "free-aim-inverted-shot",
+        imageId: getPictoEnglishName("free-aim-inverted-shot"),
+        name: getPictoName("free-aim-inverted-shot"),
         status: { speed: 504, criticalRate: 5 },
-        description: "Free Aim shots can apply Inverted.",
+        description: getPictoDescription("free-aim-inverted-shot"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Marking Shots",
+        id: "marking-shots",
+        imageId: getPictoEnglishName("marking-shots"),
+        name: getPictoName("marking-shots"),
         status: { speed: 504, criticalRate: 5 },
-        description: "20% chance to apply Mark on Free Aim shot.",
+        description: getPictoDescription("marking-shots"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Powerful Shots",
+        id: "powerful-shots",
+        imageId: getPictoEnglishName("powerful-shots"),
+        name: getPictoName("powerful-shots"),
         status: { health: 2526, defense: 137 },
-        description: "20% chance to gain Powerful on Free Aim shot.",
+        description: getPictoDescription("powerful-shots"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Protecting Shots",
+        id: "protecting-shots",
+        imageId: getPictoEnglishName("protecting-shots"),
+        name: getPictoName("protecting-shots"),
         status: { health: 2526, defense: 137 },
-        description: "20% chance to gain Shell on Free Aim shot.",
+        description: getPictoDescription("protecting-shots"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Accelerating Shots",
+        id: "accelerating-shots",
+        imageId: getPictoEnglishName("accelerating-shots"),
+        name: getPictoName("accelerating-shots"),
         status: { health: 2526, defense: 137 },
-        description: "20% chance to gain Rush on Free Aim shot.",
+        description: getPictoDescription("accelerating-shots"),
         color: "green",
         luminaCost: 15,
         effectTriggers: ["on-free-aim"]
     },
     {
-        name: "Energising Shots",
+        id: "energising-shots",
+        imageId: getPictoEnglishName("energising-shots"),
+        name: getPictoName("energising-shots"),
         status: { speed: 399, criticalRate: 11 },
-        description: "20% chance to gain 1 AP on Free Aim shot.",
+        description: getPictoDescription("energising-shots"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Versatile",
+        id: "versatile",
+        imageId: getPictoEnglishName("versatile"),
+        name: getPictoName("versatile"),
         status: { speed: 420, criticalRate: 12 },
-        description: "After a Free Aim hit, Base Attack damage is increased by 50% for 1 turn.",
+        description: getPictoDescription("versatile"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Empowering Attack",
+        id: "empowering-attack",
+        imageId: getPictoEnglishName("empowering-attack"),
+        name: getPictoName("empowering-attack"),
         status: { speed: 399, criticalRate: 11 },
-        description: "Gain Powerful for 1 turn on Base Attack.",
+        description: getPictoDescription("empowering-attack"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Protecting Attack",
+        id: "protecting-attack",
+        imageId: getPictoEnglishName("protecting-attack"),
+        name: getPictoName("protecting-attack"),
         status: { health: 2000, defense: 324 },
-        description: "Gain Shell for 1 turn on Base Attack.",
+        description: getPictoDescription("protecting-attack"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Enfeebling Attack",
+        id: "enfeebling-attack",
+        imageId: getPictoEnglishName("enfeebling-attack"),
+        name: getPictoName("enfeebling-attack"),
         status: { health: 667, defense: 971 },
-        description: "Base Attack applies Powerless for 1 turn.",
+        description: getPictoDescription("enfeebling-attack"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Exposing Attack",
+        id: "exposing-attack",
+        imageId: getPictoEnglishName("exposing-attack"),
+        name: getPictoName("exposing-attack"),
         status: { speed: 399, criticalRate: 11 },
-        description: "Base Attack applies Defenseless for 1 turn.",
+        description: getPictoDescription("exposing-attack"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Empowering Parry",
+        id: "empowering-parry",
+        imageId: getPictoEnglishName("empowering-parry"),
+        name: getPictoName("empowering-parry"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Each successful Parry increases damage by 5% until end of the following turn. Taking any damage removes this buff.",
+        description: getPictoDescription("empowering-parry"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Accelerating Last Stand",
+        id: "accelerating-last-stand",
+        imageId: getPictoEnglishName("accelerating-last-stand"),
+        name: getPictoName("accelerating-last-stand"),
         status: { health: 1403, speed: 280 },
-        description: "Gain Rush if fighting alone.",
+        description: getPictoDescription("accelerating-last-stand"),
         color: "green",
         luminaCost: 15,
         effectTriggers: ["on-battle-start", "on-turn-start"]
     },
     {
-        name: "Empowering Last Stand",
+        id: "empowering-last-stand",
+        imageId: getPictoEnglishName("empowering-last-stand"),
+        name: getPictoName("empowering-last-stand"),
         status: { health: 1403, criticalRate: 23 },
-        description: "Gain Powerful if fighting alone.",
+        description: getPictoDescription("empowering-last-stand"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Protecting Last Stand",
+        id: "protecting-last-stand",
+        imageId: getPictoEnglishName("protecting-last-stand"),
+        name: getPictoName("protecting-last-stand"),
         status: { health: 1403, defense: 681 },
-        description: "Gain Shell if fighting alone.",
+        description: getPictoDescription("protecting-last-stand"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Pain",
+        id: "energising-pain",
+        imageId: getPictoEnglishName("energising-pain"),
+        name: getPictoName("energising-pain"),
         status: { health: 2000, defense: 324 },
-        description: "No longer gain AP on Parry. +1 AP on getting hit.",
+        description: getPictoDescription("energising-pain"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Jump",
+        id: "energising-jump",
+        imageId: getPictoEnglishName("energising-jump"),
+        name: getPictoName("energising-jump"),
         status: { health: 667, speed: 399 },
-        description: "+1 AP on Jump Counterattack.",
+        description: getPictoDescription("energising-jump"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Powered Attack",
+        id: "powered-attack",
+        imageId: getPictoEnglishName("powered-attack"),
+        name: getPictoName("powered-attack"),
         status: { speed: 399, criticalRate: 11 },
-        description: "On every damage dealt, try to consume 1 AP. If successful, increase damage by 20%.",
+        description: getPictoDescription("powered-attack"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Combo Attack II",
+        id: "combo-attack-ii",
+        imageId: getPictoEnglishName("combo-attack-ii"),
+        name: getPictoName("combo-attack-ii"),
         status: { speed: 399, criticalRate: 11 },
-        description: "Base Attack has 1 extra hit.",
+        description: getPictoDescription("combo-attack-ii"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Combo Attack III",
+        id: "combo-attack-iii",
+        imageId: getPictoEnglishName("combo-attack-iii"),
+        name: getPictoName("combo-attack-iii"),
         status: { speed: 399, criticalRate: 11 },
-        description: "Base Attack has 1 extra hit.",
+        description: getPictoDescription("combo-attack-iii"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Breaker",
+        id: "breaker",
+        imageId: getPictoEnglishName("breaker"),
+        name: getPictoName("breaker"),
         status: { speed: 280, criticalRate: 23 },
-        description: "25% increased Break damage.",
+        description: getPictoDescription("breaker"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Staggering Attack",
+        id: "staggering-attack",
+        imageId: getPictoEnglishName("staggering-attack"),
+        name: getPictoName("staggering-attack"),
         status: { speed: 420, criticalRate: 12 },
-        description: "50% increased Break damage on Base Attack.",
+        description: getPictoDescription("staggering-attack"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Energising Break",
+        id: "energising-break",
+        imageId: getPictoEnglishName("energising-break"),
+        name: getPictoName("energising-break"),
         status: { speed: 280, criticalRate: 23 },
-        description: "+3 AP on Breaking a target.",
+        description: getPictoDescription("energising-break"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Quick Break",
+        id: "quick-break",
+        imageId: getPictoEnglishName("quick-break"),
+        name: getPictoName("quick-break"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Play again on Breaking a target.",
+        description: getPictoDescription("quick-break"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Empowering Break",
+        id: "empowering-break",
+        imageId: getPictoEnglishName("empowering-break"),
+        name: getPictoName("empowering-break"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Gain Powerful on Breaking a target.",
+        description: getPictoDescription("empowering-break"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Breaking Shots",
+        id: "breaking-shots",
+        imageId: getPictoEnglishName("breaking-shots"),
+        name: getPictoName("breaking-shots"),
         status: { speed: 280, criticalRate: 23 },
-        description: "50% increased Break damage with Free Aim shots.",
+        description: getPictoDescription("breaking-shots"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Fueling Break",
+        id: "fueling-break",
+        imageId: getPictoEnglishName("fueling-break"),
+        name: getPictoName("fueling-break"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Breaking a target doubles its Burn amount.",
+        description: getPictoDescription("fueling-break"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Gradient Fighter",
+        id: "gradient-fighter",
+        imageId: getPictoEnglishName("gradient-fighter"),
+        name: getPictoName("gradient-fighter"),
         status: { speed: 280, criticalRate: 23 },
-        description: "25% increased damage with Gradient Attacks.",
+        description: getPictoDescription("gradient-fighter"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Gradient Recovery",
+        id: "gradient-recovery",
+        imageId: getPictoEnglishName("gradient-recovery"),
+        name: getPictoName("gradient-recovery"),
         status: { health: 1403, criticalRate: 23 },
-        description: "Recover 10% Health on using a Gradient Charge.",
+        description: getPictoDescription("gradient-recovery"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Energising Gradient",
+        id: "energising-gradient",
+        imageId: getPictoEnglishName("energising-gradient"),
+        name: getPictoName("energising-gradient"),
         status: { speed: 399, criticalRate: 11 },
-        description: "+1 AP per Gradient Charge consumed.",
+        description: getPictoDescription("energising-gradient"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Attack",
+        id: "charging-attack",
+        imageId: getPictoEnglishName("charging-attack"),
+        name: getPictoName("charging-attack"),
         status: { speed: 266, criticalRate: 22 },
-        description: "+15% of a Gradient Charge on Base Attack.",
+        description: getPictoDescription("charging-attack"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Gradient Breaker",
+        id: "gradient-breaker",
+        imageId: getPictoEnglishName("gradient-breaker"),
+        name: getPictoName("gradient-breaker"),
         status: { speed: 280, criticalRate: 23 },
-        description: "50% increased Break damage with Gradient Attacks.",
+        description: getPictoDescription("gradient-breaker"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Post Gradient",
+        id: "post-gradient",
+        imageId: getPictoEnglishName("post-gradient"),
+        name: getPictoName("post-gradient"),
         status: {},
-        description: "Play immediately after using a Gradient Attack.",
+        description: getPictoDescription("post-gradient"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Recovery",
+        id: "charging-recovery",
+        imageId: getPictoEnglishName("charging-recovery"),
+        name: getPictoName("charging-recovery"),
         status: { health: 1403, speed: 280 },
-        description: "50% increased Gradient Generation with Healing Skills.",
+        description: getPictoDescription("charging-recovery"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Counter",
+        id: "charging-counter",
+        imageId: getPictoEnglishName("charging-counter"),
+        name: getPictoName("charging-counter"),
         status: { health: 1333, defense: 647 },
-        description: "+10% of a Gradient Charge on Counterattack.",
+        description: getPictoDescription("charging-counter"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Weakness",
+        id: "charging-weakness",
+        imageId: getPictoEnglishName("charging-weakness"),
+        name: getPictoName("charging-weakness"),
         status: { speed: 280, criticalRate: 23 },
-        description: "+15% of a Gradient Charge on hitting a Weakness. Once per turn.",
+        description: getPictoDescription("charging-weakness"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Mark",
+        id: "charging-mark",
+        imageId: getPictoEnglishName("charging-mark"),
+        name: getPictoName("charging-mark"),
         status: { speed: 266, criticalRate: 22 },
-        description: "+20% of a Gradient Charge on hitting a Marked target. Once per turn.",
+        description: getPictoDescription("charging-mark"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Revive Tint Energy",
+        id: "revive-tint-energy",
+        imageId: getPictoEnglishName("revive-tint-energy"),
+        name: getPictoName("revive-tint-energy"),
         status: { health: 1333, defense: 647 },
-        description: "Revive Tints also give 3 AP.",
+        description: getPictoDescription("revive-tint-energy"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Healing Tint Energy",
+        id: "healing-tint-energy",
+        imageId: getPictoEnglishName("healing-tint-energy"),
+        name: getPictoName("healing-tint-energy"),
         status: { health: 1403, defense: 681 },
-        description: "Healing Tints also give 1 AP.",
+        description: getPictoDescription("healing-tint-energy"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Empowering Tint",
+        id: "empowering-tint",
+        imageId: getPictoEnglishName("empowering-tint"),
+        name: getPictoName("empowering-tint"),
         status: { health: 1403, speed: 280 },
-        description: "Healing Tints also apply Powerful.",
+        description: getPictoDescription("empowering-tint"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Protecting Tint",
+        id: "protecting-tint",
+        imageId: getPictoEnglishName("protecting-tint"),
+        name: getPictoName("protecting-tint"),
         status: { health: 1403, defense: 681 },
-        description: "Healing Tints also apply Shell.",
+        description: getPictoDescription("protecting-tint"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Shielding Tint",
+        id: "shielding-tint",
+        imageId: getPictoEnglishName("shielding-tint"),
+        name: getPictoName("shielding-tint"),
         status: { health: 1333, defense: 647 },
-        description: "Healing Tints also add 2 Shields.",
+        description: getPictoDescription("shielding-tint"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Accelerating Tint",
+        id: "accelerating-tint",
+        imageId: getPictoEnglishName("accelerating-tint"),
+        name: getPictoName("accelerating-tint"),
         status: { health: 1403, speed: 280 },
-        description: "Healing Tints also apply Rush.",
+        description: getPictoDescription("accelerating-tint"),
         color: "green",
         luminaCost: 15,
         effectTriggers: ["on-healing-tint"]
     },
     {
-        name: "Better Healing Tint",
+        id: "better-healing-tint",
+        imageId: getPictoEnglishName("better-healing-tint"),
+        name: getPictoName("better-healing-tint"),
         status: { health: 1333, defense: 647 },
-        description: "Healing Tints have double the Healing effect.",
+        description: getPictoDescription("better-healing-tint"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Cleansing Tint",
+        id: "cleansing-tint",
+        imageId: getPictoEnglishName("cleansing-tint"),
+        name: getPictoName("cleansing-tint"),
         status: { health: 1333, defense: 647 },
-        description: "Healing Tints also remove all Status Effects from the target.",
+        description: getPictoDescription("cleansing-tint"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Great Healing Tint",
+        id: "great-healing-tint",
+        imageId: getPictoEnglishName("great-healing-tint"),
+        name: getPictoName("great-healing-tint"),
         status: { health: 1333, defense: 647 },
-        description: "Healing Tints now affect the whole Expedition.",
+        description: getPictoDescription("great-healing-tint"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Great Energy Tint",
+        id: "great-energy-tint",
+        imageId: getPictoEnglishName("great-energy-tint"),
+        name: getPictoName("great-energy-tint"),
         status: { health: 1333, defense: 647 },
-        description: "Energy Tints now affect the whole Expedition.",
+        description: getPictoDescription("great-energy-tint"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Tint",
+        id: "charging-tint",
+        imageId: getPictoEnglishName("charging-tint"),
+        name: getPictoName("charging-tint"),
         status: { health: 1403, defense: 681 },
-        description: "+5% of a Gradient Charge on using an item.",
+        description: getPictoDescription("charging-tint"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Time Tint",
+        id: "time-tint",
+        imageId: getPictoEnglishName("time-tint"),
+        name: getPictoName("time-tint"),
         status: { health: 1333, defense: 647 },
-        description: "Energy Tints also apply Rush.",
+        description: getPictoDescription("time-tint"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Burn",
+        id: "energising-burn",
+        imageId: getPictoEnglishName("energising-burn"),
+        name: getPictoName("energising-burn"),
         status: { defense: 324, speed: 266 },
-        description: "+1 AP on applying Burn. Once per turn.",
+        description: getPictoDescription("energising-burn"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Breaking Burn",
+        id: "breaking-burn",
+        imageId: getPictoEnglishName("breaking-burn"),
+        name: getPictoName("breaking-burn"),
         status: { speed: 420, criticalRate: 12 },
-        description: "25% increased Break damage on Burning enemies.",
+        description: getPictoDescription("breaking-burn"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Critical Burn",
+        id: "critical-burn",
+        imageId: getPictoEnglishName("critical-burn"),
+        name: getPictoName("critical-burn"),
         status: { speed: 266, criticalRate: 22 },
-        description: "25% increased Critical Chance on Burning enemies.",
+        description: getPictoDescription("critical-burn"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Burning Death",
+        id: "burning-death",
+        imageId: getPictoEnglishName("burning-death"),
+        name: getPictoName("burning-death"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Apply 3 Burn to all enemies on Death.",
+        description: getPictoDescription("burning-death"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Longer Burn",
+        id: "longer-burn",
+        imageId: getPictoEnglishName("longer-burn"),
+        name: getPictoName("longer-burn"),
         status: { health: 1333, defense: 647 },
-        description: "Burn duration is increased by 2.",
+        description: getPictoDescription("longer-burn"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Critical Break",
+        id: "critical-break",
+        imageId: getPictoEnglishName("critical-break"),
+        name: getPictoName("critical-break"),
         status: { speed: 399, criticalRate: 11 },
-        description: "25% increased Break damage on Critical hits.",
+        description: getPictoDescription("critical-break"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Critical Weakness",
+        id: "critical-weakness",
+        imageId: getPictoEnglishName("critical-weakness"),
+        name: getPictoName("critical-weakness"),
         status: { speed: 399, criticalRate: 11 },
-        description: "25% increased Critical Chance on Weakness.",
+        description: getPictoDescription("critical-weakness"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Critical Stun",
+        id: "critical-stun",
+        imageId: getPictoEnglishName("critical-stun"),
+        name: getPictoName("critical-stun"),
         status: { health: 1403, speed: 280 },
-        description: "Increased critical hit chance against stunned enemies.",
+        description: getPictoDescription("critical-stun"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Critical Vulnerability",
+        id: "critical-vulnerability",
+        imageId: getPictoEnglishName("critical-vulnerability"),
+        name: getPictoName("critical-vulnerability"),
         status: { defense: 647, speed: 266 },
-        description: "25% increased Critical Chance on Defenceless enemies.",
+        description: getPictoDescription("critical-vulnerability"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Empowering Dodge",
+        id: "empowering-dodge",
+        imageId: getPictoEnglishName("empowering-dodge"),
+        name: getPictoName("empowering-dodge"),
         status: { speed: 280, criticalRate: 23 },
-        description: "5% increased damage for each consecutive successful Dodge. Can stack up to 10 times.",
+        description: getPictoDescription("empowering-dodge"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Marking Break",
+        id: "marking-break",
+        imageId: getPictoEnglishName("marking-break"),
+        name: getPictoName("marking-break"),
         status: { speed: 280, criticalRate: 23 },
-        description: "Apply Mark on Break.",
+        description: getPictoDescription("marking-break"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Slowing Break",
+        id: "slowing-break",
+        imageId: getPictoEnglishName("slowing-break"),
+        name: getPictoName("slowing-break"),
         status: { defense: 681, speed: 280 },
-        description: "Apply Slow on Break.",
+        description: getPictoDescription("slowing-break"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Longer Rush",
+        id: "longer-rush",
+        imageId: getPictoEnglishName("longer-rush"),
+        name: getPictoName("longer-rush"),
         status: { health: 1333, speed: 266 },
-        description: "On applying Rush, its duration is increased by 2.",
+        description: getPictoDescription("longer-rush"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Powerful On Shell",
+        id: "powerful-on-shell",
+        imageId: getPictoEnglishName("powerful-on-shell"),
+        name: getPictoName("powerful-on-shell"),
         status: { defense: 647, criticalRate: 22 },
-        description: "Apply Powerful on applying Shell.",
+        description: getPictoDescription("powerful-on-shell"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Rush On Powerful",
+        id: "rush-on-powerful",
+        imageId: getPictoEnglishName("rush-on-powerful"),
+        name: getPictoName("rush-on-powerful"),
         status: { speed: 266, criticalRate: 22 },
-        description: "Apply Rush on applying Powerful.",
+        description: getPictoDescription("rush-on-powerful"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Shell On Rush",
+        id: "shell-on-rush",
+        imageId: getPictoEnglishName("shell-on-rush"),
+        name: getPictoName("shell-on-rush"),
         status: { defense: 647, speed: 266 },
-        description: "Apply Shell on applying Rush.",
+        description: getPictoDescription("shell-on-rush"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Evasive Healer",
+        id: "evasive-healer",
+        imageId: getPictoEnglishName("evasive-healer"),
+        name: getPictoName("evasive-healer"),
         status: { health: 1333, defense: 647 },
-        description: "Heals provided are doubled until any damage is taken.",
+        description: getPictoDescription("evasive-healer"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Powerful",
+        id: "energising-powerful",
+        imageId: getPictoEnglishName("energising-powerful"),
+        name: getPictoName("energising-powerful"),
         status: { defense: 647, speed: 266 },
-        description: "Give 2 AP on applying Powerful.",
+        description: getPictoDescription("energising-powerful"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Shell",
+        id: "energising-shell",
+        imageId: getPictoEnglishName("energising-shell"),
+        name: getPictoName("energising-shell"),
         status: { defense: 647, speed: 266 },
-        description: "Give 2 AP on applying Shell.",
+        description: getPictoDescription("energising-shell"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Rush",
+        id: "energising-rush",
+        imageId: getPictoEnglishName("energising-rush"),
+        name: getPictoName("energising-rush"),
         status: { defense: 647, speed: 266 },
-        description: "Give 2 AP on applying Rush.",
+        description: getPictoDescription("energising-rush"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Healing Boon",
+        id: "healing-boon",
+        imageId: getPictoEnglishName("healing-boon"),
+        name: getPictoName("healing-boon"),
         status: { defense: 647, speed: 266 },
-        description: "Heal 15% HP on applying a buff.",
+        description: getPictoDescription("healing-boon"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Greater Powerless",
+        id: "greater-powerless",
+        imageId: getPictoEnglishName("greater-powerless"),
+        name: getPictoName("greater-powerless"),
         status: { defense: 647, speed: 266 },
-        description: "+15% to Powerless damage reduction.",
+        description: getPictoDescription("greater-powerless"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Greater Defenceless",
+        id: "greater-defenceless",
+        imageId: getPictoEnglishName("greater-defenceless"),
+        name: getPictoName("greater-defenceless"),
         status: { speed: 266, criticalRate: 22 },
-        description: "+15% to Defenceless damage amplification.",
+        description: getPictoDescription("greater-defenceless"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Greater Slow",
+        id: "greater-slow",
+        imageId: getPictoEnglishName("greater-slow"),
+        name: getPictoName("greater-slow"),
         status: { defense: 647, speed: 266 },
-        description: "+15% to Slow Speed reduction.",
+        description: getPictoDescription("greater-slow"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Energising Cleanse",
+        id: "energising-cleanse",
+        imageId: getPictoEnglishName("energising-cleanse"),
+        name: getPictoName("energising-cleanse"),
         status: { health: 2000, defense: 324 },
-        description: "Dispel the first negative Status Effect received and gain 2 AP.",
+        description: getPictoDescription("energising-cleanse"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Draining Cleanse",
+        id: "draining-cleanse",
+        imageId: getPictoEnglishName("draining-cleanse"),
+        name: getPictoName("draining-cleanse"),
         status: { health: 2000, defense: 324 },
-        description: "Consume 1 AP to prevent Status Effects application, if possible.",
+        description: getPictoDescription("draining-cleanse"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Anti-Blight",
+        id: "anti-blight",
+        imageId: getPictoEnglishName("anti-blight"),
+        name: getPictoName("anti-blight"),
         status: { health: 1333, defense: 647 },
-        description: "Immune to Blight.",
+        description: getPictoDescription("anti-blight"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Charging Critical",
+        id: "charging-critical",
+        imageId: getPictoEnglishName("charging-critical"),
+        name: getPictoName("charging-critical"),
         status: { defense: 647, criticalRate: 22 },
-        description: "+20% of a Gradient Charge on Critical Hit. Once per turn.",
+        description: getPictoDescription("charging-critical"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Burn",
+        id: "charging-burn",
+        imageId: getPictoEnglishName("charging-burn"),
+        name: getPictoName("charging-burn"),
         status: { health: 1333, speed: 266 },
-        description: "+20% of a Gradient Charge on applying Burn. Once per turn.",
+        description: getPictoDescription("charging-burn"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Stun",
+        id: "charging-stun",
+        imageId: getPictoEnglishName("charging-stun"),
+        name: getPictoName("charging-stun"),
         status: { health: 1403, speed: 280 },
-        description: "+5% of a Gradient Charge on hitting a Stunned enemy.",
+        description: getPictoDescription("charging-stun"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "Charging Alteration",
+        id: "charging-alteration",
+        imageId: getPictoEnglishName("charging-alteration"),
+        name: getPictoName("charging-alteration"),
         status: { defense: 681, speed: 280 },
-        description: "+10% of a Gradient Charge on applying a Buff. Once per turn.",
+        description: getPictoDescription("charging-alteration"),
         color: "green",
         luminaCost: 15
     },
     {
-        name: "The Best Defense",
+        id: "the-best-defense",
+        imageId: getPictoEnglishName("the-best-defense"),
+        name: getPictoName("the-best-defense"),
         status: { defense: 1294 },
-        description: "Deal 50% more damage, but can't Parry or Dodge.",
+        description: getPictoDescription("the-best-defense"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Passive Defense",
+        id: "passive-defense",
+        imageId: getPictoEnglishName("passive-defense"),
+        name: getPictoName("passive-defense"),
         status: { health: 1403, criticalRate: 23 },
-        description: "Reduce damage taken by 50%, but can't Parry or Dodge.",
+        description: getPictoDescription("passive-defense"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Successive Parry",
+        id: "successive-parry",
+        imageId: getPictoEnglishName("successive-parry"),
+        name: getPictoName("successive-parry"),
         status: { defense: 681, criticalRate: 23 },
-        description: "Can't Dodge. +5% increased damage per Parry until damage taken.",
+        description: getPictoDescription("successive-parry"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Breaking Attack",
+        id: "breaking-attack",
+        imageId: getPictoEnglishName("breaking-attack"),
+        name: getPictoName("breaking-attack"),
         status: { speed: 266, criticalRate: 22 },
-        description: "Base Attack can Break.",
+        description: getPictoDescription("breaking-attack"),
         color: "red",
         luminaCost: 15
     },
     {
-        name: "Anti-Charm",
+        id: "anti-charm",
+        imageId: getPictoEnglishName("anti-charm"),
+        name: getPictoName("anti-charm"),
         status: { health: 1333, defense: 647 },
-        description: "Immune to Charm.",
+        description: getPictoDescription("anti-charm"),
         color: "blue",
         luminaCost: 15
     },
     {
-        name: "Clea's Life",
+        id: "cleas-life",
+        imageId: getPictoEnglishName("cleas-life"),
+        name: getPictoName("cleas-life"),
         status: { health: 2526 },
-        description: "On turn start, if no damage taken since last turn, recover 100% Health.",
+        description: getPictoDescription("cleas-life"),
         color: "blue",
         luminaCost: 15
     }
