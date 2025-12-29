@@ -7,6 +7,29 @@ import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
 import { displayWeaponPlusDices, displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE } from "../utils/ElementUtils";
+import { getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
+
+// Helper to find the correct weapon ID considering character variations
+function getWeaponTranslationId(weaponName: string, weaponList: WeaponDTO[]): string {
+  const baseId = toKebabCase(weaponName);
+
+  // Try base ID first
+  if (hasWeapon(baseId)) {
+    return baseId;
+  }
+
+  // Try with character suffixes
+  const suffixes = ["-verso", "-lune", "-maelle", "-monoco", "-sciel"];
+  for (const suffix of suffixes) {
+    const idWithSuffix = baseId + suffix;
+    if (hasWeapon(idWithSuffix)) {
+      return idWithSuffix;
+    }
+  }
+
+  // Fallback to base ID
+  return baseId;
+}
 
 type SelectorWeapon = {
   id: string;
@@ -489,12 +512,18 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
               </div>
 
               <ul className="mt-4 w-full space-y-1 text-sm md:col-span-2">
-                {(activeWeapon.passives ?? []).map((p: any) => (
-                  <li key={p.level} className="flex w-full gap-2">
-                    <span className={`font-semibold ${levelColor(p.level)}`}>Level {p.level}</span>
-                    <span className="flex-1 opacity-90">: {p.effect}</span>
-                  </li>
-                ))}
+                {(activeWeapon.passives ?? []).map((p: any) => {
+                  const weaponId = getWeaponTranslationId(activeWeapon.name, weaponList);
+                  const translatedEffect = getWeaponPassive(weaponId, p.level);
+                  const effectText = translatedEffect || p.effect;
+
+                  return (
+                    <li key={p.level} className="flex w-full gap-2">
+                      <span className={`font-semibold ${levelColor(p.level)}`}>Level {p.level}</span>
+                      <span className="flex-1 opacity-90">: {effectText}</span>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}
@@ -630,12 +659,17 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                       </div>
 
                       <ul className="mt-4 w-full space-y-1 text-sm md:col-span-2">
-                        {(weaponDetails?.passives ?? []).map((p: any) => (
-                          <li key={p.level} className="flex w-full gap-2">
-                            <span className={`font-semibold ${levelColor(p.level)}`}>Level {p.level}</span>
-                            <span className="flex-1 opacity-90">: {p.effect}</span>
-                          </li>
-                        ))}
+                        {(weaponDetails?.passives ?? []).map((p: any) => {
+                          const weaponId = getWeaponTranslationId(weaponDetails.name, weaponList);
+                          const translatedEffect = getWeaponPassive(weaponId, p.level);
+                          const effectText = translatedEffect || p.effect;
+                          return (
+                            <li key={p.level} className="flex w-full gap-2">
+                              <span className={`font-semibold ${levelColor(p.level)}`}>Level {p.level}</span>
+                              <span className="flex-1 opacity-90">: {effectText}</span>
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                   </button>

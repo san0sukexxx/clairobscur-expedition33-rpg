@@ -900,5 +900,851 @@
       "name": "Vida de Cléa",
       "description": "No início do turno, se nenhum dano foi recebido desde o último turno, recupera 100% de Vida."
     }
+  },
+  "weapons": {
+    "abysseram": {
+      "name": "Abysseram",
+      "passives": {
+        "4": "50% de dano aumentado no Rank D. Nenhum aumento de dano em outros ranks.",
+        "10": "50% de dano aumentado no Ataque Base.",
+        "20": "No Rank D, recupera 20% de Vida com Ataque Base."
+      }
+    },
+    "baguette-verso": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Mata a si mesmo no início da batalha.",
+        "10": "Revive com 100% de Vida. Uma vez por batalha.",
+        "20": "Joga primeiro."
+      }
+    },
+    "blodam": {
+      "name": "Blodam",
+      "passives": {
+        "4": "Perfeição agora é baseada na Vida atual. Ganha 1 Rank a cada 20% de Vida faltante.",
+        "10": "20% de dano de Luz aumentado com Habilidades.",
+        "20": "+1 PA ao subir de Rank."
+      }
+    },
+    "chevalam": {
+      "name": "Chevalam",
+      "passives": {
+        "4": "Começa a batalha no Rank S, mas não pode ser Curado ou ganhar Escudos.",
+        "10": "20% de dano aumentado para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
+        "20": "Aplica Velocidade no Rank S."
+      }
+    },
+    "confuso": {
+      "name": "Confuso",
+      "passives": {
+        "4": "Dano de Luz pode Queimar em acertos Críticos.",
+        "10": "Aplica 3 Queimaduras ao invés de Marca.",
+        "20": "Aumenta o dano de Queimadura em 50% por Rank, até 300% no Rank S."
+      }
+    },
+    "contorso": {
+      "name": "Contorso",
+      "passives": {
+        "4": "Muda para Rank S ao Quebrar. Ataque Base pode Quebrar.",
+        "10": "100% de Chance Crítica no Rank S.",
+        "20": "Dispara um raio em acertos Críticos."
+      }
+    },
+    "corpeso": {
+      "name": "Corpeso",
+      "passives": {
+        "4": "Ataque Base aplica 2 acúmulos de Queimadura por Rank.",
+        "10": "+1 PA ao subir de Rank.",
+        "20": "Aumenta o dano de Queimadura em 50% por Rank, até 300% no Rank S."
+      }
+    },
+    "cruleram": {
+      "name": "Cruleram",
+      "passives": {
+        "4": "Não perde Rank ao receber dano de inimigos Impotentes.",
+        "10": "+1 Perfeição ao acertar um inimigo Impotente.",
+        "20": "Aplica Impotência no Contra-ataque."
+      }
+    },
+    "cultam": {
+      "name": "Cultam",
+      "passives": {
+        "4": "Sem perda de Perfeição ao receber dano. Perfeição é perdida ao ser Curado.",
+        "10": "Ganha 2 PA no Contra-ataque.",
+        "20": "Ganha 1 Rank no Contra-ataque."
+      }
+    },
+    "danseso": {
+      "name": "Danseso",
+      "passives": {
+        "4": "Ataque Base dá 1 Perfeição por Queimadura no alvo.",
+        "10": "Enquanto Poderoso, 20% de chance de Queimar ao acertar.",
+        "20": "+1 PA ao subir de Rank."
+      }
+    },
+    "delaram": {
+      "name": "Delaram",
+      "passives": {
+        "4": "Começa a batalha no Rank B, mas com 50% de Vida.",
+        "10": "Recupera 15% de Vida no Ataque Base.",
+        "20": "Aplica Poderoso no Rank B."
+      }
+    },
+    "demonam": {
+      "name": "Demonam",
+      "passives": {
+        "4": "Usar uma Habilidade de Luz aumenta o dano da próxima Habilidade Física em 50% e vice versa.",
+        "10": "20% de dano Físico aumentado com Habilidades.",
+        "20": "Causar dano de Luz com uma Habilidade recupera 3% de Vida."
+      }
+    },
+    "dreameso": {
+      "name": "Dreameso",
+      "passives": {
+        "4": "Ganha 1 Rank no Contra-ataque.",
+        "10": "50% de dano aumentado no Contra-ataque.",
+        "20": "Ganha 2 PA no Contra-ataque."
+      }
+    },
+    "dualiso": {
+      "name": "Dualiso",
+      "passives": {
+        "4": "Joga novamente após um Ataque Base.",
+        "10": "50% de dano aumentado no Ataque Base.",
+        "20": "Ataque Base dá 4 Perfeição."
+      }
+    },
+    "gaultaram": {
+      "name": "Gaultaram",
+      "passives": {
+        "4": "Ao ser atingido, perde 1 Perfeição ao invés de 1 Rank.",
+        "10": "Aplica Velocidade no Rank S.",
+        "20": "Ganha 2 Perfeição no início do turno."
+      }
+    },
+    "gesam": {
+      "name": "Gesam",
+      "passives": {
+        "4": "Converte dano de Luz das Habilidades em dano Físico.",
+        "10": "20% de dano Físico aumentado com Habilidades.",
+        "20": "-1 PA de custo para Habilidades Físicas."
+      }
+    },
+    "glaceso": {
+      "name": "Glaceso",
+      "passives": {
+        "4": "+1 Perfeição em acerto Crítico.",
+        "10": "Auto-cura de 2% de Vida ao dar um acerto Crítico.",
+        "20": "Contra-ataque é sempre um acerto Crítico."
+      }
+    },
+    "lanceram": {
+      "name": "Lanceram",
+      "passives": {
+        "4": "Rank não pode ser menor que C.",
+        "10": "Ataque Base dá 4 Perfeição.",
+        "20": "Aparar dá 2 Perfeição ao invés de 1."
+      }
+    },
+    "liteso": {
+      "name": "Liteso",
+      "passives": {
+        "4": "Ataque Base consome todos os Escudos para causar 100% de dano aumentado por Escudo.",
+        "10": "+1 Escudo no Contra-ataque.",
+        "20": "Ataque Base dá 4 Perfeição."
+      }
+    },
+    "noahram": {
+      "name": "Noahram",
+      "passives": {}
+    },
+    "nosaram": {
+      "name": "Nosaram",
+      "passives": {
+        "4": "Dobra a Perfeição ganha em tiros de Mira Livre.",
+        "10": "Tiros de Mira Livre quebram 2 Escudos.",
+        "20": "50% de dano aumentado em Mira Livre."
+      }
+    },
+    "sakaram": {
+      "name": "Sakaram",
+      "passives": {
+        "4": "Não pode perder Perfeição. Sem aumento de dano por Rank.",
+        "10": "50% de dano aumentado no Ataque Base.",
+        "20": "Ataque Base dá 4 Perfeição."
+      }
+    },
+    "seeram": {
+      "name": "Seeram",
+      "passives": {
+        "4": "+1 para todo ganho de Perfeição mas não pode alcançar Rank S.",
+        "10": "Ataque Base dá 4 Perfeição.",
+        "20": "20% de dano de Luz aumentado com Habilidades."
+      }
+    },
+    "simoso": {
+      "name": "Simoso",
+      "passives": {
+        "4": "Uma Espada etérea causa dano de Luz em qualquer dano causado com Habilidades.",
+        "10": "20% de chance de aplicar Queimadura ao causar dano de Luz.",
+        "20": "Não pode morrer se estiver pelo menos no Rank A."
+      }
+    },
+    "sireso": {
+      "name": "Sireso",
+      "passives": {
+        "4": "Dano bônus da Perfeição se aplica a todos os aliados pela metade. Dano bônus não se aplica mais a Verso.",
+        "10": "Perfeição ganha é aumentada em 1 enquanto Poderoso.",
+        "20": "Habilidades de Suporte custam 1 PA a menos."
+      }
+    },
+    "tireso": {
+      "name": "Tireso",
+      "passives": {
+        "4": "Ganha 1 Rank ao aplicar Marca.",
+        "10": "Marca um inimigo no Ataque Base.",
+        "20": "Aplica Impotência ao Marcar um inimigo."
+      }
+    },
+    "verleso": {
+      "name": "Verleso",
+      "passives": {}
+    },
+    "angerim": {
+      "name": "Angerim",
+      "passives": {
+        "4": "Ataque Base aplica 2 Queimaduras por Mancha de Fogo.",
+        "10": "Gera uma Mancha de Fogo no início de cada turno.",
+        "20": "30% de dano de Queimadura aumentado por Mancha de Fogo."
+      }
+    },
+    "baguette-lune": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Mata a si mesmo no início da batalha.",
+        "10": "Revive com 100% de Vida. Uma vez por batalha.",
+        "20": "Joga primeiro."
+      }
+    },
+    "benisim": {
+      "name": "Benisim",
+      "passives": {
+        "4": "Habilidades de Cura custam 1 PA a menos.",
+        "10": "Gera uma Mancha de Terra no início de cada turno.",
+        "20": "Joga novamente instantaneamente ao consumir Manchas com uma Habilidade de Cura."
+      }
+    },
+    "betelim": {
+      "name": "Betelim",
+      "passives": {
+        "4": "Usar uma Habilidade que consome Manchas aumenta o dano em 20%. Pode acumular até 5 vezes. Reseta ao usar uma Habilidade sem consumir Manchas.",
+        "10": "No início do turno, se não houver Manchas, 2 Manchas aleatórias são geradas.",
+        "20": "+1 PA quando Manchas são consumidas."
+      }
+    },
+    "braselim": {
+      "name": "Braselim",
+      "passives": {
+        "4": "30% de Chance Crítica aumentada por Mancha de Gelo.",
+        "10": "+5% de uma Carga de Gradiente em acerto Crítico.",
+        "20": "20% de dano de Fogo aumentado com Habilidades."
+      }
+    },
+    "chapelim": {
+      "name": "Chapelim",
+      "passives": {
+        "4": "30% de dano de Quebra aumentado por Mancha de Terra.",
+        "10": "Ganha 9 PA ao Quebrar um inimigo.",
+        "20": "Gera uma Mancha de Terra no início de cada turno."
+      }
+    },
+    "choralim": {
+      "name": "Choralim",
+      "passives": {
+        "4": "100% de Chance Crítica quando 4 Manchas estão simultaneamente ativas.",
+        "10": "20% de dano aumentado para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
+        "20": "Acertos Críticos aplicam Queimadura."
+      }
+    },
+    "colim": {
+      "name": "Colim",
+      "passives": {
+        "4": "50% de chance de gerar uma Mancha de Luz ao consumir Manchas.",
+        "10": "+1 PA ao consumir uma Mancha de Luz.",
+        "20": "20% de dano aumentado com Habilidades por Mancha de Luz ativa."
+      }
+    },
+    "coralim": {
+      "name": "Coralim",
+      "passives": {
+        "4": "Habilidades de Gelo custam 1 PA a menos.",
+        "10": "20% de dano de Gelo aumentado com Habilidades.",
+        "20": "Começa a batalha com 1 Mancha de Terra."
+      }
+    },
+    "deminerim": {
+      "name": "Deminerim",
+      "passives": {
+        "4": "Habilidades de Raio custam 1 PA a menos.",
+        "10": "20% de dano de Raio aumentado com Habilidades.",
+        "20": "Começa a batalha com 1 Mancha de Fogo."
+      }
+    },
+    "elerim": {
+      "name": "Elerim",
+      "passives": {
+        "4": "Consumir uma Mancha de Terra aplica 1 Escudo a si mesmo.",
+        "10": "20% de dano de Terra aumentado com Habilidades.",
+        "20": "Ataque Base gera uma Mancha de Terra."
+      }
+    },
+    "kralim": {
+      "name": "Kralim",
+      "passives": {
+        "4": "Usar uma Habilidade aumenta o dano de Habilidade de todos os outros elementos em 20%. Reseta ao usar uma Habilidade de um elemento anterior.",
+        "10": "No início do turno, se não houver Manchas, 2 Manchas aleatórias são geradas.",
+        "20": "+1 PA quando Manchas são consumidas."
+      }
+    },
+    "lighterim": {
+      "name": "Lighterim",
+      "passives": {
+        "4": "Habilidades de Fogo custam 1 PA a menos.",
+        "10": "20% de dano de Fogo aumentado com Habilidades.",
+        "20": "Começa a batalha com 1 Mancha de Gelo."
+      }
+    },
+    "lithelim": {
+      "name": "Lithelim",
+      "passives": {
+        "4": "50% de chance de gerar uma Mancha Sombria ou de Luz ao consumir Manchas. Causa 50% mais dano com Habilidades por Mancha Sombria ativa.",
+        "10": "+1 PA ao consumir uma Mancha de Luz.",
+        "20": "Ataques Base podem consumir uma Mancha Sombria para causar 200% mais dano."
+      }
+    },
+    "lunerim": {
+      "name": "Lunerim",
+      "passives": {}
+    },
+    "painerim": {
+      "name": "Painerim",
+      "passives": {
+        "4": "Habilidades de Terra custam 1 PA a menos.",
+        "10": "20% de dano de Terra aumentado com Habilidades.",
+        "20": "Começa a batalha com 1 Mancha de Raio."
+      }
+    },
+    "potierim": {
+      "name": "Potierim",
+      "passives": {
+        "4": "Habilidades de Cura geram uma Mancha de Luz adicional.",
+        "10": "Consumir uma Mancha de Luz aplica Lentidão a um inimigo aleatório.",
+        "20": "Ataque Base gera uma Mancha de Luz."
+      }
+    },
+    "redalim": {
+      "name": "Redalim",
+      "passives": {
+        "4": "Habilidades de Cura geram uma Mancha de Luz adicional.",
+        "10": "Gera uma Mancha de Gelo no início de cada turno.",
+        "20": "Joga novamente instantaneamente ao consumir Manchas com uma Habilidade de Cura."
+      }
+    },
+    "saperim": {
+      "name": "Saperim",
+      "passives": {
+        "4": "Usar um Ataque de Gradiente gera 1 Mancha de Luz adicional.",
+        "10": "Quando uma Mancha de Fogo é gerada, uma Mancha de Raio também é gerada. Uma vez por turno.",
+        "20": "Ataques de Gradiente e Contra-ataques de Gradiente causam 50% mais dano."
+      }
+    },
+    "scaverim": {
+      "name": "Scaverim",
+      "passives": {
+        "4": "50% de chance de gerar uma Mancha Sombria ao consumir Manchas. Causa 50% mais dano com Habilidades por Mancha Sombria ativa.",
+        "10": "Ataques Base podem consumir uma Mancha Sombria para causar 200% mais dano.",
+        "20": "Com 4 Manchas Sombrias ativas, qualquer Habilidade pode consumi-las para causar 300% mais dano."
+      }
+    },
+    "snowim": {
+      "name": "Snowim",
+      "passives": {
+        "4": "Congela a si mesmo ao cair abaixo de 30% de vida. Previne a próxima instância de dano enquanto Congelado.",
+        "10": "No início do turno, se Congelado, remove Congelamento e recupera 60% de Vida.",
+        "20": "Ganha 2 Manchas de Gelo e 3 PA quando Congelado."
+      }
+    },
+    "trebuchim": {
+      "name": "Trebuchim",
+      "passives": {
+        "4": "Gera uma Mancha aleatória em tiro de Mira Livre.",
+        "10": "+1 PA quando Manchas são consumidas.",
+        "20": "Ataque Base gera 2 Manchas aleatórias."
+      }
+    },
+    "troubadim": {
+      "name": "Troubadim",
+      "passives": {
+        "4": "Tiros de Mira Livre causam dano a um alvo aleatório adicional.",
+        "10": "50% de dano aumentado em Mira Livre.",
+        "20": "Gera uma Mancha aleatória em tiro de Mira Livre."
+      }
+    },
+    "baguette-maelle": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Mata a si mesmo no início da batalha.",
+        "10": "Revive com 100% de Vida. Uma vez por batalha.",
+        "20": "Joga primeiro."
+      }
+    },
+    "barrier-breaker": {
+      "name": "Quebra-Barreiras",
+      "passives": {
+        "4": "Rouba Escudos removidos ao acertar inimigos.",
+        "10": "Muda para Postura Virtuosa ao quebrar qualquer Escudo.",
+        "20": "Acertar um inimigo Marcado quebra todos os seus Escudos."
+      }
+    },
+    "battlum": {
+      "name": "Battlum",
+      "passives": {
+        "4": "Dobra a geração de Gradiente enquanto em Postura Defensiva.",
+        "10": "Se Sem Postura, Ataque Base muda para Postura Defensiva.",
+        "20": "+5% de uma Carga de Gradiente ao Aparar."
+      }
+    },
+    "brulerum": {
+      "name": "Brulerum",
+      "passives": {
+        "4": "Acertos Críticos aplicam Queimadura.",
+        "10": "Ataque Base aplica 2 Queimaduras.",
+        "20": "100% de Chance Crítica enquanto Sem Postura."
+      }
+    },
+    "chalium": {
+      "name": "Chalium",
+      "passives": {
+        "4": "Na Postura Defensiva, ganha 1 Escudo por Aparar. Perde todos os Escudos no início do turno.",
+        "10": "20% de dano de Luz aumentado com Habilidades.",
+        "20": "50% de dano de Contra-ataque aumentado por Escudo."
+      }
+    },
+    "chantenum": {
+      "name": "Chantenum",
+      "passives": {
+        "4": "No início do turno, se Sem Postura, muda para Postura Ofensiva.",
+        "10": "Habilidades de Fogo custam 1 PA a menos.",
+        "20": "+1 Escudo ao mudar para Postura Ofensiva."
+      }
+    },
+    "clierum": {
+      "name": "Clierum",
+      "passives": {
+        "4": "Acertos Críticos com Habilidades dão 2 PA. Uma vez por turno.",
+        "10": "20% de dano de Raio aumentado com Habilidades.",
+        "20": "+50% de Chance Crítica enquanto em Postura Ofensiva."
+      }
+    },
+    "coldum": {
+      "name": "Coldum",
+      "passives": {
+        "4": "Auto-cura de 2% de Vida ao dar um acerto Crítico.",
+        "10": "+50% de Chance Crítica enquanto em Postura Defensiva.",
+        "20": "Se Sem Postura, Ataque Base muda para Postura Defensiva."
+      }
+    },
+    "duenum": {
+      "name": "Duenum",
+      "passives": {
+        "4": "Na Postura Defensiva, ganhar PA também dá 1 PA aos aliados.",
+        "10": "Se Sem Postura, Ataque Base muda para Postura Defensiva.",
+        "20": "+1 PA ao trocar de Postura."
+      }
+    },
+    "facesum": {
+      "name": "Facesum",
+      "passives": {
+        "4": "Na Postura Ofensiva, dobra a quantidade de Queimadura aplicada.",
+        "10": "50% de dano de Queimadura aumentado.",
+        "20": "Ataque Base propaga Queimadura."
+      }
+    },
+    "glaisum": {
+      "name": "Glaisum",
+      "passives": {
+        "4": "Aliados recuperam 20% de Vida ao mudar para Postura Virtuosa.",
+        "10": "Ganha Carapaça ao sair da Postura Virtuosa.",
+        "20": "Remove Efeitos de Status de si mesmo ao mudar para Postura Virtuosa."
+      }
+    },
+    "jarum": {
+      "name": "Jarum",
+      "passives": {
+        "4": "Muda para Postura Virtuosa no Contra-ataque.",
+        "10": "Aplica 5 Queimaduras no Contra-ataque.",
+        "20": "50% de dano de Contra-ataque aumentado por Escudo."
+      }
+    },
+    "lithum": {
+      "name": "Lithum",
+      "passives": {
+        "4": "Na Postura Virtuosa, acertar um inimigo Marcado não remove a Marca.",
+        "10": "Muda para Postura Virtuosa no Contra-ataque.",
+        "20": "Ganha Carapaça ao sair da Postura Virtuosa."
+      }
+    },
+    "maellum": {
+      "name": "Maellum",
+      "passives": {}
+    },
+    "medalum": {
+      "name": "Medalum",
+      "passives": {
+        "4": "Começa em Postura Virtuosa.",
+        "10": "Na Postura Virtuosa, toda Queimadura aplicada é dobrada.",
+        "20": "Na Postura Virtuosa, Queimadura causa dano dobrado."
+      }
+    },
+    "melarum": {
+      "name": "Melarum",
+      "passives": {
+        "4": "Aliados recuperam 20% de Vida ao mudar para Postura Virtuosa.",
+        "10": "Aplica Carapaça quando a Vida está acima de 80%.",
+        "20": "Muda para Postura Virtuosa quando a Vida cai abaixo de 50%."
+      }
+    },
+    "plenum": {
+      "name": "Plenum",
+      "passives": {
+        "4": "No início do turno, se Sem Postura, muda para Postura Defensiva.",
+        "10": "Na Postura Defensiva, dobra o dano de Quebra.",
+        "20": "Habilidades de Suporte custam 1 PA a menos."
+      }
+    },
+    "seashelum": {
+      "name": "Seashelum",
+      "passives": {
+        "4": "+1 Escudo ao mudar para Postura Ofensiva.",
+        "10": "Se Sem Postura, Ataque Base muda para Postura Ofensiva.",
+        "20": "+50% de Chance Crítica enquanto em Postura Ofensiva."
+      }
+    },
+    "sekarum": {
+      "name": "Sekarum",
+      "passives": {
+        "4": "Muda para Postura Virtuosa ao quebrar qualquer Escudo.",
+        "10": "Tiros de Mira Livre quebram 2 Escudos.",
+        "20": "Na Postura Virtuosa, todo dano perfura Escudos."
+      }
+    },
+    "stalum": {
+      "name": "Stalum",
+      "passives": {
+        "4": "Aplica Queimadura em si mesmo no início do turno. 10% de dano aumentado para cada acúmulo de Queimadura próprio.",
+        "10": "Ataque Base aplica 2 Queimaduras.",
+        "20": "Enquanto em Postura Defensiva, recebe Cura ao invés de dano de Queimadura."
+      }
+    },
+    "tissenum": {
+      "name": "Tissenum",
+      "passives": {
+        "4": "Na Postura Defensiva, dobra o dano de Quebra.",
+        "10": "Ganha 9 PA ao Quebrar um inimigo.",
+        "20": "Quebrar um inimigo causa uma grande quantidade de dano de Terra."
+      }
+    },
+    "veremum": {
+      "name": "Veremum",
+      "passives": {
+        "4": "Se Sem Postura, Ataque Base muda para Postura Ofensiva.",
+        "10": "Contra-ataques aplicam Indefeso.",
+        "20": "+50% de Chance Crítica enquanto em Postura Ofensiva."
+      }
+    },
+    "volesterum": {
+      "name": "Volesterum",
+      "passives": {
+        "4": "+1 PA ao trocar de Postura.",
+        "10": "Se Sem Postura, Ataque Base muda para Postura Defensiva.",
+        "20": "Recupera 5% de Vida ao trocar de Postura."
+      }
+    },
+    "yeverum": {
+      "name": "Yeverum",
+      "passives": {
+        "4": "Aplicar Carapaça também aplica 1 Escudo.",
+        "10": "Ao aplicar Escudos, também dá 1 PA.",
+        "20": "Ao mudar para Postura Virtuosa, dobra todos os Escudos nos aliados."
+      }
+    },
+    "baguette-monoco": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Mata a si mesmo no início da batalha.",
+        "10": "Revive com 100% de Vida. Uma vez por batalha.",
+        "20": "Joga primeiro."
+      }
+    },
+    "ballaro": {
+      "name": "Ballaro",
+      "passives": {
+        "4": "Reverte a ordem da Roda Bestial.",
+        "10": "Usar uma Habilidade Aprimorada dá 1 PA a todos os outros aliados.",
+        "20": "Máscara Todo-Poderosa dá 2 PA a todos os aliados."
+      }
+    },
+    "boucharo": {
+      "name": "Boucharo",
+      "passives": {
+        "4": "Começa a batalha na Máscara Ágil.",
+        "10": "Máscara Ágil aplica Velocidade por 3 turnos.",
+        "20": "+50% de Chance Crítica enquanto na Máscara Ágil."
+      }
+    },
+    "brumaro": {
+      "name": "Brumaro",
+      "passives": {
+        "4": "Joga novamente instantaneamente quando na Máscara Todo-Poderosa.",
+        "10": "+3 PA quando na Máscara Todo-Poderosa.",
+        "20": "Revive instantaneamente com Vida cheia se morrer enquanto na Máscara Todo-Poderosa. Uma vez por Batalha."
+      }
+    },
+    "chromaro": {
+      "name": "Chromaro",
+      "passives": {
+        "4": "Começa a batalha na Máscara Conjuradora.",
+        "10": "Máscara Conjuradora aplica Regeneração por 3 turnos.",
+        "20": "Habilidades custam 1 PA a menos enquanto na Máscara Conjuradora."
+      }
+    },
+    "fragaro": {
+      "name": "Fragaro",
+      "passives": {
+        "4": "Tiros de Mira Livre giram a Roda Bestial para um valor aleatório.",
+        "10": "Tiros de Mira Livre causam 100% mais dano com todas as Máscaras exceto Todo-Poderosa.",
+        "20": "100% de Chance Crítica enquanto na Máscara Todo-Poderosa."
+      }
+    },
+    "grandaro": {
+      "name": "Grandaro",
+      "passives": {
+        "4": "Começa a batalha na Máscara Pesada.",
+        "10": "Máscara Pesada aplica Carapaça por 3 turnos.",
+        "20": "+1 PA por acerto recebido."
+      }
+    },
+    "joyaro": {
+      "name": "Joyaro",
+      "passives": {
+        "4": "Começa a batalha na Máscara Todo-Poderosa.",
+        "10": "20% de dano aumentado para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
+        "20": "Dano de Quebra é dobrado enquanto na Máscara Todo-Poderosa."
+      }
+    },
+    "monocaro": {
+      "name": "Monocaro",
+      "passives": {
+        "4": "Começa a batalha na Máscara Equilibrada.",
+        "10": "Máscara Equilibrada aplica Poderoso por 3 turnos.",
+        "20": "Acertos Críticos causam 30% mais dano enquanto na Máscara Equilibrada."
+      }
+    },
+    "nusaro": {
+      "name": "Nusaro",
+      "passives": {
+        "4": "Aparar aumenta a Roda Bestial em 1. Receber dano reseta a Roda Bestial.",
+        "10": "Habilidades Aprimoradas causam 30% mais dano.",
+        "20": "+1 PA ao trocar de Máscara."
+      }
+    },
+    "sidaro": {
+      "name": "Sidaro",
+      "passives": {
+        "4": "30% de dano aumentado por Habilidade Aprimorada usada. Reseta ao usar uma Habilidade não-Aprimorada.",
+        "10": "Ataque Base gira a Roda Bestial para um valor aleatório.",
+        "20": "Usar uma Habilidade Aprimorada dá 1 PA a todos os outros aliados."
+      }
+    },
+    "urnaro": {
+      "name": "Urnaro",
+      "passives": {
+        "4": "Muda para Máscara Todo-Poderosa ao Quebrar um inimigo.",
+        "10": "Máscara Todo-Poderosa dá 2 PA a todos os aliados.",
+        "20": "50% de dano de Quebra aumentado."
+      }
+    },
+    "algueron": {
+      "name": "Algueron",
+      "passives": {
+        "4": "Tiros de Mira Livre podem consumir 1 Prenúncio para causar 100% mais dano.",
+        "10": "Ataque Base aplica 3 Prenúncios.",
+        "20": "Durante o Crepúsculo, tiros de Mira Livre causam dano dobrado."
+      }
+    },
+    "baguette-sciel": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Mata a si mesmo no início da batalha.",
+        "10": "Revive com 100% de Vida. Uma vez por batalha.",
+        "20": "Joga primeiro."
+      }
+    },
+    "blizzon": {
+      "name": "Blizzon",
+      "passives": {
+        "4": "Enquanto tiver pelo menos 1 carga de Lua ativa, Habilidades da Lua são sempre Críticas mas o dano recebido é dobrado.",
+        "10": "25% de dano aumentado por carga de Lua.",
+        "20": "Ataque Base dá 1 carga de Lua."
+      }
+    },
+    "bourgelon": {
+      "name": "Bourgelon",
+      "passives": {
+        "4": "Consumir Prenúncio aplica 2 Queimaduras no alvo por Carga de Sol.",
+        "10": "100% de dano de Queimadura aumentado no estado Crepúsculo.",
+        "20": "Habilidades do Sol dão uma carga a mais."
+      }
+    },
+    "charnon": {
+      "name": "Charnon",
+      "passives": {
+        "4": "100% de Chance Crítica durante o Crepúsculo.",
+        "10": "Aplica 1 Prenúncio em acerto Crítico.",
+        "20": "20% de dano aumentado para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes."
+      }
+    },
+    "chation": {
+      "name": "Chation",
+      "passives": {
+        "4": "Habilidades do Sol sempre aplicam 10 Prenúncios, mas todo dano recebido é dobrado.",
+        "10": "Ataque Base dá 1 carga de Lua e consome todos os Prenúncios para aplicar Queimadura.",
+        "20": "100% de dano de Queimadura aumentado no estado Crepúsculo."
+      }
+    },
+    "corderon": {
+      "name": "Corderon",
+      "passives": {
+        "4": "Amaldiçoa a si mesmo no início da batalha. Causa 50% mais dano enquanto Amaldiçoado.",
+        "10": "Reseta a duração da Maldição ao entrar no estado Crepúsculo.",
+        "20": "Joga novamente ao entrar no estado Crepúsculo."
+      }
+    },
+    "direton": {
+      "name": "Direton",
+      "passives": {
+        "4": "+1 PA por carga de Lua no início do turno.",
+        "10": "Ataque Base dá 1 carga de Lua.",
+        "20": "Durante o Crepúsculo, Ataque Base consome todo PA. Ataque Base aplica 1 Prenúncio e causa 50% de dano aumentado por PA consumido."
+      }
+    },
+    "garganon": {
+      "name": "Garganon",
+      "passives": {
+        "4": "Enquanto tiver pelo menos 1 carga de Sol ativa, aplica um acúmulo de Queimadura por acerto recebido.",
+        "10": "Contra-ataques aplicam 1 Queimadura por carga de Sol ativa.",
+        "20": "Ataque Base pode consumir 1 carga de Sol para aplicar 5 Prenúncios."
+      }
+    },
+    "gobluson": {
+      "name": "Gobluson",
+      "passives": {
+        "4": "Durante o Crepúsculo, toda vez que Prenúncio é aplicado ele também afeta outro inimigo aleatório.",
+        "10": "Aplica 1 Queimadura a cada 3 Prenúncios aplicados com Habilidades.",
+        "20": "20% de dano de Fogo aumentado com Habilidades."
+      }
+    },
+    "guleson": {
+      "name": "Guleson",
+      "passives": {
+        "4": "No início do Crepúsculo, aplica Marca em todos os inimigos.",
+        "10": "Acertar um inimigo Marcado durante o Crepúsculo não remove a Marca.",
+        "20": "Aplica 3 Prenúncios ao aplicar Marca."
+      }
+    },
+    "hevason": {
+      "name": "Hevason",
+      "passives": {
+        "4": "Tiros de Mira Livre podem consumir uma carga de Sol para aplicar 5 Prenúncios e consumir uma carga de Lua para causar 400% mais dano.",
+        "10": "Consumir uma carga de Sol ou Lua dá 1 PA.",
+        "20": "Ataque Base dá 1 carga de Lua."
+      }
+    },
+    "litheson": {
+      "name": "Litheson",
+      "passives": {
+        "4": "Durante a Lua, todos os aliados têm Velocidade Superior. Durante o Sol, todos os inimigos têm Lentidão Superior.",
+        "10": "Durante o Crepúsculo, todos os aliados têm Velocidade Superior e todos os inimigos têm Lentidão Superior.",
+        "20": "+3 PA ao aplicar um Buff ou Debuff. Uma vez por turno."
+      }
+    },
+    "lusteson": {
+      "name": "Lusteson",
+      "passives": {
+        "4": "Matar um inimigo com Prenúncio aplica seu Prenúncio a outro inimigo aleatório.",
+        "10": "Aplica Marca ao consumir Prenúncio.",
+        "20": "20% de dano Sombrio aumentado com Habilidades."
+      }
+    },
+    "martenon": {
+      "name": "Martenon",
+      "passives": {
+        "4": "No início do Crepúsculo, causa dano a todos os inimigos baseado na quantidade de cargas.",
+        "10": "No início do Crepúsculo, aplica 2 Prenúncios por carga a todos os inimigos.",
+        "20": "Dobra a geração de cargas de Sol e Lua."
+      }
+    },
+    "minason": {
+      "name": "Minason",
+      "passives": {
+        "4": "Habilidades do Sol têm dano aumentado para cada Prenúncio no alvo. Habilidades da Lua não geram mais cargas de Lua.",
+        "10": "Com pelo menos 1 carga de Sol ativa, ganha um PA adicional por Prenúncio consumido.",
+        "20": "Ataque Base pode consumir 1 carga de Sol para aplicar 5 Prenúncios."
+      }
+    },
+    "moisson": {
+      "name": "Moisson",
+      "passives": {
+        "4": "Durante o Crepúsculo, todo dano causado é convertido em dano Sombrio.",
+        "10": "20% de dano Sombrio aumentado com Habilidades.",
+        "20": "Aplica Carapaça durante a Lua, Poderoso durante o Sol, e Velocidade durante o Crepúsculo."
+      }
+    },
+    "ramasson": {
+      "name": "Ramasson",
+      "passives": {
+        "4": "Pode consumir 1 carga de Lua no início do turno para recuperar 20% da Vida de cada aliado.",
+        "10": "Ataque Base dá 1 carga de Lua.",
+        "20": "Habilidades da Lua dão uma carga a mais."
+      }
+    },
+    "rangeson": {
+      "name": "Rangeson",
+      "passives": {
+        "4": "Recupera 5% de Vida por Prenúncio aplicado.",
+        "10": "Habilidades de Cura custam 1 PA a menos.",
+        "20": "30% de eficiência de Cura aumentada por carga de Lua. Ataque Base dá 1 carga de Lua."
+      }
+    },
+    "sadon": {
+      "name": "Sadon",
+      "passives": {
+        "4": "No início do turno, ganha 1 Escudo se pelo menos 1 carga de Sol está ativa.",
+        "10": "Aplica 5 Prenúncios em inimigos que quebram Escudos.",
+        "20": "+2 cargas de Sol no Contra-ataque."
+      }
+    },
+    "scieleson": {
+      "name": "Scieleson",
+      "passives": {}
+    },
+    "tisseron": {
+      "name": "Tisseron",
+      "passives": {
+        "4": "Estende o Crepúsculo por um turno ao usar uma Habilidade da Lua. +50% de aumento de dano do Crepúsculo ao usar uma Habilidade do Sol.",
+        "10": "Duração do Crepúsculo é aumentada em 1.",
+        "20": "Joga novamente ao entrar no estado Crepúsculo."
+      }
+    }
   }
 }

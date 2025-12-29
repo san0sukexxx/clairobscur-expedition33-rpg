@@ -1,14 +1,18 @@
 /**
- * i18n Translation System for Pictos
+ * i18n Translation System for Pictos and Weapons
  *
- * This module provides helper functions to get picto names and descriptions
- * in different languages using kebab-case IDs.
+ * This module provides helper functions to get picto and weapon names, descriptions,
+ * and passive effects in different languages using kebab-case IDs.
  *
  * Usage:
  * ```typescript
+ * // Pictos
  * const name = getPictoName("energy-master", "pt-BR")  // "Mestre de Energia"
  * const desc = getPictoDescription("energy-master", "en")  // "Every AP gain is increased by 1."
- * const picto = getPicto("energy-master", "pt-BR")  // { name: "...", description: "..." }
+ *
+ * // Weapons
+ * const weaponName = getWeaponName("abysseram", "pt-BR")  // "Abysseram"
+ * const passive = getWeaponPassive("abysseram", 4, "pt-BR")  // "50% de dano aumentado no Rank D..."
  * ```
  */
 
@@ -22,13 +26,19 @@ interface PictoTranslation {
   description: string;
 }
 
+interface WeaponTranslation {
+  name: string;
+  passives: Record<string, string>;  // level -> effect description
+}
+
 interface Translations {
   pictos: Record<string, PictoTranslation>;
+  weapons: Record<string, WeaponTranslation>;
 }
 
 const translations: Record<Locale, Translations> = {
-  en: enTranslations,
-  "pt-BR": ptBRTranslations,
+  en: enTranslations as Translations,
+  "pt-BR": ptBRTranslations as Translations,
 };
 
 // Default locale (can be changed based on user preference)
@@ -157,4 +167,118 @@ export function getPictoEnglishName(pictoId: string): string {
   }
 
   return picto.name;
+}
+
+// ==================== WEAPON TRANSLATIONS ====================
+
+/**
+ * Get a weapon's translated name by its kebab-case ID
+ * @param weaponId The kebab-case ID (e.g., "abysseram")
+ * @param locale The locale to use (defaults to current locale)
+ * @returns The translated weapon name
+ */
+export function getWeaponName(weaponId: string, locale?: Locale): string {
+  const targetLocale = locale || currentLocale;
+  const weapon = translations[targetLocale]?.weapons[weaponId];
+
+  if (!weapon) {
+    console.warn(`Translation not found for weapon: ${weaponId} in locale: ${targetLocale}`);
+    return weaponId; // Fallback to ID
+  }
+
+  return weapon.name;
+}
+
+/**
+ * Get the English name for a weapon (used for image filenames and backend)
+ * @param weaponId The kebab-case ID
+ * @returns The English name for the weapon
+ */
+export function getWeaponEnglishName(weaponId: string): string {
+  const weapon = translations.en?.weapons[weaponId];
+
+  if (!weapon) {
+    console.warn(`English name not found for weapon: ${weaponId}`);
+    return weaponId;
+  }
+
+  return weapon.name;
+}
+
+/**
+ * Get a weapon's passive effect description by weapon ID and level
+ * @param weaponId The kebab-case ID (e.g., "abysseram")
+ * @param level The passive level (4, 10, or 20)
+ * @param locale The locale to use (defaults to current locale)
+ * @returns The translated passive effect description
+ */
+export function getWeaponPassive(weaponId: string, level: number, locale?: Locale): string {
+  const targetLocale = locale || currentLocale;
+  const weapon = translations[targetLocale]?.weapons[weaponId];
+
+  if (!weapon) {
+    console.warn(`Translation not found for weapon: ${weaponId} in locale: ${targetLocale}`);
+    return "";
+  }
+
+  const passive = weapon.passives[level.toString()];
+  if (!passive) {
+    console.warn(`Passive not found for weapon ${weaponId} at level ${level}`);
+    return "";
+  }
+
+  return passive;
+}
+
+/**
+ * Get all passive effects for a weapon
+ * @param weaponId The kebab-case ID
+ * @param locale The locale to use (defaults to current locale)
+ * @returns Record of level -> effect description
+ */
+export function getWeaponPassives(weaponId: string, locale?: Locale): Record<string, string> {
+  const targetLocale = locale || currentLocale;
+  const weapon = translations[targetLocale]?.weapons[weaponId];
+
+  if (!weapon) {
+    console.warn(`Translation not found for weapon: ${weaponId} in locale: ${targetLocale}`);
+    return {};
+  }
+
+  return weapon.passives;
+}
+
+/**
+ * Get a weapon's full translation (name and all passives)
+ * @param weaponId The kebab-case ID
+ * @param locale The locale to use (defaults to current locale)
+ * @returns The weapon translation object
+ */
+export function getWeapon(weaponId: string, locale?: Locale): WeaponTranslation | null {
+  const targetLocale = locale || currentLocale;
+  const weapon = translations[targetLocale]?.weapons[weaponId];
+
+  if (!weapon) {
+    console.warn(`Translation not found for weapon: ${weaponId} in locale: ${targetLocale}`);
+    return null;
+  }
+
+  return weapon;
+}
+
+/**
+ * Check if a weapon ID exists in the translation system
+ * @param weaponId The kebab-case ID to check
+ * @returns True if the weapon exists in translations
+ */
+export function hasWeapon(weaponId: string): boolean {
+  return !!translations[currentLocale]?.weapons[weaponId];
+}
+
+/**
+ * Get all available weapon IDs
+ * @returns Array of all weapon kebab-case IDs
+ */
+export function getAllWeaponIds(): string[] {
+  return Object.keys(translations.en.weapons);
 }

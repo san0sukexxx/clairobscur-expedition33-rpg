@@ -900,5 +900,851 @@
       "name": "Clea's Life",
       "description": "On turn start, if no damage taken since last turn, recover 100% Health."
     }
+  },
+  "weapons": {
+    "abysseram": {
+      "name": "Abysseram",
+      "passives": {
+        "4": "50% increased damage on Rank D. No damage increase on other ranks.",
+        "10": "50% increased Base Attack damage.",
+        "20": "On Rank D, recover 20% Health with Base Attack."
+      }
+    },
+    "baguette-verso": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Kill self on battle start.",
+        "10": "Revive with 100% Health. Once per battle.",
+        "20": "Play first."
+      }
+    },
+    "blodam": {
+      "name": "Blodam",
+      "passives": {
+        "4": "Perfection is now based on current Health. Gain 1 Rank every 20% missing Health.",
+        "10": "20% increased Light damage with Skills.",
+        "20": "+1 AP on Rank Up."
+      }
+    },
+    "chevalam": {
+      "name": "Chevalam",
+      "passives": {
+        "4": "Start battle at Rank S, but can't be Healed or gain Shields.",
+        "10": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times.",
+        "20": "Apply Rush on Rank S."
+      }
+    },
+    "confuso": {
+      "name": "Confuso",
+      "passives": {
+        "4": "Light damage can Burn on Critical hits.",
+        "10": "Apply 3 Burn instead of Mark.",
+        "20": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
+      }
+    },
+    "contorso": {
+      "name": "Contorso",
+      "passives": {
+        "4": "Switch to Rank S on Break. Base Attack can Break.",
+        "10": "100% Critical Chance on Rank S.",
+        "20": "Triggers a lightning strike on Critical hits."
+      }
+    },
+    "corpeso": {
+      "name": "Corpeso",
+      "passives": {
+        "4": "Base Attack applies 2 Burn stack per Rank.",
+        "10": "+1 AP on Rank Up.",
+        "20": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
+      }
+    },
+    "cruleram": {
+      "name": "Cruleram",
+      "passives": {
+        "4": "Don't lose Rank when taking damage from Powerless enemies.",
+        "10": "+1 Perfection on hitting a Powerless enemy.",
+        "20": "Apply Powerless on Counterattack."
+      }
+    },
+    "cultam": {
+      "name": "Cultam",
+      "passives": {
+        "4": "No Perfection loss on damage taken. Perfection is instead lost on being Healed.",
+        "10": "Gain 2 AP on Counterattack.",
+        "20": "Gain 1 Rank on Counterattack."
+      }
+    },
+    "danseso": {
+      "name": "Danseso",
+      "passives": {
+        "4": "Base attack gives 1 Perfection per Burn on target.",
+        "10": "While Powerful, 20% chance to Burn on hit.",
+        "20": "+1 AP on Rank Up."
+      }
+    },
+    "delaram": {
+      "name": "Delaram",
+      "passives": {
+        "4": "Start battle on Rank B, but 50% Health.",
+        "10": "Recover 15% Health on Base Attack.",
+        "20": "Apply Powerful on Rank B."
+      }
+    },
+    "demonam": {
+      "name": "Demonam",
+      "passives": {
+        "4": "Casting a Light Skill increases damage of next Physical Skill cast by 50% and vice versa.",
+        "10": "20% increased Physical damage with Skills.",
+        "20": "Dealing Light damage with a Skill recovers 3% Health."
+      }
+    },
+    "dreameso": {
+      "name": "Dreameso",
+      "passives": {
+        "4": "Gain 1 Rank on Counterattack.",
+        "10": "50% increased Counterattack damage.",
+        "20": "Gain 2 AP on Counterattack."
+      }
+    },
+    "dualiso": {
+      "name": "Dualiso",
+      "passives": {
+        "4": "Play again after a Base Attack.",
+        "10": "50% increased Base Attack damage.",
+        "20": "Base Attack gives 4 Perfection."
+      }
+    },
+    "gaultaram": {
+      "name": "Gaultaram",
+      "passives": {
+        "4": "When hit, lose 1 Perfection instead of 1 Rank.",
+        "10": "Apply Rush on Rank S.",
+        "20": "Gain 2 Perfection on turn start."
+      }
+    },
+    "gesam": {
+      "name": "Gesam",
+      "passives": {
+        "4": "Convert Light damage from Skills to Physical damage.",
+        "10": "20% increased Physical damage with Skills.",
+        "20": "-1 AP cost for Physical Skills."
+      }
+    },
+    "glaceso": {
+      "name": "Glaceso",
+      "passives": {
+        "4": "+1 Perfection on Critical hit.",
+        "10": "Self-Heal by 2% Health on dealing a Critical hit.",
+        "20": "Counterattack is always a Critical hit."
+      }
+    },
+    "lanceram": {
+      "name": "Lanceram",
+      "passives": {
+        "4": "Rank can't be lower than C.",
+        "10": "Base Attack gives 4 Perfection.",
+        "20": "Parrying gives 2 Perfection instead of 1."
+      }
+    },
+    "liteso": {
+      "name": "Liteso",
+      "passives": {
+        "4": "Base Attack consumes all Shields to deal 100% increased damage per Shield.",
+        "10": "+1 Shield on Counterattack.",
+        "20": "Base Attack gives 4 Perfection."
+      }
+    },
+    "noahram": {
+      "name": "Noahram",
+      "passives": {}
+    },
+    "nosaram": {
+      "name": "Nosaram",
+      "passives": {
+        "4": "Double Perfection gained on Free Aim shots.",
+        "10": "Free Aim shots break 2 Shields.",
+        "20": "50% increased Free Aim damage."
+      }
+    },
+    "sakaram": {
+      "name": "Sakaram",
+      "passives": {
+        "4": "Can't lose Perfection. No damage increase from Rank.",
+        "10": "50% increased Base Attack damage.",
+        "20": "Base Attack gives 4 Perfection."
+      }
+    },
+    "seeram": {
+      "name": "Seeram",
+      "passives": {
+        "4": "+1 to all Perfection gain but can't reach Rank S.",
+        "10": "Base Attack gives 4 Perfection.",
+        "20": "20% increased Light damage with Skills."
+      }
+    },
+    "simoso": {
+      "name": "Simoso",
+      "passives": {
+        "4": "An ethereal Sword deals Light damage on any damage dealt with Skills.",
+        "10": "20% chance to apply Burn on dealing Light damage.",
+        "20": "Can't die if at least Rank A."
+      }
+    },
+    "sireso": {
+      "name": "Sireso",
+      "passives": {
+        "4": "Bonus damage from Perfection applies to all allies at half value. Bonus damage no longer applies to Verso.",
+        "10": "Perfection gained is increased by 1 while Powerful.",
+        "20": "Support Skills cost 1 less AP."
+      }
+    },
+    "tireso": {
+      "name": "Tireso",
+      "passives": {
+        "4": "Gain 1 Rank on applying Mark.",
+        "10": "Mark an enemy on Base Attack.",
+        "20": "Apply Powerless on Marking an enemy."
+      }
+    },
+    "verleso": {
+      "name": "Verleso",
+      "passives": {}
+    },
+    "angerim": {
+      "name": "Angerim",
+      "passives": {
+        "4": "Base Attack applies 2 Burn per Fire Stain.",
+        "10": "Generate one Fire Stain at the beginning of each turn.",
+        "20": "30% increased Burn damage per Fire Stain."
+      }
+    },
+    "baguette-lune": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Kill self on battle start.",
+        "10": "Revive with 100% Health. Once per battle.",
+        "20": "Play first."
+      }
+    },
+    "benisim": {
+      "name": "Benisim",
+      "passives": {
+        "4": "Healing Skills cost 1 less AP.",
+        "10": "Generate one Earth Stain at the beginning of each turn.",
+        "20": "Replay instantly on consuming Stains with a Healing Skill."
+      }
+    },
+    "betelim": {
+      "name": "Betelim",
+      "passives": {
+        "4": "Using a Skill that consumes Stains increases damage by 20%. Can stack up to 5 times. Resets on using a Skill without consuming Stains.",
+        "10": "On turn start, if no Stains, 2 random Stains are generated.",
+        "20": "+1 AP when Stains are consumed."
+      }
+    },
+    "braselim": {
+      "name": "Braselim",
+      "passives": {
+        "4": "30% increased Critical Chance per Ice Stain.",
+        "10": "+5% of a Gradient Charge on Critical hit.",
+        "20": "20% increased Fire damage with Skills."
+      }
+    },
+    "chapelim": {
+      "name": "Chapelim",
+      "passives": {
+        "4": "30% increased Break damage per Earth Stain.",
+        "10": "Gain 9 AP on Breaking an enemy.",
+        "20": "Generate one Earth Stain at the beginning of each turn."
+      }
+    },
+    "choralim": {
+      "name": "Choralim",
+      "passives": {
+        "4": "100% Critical Chance when 4 Stains are simultaneously active.",
+        "10": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times.",
+        "20": "Critical hits apply Burn."
+      }
+    },
+    "colim": {
+      "name": "Colim",
+      "passives": {
+        "4": "50% chance to generate a Light Stain when consuming Stains.",
+        "10": "+1 AP on consuming a Light Stain.",
+        "20": "20% increased damage with Skills per active Light Stain."
+      }
+    },
+    "coralim": {
+      "name": "Coralim",
+      "passives": {
+        "4": "Ice Skills cost 1 less AP.",
+        "10": "20% increased Ice damage with Skills.",
+        "20": "Start battle with 1 Earth Stain."
+      }
+    },
+    "deminerim": {
+      "name": "Deminerim",
+      "passives": {
+        "4": "Lightning Skills cost 1 less AP.",
+        "10": "20% increased Lightning damage with Skills.",
+        "20": "Start battle with 1 Fire Stain."
+      }
+    },
+    "elerim": {
+      "name": "Elerim",
+      "passives": {
+        "4": "Consuming an Earth Stain applies 1 Shield to self.",
+        "10": "20% increased Earth damage with Skills.",
+        "20": "Base Attack generates an Earth Stain."
+      }
+    },
+    "kralim": {
+      "name": "Kralim",
+      "passives": {
+        "4": "Casting a Skill increases the Skill damage of all other elements by 20%. Resets when casting a Skill of a previous element.",
+        "10": "On turn start, if no Stains, 2 random Stains are generated.",
+        "20": "+1 AP when Stains are consumed."
+      }
+    },
+    "lighterim": {
+      "name": "Lighterim",
+      "passives": {
+        "4": "Fire Skills cost 1 less AP.",
+        "10": "20% increased Fire damage with Skills.",
+        "20": "Start battle with 1 Ice Stain."
+      }
+    },
+    "lithelim": {
+      "name": "Lithelim",
+      "passives": {
+        "4": "50% chance to generate a Dark or Light Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain.",
+        "10": "+1 AP on consuming a Light Stain.",
+        "20": "Base Attacks can consume one Dark Stain to deal 200% more damage."
+      }
+    },
+    "lunerim": {
+      "name": "Lunerim",
+      "passives": {}
+    },
+    "painerim": {
+      "name": "Painerim",
+      "passives": {
+        "4": "Earth Skills cost 1 less AP.",
+        "10": "20% increased Earth damage with Skills.",
+        "20": "Start battle with 1 Lightning Stain."
+      }
+    },
+    "potierim": {
+      "name": "Potierim",
+      "passives": {
+        "4": "Healing Skills generate one additional Light Stain.",
+        "10": "Consuming a Light Stain applies Slow to a random enemy.",
+        "20": "Base Attack generates a Light Stain."
+      }
+    },
+    "redalim": {
+      "name": "Redalim",
+      "passives": {
+        "4": "Healing Skills generate one additional Light Stain.",
+        "10": "Generate one Ice Stain at the beginning of each turn.",
+        "20": "Replay instantly on consuming Stains with a Healing Skill."
+      }
+    },
+    "saperim": {
+      "name": "Saperim",
+      "passives": {
+        "4": "Using a Gradient Attack generates 1 additional Light Stain.",
+        "10": "When a Fire Stain is generated, a Lightning Stain is also generated. Once per turn.",
+        "20": "Gradient Attacks and Gradient Counters deal 50% more damage."
+      }
+    },
+    "scaverim": {
+      "name": "Scaverim",
+      "passives": {
+        "4": "50% chance to generate a Dark Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain.",
+        "10": "Base Attacks can consume one Dark Stain to deal 200% more damage.",
+        "20": "With 4 active Dark Stains, any Skill can consume them to deal 300% more damage."
+      }
+    },
+    "snowim": {
+      "name": "Snowim",
+      "passives": {
+        "4": "Freeze self when falling below 30% health. Prevent the next instance of damage while Frozen.",
+        "10": "On turn start, if Frozen, remove Freeze and recover 60% Health.",
+        "20": "Gain 2 Ice Stains and 3 AP when Frozen."
+      }
+    },
+    "trebuchim": {
+      "name": "Trebuchim",
+      "passives": {
+        "4": "Generate a random Stain on Free Aim shot.",
+        "10": "+1 AP when Stains are consumed.",
+        "20": "Base Attack generates 2 random Stains."
+      }
+    },
+    "troubadim": {
+      "name": "Troubadim",
+      "passives": {
+        "4": "Free Aim Shots deal damage to an additional random target.",
+        "10": "50% increased Free Aim damage.",
+        "20": "Generate a random Stain on Free Aim shot."
+      }
+    },
+    "baguette-maelle": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Kill self on battle start.",
+        "10": "Revive with 100% Health. Once per battle.",
+        "20": "Play first."
+      }
+    },
+    "barrier-breaker": {
+      "name": "Barrier Breaker",
+      "passives": {
+        "4": "Steal Shields removed by hitting enemies.",
+        "10": "Switch to Virtuose Stance on breaking any Shield.",
+        "20": "Hitting a Marked enemy breaks all its Shields."
+      }
+    },
+    "battlum": {
+      "name": "Battlum",
+      "passives": {
+        "4": "Double Gradient generation while in Defensive Stance.",
+        "10": "If Stanceless, Base Attack switches to Defensive Stance.",
+        "20": "+5% of a Gradient Charge on Parry."
+      }
+    },
+    "brulerum": {
+      "name": "Brulerum",
+      "passives": {
+        "4": "Critical hits apply Burn.",
+        "10": "Base Attack applies 2 Burn.",
+        "20": "100% Critical Chance while Stanceless."
+      }
+    },
+    "chalium": {
+      "name": "Chalium",
+      "passives": {
+        "4": "On Defensive Stance, gain 1 Shield per Parry. Lose all Shields on turn start.",
+        "10": "20% increased Light damage with Skills.",
+        "20": "50% increased Counter damage per Shield."
+      }
+    },
+    "chantenum": {
+      "name": "Chantenum",
+      "passives": {
+        "4": "On turn start, if Stanceless, switch to Offensive Stance.",
+        "10": "Fire Skills cost 1 less AP.",
+        "20": "+1 Shield on switching to Offensive Stance."
+      }
+    },
+    "clierum": {
+      "name": "Clierum",
+      "passives": {
+        "4": "Critical hits with Skills give 2 AP. Once per turn.",
+        "10": "20% increased Lightning damage with Skills.",
+        "20": "+50% Critical Chance while in Offensive Stance."
+      }
+    },
+    "coldum": {
+      "name": "Coldum",
+      "passives": {
+        "4": "Self-Heal by 2% Health on dealing a Critical hit.",
+        "10": "+50% Critical Chance while in Defensive Stance.",
+        "20": "If Stanceless, Base Attack switches to Defensive Stance."
+      }
+    },
+    "duenum": {
+      "name": "Duenum",
+      "passives": {
+        "4": "In Defensive Stance, gaining AP also gives 1 AP to allies.",
+        "10": "If Stanceless, Base Attack switches to Defensive Stance.",
+        "20": "+1 AP on Stance switch."
+      }
+    },
+    "facesum": {
+      "name": "Facesum",
+      "passives": {
+        "4": "In Offensive Stance, double the amount of Burn applied.",
+        "10": "50% increased Burn damage.",
+        "20": "Base Attack propagates Burn."
+      }
+    },
+    "glaisum": {
+      "name": "Glaisum",
+      "passives": {
+        "4": "Allies recover 20% Health on switching to Virtuose Stance.",
+        "10": "Gain Shell when switching out of Virtuose Stance.",
+        "20": "Cleanse self Status Effects when switching to Virtuose Stance."
+      }
+    },
+    "jarum": {
+      "name": "Jarum",
+      "passives": {
+        "4": "Switch to Virtuose Stance on Counterattack.",
+        "10": "Apply 5 Burn on Counterattack.",
+        "20": "50% increased Counter damage per Shield."
+      }
+    },
+    "lithum": {
+      "name": "Lithum",
+      "passives": {
+        "4": "In Virtuose Stance, hitting a Marked enemy doesn't remove Mark.",
+        "10": "Switch to Virtuose Stance on Counterattack.",
+        "20": "Gain Shell when switching out of Virtuose Stance."
+      }
+    },
+    "maellum": {
+      "name": "Maellum",
+      "passives": {}
+    },
+    "medalum": {
+      "name": "Medalum",
+      "passives": {
+        "4": "Start in Virtuose Stance.",
+        "10": "In Virtuose Stance, every Burn applied is doubled.",
+        "20": "In Virtuose Stance, Burn deals double damage."
+      }
+    },
+    "melarum": {
+      "name": "Melarum",
+      "passives": {
+        "4": "Allies recover 20% Health on switching to Virtuose Stance.",
+        "10": "Applies Shell when Health is above 80%.",
+        "20": "Switch to Virtuose Stance when Health falls below 50%."
+      }
+    },
+    "plenum": {
+      "name": "Plenum",
+      "passives": {
+        "4": "On turn start, if Stanceless, switch to Defensive Stance.",
+        "10": "In Defensive Stance, double Break damage.",
+        "20": "Support Skills cost 1 less AP."
+      }
+    },
+    "seashelum": {
+      "name": "Seashelum",
+      "passives": {
+        "4": "+1 Shield on switching to Offensive Stance.",
+        "10": "If Stanceless, Base Attack switches to Offensive Stance.",
+        "20": "+50% Critical Chance while in Offensive Stance."
+      }
+    },
+    "sekarum": {
+      "name": "Sekarum",
+      "passives": {
+        "4": "Switch to Virtuose Stance on breaking any Shield.",
+        "10": "Free Aim shots break 2 Shields.",
+        "20": "In Virtuose Stance, all damage pierce Shields."
+      }
+    },
+    "stalum": {
+      "name": "Stalum",
+      "passives": {
+        "4": "Apply Burn on self on turn start. 10% increased damage for each self Burn stack.",
+        "10": "Base Attack applies 2 Burn.",
+        "20": "While in Defensive Stance, receive Heal instead of Burn damage."
+      }
+    },
+    "tissenum": {
+      "name": "Tissenum",
+      "passives": {
+        "4": "In Defensive Stance, double Break damage.",
+        "10": "Gain 9 AP on Breaking an enemy.",
+        "20": "Breaking an enemy deals a high amount of Earth damage."
+      }
+    },
+    "veremum": {
+      "name": "Veremum",
+      "passives": {
+        "4": "If Stanceless, Base Attack switches to Offensive Stance.",
+        "10": "Counterattacks apply Defenceless.",
+        "20": "+50% Critical Chance while in Offensive Stance."
+      }
+    },
+    "volesterum": {
+      "name": "Volesterum",
+      "passives": {
+        "4": "+1 AP on Stance switch.",
+        "10": "If Stanceless, Base Attack switches to Defensive Stance.",
+        "20": "Recover 5% Health on Stance switch."
+      }
+    },
+    "yeverum": {
+      "name": "Yeverum",
+      "passives": {
+        "4": "Applying Shell also applies 1 Shield.",
+        "10": "On applying Shields, also give 1 AP.",
+        "20": "On switching to Virtuose Stance, double all Shields on allies."
+      }
+    },
+    "baguette-monoco": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Kill self on battle start.",
+        "10": "Revive with 100% Health. Once per battle.",
+        "20": "Play first."
+      }
+    },
+    "ballaro": {
+      "name": "Ballaro",
+      "passives": {
+        "4": "Reverse Bestial Wheel order.",
+        "10": "Using an Upgraded Skill gives 1 AP to all other allies.",
+        "20": "Almighty Mask gives 2 AP to all allies."
+      }
+    },
+    "boucharo": {
+      "name": "Boucharo",
+      "passives": {
+        "4": "Start battle in Agile Mask.",
+        "10": "Agile Mask applies Rush for 3 turns.",
+        "20": "+50% Critical Chance while in Agile Mask."
+      }
+    },
+    "brumaro": {
+      "name": "Brumaro",
+      "passives": {
+        "4": "Replay instantly when in Almighty Mask.",
+        "10": "+3 AP when in Almighty Mask.",
+        "20": "Revive instantly with full Health if dead while in Almighty Mask. Once per Battle."
+      }
+    },
+    "chromaro": {
+      "name": "Chromaro",
+      "passives": {
+        "4": "Start battle in Caster Mask.",
+        "10": "Caster Mask applies Regen for 3 turns.",
+        "20": "Skills cost 1 less AP while in Caster Mask."
+      }
+    },
+    "fragaro": {
+      "name": "Fragaro",
+      "passives": {
+        "4": "Free Aim shots spin the Bestial Wheel to a random value.",
+        "10": "Free Aim shots deal 100% more damage with all Masks except Almighty.",
+        "20": "100% Critical Chance while in Almighty Mask."
+      }
+    },
+    "grandaro": {
+      "name": "Grandaro",
+      "passives": {
+        "4": "Start battle in Heavy Mask.",
+        "10": "Heavy Mask applies Shell for 3 turns.",
+        "20": "+1 AP per hit taken."
+      }
+    },
+    "joyaro": {
+      "name": "Joyaro",
+      "passives": {
+        "4": "Start battle in Almighty Mask.",
+        "10": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times.",
+        "20": "Break damage is doubled while in Almighty Mask."
+      }
+    },
+    "monocaro": {
+      "name": "Monocaro",
+      "passives": {
+        "4": "Start battle in Balanced Mask.",
+        "10": "Balanced Mask applies Powerful for 3 turns.",
+        "20": "Critical hits deal 30% more damage while in Balanced Mask."
+      }
+    },
+    "nusaro": {
+      "name": "Nusaro",
+      "passives": {
+        "4": "Parries increase the Bestial Wheel by 1. Taking damage resets the Bestial Wheel.",
+        "10": "Upgraded Skills deal 30% more damage.",
+        "20": "+1 AP on Mask change."
+      }
+    },
+    "sidaro": {
+      "name": "Sidaro",
+      "passives": {
+        "4": "30% increased damage per Upgraded Skill used. Resets on using a non-Upgraded Skill.",
+        "10": "Base Attack spins the Bestial Wheel to a random value.",
+        "20": "Using an Upgraded Skill gives 1 AP to all other allies."
+      }
+    },
+    "urnaro": {
+      "name": "Urnaro",
+      "passives": {
+        "4": "Switch to Almighty Mask on Breaking an enemy.",
+        "10": "Almighty Mask gives 2 AP to all allies.",
+        "20": "50% increased Break damage."
+      }
+    },
+    "algueron": {
+      "name": "Algueron",
+      "passives": {
+        "4": "Free Aim shots can consume 1 Foretell to deal 100% more damage.",
+        "10": "Base Attack applies 3 Foretell.",
+        "20": "During Twilight, Free Aim shots deal double damage."
+      }
+    },
+    "baguette-sciel": {
+      "name": "Baguette",
+      "passives": {
+        "4": "Kill self on battle start.",
+        "10": "Revive with 100% Health. Once per battle.",
+        "20": "Play first."
+      }
+    },
+    "blizzon": {
+      "name": "Blizzon",
+      "passives": {
+        "4": "While having at least 1 active Moon charge, Moon Skills are always Critical but damage taken is doubled.",
+        "10": "25% increased damage per Moon charge.",
+        "20": "Base Attack gives 1 Moon charge."
+      }
+    },
+    "bourgelon": {
+      "name": "Bourgelon",
+      "passives": {
+        "4": "Consuming Foretell applies 2 Burn on target per Sun Charge.",
+        "10": "100% increased Burn damage in Twilight state.",
+        "20": "Sun Skills give one more charge."
+      }
+    },
+    "charnon": {
+      "name": "Charnon",
+      "passives": {
+        "4": "100% Critical Chance during Twilight.",
+        "10": "Apply 1 Foretell on Critical hit.",
+        "20": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
+      }
+    },
+    "chation": {
+      "name": "Chation",
+      "passives": {
+        "4": "Sun Skills always apply 10 Foretell, but all damage taken is doubled.",
+        "10": "Base Attack gives 1 Moon charge and consumes all Foretell to apply Burn.",
+        "20": "100% increased Burn damage in Twilight state."
+      }
+    },
+    "corderon": {
+      "name": "Corderon",
+      "passives": {
+        "4": "Curse self on battle start. Deal 50% more damage while Cursed.",
+        "10": "Reset Curse duration when entering Twilight state.",
+        "20": "Play again when entering Twilight state."
+      }
+    },
+    "direton": {
+      "name": "Direton",
+      "passives": {
+        "4": "+1 AP per Moon charge on turn start.",
+        "10": "Base Attack gives 1 Moon charge.",
+        "20": "During Twilight, Base Attack consumes all AP. Base Attack applies 1 Foretell and deals 50% increased damage per AP consumed."
+      }
+    },
+    "garganon": {
+      "name": "Garganon",
+      "passives": {
+        "4": "While having at least 1 active Sun charge, apply one Burn stack per hit taken.",
+        "10": "Counterattacks apply 1 Burn per active Sun charge.",
+        "20": "Base attack can consume 1 Sun charge to apply 5 Foretell."
+      }
+    },
+    "gobluson": {
+      "name": "Gobluson",
+      "passives": {
+        "4": "During Twilight, every time Foretell is applied it also affects another random enemy.",
+        "10": "Apply 1 Burn every 3 Foretell applied with Skills.",
+        "20": "20% increased Fire damage with Skills."
+      }
+    },
+    "guleson": {
+      "name": "Guleson",
+      "passives": {
+        "4": "On Twilight Start, apply Mark to all enemies.",
+        "10": "Hitting a Marked enemy during Twilight doesn't remove Mark.",
+        "20": "Apply 3 Foretell on applying Mark."
+      }
+    },
+    "hevason": {
+      "name": "Hevason",
+      "passives": {
+        "4": "Free Aim shots can consume a Sun charge to apply 5 Foretell and consume a Moon charge to deal 400% more damage.",
+        "10": "Consuming a Sun or Moon charge gives 1 AP.",
+        "20": "Base Attack gives 1 Moon charge."
+      }
+    },
+    "litheson": {
+      "name": "Litheson",
+      "passives": {
+        "4": "During Moon, all allies have Greater Rush. During Sun, all enemies have Greater Slow.",
+        "10": "During Twilight, all allies have Greater Rush and all enemies have Greater Slow.",
+        "20": "+3 AP on applying a Buff or Debuff. Once per turn."
+      }
+    },
+    "lusteson": {
+      "name": "Lusteson",
+      "passives": {
+        "4": "Killing an enemy with Foretell applies its Foretell to another random enemy.",
+        "10": "Apply Mark on consuming Foretell.",
+        "20": "20% increased Dark damage with Skills."
+      }
+    },
+    "martenon": {
+      "name": "Martenon",
+      "passives": {
+        "4": "On Twilight Start, deal damage to all enemies based on the amount of charges.",
+        "10": "On Twilight Start, apply 2 Foretell per charge to all enemies.",
+        "20": "Double Sun and Moon charge generation."
+      }
+    },
+    "minason": {
+      "name": "Minason",
+      "passives": {
+        "4": "Sun Skills have increased damage for each Foretell on the target. Moon Skills don't generate Moon charges anymore.",
+        "10": "With at least 1 active Sun charge, gain one additional AP per Foretell consumed.",
+        "20": "Base attack can consume 1 Sun charge to apply 5 Foretell."
+      }
+    },
+    "moisson": {
+      "name": "Moisson",
+      "passives": {
+        "4": "During Twilight, all damage dealt is converted to Dark damage.",
+        "10": "20% increased Dark damage with Skills.",
+        "20": "Apply Shell during Moon, Powerful during Sun, and Rush during Twilight."
+      }
+    },
+    "ramasson": {
+      "name": "Ramasson",
+      "passives": {
+        "4": "Can consume 1 Moon charge on turn start to recover 20% of each ally's Health.",
+        "10": "Base Attack gives 1 Moon charge.",
+        "20": "Moon Skills give one more charge."
+      }
+    },
+    "rangeson": {
+      "name": "Rangeson",
+      "passives": {
+        "4": "Recover 5% Health per Foretell applied.",
+        "10": "Healing Skills cost 1 less AP.",
+        "20": "30% increased Heal efficiency per Moon charge. Base Attack gives 1 Moon charge."
+      }
+    },
+    "sadon": {
+      "name": "Sadon",
+      "passives": {
+        "4": "On turn start, gain 1 Shield if at least 1 Sun charge is active.",
+        "10": "Apply 5 Foretell on enemies that break Shields.",
+        "20": "+2 Sun charges on Counterattack."
+      }
+    },
+    "scieleson": {
+      "name": "Scieleson",
+      "passives": {}
+    },
+    "tisseron": {
+      "name": "Tisseron",
+      "passives": {
+        "4": "Extend Twilight by one turn on using a Moon Skill. +50% Twilight damage increase on using a Sun Skill.",
+        "10": "Twilight duration is increased by 1.",
+        "20": "Play again when entering Twilight state."
+      }
+    }
   }
 }
