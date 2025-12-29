@@ -2,6 +2,7 @@ import { AiFillPlusCircle } from "react-icons/ai";
 import { AiFillSave } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { t } from "../i18n";
 
 
 export default function MasterPage() {
@@ -13,18 +14,18 @@ export default function MasterPage() {
                 </Link>
 
                 <h1 className="text-3xl font-bold text-center text-primary">
-                    Seja o mestre
+                    {t("masterPage.title")}
                 </h1>
 
                 <Link to="/create-campaign" className="btn btn-primary btn-lg w-full flex items-center justify-center gap-3">
                     <AiFillPlusCircle size={24} />
-                    Criar campanha
+                    {t("masterPage.createCampaign")}
                     <span className="opacity-0 w-1">.</span>
                 </Link>
 
                 <Link to="/load-campaign" className="btn btn-secondary btn-lg w-full flex items-center justify-center gap-3">
                     <AiFillSave size={22} />
-                    Carregar campanha
+                    {t("masterPage.loadCampaign")}
                     <span className="opacity-0 w-1">.</span>
                 </Link>
             </div>

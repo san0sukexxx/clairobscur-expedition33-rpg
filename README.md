@@ -13,6 +13,8 @@ Versão RPG de mesa do jogo Clair Obscur: Expedition 33
 - Usar um Picto em 3 batalhas bem sucedidas gera uma Lumina automaticamente
 - Como mestre você pode editar todos os detalhes da ficha dos jogadores
 - Como mestre é você quem decide como vão subir o nível das armas
+- Sempre que você estiver gerenciando uma batalha e ela acabar, primeiro clique em finalizar batalha, não clique direto para apagar a batalha
+    - Ao finalizar a batalha você distribui as recompensas e soma a contagem de batalhas dos pictos
 
 # Informaçõe úteis da história
 A Fratura ocorreu a 67 anos.

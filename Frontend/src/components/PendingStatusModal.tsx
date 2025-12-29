@@ -8,6 +8,7 @@ import {
 } from "../utils/BattleUtils";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
 import { getCurrentPlayerPendingStatus } from "../utils/StatusCalculator";
+import { t } from "../i18n";
 
 interface PendingStatusModalProps {
     player: GetPlayerResponse | null;
@@ -23,9 +24,9 @@ export default function PendingStatusModal({ player, onTapResolve }: PendingStat
     return (
         <div className="modal modal-open">
             <div className="modal-box max-w-md h-[80vh] flex flex-col">
-                <h3 className="font-bold text-lg mb-2">Efeitos pendentes</h3>
+                <h3 className="font-bold text-lg mb-2">{t("pendingStatus.title")}</h3>
                 <p className="text-sm opacity-80 mb-4">
-                    Resolva os efeitos abaixo antes de realizar suas ações neste turno.
+                    {t("pendingStatus.message")}
                 </p>
 
                 <div className="flex-1 flex flex-col gap-2 mb-4 overflow-y-auto">
@@ -42,8 +43,8 @@ export default function PendingStatusModal({ player, onTapResolve }: PendingStat
                                         {getStatusLabel(st.effectName)}{" "}
                                         {showAmmount && st.ammount != null ? st.ammount : ""}{" "}
                                         {st.remainingTurns
-                                            ? `(${st.remainingTurns} turno${
-                                                  st.remainingTurns > 1 ? "s" : ""
+                                            ? `(${st.remainingTurns} ${
+                                                  st.remainingTurns > 1 ? t("pendingStatus.turns") : t("pendingStatus.turn")
                                               })`
                                             : ""}
                                     </span>

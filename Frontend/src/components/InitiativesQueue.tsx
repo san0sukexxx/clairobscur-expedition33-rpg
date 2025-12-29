@@ -2,6 +2,7 @@ import { useMemo, useState } from "react"
 import { type BattleCharacterInfo, type InitiativeResponse, type BattleTurnResponse } from "../api/ResponseModel"
 import { APIBattle } from "../api/APIBattle"
 import { useToast } from "./Toast"
+import { t } from "../i18n"
 
 interface InitiativesQueueProps {
     characters?: BattleCharacterInfo[] | undefined

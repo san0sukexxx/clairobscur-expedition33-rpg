@@ -8,6 +8,7 @@ import { CgSandClock } from "react-icons/cg";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo } from "../api/ResponseModel";
 import PlayerStatusFloating from "./PlayerStatusFloating";
+import { t } from "../i18n";
 
 interface CombatsSectionProps {
     onMenuAction: (action: CombatMenuAction) => void;

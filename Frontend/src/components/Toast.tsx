@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { t } from "../i18n";
 
 type ToastOptions = {
   duration?: number;
@@ -71,7 +72,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 export function useToast() {
   const ctx = useContext(ToastQueueContext);
   if (!ctx) {
-    throw new Error("useToast deve ser usado dentro de <ToastProvider>");
+    throw new Error(t("toast.useToastError"));
   }
   return { showToast: ctx };
 }

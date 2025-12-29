@@ -1,5 +1,6 @@
 import React from "react"
 import { type GetAttacksResponse, type BattleWithDetailsResponse } from "../api/APIBattle"
+import { t } from "../i18n"
 
 interface AttacksModalProps {
     isOpen: boolean
@@ -21,13 +22,13 @@ export function AttacksModal({ isOpen, attacks, onClose, onRollDefense, battleDe
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
             <div className="bg-base-100 rounded-xl shadow-xl w-full max-w-4xl max-h-[80vh] flex flex-col">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-base-300">
-                    <h2 className="text-lg font-semibold">Ataques pendentes</h2>
+                    <h2 className="text-lg font-semibold">{t("combat.pendingAttacks")}</h2>
                     <button
                         type="button"
                         className="btn btn-ghost btn-sm"
                         onClick={onClose}
                     >
-                        Fechar
+                        {t("common.close")}
                     </button>
                 </div>
 

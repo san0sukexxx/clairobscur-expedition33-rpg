@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { CHARACTERS_LIST } from "../utils/CharacterUtils";
+import { t } from "../i18n";
 
 interface CharacterSelectProps {
     selected: string | null | undefined;
@@ -33,7 +34,7 @@ export default function CharacterSelect({ selected, onSelect, allowedCharacters 
                 ) : (
                     <div className="flex items-center gap-3 text-gray-400 text-lg">
                         <FaUserCircle className="w-6 h-6" aria-hidden />
-                        <span>Selecione seu personagem</span>
+                        <span>{t("characterSheet.selectCharacter")}</span>
                     </div>
                 )}
             </summary>

@@ -15,6 +15,7 @@ import {
     FaTimes,
     FaHeartBroken
 } from "react-icons/fa";
+import { t } from "../i18n";
 
 interface PendingAttacksModalProps {
     player: GetPlayerResponse | null;
@@ -39,7 +40,7 @@ export default function PendingAttacksModal({
 
     const getCharacterNameByBattleId = (battleId: number) => {
         const c = characters.find((x) => x.battleID === battleId);
-        return c?.name ?? `Personagem #${battleId}`;
+        return c?.name ?? `${t("common.character")} #${battleId}`;
     };
 
     const isCounterAttack = (attack: AttackResponse) =>

@@ -3,6 +3,7 @@ import AnimatedStatBar from "./AnimatedStatBar";
 import type { BattleCharacterInfo, BattleTurnResponse } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
+import { t } from "../i18n";
 
 interface GradientBarProps {
     characters?: BattleCharacterInfo[];
@@ -49,12 +50,12 @@ export default function GradientBar({ characters, player, turns }: GradientBarPr
         <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mb-4">
             <div>
                 <div className="flex items-center justify-between text-sm mb-2">
-                    <span>Cargas de Gradiente</span>
+                    <span>{t("combat.gradientCharges")}</span>
                     <span className="font-bold">{Math.floor(teamGradientPoints / 12)}/3</span>
                 </div>
                 <AnimatedStatBar
                     value={pct(teamGradientPoints % 12, 12)}
-                    label="Gradiente"
+                    label={t("combat.gradient")}
                     fillClass="bg-purple-500"
                     ghostClass="bg-purple-500/30"
                 />

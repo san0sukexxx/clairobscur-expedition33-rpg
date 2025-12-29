@@ -5,6 +5,7 @@ import { APIItem } from "../api/APIItem";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { type WeaponInfo } from "../api/ResponseModel";
 import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator";
+import { t } from "../i18n";
 
 const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", "revive-elixir"]);
 
@@ -107,10 +108,10 @@ function ElixirsCard({
     }, [player, inCombat]);
 
     const ELIXIRS = [
-        { id: "chroma-elixir", label: "Chroma", src: "/items/Chroma Elixir.png" },
-        { id: "healing-elixir", label: "Healing", src: "/items/Healing Tints.png" },
-        { id: "energy-elixir", label: "Energy", src: "/items/Energy Tint.png" },
-        { id: "revive-elixir", label: "Revive", src: "/items/Revive Tints.png" },
+        { id: "chroma-elixir", label: t("items.chroma"), src: "/items/Chroma Elixir.png" },
+        { id: "healing-elixir", label: t("items.healing"), src: "/items/Healing Tints.png" },
+        { id: "energy-elixir", label: t("items.energy"), src: "/items/Energy Tint.png" },
+        { id: "revive-elixir", label: t("items.revive"), src: "/items/Revive Tints.png" },
     ] as const;
 
     async function updateElixir(itemId: string, quantity: number, maxQuantity?: number) {
@@ -282,11 +283,11 @@ function ElixirsCard({
 
     return (
         <>
-            <Modal open={modalOpen} onClose={closeRecoveryModal} title="Recuperação">
+            <Modal open={modalOpen} onClose={closeRecoveryModal} title={t("items.recovery")}>
                 <div className="p-4 flex flex-col gap-4">
                     <div>
                         <label className="block text-sm opacity-80 mb-2">
-                            Porcentagem de recuperação:
+                            {t("items.recoveryPercent")}
                         </label>
                         <input
                             type="number"
@@ -301,14 +302,14 @@ function ElixirsCard({
                         className="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
                         onClick={confirmUseItem}
                     >
-                        Confirmar
+                        {t("common.confirm")}
                     </button>
                 </div>
             </Modal>
 
             <div className="rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
                 <div className="px-6 py-3 border-b border-white/10 text-lg tracking-widest text-center opacity-90">
-                    ELIXIRES
+                    {t("items.elixirs").toUpperCase()}
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4">
@@ -628,18 +629,18 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
             <Modal
                 open={openSlot !== null || editingItem !== null}
                 onClose={closeModal}
-                title={editingItem ? "Editar Item" : "Novo Item"}
+                title={editingItem ? t("items.editItem") : t("items.newItem")}
             >
                 <div className="p-4 flex flex-col gap-4">
                     <input
                         className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
-                        placeholder="ID do Item (ex: health-potion)"
+                        placeholder={t("items.itemId")}
                         value={itemId}
                         onChange={(e) => setItemId(e.target.value)}
                     />
                     <div className="flex gap-4">
                         <div className="flex-1">
-                            <label className="block text-sm opacity-80 mb-1">Quantidade</label>
+                            <label className="block text-sm opacity-80 mb-1">{t("common.quantity")}</label>
                             <input
                                 type="number"
                                 min={0}
@@ -649,7 +650,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                             />
                         </div>
                         <div className="flex-1">
-                            <label className="block text-sm opacity-80 mb-1">Quantidade Máxima</label>
+                            <label className="block text-sm opacity-80 mb-1">{t("common.maxQuantity")}</label>
                             <input
                                 type="number"
                                 min={1}
@@ -664,7 +665,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                         disabled={!itemId.trim()}
                         onClick={editingItem ? updateItem : createItem}
                     >
-                        {editingItem ? "Salvar" : "Adicionar"}
+                        {editingItem ? t("common.save") : t("common.add")}
                     </button>
                 </div>
             </Modal>

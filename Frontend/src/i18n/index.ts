@@ -31,9 +31,12 @@ interface WeaponTranslation {
   passives: Record<string, string>;  // level -> effect description
 }
 
+type UITexts = Record<string, any>;  // Nested structure for UI texts
+
 interface Translations {
   pictos: Record<string, PictoTranslation>;
   weapons: Record<string, WeaponTranslation>;
+  ui: UITexts;
 }
 
 const translations: Record<Locale, Translations> = {
@@ -281,4 +284,56 @@ export function hasWeapon(weaponId: string): boolean {
  */
 export function getAllWeaponIds(): string[] {
   return Object.keys(translations.en.weapons);
+}
+
+// ==================== UI TEXT TRANSLATIONS ====================
+
+/**
+ * Get a translated UI text by path (e.g., "common.save", "combat.attack")
+ * @param path Dot-separated path to the text (e.g., "common.save")
+ * @param locale The locale to use (defaults to current locale)
+ * @returns The translated text
+ */
+export function t(path: string, locale?: Locale): string {
+  const targetLocale = locale || currentLocale;
+  const keys = path.split(".");
+
+  let current: any = translations[targetLocale]?.ui;
+
+  for (const key of keys) {
+    if (current && typeof current === "object" && key in current) {
+      current = current[key];
+    } else {
+      console.warn(`Translation not found for path: ui.${path} in locale: ${targetLocale}`);
+      return path; // Fallback to path itself
+    }
+  }
+
+  return typeof current === "string" ? current : path;
+}
+
+/**
+ * Shorthand for t() - Get translated UI text
+ */
+export const translate = t;
+
+/**
+ * Get translated text with variable interpolation
+ * @param path Dot-separated path to the text
+ * @param variables Object with variables to interpolate (e.g., {name: "John"})
+ * @param locale The locale to use (defaults to current locale)
+ * @returns The translated text with variables replaced
+ *
+ * @example
+ * // Translation: "Hello, {name}!"
+ * tv("greeting.hello", {name: "John"}) // "Hello, John!"
+ */
+export function tv(path: string, variables: Record<string, string | number>, locale?: Locale): string {
+  let text = t(path, locale);
+
+  for (const [key, value] of Object.entries(variables)) {
+    text = text.replace(new RegExp(`\\{${key}\\}`, 'g'), String(value));
+  }
+
+  return text;
 }

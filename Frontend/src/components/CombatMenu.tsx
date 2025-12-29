@@ -4,6 +4,7 @@ import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuA
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { getCurrentPlayerStatus } from "../utils/StatusCalculator";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
+import { t } from "../i18n";
 
 interface CombatMenuProps {
   player: GetPlayerResponse | null;

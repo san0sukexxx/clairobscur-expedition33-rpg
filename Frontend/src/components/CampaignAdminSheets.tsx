@@ -3,6 +3,7 @@ import { FaUserFriends, FaTrash, FaArrowRight } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { getCharacterLabelById } from "../utils/CharacterUtils";
+import { t } from "../i18n";
 
 interface CampaignAdminSheetsProps {
     campaignId: number | null;
@@ -49,7 +50,7 @@ export default function CampaignAdminSheets({
             await APICampaignPlayer.delete(campaignId, playerId);
             await reload();
         } catch (e) {
-            console.error("Erro ao deletar jogador", e);
+            console.error(t("campaignAdminSheets.errorDeleting"), e);
             await reload();
         } finally {
             setDeletingId(null);
@@ -63,13 +64,13 @@ export default function CampaignAdminSheets({
                 <div className="card-body">
                     <div className="flex items-center justify-between gap-4">
                         <h2 className="card-title">
-                            <FaUserFriends className="opacity-60" /> Jogadores ({items.length})
+                            <FaUserFriends className="opacity-60" /> {t("campaignAdminSheets.players")} ({items.length})
                         </h2>
                     </div>
 
                     {loading && (
                         <div className="text-center py-4 text-sm opacity-70">
-                            Carregando...
+                            {t("common.loading")}
                         </div>
                     )}
 
@@ -79,9 +80,9 @@ export default function CampaignAdminSheets({
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Nome</th>
-                                        <th>Personagem</th>
-                                        <th className="text-right">Ações</th>
+                                        <th>{t("common.name")}</th>
+                                        <th>{t("common.character")}</th>
+                                        <th className="text-right">{t("common.actions")}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -98,9 +99,9 @@ export default function CampaignAdminSheets({
                                                     onClick={() => openConfirmDialog(p.id)}
                                                     disabled={deletingId === p.id}
                                                 >
-                                                    {deletingId === p.id ? "Carregando..." : (
+                                                    {deletingId === p.id ? t("common.loading") : (
                                                         <>
-                                                            <FaTrash /> Remover
+                                                            <FaTrash /> {t("common.remove")}
                                                         </>
                                                     )}
                                                 </button>
@@ -110,7 +111,7 @@ export default function CampaignAdminSheets({
                                                     onClick={() => navigateToDetails(p.id)}
                                                 >
                                                     <FaArrowRight />
-                                                    {p.isMasterEditing ? "Editando" : "Detalhes"}
+                                                    {p.isMasterEditing ? t("campaignAdminSheets.editing") : t("campaignAdminSheets.details")}
                                                 </button>
 
                                             </td>
@@ -119,7 +120,7 @@ export default function CampaignAdminSheets({
                                     {items.length === 0 && !loading && (
                                         <tr>
                                             <td colSpan={4} className="text-center opacity-60">
-                                                Nenhum jogador ainda.
+                                                {t("campaignAdminSheets.noPlayers")}
                                             </td>
                                         </tr>
                                     )}
@@ -139,7 +140,7 @@ export default function CampaignAdminSheets({
                 <div className="modal-box max-w-md w-[92vw] bg-base-100 text-base-content shadow-xl p-0 overflow-hidden relative z-20">
                     <div className="px-6 py-4 border-b border-base-300 flex items-center justify-between bg-base-200">
                         <h3 className="font-bold text-lg text-base-content">
-                            Remover jogador
+                            {t("campaignAdminSheets.removePlayer")}
                         </h3>
                         <form method="dialog">
                             <button
@@ -153,16 +154,15 @@ export default function CampaignAdminSheets({
 
                     <div className="px-6 py-6 space-y-4">
                         <p className="text-sm leading-relaxed">
-                            Tem certeza que deseja remover este jogador da campanha?
-                            Esta ação não pode ser desfeita.
+                            {t("campaignAdminSheets.removeConfirm")}
                         </p>
 
                         <div className="bg-base-300 rounded-lg p-3 text-xs">
                             <div className="font-semibold">
-                                ID do jogador: {confirmingId ?? "-"}
+                                {t("campaignAdminSheets.playerId")}: {confirmingId ?? "-"}
                             </div>
                             <div className="opacity-70">
-                                Campanha: {campaignName}
+                                {t("campaignAdminSheets.campaign")}: {campaignName}
                             </div>
                         </div>
 
@@ -172,7 +172,7 @@ export default function CampaignAdminSheets({
                                 onClick={closeConfirmDialog}
                                 disabled={deletingId !== null}
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </button>
 
                             <button
@@ -184,7 +184,7 @@ export default function CampaignAdminSheets({
                                 }}
                                 disabled={deletingId !== null}
                             >
-                                {deletingId !== null ? "Removendo..." : "Remover jogador"}
+                                {deletingId !== null ? t("campaignAdminSheets.removing") : t("campaignAdminSheets.removePlayer")}
                             </button>
                         </div>
                     </div>

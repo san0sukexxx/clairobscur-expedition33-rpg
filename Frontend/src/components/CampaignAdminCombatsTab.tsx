@@ -5,6 +5,7 @@ import CombatAdmin from "./CombatAdmin";
 import { type Campaign } from "../api/APICampaign";
 import { getBattleStatusLabel } from "../utils/BattleUtils";
 import { type GetPlayerResponse } from "../api/APIPlayer";
+import { t } from "../i18n";
 
 interface CampaignAdminCombatsTabProps {
     campaignInfo: Campaign;
@@ -29,7 +30,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
             const data = await APIBattle.listByCampaign(campaignInfo.id);
             setBattles(data);
         } catch {
-            setError("Não foi possível carregar os combates desta campanha.");
+            setError(t("combatAdmin.errorLoadingCombats"));
         } finally {
             setLoading(false);
         }
@@ -51,7 +52,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
             await loadBattles();
             handleSelectBattle(newId);
         } catch {
-            setError("Erro ao criar o combate.");
+            setError(t("combatAdmin.errorCreating"));
         } finally {
             setCreating(false);
         }
@@ -63,7 +64,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
             await APIBattle.useBattle(battleId, campaignInfo.id)
         } catch (error) {
             console.error("Erro ao ativar batalha:", error)
-            alert("Não foi possível ativar a batalha.")
+            alert(t("combatAdmin.errorActivating"))
         }
     }
 
@@ -92,7 +93,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                 handleSelectBattle(null);
             }
         } catch {
-            setError("Erro ao apagar o combate.");
+            setError(t("combatAdmin.errorDeleting"));
         } finally {
             setDeletingId(null);
         }
@@ -112,10 +113,10 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
             {confirmId !== null && (
                 <dialog className="modal modal-open">
                     <div className="modal-box">
-                        <h3 className="font-bold text-lg">Apagar combate</h3>
+                        <h3 className="font-bold text-lg">{t("combatAdmin.deleteCombat")}</h3>
                         <p className="py-3">
-                            Tem certeza que deseja apagar o combate{" "}
-                            <b>#{confirmId}</b>? Esta ação não poderá ser desfeita.
+                            {t("combatAdmin.deleteConfirm")}{" "}
+                            <b>#{confirmId}</b>? {t("combatAdmin.actionUndone")}
                         </p>
                         <div className="modal-action">
                             <button
@@ -123,7 +124,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                                 onClick={() => setConfirmId(null)}
                                 disabled={deletingId === confirmId}
                             >
-                                Cancelar
+                                {t("common.cancel")}
                             </button>
                             <button
                                 className="btn btn-error"
@@ -131,8 +132,8 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                                 disabled={deletingId === confirmId}
                             >
                                 {deletingId === confirmId
-                                    ? "Encerrando..."
-                                    : "Apagar"}
+                                    ? t("combatAdmin.deleting")
+                                    : t("combatAdmin.delete")}
                             </button>
                         </div>
                     </div>
@@ -144,7 +145,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                     <div className="flex items-center justify-between">
                         <h2 className="card-title flex items-center gap-2">
                             <FaShieldAlt className="opacity-60" />
-                            Combates
+                            {t("combatAdmin.combatsTitle")}
                         </h2>
 
                         <button
@@ -153,13 +154,13 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                             disabled={creating}
                         >
                             <FaPlus />
-                            {creating ? "Criando..." : "Criar combate"}
+                            {creating ? t("combatAdmin.creating") : t("combatAdmin.createCombat")}
                         </button>
                     </div>
 
                     {loading && (
                         <div className="mt-4 text-sm opacity-70">
-                            Carregando combates...
+                            {t("combatAdmin.loadingCombats")}
                         </div>
                     )}
 
@@ -171,7 +172,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
 
                     {!loading && !error && battles.length === 0 && (
                         <div className="alert alert-info mt-4 text-sm leading-relaxed">
-                            Nenhum combate encontrado para esta campanha.
+                            {t("combatAdmin.noCombatsFound")}
                         </div>
                     )}
 
@@ -180,9 +181,9 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                             <table className="table table-zebra w-full">
                                 <thead>
                                     <tr>
-                                        <th className="text-left">Combate</th>
-                                        <th className="text-left">Status</th>
-                                        <th className="text-left w-1/6">Ações</th>
+                                        <th className="text-left">{t("combatAdmin.combat")}</th>
+                                        <th className="text-left">{t("combatAdmin.status")}</th>
+                                        <th className="text-left w-1/6">{t("common.actions")}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -196,7 +197,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                                                         className="btn btn-xs btn-outline"
                                                         onClick={() => handleOpenBattle(battle.id)}
                                                     >
-                                                        Usar
+                                                        {t("combatAdmin.use")}
                                                     </button>
                                                 ) : (
                                                     <button
@@ -207,11 +208,11 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                                                                 handleSelectBattle(null)
                                                             } catch (error) {
                                                                 console.error("Erro ao pausar batalha:", error)
-                                                                alert("Não foi possível pausar a batalha.")
+                                                                alert(t("combatAdmin.errorPausing"))
                                                             }
                                                         }}
                                                     >
-                                                        Pausar
+                                                        {t("combatAdmin.pause")}
                                                     </button>
                                                 )}
 
@@ -220,7 +221,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                                                     onClick={() => setConfirmId(battle.id)}
                                                     disabled={deletingId === battle.id}
                                                 >
-                                                    Apagar
+                                                    {t("combatAdmin.delete")}
                                                 </button>
                                             </td>
 

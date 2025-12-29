@@ -6,6 +6,7 @@ import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
+import { t } from "../i18n";
 
 interface BattleGroupStatusProps {
     player: GetPlayerResponse | null;

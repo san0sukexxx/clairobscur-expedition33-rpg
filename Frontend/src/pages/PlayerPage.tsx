@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useLocation, matchPath } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
+import { t } from "../i18n";
 import { FaUser, FaSkull, FaCheckCircle, FaDivide, FaShieldAlt } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
@@ -194,16 +195,20 @@ export default function PlayerPage() {
             ? "Uma batalha está em andamento"
             : "A batalha foi encerrada"
         );
-
-        setPlayer(prev =>
-          prev
-            ? {
-              ...prev,
-              fightInfo: playerInfo?.fightInfo ?? undefined
-            }
-            : prev
-        );
       }
+
+      // Sempre atualizar pictos, weapons, luminas e fightInfo
+      setPlayer(prev =>
+        prev
+          ? {
+            ...prev,
+            fightInfo: playerInfo?.fightInfo ?? undefined,
+            pictos: playerInfo?.pictos ?? prev.pictos,
+            weapons: playerInfo?.weapons ?? prev.weapons,
+            luminas: playerInfo?.luminas ?? prev.luminas
+          }
+          : prev
+      );
 
       setWasMasterEditing(prev => {
         if (playerInfo.isMasterEditing && !prev) {
@@ -277,7 +282,7 @@ export default function PlayerPage() {
 
       {/* Conteúdo (deixa espaço para a btm-nav) */}
       <main className="p-4 max-w-md mx-auto pb-24">
-        {loading && <div className="text-center opacity-70 py-16">Carregando…</div>}
+        {loading && <div className="text-center opacity-70 py-16">{t("common.loading")}</div>}
 
         {error && !loading && (
           <div className="text-center text-error py-16">{error}</div>
@@ -397,7 +402,7 @@ export default function PlayerPage() {
 
           navigate(`/campaign-player/${campaign}/${response.id}`, { replace: true });
         } catch (e: any) {
-          setError("Erro ao carregar dados: " + e?.message);
+          setError(t("errors.errorLoading") + " " + e?.message);
         }
       };
 
@@ -427,7 +432,7 @@ export default function PlayerPage() {
       setLoading(false);
     } catch (e: any) {
       console.error("Erro ao carregar player:", e);
-      setError("Erro ao carregar player: " + e?.message);
+      setError(t("errors.errorLoading") + " " + e?.message);
     }
   }
 

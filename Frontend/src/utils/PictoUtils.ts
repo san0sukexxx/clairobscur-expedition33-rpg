@@ -51,15 +51,25 @@ export function displayPictoAttributeCritical(value: number, level: number): str
 }
 
 export function getPictoByName(name: string): PictoInfo | undefined {
-    // Try to find by translated name first
+    if (!name) return undefined;
+
+    const nameLower = name.toLowerCase();
+
+    // Try to find by id first (kebab-case like "dodger")
+    const byId = PictosList.find(
+        (picto) => picto.id?.toLowerCase() === nameLower
+    );
+    if (byId) return byId;
+
+    // Try to find by translated name
     const byName = PictosList.find(
-        (picto) => picto.name.toLowerCase() === name.toLowerCase()
+        (picto) => picto.name?.toLowerCase() === nameLower
     );
     if (byName) return byName;
 
     // Fallback: try to find by imageId (English name)
     return PictosList.find(
-        (picto) => picto.imageId.toLowerCase() === name.toLowerCase()
+        (picto) => picto.imageId?.toLowerCase() === nameLower
     );
 }
 

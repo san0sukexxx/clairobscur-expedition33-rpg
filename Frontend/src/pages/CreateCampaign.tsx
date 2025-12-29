@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link, useLocation, matchPath, useNavigate, useParams } from "react-router-dom";
 import { APICampaign } from "../api/APICampaign";
+import { t } from "../i18n";
 
 type Item = { id: string; label: string; checked: boolean };
 
@@ -48,7 +49,7 @@ export default function CreateCampaign() {
     const nameError = useMemo(() => {
         if (!touched) return undefined;
         if (campaign.name.trim().length < 3)
-            return "O nome deve ter pelo menos 3 caracteres.";
+            return t("createCampaign.nameError");
         return undefined;
     }, [campaign.name, touched]);
 
@@ -114,7 +115,7 @@ export default function CreateCampaign() {
             <form onSubmit={onSubmit} className="w-full max-w-md card bg-base-100 shadow-xl">
                 <div className="card-body gap-4">
                     <h2 className="card-title text-primary">
-                        {isEdit ? "Editar Campanha" : "Criar Campanha"}
+                        {isEdit ? t("createCampaign.editTitle") : t("createCampaign.title")}
                     </h2>
 
                     {error && (
@@ -122,10 +123,10 @@ export default function CreateCampaign() {
                     )}
 
                     <label className="form-control" onBlur={() => setTouched(true)}>
-                        <span className="label-text">Nome da campanha</span>
+                        <span className="label-text">{t("createCampaign.campaignName")}</span>
                         <input
                             className="input input-bordered"
-                            placeholder="Expedition 33"
+                            placeholder={t("createCampaign.campaignNamePlaceholder")}
                             value={campaign.name}
                             onChange={(e) =>
                                 setCampaign((prev) => ({ ...prev, name: e.target.value }))
@@ -140,7 +141,7 @@ export default function CreateCampaign() {
 
                     <div className="flex items-center justify-between mt-2">
                         <span className="text-sm opacity-70">
-                            Personagens iniciais permitidos: <b>{selectedCount}</b> /{" "}
+                            {t("createCampaign.initialCharacters")}: <b>{selectedCount}</b> /{" "}
                             {campaign.characters.length}
                         </span>
                         <div className="join">
@@ -149,14 +150,14 @@ export default function CreateCampaign() {
                                 className="btn btn-xs join-item"
                                 onClick={() => toggleAll(true)}
                             >
-                                Selecionar tudo
+                                {t("common.selectAll")}
                             </button>
                             <button
                                 type="button"
                                 className="btn btn-xs join-item"
                                 onClick={() => toggleAll(false)}
                             >
-                                Limpar
+                                {t("common.clear")}
                             </button>
                         </div>
                     </div>
@@ -190,13 +191,13 @@ export default function CreateCampaign() {
                             onClick={() => navigate(-1)}
                             disabled={submitting}
                         >
-                            Cancelar
+                            {t("common.cancel")}
                         </button>
                         <button type="submit" className="btn btn-primary" disabled={!canSubmit}>
                             {submitting ? (
                                 <span className="loading loading-spinner loading-sm" />
                             ) : (
-                                isEdit ? "Editar campanha" : "Criar campanha"
+                                isEdit ? t("createCampaign.editButton") : t("createCampaign.createButton")
                             )}
                         </button>
                     </div>
@@ -225,7 +226,7 @@ export default function CreateCampaign() {
             });
         } catch (e: any) {
             console.error("Erro ao carregar campanha:", e);
-            setError("Erro ao carregar campanha: " + e?.message);
+            setError(t("createCampaign.errorLoading") + " " + e?.message);
         }
     }
 }

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react"
 import { type PictoResponse, type PictoInfo } from "../api/ResponseModel"
+import { t } from "../i18n"
 import {
   displayPictoAttributeCritical,
   displayPictoAttributeDefense,
@@ -27,7 +28,9 @@ type ModalType = "slot" | "admin-add" | "admin-add-level" | "admin-remove" | nul
 
 function getPictoName(p: PictoResponse | null | undefined): string {
   if (!p) return ""
-  return (p as any).name ?? (p as any).pictoId ?? ""
+  // Buscar o picto pelo ID para obter o nome traduzido
+  const pictoInfo = getPictoByName(p.pictoId)
+  return pictoInfo?.name ?? p.pictoId ?? ""
 }
 
 export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps) {
@@ -226,7 +229,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
     try {
       newId = await APIPicto.createPlayerPicto({
         playerId: player.id,
-        pictoId: pendingAddPicto.name,
+        pictoId: pendingAddPicto.id,
         level: lvl
       })
     } catch (e) {
@@ -238,14 +241,14 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
       const existing = prev.pictos ?? []
 
       const alreadyHas = existing.some(
-        (p) => p.pictoId.toLowerCase() === pendingAddPicto.name.toLowerCase()
+        (p) => p.pictoId.toLowerCase() === pendingAddPicto.id.toLowerCase()
       )
       if (alreadyHas) return prev
 
       const added: PictoResponse = {
         id: newId ?? 0,
         playerId: player.id,
-        pictoId: pendingAddPicto.name,
+        pictoId: pendingAddPicto.id,
         level: lvl,
         battleCount: 0
       }
@@ -269,12 +272,12 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
 
   const modalTitle =
     modalType === "admin-add"
-      ? "Adicionar Picto"
+      ? t("pictos.addPicto")
       : modalType === "admin-add-level"
-        ? "Definir nível"
+        ? t("common.level")
         : modalType === "admin-remove"
-          ? "Remover Picto"
-          : "Selecione um Picto"
+          ? t("pictos.removePicto")
+          : t("pictos.selectPicto")
 
   return (
     <div className="text-white">
@@ -650,13 +653,13 @@ function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse; l
   return (
     <>
       <Stat
-        label="Agilidade"
+        label={t("pictos.speed")}
         value={picto.status.speed}
         displayValue={displayPictoSpeed(picto.status.speed ?? 0, level)}
         displayAttributedValue={displayPictoAttributeSpeed(picto.status.speed ?? 0, level)}
       />
       <Stat
-        label="Crítico"
+        label={t("pictos.critical")}
         value={
           picto.status.criticalRate !== undefined
             ? `${picto.status.criticalRate}%`
@@ -669,13 +672,13 @@ function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse; l
         )}
       />
       <Stat
-        label="HP"
+        label={t("pictos.health")}
         value={picto.status.health}
         displayValue={displayPictoHealth(picto.status.health ?? 0, level)}
         displayAttributedValue={displayPictoAttributeHealth(picto.status.health ?? 0, level)}
       />
       <Stat
-        label="Defesa"
+        label={t("pictos.defense")}
         value={picto.status.defense}
         displayValue={displayPictoDefense(picto.status.defense ?? 0, level)}
         displayAttributedValue={displayPictoAttributeDefense(

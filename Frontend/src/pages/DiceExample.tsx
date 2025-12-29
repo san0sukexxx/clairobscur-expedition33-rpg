@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import DiceBox from "@3d-dice/dice-box";
+import { t } from "../i18n";
 
 export default function DiceSimple() {
 	const boxRef = useRef<any>(null);
@@ -33,7 +34,7 @@ export default function DiceSimple() {
 		<div className="flex flex-col h-screen gap-3">
 			<div id={BOX_ID} className="flex-1 w-full border rounded-lg" />
 			<button onClick={rollD6} className="btn btn-primary w-32 self-center mb-3">
-				Rolar D6
+				{t("weapons.rollD6")}
 			</button>
 		</div>
 	);

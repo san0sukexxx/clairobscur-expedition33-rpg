@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react"
 import { type PictoInfo, type LuminaResponse } from "../api/ResponseModel"
+import { t } from "../i18n"
 import {
     displayPictoAttributeCritical,
     displayPictoAttributeDefense,
@@ -258,10 +259,10 @@ export default function LuminasSection({
 
     const modalTitle =
         modalType === "admin-add"
-            ? "Adicionar Lumina"
+            ? t("luminas.addLumina")
             : modalType === "admin-remove"
-                ? "Remover Lumina"
-                : "Selecione uma Lumina"
+                ? t("luminas.removeLumina")
+                : t("luminas.selectLumina")
 
     return (
         <div className="text-white">

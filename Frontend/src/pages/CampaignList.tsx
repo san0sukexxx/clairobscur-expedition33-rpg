@@ -3,6 +3,7 @@ import { FaPlay, FaArchive } from "react-icons/fa";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { useApiListRaw } from "../api/UseApiListRaw";
+import { t } from "../i18n";
 
 export default function CampaignList() {
   const { pathname } = useLocation();
@@ -20,14 +21,14 @@ export default function CampaignList() {
         <div className="flex-1">
           <Link to="/" className="flex items-center gap-2">
             <MdOutlineKeyboardBackspace />
-            <span className="text-lg font-bold">Campanhas</span>
+            <span className="text-lg font-bold">{t("campaigns.title")}</span>
           </Link>
         </div>
       </div>
 
       {/* Conteúdo */}
       <main className="p-4 space-y-4 max-w-md mx-auto">
-        {loading && <div className="text-center opacity-70 py-16">Carregando…</div>}
+        {loading && <div className="text-center opacity-70 py-16">{t("common.loading")}</div>}
 
         {error && !loading && (
           <div className="text-center text-error py-16">{error}</div>
@@ -35,7 +36,7 @@ export default function CampaignList() {
 
         {!loading && !error && (items.length === 0 ? (
           <div className="text-center opacity-70 py-16">
-            Nenhuma campanha disponível.
+            {t("campaigns.noCampaigns")}
           </div>
         ) : (
           <ul className="space-y-3">
@@ -51,7 +52,7 @@ export default function CampaignList() {
 
                     <div className="card-actions justify-end mt-2">
                       <Link to={`${campaignPath}/${c.id}`} className="btn btn-primary btn-sm">
-                        Entrar
+                        {t("common.enter")}
                       </Link>
                     </div>
                   </div>

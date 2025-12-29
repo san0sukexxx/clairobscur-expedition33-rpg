@@ -7,7 +7,7 @@ import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
 import { displayWeaponPlusDices, displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE } from "../utils/ElementUtils";
-import { getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
+import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
 
 // Helper to find the correct weapon ID considering character variations
 function getWeaponTranslationId(weaponName: string, weaponList: WeaponDTO[]): string {
@@ -340,7 +340,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
             className="btn btn-primary"
             onClick={() => openSelector("add")}
           >
-            Adicionar arma
+            {t("weapons.addWeapon")}
           </button>
 
           <button
@@ -348,7 +348,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
             onClick={() => openSelector("remove")}
             disabled={!player?.weapons || player.weapons.length === 0}
           >
-            Remover arma
+            {t("weapons.removeWeapon")}
           </button>
         </div>
       )}
@@ -356,7 +356,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
       {!hasWeapons && (
         <div className={`card-body ${isAdmin ? "pt-0" : ""}`}>
           <p className="text-sm text-neutral-300">
-            Você não tem nenhuma arma.
+            {t("weapons.noWeapon")}
           </p>
         </div>
       )}
@@ -366,7 +366,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
           {activeWeapon == null ? (
             <div className="card-body">
               <p className="text-sm text-neutral-300">
-                Você não tem nenhuma arma equipada.
+                {t("weapons.noWeapon")}
               </p>
 
               <button
@@ -375,21 +375,21 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                 className="mt-4 inline-flex items-center gap-2 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-semibold text-neutral-100 hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-500"
               >
                 <FaList aria-hidden="true" />
-                <span>Ver lista de armas</span>
+                <span>{t("weapons.selectWeapon")}</span>
               </button>
             </div>
           ) : (
             <div className="card-body">
               <div className="flex items-center justify-between">
                 <h2 className="flex-1 text-center font-bold text-sm tracking-wide uppercase">
-                  Armas
+                  {t("weapons.title")}
                 </h2>
                 <button
                   type="button"
                   onClick={handleUnequip}
                   className="btn btn-sm btn-ghost btn-circle"
-                  title="Desequipar arma"
-                  aria-label="Desequipar arma"
+                  title={t("weapons.changeWeapon")}
+                  aria-label={t("weapons.changeWeapon")}
                 >
                   ✕
                 </button>
@@ -451,7 +451,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
               <div className="grid grid-cols-4 gap-4 text-center mt-6">
                 <div>
-                  <span className="block text-xs uppercase opacity-70">Poder</span>
+                  <span className="block text-xs uppercase opacity-70">{t("weapons.power")}</span>
                   {displayWeaponPlusDices(activeWeapon.power, activeWeapon.level) !== null && (
                     <span className="inline-flex items-center justify-center gap-1 text-2xl font-bold">
                       {displayWeaponPlusDices(activeWeapon.power, activeWeapon.level)}
@@ -466,41 +466,41 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                   )}
                 </div>
                 <div>
-                  <span className="block text-xs uppercase opacity-70">Elemento</span>
+                  <span className="block text-xs uppercase opacity-70">{t("weapons.element")}</span>
                   <span className="block text-2xl">{activeWeapon.element}</span>
                   <span className="block text-s">({activeWeapon.elementName})</span>
                 </div>
 
                 {(
                   [
-                    ["Vitalidade", activeWeapon.scaling.vitality],
-                    ["Defesa", activeWeapon.scaling.defense],
-                    ["Sorte", activeWeapon.scaling.luck],
-                    ["Agilidade", activeWeapon.scaling.agility],
+                    [t("weapons.vitality"), activeWeapon.scaling.vitality],
+                    [t("weapons.defense"), activeWeapon.scaling.defense],
+                    [t("weapons.luck"), activeWeapon.scaling.luck],
+                    [t("weapons.agility"), activeWeapon.scaling.agility],
                   ] as const
                 ).map(([label, value]) =>
                   value ? (
                     <div key={label}>
                       <span className="block text-xs uppercase opacity-70">{label}</span>
-                      {label == "Vitalidade" && (
+                      {label == t("weapons.vitality") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponVitalityBonus(value, activeWeapon.level)}
                           <GiLifeBar />
                         </span>
                       )}
-                      {label == "Defesa" && (
+                      {label == t("weapons.defense") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponDefenseBonus(value, activeWeapon.level)}
                           <FaDice />
                         </span>
                       )}
-                      {label == "Sorte" && (
+                      {label == t("weapons.luck") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponLuckBonus(value, activeWeapon.level)}
                           <FaDice />
                         </span>
                       )}
-                      {label == "Agilidade" && (
+                      {label == t("weapons.agility") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponAgilityBonus(value, activeWeapon.level)}
                           <FaDice />

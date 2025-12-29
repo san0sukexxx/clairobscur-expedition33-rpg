@@ -8,6 +8,7 @@ import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import CampaignAdminSheets from "../components/CampaignAdminSheets";
 import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
+import { t } from "../i18n";
 
 export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
@@ -58,7 +59,7 @@ export default function CampaignAdmin() {
             } catch {
                 const emptyCampaign: Campaign = {
                     id: 0,
-                    name: "Falha ao carregar dados da campanha",
+                    name: t("errors.failedToLoad"),
                     characters: []
                 };
                 setCampaignInfo(emptyCampaign);
@@ -80,7 +81,7 @@ export default function CampaignAdmin() {
             {/* Navbar */}
             <div className="navbar bg-base-100 shadow px-4">
                 <div className="flex-1">
-                    <span className="text-xl font-bold text-primary">Painel da Campanha</span>
+                    <span className="text-xl font-bold text-primary">{t("campaigns.campaignPanel")}</span>
                 </div>
 
                 <div className="flex-none">
@@ -89,7 +90,7 @@ export default function CampaignAdmin() {
                         className="btn btn-ghost gap-2"
                     >
                         <FiLogOut />
-                        Sair
+                        {t("navigation.logout")}
                     </button>
                 </div>
             </div>
@@ -98,9 +99,9 @@ export default function CampaignAdmin() {
             <main className="p-4 lg:p-6 flex flex-col gap-6 flex-1">
                 <div>
                     <h1 className="text-3xl font-bold">
-                        {campaignInfo?.name ?? "Carregando..."}
+                        {campaignInfo?.name ?? t("common.loading")}
                     </h1>
-                    <p className="opacity-70">Administração da campanha</p>
+                    <p className="opacity-70">{t("campaigns.campaignAdmin")}</p>
                 </div>
 
                 {/* Tabs */}
@@ -113,7 +114,7 @@ export default function CampaignAdmin() {
                         >
                             <span className="flex items-center gap-2">
                                 <FaUserFriends />
-                                Jogadores
+                                {t("tabs.players")}
                             </span>
                         </button>
 
@@ -124,7 +125,7 @@ export default function CampaignAdmin() {
                         >
                             <span className="flex items-center gap-2">
                                 <FaShieldAlt />
-                                Combates
+                                {t("tabs.combats")}
                             </span>
                         </button>
 
@@ -140,7 +141,7 @@ export default function CampaignAdmin() {
                         >
                             <span className="flex items-center gap-2">
                                 <FaFileAlt />
-                                Detalhes
+                                {t("common.details")}
                             </span>
                         </button>
                     </div>

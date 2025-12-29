@@ -8,6 +8,7 @@ import { getPlayerHasSkill, getSkillById, getSkillIsBlocked, getEnrichedCharacte
 import { calculateSkillPoints } from "../utils/PlayerCalculator";
 import { APISkill } from "../api/APISkill";
 import { renderStainText } from "../utils/StainTextUtils";
+import { t } from "../i18n";
 
 export interface SkillsListTabProps {
     player: GetPlayerResponse | null;
@@ -33,7 +34,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
     if (list.length === 0) {
         return (
             <div className="w-full py-10 text-center opacity-70">
-                <p>Nenhuma habilidade disponível.</p>
+                <p>{t("skills.noSkills")}</p>
             </div>
         );
     }
@@ -196,7 +197,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                             <article
                                 key={skill.id}
                                 className="group relative flex h-full items-center justify-center rounded-2xl border border-white/10 bg-neutral-900/80 p-10 shadow-sm backdrop-blur-sm"
-                                aria-label={`Habilidade bloqueada`}
+                                aria-label={t("skills.skillBlocked")}
                             >
                                 <div className="flex flex-col items-center gap-2 text-neutral-300">
                                     <div className="relative h-12 w-12">
@@ -205,7 +206,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                             <FaLock className="h-7 w-7 opacity-80" aria-hidden />
                                         </div>
                                     </div>
-                                    <span className="text-xs opacity-70">Bloqueada</span>
+                                    <span className="text-xs opacity-70">{t("skills.locked")}</span>
                                 </div>
                             </article>
                         );
@@ -313,11 +314,11 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                             <FaUnlock className="h-3.5 w-3.5" aria-hidden />
                                             {skillInfo.masterUnlock
                                                 ? skillInfo.unlockCost && skillInfo.unlockCost > 0
-                                                    ? `Desbloqueie somente quando o mestre permitir (${skillInfo.unlockCost})`
-                                                    : 'Desbloqueie somente quando o mestre permitir'
+                                                    ? `${t("skills.unlock")} (${skillInfo.unlockCost})`
+                                                    : t("skills.unlock")
                                                 : skillInfo.unlockCost === 0
-                                                ? 'Desbloqueio Grátis'
-                                                : `Desbloquear (${skillInfo.unlockCost})`}
+                                                ? t("skills.unlock")
+                                                : `${t("skills.unlock")} (${skillInfo.unlockCost})`}
                                         </button>
                                     )}
                                 </div>
@@ -327,7 +328,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                 <div className="mt-4 flex justify-end">
                                     {inBattle ? (
                                         <div className="text-xs text-amber-400">
-                                            Não é possível remover habilidades durante a batalha
+                                            {t("skills.unlock")}
                                         </div>
                                     ) : (
                                         <button
@@ -339,7 +340,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                             className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
                                         >
                                             <FaTrash className="h-3.5 w-3.5" aria-hidden />
-                                            Remover
+                                            {t("common.remove")}
                                         </button>
                                     )}
                                 </div>

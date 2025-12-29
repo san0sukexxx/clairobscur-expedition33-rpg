@@ -7,6 +7,7 @@ import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { getCharacterLabelById } from "../utils/CharacterUtils";
+import { t } from "../i18n";
 
 export default function CharacterSheetList() {
   const { campaign } = useParams<{ campaign: string }>();
@@ -30,14 +31,14 @@ export default function CharacterSheetList() {
         <div className="flex-1">
           <Link to="/campaign-list" className="flex items-center gap-2">
             <MdOutlineKeyboardBackspace />
-            <span className="text-lg font-bold">Fichas de personagem</span>
+            <span className="text-lg font-bold">{t("navigation.characterSheets")}</span>
           </Link>
         </div>
       </div>
 
       {/* Conteúdo */}
       <main className="p-4 space-y-4 max-w-md mx-auto">
-        {loading && <div className="text-center opacity-70 py-16">Carregando…</div>}
+        {loading && <div className="text-center opacity-70 py-16">{t("common.loading")}</div>}
 
         {error && !loading && (
           <div className="text-center text-error py-16">{error}</div>
@@ -45,7 +46,7 @@ export default function CharacterSheetList() {
 
         {!loading && !error && (items.length === 0 ? (
           <div className="text-center opacity-70 py-16">
-            Nenhuma ficha de personagem disponível.
+            {t("characterSheet.noCharacterSheets")}
           </div>
         ) : (
           <ul className="space-y-3">
@@ -55,10 +56,10 @@ export default function CharacterSheetList() {
                   <div className="card-body p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <h2 className="card-title text-base">{c.playerSheet?.name ?? "Sem nome"}</h2>
+                        <h2 className="card-title text-base">{c.playerSheet?.name ?? t("common.noName")}</h2>
                       </div>
                       <div className="text-right text-sm opacity-70">
-                        Personagem: {getCharacterLabelById(c.playerSheet?.characterId) ?? "Nenhum"}
+                        {t("common.character")}: {getCharacterLabelById(c.playerSheet?.characterId) ?? t("common.none")}
                       </div>
                     </div>
 
@@ -67,7 +68,7 @@ export default function CharacterSheetList() {
                         to={`/campaign-player/${campaign}/${c.id}`}
                         className="btn btn-primary btn-sm"
                       >
-                        Usar
+                        {t("common.use")}
                       </Link>
                     </div>
                   </div>

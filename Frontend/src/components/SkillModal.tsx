@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { t } from "../i18n";
 
 function Modal({
     open,
@@ -29,8 +30,8 @@ function Modal({
             <div className="absolute inset-0 flex items-center justify-center p-4">
                 <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-[#121212] border border-white/10 shadow-2xl">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-                        <div className="text-lg tracking-wide">Selecione uma Habilidade</div>
-                        <button onClick={onClose} className="text-2xl leading-none px-2" aria-label="Fechar">
+                        <div className="text-lg tracking-wide">{t("skills.selectSkill")}</div>
+                        <button onClick={onClose} className="text-2xl leading-none px-2" aria-label={t("common.close")}>
                             ×
                         </button>
                     </div>

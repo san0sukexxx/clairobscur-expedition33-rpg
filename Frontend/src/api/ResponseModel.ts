@@ -73,6 +73,14 @@ export interface BattleCharacterInfo {
     canRollInitiative?: boolean;
 }
 
+export type RewardType = "weapon" | "picto";
+
+export interface BattleReward {
+    type: RewardType;
+    itemId: string;  // Weapon name or Picto name
+    level: number;   // Level of the reward
+}
+
 export interface NPCInfo {
     id: string;
     name: string;
@@ -90,6 +98,7 @@ export interface NPCInfo {
     isFlying?: boolean;
     initiativeBonus?: number;  // Flat bonus added to initiative roll
     maxLifeBonus?: number;  // Flat bonus added to max HP calculation (resistance * 5 + bonus)
+    reward?: BattleReward;  // Optional reward for defeating this NPC
 }
 
 export interface NPCStatusItem {

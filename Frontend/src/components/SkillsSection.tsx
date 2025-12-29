@@ -7,6 +7,7 @@ import { FaListCheck } from "react-icons/fa6";
 import { FaListUl } from "react-icons/fa";
 import { calculateSkillPoints } from "../utils/PlayerCalculator";
 import { calculateUsedSkillPoints } from "../utils/SkillUtils";
+import { t } from "../i18n";
 
 interface SkillsSectionProps {
     player: GetPlayerResponse | null;

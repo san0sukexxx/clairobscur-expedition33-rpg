@@ -8,6 +8,7 @@ import { APISkill } from "../api/APISkill";
 import { renderStainText } from "../utils/StainTextUtils";
 import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
 import { hasRequiredStains } from "../utils/StainUtils";
+import { t } from "../i18n";
 
 export interface SkillPickerProps {
     player: GetPlayerResponse | null;

@@ -21,6 +21,11 @@ import { rollWithTimeout } from "../utils/RollUtils";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import { getAttackTypeLabel, getSkillLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { calculateNpcStatusResolvedTotalValue } from "../utils/StatusCalculator";
+import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName } from "../i18n";
+import type { BattleReward } from "../api/ResponseModel";
+import { APIRewards } from "../api/APIRewards";
+import { PictosList } from "../data/PictosList";
+import { pictoColorHex } from "../utils/PictoUtils";
 
 export interface CombatEntity {
     rowId?: number
@@ -123,9 +128,59 @@ export default function CombatAdmin({
     const [newHpValue, setNewHpValue] = useState("");
     const [sortColumn, setSortColumn] = useState<"name" | "difficulty" | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+    const [battleRewards, setBattleRewards] = useState<BattleReward[]>([]);
 
     const processedEffectsRef = useRef<Set<string>>(new Set())
     const lastActiveCharacterIdRef = useRef<number | undefined>(undefined)
+
+    // Função para coletar recompensas de NPCs derrotados
+    const collectBattleRewards = useCallback((characters: BattleCharacterInfo[]) => {
+        const rewards: BattleReward[] = [];
+
+        console.log("=== collectBattleRewards ===");
+        console.log("Total de personagens:", characters.length);
+
+        // Verificar se há algum jogador vivo
+        const hasAlivePlayer = characters.some(
+            ch => ch.type === "player" && ch.healthPoints > 0
+        );
+        console.log("Há jogador vivo?", hasAlivePlayer);
+
+        if (!hasAlivePlayer) {
+            console.log("Nenhum jogador vivo, sem recompensas");
+            return rewards; // Sem recompensas se todos os jogadores morreram
+        }
+
+        // Coletar recompensas de todos os NPCs mortos
+        characters.forEach(ch => {
+            console.log(`Personagem: ${ch.name} (${ch.id}), Tipo: ${ch.type}, HP: ${ch.healthPoints}`);
+            if (ch.type === "npc" && ch.healthPoints <= 0) {
+                console.log(`  -> NPC morto, buscando recompensa para ID: ${ch.id}`);
+                const npc = getNpcById(ch.id);
+                console.log(`  -> NPC encontrado:`, npc);
+                if (npc?.reward) {
+                    console.log(`  -> Recompensa encontrada:`, npc.reward);
+                    rewards.push(npc.reward);
+                } else {
+                    console.log(`  -> Nenhuma recompensa definida para este NPC`);
+                }
+            }
+        });
+
+        console.log("Total de recompensas coletadas:", rewards.length);
+        return rewards;
+    }, []);
+
+    // Coletar recompensas quando a batalha estiver finalizada (ao carregar ou recarregar a página)
+    useEffect(() => {
+        if (battleStatus === 'finished' && battleDetails?.characters && battleRewards.length === 0) {
+            console.log("Batalha já finalizada, coletando recompensas...");
+            const rewards = collectBattleRewards(battleDetails.characters);
+            if (rewards.length > 0) {
+                setBattleRewards(rewards);
+            }
+        }
+    }, [battleStatus, battleDetails?.characters, battleRewards.length, collectBattleRewards]);
 
     const processUnresolvedStatuses = (battleDetailsInfo: BattleWithDetailsResponse) => {
         const active = getActiveTurnCharacterFromBattle(battleDetailsInfo)
@@ -269,8 +324,24 @@ export default function CombatAdmin({
             }
             onStatusChanged?.(newStatus)
             await reloadBattleDetails()
-        } catch {
-            alert("Erro ao atualizar o status do combate.")
+
+            // Se a batalha foi finalizada, buscar os dados atualizados e coletar recompensas
+            if (newStatus === "finished") {
+                console.log("Batalha finalizada, buscando dados para coletar recompensas...");
+                const updatedBattle = await APIBattle.getById(campaignInfo.battleId);
+                console.log("Dados da batalha atualizada:", updatedBattle);
+                if (updatedBattle?.characters) {
+                    console.log("Coletando recompensas...");
+                    const rewards = collectBattleRewards(updatedBattle.characters);
+                    setBattleRewards(rewards);
+                } else {
+                    console.log("Nenhum personagem encontrado na batalha atualizada");
+                }
+            }
+        } catch (error) {
+            console.error("Erro completo ao atualizar o status do combate:", error);
+            console.error("Stack trace:", error instanceof Error ? error.stack : "N/A");
+            alert("Erro ao atualizar o status do combate: " + (error instanceof Error ? error.message : String(error)))
             setBattleStatus(initialStatus)
         } finally {
             setUpdatingStatus(false)
@@ -544,6 +615,11 @@ export default function CombatAdmin({
     }
 
     function renderActionOptions() {
+        // Ocultar se a batalha estiver finalizada
+        if (battleStatus === 'finished') {
+            return;
+        }
+
         if (!isCurrentTurnPlayer() || battleDetails?.attacks == undefined || battleDetails?.attacks?.length == 0) {
             return;
         }
@@ -567,6 +643,11 @@ export default function CombatAdmin({
     }
 
     function renderAttackOptions() {
+        // Ocultar se a batalha estiver finalizada
+        if (battleStatus === 'finished') {
+            return;
+        }
+
         if (!isCurrentTurnNPC()) {
             return;
         }
@@ -1126,17 +1207,164 @@ export default function CombatAdmin({
                         </div>
                     </div>
 
-                    <GradientBar characters={battleDetails?.characters} player={undefined} turns={battleDetails?.turns} />
+                    {/* Mostrar recompensas no lugar da barra de turnos se a batalha terminou */}
+                    {(() => {
+                        console.log("Verificando recompensas - Status:", battleStatus, "Recompensas:", battleRewards);
+                        return battleStatus === 'finished' && battleRewards.length > 0;
+                    })() ? (
+                        <div className="card bg-base-200 p-6">
+                            <h2 className="text-3xl font-bold text-center mb-2 text-success">
+                                {t("combat.victoryTitle")}
+                            </h2>
+                            <p className="text-center text-lg mb-6 opacity-80">
+                                {t("combat.rewardsEarned")}
+                            </p>
 
-                    <InitiativesQueue
-                        characters={battleDetails?.characters}
-                        initiatives={battleDetails?.initiatives}
-                        turns={battleDetails?.turns}
-                        isStarted={battleStatus == "started" || battleStatus == "finished"}
-                        showBattleId={true}
-                        isAdmin={true}
-                        onReorder={reloadBattleDetails} />
+                            <div className="space-y-4">
+                                {battleRewards.map((reward, index) => {
+                                    console.log("Renderizando recompensa:", reward);
+                                    const isWeapon = reward.type === "weapon";
+                                    const kebabId = toKebabCase(reward.itemId);
+                                    console.log("kebabId:", kebabId);
+                                    const displayName = isWeapon
+                                        ? getWeaponName(kebabId)
+                                        : getPictoName(kebabId);
+                                    console.log("displayName:", displayName);
+                                    const englishName = isWeapon
+                                        ? getWeaponEnglishName(kebabId)
+                                        : getPictoEnglishName(kebabId);
+                                    console.log("englishName:", englishName);
 
+                                    const imagePath = isWeapon
+                                        ? `/weapons/${englishName}.png`
+                                        : `/pictos/${englishName}.webp`;
+                                    console.log("imagePath:", imagePath);
+
+                                    // Buscar informações do picto para pegar a cor
+                                    let pictoColor = null;
+                                    if (!isWeapon) {
+                                        const pictoInfo = PictosList.find((p: any) => p.id === kebabId);
+                                        pictoColor = pictoInfo?.color;
+                                        console.log("Cor do picto:", pictoColor);
+                                    }
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="flex items-center gap-4 bg-base-300 p-4 rounded-lg"
+                                        >
+                                            <div className="avatar">
+                                                <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-black/30">
+                                                    {isWeapon ? (
+                                                        <img
+                                                            src={imagePath}
+                                                            alt={displayName}
+                                                            className="w-full h-full object-contain"
+                                                            onError={(e) => {
+                                                                e.currentTarget.src = "/placeholder-item.png";
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            className="w-12 h-12"
+                                                            style={{
+                                                                backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
+                                                                WebkitMaskImage: `url("${imagePath}")`,
+                                                                maskImage: `url("${imagePath}")`,
+                                                                WebkitMaskRepeat: "no-repeat",
+                                                                maskRepeat: "no-repeat",
+                                                                WebkitMaskSize: "contain",
+                                                                maskSize: "contain",
+                                                                WebkitMaskPosition: "center",
+                                                                maskPosition: "center",
+                                                            }}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="flex-1">
+                                                <h3 className="font-bold text-lg">{displayName}</h3>
+                                                <div className="flex items-center gap-2 text-sm opacity-70">
+                                                    {isWeapon ? (
+                                                        <span className="badge badge-warning">
+                                                            {t("rewards.weapon")}
+                                                        </span>
+                                                    ) : (
+                                                        <span
+                                                            className="badge"
+                                                            style={{
+                                                                backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
+                                                                color: "black"
+                                                            }}
+                                                        >
+                                                            {t("rewards.picto")}
+                                                        </span>
+                                                    )}
+                                                    <span className="badge badge-outline">
+                                                        {t("rewards.level")} {reward.level}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-medium opacity-70">Dar recompensa para:</span>
+                                                {players.map(player => {
+                                                    const rawCharacterName = player.playerSheet?.characterId || "?";
+                                                    // Capitalizar primeira letra
+                                                    const characterName = rawCharacterName.charAt(0).toUpperCase() + rawCharacterName.slice(1);
+                                                    const playerName = player.playerSheet?.name || "?";
+
+                                                    // Encontrar o battleID do personagem
+                                                    const battleChar = battleDetails?.characters.find(
+                                                        ch => ch.type === "player" && ch.id === String(player.id)
+                                                    );
+                                                    const battleID = battleChar?.battleID;
+
+                                                    const buttonLabel = battleID
+                                                        ? `#${battleID} ${characterName} (${playerName})`
+                                                        : `${characterName} (${playerName})`;
+
+                                                    return (
+                                                        <button
+                                                            key={player.id}
+                                                            onClick={async () => {
+                                                                try {
+                                                                    await APIRewards.claimReward(player.id, reward);
+                                                                    showToast(`${displayName} ${t("rewards.level")} ${reward.level} reivindicado por ${characterName}!`);
+                                                                } catch (error) {
+                                                                    console.error("Erro ao reivindicar recompensa:", error);
+                                                                    showToast("Erro ao reivindicar recompensa");
+                                                                }
+                                                            }}
+                                                            className="btn btn-success btn-sm"
+                                                        >
+                                                            {buttonLabel}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <GradientBar characters={battleDetails?.characters} player={undefined} turns={battleDetails?.turns} />
+
+                            <InitiativesQueue
+                                characters={battleDetails?.characters}
+                                initiatives={battleDetails?.initiatives}
+                                turns={battleDetails?.turns}
+                                isStarted={battleStatus == "started" || battleStatus == "finished"}
+                                showBattleId={true}
+                                isAdmin={true}
+                                onReorder={reloadBattleDetails} />
+                        </>
+                    )}
+
+                    {/* Equipes A e B - sempre visíveis */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {renderAttackOptions()}
                         {renderActionOptions()}
@@ -1187,9 +1415,20 @@ export default function CombatAdmin({
         }
 
         const hasBattleFinished = logs.some(log => log.eventType === "BATTLE_FINISHED");
+        console.log("hasBattleFinished:", hasBattleFinished, "battleStatus:", battleInfo.battleStatus);
+
         if (hasBattleFinished && battleInfo.battleStatus) {
+            console.log("Batalha finalizada! Coletando recompensas...");
             setBattleStatus(battleInfo.battleStatus);
             onStatusChanged?.(battleInfo.battleStatus);
+
+            // Coletar recompensas quando a batalha terminar
+            if (battleInfo.characters) {
+                const rewards = collectBattleRewards(battleInfo.characters);
+                console.log("Recompensas coletadas:", rewards);
+                console.log("Personagens:", battleInfo.characters);
+                setBattleRewards(rewards);
+            }
         }
 
         const lastBattleLog = getLastBattleLogFromBattle(battleInfo);

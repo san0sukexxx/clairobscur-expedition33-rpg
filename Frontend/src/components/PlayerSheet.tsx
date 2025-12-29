@@ -3,6 +3,7 @@ import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
 import { calculateMaxHP, calculateMaxMP, calculateMaxPA, calculateInitialMP, calculateMaxLuminas, calculateSkillPoints } from "../utils/PlayerCalculator";
 import type { WeaponInfo } from "../api/ResponseModel";
+import { t } from "../i18n";
 
 interface PlayerSheetProps {
     player: GetPlayerResponse | null;
@@ -19,15 +20,15 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInf
     return (
         <div className="card bg-base-100 shadow">
             <div className="card-body">
-                <h2 className="card-title">Ficha</h2>
+                <h2 className="card-title">{t("characterSheet.title")}</h2>
 
                 <div className="grid grid-cols-1 gap-3">
                     <label className="form-control flex flex-col items-start gap-1">
-                        <span className="label-text">Nome</span>
+                        <span className="label-text">{t("common.name")}</span>
                         <input
                             name="name"
                             className="input input-bordered w-full"
-                            placeholder="Nome"
+                            placeholder={t("common.name")}
                             value={player?.playerSheet?.name ?? ""}
                             onChange={async (e) => {
                                 if (!player) return;
@@ -67,10 +68,10 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo, weaponInf
                         <div className="card-body">
                             <div className="grid grid-cols-2 gap-3">
                                 <label className="form-control">
-                                    <span className="label-text">Nível do personagem</span>
+                                    <span className="label-text">{t("characterSheet.characterLevel")}</span>
                                     <input
                                         className="input input-bordered"
-                                        placeholder="Ex.: 10"
+                                        placeholder={t("characterSheet.levelPlaceholder")}
                                         type="number"
                                         value={player?.playerSheet?.totalPoints ?? ""}
                                         onChange={async (e) => {

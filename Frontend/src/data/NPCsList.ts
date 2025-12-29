@@ -53,7 +53,12 @@ export const NPCsList: NPCInfo[] = [
                     }
                 ]
             },
-        ]
+        ],
+        reward: {
+            type: "picto",
+            itemId: "energy-master",
+            level: 1
+        }
     },
     {
         id: "lancer",
@@ -61,7 +66,12 @@ export const NPCsList: NPCInfo[] = [
         power: 2,
         hability: 1,
         resistance: 2,
-        freeShotWeakPoints: 1
+        freeShotWeakPoints: 1,
+        reward: {
+            type: "weapon",
+            itemId: "baguette",
+            level: 4
+        }
     },
     {
         id: "gatekeeper",
@@ -77,7 +87,12 @@ export const NPCsList: NPCInfo[] = [
                 additionalDamage: 3,
                 additionalDices: 1
             }
-        ]
+        ],
+        reward: {
+            type: "picto",
+            itemId: "dodger",
+            level: 1
+        }
     },
 ];
 

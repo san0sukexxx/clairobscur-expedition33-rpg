@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { t } from "../i18n";
 
 type ModalSize = "sm" | "md" | "lg" | "xl";
 
@@ -92,7 +93,7 @@ export default function PanelModal({
                         <h3 className="text-lg font-semibold truncate">{title ?? ""}</h3>
                         {showClose && (
                             <button
-                                aria-label="Fechar"
+                                aria-label={t("common.close")}
                                 onClick={onClose}
                                 className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-700 hover:bg-neutral-800"
                             >
