@@ -65,4 +65,44 @@ class BattleTurnService(private val battleTurnRepository: BattleTurnRepository) 
             }
         }
     }
+
+    /**
+     * Grants an extra turn to a character by inserting them at position 2 (right after current turn)
+     * This allows the character to act again immediately after their current turn ends
+     */
+    @Transactional
+    fun grantExtraTurn(battleId: Int, battleCharacterId: Int) {
+        val turns = battleTurnRepository.findByBattleIdOrderByPlayOrderAsc(battleId)
+        if (turns.isEmpty()) return
+
+        // Find the character's current turn
+        val targetTurnIndex = turns.indexOfFirst { it.battleCharacterId == battleCharacterId }
+        if (targetTurnIndex == -1) return
+
+        // If character is already at position 1 (current turn), they'll keep playing
+        // So we ensure they stay at position 1 by not advancing turn
+        if (targetTurnIndex == 0) {
+            // Character is current, they'll play again - no need to reorder
+            return
+        }
+
+        // If character is not at position 1, move them to position 2 (next turn)
+        val targetTurn = turns[targetTurnIndex]
+        val currentPlayOrder = targetTurn.playOrder
+
+        // Shift all turns between position 2 and current position down by 1
+        turns.forEach { turn ->
+            val id = turn.id ?: return@forEach
+            when {
+                // Target turn moves to position 2
+                turn.battleCharacterId == battleCharacterId -> {
+                    battleTurnRepository.updatePlayOrder(id, 2)
+                }
+                // Turns between 2 and current position shift down by 1
+                turn.playOrder in 2 until currentPlayOrder -> {
+                    battleTurnRepository.updatePlayOrder(id, turn.playOrder + 1)
+                }
+            }
+        }
+    }
 }

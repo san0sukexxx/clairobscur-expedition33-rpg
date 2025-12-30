@@ -8,7 +8,8 @@ export type StatusType =
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Taunt" | "Foretell" | "Twilight" | "Powerless" |
-    "Rush" | "Burn" | "Shield" | "Powerful" | "Mark" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier";
+    "Rush" | "Burn" | "Shield" | "Powerful" | "Mark" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
+    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "DoubleDamage" | "Defenceless" | "Regen" | "Curse";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
@@ -59,6 +60,7 @@ export interface BattleCharacterInfo {
     gradientPoints?: number;
     actionPoints?: number;
     maxActionPoints?: number;
+    power?: number; // Character's power/might stat
     stance?: Stance | null;
     stainSlot1?: StainType | null;
     stainSlot2?: StainType | null;
@@ -137,6 +139,7 @@ export type PictoTrigger =
     | "on-battle-start"
     | "on-healing-tint"
     | "on-turn-start"
+    | "on-turn-end"
     | "on-attack"
     | "on-parry"
     | "on-dodge"

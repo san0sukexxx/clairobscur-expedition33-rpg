@@ -48,7 +48,12 @@ export default function PendingAttacksModal({
         attack.allowCounter === true &&
         attack.isCounterResolved === false;
 
-    const canDodge = !playerHasEntangled(player)
+    const hasSuccessiveParry = player.fightInfo.characters
+        ?.find(c => c.type === "player" && c.id === String(player.id))
+        ?.status
+        ?.some(s => s.effectName === "SuccessiveParry") ?? false;
+
+    const canDodge = !playerHasEntangled(player) && !hasSuccessiveParry
 
     const handleDefenseClick = async (attack: AttackResponse, defense: DefenseOption) => {
         console.log("Defense clicked, setting isDefending to true");

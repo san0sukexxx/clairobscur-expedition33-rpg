@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useLocation, matchPath } from "react-router-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import { t } from "../i18n";
-import { FaUser, FaSkull, FaCheckCircle, FaDivide, FaShieldAlt } from "react-icons/fa";
+import { FaUser, FaSkull, FaCheckCircle, FaDivide, FaShieldAlt, FaTimes, FaFire, FaUsers, FaExclamationTriangle } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
@@ -734,11 +734,11 @@ export default function PlayerPage() {
       for (let hitIndex = 0; hitIndex < totalHits; hitIndex++) {
         await new Promise<void>((resolve) => {
           rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), result => {
-      const criticalRolls = countCriticalRolls(result)
-      const criticalMulti = calculatePlayerCriticalMulti(result, player)
+      const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID)
+      const criticalRolls = countCriticalRolls(result, player?.pictos, target)
+      const criticalMulti = calculatePlayerCriticalMulti(result, player, target)
       const rollTotal = diceTotal(result)
       const weaponPower = calculateRawWeaponPower(weaponInfo, attackType)
-      const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID)
       const total = calculateAttackDamage(player, weaponInfo, target, result, attackType, playerChar?.stance, playerChar)
 
       // Verso's Perfection Rank: Get multiplier for display purposes
@@ -754,6 +754,60 @@ export default function PlayerPage() {
       const isWeakened = playerHasWeakened(player)
       const playerFrenzy = getPlayerFrenzy(player)
       const isDizzy = playerHasDizzy(player)
+
+      // Breaker: Check if player has breaker picto and target has Broken or Fragile
+      const hasBreaker = player?.pictos?.some(p =>
+        p.pictoId?.toLowerCase() === "breaker" &&
+        p.slot !== null && p.slot !== undefined &&
+        p.slot >= 0 &&
+        p.slot <= 2
+      ) ?? false;
+      const targetHasBroken = target.status?.some(s => s.effectName === "Broken") ?? false;
+      const targetHasFragile = target.status?.some(s => s.effectName === "Fragile") ?? false;
+      const breakerBonus = (hasBreaker && (targetHasBroken || targetHasFragile)) ? 25 : 0;
+
+      // Breaking Burn: Check if player has breaking-burn picto and target has Burning AND (Broken or Fragile)
+      const hasBreakingBurn = player?.pictos?.some(p =>
+        p.pictoId?.toLowerCase() === "breaking-burn" &&
+        p.slot !== null && p.slot !== undefined &&
+        p.slot >= 0 &&
+        p.slot <= 2
+      ) ?? false;
+      const targetHasBurning = target.status?.some(s => s.effectName === "Burning") ?? false;
+      const breakingBurnBonus = (hasBreakingBurn && targetHasBurning && (targetHasBroken || targetHasFragile)) ? 25 : 0;
+
+      // Enfeebling Mark: Check if attacker (player) has Marked status
+      // Note: Enfeebling Mark penalty is applied in backend DamageModifierService
+      const playerHasMarked = playerChar?.status?.some(s => s.effectName === "Marked") ?? false;
+      const enfeeblingMarkPenalty = (playerHasMarked && target.type === "player") ? 30 : 0;
+
+      // Burn Affinity: Check if player has burn-affinity and target has Burning
+      const hasBurnAffinity = player?.pictos?.some(p =>
+        p.pictoId?.toLowerCase() === "burn-affinity" &&
+        p.slot !== null && p.slot !== undefined && p.slot >= 0 && p.slot <= 2
+      ) ?? false;
+      const burnAffinityBonus = (hasBurnAffinity && targetHasBurning) ? 25 : 0;
+
+      // Teamwork: Check if player has teamwork and all allies are alive
+      const hasTeamwork = player?.pictos?.some(p =>
+        p.pictoId?.toLowerCase() === "teamwork" &&
+        p.slot !== null && p.slot !== undefined && p.slot >= 0 && p.slot <= 2
+      ) ?? false;
+      const allies = player?.fightInfo?.characters?.filter(c =>
+        c.type === "player" && c.battleID !== playerChar?.battleID
+      ) ?? [];
+      const allAlliesAlive = allies.length > 0 && allies.every(a => a.healthPoints > 0);
+      const teamworkBonus = (hasTeamwork && allAlliesAlive) ? 10 : 0;
+
+      // Faster Than Strong: Check if player has DamageReduction status
+      const hasDamageReduction = playerChar?.status?.some(s =>
+        s.effectName === "DamageReduction"
+      ) ?? false;
+      const damageReductionAmount = playerChar?.status
+        ?.find(s => s.effectName === "DamageReduction")?.ammount ?? 0;
+
+      // Augmented Counter: Counter damage bonus is applied in backend DamageModifierService
+      // No need to show in UI as it's automatically calculated during counterattacks
 
       setModalTitle("Resultado da rolagem")
 
@@ -830,6 +884,42 @@ export default function PlayerPage() {
                 (<FaDivide className="w-4 h-4" /> 2 )
               </span>
             </p>
+          )}
+          {breakerBonus > 0 && (
+            <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
+              <FaCheckCircle className="w-6 h-6" />
+              Breaker: Alvo {targetHasBroken ? "Broken" : "Fragile"} <b>(+{breakerBonus}%)</b>
+            </h3>
+          )}
+          {breakingBurnBonus > 0 && (
+            <h3 className="flex items-center gap-2 text-orange-600 font-bold text-lg">
+              <FaCheckCircle className="w-6 h-6" />
+              Breaking Burn: Alvo Burning+{targetHasBroken ? "Broken" : "Fragile"} <b>(+{breakingBurnBonus}%)</b>
+            </h3>
+          )}
+          {enfeeblingMarkPenalty > 0 && (
+            <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
+              <FaTimes className="w-6 h-6" />
+              Você está Marcado! Alvo pode ter Enfeebling Mark <b>(-{enfeeblingMarkPenalty}%)</b>
+            </h3>
+          )}
+          {burnAffinityBonus > 0 && (
+            <h3 className="flex items-center gap-2 text-orange-600 font-bold text-lg">
+              <FaFire className="w-6 h-6" />
+              Burn Affinity: Alvo Burning <b>(+{burnAffinityBonus}%)</b>
+            </h3>
+          )}
+          {teamworkBonus > 0 && (
+            <h3 className="flex items-center gap-2 text-blue-600 font-bold text-lg">
+              <FaUsers className="w-6 h-6" />
+              Teamwork: Todos aliados vivos <b>(+{teamworkBonus}%)</b>
+            </h3>
+          )}
+          {hasDamageReduction && damageReductionAmount > 0 && (
+            <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
+              <FaExclamationTriangle className="w-6 h-6" />
+              Faster Than Strong: Turno extra ativo <b>(-{damageReductionAmount}%)</b>
+            </h3>
           )}
           {isShielded && (
             <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
@@ -1471,8 +1561,13 @@ export default function PlayerPage() {
                   let empoweredMulti = playerHasEmpowered(player) ? 2 : 1;
                   empoweredMulti = playerHasWeakened(player) ? 0.5 : empoweredMulti;
 
+                  // Get target for Critical Burn picto check
+                  const targetChar = resolved.targetIds.length > 0
+                    ? (player.fightInfo?.characters ?? []).find(c => c.battleID === resolved.targetIds[0])
+                    : undefined;
+
                   // Sword Ballet: Double crit damage (4x total instead of 2x)
-                  let critMulti = calculatePlayerCriticalMulti(result, player);
+                  let critMulti = calculatePlayerCriticalMulti(result, player, targetChar);
                   if (resolved.metadata.doubleCritDamage && critMulti > 1) {
                     critMulti = critMulti * 2;  // 2x becomes 4x
                     if (hitIndex === 0) {
@@ -1537,7 +1632,7 @@ export default function PlayerPage() {
                   // This is ADDITIVE with the base rank bonus, not multiplicative
                   if (isVerso && resolved.metadata.rankConditionalBonus) {
                     const { rank, damageMultiplier } = resolved.metadata.rankConditionalBonus;
-                    if (source.perfectionRank === rank) {
+                    if (source.perfectionRank === rank && damageMultiplier) {
                       // Add the bonuses together: e.g., B Rank (+40%) + Assault Zero (+50%) = +90% total
                       const baseBonus = versoPerfectionMultiplier - 1.0;  // e.g., 1.4 - 1.0 = 0.4 (40%)
                       const conditionalBonus = damageMultiplier - 1.0;    // e.g., 1.5 - 1.0 = 0.5 (50%)

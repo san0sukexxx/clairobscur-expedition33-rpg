@@ -492,10 +492,6 @@
       "name": "Contaminação Benéfica",
       "description": "+2 PM ao aplicar um Efeito de Status. Uma vez por turno."
     },
-    "perfect-reward": {
-      "name": "Recompensa Perfeita",
-      "description": "Ritmos Perfeitos dão 1 PM."
-    },
     "roulette": {
       "name": "Roleta",
       "description": "Cada golpe tem 50% de chance de causar 50% ou 200% do seu dano."
@@ -762,7 +758,7 @@
     },
     "critical-burn": {
       "name": "Queimadura Crítica",
-      "description": "25% de Chance Crítica aumentada em inimigos com Burn."
+      "description": "Pode acertar crítico tirando 5 no dado caso o alvo esteja sob Queimadura."
     },
     "burning-death": {
       "name": "Morte Ardente",
@@ -1922,7 +1918,9 @@
       "weapon": "Arma",
       "picto": "Picto",
       "level": "Nível",
-      "claim": "Reivindicar"
+      "claim": "Reivindicar",
+      "alreadyOwned": "Já possui",
+      "cannotUse": "Não pode usar"
     },
     "campaignAdminSheets": {
       "players": "Jogadores",

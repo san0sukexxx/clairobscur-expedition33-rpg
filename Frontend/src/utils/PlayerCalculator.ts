@@ -76,9 +76,11 @@ export function playerPictosTotalCritical(player: GetPlayerResponse | null): num
     return total;
 }
 
-export function calculatePlayerCriticalMulti(diceResult: any, player: GetPlayerResponse | null): number {
-    const baseCriticalMulti = calculateCriticalMulti(diceResult);
-    const criticalRolls = countCriticalRolls(diceResult);
+export function calculatePlayerCriticalMulti(diceResult: any, player: GetPlayerResponse | null, target?: BattleCharacterInfo): number {
+    // Pass pictos and target to calculateCriticalMulti so it can check for Critical Burn picto
+    const pictos = player?.pictos ?? [];
+    const baseCriticalMulti = calculateCriticalMulti(diceResult, pictos, target);
+    const criticalRolls = countCriticalRolls(diceResult, pictos, target);
 
     if (criticalRolls > 0) {
         const pictoCritical = playerPictosTotalCritical(player);
@@ -380,7 +382,8 @@ export function rollCommandForDefense(player: GetPlayerResponse, weaponInfo: Wea
 export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult);
-    var playerInitiative = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult);
+    const pictos = player?.pictos ?? [];
+    var playerInitiative = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult, pictos);
 
     if (failures > 0) {
         playerInitiative = Math.floor(playerInitiative / failures);

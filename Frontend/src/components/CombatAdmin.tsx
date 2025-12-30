@@ -27,6 +27,62 @@ import { APIRewards } from "../api/APIRewards";
 import { PictosList } from "../data/PictosList";
 import { pictoColorHex } from "../utils/PictoUtils";
 
+// Map weapon types to characters that can use them
+const WEAPON_CHARACTER_MAP: Record<string, string[]> = {
+    "sword": ["verso", "gustave"],
+    "lune": ["lune"],
+    "maelle": ["maelle"],
+    "monoco": ["monoco"],
+    "sciel": ["sciel"]
+};
+
+// Determine weapon type from weapon ID
+function getWeaponType(weaponId: string): string | null {
+    const id = weaponId.toLowerCase();
+
+    // Check if it's a sword (verso/gustave weapons)
+    if (id.includes("verso") || id.includes("gustave") ||
+        ["lanceram", "abysseram", "algueron", "angerim", "verleso", "lunerim", "maellum", "noahram", "scieleson"].includes(id)) {
+        return "sword";
+    }
+
+    // Check if it's a Lune weapon
+    if (id.includes("lune") || id.startsWith("baguette-lune")) {
+        return "lune";
+    }
+
+    // Check if it's a Maelle weapon
+    if (id.includes("maelle") || id.startsWith("baguette-maelle")) {
+        return "maelle";
+    }
+
+    // Check if it's a Monoco weapon
+    if (id.includes("monoco")) {
+        return "monoco";
+    }
+
+    // Check if it's a Sciel weapon
+    if (id.includes("sciel")) {
+        return "sciel";
+    }
+
+    return null;
+}
+
+// Check if a character can use a weapon
+function canCharacterUseWeapon(characterId: string | undefined, weaponId: string): boolean {
+    if (!characterId) return false;
+
+    const weaponType = getWeaponType(weaponId);
+    if (!weaponType) return true; // Unknown weapon type, allow it
+
+    const allowedCharacters = WEAPON_CHARACTER_MAP[weaponType];
+    if (!allowedCharacters) return true;
+
+    const charId = characterId.toLowerCase();
+    return allowedCharacters.some(char => charId.includes(char));
+}
+
 export interface CombatEntity {
     rowId?: number
     externalId: number | string
@@ -1222,30 +1278,24 @@ export default function CombatAdmin({
 
                             <div className="space-y-4">
                                 {battleRewards.map((reward, index) => {
-                                    console.log("Renderizando recompensa:", reward);
                                     const isWeapon = reward.type === "weapon";
                                     const kebabId = toKebabCase(reward.itemId);
-                                    console.log("kebabId:", kebabId);
                                     const displayName = isWeapon
                                         ? getWeaponName(kebabId)
                                         : getPictoName(kebabId);
-                                    console.log("displayName:", displayName);
                                     const englishName = isWeapon
                                         ? getWeaponEnglishName(kebabId)
                                         : getPictoEnglishName(kebabId);
-                                    console.log("englishName:", englishName);
 
                                     const imagePath = isWeapon
-                                        ? `/weapons/${englishName}.png`
+                                        ? `/weapons/${englishName}.webp`
                                         : `/pictos/${englishName}.webp`;
-                                    console.log("imagePath:", imagePath);
 
                                     // Buscar informações do picto para pegar a cor
                                     let pictoColor = null;
                                     if (!isWeapon) {
                                         const pictoInfo = PictosList.find((p: any) => p.id === kebabId);
                                         pictoColor = pictoInfo?.color;
-                                        console.log("Cor do picto:", pictoColor);
                                     }
 
                                     return (
@@ -1325,6 +1375,25 @@ export default function CombatAdmin({
                                                         ? `#${battleID} ${characterName} (${playerName})`
                                                         : `${characterName} (${playerName})`;
 
+                                                    // Check if player already has this item (case-insensitive comparison)
+                                                    const playerAlreadyHasItem = isWeapon
+                                                        ? player.weapons?.some(w => w.id.toLowerCase() === kebabId.toLowerCase())
+                                                        : player.pictos?.some(p => p.pictoId.toLowerCase() === kebabId.toLowerCase());
+
+                                                    // Check if character can use this weapon
+                                                    const canUseWeapon = !isWeapon || canCharacterUseWeapon(player.playerSheet?.characterId, kebabId);
+
+                                                    // Determine if button should be disabled
+                                                    const isDisabled = playerAlreadyHasItem || !canUseWeapon;
+
+                                                    // Determine tooltip
+                                                    let tooltipText: string | undefined;
+                                                    if (playerAlreadyHasItem) {
+                                                        tooltipText = t("rewards.alreadyOwned");
+                                                    } else if (!canUseWeapon) {
+                                                        tooltipText = t("rewards.cannotUse");
+                                                    }
+
                                                     return (
                                                         <button
                                                             key={player.id}
@@ -1337,7 +1406,9 @@ export default function CombatAdmin({
                                                                     showToast("Erro ao reivindicar recompensa");
                                                                 }
                                                             }}
-                                                            className="btn btn-success btn-sm"
+                                                            className={`btn btn-sm ${isDisabled ? 'btn-disabled' : 'btn-success'}`}
+                                                            disabled={isDisabled}
+                                                            title={tooltipText}
                                                         >
                                                             {buttonLabel}
                                                         </button>

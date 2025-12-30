@@ -307,6 +307,9 @@ class BattleController(
             battleLogRepository.save(
                     BattleLog(battleId = battleId, eventType = "BATTLE_STARTED", eventJson = null)
             )
+
+            // Check for Auto Death picto - kill characters with this picto equipped
+            checkAutoDeathPicto(battleId)
         }
 
         battle.battleStatus = body.battleStatus
@@ -346,5 +349,59 @@ class BattleController(
         )
 
         return ResponseEntity.noContent().build()
+    }
+
+    /**
+     * Checks for Auto Death picto and kills characters with it equipped.
+     * Auto Death: "Kill self on battle start."
+     */
+    @Transactional
+    fun checkAutoDeathPicto(battleId: Int) {
+        val characters = battleCharacterRepository.findByBattleId(battleId)
+
+        characters.forEach { character ->
+            if (character.characterType == "player") {
+                val playerId = character.externalId.toIntOrNull()
+                if (playerId != null) {
+                    val pictos = playerPictoRepository.findByPlayerId(playerId)
+                    val hasAutoDeathPicto = pictos.any {
+                        it.pictoId.lowercase() == "auto-death" &&
+                        it.slot != null &&
+                        it.slot in 0..2
+                    }
+
+                    if (hasAutoDeathPicto) {
+                        // Kill the character
+                        character.healthPoints = 0
+                        if (character.magicPoints != null) {
+                            character.magicPoints = 0
+                        }
+
+                        // Remove from turn order
+                        val turns = battleTurnRepository.findByBattleCharacterId(character.id!!)
+                        if (turns.isNotEmpty()) {
+                            battleTurnRepository.deleteAllInBatch(turns)
+                        }
+
+                        // Remove all status effects
+                        val effects = battleStatusEffectRepository.findByBattleCharacterId(character.id!!)
+                        if (effects.isNotEmpty()) {
+                            battleStatusEffectRepository.deleteAll(effects)
+                        }
+
+                        battleCharacterRepository.save(character)
+
+                        // Log the event
+                        battleLogRepository.save(
+                            BattleLog(
+                                battleId = battleId,
+                                eventType = "AUTO_DEATH",
+                                eventJson = null
+                            )
+                        )
+                    }
+                }
+            }
+        }
     }
 }

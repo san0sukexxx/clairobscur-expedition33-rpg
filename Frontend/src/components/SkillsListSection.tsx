@@ -312,12 +312,8 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                             }`}
                                         >
                                             <FaUnlock className="h-3.5 w-3.5" aria-hidden />
-                                            {skillInfo.masterUnlock
-                                                ? skillInfo.unlockCost && skillInfo.unlockCost > 0
-                                                    ? `${t("skills.unlock")} (${skillInfo.unlockCost})`
-                                                    : t("skills.unlock")
-                                                : skillInfo.unlockCost === 0
-                                                ? t("skills.unlock")
+                                            {skillInfo.unlockCost === undefined || skillInfo.unlockCost === 0
+                                                ? `${t("skills.unlock")} (Grátis)`
                                                 : `${t("skills.unlock")} (${skillInfo.unlockCost})`}
                                         </button>
                                     )}

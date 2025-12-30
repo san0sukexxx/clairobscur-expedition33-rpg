@@ -742,7 +742,7 @@ function PictoInfoCard({
       onClick={() => onPick && onPick(info)}
       className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
     >
-      <PlusDiamond icon="" picto={{ name: info.name } as unknown as PictoResponse} isBig={true} />
+      <PlusDiamond icon="" picto={{ pictoId: info.id } as unknown as PictoResponse} isBig={true} />
       <div className="flex flex-col gap-2">
         <div className="flex items-start justify-between">
           <div className="text-xl font-semibold leading-tight">{info.name}</div>
@@ -750,7 +750,7 @@ function PictoInfoCard({
         <div className="grid grid-cols-1 gap-2">
           {picto && (
             <StatusTexts
-              pictoResponse={{ name: picto.name } as unknown as PictoResponse}
+              pictoResponse={{ pictoId: info.id } as unknown as PictoResponse}
               level={level}
             />
           )}

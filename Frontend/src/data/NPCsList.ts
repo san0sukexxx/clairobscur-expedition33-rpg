@@ -67,10 +67,11 @@ export const NPCsList: NPCInfo[] = [
         hability: 1,
         resistance: 2,
         freeShotWeakPoints: 1,
+        weakTo: "Ice",
         reward: {
             type: "weapon",
-            itemId: "baguette",
-            level: 4
+            itemId: "Lanceram",
+            level: 1
         }
     },
     {

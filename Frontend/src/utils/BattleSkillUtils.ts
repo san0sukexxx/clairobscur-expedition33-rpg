@@ -7,7 +7,7 @@ import { APIBattle, type AttackStatusEffectRequest } from "../api/APIBattle";
 export interface ResolvedSkill {
     skillId: string;
     hitCount: number;             // Número de rolagens necessárias
-    damageLevel: "none" | "low" | "medium" | "high";  // Nível de dano (none=0%, low=50%, medium=100%, high=150%)
+    damageLevel: "none" | "low" | "medium" | "high" | "very-high" | "extreme";  // Nível de dano (none=0%, low=50%, medium=100%, high=150%, very-high=200%, extreme=250%)
     damageType: "physical" | "magical" | "true";
     effects: ResolvedEffect[];
     targetIds: number[];          // BattleCharacterIDs

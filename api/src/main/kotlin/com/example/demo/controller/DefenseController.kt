@@ -20,6 +20,7 @@ class DefenseController(
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val playerRepository: PlayerRepository,
+        private val playerPictoRepository: PlayerPictoRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val attackStatusEffectRepository: AttackStatusEffectRepository,
         private val battleTurnService: BattleTurnService,
@@ -90,6 +91,105 @@ class DefenseController(
                                 )
 
                 battleStatusEffectRepository.save(toSave)
+            }
+        }
+
+        // Empowering Parry: Add EmpoweringParry status (+5% damage per stack) on successful block
+        if (body.defenseType == "block" && targetBC.characterType == "player") {
+            val playerId = targetBC.externalId.toIntOrNull()
+            if (playerId != null) {
+                val pictos = playerPictoRepository.findByPlayerId(playerId)
+                val hasEmpoweringParry = pictos.any {
+                    it.pictoId.lowercase() == "empowering-parry" &&
+                    it.slot != null &&
+                    it.slot in 0..2
+                }
+
+                if (hasEmpoweringParry) {
+                    val allTargetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                    val existing = allTargetEffects.firstOrNull { it.effectType == "EmpoweringParry" }
+
+                    val toSave = existing?.copy(
+                        ammount = (existing.ammount + 1),  // Stack +1
+                        remainingTurns = 2,  // Reset to 2 turns (current + next)
+                        skipNextDecrement = false
+                    ) ?: BattleStatusEffect(
+                        battleCharacterId = targetBC.id!!,
+                        effectType = "EmpoweringParry",
+                        ammount = 1,  // First stack
+                        remainingTurns = 2,  // Lasts current turn + next turn
+                        isResolved = true,
+                        skipNextDecrement = false
+                    )
+
+                    battleStatusEffectRepository.save(toSave)
+                }
+            }
+        }
+
+        // Empowering Dodge: Add EmpoweringDodge status (+5% damage per stack, max 10) on successful dodge
+        if (body.defenseType == "dodge" && targetBC.characterType == "player") {
+            val playerId = targetBC.externalId.toIntOrNull()
+            if (playerId != null) {
+                val pictos = playerPictoRepository.findByPlayerId(playerId)
+                val hasEmpoweringDodge = pictos.any {
+                    it.pictoId.lowercase() == "empowering-dodge" &&
+                    it.slot != null &&
+                    it.slot in 0..2
+                }
+
+                if (hasEmpoweringDodge) {
+                    val allTargetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                    val existing = allTargetEffects.firstOrNull { it.effectType == "EmpoweringDodge" }
+
+                    val toSave = existing?.copy(
+                        ammount = (existing.ammount + 1).coerceAtMost(10),  // Stack +1, max 10
+                        remainingTurns = 2,  // Reset to 2 turns (current + next)
+                        skipNextDecrement = false
+                    ) ?: BattleStatusEffect(
+                        battleCharacterId = targetBC.id!!,
+                        effectType = "EmpoweringDodge",
+                        ammount = 1,  // First stack
+                        remainingTurns = 2,  // Lasts current turn + next turn
+                        isResolved = true,
+                        skipNextDecrement = false
+                    )
+
+                    battleStatusEffectRepository.save(toSave)
+                }
+            }
+        }
+
+        // Successive Parry: Add SuccessiveParry status (+5% damage per stack) on successful block
+        if (body.defenseType == "block" && targetBC.characterType == "player") {
+            val playerId = targetBC.externalId.toIntOrNull()
+            if (playerId != null) {
+                val pictos = playerPictoRepository.findByPlayerId(playerId)
+                val hasSuccessiveParry = pictos.any {
+                    it.pictoId.lowercase() == "successive-parry" &&
+                    it.slot != null &&
+                    it.slot in 0..2
+                }
+
+                if (hasSuccessiveParry) {
+                    val allTargetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                    val existing = allTargetEffects.firstOrNull { it.effectType == "SuccessiveParry" }
+
+                    val toSave = existing?.copy(
+                        ammount = (existing.ammount + 1),  // Stack +1, no limit
+                        remainingTurns = 2,  // Reset to 2 turns (current + next)
+                        skipNextDecrement = false
+                    ) ?: BattleStatusEffect(
+                        battleCharacterId = targetBC.id!!,
+                        effectType = "SuccessiveParry",
+                        ammount = 1,  // First stack
+                        remainingTurns = 2,  // Lasts current turn + next turn
+                        isResolved = true,
+                        skipNextDecrement = false
+                    )
+
+                    battleStatusEffectRepository.save(toSave)
+                }
             }
         }
 

@@ -23,12 +23,15 @@ import { getPictoName } from "../i18n";
  */
 export type PictoTrigger =
     | "on-heal-ally"           // When healing an ally (Accelerating Heal)
+    | "on-heal-received"       // When receiving healing
     | "on-revived"             // When character is revived (Aegis Revival)
     | "on-free-aim"            // After a Free Aim shot (Accelerating Shots)
     | "on-battle-start"        // At battle start (Accelerating Last Stand)
     | "on-healing-tint"        // When using a Healing Tint (Accelerating Tint)
     | "on-turn-start"          // At turn start
+    | "on-turn-end"            // At turn end (Faster Than Strong, Cheater)
     | "on-attack"              // After attacking
+    | "on-base-attack"         // After basic attack specifically
     | "on-parry"               // After successful parry
     | "on-dodge"               // After successful dodge
     | "on-crit"                // After critical hit
@@ -871,18 +874,6 @@ registerPictoEffect("beneficial-contamination", async (ctx) => {
 });
 
 /**
- * Perfect Reward
- * "Perfect Rythms give 1 AP."
- */
-registerPictoEffect("perfect-reward", async (_ctx) => {
-    // NOTE: Requires backend implementation for rhythm game integration
-    return {
-        success: false,
-        message: "Perfect Reward requires backend implementation for rhythm game integration"
-    };
-});
-
-/**
  * Energising Break
  * "+3 AP on Breaking a target."
  */
@@ -1039,14 +1030,20 @@ registerPictoEffect("energising-rush", async (ctx) => {
 
 /**
  * Energising Cleanse
- * "Dispel the first negative Status Effect received and gain 2 AP."
+ * "Dispel the first negative Status Effect received and gain 2 MP."
+ *
+ * This is a PASSIVE effect that is handled by the backend when status effects are applied.
+ * The backend checks if the character has this picto equipped and if it's the first
+ * negative status effect of the battle. If so, it prevents the status and grants 2 MP instead.
  */
-registerPictoEffect("energising-cleanse", async (_ctx) => {
-    // NOTE: Requires backend implementation to intercept status effect application
-    return {
-        success: false,
-        message: "Energising Cleanse requires backend implementation"
-    };
+registerPictoEffect("energising-cleanse", async (ctx) => {
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("energising-cleanse")} active! First negative status will be cleansed for 2 MP.`
+        };
+    }
+    return { success: false };
 });
 
 // ==================== SURVIVAL & DEFENSIVE ====================
@@ -1170,13 +1167,22 @@ registerPictoEffect("recovery", async (ctx) => {
 /**
  * Solidifying
  * "+2 Shields when the character's Health falls below 50%. Once per battle."
+ *
+ * This is a PASSIVE effect that is handled by the backend when damage is applied.
+ * The backend checks HP after damage and triggers the effect when:
+ * 1. Character has this picto equipped (slots 0-2)
+ * 2. HP drops below 50% for the FIRST time in battle
+ * 3. Effect hasn't been used yet (once-per-battle)
+ * Then it automatically adds 2 Shield status effects.
  */
-registerPictoEffect("solidifying", async (_ctx) => {
-    // NOTE: Requires backend implementation to track health threshold
-    return {
-        success: false,
-        message: "Solidifying requires backend implementation for health threshold tracking"
-    };
+registerPictoEffect("solidifying", async (ctx) => {
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("solidifying")} active! Will gain 2 Shields when HP drops below 50%.`
+        };
+    }
+    return { success: false };
 });
 
 /**
@@ -1274,13 +1280,20 @@ registerPictoEffect("revive-with-rush", async (ctx) => {
 /**
  * Confident
  * "Take 50% less damage, but can't be Healed."
+ *
+ * This is a PASSIVE effect that is handled by the backend:
+ * 1. Damage Reduction: All incoming damage is reduced by 50% in DamageService
+ * 2. Healing Block: Cannot receive any type of healing (potions, skills, regeneration, absorption)
+ * The backend checks if character has this picto equipped (slots 0-2) and applies both effects.
  */
-registerPictoEffect("confident", async (_ctx) => {
-    // NOTE: Passive modifier requiring backend implementation
-    return {
-        success: false,
-        message: "Confident requires backend implementation for passive damage reduction"
-    };
+registerPictoEffect("confident", async (ctx) => {
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("confident")} active! Takes 50% less damage but cannot be healed.`
+        };
+    }
+    return { success: false };
 });
 
 /**
@@ -1492,50 +1505,65 @@ registerPictoEffect("in-medias-res", async (ctx) => {
 
 /**
  * Defensive Mode
- * "On receiving damage, consume 1 AP to take 30% less damage, if possible."
+ * "On receiving damage, consume 1 MP to take 30% less damage, if possible."
+ *
+ * This is a PASSIVE effect that is handled by the backend:
+ * - When character receives damage and has MP available (MP > 0):
+ *   - Reduces damage by 30% (rounded up using ceil)
+ *   - Consumes 1 MP
+ * - If character has no MP, no reduction is applied
+ * The backend checks this condition automatically in DamageService.
  */
-registerPictoEffect("defensive-mode", async (_ctx) => {
-    // NOTE: Requires backend implementation to intercept damage
-    return {
-        success: false,
-        message: "Defensive Mode requires backend implementation"
-    };
+registerPictoEffect("defensive-mode", async (ctx) => {
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("defensive-mode")} active! Takes 30% less damage by consuming 1 MP per hit.`
+        };
+    }
+    return { success: false };
 });
 
 /**
  * Revive Paradox
  * "Play immediately when revived."
  */
-registerPictoEffect("revive-paradox", async (_ctx) => {
-    // NOTE: Requires backend implementation for turn order manipulation
-    return {
-        success: false,
-        message: "Revive Paradox requires backend implementation"
-    };
+registerPictoEffect("revive-paradox", async (ctx) => {
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("revive-paradox")} active! Will play immediately when revived.`
+        };
+    }
+    return { success: false };
 });
 
 /**
  * Effective Heal
  * "Double all Heals received."
  */
-registerPictoEffect("effective-heal", async (_ctx) => {
-    // NOTE: Passive modifier requiring backend implementation
-    return {
-        success: false,
-        message: "Effective Heal requires backend implementation"
-    };
+registerPictoEffect("effective-heal", async (ctx) => {
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("effective-heal")} active! Receives double healing.`
+        };
+    }
+    return { success: false };
 });
 
 /**
  * Shortcut
  * "Immediately play when falling below 30% Health. Once per battle."
  */
-registerPictoEffect("shortcut", async (_ctx) => {
-    // NOTE: Requires backend implementation for turn order manipulation
-    return {
-        success: false,
-        message: "Shortcut requires backend implementation"
-    };
+registerPictoEffect("shortcut", async (ctx) => {
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("shortcut")} active! Will play immediately when HP drops below 30%.`
+        };
+    }
+    return { success: false };
 });
 
 /**
@@ -1543,15 +1571,15 @@ registerPictoEffect("shortcut", async (_ctx) => {
  * "On turn start, if no damage taken since last turn, recover 100% Health."
  */
 registerPictoEffect("cleas-life", async (ctx) => {
-    if (ctx.trigger !== "on-turn-start") {
-        return { success: false };
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("cleas-life")} active! Will recover 100% HP at turn start if undamaged.`
+        };
     }
 
-    // NOTE: Requires backend implementation to track damage taken since last turn
-    return {
-        success: false,
-        message: "Clea's Life requires backend implementation for damage tracking"
-    };
+    // Turn start healing is handled by backend
+    return { success: false };
 });
 
 // ==================== BATTLE START BUFFS ====================
@@ -1699,15 +1727,15 @@ registerPictoEffect("auto-burn", async (ctx) => {
  * "Kill self on battle start."
  */
 registerPictoEffect("auto-death", async (ctx) => {
-    if (ctx.trigger !== "on-battle-start") {
-        return { success: false };
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("auto-death")} active! Will die when battle starts.`
+        };
     }
 
-    // NOTE: Requires backend implementation to kill character
-    return {
-        success: false,
-        message: "Auto Death requires backend implementation"
-    };
+    // Death is handled by backend when battle status changes to "started"
+    return { success: false };
 });
 
 /**
@@ -1944,12 +1972,14 @@ registerPictoEffect("shared-care", async (ctx) => {
  * Healing Share
  * "Receive 15% of all Heals affecting other characters."
  */
-registerPictoEffect("healing-share", async (_ctx) => {
-    // NOTE: Requires backend implementation to intercept all heals
-    return {
-        success: false,
-        message: "Healing Share requires backend implementation"
-    };
+registerPictoEffect("healing-share", async (ctx) => {
+    if (ctx.trigger === "on-heal-received") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("healing-share")} active! Receives 15% of all heals to other characters.`
+        };
+    }
+    return { success: false };
 });
 
 /**
@@ -2169,28 +2199,561 @@ registerPictoEffect("protecting-last-stand", async (ctx) => {
  * Solo Fighter
  * "Deal 50% more damage if fighting alone."
  */
-registerPictoEffect("solo-fighter", async (_ctx) => {
-    // NOTE: Passive damage modifier requiring backend implementation
-    return {
-        success: false,
-        message: "Solo Fighter requires backend implementation"
-    };
+registerPictoEffect("solo-fighter", async (ctx) => {
+    if (ctx.trigger === "on-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("solo-fighter")} active! Deals 50% more damage when fighting alone.`
+        };
+    }
+    return { success: false };
 });
 
 /**
  * Last Stand Critical
  * "100% Critical Chance while fighting alone."
  */
-registerPictoEffect("last-stand-critical", async (_ctx) => {
-    // NOTE: Passive critical modifier requiring backend implementation
-    return {
-        success: false,
-        message: "Last Stand Critical requires backend implementation"
-    };
+registerPictoEffect("last-stand-critical", async (ctx) => {
+    if (ctx.trigger === "on-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("last-stand-critical")} active! 100% critical chance when fighting alone.`
+        };
+    }
+    return { success: false };
 });
 
 // ==================== FREE AIM EFFECTS ====================
 
+/**
+ * Augmented Aim
+ * "Deal 50% more damage on Free Aim shots."
+ */
+registerPictoEffect("augmented-aim", async (ctx) => {
+    if (ctx.trigger === "on-free-aim") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("augmented-aim")} active! Deals 50% more damage with Free Aim shots.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Piercing Shot
+ * "25% increased Free Aim damage. Free Aim shots ignore Shields."
+ */
+registerPictoEffect("piercing-shot", async (ctx) => {
+    if (ctx.trigger === "on-free-aim") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("piercing-shot")} active! Deals 25% more damage and ignores Shields with Free Aim shots.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Sniper
+ * "First Free Aim shot each turn deals 200% increased damage and can Break."
+ */
+registerPictoEffect("sniper", async (ctx) => {
+    if (ctx.trigger === "on-free-aim") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("sniper")} active! First Free Aim shot deals 200% more damage and can apply Broken if target has Fragile.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Versatile
+ * "After a Free Aim hit, Base Attack damage is increased by 50% for 1 turn."
+ */
+registerPictoEffect("versatile", async (ctx) => {
+    if (ctx.trigger === "on-free-aim") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("versatile")} active! Next Base Attack will deal 50% more damage (1 turn).`
+        };
+    }
+    if (ctx.trigger === "on-base-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("versatile")} buff active! Dealing 50% more damage with Base Attack.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Breaking Shots
+ * "This character deals 50% more damage with Free Aim shots if target has Fragile or Broken. Converts Fragile to Broken."
+ */
+registerPictoEffect("breaking-shots", async (ctx) => {
+    if (ctx.trigger === "on-free-aim") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("breaking-shots")} active! Deals 50% more damage with Free Aim if target has Fragile or Broken (converts Fragile to Broken).`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Augmented Attack
+ * "This character deals 50% more damage with Base Attacks."
+ */
+registerPictoEffect("augmented-attack", async (ctx) => {
+    if (ctx.trigger === "on-base-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("augmented-attack")} active! Deals 50% more damage with Base Attacks.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Augmented First Strike
+ * "This character deals 50% more damage on the first hit in battle. Once per battle."
+ */
+registerPictoEffect("augmented-first-strike", async (ctx) => {
+    if (ctx.trigger === "on-base-attack" || ctx.trigger === "on-free-aim") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("augmented-first-strike")} active! First attack deals 50% more damage (once per battle).`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Combo Attack I
+ * "Base Attack has 1 extra hit."
+ */
+registerPictoEffect("combo-attack-i", async (ctx) => {
+    if (ctx.trigger === "on-base-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("combo-attack-i")} active! Base Attack has +1 extra hit.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Combo Attack II
+ * "Base Attack has 2 extra hits."
+ */
+registerPictoEffect("combo-attack-ii", async (ctx) => {
+    if (ctx.trigger === "on-base-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("combo-attack-ii")} active! Base Attack has +2 extra hits.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Combo Attack III
+ * "Base Attack has 3 extra hits."
+ */
+registerPictoEffect("combo-attack-iii", async (ctx) => {
+    if (ctx.trigger === "on-base-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("combo-attack-iii")} active! Base Attack has +3 extra hits.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Powered Attack
+ * "On every damage dealt, try to consume 1 MP. If successful, increase damage by 20%."
+ */
+registerPictoEffect("powered-attack", async (ctx) => {
+    if (ctx.trigger === "on-base-attack" || ctx.trigger === "on-free-aim") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("powered-attack")} active! Each hit consumes 1 MP to deal 20% more damage.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Breaking Attack
+ * "If you deal any damage with Base Attack and target has Fragile, remove Fragile and apply Broken for 1 turn."
+ */
+registerPictoEffect("breaking-attack", async (ctx) => {
+    if (ctx.trigger === "on-base-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("breaking-attack")} active! Base Attacks convert Fragile into Broken.`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Charging Attack
+ * "+15% of a Gradient Charge on Base Attack"
+ * Increases team gradient bar by 15% of max (36 points) = 5 points on base attacks
+ */
+registerPictoEffect("charging-attack", async (ctx) => {
+    if (ctx.trigger === "on-base-attack") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("charging-attack")} active! Base Attacks grant +15% Gradient Charge (+5 points).`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Empowering Parry
+ * "Each successful Parry increases damage by 5% until end of the following turn. Taking any damage removes this buff."
+ * Creates "EmpoweringParry" status effect that stacks. Each stack = +5% damage.
+ */
+registerPictoEffect("empowering-parry", async (ctx) => {
+    if (ctx.trigger === "on-parry") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("empowering-parry")} active! Parry grants +5% damage (stacks, removed on damage taken).`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Empowering Dodge
+ * "5% increased damage for each consecutive successful Dodge. Can stack up to 10 times."
+ * Creates "EmpoweringDodge" status effect that stacks. Each stack = +5% damage, max 10 stacks.
+ */
+registerPictoEffect("empowering-dodge", async (ctx) => {
+    if (ctx.trigger === "on-dodge") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("empowering-dodge")} active! Dodge grants +5% damage (max 10 stacks, removed on damage taken).`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Successive Parry
+ * "Can't Dodge. +5% increased damage per Parry until damage taken"
+ * Creates "SuccessiveParry" status effect that stacks. Each stack = +5% damage.
+ * Disables dodge button for this player.
+ */
+registerPictoEffect("successive-parry", async (ctx) => {
+    if (ctx.trigger === "on-parry") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("successive-parry")} active! Parry grants +5% damage (dodge disabled, removed on damage taken).`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Quick Break
+ * "Gain an extra turn after applying Broken status to any enemy"
+ * When player successfully applies Broken status, they get to act again after this turn
+ */
+registerPictoEffect("quick-break", async (ctx) => {
+    if (ctx.trigger === "on-break") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("quick-break")} active! Breaking an enemy grants an extra turn!`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Fueling Break
+ * "Breaking a target doubles its Burn amount"
+ * When player applies Broken status to an enemy, all Burning stacks on that enemy are doubled
+ */
+registerPictoEffect("fueling-break", async (ctx) => {
+    if (ctx.trigger === "on-break") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("fueling-break")} active! Breaking doubles Burn stacks!`
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Breaker
+ * "If target has Fragile and attack will add Broken, damage increases by 25%. If target has Broken, damage increases by 25%."
+ * NOTE: Damage modification happens in backend DamageModifierService
+ */
+registerPictoEffect("breaker", async (ctx) => {
+    // This picto is purely backend-driven for damage calculation
+    // Frontend registration exists for consistency and future UI needs
+    return { success: false };
+});
+
+/**
+ * Breaking Burn
+ * "Only when target has Burning: If target has Fragile and attack will add Broken, damage increases by 25%. If target has Broken, damage increases by 25%."
+ * NOTE: Damage modification happens in backend DamageModifierService
+ */
+registerPictoEffect("breaking-burn", async (ctx) => {
+    // This picto is purely backend-driven for damage calculation
+    // Frontend registration exists for consistency and future UI needs
+    return { success: false };
+});
+
+/**
+ * Enfeebling Mark
+ * "If attacker has Marked status, they deal 30% less damage to characters with this picto"
+ * NOTE: Damage reduction happens in backend DamageModifierService
+ */
+registerPictoEffect("enfeebling-mark", async (ctx) => {
+    // This picto is purely backend-driven for damage reduction
+    // Frontend registration exists for consistency and future UI needs
+    return { success: false };
+});
+
+/**
+ * Burn Affinity
+ * "+25% damage to targets with Burning status"
+ * NOTE: Damage calculation happens in backend DamageModifierService
+ */
+registerPictoEffect("burn-affinity", async (ctx) => {
+    // Backend-driven damage calculation
+    return { success: false };
+});
+
+/**
+ * Teamwork
+ * "+10% damage while all allies are alive (not solo)"
+ * NOTE: Damage calculation happens in backend DamageModifierService
+ */
+registerPictoEffect("teamwork", async (ctx) => {
+    // Backend-driven damage calculation
+    return { success: false };
+});
+
+/**
+ * Faster Than Strong
+ * "Play again after turn ends, but with -50% damage"
+ * NOTE: Grants extra turn and applies DamageReduction status
+ */
+registerPictoEffect("faster-than-strong", async (ctx) => {
+    if (ctx.trigger === "on-turn-end") {
+        const source = ctx.source;
+        if (!source?.battleID) return { success: false };
+
+        // Check if already used this turn (once-per-turn limitation)
+        const canActivate = await APIPictoTracker.canActivate({
+            battleId: source.battleID,
+            battleCharacterId: source.battleID,
+            pictoName: "faster-than-strong",
+            effectType: "once-per-turn"
+        });
+
+        if (!canActivate) return { success: false };
+
+        // Grant extra turn
+        await APIBattle.grantExtraTurn(source.battleID);
+
+        // Add DamageReduction status (-50% damage for 1 turn)
+        await APIBattle.addStatusEffect({
+            battleCharacterId: source.battleID,
+            effectType: "DamageReduction",
+            amount: 50,
+            remainingTurns: 1,
+            source: "faster-than-strong"
+        });
+
+        await APIPictoTracker.trackEffect({
+            battleId: source.battleID,
+            battleCharacterId: source.battleID,
+            pictoName: "faster-than-strong",
+            effectType: "once-per-turn"
+        });
+
+        return {
+            success: true,
+            message: "Faster Than Strong: Turno extra concedido (-50% dano)!"
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Longer Rush
+ * "When receiving Hastened status, duration is increased by 2 turns"
+ * NOTE: Duration extension happens in backend AttackController
+ */
+registerPictoEffect("longer-rush", async (ctx) => {
+    // Backend-driven status duration extension
+    return { success: false };
+});
+
+/**
+ * Cheater
+ * "Play again after turn ends"
+ * NOTE: Grants extra turn without damage penalty
+ */
+registerPictoEffect("cheater", async (ctx) => {
+    if (ctx.trigger === "on-turn-end") {
+        const source = ctx.source;
+        if (!source?.battleID) return { success: false };
+
+        // Check if already used this turn (once-per-turn limitation)
+        const canActivate = await APIPictoTracker.canActivate({
+            battleId: source.battleID,
+            battleCharacterId: source.battleID,
+            pictoName: "cheater",
+            effectType: "once-per-turn"
+        });
+
+        if (!canActivate) return { success: false };
+
+        // Grant extra turn (no damage penalty unlike Faster Than Strong)
+        await APIBattle.grantExtraTurn(source.battleID);
+
+        await APIPictoTracker.trackEffect({
+            battleId: source.battleID,
+            battleCharacterId: source.battleID,
+            pictoName: "cheater",
+            effectType: "once-per-turn"
+        });
+
+        return {
+            success: true,
+            message: "Cheater: Jogando novamente!"
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Augmented Counter I
+ * "+50% counter damage (stackable)"
+ * NOTE: Damage calculation happens in backend DamageModifierService
+ */
+registerPictoEffect("augmented-counter-i", async (ctx) => {
+    // Backend-driven damage calculation
+    return { success: false };
+});
+
+/**
+ * Augmented Counter II
+ * "+50% counter damage (stackable)"
+ * NOTE: Damage calculation happens in backend DamageModifierService
+ */
+registerPictoEffect("augmented-counter-ii", async (ctx) => {
+    // Backend-driven damage calculation
+    return { success: false };
+});
+
+/**
+ * Augmented Counter III
+ * "+50% counter damage (stackable)"
+ * NOTE: Damage calculation happens in backend DamageModifierService
+ */
+registerPictoEffect("augmented-counter-iii", async (ctx) => {
+    // Backend-driven damage calculation
+    return { success: false };
+});
+
+/**
+ * The One
+ * "Max HP = 1"
+ * NOTE: HP modification happens on battle start
+ */
+registerPictoEffect("the-one", async (ctx) => {
+    if (ctx.trigger === "on-battle-start") {
+        const source = ctx.source;
+        if (!source?.battleID) return { success: false };
+
+        // Set max HP to 1
+        await APIBattle.updateCharacterMaxHp(source.battleID, 1);
+
+        return {
+            success: true,
+            message: "The One: HP máximo = 1!"
+        };
+    }
+    return { success: false };
+});
+
+/**
+ * Revive Tint Energy
+ * "Revived allies get 3 MP instead of 0"
+ * NOTE: Backend-driven MP restoration on revive
+ */
+registerPictoEffect("revive-tint-energy", async (ctx) => {
+    // Backend-driven MP restoration
+    return { success: false };
+});
+
+/**
+ * Better Healing Tint
+ * "Healing potions restore double HP"
+ * NOTE: Backend-driven healing calculation
+ */
+registerPictoEffect("better-healing-tint", async (ctx) => {
+    // Backend-driven healing calculation
+    return { success: false };
+});
+
+/**
+ * Cleansing Tint
+ * "Healing potions remove all negative status effects"
+ * NOTE: Backend-driven status removal
+ */
+registerPictoEffect("cleansing-tint", async (ctx) => {
+    // Backend-driven status removal
+    return { success: false };
+});
+
+/**
+ * Great Healing Tint
+ * "Healing potion effects affect entire team"
+ * NOTE: Backend-driven team-wide healing
+ */
+registerPictoEffect("great-healing-tint", async (ctx) => {
+    // Backend-driven team healing
+    return { success: false };
+});
+
+/**
+ * Charging Tint
+ * "Any potion used increases gradient by 5%"
+ * NOTE: Backend-driven gradient increase
+ */
+registerPictoEffect("charging-tint", async (ctx) => {
+    // Backend-driven gradient increase
+    return { success: false };
+});
+
+/**
+ * Time Tint
+ * "Mana potions also apply Hastened status"
+ * NOTE: Backend-driven status application
+ */
+registerPictoEffect("time-tint", async (ctx) => {
+    // Backend-driven status application
+    return { success: false };
+});
+
+/**
+ * Anti-Status Pictos
+ * "Prevents specific negative status effects"
+ * NOTE: Backend-driven status removal via AntiStatusService
+ */
 /**
  * Accelerating Shots
  * "20% chance to gain Rush on Free Aim shot."
@@ -2924,12 +3487,14 @@ registerPictoEffect("successive-parry", async (_ctx) => {
  * Death Bomb
  * "On Death, deal damage to all enemies."
  */
-registerPictoEffect("death-bomb", async (_ctx) => {
-    // NOTE: Requires backend implementation for damage dealing
-    return {
-        success: false,
-        message: "Death Bomb requires backend implementation"
-    };
+registerPictoEffect("death-bomb", async (ctx) => {
+    if (ctx.trigger === "on-death") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("death-bomb")} active! Will deal damage to all enemies on death.`
+        };
+    }
+    return { success: false };
 });
 
 /**
@@ -3158,18 +3723,6 @@ registerPictoEffect("slowing-break", async (ctx) => {
             duration: 3,
             amount: 0
         }]
-    };
-});
-
-/**
- * Fueling Break
- * "Breaking a target doubles its Burn amount."
- */
-registerPictoEffect("fueling-break", async (_ctx) => {
-    // NOTE: Requires backend implementation to modify burn stacks
-    return {
-        success: false,
-        message: "Fueling Break requires backend implementation"
     };
 });
 
@@ -3417,14 +3970,27 @@ registerPictoEffect("frozen-affinity", async (_ctx) => {
 
 /**
  * Critical Burn
- * "25% increased Critical Chance on Burning enemies."
+ * "Can land critical hits by rolling a 5 on the die if target is Burning."
+ *
+ * This is a PASSIVE modifier that expands the critical hit range CONDITIONALLY.
+ * Normally only rolling a 6 on the die results in a critical hit.
+ * With this picto, rolling either 5 or 6 results in a critical hit,
+ * BUT ONLY if the target has the Burning status effect.
+ *
+ * This is checked in the combat calculation logic when determining
+ * if an attack is a critical hit.
  */
-registerPictoEffect("critical-burn", async (_ctx) => {
-    // NOTE: Passive critical modifier requiring backend implementation
-    return {
-        success: false,
-        message: "Critical Burn requires backend implementation"
-    };
+registerPictoEffect("critical-burn", async (ctx) => {
+    // This is a passive modifier - systems checking for critical hits
+    // should check if the player has this picto equipped AND if target is Burning,
+    // then expand the critical range to include 5 and 6 (instead of just 6)
+    if (ctx.trigger === "on-battle-start") {
+        return {
+            success: true,
+            message: `${ctx.source.name} has ${getPictoName("critical-burn")} active! Can crit on 5 or 6 against Burning enemies.`
+        };
+    }
+    return { success: false };
 });
 
 // ==================== BUFF SYNERGY ====================
@@ -3595,14 +4161,6 @@ registerPictoEffect("teamwork", async (_ctx) => {
  * The One
  * "Max Health is reduced to 1."
  */
-registerPictoEffect("the-one", async (_ctx) => {
-    // NOTE: Requires backend implementation for max health modification
-    return {
-        success: false,
-        message: "The One requires backend implementation"
-    };
-});
-
 /**
  * Hazardous Choice
  * "33% chance to skip own turn, but deal 50% more damage."

@@ -63,6 +63,7 @@ export interface SkillMetadata {
     appliesForetellOnCrit?: number;      // Applies additional Foretell stacks on critical hits (Spectral Sweep: +1 per crit)
     propagatesBurnDamage?: boolean;      // Propagates damage to other Burning enemies (Searing Bond: 50% damage + 1 Foretell)
     grantsMpPerForetell?: number;        // Grants MP to random ally per Foretell consumed (Plentiful Harvest: 1 MP per stack)
+    grantsApPerForetell?: number;        // Grants AP to random ally per Foretell consumed
     drainsAlliesHp?: boolean;            // Drains all allies HP to 1, adds drained HP to damage (Our Sacrifice)
     consumesAllEnemiesForetell?: boolean; // Consumes Foretell from ALL enemies, adds to damage (Our Sacrifice: +1 per stack)
     redistributesForetell?: boolean;     // Redistributes target's Foretell to all other enemies (Card Weaver)
@@ -101,11 +102,36 @@ export interface SkillMetadata {
 
     // Verso's Perfection Rank System
     ranksUpOnCrit?: boolean;             // Ranks up user by 1 level if at least 1 critical hit occurs (Assault Zero)
-    rankConditionalBonus?: { rank: string; damageMultiplier: number };  // Additional damage multiplier when used at specific rank (Assault Zero at B: +50%)
+    rankConditionalBonus?: {              // Additional bonuses when used at specific rank
+        rank: string;
+        damageMultiplier?: number;        // Additional damage multiplier (Assault Zero at B: +50%)
+        bonusApReturn?: number;           // Extra AP returned (Fleuret Fury at C: +1)
+        grantsAp?: number;                // AP granted (Poignée Forte at A: +2)
+        bonusApToAllies?: number;         // Extra AP to allies (Fleuret Eperdu at C: +1)
+        canReapplyStun?: boolean;         // Can reapply Stun (Assaut Concussif at A)
+    };
     rollsForTargetScope?: boolean;       // Rolls 1d6 to determine target scope: 1-3 = self only, 4-6 = all allies (Powerful)
     rankConditionalDuration?: { rank: string; duration: number };  // Changes effect duration at specific rank (Powerful at A: 5 turns)
     gainsStainOnCrit?: boolean;          // Gains corresponding stain on critical hits (Elemental Trick)
     transformsStainToLight?: { from: "Fire"; to: "Light" };  // Transforms Fire stain to Light stain (Electrify)
+    gainsPerfectionOnCrit?: boolean;     // Critical hits generate +1 Perfection (Assault Zero)
+    gainsPerfection?: { min: number; max: number };  // Gives random Perfection progress (Verso Puissant)
+    gainsPerfectionPerHit?: number;      // +X Perfection per hit (Fleuret Fury: +1 per hit, 8 total)
+    gainsPerfectionRank?: number;        // Gains +X Perfection Rank (Fléau: +1, Poignée Forte: +1)
+    playsSecondTime?: boolean;           // Plays a second time (Deux Moulinet: total 2 hits)
+    upgradesRankToSOnBreak?: boolean;    // When enemy breaks, auto-upgrade Perfection to S Rank (Le Tremblement)
+    costsHpPercent?: number;             // Costs X% of current HP to use (Poignée Forte: 30%)
+    transfersAllStatusToSelf?: boolean;  // Removes all status from allies and applies to Verso (Fléau)
+    returnsAp?: { min: number; max: number };  // Returns X-Y AP back (Fleuret Fury: 1-3)
+    grantsApToAllies?: { min: number; max: number };  // Grants X-Y AP to other allies (Fleuret Eperdu: 2-4)
+    scalesWithSpeedDifference?: boolean; // Damage increased by Speed difference with target (Escrime Rapide)
+    interruptedIfDamaged?: boolean;      // Interrupted if any damage taken during charge (Plongeant Espadon)
+    setsRankToS?: boolean;               // Sets Perfection Rank to S (Ultimate skills)
+    requiresOneTurnDelay?: boolean;      // Requires one turn delay before executing (charging skills like Plongeant Espadon)
+    reducesRank?: number;                // Reduces Perfection Rank by X levels (Verso Demoralisation: -1)
+    grantsImmediateTurn?: boolean;       // Grants an immediate turn to the user (Free Action skills)
+    scalesWithBattleForetellCount?: boolean;  // Damage scales with total Foretell count across all enemies in battle
+    grantsAP?: number;                   // Grants X AP to the user
 }
 
 export const SkillEffectsRegistry: Record<string, SkillMetadata> = {

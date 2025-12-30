@@ -4,6 +4,7 @@ import com.example.demo.model.DamageModifier
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.DamageModifierRepository
+import com.example.demo.repository.PlayerPictoRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.math.roundToInt
@@ -12,7 +13,9 @@ import kotlin.math.roundToInt
 class DamageModifierService(
     private val damageModifierRepository: DamageModifierRepository,
     private val battleCharacterRepository: BattleCharacterRepository,
-    private val battleStatusEffectRepository: BattleStatusEffectRepository
+    private val battleStatusEffectRepository: BattleStatusEffectRepository,
+    private val pictoEffectTrackerService: PictoEffectTrackerService,
+    private val playerPictoRepository: PlayerPictoRepository
 ) {
 
     /**
@@ -67,6 +70,210 @@ class DamageModifierService(
         var modifiedDamage = baseDamage.toDouble()
         validModifiers.forEach { modifier ->
             modifiedDamage *= modifier.multiplier
+        }
+
+        // Empowering Parry: Apply +5% damage per stack of EmpoweringParry status
+        val empoweringParryEffects = battleStatusEffectRepository.findByBattleCharacterId(battleCharacterId)
+            .filter { it.effectType == "EmpoweringParry" }
+        if (empoweringParryEffects.isNotEmpty()) {
+            val totalStacks = empoweringParryEffects.sumOf { it.ammount }
+            // Each stack = +5% damage (0.05 multiplier per stack)
+            val empoweringParryMultiplier = 1.0 + (totalStacks * 0.05)
+            modifiedDamage *= empoweringParryMultiplier
+        }
+
+        // Empowering Dodge: Apply +5% damage per stack of EmpoweringDodge status (max 10 stacks)
+        val empoweringDodgeEffects = battleStatusEffectRepository.findByBattleCharacterId(battleCharacterId)
+            .filter { it.effectType == "EmpoweringDodge" }
+        if (empoweringDodgeEffects.isNotEmpty()) {
+            val totalStacks = empoweringDodgeEffects.sumOf { it.ammount }
+            // Each stack = +5% damage (0.05 multiplier per stack, max 10 stacks = +50%)
+            val empoweringDodgeMultiplier = 1.0 + (totalStacks * 0.05)
+            modifiedDamage *= empoweringDodgeMultiplier
+        }
+
+        // Successive Parry: Apply +5% damage per stack of SuccessiveParry status
+        val successiveParryEffects = battleStatusEffectRepository.findByBattleCharacterId(battleCharacterId)
+            .filter { it.effectType == "SuccessiveParry" }
+        if (successiveParryEffects.isNotEmpty()) {
+            val totalStacks = successiveParryEffects.sumOf { it.ammount }
+            // Each stack = +5% damage (0.05 multiplier per stack)
+            val successiveParryMultiplier = 1.0 + (totalStacks * 0.05)
+            modifiedDamage *= successiveParryMultiplier
+        }
+
+        // Breaker: Apply +25% damage if target has Broken OR if target has Fragile and will become Broken
+        val targetId = context["targetBattleCharacterId"] as? Int
+        if (targetId != null) {
+            val character = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+            if (character != null && character.characterType == "player") {
+                val playerId = character.externalId.toIntOrNull()
+                if (playerId != null) {
+                    val pictos = playerPictoRepository.findByPlayerId(playerId)
+                    val hasBreaker = pictos.any {
+                        it.pictoId.lowercase() == "breaker" &&
+                        it.slot != null &&
+                        it.slot in 0..2
+                    }
+
+                    if (hasBreaker) {
+                        val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetId)
+                        val hasBroken = targetEffects.any { it.effectType == "Broken" }
+                        val hasFragile = targetEffects.any { it.effectType == "Fragile" }
+                        val willBreak = context["willApplyBroken"] as? Boolean ?: false
+
+                        // +25% if target has Broken OR if target has Fragile and will become Broken
+                        if (hasBroken || (hasFragile && willBreak)) {
+                            modifiedDamage *= 1.25
+                        }
+                    }
+                }
+            }
+        }
+
+        // Breaking Burn: Apply +25% damage if target has Burning AND (Broken OR Fragile+willBreak)
+        if (targetId != null) {
+            val character = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+            if (character != null && character.characterType == "player") {
+                val playerId = character.externalId.toIntOrNull()
+                if (playerId != null) {
+                    val pictos = playerPictoRepository.findByPlayerId(playerId)
+                    val hasBreakingBurn = pictos.any {
+                        it.pictoId.lowercase() == "breaking-burn" &&
+                        it.slot != null &&
+                        it.slot in 0..2
+                    }
+
+                    if (hasBreakingBurn) {
+                        val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetId)
+                        val hasBurning = targetEffects.any { it.effectType == "Burning" }
+                        val hasBroken = targetEffects.any { it.effectType == "Broken" }
+                        val hasFragile = targetEffects.any { it.effectType == "Fragile" }
+                        val willBreak = context["willApplyBroken"] as? Boolean ?: false
+
+                        // +25% ONLY if target has Burning AND (has Broken OR has Fragile and will become Broken)
+                        if (hasBurning && (hasBroken || (hasFragile && willBreak))) {
+                            modifiedDamage *= 1.25
+                        }
+                    }
+                }
+            }
+        }
+
+        // Enfeebling Mark: Reduce damage by 30% if attacker has Marked and target (defender) has enfeebling-mark picto
+        if (targetId != null) {
+            val targetCharacter = battleCharacterRepository.findById(targetId).orElse(null)
+            if (targetCharacter != null && targetCharacter.characterType == "player") {
+                val targetPlayerId = targetCharacter.externalId.toIntOrNull()
+                if (targetPlayerId != null) {
+                    val targetPictos = playerPictoRepository.findByPlayerId(targetPlayerId)
+                    val hasEnfeeblingMark = targetPictos.any {
+                        it.pictoId.lowercase() == "enfeebling-mark" &&
+                        it.slot != null &&
+                        it.slot in 0..2
+                    }
+
+                    if (hasEnfeeblingMark) {
+                        // Check if attacker (source) has Marked status
+                        val attackerEffects = battleStatusEffectRepository.findByBattleCharacterId(battleCharacterId)
+                        val attackerHasMarked = attackerEffects.any { it.effectType == "Marked" }
+
+                        // -30% damage if attacker is Marked
+                        if (attackerHasMarked) {
+                            modifiedDamage *= 0.7  // 70% of original damage = 30% reduction
+                        }
+                    }
+                }
+            }
+        }
+
+        // Burn Affinity: Apply +25% damage if target has Burning
+        if (targetId != null) {
+            val character = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+            if (character != null && character.characterType == "player") {
+                val playerId = character.externalId.toIntOrNull()
+                if (playerId != null) {
+                    val pictos = playerPictoRepository.findByPlayerId(playerId)
+                    val hasBurnAffinity = pictos.any {
+                        it.pictoId.lowercase() == "burn-affinity" &&
+                        it.slot != null &&
+                        it.slot in 0..2
+                    }
+
+                    if (hasBurnAffinity) {
+                        val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetId)
+                        val hasBurning = targetEffects.any { it.effectType == "Burning" }
+
+                        if (hasBurning) {
+                            modifiedDamage *= 1.25
+                        }
+                    }
+                }
+            }
+        }
+
+        // Teamwork: Apply +10% damage if all allies alive (not solo)
+        val character = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+        if (character != null && character.characterType == "player") {
+            val playerId = character.externalId.toIntOrNull()
+            if (playerId != null) {
+                val pictos = playerPictoRepository.findByPlayerId(playerId)
+                val hasTeamwork = pictos.any {
+                    it.pictoId.lowercase() == "teamwork" &&
+                    it.slot != null &&
+                    it.slot in 0..2
+                }
+
+                if (hasTeamwork) {
+                    val isSolo = context["isSolo"] as? Boolean ?: true
+                    if (!isSolo) {
+                        val battleId = character.battleId
+                        val allies = battleCharacterRepository
+                            .findByBattleIdAndIsEnemy(battleId, character.isEnemy)
+                            .filter { ally -> ally.id != battleCharacterId }
+
+                        val allAlliesAlive = allies.all { ally -> ally.healthPoints > 0 }
+
+                        if (allAlliesAlive) {
+                            modifiedDamage *= 1.10
+                        }
+                    }
+                }
+            }
+        }
+
+        // Faster Than Strong: Apply -50% damage if DamageReduction status active
+        val damageReductionEffects = battleStatusEffectRepository.findByBattleCharacterId(battleCharacterId)
+            .filter { it.effectType == "DamageReduction" }
+        if (damageReductionEffects.isNotEmpty()) {
+            val totalReduction = damageReductionEffects.sumOf { it.ammount }
+            val reductionMultiplier = 1.0 - (totalReduction / 100.0)
+            modifiedDamage *= reductionMultiplier
+        }
+
+        // Augmented Counter: +50% per equipped counter picto (stackable)
+        if (attackType == "counter") {
+            val character = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+            if (character != null && character.characterType == "player") {
+                val playerId = character.externalId.toIntOrNull()
+                if (playerId != null) {
+                    val pictos = playerPictoRepository.findByPlayerId(playerId)
+                    val counterPictos = pictos.filter {
+                        it.pictoId.lowercase() in listOf(
+                            "augmented-counter-i",
+                            "augmented-counter-ii",
+                            "augmented-counter-iii"
+                        ) &&
+                        it.slot != null &&
+                        it.slot in 0..2
+                    }
+
+                    // Each counter picto = +50% (multiplicative, stackable)
+                    counterPictos.forEach { _ ->
+                        modifiedDamage *= 1.50
+                    }
+                }
+            }
         }
 
         // Then apply flat bonuses (additive)
@@ -140,6 +347,53 @@ class DamageModifierService(
                 // Check if character has Twilight status
                 val effects = battleStatusEffectRepository.findByBattleCharacterId(battleCharacterId)
                 effects.any { it.effectType == "Twilight" }
+            }
+            "sniper-first-shot" -> {
+                // Check if this is the first free-shot this turn (Sniper picto)
+                val character = battleCharacterRepository.findById(battleCharacterId).orElse(null) ?: return false
+                val battleId = character.battleId ?: return false
+
+                // Check if Sniper was already used this turn
+                val canActivate = pictoEffectTrackerService.canActivate(
+                    battleId = battleId,
+                    battleCharacterId = battleCharacterId,
+                    pictoName = "sniper",
+                    effectType = "once-per-turn"
+                )
+
+                canActivate
+            }
+            "versatile-buff" -> {
+                // Check if character has VersatileBuff status effect (Versatile picto)
+                val effects = battleStatusEffectRepository.findByBattleCharacterId(battleCharacterId)
+                effects.any { it.effectType == "VersatileBuff" }
+            }
+            "enemy-fragile-or-broken" -> {
+                // Check if target enemy has Fragile or Broken status (Breaking Shots picto)
+                val targetId = context["targetBattleCharacterId"] as? Int ?: return false
+                val effects = battleStatusEffectRepository.findByBattleCharacterId(targetId)
+                effects.any { it.effectType == "Fragile" || it.effectType == "Broken" }
+            }
+            "first-hit-in-battle" -> {
+                // Check if this is the first hit in battle (Augmented First Strike picto)
+                val character = battleCharacterRepository.findById(battleCharacterId).orElse(null) ?: return false
+                val battleId = character.battleId ?: return false
+
+                // Check if this character has already attacked in this battle
+                val canActivate = pictoEffectTrackerService.canActivate(
+                    battleId = battleId,
+                    battleCharacterId = battleCharacterId,
+                    pictoName = "augmented-first-strike",
+                    effectType = "once-per-battle"
+                )
+
+                canActivate
+            }
+            "has-mp" -> {
+                // Check if character has MP available (Powered Attack picto)
+                val character = battleCharacterRepository.findById(battleCharacterId).orElse(null) ?: return false
+                val currentMP = character.magicPoints ?: 0
+                currentMP > 0
             }
             else -> {
                 // Unknown condition, default to false

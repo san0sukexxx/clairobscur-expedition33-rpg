@@ -29,7 +29,9 @@ class BattleStatusController(
         private val damageService: DamageService,
         private val battleTurnRepository: BattleTurnRepository,
         private val objectMapper: ObjectMapper,
-        private val immunityService: com.example.demo.service.ImmunityService
+        private val immunityService: com.example.demo.service.ImmunityService,
+        private val pictoEffectTrackerService: com.example.demo.service.PictoEffectTrackerService,
+        private val playerPictoRepository: com.example.demo.repository.PlayerPictoRepository
 ) {
 
     @PostMapping("/resolve")
@@ -86,26 +88,54 @@ class BattleStatusController(
                 }
             }
         } else if (body.effectType == "Regeneration") {
-            val heal = body.totalValue.coerceAtLeast(0)
+            val baseHeal = body.totalValue.coerceAtLeast(0)
 
-            if (heal > 0) {
-                val invertedEffects =
-                        battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
-                                battleCharacter.id!!,
-                                "Inverted"
-                        )
+            if (baseHeal > 0) {
+                // Check if character has Confident picto - blocks ALL healing
+                if (hasConfidentPicto(battleCharacter)) {
+                    // Cannot be healed - log and skip healing
+                    val eventJson = objectMapper.writeValueAsString(
+                            mapOf(
+                                    "battleCharacterId" to battleCharacter.id!!,
+                                    "characterName" to battleCharacter.characterName,
+                                    "healingBlocked" to baseHeal,
+                                    "healingType" to "regeneration",
+                                    "reason" to "confident_picto"
+                            )
+                    )
 
-                val hasInverted = invertedEffects.isNotEmpty()
-
-                if (hasInverted) {
-                    damageService.applyDamage(battleCharacter, heal)
+                    battleLogRepository.save(
+                            BattleLog(
+                                    battleId = battleId,
+                                    eventType = "HEALING_BLOCKED",
+                                    eventJson = eventJson
+                            )
+                    )
                 } else {
-                    val currentHp = battleCharacter.healthPoints
-                    val maxHp = battleCharacter.maxHealthPoints ?: currentHp
-                    val nextHp = (currentHp + heal).coerceAtMost(maxHp)
+                    // Apply Effective Heal modifier (doubles healing if equipped)
+                    val heal = damageService.applyEffectiveHeal(battleCharacter, baseHeal)
 
-                    battleCharacter.healthPoints = nextHp
-                    battleCharacterRepository.save(battleCharacter)
+                    val invertedEffects =
+                            battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
+                                    battleCharacter.id!!,
+                                    "Inverted"
+                            )
+
+                    val hasInverted = invertedEffects.isNotEmpty()
+
+                    if (hasInverted) {
+                        damageService.applyDamage(battleCharacter, heal)
+                    } else {
+                        val currentHp = battleCharacter.healthPoints
+                        val maxHp = battleCharacter.maxHealthPoints ?: currentHp
+                        val nextHp = (currentHp + heal).coerceAtMost(maxHp)
+
+                        battleCharacter.healthPoints = nextHp
+                        battleCharacterRepository.save(battleCharacter)
+
+                        // Apply Healing Share: distribute 15% of heal to characters with healing-share picto
+                        damageService.applyHealingShare(battleId, battleCharacter, heal)
+                    }
                 }
             }
 
@@ -220,6 +250,12 @@ class BattleStatusController(
         }
 
         val battleId = bc.battleId ?: return ResponseEntity.badRequest().build()
+
+        // Check for Energising Cleanse picto - intercept first negative status
+        if (handleEnergisingCleanse(battleId, bc, body.effectType)) {
+            // Status was cleansed and MP was granted, return without applying the status
+            return ResponseEntity.noContent().build()
+        }
 
         if (body.effectType == "Plagued") {
             val amount = body.ammount ?: 0
@@ -338,6 +374,98 @@ class BattleStatusController(
 
                 else -> false
             }
+
+    /**
+     * Checks if character has "Energising Cleanse" picto equipped and can activate it.
+     * If yes, prevents the status effect and grants 2 MP instead.
+     * Returns true if the status was intercepted (cleansed), false otherwise.
+     */
+    private fun handleEnergisingCleanse(
+            battleId: Int,
+            battleCharacter: com.example.demo.model.BattleCharacter,
+            effectType: String
+    ): Boolean {
+        // Only intercept negative status effects
+        if (!isNegativeEffect(effectType)) {
+            return false
+        }
+
+        // Only works for player characters
+        if (battleCharacter.characterType != "player") {
+            return false
+        }
+
+        // Check if player has Energising Cleanse picto equipped (slots 0-2)
+        val playerId = battleCharacter.externalId.toIntOrNull() ?: return false
+        val pictos = playerPictoRepository.findByPlayerId(playerId)
+
+        val hasEnergisingCleanse = pictos.any {
+            it.pictoId.lowercase() == "energising-cleanse" &&
+            it.slot != null &&
+            it.slot in 0..2
+        }
+
+        if (!hasEnergisingCleanse) {
+            return false
+        }
+
+        // Check if effect can be activated (once-per-battle)
+        val canActivate = pictoEffectTrackerService.canActivate(
+                battleId,
+                battleCharacter.id!!,
+                "Energising Cleanse",
+                "once-per-battle"
+        )
+
+        if (!canActivate) {
+            return false
+        }
+
+        // Activate the effect: grant 2 MP
+        val currentMp = battleCharacter.magicPoints ?: 0
+        val maxMp = battleCharacter.maxMagicPoints ?: 0
+        val newMp = (currentMp + 2).coerceAtMost(maxMp)
+
+        battleCharacter.magicPoints = newMp
+        battleCharacterRepository.save(battleCharacter)
+
+        // Update player MP if necessary
+        val player = playerRepository.findById(playerId).orElse(null)
+        if (player != null) {
+            player.mpCurrent = newMp
+            playerRepository.save(player)
+        }
+
+        // Track that the effect was used
+        pictoEffectTrackerService.track(
+                battleId,
+                battleCharacter.id!!,
+                "Energising Cleanse",
+                "once-per-battle"
+        )
+
+        // Log the event
+        val eventJson = objectMapper.writeValueAsString(
+                mapOf(
+                        "battleCharacterId" to battleCharacter.id!!,
+                        "characterName" to battleCharacter.characterName,
+                        "statusType" to effectType,
+                        "mpGained" to 2,
+                        "newMp" to newMp,
+                        "result" to "cleansed"
+                )
+        )
+
+        battleLogRepository.save(
+                BattleLog(
+                        battleId = battleId,
+                        eventType = "ENERGISING_CLEANSE",
+                        eventJson = eventJson
+                )
+        )
+
+        return true
+    }
 
     @PostMapping("/cleanse/{battleCharacterId}")
     @Transactional
@@ -549,6 +677,25 @@ class BattleStatusController(
         )
 
         return ResponseEntity.noContent().build()
+    }
+
+    /**
+     * Checks if character has "Confident" picto equipped.
+     * Returns true if the picto is equipped in slots 0-2.
+     */
+    private fun hasConfidentPicto(battleCharacter: com.example.demo.model.BattleCharacter): Boolean {
+        if (battleCharacter.characterType != "player") {
+            return false
+        }
+
+        val playerId = battleCharacter.externalId.toIntOrNull() ?: return false
+        val pictos = playerPictoRepository.findByPlayerId(playerId)
+
+        return pictos.any {
+            it.pictoId.lowercase() == "confident" &&
+            it.slot != null &&
+            it.slot in 0..2
+        }
     }
 }
 

@@ -414,7 +414,7 @@
     },
     "defensive-mode": {
       "name": "Defensive Mode",
-      "description": "On receiving damage, consume 1 AP to take 30% less damage, if possible."
+      "description": "On receiving damage, consume 1 MP to take 30% less damage, if possible."
     },
     "greater-powerful": {
       "name": "Greater Powerful",
@@ -491,10 +491,6 @@
     "beneficial-contamination": {
       "name": "Beneficial Contamination",
       "description": "+2 AP on applying a Status Effect. Once per turn."
-    },
-    "perfect-reward": {
-      "name": "Perfect Reward",
-      "description": "Perfect Rythms give 1 AP."
     },
     "roulette": {
       "name": "Roulette",
@@ -762,7 +758,7 @@
     },
     "critical-burn": {
       "name": "Critical Burn",
-      "description": "25% increased Critical Chance on Burning enemies."
+      "description": "Can land critical hits by rolling a 5 on the die if target is Burning."
     },
     "burning-death": {
       "name": "Burning Death",
@@ -850,7 +846,7 @@
     },
     "energising-cleanse": {
       "name": "Energising Cleanse",
-      "description": "Dispel the first negative Status Effect received and gain 2 AP."
+      "description": "Dispel the first negative Status Effect received and gain 2 MP."
     },
     "draining-cleanse": {
       "name": "Draining Cleanse",
@@ -1922,7 +1918,9 @@
       "weapon": "Weapon",
       "picto": "Picto",
       "level": "Level",
-      "claim": "Claim"
+      "claim": "Claim",
+      "alreadyOwned": "Already owned",
+      "cannotUse": "Cannot use"
     },
     "campaignAdminSheets": {
       "players": "Players",

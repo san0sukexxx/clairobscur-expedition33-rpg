@@ -20,20 +20,18 @@ export const APIPictoTracker = {
      * Verifica se um efeito de picto pode ser ativado
      */
     async canActivate(request: CanActivateRequest): Promise<boolean> {
-        const response = await api.post<boolean>("battle/picto-effects/can-activate", request)
+        const response = await api.post<CanActivateRequest, boolean>("battle/picto-effects/can-activate", request)
         console.log("[APIPictoTracker] canActivate response:", response)
-        console.log("[APIPictoTracker] response.data:", response.data)
-        // Se response já é o valor booleano direto, retornar ele
-        // Senão, retornar response.data
-        return typeof response === 'boolean' ? response : response.data
+        // api.post já retorna o valor diretamente, não precisa acessar .data
+        return response
     },
 
     /**
      * Registra o uso de um efeito de picto
      */
     async trackEffect(request: TrackPictoEffectRequest): Promise<PictoEffectTracker> {
-        const response = await api.post<PictoEffectTracker>("battle/picto-effects/track", request)
-        return response.data
+        const response = await api.post<TrackPictoEffectRequest, PictoEffectTracker>("battle/picto-effects/track", request)
+        return response
     },
 
     /**
@@ -44,7 +42,7 @@ export const APIPictoTracker = {
             const response = await api.get<PictoEffectTracker>(
                 `battle/picto-effects/tracker/${battleId}/${battleCharacterId}/${pictoName}`
             )
-            return response.data
+            return response
         } catch {
             return null
         }
@@ -55,7 +53,7 @@ export const APIPictoTracker = {
      */
     async listByBattle(battleId: number): Promise<PictoEffectTracker[]> {
         const response = await api.get<PictoEffectTracker[]>(`battle/picto-effects/battle/${battleId}`)
-        return response.data
+        return response
     },
 
     /**
@@ -63,7 +61,7 @@ export const APIPictoTracker = {
      */
     async listByCharacter(battleCharacterId: number): Promise<PictoEffectTracker[]> {
         const response = await api.get<PictoEffectTracker[]>(`battle/picto-effects/character/${battleCharacterId}`)
-        return response.data
+        return response
     },
 
     /**

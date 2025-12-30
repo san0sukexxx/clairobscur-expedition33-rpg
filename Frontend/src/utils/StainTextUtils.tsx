@@ -32,12 +32,14 @@ export function renderStainText(text: string): React.ReactNode[] {
     const stainPattern = /(\d+\s+)?Manchas?\s+de\s+(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)|\b(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)\b/gi;
 
     let lastIndex = 0;
-    let match;
+    let match: RegExpExecArray | null = null;
 
     while ((match = stainPattern.exec(text)) !== null) {
+        const matchIndex = match.index; // Store for type safety
+
         // Adiciona o texto antes do match
-        if (match.index > lastIndex) {
-            parts.push(text.substring(lastIndex, match.index));
+        if (matchIndex > lastIndex) {
+            parts.push(text.substring(lastIndex, matchIndex));
         }
 
         const fullMatch = match[0];
@@ -52,10 +54,10 @@ export function renderStainText(text: string): React.ReactNode[] {
             if (count) {
                 const numericCount = parseInt(count);
                 parts.push(
-                    <span key={match.index} className="inline-flex items-center gap-1 mx-0.5">
+                    <span key={matchIndex} className="inline-flex items-center gap-1 mx-0.5">
                         {Array.from({ length: numericCount }).map((_, idx) => (
                             <img
-                                key={`${match.index}-${idx}`}
+                                key={`${matchIndex}-${idx}`}
                                 src={imagePath}
                                 alt={stainName}
                                 className="inline-block w-5 h-5"
@@ -68,7 +70,7 @@ export function renderStainText(text: string): React.ReactNode[] {
                 // Apenas uma imagem (para "Mancha de X" ou "X" sozinho)
                 parts.push(
                     <img
-                        key={match.index}
+                        key={matchIndex}
                         src={imagePath}
                         alt={stainName}
                         className="inline-block w-5 h-5 mx-0.5"
@@ -81,7 +83,7 @@ export function renderStainText(text: string): React.ReactNode[] {
             parts.push(fullMatch);
         }
 
-        lastIndex = match.index + fullMatch.length;
+        lastIndex = matchIndex + fullMatch.length;
     }
 
     // Adiciona o texto restante após o último match

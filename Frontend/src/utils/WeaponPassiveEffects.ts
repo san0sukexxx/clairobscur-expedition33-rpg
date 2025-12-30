@@ -33,7 +33,14 @@ export type WeaponPassiveTrigger =
   | "on-kill"
   | "on-gradient-use"
   | "on-ap-gain"
+  | "on-ap-gained"
   | "on-burn-applied"
+  | "on-burn-damage"
+  | "on-break-damage"
+  | "on-foretell-applied"
+  | "on-foretell-consumed"
+  | "on-shell-applied"
+  | "on-charge-consumed"
   | "on-buff-applied"
   | "on-debuff-applied";
 
@@ -61,6 +68,7 @@ export interface WeaponPassiveContext {
     newRank?: string;
     oldStance?: string;
     newStance?: string;
+    previousStance?: string;
     oldMask?: string;
     newMask?: string;
     shieldsBroken?: number;
@@ -79,6 +87,13 @@ export interface WeaponPassiveContext {
     targetPowerless?: boolean;
     targetBurnStacks?: number;
     consecutiveTurnsWithoutDamage?: number;
+    damageElement?: string;
+    isSkill?: boolean;
+    currentMask?: string;
+    isSupport?: boolean;
+    chargeType?: "sun" | "moon";
+    isHealingSkill?: boolean;
+    shieldBreaker?: number; // battleCharacterId of the enemy who broke the shield
   };
 }
 
@@ -588,7 +603,7 @@ registerWeaponPassive("Contorso", 10, async (ctx) => {
 registerWeaponPassive("Contorso", 20, async (ctx) => {
   // "Triggers a lightning strike on Critical hits."
   if (ctx.trigger === "on-critical-hit" && ctx.target) {
-    const strikeDamage = Math.floor(ctx.source.might * 0.5);
+    const strikeDamage = Math.floor((ctx.source.power || 0) * 0.5);
     await dealDamage(ctx.target.battleID, strikeDamage);
     return {
       success: true,
@@ -1219,7 +1234,7 @@ registerWeaponPassive("Seeram", 20, async (ctx) => {
 registerWeaponPassive("Simoso", 4, async (ctx) => {
   // "An ethereal Sword deals Light damage on any damage dealt with Skills."
   if (ctx.trigger === "on-skill-used" && ctx.target) {
-    const bonusDamage = Math.floor(ctx.source.might * 0.3);
+    const bonusDamage = Math.floor((ctx.source.power || 0) * 0.3);
     await dealDamage(ctx.target.battleID, bonusDamage);
     return {
       success: true,

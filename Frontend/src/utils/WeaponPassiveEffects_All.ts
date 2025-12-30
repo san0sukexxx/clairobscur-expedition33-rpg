@@ -22,11 +22,11 @@ registerWeaponPassive("Baguette", 4, async (ctx) => {
 // Baguette L10: Revive with 100% Health. Once per battle
 registerWeaponPassive("Baguette", 10, async (ctx) => {
   if (ctx.trigger === "on-death") {
-    const canActivate = await canActivateEffect(ctx.battleId, ctx.source.battleID, "Baguette-Revive", 1);
+    const canActivate = await canActivateEffect(ctx.battleId, ctx.source.battleID, "Baguette-Revive", "once-per-battle");
     if (canActivate) {
       // TODO: Revive with 100% Health - Needs API to revive character
       await healCharacter(ctx.source.battleID, ctx.source.maxHealthPoints);
-      await trackEffectActivation(ctx.battleId, ctx.source.battleID, "Baguette-Revive", 1);
+      await trackEffectActivation(ctx.battleId, ctx.source.battleID, "Baguette-Revive", "once-per-battle");
       return { success: true, preventDeath: true, message: `${ctx.source.name} was revived with full health!` };
     }
   }
@@ -1223,7 +1223,7 @@ registerWeaponPassive("Direton", 10, async (ctx) => {
 registerWeaponPassive("Direton", 20, async (ctx) => {
   if (ctx.trigger === "on-base-attack" && ctx.additionalData?.isTwilight && ctx.target) {
     // TODO: Consume all AP, apply 1 Foretell per AP consumed, deal 50% increased damage per AP consumed
-    const apConsumed = ctx.additionalData?.currentAP || 0;
+    const apConsumed = ctx.source.magicPoints || 0;
     await applyStatus(ctx.target.battleID, "Foretell", apConsumed);
     if (ctx.additionalData?.damageAmount) {
       return { success: true, modifiedDamage: ctx.additionalData.damageAmount * (1 + apConsumed * 0.5), message: `Consumed ${apConsumed} AP!` };
@@ -1262,8 +1262,9 @@ registerWeaponPassive("Garganon", 20, async (ctx) => {
 // ===== GOBLUSON =====
 registerWeaponPassive("Gobluson", 4, async (ctx) => {
   if (ctx.trigger === "on-foretell-applied" && ctx.additionalData?.isTwilight && ctx.target) {
+    const target = ctx.target; // Store for closure
     const enemies = getEnemies(ctx.source, ctx.allCharacters);
-    const otherEnemies = enemies.filter(e => e.battleID !== ctx.target.battleID);
+    const otherEnemies = enemies.filter(e => e.battleID !== target.battleID);
     if (otherEnemies.length > 0) {
       const randomEnemy = otherEnemies[Math.floor(Math.random() * otherEnemies.length)];
       const foretellAmount = ctx.additionalData?.foretellStacks || 1;
@@ -1338,7 +1339,7 @@ registerWeaponPassive("Hevason", 4, async (ctx) => {
 });
 
 registerWeaponPassive("Hevason", 10, async (ctx) => {
-  if (ctx.trigger === "on-charge-consumed" && (ctx.additionalData?.chargeType === "Sun" || ctx.additionalData?.chargeType === "Moon")) {
+  if (ctx.trigger === "on-charge-consumed" && (ctx.additionalData?.chargeType === "sun" || ctx.additionalData?.chargeType === "moon")) {
     await giveAP(ctx.source.battleID, 1);
     return { success: true, message: `${ctx.source.name} gained 1 AP!` };
   }
@@ -1356,10 +1357,11 @@ registerWeaponPassive("Hevason", 20, async (ctx) => {
 // ===== LUSTESON =====
 registerWeaponPassive("Lusteson", 4, async (ctx) => {
   if (ctx.trigger === "on-kill" && ctx.target) {
-    const foretellStacks = getStacks(ctx.battleId, ctx.target.battleID, "Foretell") || 0;
+    const target = ctx.target; // Store for closure
+    const foretellStacks = getStacks(ctx.battleId, target.battleID, "Foretell") || 0;
     if (foretellStacks > 0) {
       const enemies = getEnemies(ctx.source, ctx.allCharacters);
-      const otherEnemies = enemies.filter(e => e.battleID !== ctx.target.battleID);
+      const otherEnemies = enemies.filter(e => e.battleID !== target.battleID);
       if (otherEnemies.length > 0) {
         const randomEnemy = otherEnemies[Math.floor(Math.random() * otherEnemies.length)];
         await applyStatus(randomEnemy.battleID, "Foretell", foretellStacks);

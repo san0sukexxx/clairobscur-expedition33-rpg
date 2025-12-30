@@ -27,7 +27,7 @@ export function hasAllElementalStains(character: BattleCharacterInfo): boolean {
         character.stainSlot4
     ];
 
-    const requiredElements = ["Lightning", "Earth", "Fire", "Ice"];
+    const requiredElements: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
     const lightCount = stains.filter(s => s === "Light").length;
 
     // Check how many required elements are missing

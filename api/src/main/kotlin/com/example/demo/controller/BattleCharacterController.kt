@@ -47,6 +47,15 @@ class BattleCharacterController(private val service: BattleCharacterService) {
         return ResponseEntity.noContent().build()
     }
 
+    @PutMapping("/characters/{id}/max-hp")
+    fun updateCharacterMaxHp(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateHpRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterMaxHp(id, body.newHp)
+        return ResponseEntity.noContent().build()
+    }
+
     @PutMapping("/characters/{id}/mp")
     fun updateCharacterMp(
             @PathVariable id: Int,

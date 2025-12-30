@@ -1329,15 +1329,6 @@ export const PictosList: PictoInfo[] = [
         luminaCost: 15
     },
     {
-        id: "perfect-reward",
-        imageId: getPictoEnglishName("perfect-reward"),
-        name: getPictoName("perfect-reward"),
-        status: {},
-        description: getPictoDescription("perfect-reward"),
-        color: "green",
-        luminaCost: 15
-    },
-    {
         id: "roulette",
         imageId: getPictoEnglishName("roulette"),
         name: getPictoName("roulette"),

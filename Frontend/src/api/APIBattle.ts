@@ -244,6 +244,13 @@ export class APIBattle {
         )
     }
 
+    static async updateCharacterMaxHp(id: number, newHp: number): Promise<void> {
+        await api.put<{ newHp: number }, void>(
+            `battles/characters/${id}/max-hp`,
+            { newHp }
+        )
+    }
+
     static async updateCharacterMp(id: number, newMp: number): Promise<void> {
         await api.put<{ newMp: number }, void>(
             `battles/characters/${id}/mp`,
@@ -411,5 +418,33 @@ export class APIBattle {
         await api.put<{ battleCharacterIds: number[] }, void>('battle-initiatives/reorder', {
             battleCharacterIds: battleCharacterIds
         })
+    }
+
+    /**
+     * Grants an extra turn to a character
+     * NOTE: Backend implementation required
+     */
+    static async grantExtraTurn(battleCharacterId: number): Promise<void> {
+        await api.post(`battle-turns/${battleCharacterId}/grant-extra`, {});
+    }
+
+    /**
+     * Adds a status effect to a character
+     * Wrapper around addStatus for convenience
+     */
+    static async addStatusEffect(request: {
+        battleCharacterId: number;
+        effectType: StatusType;
+        amount: number;
+        remainingTurns?: number;
+        source?: string;
+    }): Promise<void> {
+        await this.addStatus({
+            battleCharacterId: request.battleCharacterId,
+            effectType: request.effectType,
+            ammount: request.amount,
+            remainingTurns: request.remainingTurns,
+            source: request.source
+        });
     }
 }

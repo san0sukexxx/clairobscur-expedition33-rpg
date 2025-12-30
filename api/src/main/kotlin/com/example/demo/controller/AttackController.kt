@@ -35,7 +35,11 @@ class AttackController(
         private val damageService: DamageService,
         private val battleCharacterService: com.example.demo.service.BattleCharacterService,
         private val damageModifierService: com.example.demo.service.DamageModifierService,
-        private val elementResistanceService: com.example.demo.service.ElementResistanceService
+        private val elementResistanceService: com.example.demo.service.ElementResistanceService,
+        private val playerPictoRepository: com.example.demo.repository.PlayerPictoRepository,
+        private val pictoEffectTrackerService: com.example.demo.service.PictoEffectTrackerService,
+        private val battleTurnService: com.example.demo.service.BattleTurnService,
+        private val antiStatusService: com.example.demo.service.AntiStatusService
 ) {
 
         @PostMapping
@@ -261,10 +265,14 @@ class AttackController(
                         }
 
                         // Apply damage modifiers from source character
+                        // Check if this attack will apply Broken status (for Breaker picto)
+                        val willApplyBroken = body.effects.any { it.effectType == "Broken" }
+
                         val modifierContext = mapOf(
                                 "targetBattleCharacterId" to targetBC.id!!,
                                 "isFirstHit" to (body.isFirstHit ?: false),
-                                "isSolo" to (allies.isEmpty())
+                                "isSolo" to (allies.isEmpty()),
+                                "willApplyBroken" to willApplyBroken
                         )
                         var modifiedDamage = damageModifierService.calculateModifiedDamage(
                                 battleCharacterId = body.sourceBattleId,
@@ -272,6 +280,94 @@ class AttackController(
                                 attackType = body.attackType ?: "basic",
                                 context = modifierContext
                         )
+
+                        // Powered Attack: Consume 1 MP if modifier was applied (character has MP and Powered Attack equipped)
+                        if (sourceBC.characterType == "player" && (sourceBC.magicPoints ?: 0) > 0) {
+                                val playerId = sourceBC.externalId.toIntOrNull()
+                                if (playerId != null) {
+                                        val pictos = playerPictoRepository.findByPlayerId(playerId)
+                                        val hasPoweredAttack = pictos.any {
+                                                it.pictoId.lowercase() == "powered-attack" &&
+                                                it.slot != null &&
+                                                it.slot in 0..2
+                                        }
+
+                                        if (hasPoweredAttack) {
+                                                // Consume 1 MP for Powered Attack bonus
+                                                val currentMP = sourceBC.magicPoints ?: 0
+                                                sourceBC.magicPoints = (currentMP - 1).coerceAtLeast(0)
+                                                battleCharacterRepository.save(sourceBC)
+                                        }
+                                }
+                        }
+
+                        // Augmented First Strike: Track usage if this is the first hit in battle
+                        if (sourceBC.characterType == "player") {
+                                val playerId = sourceBC.externalId.toIntOrNull()
+                                if (playerId != null) {
+                                        val pictos = playerPictoRepository.findByPlayerId(playerId)
+                                        val hasAugmentedFirstStrike = pictos.any {
+                                                it.pictoId.lowercase() == "augmented-first-strike" &&
+                                                it.slot != null &&
+                                                it.slot in 0..2
+                                        }
+
+                                        if (hasAugmentedFirstStrike) {
+                                                // Check if this is the first attack in battle
+                                                val canActivate = pictoEffectTrackerService.canActivate(
+                                                        battleId = battleId,
+                                                        battleCharacterId = sourceBC.id!!,
+                                                        pictoName = "augmented-first-strike",
+                                                        effectType = "once-per-battle"
+                                                )
+
+                                                if (canActivate) {
+                                                        // Track that first hit was used
+                                                        pictoEffectTrackerService.track(
+                                                                battleId = battleId,
+                                                                battleCharacterId = sourceBC.id!!,
+                                                                pictoName = "augmented-first-strike",
+                                                                effectType = "once-per-battle"
+                                                        )
+                                                }
+                                        }
+                                }
+                        }
+
+                        // Sniper: Track usage if it's a free-shot and Sniper picto is equipped
+                        var sniperWasActivated = false
+                        if (body.attackType == "free-shot" && sourceBC.characterType == "player") {
+                                val playerId = sourceBC.externalId.toIntOrNull()
+                                if (playerId != null) {
+                                        val pictos = playerPictoRepository.findByPlayerId(playerId)
+                                        val hasSniper = pictos.any {
+                                                it.pictoId.lowercase() == "sniper" &&
+                                                it.slot != null &&
+                                                it.slot in 0..2
+                                        }
+
+                                        if (hasSniper) {
+                                                // Check if this is the first free-shot this turn
+                                                val canActivate = pictoEffectTrackerService.canActivate(
+                                                        battleId = battleId,
+                                                        battleCharacterId = sourceBC.id!!,
+                                                        pictoName = "sniper",
+                                                        effectType = "once-per-turn"
+                                                )
+
+                                                if (canActivate) {
+                                                        // Track that Sniper was used
+                                                        pictoEffectTrackerService.track(
+                                                                battleId = battleId,
+                                                                battleCharacterId = sourceBC.id!!,
+                                                                pictoName = "sniper",
+                                                                effectType = "once-per-turn"
+                                                        )
+                                                        sniperWasActivated = true
+                                                }
+                                        }
+                                }
+                        }
 
                         // Apply elemental resistances (if element is specified)
                         if (body.element != null) {
@@ -308,6 +404,52 @@ class AttackController(
                                 battleCharacterService.rankDownCharacter(targetBC.id!!)
                         }
 
+                        // Empowering Parry & Empowering Dodge & Successive Parry: Remove all stacks when taking damage
+                        if (body.totalDamage > 0 && targetBC.characterType == "player") {
+                                val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+
+                                // Remove all EmpoweringParry status effects
+                                val empoweringParryEffects = targetEffects.filter { it.effectType == "EmpoweringParry" }
+                                if (empoweringParryEffects.isNotEmpty()) {
+                                        empoweringParryEffects.forEach { effect ->
+                                                battleStatusEffectRepository.delete(effect)
+                                        }
+                                }
+
+                                // Remove all EmpoweringDodge status effects
+                                val empoweringDodgeEffects = targetEffects.filter { it.effectType == "EmpoweringDodge" }
+                                if (empoweringDodgeEffects.isNotEmpty()) {
+                                        empoweringDodgeEffects.forEach { effect ->
+                                                battleStatusEffectRepository.delete(effect)
+                                        }
+                                }
+
+                                // Remove all SuccessiveParry status effects
+                                val successiveParryEffects = targetEffects.filter { it.effectType == "SuccessiveParry" }
+                                if (successiveParryEffects.isNotEmpty()) {
+                                        successiveParryEffects.forEach { effect ->
+                                                battleStatusEffectRepository.delete(effect)
+                                        }
+                                }
+                        }
+
+                        // Check if attack should ignore shields (Piercing Shot picto with free-shot)
+                        val shouldIgnoreShields = if (body.attackType == "free-shot" && sourceBC.characterType == "player") {
+                                val playerId = sourceBC.externalId.toIntOrNull()
+                                if (playerId != null) {
+                                        val pictos = playerPictoRepository.findByPlayerId(playerId)
+                                        pictos.any {
+                                                it.pictoId.lowercase() == "piercing-shot" &&
+                                                it.slot != null &&
+                                                it.slot in 0..2
+                                        }
+                                } else {
+                                        false
+                                }
+                        } else {
+                                false
+                        }
+
                         // Breaking Rules: Destroy all shields and grant AP
                         if (body.destroysShields == true) {
                                 val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
@@ -327,10 +469,11 @@ class AttackController(
                                         sourceBC.magicPoints = (currentMP + apToGrant).coerceAtMost(maxMP)
                                         battleCharacterRepository.save(sourceBC)
                                 }
-                        } else {
-                                // Normal shield consumption (only 1)
+                        } else if (!shouldIgnoreShields) {
+                                // Normal shield consumption (only 1) - unless ignoring shields (Piercing Shot)
                                 battleService.consumeShield(targetBC.id!!)
                         }
+                        // If shouldIgnoreShields is true, shield is NOT consumed (Piercing Shot effect)
 
                         // Combustion: Consume Burn stacks from target
                         body.consumesBurn?.let { consumeAmount ->
@@ -353,6 +496,170 @@ class AttackController(
                                                                 )
                                                                 burnsRemaining = 0
                                                         }
+                                                }
+                                        }
+                                }
+                        }
+
+                        // Sniper: Convert Fragile to Broken if Sniper was activated
+                        if (sniperWasActivated) {
+                                val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                                val fragileEffect = targetEffects.firstOrNull { it.effectType == "Fragile" }
+
+                                if (fragileEffect != null) {
+                                        // Remove Fragile effect
+                                        battleStatusEffectRepository.delete(fragileEffect)
+
+                                        // Add Broken effect (1 turn)
+                                        val brokenEffect = com.example.demo.model.BattleStatusEffect(
+                                                battleCharacterId = targetBC.id!!,
+                                                effectType = "Broken",
+                                                ammount = 1,
+                                                remainingTurns = 1,
+                                                isResolved = true,
+                                                skipNextDecrement = false
+                                        )
+                                        battleStatusEffectRepository.save(brokenEffect)
+
+                                        battleLogRepository.save(
+                                                BattleLog(
+                                                        battleId = battleId,
+                                                        eventType = "SNIPER_BREAK",
+                                                        eventJson = null
+                                                )
+                                        )
+
+                                        // Quick Break: Grant extra turn if player has quick-break picto
+                                        checkQuickBreakAndGrantExtraTurn(sourceBC, battleId)
+
+                                        // Fueling Break: Double Burn stacks if player has fueling-break picto
+                                        checkFuelingBreakAndDoubleBurn(sourceBC, targetBC, battleId)
+                                }
+                        }
+
+                        // Breaking Shots: Convert Fragile to Broken if Breaking Shots picto is equipped and attack is free-shot
+                        if (body.attackType == "free-shot" && sourceBC.characterType == "player") {
+                                val playerId = sourceBC.externalId.toIntOrNull()
+                                if (playerId != null) {
+                                        val pictos = playerPictoRepository.findByPlayerId(playerId)
+                                        val hasBreakingShots = pictos.any {
+                                                it.pictoId.lowercase() == "breaking-shots" &&
+                                                it.slot != null &&
+                                                it.slot in 0..2
+                                        }
+
+                                        if (hasBreakingShots) {
+                                                val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                                                val fragileEffect = targetEffects.firstOrNull { it.effectType == "Fragile" }
+
+                                                if (fragileEffect != null) {
+                                                        // Remove Fragile effect
+                                                        battleStatusEffectRepository.delete(fragileEffect)
+
+                                                        // Add Broken effect (1 turn)
+                                                        val brokenEffect = com.example.demo.model.BattleStatusEffect(
+                                                                battleCharacterId = targetBC.id!!,
+                                                                effectType = "Broken",
+                                                                ammount = 1,
+                                                                remainingTurns = 1,
+                                                                isResolved = true,
+                                                                skipNextDecrement = false
+                                                        )
+                                                        battleStatusEffectRepository.save(brokenEffect)
+
+                                                        battleLogRepository.save(
+                                                                BattleLog(
+                                                                        battleId = battleId,
+                                                                        eventType = "BREAKING_SHOTS_BREAK",
+                                                                        eventJson = null
+                                                                )
+                                                        )
+
+                                                        // Quick Break: Grant extra turn if player has quick-break picto
+                                                        checkQuickBreakAndGrantExtraTurn(sourceBC, battleId)
+
+                                                        // Fueling Break: Double Burn stacks if player has fueling-break picto
+                                                        checkFuelingBreakAndDoubleBurn(sourceBC, targetBC, battleId)
+                                                }
+                                        }
+                                }
+                        }
+
+                        // Breaking Attack: Convert Fragile to Broken if Breaking Attack picto is equipped and attack is basic
+                        if (body.attackType == "basic" && sourceBC.characterType == "player" && body.totalDamage != null && body.totalDamage > 0) {
+                                val playerId = sourceBC.externalId.toIntOrNull()
+                                if (playerId != null) {
+                                        val pictos = playerPictoRepository.findByPlayerId(playerId)
+                                        val hasBreakingAttack = pictos.any {
+                                                it.pictoId.lowercase() == "breaking-attack" &&
+                                                it.slot != null &&
+                                                it.slot in 0..2
+                                        }
+
+                                        if (hasBreakingAttack) {
+                                                val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                                                val fragileEffect = targetEffects.firstOrNull { it.effectType == "Fragile" }
+
+                                                if (fragileEffect != null) {
+                                                        // Remove Fragile effect
+                                                        battleStatusEffectRepository.delete(fragileEffect)
+
+                                                        // Add Broken effect (1 turn)
+                                                        val brokenEffect = com.example.demo.model.BattleStatusEffect(
+                                                                battleCharacterId = targetBC.id!!,
+                                                                effectType = "Broken",
+                                                                ammount = 1,
+                                                                remainingTurns = 1,
+                                                                isResolved = true,
+                                                                skipNextDecrement = false
+                                                        )
+                                                        battleStatusEffectRepository.save(brokenEffect)
+
+                                                        battleLogRepository.save(
+                                                                BattleLog(
+                                                                        battleId = battleId,
+                                                                        eventType = "BREAKING_ATTACK_BREAK",
+                                                                        eventJson = null
+                                                                )
+                                                        )
+
+                                                        // Quick Break: Grant extra turn if player has quick-break picto
+                                                        checkQuickBreakAndGrantExtraTurn(sourceBC, battleId)
+
+                                                        // Fueling Break: Double Burn stacks if player has fueling-break picto
+                                                        checkFuelingBreakAndDoubleBurn(sourceBC, targetBC, battleId)
+                                                }
+                                        }
+                                }
+                        }
+
+                        // Charging Attack: Increase gradient bar by 15% (5 points) on basic attacks
+                        if (body.attackType == "basic" && sourceBC.characterType == "player") {
+                                val playerId = sourceBC.externalId.toIntOrNull()
+                                if (playerId != null) {
+                                        val pictos = playerPictoRepository.findByPlayerId(playerId)
+                                        val hasChargingAttack = pictos.any {
+                                                it.pictoId.lowercase() == "charging-attack" &&
+                                                it.slot != null &&
+                                                it.slot in 0..2
+                                        }
+
+                                        if (hasChargingAttack) {
+                                                val battle = battleRepository.findById(sourceBC.battleId).orElse(null)
+                                                if (battle != null) {
+                                                        // 15% of max gradient (36) = 5.4 ≈ 5 points
+                                                        val gradientBonus = 5
+                                                        val maxGradient = 36  // 3 charges * 12 points per charge
+
+                                                        if (sourceBC.isEnemy) {
+                                                                val currentGradient = battle.teamBGradientPoints
+                                                                battle.teamBGradientPoints = (currentGradient + gradientBonus).coerceAtMost(maxGradient)
+                                                        } else {
+                                                                val currentGradient = battle.teamAGradientPoints
+                                                                battle.teamAGradientPoints = (currentGradient + gradientBonus).coerceAtMost(maxGradient)
+                                                        }
+
+                                                        battleRepository.save(battle)
                                                 }
                                         }
                                 }
@@ -441,8 +748,43 @@ class AttackController(
                                                         remainingTurns = eff.remainingTurns
                                                 )
                                         )
+
+                                        // Check anti-status protection
+                                        antiStatusService.checkAndRemoveStatus(
+                                                targetBC.id!!,
+                                                eff.effectType
+                                        )
                                 }
                                 }
+
+                        // Longer Rush: Extend Hastened duration by 2 turns if target has longer-rush picto
+                        val hastenedEffects = body.effects.filter { it.effectType == "Hastened" }
+                        if (hastenedEffects.isNotEmpty()) {
+                                if (targetBC.characterType == "player") {
+                                        val targetPlayerId = targetBC.externalId.toIntOrNull()
+                                        if (targetPlayerId != null) {
+                                                val targetPictos = playerPictoRepository.findByPlayerId(targetPlayerId)
+                                                val hasLongerRush = targetPictos.any {
+                                                        it.pictoId.lowercase() == "longer-rush" &&
+                                                        it.slot != null &&
+                                                        it.slot in 0..2
+                                                }
+
+                                                if (hasLongerRush) {
+                                                        val targetHastenedEffects = battleStatusEffectRepository
+                                                                .findByBattleCharacterId(targetBC.id!!)
+                                                                .filter { it.effectType == "Hastened" }
+
+                                                        targetHastenedEffects.forEach { effect ->
+                                                                val newTurns = (effect.remainingTurns ?: 0) + 2
+                                                                battleStatusEffectRepository.save(
+                                                                        effect.copy(remainingTurns = newTurns)
+                                                                )
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
                         }
 
                         battleLogRepository.save(
@@ -470,6 +812,84 @@ class AttackController(
                                                 )
 
                                 battleStatusEffectRepository.save(toSave)
+                        }
+                }
+
+                // Versatile: Apply buff after successful free-shot
+                if (body.attackType == "free-shot" && sourceBC.characterType == "player" && body.totalDamage != null && body.totalDamage > 0) {
+                        val playerId = sourceBC.externalId.toIntOrNull()
+                        if (playerId != null) {
+                                val pictos = playerPictoRepository.findByPlayerId(playerId)
+                                val hasVersatile = pictos.any {
+                                        it.pictoId.lowercase() == "versatile" &&
+                                        it.slot != null &&
+                                        it.slot in 0..2
+                                }
+
+                                if (hasVersatile) {
+                                        // Add VersatileBuff status effect (lasts 1 turn)
+                                        val existingBuff = battleStatusEffectRepository
+                                                .findByBattleCharacterIdAndEffectType(sourceBC.id!!, "VersatileBuff")
+                                                .firstOrNull()
+
+                                        if (existingBuff == null) {
+                                                val versatileBuff = BattleStatusEffect(
+                                                        battleCharacterId = sourceBC.id!!,
+                                                        effectType = "VersatileBuff",
+                                                        ammount = 1,
+                                                        remainingTurns = 1,
+                                                        isResolved = true,
+                                                        skipNextDecrement = false
+                                                )
+                                                battleStatusEffectRepository.save(versatileBuff)
+
+                                                val sourceBattleId = sourceBC.battleId
+                                                if (sourceBattleId != null) {
+                                                        battleLogRepository.save(
+                                                                BattleLog(
+                                                                        battleId = sourceBattleId,
+                                                                        eventType = "VERSATILE_BUFF_APPLIED",
+                                                                        eventJson = null
+                                                                )
+                                                        )
+                                                }
+                                        }
+                                }
+                        }
+                }
+
+                // Combo Attack: Process extra hits if this is a base attack
+                if (body.attackType == "basic" && body.isFirstHit == true && body.totalDamage != null) {
+                        val extraHits = battleCharacterService.calculateExtraBaseAttackHits(body.sourceBattleId)
+
+                        if (extraHits > 0) {
+                                // Process each extra hit
+                                for (hitIndex in 1..extraHits) {
+                                        // Recursive call for each extra hit (without isFirstHit flag)
+                                        val extraHitRequest = CreateAttackRequest(
+                                                totalDamage = body.totalDamage,
+                                                totalPower = body.totalPower,
+                                                targetBattleId = body.targetBattleId,
+                                                sourceBattleId = body.sourceBattleId,
+                                                effects = emptyList(), // No status effects on extra hits
+                                                attackType = "basic",
+                                                skillCost = 0, // No MP cost for extra hits
+                                                consumesCharge = null,
+                                                isGradient = body.isGradient,
+                                                destroysShields = null, // Extra hits don't destroy shields
+                                                grantsAPPerShield = null,
+                                                consumesBurn = null,
+                                                consumesForetell = null,
+                                                executionThreshold = null,
+                                                skillType = null,
+                                                bestialWheelAdvance = null,
+                                                isFirstHit = false, // NOT the first hit
+                                                element = body.element
+                                        )
+
+                                        // Process extra hit recursively
+                                        addAttack(extraHitRequest)
+                                }
                         }
                 }
 
@@ -527,5 +947,73 @@ class AttackController(
                 )
 
                 return ResponseEntity.ok().build()
+        }
+
+        /**
+         * Quick Break Helper: Checks if player has quick-break picto and grants extra turn
+         * Called when Broken status is successfully applied to an enemy
+         */
+        private fun checkQuickBreakAndGrantExtraTurn(sourceBC: com.example.demo.model.BattleCharacter, battleId: Int) {
+                if (sourceBC.characterType != "player") return
+
+                val playerId = sourceBC.externalId.toIntOrNull() ?: return
+                val pictos = playerPictoRepository.findByPlayerId(playerId)
+                val hasQuickBreak = pictos.any {
+                        it.pictoId.lowercase() == "quick-break" &&
+                        it.slot != null &&
+                        it.slot in 0..2
+                }
+
+                if (hasQuickBreak) {
+                        // Grant extra turn by moving character to position 2 (next turn)
+                        battleTurnService.grantExtraTurn(battleId, sourceBC.id!!)
+
+                        battleLogRepository.save(
+                                BattleLog(
+                                        battleId = battleId,
+                                        eventType = "QUICK_BREAK_EXTRA_TURN",
+                                        eventJson = null
+                                )
+                        )
+                }
+        }
+
+        /**
+         * Fueling Break Helper: Checks if player has fueling-break picto and doubles Burn stacks
+         * Called when Broken status is successfully applied to an enemy
+         */
+        private fun checkFuelingBreakAndDoubleBurn(sourceBC: com.example.demo.model.BattleCharacter, targetBC: com.example.demo.model.BattleCharacter, battleId: Int) {
+                if (sourceBC.characterType != "player") return
+
+                val playerId = sourceBC.externalId.toIntOrNull() ?: return
+                val pictos = playerPictoRepository.findByPlayerId(playerId)
+                val hasFuelingBreak = pictos.any {
+                        it.pictoId.lowercase() == "fueling-break" &&
+                        it.slot != null &&
+                        it.slot in 0..2
+                }
+
+                if (hasFuelingBreak) {
+                        // Find all Burning status effects on target
+                        val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                        val burningEffects = targetEffects.filter { it.effectType == "Burning" }
+
+                        if (burningEffects.isNotEmpty()) {
+                                burningEffects.forEach { burnEffect ->
+                                        // Double the burn amount
+                                        val doubledAmount = burnEffect.ammount * 2
+                                        val updatedEffect = burnEffect.copy(ammount = doubledAmount)
+                                        battleStatusEffectRepository.save(updatedEffect)
+                                }
+
+                                battleLogRepository.save(
+                                        BattleLog(
+                                                battleId = battleId,
+                                                eventType = "FUELING_BREAK_BURN_DOUBLED",
+                                                eventJson = null
+                                        )
+                                )
+                        }
+                }
         }
 }

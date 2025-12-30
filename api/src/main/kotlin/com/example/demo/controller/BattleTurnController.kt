@@ -22,7 +22,8 @@ class BattleTurnController(
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnService: BattleTurnService,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
-        private val attackRepository: AttackRepository
+        private val attackRepository: AttackRepository,
+        private val damageService: com.example.demo.service.DamageService
 ) {
 
         @PostMapping
@@ -124,6 +125,9 @@ class BattleTurnController(
                                         nextCharacter.magicPoints = (currentMp + 1).coerceAtMost(maxMp)
                                         battleCharacterRepository.save(nextCharacter)
                                 }
+
+                                // Check for Clea's Life picto - heal to 100% if no damage taken last turn
+                                damageService.checkCleasLife(battleId, nextCharacter)
                         }
                 }
 
