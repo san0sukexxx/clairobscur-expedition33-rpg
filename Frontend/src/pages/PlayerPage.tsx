@@ -80,6 +80,7 @@ export default function PlayerPage() {
   const [error, setError] = useState<string | null>(null);
   const [player, setPlayer] = useState<GetPlayerResponse | null>(null);
   const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
+  const [isExecutingMezzoForte, setIsExecutingMezzoForte] = useState(false);
   const diceBoardRef = useRef<DiceBoardRef>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState<string | undefined>(undefined);
@@ -1187,6 +1188,16 @@ export default function PlayerPage() {
       c => c.battleID === player.fightInfo?.playerBattleID
     );
 
+    // Auto-execute self-targeted utility skills (like Mezzo Forte)
+    if (skillMetadata.targetScope === "self" && skillMetadata.damageLevel === "none" && !targetsEnemies) {
+      if (currentCharacter) {
+        handleExecuteSkill(skillId, currentCharacter);
+      } else {
+        showToast("Erro: Personagem não encontrado");
+      }
+      return;
+    }
+
     // Determine correct tab based on target type and character's team
     // If character is on enemy team (isEnemy = true):
     //   - targetsEnemies means target opposite team (team A = "team")
@@ -1211,6 +1222,11 @@ export default function PlayerPage() {
 
   async function handleExecuteSkill(skillId: string, target: BattleCharacterInfo) {
     if (!player?.fightInfo) return;
+
+    // Prevent duplicate execution for Mezzo Forte
+    if (skillId === "maelle-mezzo-forte" && isExecutingMezzoForte) {
+      return;
+    }
 
     try {
       const source = player.fightInfo?.characters?.find(
@@ -2082,35 +2098,91 @@ export default function PlayerPage() {
           });
         }
       } else {
-        // For skills without hits (status-only skills), still need to consume resources
-        // Send a dummy attack to trigger MP/Gradient consumption in backend
-        if (skillCost > 0) {
-          const firstTargetId = resolved.targetIds[0];
-          if (firstTargetId) {
-            const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === firstTargetId);
-            const isNpcTarget = targetChar?.type === "npc";
+        // For skills without hits (utility skills like Mezzo Forte)
 
-            const attackRequest: CreateAttackRequest = isNpcTarget
-              ? {
-                  sourceBattleId: source.battleID,
-                  targetBattleId: firstTargetId,
-                  totalDamage: 0,  // No damage, just resource consumption
-                  attackType: "skill",
-                  effects: [],
-                  skillCost: skillCost,
-                  isGradient: isGradientSkill
-                }
-              : {
-                  sourceBattleId: source.battleID,
-                  targetBattleId: firstTargetId,
-                  totalPower: 0,  // No damage, just resource consumption
-                  attackType: "skill",
-                  effects: [],
-                  skillCost: skillCost,
-                  isGradient: isGradientSkill
-                };
+        // Check if this is Mezzo Forte or similar utility skill
+        const isMezzoForte = resolved.metadata.grantsMPDiceRoll !== undefined;
 
-            await APIBattle.attack(attackRequest);
+        if (isMezzoForte) {
+          // Mezzo Forte: Roll dice for MP recovery, maintain stance, grant AP
+          // Set flag to prevent duplicate execution
+          setIsExecutingMezzoForte(true);
+
+          try {
+            // First, consume the MP cost
+            const initialMp = source.magicPoints ?? 0;
+            const mpAfterCost = Math.max(0, initialMp - skillCost);
+            await APIBattle.updateCharacterMp(source.battleID, mpAfterCost);
+
+            // Roll 1d6 for MP recovery using rollWithTimeout
+            if (resolved.metadata.grantsMPDiceRoll) {
+              await new Promise<void>((resolvePromise) => {
+                rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
+                  // Get dice roll value from result array
+                  const diceRoll = result && result.length > 0 ? result[0].value : 1;
+                  const mpToGrant = diceRoll <= 3
+                    ? resolved.metadata.grantsMPDiceRoll!.low
+                    : resolved.metadata.grantsMPDiceRoll!.high;
+
+                  // Add recovery to MP after cost
+                  const maxMp = source.maxMagicPoints ?? 0;
+                  const newMp = maxMp > 0 ? Math.min(mpAfterCost + mpToGrant, maxMp) : (mpAfterCost + mpToGrant);
+
+                  await APIBattle.updateCharacterMp(source.battleID, newMp);
+                  resolvePromise();
+                });
+              });
+            }
+          } finally {
+            // Reset flag after execution
+            setIsExecutingMezzoForte(false);
+          }
+
+          // Grant AP
+          if (resolved.metadata.grantsAPRange) {
+            const { min, max } = resolved.metadata.grantsAPRange;
+            const apGrant = Math.floor(Math.random() * (max - min + 1)) + min;
+            if (apGrant > 0) {
+              const currentAP = source.chargePoints ?? 0;
+              const newAP = currentAP + apGrant;
+              await APIBattle.updateCharacterAP(source.battleID, newAP);
+            }
+          }
+
+          // Reapply stance
+          if (resolved.metadata.reappliesStance && source.stance) {
+            await APIBattle.updateCharacterStance(source.battleID, source.stance);
+          }
+        } else {
+          // Other skills without hits - send dummy attack for resource consumption
+          if (skillCost > 0) {
+            const firstTargetId = resolved.targetIds[0];
+            if (firstTargetId) {
+              const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === firstTargetId);
+              const isNpcTarget = targetChar?.type === "npc";
+
+              const attackRequest: CreateAttackRequest = isNpcTarget
+                ? {
+                    sourceBattleId: source.battleID,
+                    targetBattleId: firstTargetId,
+                    totalDamage: 0,  // No damage, just resource consumption
+                    attackType: "skill",
+                    effects: [],
+                    skillCost: skillCost,
+                    isGradient: isGradientSkill
+                  }
+                : {
+                    sourceBattleId: source.battleID,
+                    targetBattleId: firstTargetId,
+                    totalPower: 0,  // No damage, just resource consumption
+                    attackType: "skill",
+                    effects: [],
+                    skillCost: skillCost,
+                    isGradient: isGradientSkill
+                  };
+
+              await APIBattle.attack(attackRequest);
+            }
           }
         }
 
@@ -2268,8 +2340,9 @@ export default function PlayerPage() {
         showToast(`Postura ${stanceName} reaplicada!`);
       }
 
-      // Mezzo Forte / Swift Stride: Grant random AP between min and max
-      if (resolved.metadata.grantsAPRange) {
+      // Swift Stride: Grant random MP between min and max
+      // NOTE: Mezzo Forte handles its own MP/AP, so skip this for skills with dice roll MP
+      if (resolved.metadata.grantsAPRange && !resolved.metadata.grantsMPDiceRoll) {
         const { min, max } = resolved.metadata.grantsAPRange;
         const apGranted = Math.floor(Math.random() * (max - min + 1)) + min;
         const currentMp = source.magicPoints ?? 0;

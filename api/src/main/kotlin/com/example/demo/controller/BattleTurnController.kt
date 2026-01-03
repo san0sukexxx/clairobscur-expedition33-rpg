@@ -23,7 +23,8 @@ class BattleTurnController(
         private val battleTurnService: BattleTurnService,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
         private val attackRepository: AttackRepository,
-        private val damageService: com.example.demo.service.DamageService
+        private val damageService: com.example.demo.service.DamageService,
+        private val playerRepository: com.example.demo.repository.PlayerRepository
 ) {
 
         @PostMapping
@@ -129,6 +130,25 @@ class BattleTurnController(
                                 // Check for Clea's Life picto - heal to 100% if no damage taken last turn
                                 damageService.checkCleasLife(battleId, nextCharacter)
                         }
+                }
+
+                // Maelle stance reset mechanic: If Maelle didn't use a stance-changing/maintaining skill,
+                // reset her stance to null (Stanceless) at end of turn
+                if (bc.characterType == "player" && !bc.stanceChangedThisTurn && bc.stance != null) {
+                        val playerId = bc.externalId.toIntOrNull()
+                        if (playerId != null) {
+                                val player = playerRepository.findById(playerId).orElse(null)
+                                if (player != null && player.characterId?.lowercase() == "maelle") {
+                                        bc.stance = null
+                                        battleCharacterRepository.save(bc)
+                                }
+                        }
+                }
+
+                // Reset stance flag for next turn
+                if (bc.stanceChangedThisTurn) {
+                        bc.stanceChangedThisTurn = false
+                        battleCharacterRepository.save(bc)
                 }
 
                 battleLogRepository.save(

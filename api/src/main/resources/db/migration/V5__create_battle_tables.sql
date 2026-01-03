@@ -25,6 +25,7 @@ CREATE TABLE
         sun_charges INTEGER,
         moon_charges INTEGER,
         stance TEXT,
+        stance_changed_this_turn BOOLEAN NOT NULL DEFAULT 0,
         stain_slot_1 TEXT,
         stain_slot_2 TEXT,
         stain_slot_3 TEXT,

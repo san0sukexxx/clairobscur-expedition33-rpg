@@ -20,6 +20,7 @@ data class BattleCharacter(
         @Column(name = "sun_charges") var sunCharges: Int? = null,
         @Column(name = "moon_charges") var moonCharges: Int? = null,
         @Column(name = "stance") var stance: String? = null,
+        @Column(name = "stance_changed_this_turn") var stanceChangedThisTurn: Boolean = false,
         @Column(name = "stain_slot_1") var stainSlot1: String? = null,
         @Column(name = "stain_slot_2") var stainSlot2: String? = null,
         @Column(name = "stain_slot_3") var stainSlot3: String? = null,

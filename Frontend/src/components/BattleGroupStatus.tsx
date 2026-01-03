@@ -89,7 +89,7 @@ export default function BattleGroupStatus({
                                                 {ch.name}
                                             </p>
 
-                                            <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80">
+                                            <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80 justify-end">
                                                 {ch.status
                                                     ?.filter(s => {
                                                         if (s.effectName === "free-shot") return false;

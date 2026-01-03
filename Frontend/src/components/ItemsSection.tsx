@@ -69,6 +69,7 @@ function ElixirsCard({
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
     const [recoveryPercent, setRecoveryPercent] = useState(30);
+    const [inputValue, setInputValue] = useState("30");
 
     const hasDeadTeammate = useMemo(() => {
         if (!player?.fightInfo?.characters) return false;
@@ -203,6 +204,7 @@ function ElixirsCard({
     function openRecoveryModal(itemId: string) {
         setSelectedItemId(itemId);
         setRecoveryPercent(30);
+        setInputValue("30");
         setModalOpen(true);
     }
 
@@ -210,6 +212,7 @@ function ElixirsCard({
         setModalOpen(false);
         setSelectedItemId(null);
         setRecoveryPercent(30);
+        setInputValue("30");
     }
 
     async function useItem(itemId: string, percent?: number) {
@@ -294,8 +297,22 @@ function ElixirsCard({
                             min={1}
                             max={100}
                             className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
-                            value={recoveryPercent}
-                            onChange={(e) => setRecoveryPercent(Number(e.target.value))}
+                            value={inputValue}
+                            onChange={(e) => {
+                                setInputValue(e.target.value);
+                            }}
+                            onBlur={() => {
+                                const num = Number(inputValue);
+                                if (isNaN(num) || num < 1) {
+                                    setInputValue("1");
+                                    setRecoveryPercent(1);
+                                } else if (num > 100) {
+                                    setInputValue("100");
+                                    setRecoveryPercent(100);
+                                } else {
+                                    setRecoveryPercent(num);
+                                }
+                            }}
                         />
                     </div>
                     <button

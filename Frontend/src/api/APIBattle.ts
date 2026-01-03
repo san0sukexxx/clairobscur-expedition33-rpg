@@ -258,6 +258,20 @@ export class APIBattle {
         )
     }
 
+    static async updateCharacterAP(id: number, newAP: number): Promise<void> {
+        await api.put<{ newAP: number }, void>(
+            `battles/characters/${id}/ap`,
+            { newAP }
+        )
+    }
+
+    static async updateCharacterGradient(id: number, newGradient: number): Promise<void> {
+        await api.put<{ newGradient: number }, void>(
+            `battles/characters/${id}/gradient`,
+            { newGradient }
+        )
+    }
+
     static async rankUpCharacter(battleCharacterId: number): Promise<boolean> {
         const response = await api.post<{}, { success: boolean }>(
             `battles/characters/${battleCharacterId}/rank-up`,

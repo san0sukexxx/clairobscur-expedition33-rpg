@@ -8,7 +8,6 @@ export interface ResolvedSkill {
     skillId: string;
     hitCount: number;             // Número de rolagens necessárias
     damageLevel: "none" | "low" | "medium" | "high" | "very-high" | "extreme";  // Nível de dano (none=0%, low=50%, medium=100%, high=150%, very-high=200%, extreme=250%)
-    damageType: "physical" | "magical" | "true";
     effects: ResolvedEffect[];
     targetIds: number[];          // BattleCharacterIDs
     metadata: SkillMetadata;      // Metadata original para referência
@@ -135,7 +134,6 @@ export function resolveSkill(
         skillId,
         hitCount: metadata.hitCount,
         damageLevel: metadata.damageLevel,
-        damageType: metadata.damageType,
         effects: [...primaryEffects, ...conditionalEffects],
         targetIds,
         metadata

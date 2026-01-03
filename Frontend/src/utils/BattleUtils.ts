@@ -1,5 +1,6 @@
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { type AttackType, type AttackResponse, type StatusType, type BattleCharacterInfo, type SkillType, type StatusResponse } from "../api/ResponseModel";
+import { t } from "../i18n";
 
 /**
  * Calcula o multiplicador de dano baseado no Rank de Perfeição do Verso
@@ -23,11 +24,11 @@ export function getVersoPerfectionDamageMultiplier(rank: string | null | undefin
 export function getBattleStatusLabel(status: string): string {
     switch (status) {
         case "starting":
-            return "Aguardando início";
+            return t("battle.status.starting");
         case "started":
-            return "Em andamento";
+            return t("battle.status.started");
         case "finished":
-            return "Terminada";
+            return t("battle.status.finished");
         default:
             return status;
     }
@@ -50,13 +51,13 @@ export function getAttackType(attack: AttackResponse): AttackType {
 export function getAttackTypeLabel(type: AttackType): string {
     switch (type) {
         case "basic":
-            return "Ataque básico";
+            return t("battle.attackType.basic");
         case "jump":
-            return "Pulo";
+            return t("battle.attackType.jump");
         case "jump-all":
-            return "Pulo em área";
+            return t("battle.attackType.jumpAll");
         case "gradient":
-            return "Gradiente";
+            return t("battle.attackType.gradient");
         default:
             return type;
     }
@@ -65,7 +66,7 @@ export function getAttackTypeLabel(type: AttackType): string {
 export function getSkillLabel(skill: SkillType): string {
     switch (skill) {
         case "give-status":
-            return "Aplicar status";
+            return t("battle.skillType.giveStatus");
         default:
             return skill;
     }
@@ -73,39 +74,39 @@ export function getSkillLabel(skill: SkillType): string {
 
 export function getStatusLabel(status: StatusType): string {
     switch (status) {
-        case "Hastened": return "Acelerado";
-        case "Empowered": return "Fortalecido";
-        case "Protected": return "Protegido";
-        case "Regeneration": return "Regeneração";
-        case "Unprotected": return "Desprotegido";
-        case "Slowed": return "Lento";
-        case "Weakened": return "Enfraquecido";
-        case "Cursed": return "Amaldiçoado";
-        case "Stunned": return "Atordoado";
-        case "Confused": return "Confuso";
-        case "Frozen": return "Congelado";
-        case "Entangled": return "Acorrentado";
-        case "Shielded": return "Escudado";
-        case "Exhausted": return "Exausto";
-        case "Frenzy": return "Frenesi";
-        case "Rage": return "Fúria";
-        case "Inverted": return "Invertido";
-        case "Marked": return "Marcado";
-        case "Plagued": return "Pesteado";
-        case "Burning": return "Queimando";
-        case "Silenced": return "Silenciado";
-        case "Dizzy": return "Tonto";
-        case "Fragile": return "Frágil";
-        case "Broken": return "Quebrado";
-        case "Fleeing": return "Fugindo";
-        case "FireVulnerability": return "Vulnerável a Fogo";
-        case "Taunt": return "Provocar";
-        case "Foretell": return "Predição";
-        case "Twilight": return "🌕 Crepúsculo";
-        case "free-shot": return "Free Shot";
-        case "jump": return "Pular";
-        case "gradient": return "Gradiente";
-        case "invisible-barrier": return "Barreira Invisível";
+        case "Hastened": return t("battle.statusEffects.Hastened");
+        case "Empowered": return t("battle.statusEffects.Empowered");
+        case "Protected": return t("battle.statusEffects.Protected");
+        case "Regeneration": return t("battle.statusEffects.Regeneration");
+        case "Unprotected": return t("battle.statusEffects.Unprotected");
+        case "Slowed": return t("battle.statusEffects.Slowed");
+        case "Weakened": return t("battle.statusEffects.Weakened");
+        case "Cursed": return t("battle.statusEffects.Cursed");
+        case "Stunned": return t("battle.statusEffects.Stunned");
+        case "Confused": return t("battle.statusEffects.Confused");
+        case "Frozen": return t("battle.statusEffects.Frozen");
+        case "Entangled": return t("battle.statusEffects.Entangled");
+        case "Shielded": return t("battle.statusEffects.Shielded");
+        case "Exhausted": return t("battle.statusEffects.Exhausted");
+        case "Frenzy": return t("battle.statusEffects.Frenzy");
+        case "Rage": return t("battle.statusEffects.Rage");
+        case "Inverted": return t("battle.statusEffects.Inverted");
+        case "Marked": return t("battle.statusEffects.Marked");
+        case "Plagued": return t("battle.statusEffects.Plagued");
+        case "Burning": return t("battle.statusEffects.Burning");
+        case "Silenced": return t("battle.statusEffects.Silenced");
+        case "Dizzy": return t("battle.statusEffects.Dizzy");
+        case "Fragile": return t("battle.statusEffects.Fragile");
+        case "Broken": return t("battle.statusEffects.Broken");
+        case "Fleeing": return t("battle.statusEffects.Fleeing");
+        case "FireVulnerability": return t("battle.statusEffects.FireVulnerability");
+        case "Taunt": return t("battle.statusEffects.Taunt");
+        case "Foretell": return t("battle.statusEffects.Foretell");
+        case "Twilight": return t("battle.statusEffects.Twilight");
+        case "free-shot": return t("battle.statusEffects.freeShot");
+        case "jump": return t("battle.statusEffects.jump");
+        case "gradient": return t("battle.statusEffects.gradient");
+        case "invisible-barrier": return t("battle.statusEffects.invisibleBarrier");
         default: return status;
     }
 }
@@ -131,7 +132,8 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Fragile",
         "Broken",
         "Fleeing",
-        "Twilight"
+        "Twilight",
+        "FireVulnerability"
     ];
 
     return !skillsWithoutAmmount.includes(type);
@@ -139,37 +141,37 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
 
 export function getStatusDescription(status: StatusType): string {
     switch (status) {
-        case "Frozen": return "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.";
-        case "Shielded": return "Cada escudo anula um ataque completamente.";
-        case "Burning": return "Causa dano no início do turno. Cada queimadura causa 1d6 de dano.";
-        case "Hastened": return "Melhora a esquiva e o pulo.";
-        case "Slowed": return "Dificulta a esquiva e o pulo.";
-        case "Empowered": return "Melhora seu ataque.";
-        case "Weakened": return "Enfraquece seu ataque.";
-        case "Protected": return "Melhora sua defesa ao aparar.";
-        case "Unprotected": return "Dificulta sua defesa ao aparar.";
-        case "Regeneration": return "Restaura uma porcentagem da sua vida a cada turno.";
-        case "Cursed": return "Morre quando o contador chegar a zero.";
-        case "Stunned": return "Impede o personagem de agir neste turno.";
-        case "Confused": return "Seu personagem deve fazer o que o mestre disser. Você tem direito a um teste de resistência a cada início de turno.";
-        case "Entangled": return "Não pode desviar de ataques, apenas aparar, aparar gradiente ou pular.";
-        case "Exhausted": return "Qualquer ação que custe PM, custa 1 a mais e os personagens não podem recuperar PM de nenhuma maneira.";
-        case "Frenzy": return "O personagem tem +1 por frenesi em testes de ataque (exceto tiro livre).";
-        case "Rage": return "Você tem direito a uma ação de ataque básico extra, além de suas outras ações.";
-        case "Inverted": return "Quando receber cura de qualquer efeito, sofre dano ao invés de se curar.";
-        case "Marked": return "O personagem tem Perda no seu próximo teste de Defesa.";
-        case "Plagued": return "O personagem tem –5 PV máximos até o fim da cena. Essa condição pode acumular, diminuindo 5 PV por cada acumulo, até o personagem ficar com o mínimo de 1 PV máximo.";
-        case "Silenced": return "Não pode usar habilidades.";
-        case "Dizzy": return "Perda em ataques usando tiro livre ou habilidades.";
-        case "Fragile": return "Receber um dano maior que o dobro de sua resistência te torna frágil. Estando frágil você fica vulnerável a quebra.";
-        case "Broken": return "Você não pode se defender ou pode agir.";
-        case "Fleeing": return "O personagem está tentando fugir da batalha e não pode realizar nenhuma outra ação.";
-        case "Twilight": return "Estado místico de Sciel que concede +150% de dano, dobro de Predição infligida (até 40 máximo) e impede ganho de cargas Sol/Lua. Ativado ao ter pelo menos 1 carga de Sol e 1 de Lua simultaneamente.";
-        case "free-shot": return "Acumula bônus para ataques básicos.";
-        case "jump": return "Ignora terreno ou obstáculos temporariamente.";
-        case "gradient": return "Efeito especial de uso interno.";
-        case "invisible-barrier": return "Barreira mágica invisível que protege o personagem. Visível apenas para o mestre.";
-        default: return "Efeito ativo.";
+        case "Frozen": return t("battle.statusDescriptions.Frozen");
+        case "Shielded": return t("battle.statusDescriptions.Shielded");
+        case "Burning": return t("battle.statusDescriptions.Burning");
+        case "Hastened": return t("battle.statusDescriptions.Hastened");
+        case "Slowed": return t("battle.statusDescriptions.Slowed");
+        case "Empowered": return t("battle.statusDescriptions.Empowered");
+        case "Weakened": return t("battle.statusDescriptions.Weakened");
+        case "Protected": return t("battle.statusDescriptions.Protected");
+        case "Unprotected": return t("battle.statusDescriptions.Unprotected");
+        case "Regeneration": return t("battle.statusDescriptions.Regeneration");
+        case "Cursed": return t("battle.statusDescriptions.Cursed");
+        case "Stunned": return t("battle.statusDescriptions.Stunned");
+        case "Confused": return t("battle.statusDescriptions.Confused");
+        case "Entangled": return t("battle.statusDescriptions.Entangled");
+        case "Exhausted": return t("battle.statusDescriptions.Exhausted");
+        case "Frenzy": return t("battle.statusDescriptions.Frenzy");
+        case "Rage": return t("battle.statusDescriptions.Rage");
+        case "Inverted": return t("battle.statusDescriptions.Inverted");
+        case "Marked": return t("battle.statusDescriptions.Marked");
+        case "Plagued": return t("battle.statusDescriptions.Plagued");
+        case "Silenced": return t("battle.statusDescriptions.Silenced");
+        case "Dizzy": return t("battle.statusDescriptions.Dizzy");
+        case "Fragile": return t("battle.statusDescriptions.Fragile");
+        case "Broken": return t("battle.statusDescriptions.Broken");
+        case "Fleeing": return t("battle.statusDescriptions.Fleeing");
+        case "Twilight": return t("battle.statusDescriptions.Twilight");
+        case "free-shot": return t("battle.statusDescriptions.freeShot");
+        case "jump": return t("battle.statusDescriptions.jump");
+        case "gradient": return t("battle.statusDescriptions.gradient");
+        case "invisible-barrier": return t("battle.statusDescriptions.invisibleBarrier");
+        default: return t("battle.statusDescriptions.default");
     }
 }
 
@@ -178,9 +180,9 @@ export function getResolveButtonLabel(status: StatusType): string {
         case "Frozen":
         case "Burning":
         case "Confused":
-            return "Resolver";
+            return t("battle.resolveButton.resolve");
         default:
-            return "Ok";
+            return t("battle.resolveButton.ok");
     }
 }
 

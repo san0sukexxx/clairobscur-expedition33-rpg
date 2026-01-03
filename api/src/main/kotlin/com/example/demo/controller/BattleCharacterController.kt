@@ -7,6 +7,8 @@ import com.example.demo.dto.UpdateStanceRequest
 import com.example.demo.dto.UpdateStainsRequest
 import com.example.demo.dto.UpdateRankRequest
 import com.example.demo.dto.UpdateAPRequest
+import com.example.demo.dto.UpdateNewAPRequest
+import com.example.demo.dto.UpdateGradientRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.service.BattleCharacterService
 import jakarta.validation.Valid
@@ -71,6 +73,24 @@ class BattleCharacterController(private val service: BattleCharacterService) {
             @RequestBody body: UpdateStanceRequest
     ): ResponseEntity<Void> {
         service.updateCharacterStance(id, body.newStance)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/ap")
+    fun updateCharacterAP(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateNewAPRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterAPDirect(id, body.newAP)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/gradient")
+    fun updateCharacterGradient(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateGradientRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterGradient(id, body.newGradient)
         return ResponseEntity.noContent().build()
     }
 

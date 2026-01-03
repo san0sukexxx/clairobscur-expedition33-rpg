@@ -254,6 +254,8 @@ class BattleCharacterService(
                 val entity = opt.get()
 
                 entity.stance = newStance
+                // Mark that stance was changed this turn (for Maelle's auto-reset mechanic)
+                entity.stanceChangedThisTurn = true
 
                 repository.save(entity)
 
@@ -425,6 +427,46 @@ class BattleCharacterService(
                 return mapOf(
                         "actionPoints" to entity.magicPoints,
                         "maxActionPoints" to entity.maxMagicPoints
+                )
+        }
+
+        @Transactional
+        fun updateCharacterAPDirect(id: Int, newAP: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                val finalAP = newAP.coerceAtLeast(0)
+
+                entity.chargePoints = finalAP
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "AP_CHANGED", eventJson = null)
+                )
+        }
+
+        @Transactional
+        fun updateCharacterGradient(id: Int, newGradient: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                val finalGradient = newGradient.coerceIn(0, 100)
+
+                entity.chargePoints = finalGradient
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "GRADIENT_CHANGED", eventJson = null)
                 )
         }
 

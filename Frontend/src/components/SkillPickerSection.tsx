@@ -59,9 +59,9 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
         >
             <DiamondThumb image={skill.image} alt={skill.name} />
             <div className="flex flex-col gap-1 min-w-0">
-                <div className="flex items-start gap-2 justify-between">
-                    <div className="text-base font-semibold leading-tight truncate">{skill.name}</div>
-                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${skill.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                <div className="flex items-start gap-2 justify-between flex-wrap">
+                    <div className="text-base font-semibold leading-tight">{skill.name}</div>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md flex-shrink-0 ${skill.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
                         {skill.isGradient ? `${skill.cost} ${skill.cost === 1 ? 'carga' : 'cargas'}` : skill.cost}
                     </span>
                 </div>
@@ -149,6 +149,9 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         const isScielSkill = skillId?.toLowerCase().includes("sciel") ?? false;
         const stainRendered = isScielSkill ? renderStainText(text) : [text];
 
+        // Check if this is a Maelle skill
+        const isMaelleSkill = skillId?.toLowerCase().includes("maelle") ?? false;
+
         // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
 
@@ -158,7 +161,10 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         // Add Monoco's Bestial Wheel masks with their colors
         const maskTerms = ["Máscara Onipotente", "Máscara Todopoderosa", "Máscara Lançadora", "Máscara de Conjurador", "Máscara Ágil", "Máscara Equilibrada", "Máscara Pesada"];
 
-        const allTerms = [...terms, ...rankTerms, ...maskTerms];
+        // Add Maelle's stance terms with their colors
+        const stanceTerms = ["Defensiva", "Ofensiva", "Virtuosa"];
+
+        const allTerms = [...terms, ...rankTerms, ...maskTerms, ...(isMaelleSkill ? stanceTerms : [])];
         const pattern = new RegExp(`\\b(${allTerms.join("|")})\\b`, "g");
 
         // Function to get rank color class
@@ -187,6 +193,16 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             }
         };
 
+        // Function to get stance color class (Maelle)
+        const getStanceColorClass = (stance: string): string => {
+            switch(stance) {
+                case "Defensiva": return "text-blue-400 font-bold border-b-2 border-blue-400";
+                case "Ofensiva": return "text-red-400 font-bold border-b-2 border-red-400";
+                case "Virtuosa": return "text-purple-400 font-bold border-b-2 border-purple-400";
+                default: return "text-amber-300 font-semibold";
+            }
+        };
+
         return stainRendered.map((node, nodeIdx) => {
             // If it's already a React element (stain image), keep it as is
             if (typeof node !== "string") {
@@ -206,6 +222,13 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                     // Apply mask-specific styling
                     return (
                         <span key={`${nodeIdx}-${chunkIdx}`} className={getMaskColorClass(chunk)}>
+                            {chunk}
+                        </span>
+                    );
+                } else if (stanceTerms.includes(chunk) && isMaelleSkill) {
+                    // Apply stance-specific styling (Maelle only)
+                    return (
+                        <span key={`${nodeIdx}-${chunkIdx}`} className={getStanceColorClass(chunk)}>
                             {chunk}
                         </span>
                     );
@@ -427,8 +450,8 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
 
                                 {selected ? (
                                     <>
-                                        <div className="flex-1 flex items-center gap-2 text-lg font-semibold leading-tight mr-2">
-                                            <span className="truncate">{selected.name}</span>
+                                        <div className="flex-1 flex items-center gap-2 text-lg font-semibold leading-tight mr-20 flex-wrap">
+                                            <span>{selected.name}</span>
                                             {selected.type && (
                                                 <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs ${
                                                     selected.type === "sun"

@@ -1,4 +1,4 @@
-import type { StatusType, Stance } from "../api/ResponseModel";
+import type { StatusType, Stance, Element } from "../api/ResponseModel";
 
 export interface SkillEffect {
     effectType: StatusType | "Heal" | "Cleanse";  // StatusType + special effect types
@@ -16,9 +16,8 @@ export interface SkillMetadata {
     damageLevel: "none" | "low" | "medium" | "high" | "very-high" | "extreme";  // none=0%, low=50%, medium=100%, high=150%, very-high=200%, extreme=250%
     hitCount: number;             // 1 to 8 hits
     targetScope: "single" | "all" | "self" | "random" | "ally" | "all-allies";  // single = alvo selecionado, all = todos do tipo, self = si mesmo, random = alvos aleatórios, ally = aliado, all-allies = todos aliados
-    damageType: "physical" | "magical" | "true";
     usesWeaponElement: boolean;   // Use weapon's element?
-    forcedElement?: string;       // "Lightning", "Fire", etc - overrides weapon element
+    forcedElement?: Element;      // Overrides weapon element (Physical, Fire, Lightning, Void, etc)
 
     // Effects
     primaryEffects: SkillEffect[];       // Always applied
@@ -45,7 +44,9 @@ export interface SkillMetadata {
     setsHpTo?: number;                   // Sets self HP to specific value (Last Chance: 1)
     refillsAP?: boolean;                 // Refills all AP to maximum (Last Chance)
     reappliesStance?: boolean;           // Reapplies current stance (Mezzo Forte)
+    maintainsStance?: boolean;           // Skill maintains current stance without changing it (prevents auto-reset to None)
     grantsAPRange?: { min: number; max: number };  // Grants random AP between min and max (Mezzo Forte: 2-4)
+    grantsMPDiceRoll?: { low: number; high: number };  // Rolls 1d6: 1-3 grants 'low' MP, 4-6 grants 'high' MP (Mezzo Forte: {low: 2, high: 4})
     costReductionFromStance?: { stance: Stance; reducedCost: number };  // Cost reduction when used from specific stance (Percee, Momentum Strike)
     damageScalesWithHitsReceived?: boolean;  // Damage increases per hit taken since last turn (Revenge, Payback)
     costReductionPerParry?: number;      // AP cost reduced per successful parry (Payback)
@@ -142,7 +143,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 5,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -154,7 +154,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",  // 50% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [
@@ -173,7 +172,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",  // 150% weapon damage base
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -188,7 +186,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",  // No damage
         hitCount: 0,
         targetScope: "all",  // Atinge todos aliados
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -206,7 +203,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",  // No damage
         hitCount: 0,
         targetScope: "self",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -228,7 +224,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [
@@ -246,7 +241,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",  // 150% weapon damage
         hitCount: 1,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -259,7 +253,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "very-high",  // 200% weapon damage
         hitCount: 6,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: []
@@ -273,7 +266,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",  // 50%
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,         // Uses weapon's element
         changesStanceTo: "Offensive",    // Changes stance to Offensive
         primaryEffects: [
@@ -292,7 +284,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",  // Support skill
         hitCount: 0,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
         primaryEffects: [
@@ -311,7 +302,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         changesStanceTo: "Defensive",    // Changes stance to Defensive
@@ -319,7 +309,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [
             {
                 effectType: "Burning",
-                amount: 3,  // Base 3 Burn (5 if from Offensive)
+                amount: 3,  // Burn stacks
+                remainingTurns: 3,  // Base 3 Burn (5 if from Offensive)
                 targetType: "enemy"
             }
         ],
@@ -331,7 +322,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         changesStanceTo: "Offensive",     // Changes stance to Offensive when used
@@ -351,7 +341,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         changesStanceTo: "Defensive",    // Changes stance to Defensive
@@ -366,7 +355,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 2,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Offensive",     // Using this skill changes stance to Offensive
         destroysShields: true,            // Destroys all Shielded status effects
@@ -388,7 +376,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: true,             // Uses weapon's element
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
         primaryEffects: [
@@ -407,7 +394,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 5,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Void",
         changesStanceTo: "Offensive",     // Changes stance to Offensive when used
@@ -429,7 +415,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         changesStanceTo: "Defensive",    // Changes stance to Defensive
@@ -437,7 +422,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [
             {
                 effectType: "Burning",
-                amount: 5,  // Base 5 Burn per hit (7 if from Offensive)
+                amount: 5,  // Burn stacks
+                remainingTurns: 3,// Base 5 Burn per hit (7 if from Offensive)
                 targetType: "enemy"
             }
         ],
@@ -450,7 +436,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all",  // Up to 3 allies
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
         primaryEffects: [
@@ -469,7 +454,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         changesStanceTo: "Offensive",    // Changes stance to Offensive
@@ -478,6 +462,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             {
                 effectType: "Burning",
                 amount: 3,  // Base 3 Burn per hit (5 if from Defensive)
+                remainingTurns: 3,  // Burn lasts 3 turns
                 targetType: "enemy"
             }
         ],
@@ -489,7 +474,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "very-high",
         hitCount: 4,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Void",
         changesStanceTo: "Defensive",    // Changes stance to Defensive
@@ -502,7 +486,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "self",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Defensive",     // Changes stance to Defensive when used
         primaryEffects: [
@@ -522,7 +505,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
         costReductionFromStance: { stance: "Virtuous", reducedCost: 2 },  // 5 AP normally, 2 AP from Virtuose
@@ -536,8 +518,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
+        maintainsStance: true,              // Maintains stance (or switches to Virtuose if burning)
         switchesToVirtuoseIfBurning: true,  // Switches to Virtuose if target is burning
         grantsAPRange: { min: 0, max: 2 },  // Grants 0-2 AP randomly
         primaryEffects: [],
@@ -549,7 +531,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: null,               // Changes to Stanceless normally
         preservesVirtuoseStance: true,       // But stays in Virtuose if already there
@@ -563,7 +544,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
         costReductionFromStance: { stance: "Virtuous", reducedCost: 4 },  // 7 AP normally, 4 AP from Virtuose
@@ -577,7 +557,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "self",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Virtuous",     // Changes stance to Virtuose
         setsHpTo: 1,                     // Reduces self HP to 1
@@ -592,7 +571,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Offensive",     // Changes stance to Offensive when used
         consumesBurn: true,               // Consumes Burn stacks from target
@@ -607,7 +585,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Void",
         changesStanceTo: null,           // Changes to Stanceless
@@ -622,10 +599,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "self",
-        damageType: "physical",
         usesWeaponElement: false,
+        maintainsStance: true,           // Maintains current stance without changing
         reappliesStance: true,           // Reapplies current stance (maintains position)
         grantsAPRange: { min: 2, max: 4 },  // Grants 2-4 AP randomly
+        grantsMPDiceRoll: { low: 2, high: 4 },  // Roll 1d6: 1-3 = 2 MP, 4-6 = 4 MP
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -635,7 +613,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "very-high",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
         damageScalesWithHitsReceived: true,  // Damage increases per hit taken since last turn
@@ -650,7 +627,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 5,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
         doubleCritDamage: true,          // Critical hits deal double damage (4x total instead of 2x)
@@ -663,7 +639,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 8,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         changesStanceTo: "Virtuous",         // Changes to Virtuose stance
@@ -678,7 +653,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         changesStanceTo: "Offensive",    // Changes stance to Offensive
@@ -698,7 +672,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Void",
         changesStanceTo: "Virtuous",         // Changes to Virtuose stance
@@ -712,7 +685,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 5,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         changesStanceTo: "Virtuous",     // Changes stance to Virtuose
         primaryEffects: [],
@@ -727,7 +699,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [
@@ -748,7 +719,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [
@@ -777,7 +747,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [],
@@ -791,7 +760,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 3,  // +1 per crit
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -806,7 +774,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 2,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [],
@@ -822,7 +789,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,  // 2-6 random, +1 per crit
         targetScope: "random",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -836,7 +802,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [
@@ -857,7 +822,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 4,  // 1 per element
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -869,7 +833,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -887,7 +850,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [
@@ -912,7 +874,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [],
@@ -931,7 +892,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "ally",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
@@ -956,7 +916,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "ally",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
@@ -970,7 +929,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all-allies",  // 1-3 allies (random)
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
@@ -998,7 +956,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "very-high",
         hitCount: 6,  // +1 per crit
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -1016,7 +973,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 0,  // Duration-based (3 turns)
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -1030,7 +986,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 0,  // Duration-based (3-5 turns)
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [],
@@ -1045,7 +1000,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 0,  // Duration-based (3-5 turns)
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [],
@@ -1059,7 +1013,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 5,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [],
@@ -1074,7 +1027,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 8,  // Random element per hit
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1092,7 +1044,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 0,  // Duration-based (until damaged)
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [],
@@ -1106,7 +1057,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "very-high",
         hitCount: 2,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [
@@ -1132,7 +1082,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 1,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         stainDeterminedElement: true,  // Element determined by dominant stain type
         primaryEffects: [],
@@ -1148,7 +1097,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all-allies",  // All allies
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
@@ -1173,7 +1121,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [],
@@ -1194,7 +1141,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 5,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1209,7 +1155,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [
@@ -1230,7 +1175,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [
@@ -1250,7 +1194,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1263,7 +1206,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "self",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -1287,7 +1229,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "self",  // Will be changed to "all-allies" based on dice roll
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -1309,7 +1250,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
@@ -1328,7 +1268,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1342,7 +1281,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1355,7 +1293,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
@@ -1369,7 +1306,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: []
@@ -1382,7 +1318,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: []
@@ -1395,7 +1330,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
@@ -1409,7 +1343,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "very-high",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
@@ -1424,7 +1357,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 2,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -1444,7 +1376,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all-allies",  // All allies
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1457,7 +1388,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all-allies",  // Other allies
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1471,7 +1401,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "self",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1485,7 +1414,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 5,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
@@ -1499,7 +1427,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 5,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
@@ -1513,7 +1440,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 5,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
@@ -1527,7 +1453,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 6,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -1547,7 +1472,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 13,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1562,7 +1486,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1576,7 +1499,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -1596,7 +1518,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 8,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -1624,7 +1545,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 6,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1636,7 +1556,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 4,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [],
@@ -1651,7 +1570,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1663,13 +1581,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 2,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
             {
                 effectType: "Burning",
-                amount: 4,
+                amount: 4,  // Burn stacks
+                remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
@@ -1678,6 +1596,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 condition: "agile-mask",
                 effectType: "Burning",
                 amount: 6,  // 4 base + 2 bonus at Agile Mask
+                remainingTurns: 3,  // Burn lasts 3 turns
                 targetType: "enemy"
             }
         ],
@@ -1691,7 +1610,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
@@ -1713,13 +1631,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [
             {
                 effectType: "Burning",
-                amount: 3,
+                amount: 3,  // Burn stacks
+                remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
@@ -1735,7 +1653,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "ally",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -1765,7 +1682,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 3,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [
@@ -1789,7 +1705,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [
@@ -1814,7 +1729,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 3,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -1836,7 +1750,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 3,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [
@@ -1858,7 +1771,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 6,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1876,7 +1788,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 3,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1892,7 +1803,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
@@ -1915,7 +1825,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -1930,7 +1839,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 3,
         targetScope: "random",  // Random targets
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Void",
         primaryEffects: [],
@@ -1947,7 +1855,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 3,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -1964,7 +1871,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 3,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -1981,7 +1887,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 3,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [],
@@ -1998,7 +1903,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -2015,7 +1919,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 4,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2031,7 +1934,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -2053,7 +1955,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [
@@ -2075,7 +1976,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 4,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -2096,7 +1996,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 3,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [
@@ -2126,7 +2025,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 5,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -2146,7 +2044,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Earth",
         primaryEffects: [
@@ -2176,7 +2073,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 4,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2190,7 +2086,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
@@ -2207,7 +2102,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Ice",
         primaryEffects: [
@@ -2229,7 +2123,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -2251,7 +2144,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 3,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2266,7 +2158,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 5,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -2283,7 +2174,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2298,7 +2188,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -2316,7 +2205,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 4,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2331,7 +2219,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -2348,7 +2235,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 3,
         targetScope: "random",  // Random enemies
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
@@ -2365,13 +2251,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 3,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Fire",
         primaryEffects: [
             {
                 effectType: "Burning",
-                amount: 3,
+                amount: 3,  // Burn stacks
+                remainingTurns: 3,
                 targetType: "enemy"
             }
         ],
@@ -2388,7 +2274,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 1,
         targetScope: "all",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2403,7 +2288,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 3,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -2422,7 +2306,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "ally",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -2442,7 +2325,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "ally",  // 1-3 allies
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -2466,7 +2348,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all-allies",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -2488,7 +2369,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all-allies",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2505,7 +2385,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "ally",  // 1-3 allies
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2524,7 +2403,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",
         hitCount: 2,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2542,7 +2420,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -2565,7 +2442,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all-allies",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -2594,7 +2470,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",  // 50% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -2608,7 +2483,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -2634,7 +2508,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 2,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [
@@ -2659,7 +2532,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",     // Low Dark damage
         hitCount: 2,
         targetScope: "all",     // All enemies
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [
@@ -2679,7 +2551,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",  // 150% weapon damage per hit
         hitCount: 6,  // Variable 5-7 hits (using 6 as average)
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2692,7 +2563,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",  // 150% weapon damage
         hitCount: 10,
         targetScope: "random",  // Random enemies
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [
@@ -2711,7 +2581,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "very-high",  // 200% weapon damage
         hitCount: 3,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         canBreak: true,
@@ -2743,7 +2612,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 2,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2757,7 +2625,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",  // 0% damage
         hitCount: 0,
         targetScope: "single",  // Aliado alvo
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2769,7 +2636,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",  // 150% weapon damage
         hitCount: 3,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -2783,7 +2649,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [
@@ -2803,7 +2668,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -2822,7 +2686,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [
@@ -2842,7 +2705,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "high",  // 150% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         canBreak: true,
@@ -2857,7 +2719,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage (2-6 hits variable)
         hitCount: 4,  // Average of 2-6 hits
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [
             {
@@ -2876,7 +2737,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",  // 50% weapon damage (Dark element AOE, 3 hits)
         hitCount: 3,
         targetScope: "all",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -2890,7 +2750,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",  // No damage, buff only
         hitCount: 0,
         targetScope: "ally",  // Single ally target
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -2909,7 +2768,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",  // 250% weapon damage base
         hitCount: 1,
         targetScope: "all",  // All enemies
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -2923,7 +2781,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",  // 100% weapon damage
         hitCount: 2,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2936,7 +2793,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",  // No damage, buff only
         hitCount: 0,
         targetScope: "ally",  // Random allies
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -2955,7 +2811,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "all-allies",
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -2986,7 +2841,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "none",
         hitCount: 0,
         targetScope: "ally",  // Target single ally
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2999,7 +2853,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "low",    // Low Physical damage
         hitCount: 1,           // 1 hit
         targetScope: "single",  // Target to redistribute Foretell from
-        damageType: "physical",
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -3013,7 +2866,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",  // 250% weapon damage
         hitCount: 1,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [
@@ -3034,7 +2886,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",  // 250% weapon damage (4 hits)
         hitCount: 4,
         targetScope: "single",
-        damageType: "magical",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -3049,7 +2900,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "extreme",  // 250% weapon damage (Gradiente)
         hitCount: 1,
         targetScope: "single",
-        damageType: "physical",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],

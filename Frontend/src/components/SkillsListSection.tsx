@@ -92,6 +92,9 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
         const isScielSkill = skillId?.toLowerCase().includes("sciel") ?? false;
         const stainRendered = isScielSkill ? renderStainText(text) : [text];
 
+        // Check if this is a Maelle skill
+        const isMaelleSkill = skillId?.toLowerCase().includes("maelle") ?? false;
+
         // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
 
@@ -101,7 +104,10 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
         // Add Monoco's Bestial Wheel masks with their colors
         const maskTerms = ["Máscara Onipotente", "Máscara Todopoderosa", "Máscara Lançadora", "Máscara de Conjurador", "Máscara Ágil", "Máscara Equilibrada", "Máscara Pesada"];
 
-        const allTerms = [...terms, ...rankTerms, ...maskTerms];
+        // Add Maelle's stance terms with their colors
+        const stanceTerms = ["Defensiva", "Ofensiva", "Virtuosa"];
+
+        const allTerms = [...terms, ...rankTerms, ...maskTerms, ...(isMaelleSkill ? stanceTerms : [])];
         const pattern = new RegExp(`\\b(${allTerms.join("|")})\\b`, "g");
 
         // Function to get rank color class
@@ -130,6 +136,16 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
             }
         };
 
+        // Function to get stance color class (Maelle)
+        const getStanceColorClass = (stance: string): string => {
+            switch(stance) {
+                case "Defensiva": return "text-blue-400 font-bold border-b-2 border-blue-400";
+                case "Ofensiva": return "text-red-400 font-bold border-b-2 border-red-400";
+                case "Virtuosa": return "text-purple-400 font-bold border-b-2 border-purple-400";
+                default: return "text-amber-300 font-semibold";
+            }
+        };
+
         return stainRendered.map((node, nodeIdx) => {
             // If it's already a React element (stain image), keep it as is
             if (typeof node !== "string") {
@@ -149,6 +165,13 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                     // Apply mask-specific styling
                     return (
                         <span key={`${nodeIdx}-${chunkIdx}`} className={getMaskColorClass(chunk)}>
+                            {chunk}
+                        </span>
+                    );
+                } else if (stanceTerms.includes(chunk) && isMaelleSkill) {
+                    // Apply stance-specific styling (Maelle only)
+                    return (
+                        <span key={`${nodeIdx}-${chunkIdx}`} className={getStanceColorClass(chunk)}>
                             {chunk}
                         </span>
                     );
@@ -312,9 +335,15 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                             }`}
                                         >
                                             <FaUnlock className="h-3.5 w-3.5" aria-hidden />
-                                            {skillInfo.unlockCost === undefined || skillInfo.unlockCost === 0
-                                                ? `${t("skills.unlock")} (Grátis)`
-                                                : `${t("skills.unlock")} (${skillInfo.unlockCost})`}
+                                            {skillInfo.masterUnlock ? (
+                                                skillInfo.unlockCost === undefined || skillInfo.unlockCost === 0
+                                                    ? `${t("skills.unlock")} (Grátis) - ${t("skills.masterUnlock")}`
+                                                    : `${t("skills.unlock")} (${skillInfo.unlockCost}) - ${t("skills.masterUnlock")}`
+                                            ) : (
+                                                skillInfo.unlockCost === undefined || skillInfo.unlockCost === 0
+                                                    ? `${t("skills.unlock")} (Grátis)`
+                                                    : `${t("skills.unlock")} (${skillInfo.unlockCost})`
+                                            )}
                                         </button>
                                     )}
                                 </div>
