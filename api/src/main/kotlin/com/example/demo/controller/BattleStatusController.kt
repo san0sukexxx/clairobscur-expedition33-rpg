@@ -467,6 +467,21 @@ class BattleStatusController(
         return true
     }
 
+    @DeleteMapping("/{battleCharacterId}/status/{effectType}")
+    @Transactional
+    fun removeSpecificStatus(
+        @PathVariable battleCharacterId: Int,
+        @PathVariable effectType: String
+    ): ResponseEntity<Void> {
+        val effects = battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(battleCharacterId, effectType)
+
+        if (effects.isNotEmpty()) {
+            battleStatusEffectRepository.deleteAll(effects)
+        }
+
+        return ResponseEntity.noContent().build()
+    }
+
     @PostMapping("/cleanse/{battleCharacterId}")
     @Transactional
     fun cleanseNegativeEffects(@PathVariable battleCharacterId: Int): ResponseEntity<Void> {

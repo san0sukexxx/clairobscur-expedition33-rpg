@@ -313,16 +313,16 @@ export default function BattleGroupStatus({
                                                 <div className="flex items-center gap-2 text-xs">
                                                     <span className="opacity-70">Postura</span>
                                                     {ch.stance === "Defensive" && (
-                                                        <div className="badge badge-info">Defensiva</div>
+                                                        <div className="badge badge-info badge-sm">Defensiva</div>
                                                     )}
                                                     {ch.stance === "Offensive" && (
-                                                        <div className="badge badge-error">Ofensiva</div>
+                                                        <div className="badge badge-error badge-sm">Ofensiva</div>
                                                     )}
                                                     {ch.stance === "Virtuous" && (
-                                                        <div className="badge badge-secondary">Virtuosa</div>
+                                                        <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">Virtuosa</div>
                                                     )}
                                                     {!ch.stance && (
-                                                        <div className="badge badge-ghost">Sem postura</div>
+                                                        <div className="badge badge-ghost badge-sm">Sem postura</div>
                                                     )}
                                                 </div>
                                             </div>

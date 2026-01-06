@@ -185,6 +185,9 @@ export default function CombatAdmin({
     const [sortColumn, setSortColumn] = useState<"name" | "difficulty" | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
     const [battleRewards, setBattleRewards] = useState<BattleReward[]>([]);
+    const [showGradientModal, setShowGradientModal] = useState(false);
+    const [gradientCharges, setGradientCharges] = useState(0);
+    const [editingTeamIsEnemy, setEditingTeamIsEnemy] = useState(false);
 
     const processedEffectsRef = useRef<Set<string>>(new Set())
     const lastActiveCharacterIdRef = useRef<number | undefined>(undefined)
@@ -298,6 +301,39 @@ export default function CombatAdmin({
             console.error("Erro ao carregar detalhes da batalha:", error)
         }
     }, [campaignInfo.battleId, battleStatus, lastBattleLog, processUnresolvedStatuses])
+
+    const handleOpenGradientModal = useCallback((isEnemy: boolean) => {
+        const currentGradient = isEnemy
+            ? (battleDetails?.characters?.find(ch => ch.isEnemy)?.gradientPoints ?? 0)
+            : (battleDetails?.characters?.find(ch => !ch.isEnemy)?.gradientPoints ?? 0);
+        const currentCharges = Math.floor(currentGradient / 12);
+        setGradientCharges(currentCharges);
+        setEditingTeamIsEnemy(isEnemy);
+        setShowGradientModal(true);
+    }, [battleDetails?.characters]);
+
+    const handleConfirmGradient = useCallback(async () => {
+        const teamCharacter = editingTeamIsEnemy
+            ? battleDetails?.characters?.find(ch => ch.isEnemy)
+            : battleDetails?.characters?.find(ch => !ch.isEnemy);
+
+        if (!teamCharacter?.battleID) {
+            showToast("Nenhum personagem encontrado neste time.");
+            return;
+        }
+
+        const newGradientPoints = gradientCharges * 12;
+
+        try {
+            await APIBattle.updateTeamGradient(teamCharacter.battleID, newGradientPoints);
+            setShowGradientModal(false);
+            await reloadBattleDetails();
+            showToast(`Cargas de gradiente atualizadas para ${gradientCharges}/3`);
+        } catch (error) {
+            console.error("Erro ao atualizar gradiente:", error);
+            showToast("Erro ao atualizar gradiente.");
+        }
+    }, [gradientCharges, editingTeamIsEnemy, battleDetails?.characters, reloadBattleDetails, showToast]);
 
     useEffect(() => {
         reloadBattleDetails()
@@ -1078,6 +1114,46 @@ export default function CombatAdmin({
         );
     }
 
+    function renderGradientModal() {
+        if (!showGradientModal) return null;
+
+        return (
+            <dialog className="modal modal-open">
+                <div className="modal-box space-y-4">
+                    <h3 className="font-bold text-lg">Editar Cargas de Gradiente</h3>
+
+                    <p className="text-sm opacity-80">
+                        Time: <span className="font-mono">{editingTeamIsEnemy ? "Time B (Inimigos)" : "Time A (Aliados)"}</span>
+                    </p>
+
+                    <div>
+                        <label className="label">
+                            <span className="label-text">Cargas (0-3)</span>
+                        </label>
+                        <input
+                            type="number"
+                            className="input input-bordered w-full"
+                            value={gradientCharges}
+                            min={0}
+                            max={3}
+                            onChange={(e) => setGradientCharges(parseInt(e.target.value) || 0)}
+                        />
+                    </div>
+
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => setShowGradientModal(false)}>
+                            Cancelar
+                        </button>
+
+                        <button className="btn btn-primary" onClick={handleConfirmGradient}>
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+        );
+    }
+
     function renderAddModal() {
         if (!showAddModal) return null
         return (
@@ -1264,10 +1340,7 @@ export default function CombatAdmin({
                     </div>
 
                     {/* Mostrar recompensas no lugar da barra de turnos se a batalha terminou */}
-                    {(() => {
-                        console.log("Verificando recompensas - Status:", battleStatus, "Recompensas:", battleRewards);
-                        return battleStatus === 'finished' && battleRewards.length > 0;
-                    })() ? (
+                    {battleStatus === 'finished' && battleRewards.length > 0 ? (
                         <div className="card bg-base-200 p-6">
                             <h2 className="text-3xl font-bold text-center mb-2 text-success">
                                 {t("combat.victoryTitle")}
@@ -1422,8 +1495,6 @@ export default function CombatAdmin({
                         </div>
                     ) : (
                         <>
-                            <GradientBar characters={battleDetails?.characters} player={undefined} turns={battleDetails?.turns} />
-
                             <InitiativesQueue
                                 characters={battleDetails?.characters}
                                 initiatives={battleDetails?.initiatives}
@@ -1432,6 +1503,15 @@ export default function CombatAdmin({
                                 showBattleId={true}
                                 isAdmin={true}
                                 onReorder={reloadBattleDetails} />
+
+                            <GradientBar
+                                characters={battleDetails?.characters}
+                                player={undefined}
+                                turns={battleDetails?.turns}
+                                forceShowTeamIsEnemy={getActiveTurnCharacter()?.isEnemy ?? false}
+                                isAdmin={true}
+                                onEditGradient={() => handleOpenGradientModal(getActiveTurnCharacter()?.isEnemy ?? false)}
+                            />
                         </>
                     )}
 
@@ -1444,6 +1524,7 @@ export default function CombatAdmin({
                     </div>
 
                     {renderEditEntityModal()}
+                    {renderGradientModal()}
                 </div>
             </div>
 
@@ -1473,6 +1554,8 @@ export default function CombatAdmin({
             "STATUS_ADDED",
             "HP_CHANGED",
             "MP_CHANGED",
+            "MP_RECOVERED",
+            "GRADIENT_CHANGED",
             "FLEEING",
             "HEAL_APPLIED",
             "STATUS_CLEANSED",
@@ -1486,10 +1569,8 @@ export default function CombatAdmin({
         }
 
         const hasBattleFinished = logs.some(log => log.eventType === "BATTLE_FINISHED");
-        console.log("hasBattleFinished:", hasBattleFinished, "battleStatus:", battleInfo.battleStatus);
 
         if (hasBattleFinished && battleInfo.battleStatus) {
-            console.log("Batalha finalizada! Coletando recompensas...");
             setBattleStatus(battleInfo.battleStatus);
             onStatusChanged?.(battleInfo.battleStatus);
 

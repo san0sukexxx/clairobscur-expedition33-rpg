@@ -7,7 +7,7 @@ export type StatusType =
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
-    "FireVulnerability" | "Taunt" | "Foretell" | "Twilight" | "Powerless" |
+    "FireVulnerability" | "Guardian" | "Foretell" | "Twilight" | "Powerless" |
     "Rush" | "Burn" | "Shield" | "Powerful" | "Mark" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
     "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "DoubleDamage" | "Defenceless" | "Regen" | "Curse";
 
@@ -73,6 +73,8 @@ export interface BattleCharacterInfo {
     type: BattleCharacterType;
     isEnemy: boolean;
     canRollInitiative?: boolean;
+    parriesThisTurn?: number;
+    hitsTakenThisTurn?: number;
 }
 
 export type RewardType = "weapon" | "picto";

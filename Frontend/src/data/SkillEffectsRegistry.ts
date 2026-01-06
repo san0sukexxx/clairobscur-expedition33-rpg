@@ -15,7 +15,7 @@ export interface SkillMetadata {
     // Damage
     damageLevel: "none" | "low" | "medium" | "high" | "very-high" | "extreme";  // none=0%, low=50%, medium=100%, high=150%, very-high=200%, extreme=250%
     hitCount: number;             // 1 to 8 hits
-    targetScope: "single" | "all" | "self" | "random" | "ally" | "all-allies";  // single = alvo selecionado, all = todos do tipo, self = si mesmo, random = alvos aleatórios, ally = aliado, all-allies = todos aliados
+    targetScope: "single" | "all" | "self" | "random" | "ally" | "all-allies" | "all-enemies";  // single = alvo selecionado, all = todos do tipo, self = si mesmo, random = alvos aleatórios, ally = aliado, all-allies = todos aliados, all-enemies = todos inimigos
     usesWeaponElement: boolean;   // Use weapon's element?
     forcedElement?: Element;      // Overrides weapon element (Physical, Fire, Lightning, Void, etc)
 
@@ -283,7 +283,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "maelle-guard-down",
         damageLevel: "none",  // Support skill
         hitCount: 0,
-        targetScope: "all",
+        targetScope: "all-enemies",
         usesWeaponElement: false,
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
         primaryEffects: [
@@ -375,7 +375,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "maelle-fencers-flurry",
         damageLevel: "medium",
         hitCount: 1,
-        targetScope: "all",
+        targetScope: "all-enemies",          // Attacks all enemies automatically
         usesWeaponElement: true,             // Uses weapon's element
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
         primaryEffects: [
@@ -398,7 +398,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Void",
         changesStanceTo: "Offensive",     // Changes stance to Offensive when used
         damageScalesWithBurn: true,       // Damage increases per Burn on target
-        burnDamageBonus: 10,              // +10% damage per Burn stack
+        burnDamageBonus: 2,               // +2 flat damage per Burn stack
         primaryEffects: [
             {
                 effectType: "Burning",
@@ -435,15 +435,16 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "maelle-guard-up",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all",  // Up to 3 allies
+        targetScope: "ally",  // Choose an ally, then roll 1d6
         usesWeaponElement: false,
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
+        rollsForTargetScope: true,           // Roll 1d6: 3-6 = all allies, 1-2 = single target only
         primaryEffects: [
             {
                 effectType: "Protected",  // Shell - reduces damage taken, extends Egide duration
                 amount: 0,
                 remainingTurns: 3,
-                targetType: "all-allies"
+                targetType: "self"  // Will be changed to "all-allies" or kept as single based on roll
             }
         ],
         conditionalEffects: []
@@ -490,7 +491,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         changesStanceTo: "Defensive",     // Changes stance to Defensive when used
         primaryEffects: [
             {
-                effectType: "Taunt",
+                effectType: "Guardian",
                 amount: 0,
                 remainingTurns: 2,        // Lasts 2 turns (3 if Shielded)
                 targetType: "self"
@@ -652,7 +653,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "maelle-phoenix-flame",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all",
+        targetScope: "all-enemies",
         usesWeaponElement: false,
         forcedElement: "Fire",
         changesStanceTo: "Offensive",    // Changes stance to Offensive
@@ -664,7 +665,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "all-enemies"
             }
         ],
-        conditionalEffects: []  // Mass revival (50-70% HP) not implemented in status system
+        conditionalEffects: []  // Mass revival (50-70% HP) implemented in PlayerPage.tsx
     },
 
     "maelle-gommage": {

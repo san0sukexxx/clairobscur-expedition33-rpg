@@ -130,7 +130,7 @@ export async function handleCleansesAndCopiesBuffs(ctx: SpecialMechanicContext):
 
   const positiveEffects = [
     "Hastened", "Empowered", "Protected", "Regeneration", "Shielded",
-    "Frenzy", "Rage", "Taunt", "Foretell", "Twilight"
+    "Frenzy", "Rage", "Guardian", "Foretell", "Twilight"
   ];
 
   // Get target's status effects

@@ -177,6 +177,12 @@ function resolveTargets(
             // O próprio personagem
             return [source.battleID];
 
+        case "all-enemies":
+            // Todos os inimigos (equipe oposta ao source)
+            return allCharacters
+                .filter(c => c.isEnemy !== source.isEnemy && c.healthPoints > 0)
+                .map(c => c.battleID);
+
         default:
             return [primaryTarget.battleID];
     }

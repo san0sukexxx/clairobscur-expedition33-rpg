@@ -215,5 +215,3 @@ export type {
  * 13. Add damage type conversion support
  * 14. Add skill AP cost modification system
  */
-
-console.log("[Weapon Passives] System initialized with 108 weapons and 300+ passive effects");

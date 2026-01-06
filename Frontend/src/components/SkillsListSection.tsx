@@ -311,15 +311,11 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                 </div>
                             </button>
 
-                            {disabled && !getSkillIsBlocked(skill.id, player) && hasPrerequisitesFulfilled(skill.id, player) && (
+                            {disabled && !getSkillIsBlocked(skill.id, player) && hasPrerequisitesFulfilled(skill.id, player) && !inBattle && (
                                 <div className="mt-4 flex justify-end">
                                     {skillInfo.unlockCost !== undefined && remainingPoints < skillInfo.unlockCost ? (
                                         <div className="text-xs text-red-400">
                                             Pontos insuficientes (necessário: {skillInfo.unlockCost}, disponível: {remainingPoints})
-                                        </div>
-                                    ) : inBattle ? (
-                                        <div className="text-xs text-amber-400">
-                                            Não é possível desbloquear habilidades durante a batalha
                                         </div>
                                     ) : (
                                         <button
@@ -349,25 +345,19 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                 </div>
                             )}
 
-                            {!disabled && isAdmin && (
+                            {!disabled && isAdmin && !inBattle && (
                                 <div className="mt-4 flex justify-end">
-                                    {inBattle ? (
-                                        <div className="text-xs text-amber-400">
-                                            {t("skills.unlock")}
-                                        </div>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleRemove(skill.id);
-                                            }}
-                                            className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
-                                        >
-                                            <FaTrash className="h-3.5 w-3.5" aria-hidden />
-                                            {t("common.remove")}
-                                        </button>
-                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleRemove(skill.id);
+                                        }}
+                                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
+                                    >
+                                        <FaTrash className="h-3.5 w-3.5" aria-hidden />
+                                        {t("common.remove")}
+                                    </button>
                                 </div>
                             )}
 

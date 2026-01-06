@@ -100,9 +100,29 @@ export function getStatusLabel(status: StatusType): string {
         case "Broken": return t("battle.statusEffects.Broken");
         case "Fleeing": return t("battle.statusEffects.Fleeing");
         case "FireVulnerability": return t("battle.statusEffects.FireVulnerability");
-        case "Taunt": return t("battle.statusEffects.Taunt");
+        case "Guardian": return t("battle.statusEffects.Guardian");
         case "Foretell": return t("battle.statusEffects.Foretell");
         case "Twilight": return t("battle.statusEffects.Twilight");
+        case "Powerless": return t("battle.statusEffects.Powerless");
+        case "Rush": return t("battle.statusEffects.Rush");
+        case "Burn": return t("battle.statusEffects.Burn");
+        case "Shield": return t("battle.statusEffects.Shield");
+        case "Powerful": return t("battle.statusEffects.Powerful");
+        case "Mark": return t("battle.statusEffects.Mark");
+        case "Shell": return t("battle.statusEffects.Shell");
+        case "Slow": return t("battle.statusEffects.Slow");
+        case "Freeze": return t("battle.statusEffects.Freeze");
+        case "GreaterRush": return t("battle.statusEffects.GreaterRush");
+        case "GreaterSlow": return t("battle.statusEffects.GreaterSlow");
+        case "EnfeeblingMark": return t("battle.statusEffects.EnfeeblingMark");
+        case "DamageReduction": return t("battle.statusEffects.DamageReduction");
+        case "SuccessiveParry": return t("battle.statusEffects.SuccessiveParry");
+        case "Aureole": return t("battle.statusEffects.Aureole");
+        case "Vulnerable": return t("battle.statusEffects.Vulnerable");
+        case "DoubleDamage": return t("battle.statusEffects.DoubleDamage");
+        case "Defenceless": return t("battle.statusEffects.Defenceless");
+        case "Regen": return t("battle.statusEffects.Regen");
+        case "Curse": return t("battle.statusEffects.Curse");
         case "free-shot": return t("battle.statusEffects.freeShot");
         case "jump": return t("battle.statusEffects.jump");
         case "gradient": return t("battle.statusEffects.gradient");
@@ -129,11 +149,10 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Dizzy",
         "Fragile",
         "Broken",
-        "Fragile",
-        "Broken",
         "Fleeing",
         "Twilight",
-        "FireVulnerability"
+        "FireVulnerability",
+        "Guardian"
     ];
 
     return !skillsWithoutAmmount.includes(type);
@@ -166,7 +185,30 @@ export function getStatusDescription(status: StatusType): string {
         case "Fragile": return t("battle.statusDescriptions.Fragile");
         case "Broken": return t("battle.statusDescriptions.Broken");
         case "Fleeing": return t("battle.statusDescriptions.Fleeing");
+        case "FireVulnerability": return t("battle.statusDescriptions.FireVulnerability");
+        case "Guardian": return t("battle.statusDescriptions.Guardian");
+        case "Foretell": return t("battle.statusDescriptions.Foretell");
         case "Twilight": return t("battle.statusDescriptions.Twilight");
+        case "Powerless": return t("battle.statusDescriptions.Powerless");
+        case "Rush": return t("battle.statusDescriptions.Rush");
+        case "Burn": return t("battle.statusDescriptions.Burn");
+        case "Shield": return t("battle.statusDescriptions.Shield");
+        case "Powerful": return t("battle.statusDescriptions.Powerful");
+        case "Mark": return t("battle.statusDescriptions.Mark");
+        case "Shell": return t("battle.statusDescriptions.Shell");
+        case "Slow": return t("battle.statusDescriptions.Slow");
+        case "Freeze": return t("battle.statusDescriptions.Freeze");
+        case "GreaterRush": return t("battle.statusDescriptions.GreaterRush");
+        case "GreaterSlow": return t("battle.statusDescriptions.GreaterSlow");
+        case "EnfeeblingMark": return t("battle.statusDescriptions.EnfeeblingMark");
+        case "DamageReduction": return t("battle.statusDescriptions.DamageReduction");
+        case "SuccessiveParry": return t("battle.statusDescriptions.SuccessiveParry");
+        case "Aureole": return t("battle.statusDescriptions.Aureole");
+        case "Vulnerable": return t("battle.statusDescriptions.Vulnerable");
+        case "DoubleDamage": return t("battle.statusDescriptions.DoubleDamage");
+        case "Defenceless": return t("battle.statusDescriptions.Defenceless");
+        case "Regen": return t("battle.statusDescriptions.Regen");
+        case "Curse": return t("battle.statusDescriptions.Curse");
         case "free-shot": return t("battle.statusDescriptions.freeShot");
         case "jump": return t("battle.statusDescriptions.jump");
         case "gradient": return t("battle.statusDescriptions.gradient");

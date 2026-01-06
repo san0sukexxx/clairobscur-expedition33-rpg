@@ -85,6 +85,7 @@ export interface CreateAttackRequest {
     skillType?: string  // "sun" or "moon" for Sciel's charge system
     bestialWheelAdvance?: number  // Advances Monoco's Bestial Wheel by this many positions
     ignoresShields?: boolean  // Damage goes through shields without removing them (Chevaliere Piercing)
+    shouldRemoveMarked?: boolean  // If false, don't remove Marked status (e.g., for Gustave's Homage)
 }
 
 export interface AttackStatusEffectRequest {
@@ -217,6 +218,10 @@ export class APIBattle {
         await api.post(`battle-status/cleanse/${battleCharacterId}`, {});
     }
 
+    static async removeStatus(battleCharacterId: number, effectType: string): Promise<void> {
+        await api.delete(`battle-status/${battleCharacterId}/status/${effectType}`);
+    }
+
     static async heal(battleCharacterId: number, amount: number): Promise<void> {
         await api.post(`battle-status/heal/${battleCharacterId}`, { amount });
     }
@@ -268,6 +273,13 @@ export class APIBattle {
     static async updateCharacterGradient(id: number, newGradient: number): Promise<void> {
         await api.put<{ newGradient: number }, void>(
             `battles/characters/${id}/gradient`,
+            { newGradient }
+        )
+    }
+
+    static async updateTeamGradient(characterId: number, newGradient: number): Promise<void> {
+        await api.put<{ newGradient: number }, void>(
+            `battles/characters/${characterId}/team-gradient`,
             { newGradient }
         )
     }

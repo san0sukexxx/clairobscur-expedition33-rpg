@@ -90,7 +90,9 @@ class BattleController(
                             status = status,
                             type = bc.characterType,
                             isEnemy = bc.isEnemy,
-                            canRollInitiative = bc.canRollInitiative
+                            canRollInitiative = bc.canRollInitiative,
+                            parriesThisTurn = bc.parriesThisTurn,
+                            hitsTakenThisTurn = bc.hitsTakenThisTurn
                     )
                 }
 
@@ -403,5 +405,35 @@ class BattleController(
                 }
             }
         }
+    }
+
+    @PutMapping("/characters/{characterId}/team-gradient")
+    @Transactional
+    fun updateTeamGradient(
+            @PathVariable characterId: Int,
+            @RequestBody body: Map<String, Int>
+    ): ResponseEntity<Void> {
+        val newGradient = body["newGradient"] ?: return ResponseEntity.badRequest().build()
+
+        val character = battleCharacterRepository.findById(characterId).orElse(null)
+                ?: return ResponseEntity.notFound().build()
+
+        val battleId = character.battleId ?: return ResponseEntity.notFound().build()
+        val battle = battleRepository.findById(battleId).orElse(null)
+                ?: return ResponseEntity.notFound().build()
+
+        if (character.isEnemy) {
+            battle.teamBGradientPoints = newGradient.coerceIn(0, 100)
+        } else {
+            battle.teamAGradientPoints = newGradient.coerceIn(0, 100)
+        }
+
+        battleRepository.save(battle)
+
+        battleLogRepository.save(
+                BattleLog(battleId = battleId, eventType = "GRADIENT_CHANGED", eventJson = null)
+        )
+
+        return ResponseEntity.noContent().build()
     }
 }

@@ -29,5 +29,9 @@ data class BattleCharacter(
         @Column(name = "rank_progress") var rankProgress: Int? = null,
         @Column(name = "bestial_wheel_position") var bestialWheelPosition: Int? = null,
         @Column(name = "can_roll_initiative", nullable = false)
-        var canRollInitiative: Boolean = false
+        var canRollInitiative: Boolean = false,
+        @Column(name = "parries_this_turn", nullable = false)
+        var parriesThisTurn: Int = 0,  // Tracks successful parries since last turn (for Payback skill)
+        @Column(name = "hits_taken_this_turn", nullable = false)
+        var hitsTakenThisTurn: Int = 0  // Tracks attacks that dealt damage since last turn (for Revenge skill)
 )

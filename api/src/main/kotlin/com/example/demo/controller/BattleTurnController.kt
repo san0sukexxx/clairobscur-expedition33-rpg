@@ -151,6 +151,18 @@ class BattleTurnController(
                         battleCharacterRepository.save(bc)
                 }
 
+                // Reset parries counter at end of turn (for Payback skill)
+                if (bc.parriesThisTurn > 0) {
+                        bc.parriesThisTurn = 0
+                        battleCharacterRepository.save(bc)
+                }
+
+                // Reset hits taken counter at end of turn (for Revenge skill)
+                if (bc.hitsTakenThisTurn > 0) {
+                        bc.hitsTakenThisTurn = 0
+                        battleCharacterRepository.save(bc)
+                }
+
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "TURN_ENDED", eventJson = null)
                 )

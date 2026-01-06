@@ -188,6 +188,7 @@ class BattleCharacterService(
 
                 val entity = opt.get()
 
+                val oldHp = entity.healthPoints
                 val finalHp = newHp.coerceAtLeast(0)
 
                 entity.healthPoints = finalHp
@@ -195,6 +196,37 @@ class BattleCharacterService(
                 repository.save(entity)
 
                 val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                // Check if character died or revived
+                val wasDead = oldHp == 0
+                val isDead = finalHp == 0
+                val wasAlive = oldHp > 0
+                val isAlive = finalHp > 0
+
+                // Get battle to check if it's started
+                val battle = battleRepository.findById(battleId).orElse(null)
+                val isBattleStarted = battle?.battleStatus.equals("started", ignoreCase = true)
+
+                if (isBattleStarted) {
+                        // Character died: remove from turn queue
+                        if (wasAlive && isDead) {
+                                battleTurnRepository.deleteByBattleCharacterId(id)
+                                battleTurnService.recalculatePlayOrder(battleId)
+                        }
+
+                        // Character revived: add back to turn queue
+                        if (wasDead && isAlive) {
+                                // Add character to the end of the turn queue
+                                val lastTurn = battleTurnRepository.findTopByBattleIdOrderByPlayOrderDesc(battleId)
+                                val nextOrder = (lastTurn?.playOrder ?: 0) + 1
+                                val turn = BattleTurn(
+                                        battleId = battleId,
+                                        battleCharacterId = id,
+                                        playOrder = nextOrder
+                                )
+                                battleTurnRepository.save(turn)
+                        }
+                }
 
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)

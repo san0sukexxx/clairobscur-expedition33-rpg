@@ -24,5 +24,7 @@ data class BattleCharacterInfo(
     val status: List<BattleStatusResponse>?,
     val type: String,
     val isEnemy: Boolean,
-    val canRollInitiative: Boolean
+    val canRollInitiative: Boolean,
+    val parriesThisTurn: Int,
+    val hitsTakenThisTurn: Int
 )

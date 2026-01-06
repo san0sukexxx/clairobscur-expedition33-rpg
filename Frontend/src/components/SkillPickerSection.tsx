@@ -346,10 +346,12 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }
 
     function getEffectiveCost(skill: SkillResponse): number {
-        // Get Monoco's Bestial Wheel position
+        // Get character state
         const source = player?.fightInfo?.characters?.find(
             c => c.battleID === player.fightInfo?.playerBattleID
         );
+
+        // Monoco's Bestial Wheel position
         const bestialWheelPosition = source?.bestialWheelPosition ?? -1;
         const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
         const currentMask = wheelPattern[bestialWheelPosition] ?? "";
@@ -360,7 +362,28 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             return 0;
         }
 
-        return skill.cost;
+        // Maelle's stance-based cost reduction (Percee, Momentum Strike)
+        const skillMetadata = SkillEffectsRegistry[skill.id];
+        let baseCost = skill.cost;
+
+        if (skillMetadata?.costReductionFromStance && !skill.isGradient) {
+            const currentStance = source?.stance;
+            if (currentStance === skillMetadata.costReductionFromStance.stance) {
+                baseCost = skillMetadata.costReductionFromStance.reducedCost;
+            }
+        }
+
+        // Payback: Cost reduction per parry (using parriesThisTurn counter)
+        if (skillMetadata?.costReductionPerParry && !skill.isGradient) {
+            const parriesCount = source?.parriesThisTurn ?? 0;
+            if (parriesCount > 0) {
+                const reductionPerParry = skillMetadata.costReductionPerParry;
+                const totalReduction = parriesCount * reductionPerParry;
+                baseCost = Math.max(0, baseCost - totalReduction);
+            }
+        }
+
+        return baseCost;
     }
 
     function canUseSkill(skill: SkillResponse): boolean {

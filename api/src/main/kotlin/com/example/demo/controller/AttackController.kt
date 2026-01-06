@@ -247,21 +247,21 @@ class AttackController(
                                 battleCharacterRepository.findById(body.targetBattleId).orElse(null)
                                         ?: return ResponseEntity.badRequest().build()
 
-                        // Egide: Check if there's an ally with Taunt status to redirect damage
+                        // Egide: Check if there's an ally with Guardian status to redirect damage
                         val battleId = targetBC.battleId
                         val allCharacters = battleCharacterRepository.findByBattleId(battleId)
                         val allies = allCharacters.filter { it.isEnemy == targetBC.isEnemy && it.id != targetBC.id }
 
-                        // Find ally with Taunt status (Egide active)
-                        val tauntingAlly = allies.firstOrNull { ally ->
+                        // Find ally with Guardian status (Egide active)
+                        val guardianAlly = allies.firstOrNull { ally ->
                                 battleStatusEffectRepository
-                                        .findByBattleCharacterIdAndEffectType(ally.id!!, "Taunt")
+                                        .findByBattleCharacterIdAndEffectType(ally.id!!, "Guardian")
                                         .isNotEmpty()
                         }
 
-                        // Redirect damage to taunting ally if exists
-                        if (tauntingAlly != null) {
-                                targetBC = tauntingAlly
+                        // Redirect damage to guardian ally if exists
+                        if (guardianAlly != null) {
+                                targetBC = guardianAlly
                         }
 
                         // Apply damage modifiers from source character
@@ -378,6 +378,39 @@ class AttackController(
                                 )
                         }
 
+                        // Breaking Rules: Destroy all shields BEFORE applying damage
+                        if (body.destroysShields == true) {
+                                val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
+                                val shieldEffects = targetEffects.filter { it.effectType == "Shielded" }
+
+                                // Count total shields (sum of all ammount values)
+                                val shieldsDestroyed = shieldEffects.sumOf { it.ammount }
+
+                                // Remove all shield effects
+                                shieldEffects.forEach { shield ->
+                                        battleStatusEffectRepository.delete(shield)
+                                }
+
+                                // Grant MP to source character (Maelle)
+                                if (shieldsDestroyed > 0 && body.grantsAPPerShield != null) {
+                                        val mpToGrant = shieldsDestroyed * body.grantsAPPerShield
+                                        val currentMP = sourceBC.magicPoints ?: 0
+                                        val maxMP = sourceBC.maxMagicPoints ?: 0
+                                        val newMP = (currentMP + mpToGrant).coerceAtMost(maxMP)
+                                        sourceBC.magicPoints = newMP
+                                        battleCharacterRepository.save(sourceBC)
+
+                                        // Log MP recovery
+                                        battleLogRepository.save(
+                                                BattleLog(
+                                                        battleId = battleId,
+                                                        eventType = "MP_RECOVERED",
+                                                        eventJson = """{"characterId":${sourceBC.id},"amount":$mpToGrant,"shieldsDestroyed":$shieldsDestroyed}"""
+                                                )
+                                        )
+                                }
+                        }
+
                         // Gommage: Check for execution threshold (instant kill if HP% <= threshold)
                         val shouldExecute = if (body.executionThreshold != null) {
                                 val currentHpPercent = (targetBC.healthPoints.toDouble() / targetBC.maxHealthPoints.toDouble()) * 100
@@ -450,27 +483,8 @@ class AttackController(
                                 false
                         }
 
-                        // Breaking Rules: Destroy all shields and grant AP
-                        if (body.destroysShields == true) {
-                                val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
-                                val shieldEffects = targetEffects.filter { it.effectType == "Shielded" }
-                                val shieldsDestroyed = shieldEffects.size
-
-                                // Remove all shield effects
-                                shieldEffects.forEach { shield ->
-                                        battleStatusEffectRepository.delete(shield)
-                                }
-
-                                // Grant AP to source character (Maelle)
-                                if (shieldsDestroyed > 0 && body.grantsAPPerShield != null) {
-                                        val apToGrant = shieldsDestroyed * body.grantsAPPerShield
-                                        val currentMP = sourceBC.magicPoints ?: 0
-                                        val maxMP = sourceBC.maxMagicPoints ?: 0
-                                        sourceBC.magicPoints = (currentMP + apToGrant).coerceAtMost(maxMP)
-                                        battleCharacterRepository.save(sourceBC)
-                                }
-                        } else if (!shouldIgnoreShields) {
-                                // Normal shield consumption (only 1) - unless ignoring shields (Piercing Shot)
+                        // Normal shield consumption (only 1) - unless ignoring shields (Piercing Shot) or destroying all shields (Breaking Rules)
+                        if (body.destroysShields != true && !shouldIgnoreShields) {
                                 battleService.consumeShield(targetBC.id!!)
                         }
                         // If shouldIgnoreShields is true, shield is NOT consumed (Piercing Shot effect)
@@ -691,7 +705,10 @@ class AttackController(
                                 }
                         }
 
-                        battleService.removeMarked(targetBC.id!!)
+                        // Remove Marked status unless explicitly disabled (e.g., for Gustave's Homage)
+                        if (body.shouldRemoveMarked != false) {
+                                battleService.removeMarked(targetBC.id!!)
+                        }
 
                         val nonStackableEffects = listOf("Fragile", "Inverted", "Flying", "Dizzy", "Stunned", "Silenced", "Exhausted")
 

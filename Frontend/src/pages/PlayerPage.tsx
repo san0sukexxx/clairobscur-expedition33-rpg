@@ -1175,6 +1175,7 @@ export default function PlayerPage() {
 
     const targetsAllies =
       skillMetadata.targetScope === "self" ||
+      skillMetadata.targetScope === "ally" ||
       skillMetadata.primaryEffects.some(e => e.targetType === "self" || e.targetType === "ally" || e.targetType === "all-allies") ||
       skillMetadata.conditionalEffects.some(e => e.targetType === "self" || e.targetType === "ally" || e.targetType === "all-allies");
 
@@ -1195,6 +1196,12 @@ export default function PlayerPage() {
       } else {
         showToast("Erro: Personagem não encontrado");
       }
+      return;
+    }
+
+    // Auto-execute all-enemies skills (like Guard Down)
+    if (skillMetadata.targetScope === "all-enemies" && currentCharacter) {
+      handleExecuteSkill(skillId, currentCharacter);
       return;
     }
 
@@ -1275,6 +1282,26 @@ export default function PlayerPage() {
         // Example: if (skillId === "monoco-other-skill" && (currentMask === "blue" || currentMask === "gold")) { ... }
       }
 
+      // Maelle's stance-based cost reduction (Percee, Momentum Strike)
+      if (skillMetadata.costReductionFromStance && !isGradientSkill) {
+        const currentStance = source.stance;
+        if (currentStance === skillMetadata.costReductionFromStance.stance) {
+          skillCost = skillMetadata.costReductionFromStance.reducedCost;
+        }
+      }
+
+      // Payback: Cost reduction per parry (using parriesThisTurn counter)
+      if (skillMetadata.costReductionPerParry && !isGradientSkill) {
+        const parriesCount = source.parriesThisTurn ?? 0;
+        if (parriesCount > 0) {
+          const reductionPerParry = skillMetadata.costReductionPerParry;
+          const totalReduction = parriesCount * reductionPerParry;
+          const originalCost = skillCost;
+          skillCost = Math.max(0, skillCost - totalReduction);
+          showToast(`${parriesCount} Aparada(s) bem sucedida(s)! Custo reduzido de ${originalCost} para ${skillCost} MP`);
+        }
+      }
+
       // Validate resources (MP or Gradient charges)
       if (isGradientSkill) {
         const currentGradientCharges = Math.floor((source.gradientPoints ?? 0) / 12);
@@ -1338,33 +1365,79 @@ export default function PlayerPage() {
         player.fightInfo?.characters ?? []
       );
 
-      // Powerful: Roll 1d6 to determine target scope (1-3 = self only, 4-6 = all allies)
+      // Roll 1d6 to determine target scope
       if (resolved.metadata.rollsForTargetScope) {
-        const diceRoll = Math.floor(Math.random() * 6) + 1;  // 1-6
-        if (diceRoll >= 4) {
-          // 4-6: All allies
-          showToast(`Rolou ${diceRoll}! Powerful afeta toda equipe!`);
-          const newTargetScope = "all-allies";
-          const alliesTargets = (player.fightInfo?.characters ?? [])
-            .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
-            .map(c => c.battleID);
+        // Guard Up (Maelle): 3-6 = all allies, 1-2 = single target only
+        if (skillId === "maelle-guard-up") {
+          await new Promise<void>((resolvePromise) => {
+            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
+              const diceRoll = result && result.length > 0 ? result[0].value : 1;
 
-          // Update resolved targets and effects
-          resolved = {
-            ...resolved,
-            targetIds: alliesTargets,
-            effects: resolved.effects.map(eff => ({
-              ...eff,
-              targetType: "all-allies" as any
-            }))
-          };
-        } else {
-          // 1-3: Self only
-          showToast(`Rolou ${diceRoll}! Powerful afeta apenas Verso.`);
-          resolved = {
-            ...resolved,
-            targetIds: [source.battleID]
-          };
+              if (diceRoll >= 3) {
+                // 3-6: All allies
+                showToast(`Rolou ${diceRoll}! Escudo aplicado em toda a equipe!`);
+                const alliesTargets = (player.fightInfo?.characters ?? [])
+                  .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
+                  .map(c => c.battleID);
+
+                // Update resolved targets and regenerate effects for each target
+                resolved = {
+                  ...resolved,
+                  targetIds: alliesTargets,
+                  effects: alliesTargets.flatMap(targetId =>
+                    resolved.effects.map(eff => ({
+                      ...eff,
+                      targetBattleId: targetId,
+                      targetType: "all-allies" as any
+                    }))
+                  )
+                };
+              } else {
+                // 1-2: Single target only (keep original target)
+                showToast(`Rolou ${diceRoll}! Escudo aplicado apenas no alvo escolhido.`);
+                // Update effects to have correct targetBattleId for the chosen ally
+                const chosenTargetId = resolved.targetIds[0];
+                resolved = {
+                  ...resolved,
+                  effects: resolved.effects.map(eff => ({
+                    ...eff,
+                    targetBattleId: chosenTargetId,
+                    targetType: "ally" as any
+                  }))
+                };
+              }
+
+              resolvePromise();
+            });
+          });
+        }
+        // Powerful (Verso): 1-3 = self only, 4-6 = all allies
+        else {
+          const diceRoll = Math.floor(Math.random() * 6) + 1;  // 1-6
+          if (diceRoll >= 4) {
+            // 4-6: All allies
+            showToast(`Rolou ${diceRoll}! Powerful afeta toda equipe!`);
+            const alliesTargets = (player.fightInfo?.characters ?? [])
+              .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
+              .map(c => c.battleID);
+
+            // Update resolved targets and effects
+            resolved = {
+              ...resolved,
+              targetIds: alliesTargets,
+              effects: resolved.effects.map(eff => ({
+                ...eff,
+                targetType: "all-allies" as any
+              }))
+            };
+          } else {
+            // 1-3: Self only
+            showToast(`Rolou ${diceRoll}! Powerful afeta apenas Verso.`);
+            resolved = {
+              ...resolved,
+              targetIds: [source.battleID]
+            };
+          }
         }
       }
 
@@ -1395,8 +1468,8 @@ export default function PlayerPage() {
         chargeBonus = currentCharge;  // +1 damage per charge
       }
 
-      // Burning Canvas: Calculate burn damage multiplier
-      let burnMultiplier = 1.0;
+      // Burning Canvas: Calculate burn damage bonus (flat)
+      let burnBonus = 0;
       if (resolved.metadata.damageScalesWithBurn) {
         const targetStatuses = target.status ?? [];
         const burnStacks = targetStatuses
@@ -1404,9 +1477,8 @@ export default function PlayerPage() {
           .reduce((sum, s) => sum + (s.ammount ?? 0), 0);
 
         if (burnStacks > 0) {
-          const bonusPerBurn = (resolved.metadata.burnDamageBonus ?? 10) / 100;  // Default 10% = 0.1
-          burnMultiplier = 1.0 + (burnStacks * bonusPerBurn);
-          showToast(`${burnStacks} Queimadura(s) no alvo! Dano +${Math.floor(burnStacks * bonusPerBurn * 100)}%`);
+          const bonusPerBurn = resolved.metadata.burnDamageBonus ?? 2;  // Default +2 per Burn
+          burnBonus = burnStacks * bonusPerBurn;
         }
       }
 
@@ -1451,15 +1523,7 @@ export default function PlayerPage() {
         }
       }
 
-      // Breaking Rules: Count shields on target and prepare to destroy them
-      let shieldsDestroyed = 0;
-      if (resolved.metadata.destroysShields) {
-        const targetStatuses = target.status ?? [];
-        shieldsDestroyed = targetStatuses.filter(s => s.effectName === "Shielded").length;
-        if (shieldsDestroyed > 0) {
-          showToast(`Destruindo ${shieldsDestroyed} shield(s)!`);
-        }
-      }
+      // Breaking Rules: Destroy shields (backend handles this and logs MP recovery)
 
       // Breaking Rules: Check if target has Unprotected (Defenseless) for conditional effects
       let targetHasUnprotected = false;
@@ -1695,6 +1759,17 @@ export default function PlayerPage() {
                     }
                   }
 
+                  // Revenge: Damage scales with hits taken since last turn
+                  // Uses hitsTakenThisTurn counter (automatically tracked)
+                  let hitsReceivedBonus = 0;
+                  if (resolved.metadata.damageScalesWithHitsReceived) {
+                    const hitsTaken = source.hitsTakenThisTurn ?? 0;
+                    if (hitsTaken > 0) {
+                      // Each hit received adds +10% damage (similar to other scaling mechanics)
+                      hitsReceivedBonus = hitsTaken * 10;
+                    }
+                  }
+
                   // Monoco's Bestial Wheel: Máscara Onipotente (gold, position 0) increases damage by 50%
                   const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
                   const bestialWheelPosition = source.bestialWheelPosition ?? -1;
@@ -1767,19 +1842,20 @@ export default function PlayerPage() {
                       ? (resolved.metadata.foretellPerHitMultiplier ?? 3.0)
                       : 1.0;
 
-                    // Apply charge bonus, foretell bonus, HP drained, all enemies foretell, HP sacrifice, and shield bonus (additive) then per-hit foretell multiplier, twilight, Verso's perfection, low HP multiplier, lampmaster escalation, almighty mask, burning target, stunned target, powerless target, burn multipliers, fire vulnerability, and marked bonus (multiplicative)
-                    const damageWithCharge = baseHitDamage + chargeBonus + foretellBonus + hpDrained + allEnemiesForetellConsumed + hpSacrificeBonus + shieldBonus;
+                    // Apply charge bonus, foretell bonus, HP drained, all enemies foretell, HP sacrifice, shield bonus, and burn bonus (additive) then per-hit foretell multiplier, twilight, Verso's perfection, low HP multiplier, lampmaster escalation, hits received bonus, almighty mask, burning target, stunned target, powerless target, burn consumption, fire vulnerability, and marked bonus (multiplicative)
+                    const damageWithCharge = baseHitDamage + chargeBonus + foretellBonus + hpDrained + allEnemiesForetellConsumed + hpSacrificeBonus + shieldBonus + burnBonus;
                     const damageWithForetellPerHit = Math.floor(damageWithCharge * targetForetellMultiplier);
                     const damageWithTwilight = Math.floor(damageWithForetellPerHit * twilightMultiplier);
                     const damageWithPerfection = Math.floor(damageWithTwilight * versoPerfectionMultiplier);
                     const damageWithLowHp = Math.floor(damageWithPerfection * lowHpMultiplier);
                     const damageWithLampmaster = Math.floor(damageWithLowHp * lampmasterMultiplier);
-                    const damageWithAlmightyMask = Math.floor(damageWithLampmaster * almightyMaskMultiplier);
+                    const hitsReceivedMultiplier = 1.0 + (hitsReceivedBonus / 100);  // Convert percentage to multiplier
+                    const damageWithHitsReceived = Math.floor(damageWithLampmaster * hitsReceivedMultiplier);
+                    const damageWithAlmightyMask = Math.floor(damageWithHitsReceived * almightyMaskMultiplier);
                     const damageWithBurningTarget = Math.floor(damageWithAlmightyMask * burningTargetMultiplier);
                     const damageWithStunnedTarget = Math.floor(damageWithBurningTarget * stunnedTargetMultiplier);
                     const damageWithPowerlessTarget = Math.floor(damageWithStunnedTarget * powerlessTargetMultiplier);
-                    const damageWithBurnScaling = Math.floor(damageWithPowerlessTarget * burnMultiplier);
-                    const damageWithBurnConsumption = Math.floor(damageWithBurnScaling * burnConsumptionMultiplier);
+                    const damageWithBurnConsumption = Math.floor(damageWithPowerlessTarget * burnConsumptionMultiplier);
                     const damageWithFireVulnerability = Math.floor(damageWithBurnConsumption * fireVulnerabilityMultiplier);
                     const hitDamage = Math.floor(damageWithFireVulnerability * markedDamageMultiplier);
 
@@ -1788,9 +1864,7 @@ export default function PlayerPage() {
                       primaryTargetDamage = hitDamage;
                     }
 
-                    const effects = hitIndex === 0
-                      ? getStatusEffectsForTarget(resolved.effects, targetId)
-                      : [];
+                    const effects = getStatusEffectsForTarget(resolved.effects, targetId);
 
                     // Find the target character to check if it's NPC or player
                     const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === targetId);
@@ -1824,14 +1898,14 @@ export default function PlayerPage() {
                       }
                     }
 
-                    // Egide: Extend Taunt duration if source has Protected (Shield) status
+                    // Egide: Extend Guardian duration if source has Protected (Shield) status
                     if (hitIndex === 0 && skillId === "maelle-egide") {
                       const sourceStatuses = source.status ?? [];
                       const hasProtected = sourceStatuses.some(s => s.effectName === "Protected");
                       if (hasProtected) {
-                        // Extend Taunt duration from 2 to 3 turns
+                        // Extend Guardian duration from 2 to 3 turns
                         finalEffects = finalEffects.map(effect => {
-                          if (effect.effectType === "Taunt") {
+                          if (effect.effectType === "Guardian") {
                             return { ...effect, remainingTurns: 3 };
                           }
                           return effect;
@@ -1881,14 +1955,16 @@ export default function PlayerPage() {
                     }
 
                     // Conditional Burn Bonus (Spark, Rain of Fire, Pyrolyse)
-                    if (hitIndex === 0 && resolved.metadata.conditionalBurnBonus) {
+                    if (resolved.metadata.conditionalBurnBonus) {
                       const { fromStance, bonusBurn } = resolved.metadata.conditionalBurnBonus;
                       if (source.stance === fromStance) {
                         // Add bonus burn to Burning effects
                         finalEffects = finalEffects.map(effect => {
                           if (effect.effectType === "Burning") {
                             const newAmount = (effect.ammount ?? 0) + bonusBurn;
-                            showToast(`Bonus de postura! +${bonusBurn} Queimaduras (${newAmount} total)`);
+                            if (hitIndex === 0) {
+                              showToast(`Bonus de postura! +${bonusBurn} Queimaduras por acerto`);
+                            }
                             return { ...effect, ammount: newAmount };
                           }
                           return effect;
@@ -1916,6 +1992,18 @@ export default function PlayerPage() {
                       }
                     }
 
+                    // Check for Fragile status on NPCs (damage > 2x resistance)
+                    if (isNpcTarget && targetChar) {
+                      const willGetFragile = checkForFragile(targetChar, hitDamage);
+                      if (willGetFragile && !finalEffects.some(e => e.effectType === "Fragile")) {
+                        finalEffects.push({
+                          effectType: "Fragile",
+                          ammount: 1,
+                          remainingTurns: 2
+                        });
+                      }
+                    }
+
                     // NPCs receive totalDamage (direct damage), players receive totalPower (pending attack)
                     const attackRequest: CreateAttackRequest = isNpcTarget
                       ? {
@@ -1938,7 +2026,8 @@ export default function PlayerPage() {
                               ? ((9 - bestialWheelPosition) % 9)  // Calculate positions to reach 0 (Almighty Mask)
                               : resolved.metadata.bestialWheelAdvance
                           ) : undefined,
-                          ignoresShields: resolved.metadata.ignoresShields
+                          ignoresShields: resolved.metadata.ignoresShields,
+                          shouldRemoveMarked: resolved.metadata.markedDamageBonus ? false : undefined
                         }
                       : {
                           sourceBattleId: source.battleID,
@@ -1960,7 +2049,8 @@ export default function PlayerPage() {
                               ? ((9 - bestialWheelPosition) % 9)  // Calculate positions to reach 0 (Almighty Mask)
                               : resolved.metadata.bestialWheelAdvance
                           ) : undefined,
-                          ignoresShields: resolved.metadata.ignoresShields
+                          ignoresShields: resolved.metadata.ignoresShields,
+                          shouldRemoveMarked: resolved.metadata.markedDamageBonus ? false : undefined
                         };
 
                     await APIBattle.attack(attackRequest);
@@ -2028,6 +2118,26 @@ export default function PlayerPage() {
                       for (const enemy of otherBurningEnemies) {
                         const isNpc = enemy.type === "npc";
 
+                        // Check for Fragile on propagated damage
+                        const propagationEffects: AttackStatusEffectRequest[] = [
+                          {
+                            effectType: "Foretell",
+                            ammount: 1,
+                            remainingTurns: 0
+                          }
+                        ];
+
+                        if (isNpc) {
+                          const willGetFragile = checkForFragile(enemy, propagatedDamage);
+                          if (willGetFragile) {
+                            propagationEffects.push({
+                              effectType: "Fragile",
+                              ammount: 1,
+                              remainingTurns: 2
+                            });
+                          }
+                        }
+
                         // Apply half damage + 1 Foretell to each burning enemy
                         const propagationRequest: CreateAttackRequest = isNpc
                           ? {
@@ -2035,13 +2145,7 @@ export default function PlayerPage() {
                               targetBattleId: enemy.battleID,
                               totalDamage: propagatedDamage,
                               attackType: "skill",
-                              effects: [
-                                {
-                                  effectType: "Foretell",
-                                  ammount: 1,
-                                  remainingTurns: 0
-                                }
-                              ],
+                              effects: propagationEffects,
                               skillCost: 0 // No cost for propagation
                             }
                           : {
@@ -2049,13 +2153,7 @@ export default function PlayerPage() {
                               targetBattleId: enemy.battleID,
                               totalPower: propagatedDamage,
                               attackType: "skill",
-                              effects: [
-                                {
-                                  effectType: "Foretell",
-                                  ammount: 1,
-                                  remainingTurns: 0
-                                }
-                              ],
+                              effects: propagationEffects,
                               skillCost: 0 // No cost for propagation
                             };
 
@@ -2154,35 +2252,18 @@ export default function PlayerPage() {
             await APIBattle.updateCharacterStance(source.battleID, source.stance);
           }
         } else {
-          // Other skills without hits - send dummy attack for resource consumption
-          if (skillCost > 0) {
-            const firstTargetId = resolved.targetIds[0];
-            if (firstTargetId) {
-              const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === firstTargetId);
-              const isNpcTarget = targetChar?.type === "npc";
-
-              const attackRequest: CreateAttackRequest = isNpcTarget
-                ? {
-                    sourceBattleId: source.battleID,
-                    targetBattleId: firstTargetId,
-                    totalDamage: 0,  // No damage, just resource consumption
-                    attackType: "skill",
-                    effects: [],
-                    skillCost: skillCost,
-                    isGradient: isGradientSkill
-                  }
-                : {
-                    sourceBattleId: source.battleID,
-                    targetBattleId: firstTargetId,
-                    totalPower: 0,  // No damage, just resource consumption
-                    attackType: "skill",
-                    effects: [],
-                    skillCost: skillCost,
-                    isGradient: isGradientSkill
-                  };
-
-              await APIBattle.attack(attackRequest);
-            }
+          // Other skills without hits - consume MP or Gradient
+          if (isGradientSkill) {
+            // Gradient skills consume gradient charges (skillCost * 12 points per charge)
+            const currentGradientPoints = source.gradientPoints ?? 0;
+            const gradientCost = skillCost * 12;
+            const newGradient = Math.max(0, currentGradientPoints - gradientCost);
+            await APIBattle.updateTeamGradient(source.battleID, newGradient);
+            showToast(`${skillCost} Carga(s) de Gradiente consumida(s)!`);
+          } else if (skillCost > 0) {
+            const currentMp = source.magicPoints ?? 0;
+            const newMp = currentMp - skillCost;
+            await APIBattle.updateCharacterMp(source.battleID, newMp);
           }
         }
 
@@ -2190,14 +2271,14 @@ export default function PlayerPage() {
         for (const targetId of resolved.targetIds) {
           let effects = getStatusEffectsForTarget(resolved.effects, targetId);
 
-          // Egide: Extend Taunt duration if source has Protected (Shield) status
+          // Egide: Extend Guardian duration if source has Protected (Shield) status
           if (skillId === "maelle-egide") {
             const sourceStatuses = source.status ?? [];
             const hasProtected = sourceStatuses.some(s => s.effectName === "Protected");
             if (hasProtected) {
-              // Extend Taunt duration from 2 to 3 turns
+              // Extend Guardian duration from 2 to 3 turns
               effects = effects.map(effect => {
-                if (effect.effectType === "Taunt") {
+                if (effect.effectType === "Guardian") {
                   return { ...effect, remainingTurns: 3 };
                 }
                 return effect;
@@ -2260,6 +2341,31 @@ export default function PlayerPage() {
       if (resolved.metadata.canBreak) {
         for (const targetId of resolved.targetIds) {
           await APIBattle.breakTarget(targetId);
+        }
+      }
+
+      // Phoenix Flame: Revive all dead allies with 50-70% HP based on dice roll
+      if (skillId === "maelle-phoenix-flame" && player.fightInfo) {
+        const deadAllies = (player.fightInfo.characters ?? []).filter(
+          c => !c.isEnemy && c.healthPoints === 0
+        );
+
+        if (deadAllies.length > 0) {
+          await new Promise<void>((resolvePromise) => {
+            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
+              const diceRoll = result && result.length > 0 ? result[0].value : 1;
+              const revivePercent = diceRoll >= 4 ? 70 : 50;
+
+              showToast(`Rolou ${diceRoll}! Revivendo aliados com ${revivePercent}% de HP!`);
+
+              for (const ally of deadAllies) {
+                const reviveHp = Math.floor(ally.maxHealthPoints * (revivePercent / 100));
+                await APIBattle.updateCharacterHp(ally.battleID, reviveHp);
+              }
+
+              resolvePromise();
+            });
+          });
         }
       }
 
@@ -2345,12 +2451,13 @@ export default function PlayerPage() {
       if (resolved.metadata.grantsAPRange && !resolved.metadata.grantsMPDiceRoll) {
         const { min, max } = resolved.metadata.grantsAPRange;
         const apGranted = Math.floor(Math.random() * (max - min + 1)) + min;
-        const currentMp = source.magicPoints ?? 0;
+        // Calculate MP after skill cost was consumed by backend
+        const mpAfterCost = (source.magicPoints ?? 0) - skillCost;
         const maxMp = source.maxMagicPoints ?? 0;
-        const newMp = Math.min(currentMp + apGranted, maxMp);
+        const newMp = Math.min(mpAfterCost + apGranted, maxMp);
         await APIBattle.updateCharacterMp(source.battleID, newMp);
         if (apGranted > 0) {
-          showToast(`+${apGranted} PM concedidos! (${currentMp} → ${newMp})`);
+          showToast(`+${apGranted} PM concedidos! (${mpAfterCost} → ${newMp})`);
         }
       }
 
@@ -2429,6 +2536,17 @@ export default function PlayerPage() {
 
         const buffText = buffsPerAlly === 2 ? "2 buffs aleatórios" : "1 buff aleatório";
         showToast(`Trombeta! ${buffText} aplicados em ${selectedAllies.length} aliado(s)!`);
+      }
+
+      // Stendhal: Remove self-Shields
+      if (resolved.metadata.consumesShield) {
+        const sourceStatuses = source.status ?? [];
+        const shieldEffects = sourceStatuses.filter(s => s.effectName === "Shielded");
+
+        if (shieldEffects.length > 0) {
+          await APIBattle.removeStatus(source.battleID, "Shielded");
+          showToast(`${shieldEffects.length} Escudo(s) removido(s)!`);
+        }
       }
 
       // Stendhal: Apply self-Defenseless

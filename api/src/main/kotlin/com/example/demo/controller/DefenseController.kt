@@ -62,6 +62,13 @@ class DefenseController(
         battleService.removeMarked(targetBC.id!!)
 
         val damage = body.totalDamage.coerceAtLeast(0)
+
+        // Track hits taken for Revenge skill (only if damage was actually dealt)
+        if (damage > 0) {
+            targetBC.hitsTakenThisTurn += 1
+            battleCharacterRepository.save(targetBC)
+        }
+
         if (damage > 0 && newHp > 0) {
             val attackEffects = attackStatusEffectRepository.findByAttackId(attack.id!!)
             val ignore = listOf("free-shot", "jump", "gradient")
@@ -92,6 +99,12 @@ class DefenseController(
 
                 battleStatusEffectRepository.save(toSave)
             }
+        }
+
+        // Track successful parries for Payback skill (independent of any picto)
+        if (body.defenseType == "block") {
+            targetBC.parriesThisTurn += 1
+            battleCharacterRepository.save(targetBC)
         }
 
         // Empowering Parry: Add EmpoweringParry status (+5% damage per stack) on successful block

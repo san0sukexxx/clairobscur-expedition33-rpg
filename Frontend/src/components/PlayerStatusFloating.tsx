@@ -115,22 +115,28 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     )}
 
                 {/* Gradient bar - only if player has gradient skills equipped and is in turns */}
-                {hasGradientSkills && playerInTurns && (
+                {hasGradientSkills && playerInTurns && (() => {
+                    const gradientPoints = ch.gradientPoints ?? 0;
+                    const charges = Math.floor(gradientPoints / 12);
+                    const progressValue = charges >= 3 ? 100 : pct(gradientPoints % 12, 12);
+
+                    return (
                         <div className="mt-2">
                             <div className="flex items-center justify-between text-[10px] uppercase">
                                 <span className="opacity-70">Gradiente</span>
                                 <span className="font-mono text-xs">
-                                    {Math.floor((ch.gradientPoints ?? 0) / 12)}/3
+                                    {charges}/3
                                 </span>
                             </div>
                             <AnimatedStatBar
-                                value={pct((ch.gradientPoints ?? 0) % 12, 12)}
+                                value={progressValue}
                                 label="Gradiente"
                                 fillClass="bg-purple-500"
                                 ghostClass="bg-purple-500/30"
                             />
                         </div>
-                    )}
+                    );
+                })()}
 
                 {/* Sun/Moon charges for Sciel */}
                 {ch.id.toLowerCase().includes("sciel") && (
@@ -172,7 +178,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                 <div className="badge badge-error badge-sm">Ofensiva</div>
                             )}
                             {ch.stance === "Virtuous" && (
-                                <div className="badge badge-secondary badge-sm">Virtuosa</div>
+                                <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">Virtuosa</div>
                             )}
                             {!ch.stance && (
                                 <div className="badge badge-ghost badge-sm">Sem postura</div>

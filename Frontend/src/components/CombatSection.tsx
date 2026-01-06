@@ -138,8 +138,6 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 player={player}
             />
 
-            <GradientBar characters={player?.fightInfo?.characters} player={player} turns={player?.fightInfo?.turns} />
-
             <InitiativesQueue
                 characters={player?.fightInfo?.characters}
                 initiatives={player?.fightInfo?.initiatives}
@@ -147,6 +145,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 isStarted={player?.fightInfo?.battleStatus == "started" || player?.fightInfo?.battleStatus == "finished"}
                 showBattleId={false}
                 isAdmin={isAdmin} />
+
+            <GradientBar characters={player?.fightInfo?.characters} player={player} turns={player?.fightInfo?.turns} />
 
             {tab === "enemies" && (
                 <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} />

@@ -1937,6 +1937,7 @@
     "skills": {
       "unlock": "Unlock",
       "masterUnlock": "Unlock Master",
+      "selectSkill": "Select a skill",
       "gustave-lumiere-assault": {
         "name": "Lumiere Assault",
         "description": "Deals low damage to a single target. 5 hits. Uses weapon element. Critical hits generate 1 additional Charge."
@@ -2059,15 +2060,15 @@
       },
       "lune-sky-break": {
         "name": "Sky Break",
-        "description": "Skill Effect: Deals extreme damage a all enemies. 1 hit. Can cause Break. O elemento depende de qual Mancha Lune possui more. Using this skill grants 3 stains of Luz."
+        "description": "Gradient Skill (doesn't consume turn). Deals extreme damage a all enemies. 1 hit. Can cause Break. O elemento depende de qual Mancha Lune possui more. Using this skill grants 3 stains of Luz."
       },
       "lune-tree-of-life": {
         "name": "Tree of Life",
-        "description": "Skill Effect: Remove all Efeitos de Status and heals all allies. Using this skill grants 1 Light stain."
+        "description": "Gradient Skill (doesn't consume turn). Remove all Efeitos de Status and heals all allies. Using this skill grants 1 Light stain."
       },
       "lune-tremor": {
         "name": "Tremor",
-        "description": "Skill Effect: Deals high damage Earth a all enemies. 1 hit. Remove all Escudos dos enemies. Using this skill grants 1 Mancha Earth and 1 Light stain."
+        "description": "Gradient Skill (doesn't consume turn). Deals high damage Earth a all enemies. 1 hit. Remove all Escudos dos enemies. Using this skill grants 1 Mancha Earth and 1 Light stain."
       },
       "maelle-offensive-switch": {
         "name": "Offensive Switch",
@@ -2087,7 +2088,7 @@
       },
       "maelle-guard-up": {
         "name": "Guard Up",
-        "description": "Applies Shell to up to 3 allies for 3 turns (reduces incoming damage). Perfect QTE applies to entire team. If Maelle uses this skill while in Offensive Stance, gains bonus. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Choose an ally and roll 1d6. Roll 3-6: Applies Shell to entire team for 3 turns. Roll 1-2: Applies Shell only to chosen target for 3 turns. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-swift-stride": {
         "name": "Swift Stride",
@@ -2111,11 +2112,11 @@
       },
       "maelle-combustion": {
         "name": "Combustion",
-        "description": "Deals medium Physical damage to a single target. 2 hits. Consumes up to 10 Burn for increased damage. If Maelle uses this skill while in Offensive Stance, deals bonus damage. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Deals medium Physical damage to a single target. 2 hits. Consumes up to 10 Burn for increased damage. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-fleuret-fury": {
         "name": "Fleuret Fury",
-        "description": "Deals high Physical damage to a single target. 3 hits. Can apply Break. If Maelle uses this skill while in Virtuose Stance, remains in Virtuose. Using this skill changes Maelle's Stance to Stanceless."
+        "description": "Deals high Physical damage to a single target. 3 hits. Can cause Break. If Maelle uses this skill while in Virtuose Stance, remains in Virtuose. Using this skill changes Maelle's Stance to Stanceless."
       },
       "maelle-breaking-rules": {
         "name": "Breaking Rules",
@@ -2123,7 +2124,7 @@
       },
       "maelle-fencers-flurry": {
         "name": "Fencer's Flurry",
-        "description": "Deals medium damage to all enemies. 1 hit. Uses weapon's element. Applies Defenceless for 1 turn (enemies take 25% increased damage). If Maelle uses this skill while in Offensive Stance, gains bonus effect. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Deals medium damage to all enemies. 1 hit. Uses weapon's element. Applies Defenceless for 1 turn (enemies take 25% increased damage). Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-phantom-strike": {
         "name": "Phantom Strike",
@@ -2131,11 +2132,11 @@
       },
       "maelle-burning-canvas": {
         "name": "Burning Canvas",
-        "description": "Deals high Void damage to a single target. 5 hits. Applies 1 Burn per hit. Damage increased for each Burn on the target. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Deals high Void damage to a single target. 5 hits. Applies 1 Burn per hit. Damage increased by +2 for each Burn on the target. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-revenge": {
         "name": "Revenge",
-        "description": "Deals high Fire damage to a single target. 1 hit. Damage increased for each hit received since previous turn. Can apply Break. If Maelle uses this skill while in Defensive Stance, deals bonus damage. Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals high Fire damage to a single target. 1 hit. Damage increased for each attack that dealt damage to you since previous turn. Can cause Break. Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-pyrolyse": {
         "name": "Pyrolyse",
@@ -2151,7 +2152,7 @@
       },
       "maelle-payback": {
         "name": "Payback",
-        "description": "Deals very high Physical damage to a single target. 1 hit. Can apply Break. AP cost reduced for each attack parried since last turn (base cost 9 AP). If Maelle uses this skill while in Defensive Stance, gains bonus. Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals very high Physical damage to a single target. 1 hit. Can cause Break. AP cost reduced for each attack parried since last turn (base cost 9 AP). Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-stendhal": {
         "name": "Stendhal",
@@ -2167,15 +2168,15 @@
       },
       "maelle-virtuose-strike": {
         "name": "Virtuose Strike",
-        "description": "Gradient Skill (does not consume turn). Deals high Physical damage to a single target. 5 hits. Requires 1 Gradient Charge. Using this skill changes Maelle's Stance to Virtuose."
+        "description": "Gradient Skill (does not consume turn). Deals high Physical damage to a single target. 5 hits. Using this skill changes Maelle's Stance to Virtuose."
       },
       "maelle-gommage": {
         "name": "Gommage",
-        "description": "Gradient Skill (does not consume turn). Kills weak targets. Otherwise deals extreme Void damage to a single target. If Maelle uses this skill while in Virtuose Stance, can be activated. Using this skill changes Maelle's Stance to Virtuose. Requires Gradient Charge."
+        "description": "Gradient Skill (does not consume turn). Kills weak targets. Otherwise deals extreme Void damage to a single target. Using this skill changes Maelle's Stance to Virtuose."
       },
       "maelle-phoenix-flame": {
         "name": "Phoenix Flame",
-        "description": "Gradient Skill (does not consume turn). Applies 10 Burn to all enemies. Revives all allies with 50-70% HP. Requires 2 Gradient Charges. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Gradient Skill (does not consume turn). Applies 10 Burn to all enemies. Revives all allies with 50-70% HP. Using this skill changes Maelle's Stance to Offensive."
       },
       "sciel-twilight-slash": {
         "name": "Twilight Slash",
@@ -2271,19 +2272,19 @@
       },
       "sciel-shadow-bringer": {
         "name": "Shadow Bringer",
-        "description": "Habilidade Gradiente. Deals damage das Trevas high to enemies aleatórios. 10 hits. Aplica 1 Predição for hit."
+        "description": "Gradient Skill (doesn't consume turn). Deals damage das Trevas high to enemies aleatórios. 10 hits. Aplica 1 Predição for hit."
       },
       "sciel-doom": {
         "name": "Doom",
-        "description": "Habilidade Gradiente. Deals damage das Trevas muito high to a single target. 3 hits. Aplica Fraco, Indefeso and Lento for 3 turns. Can cause Break."
+        "description": "Gradient Skill (doesn't consume turn). Deals damage das Trevas muito high to a single target. 3 hits. Aplica Fraco, Indefeso and Lento for 3 turns. Can cause Break."
       },
       "sciel-end-slice": {
         "name": "End Slice",
-        "description": "Habilidade Gradiente. Deals damage Physical extreme to a single target. 1 hit. O damage escala com a quantidade de Predições consumidas."
+        "description": "Gradient Skill (doesn't consume turn). Deals damage Physical extreme to a single target. 1 hit. O damage escala com a quantidade de Predições consumidas."
       },
       "verso-angels-eyes": {
         "name": "Angel's Eyes",
-        "description": "Deals damage Physical extremo. 8 golpes. Ganha 1 Perfeição adicional for golpe. Aplica Auréola to Verso, revivendo-o se morrer."
+        "description": "Gradient Skill (doesn't consume turn). Deals damage Physical extremo. 8 golpes. Ganha 1 Perfeição adicional for golpe. Aplica Auréola to Verso, revivendo-o se morrer."
       },
       "verso-ascending-assault": {
         "name": "Ascending Assault",
@@ -2371,7 +2372,7 @@
       },
       "verso-sabotage": {
         "name": "Sabotage",
-        "description": "Deals damage Physical medium to all enemies. 1 golpe. Aplica Marca."
+        "description": "Gradient Skill (doesn't consume turn). Deals damage Physical medium to all enemies. 1 golpe. Aplica Marca."
       },
       "verso-speedburst": {
         "name": "Speed Burst",
@@ -2383,7 +2384,7 @@
       },
       "verso-striker": {
         "name": "Striker",
-        "description": "Deals damage Physical high to a single target. 1 golpe. Pode Quebrar."
+        "description": "Gradient Skill (doesn't consume turn). Deals damage Physical high to a single target. 1 golpe. Pode Quebrar."
       },
       "verso-strike-storm": {
         "name": "Strike Storm",
@@ -2736,9 +2737,29 @@
         "Broken": "Broken",
         "Fleeing": "Fleeing",
         "FireVulnerability": "Fire Vulnerability",
-        "Taunt": "Taunt",
+        "Guardian": "Guardian",
         "Foretell": "Foretell",
         "Twilight": "🌕 Twilight",
+        "Powerless": "Powerless",
+        "Rush": "Rush",
+        "Burn": "Burn",
+        "Shield": "Shield",
+        "Powerful": "Powerful",
+        "Mark": "Mark",
+        "Shell": "Shell",
+        "Slow": "Slow",
+        "Freeze": "Freeze",
+        "GreaterRush": "Greater Rush",
+        "GreaterSlow": "Greater Slow",
+        "EnfeeblingMark": "Enfeebling Mark",
+        "DamageReduction": "Damage Reduction",
+        "SuccessiveParry": "Successive Parry",
+        "Aureole": "Aureole",
+        "Vulnerable": "Vulnerable",
+        "DoubleDamage": "Double Damage",
+        "Defenceless": "Defenceless",
+        "Regen": "Regeneration",
+        "Curse": "Curse",
         "freeShot": "Free Shot",
         "jump": "Jump",
         "gradient": "Gradient",
@@ -2770,7 +2791,30 @@
         "Fragile": "Taking damage greater than twice your resistance makes you fragile. While fragile you are vulnerable to breaking.",
         "Broken": "You cannot defend or act.",
         "Fleeing": "The character is trying to flee the battle and cannot perform any other action.",
+        "FireVulnerability": "The character takes increased damage from Fire attacks.",
+        "Guardian": "Protects allies by taking damage in their place when they are attacked.",
+        "Foretell": "Each Foretell stack increases damage dealt by Sciel. Consumed by certain skills.",
         "Twilight": "Mystical state of Sciel that grants +150% damage, double Foretell inflicted (up to 40 maximum) and prevents Sun/Moon charge gain. Activated when having at least 1 Sun charge and 1 Moon charge simultaneously.",
+        "Powerless": "The character cannot use skills or deal damage.",
+        "Rush": "Increases the character's speed and attack capability.",
+        "Burn": "Deals continuous fire damage to the character.",
+        "Shield": "Protects the character from damage.",
+        "Powerful": "Significantly increases attack power.",
+        "Mark": "Marks the target to receive increased damage.",
+        "Shell": "Significantly reduces damage taken.",
+        "Slow": "Reduces the character's speed.",
+        "Freeze": "Freezes the character, preventing actions.",
+        "GreaterRush": "Enhanced version of Rush, with stronger effects.",
+        "GreaterSlow": "Enhanced version of Slow, with stronger effects.",
+        "EnfeeblingMark": "Mark that weakens the target, reducing their power.",
+        "DamageReduction": "Reduces damage taken from all sources.",
+        "SuccessiveParry": "Improves ability to parry consecutive attacks.",
+        "Aureole": "Protective aura that grants benefits.",
+        "Vulnerable": "The character takes increased damage from all sources.",
+        "DoubleDamage": "The next attack deals double damage.",
+        "Defenceless": "The character cannot defend against attacks.",
+        "Regen": "Regenerates health points over time.",
+        "Curse": "Curse that causes continuous negative effects.",
         "freeShot": "Accumulates bonus for basic attacks.",
         "jump": "Ignores terrain or obstacles temporarily.",
         "gradient": "Special internal use effect.",

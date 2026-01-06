@@ -12,7 +12,6 @@ import CampaignAdmin from "./pages/CampaignAdmin.tsx";
 import CampaignList from "./pages/CampaignList.tsx";
 import CharacterSheetList from "./pages/CharacterSheetList.tsx";
 import DiceExample from "./pages/DiceExample.tsx";
-import { ToastProvider } from "./components/Toast";
 
 const router = createBrowserRouter([
   {
@@ -36,8 +35,6 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ToastProvider>
-      <RouterProvider router={router} />
-    </ToastProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>,
 )
