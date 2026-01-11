@@ -95,6 +95,7 @@ export default function PlayerPage() {
   const [pendingSkillId, setPendingSkillId] = useState<string | null>(null);
   const [isSelectingSkillTarget, setIsSelectingSkillTarget] = useState(false);
   const [isExecutingSkill, setIsExecutingSkill] = useState(false);
+  const [excludeSelfFromTargeting, setExcludeSelfFromTargeting] = useState(false);
   const { showToast } = useToast();
   const { pathname } = useLocation();
   const isAdmin = !!matchPath(
@@ -176,6 +177,7 @@ export default function PlayerPage() {
       setCombatTab(null);
       setIsSelectingSkillTarget(false);
       setPendingSkillId(null);
+      setExcludeSelfFromTargeting(false);
     }
   }, [tab]);
 
@@ -312,7 +314,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "combate" && (
-            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} />
+            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelfFromTargeting={excludeSelfFromTargeting} />
           )}
 
           {!loading && !error && tab === "habilidades" && (
@@ -1098,6 +1100,7 @@ export default function PlayerPage() {
         setPendingSkillId(null);
         setIsSelectingSkillTarget(false);
         setIsUsingSkillMode(false);
+        setExcludeSelfFromTargeting(false);
         break;
       default:
         break;
@@ -1176,13 +1179,9 @@ export default function PlayerPage() {
     const targetsAllies =
       skillMetadata.targetScope === "self" ||
       skillMetadata.targetScope === "ally" ||
+      skillMetadata.targetScope === "all-allies" ||
       skillMetadata.primaryEffects.some(e => e.targetType === "self" || e.targetType === "ally" || e.targetType === "all-allies") ||
       skillMetadata.conditionalEffects.some(e => e.targetType === "self" || e.targetType === "ally" || e.targetType === "all-allies");
-
-    // Store the skill to be used
-    setPendingSkillId(skillId);
-    setTab("combate");
-    setIsUsingSkillMode(false);
 
     // Get current character to determine which team they are on
     const currentCharacter = player?.fightInfo?.characters?.find(
@@ -1191,6 +1190,9 @@ export default function PlayerPage() {
 
     // Auto-execute self-targeted utility skills (like Mezzo Forte)
     if (skillMetadata.targetScope === "self" && skillMetadata.damageLevel === "none" && !targetsEnemies) {
+      setPendingSkillId(skillId);
+      setTab("combate");
+      setIsUsingSkillMode(false);
       if (currentCharacter) {
         handleExecuteSkill(skillId, currentCharacter);
       } else {
@@ -1201,9 +1203,30 @@ export default function PlayerPage() {
 
     // Auto-execute all-enemies skills (like Guard Down)
     if (skillMetadata.targetScope === "all-enemies" && currentCharacter) {
+      setPendingSkillId(skillId);
+      setTab("combate");
+      setIsUsingSkillMode(false);
       handleExecuteSkill(skillId, currentCharacter);
       return;
     }
+
+    // Auto-execute all-allies skills (like All Set)
+    if (skillMetadata.targetScope === "all-allies" && currentCharacter) {
+      setPendingSkillId(skillId);
+      setTab("combate");
+      setCombatTab(currentCharacter.isEnemy ? "enemies" : "team");
+      setIsUsingSkillMode(false);
+      handleExecuteSkill(skillId, currentCharacter);
+      return;
+    }
+
+    // Store the skill to be used and switch to combat tab for target selection
+    setPendingSkillId(skillId);
+    setTab("combate");
+    setIsUsingSkillMode(false);
+
+    // Skills with targetScope "ally" should exclude self from targeting
+    setExcludeSelfFromTargeting(skillMetadata.targetScope === "ally");
 
     // Determine correct tab based on target type and character's team
     // If character is on enemy team (isEnemy = true):
@@ -1309,6 +1332,7 @@ export default function PlayerPage() {
           showToast(`Cargas de Gradiente insuficientes! Necessário: ${skillCost}, Disponível: ${currentGradientCharges}`);
           setPendingSkillId(null);
           setIsSelectingSkillTarget(false);
+          setExcludeSelfFromTargeting(false);
           return;
         }
       } else {
@@ -1317,6 +1341,7 @@ export default function PlayerPage() {
           showToast(`MP insuficiente! Necessário: ${skillCost}, Disponível: ${currentMp}`);
           setPendingSkillId(null);
           setIsSelectingSkillTarget(false);
+          setExcludeSelfFromTargeting(false);
           return;
         }
       }
@@ -1329,6 +1354,7 @@ export default function PlayerPage() {
           setPendingSkillId(null);
           setIsSelectingSkillTarget(false);
           setIsExecutingSkill(false);
+          setExcludeSelfFromTargeting(false);
           return;
         }
         // Note: consumesStains is OPTIONAL - skill can be used without stains for base effect
@@ -1367,8 +1393,42 @@ export default function PlayerPage() {
 
       // Roll 1d6 to determine target scope
       if (resolved.metadata.rollsForTargetScope) {
+        // Rush (Sciel): 1-2 = single ally, 3-6 = all allies
+        if (skillId === "sciel-rush") {
+          await new Promise<void>((resolvePromise) => {
+            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
+              const diceRoll = result && result.length > 0 ? result[0].value : 1;
+
+              if (diceRoll >= 3) {
+                // 3-6: All allies
+                showToast(`Rolou ${diceRoll}! Rapidez aplicada em todos os aliados!`);
+                const alliesTargets = (player.fightInfo?.characters ?? [])
+                  .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
+                  .map(c => c.battleID);
+
+                // Update resolved to target all allies
+                resolved = {
+                  ...resolved,
+                  targetIds: alliesTargets,
+                  effects: alliesTargets.flatMap(targetId =>
+                    resolved.effects.map(eff => ({
+                      ...eff,
+                      targetBattleId: targetId,
+                      targetType: "all-allies" as any
+                    }))
+                  )
+                };
+              } else {
+                // 1-2: Single ally only (keep original target)
+                showToast(`Rolou ${diceRoll}! Rapidez aplicada apenas no alvo escolhido.`);
+              }
+
+              resolvePromise();
+            });
+          });
+        }
         // Guard Up (Maelle): 3-6 = all allies, 1-2 = single target only
-        if (skillId === "maelle-guard-up") {
+        else if (skillId === "maelle-guard-up") {
           await new Promise<void>((resolvePromise) => {
             rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
               const diceRoll = result && result.length > 0 ? result[0].value : 1;
@@ -1547,12 +1607,15 @@ export default function PlayerPage() {
       if (resolved.metadata.drainsAlliesHp || resolved.metadata.consumesAllEnemiesForetell) {
         const allCharacters = player.fightInfo?.characters ?? [];
 
-        // Drain allies HP to 1
+        // Drain allies HP to 1 (including self)
         if (resolved.metadata.drainsAlliesHp) {
+          const turnList = player.fightInfo?.turns ?? [];
+          const battleIdsInTurns = new Set(turnList.map(t => t.battleCharacterId));
+
           const aliveAllies = allCharacters.filter(c =>
             !c.isEnemy &&
-            c.battleID !== source.battleID &&
-            c.healthPoints > 1  // Only drain if HP > 1
+            c.healthPoints > 1 &&  // Only drain if HP > 1
+            battleIdsInTurns.has(c.battleID)  // Only allies who entered battle (in turn list)
           );
 
           for (const ally of aliveAllies) {
@@ -1562,7 +1625,7 @@ export default function PlayerPage() {
           }
 
           if (hpDrained > 0) {
-            showToast(`HP drenado de aliados: ${hpDrained} (Dano +${hpDrained})`);
+            showToast(`HP drenado de aliados em combate: ${hpDrained} (Dano +${hpDrained})`);
           }
         }
 
@@ -1623,8 +1686,18 @@ export default function PlayerPage() {
       // Variable to store last dice result for mechanics that need it (e.g., Elemental Trick)
       let lastDiceResult: number[] = [];
 
-      if (resolved.hitCount > 0) {
-        for (let hitIndex = 0; hitIndex < resolved.hitCount; hitIndex++) {
+      // Calculate actual hit count (random if minHits/maxHits defined)
+      const actualHitCount = resolved.metadata.minHits && resolved.metadata.maxHits
+        ? Math.floor(Math.random() * (resolved.metadata.maxHits - resolved.metadata.minHits + 1)) + resolved.metadata.minHits
+        : resolved.hitCount;
+
+      // Show toast for variable hit skills
+      if (resolved.metadata.minHits && resolved.metadata.maxHits) {
+        showToast(`${actualHitCount} acerto(s)!`);
+      }
+
+      if (actualHitCount > 0) {
+        for (let hitIndex = 0; hitIndex < actualHitCount; hitIndex++) {
           await new Promise<void>((resolve, reject) => {
             rollWithTimeout(
               diceBoardRef,
@@ -1694,7 +1767,7 @@ export default function PlayerPage() {
                       foretellConsumedPerTarget.set(targetId, consumed);
                       if (consumed && hitIndex === 0) {
                         const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === targetId);
-                        showToast(`${targetChar?.name ?? 'Alvo'}: Predição consumida! Dano x${resolved.metadata.foretellPerHitMultiplier ?? 3.0}`);
+                        showToast(`${targetChar?.name ?? 'Alvo'}: Predição consumida! Dano x${resolved.metadata.foretellPerHitMultiplier ?? 2.0}`);
                       }
                     }
                   }
@@ -1839,7 +1912,7 @@ export default function PlayerPage() {
 
                     // Apply per-target Foretell consumption multiplier (Sealed Fate / Firing Shadow)
                     const targetForetellMultiplier = foretellConsumedPerTarget.get(targetId)
-                      ? (resolved.metadata.foretellPerHitMultiplier ?? 3.0)
+                      ? (resolved.metadata.foretellPerHitMultiplier ?? 2.0)
                       : 1.0;
 
                     // Apply charge bonus, foretell bonus, HP drained, all enemies foretell, HP sacrifice, shield bonus, and burn bonus (additive) then per-hit foretell multiplier, twilight, Verso's perfection, low HP multiplier, lampmaster escalation, hits received bonus, almighty mask, burning target, stunned target, powerless target, burn consumption, fire vulnerability, and marked bonus (multiplicative)
@@ -2016,16 +2089,17 @@ export default function PlayerPage() {
                           consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge,
                           isGradient: hitIndex === 0 && isGradientSkill,
                           destroysShields: hitIndex === 0 && resolved.metadata.destroysShields,
-                          grantsAPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsAPPerShield : undefined,
+                          grantsMPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsMPPerShield : undefined,
                           consumesBurn: hitIndex === 0 && burnsToConsume > 0 ? burnsToConsume : undefined,
                           consumesForetell: hitIndex === 0 && foretellsToConsume > 0 ? foretellsToConsume : undefined,
                           executionThreshold: resolved.metadata.executionThreshold,
-                          skillType: hitIndex === 0 ? skillType : undefined,
+                          skillType: skillType,
                           bestialWheelAdvance: hitIndex === 0 ? (
                             resolved.metadata.forceAlmightyMask
                               ? ((9 - bestialWheelPosition) % 9)  // Calculate positions to reach 0 (Almighty Mask)
                               : resolved.metadata.bestialWheelAdvance
                           ) : undefined,
+                          isLastHit: hitIndex === actualHitCount - 1,
                           ignoresShields: resolved.metadata.ignoresShields,
                           shouldRemoveMarked: resolved.metadata.markedDamageBonus ? false : undefined
                         }
@@ -2039,16 +2113,17 @@ export default function PlayerPage() {
                           consumesCharge: hitIndex === 0 && resolved.metadata.consumesCharge,
                           isGradient: hitIndex === 0 && isGradientSkill,
                           destroysShields: hitIndex === 0 && resolved.metadata.destroysShields,
-                          grantsAPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsAPPerShield : undefined,
+                          grantsMPPerShield: hitIndex === 0 && resolved.metadata.destroysShields ? resolved.metadata.grantsMPPerShield : undefined,
                           consumesBurn: hitIndex === 0 && burnsToConsume > 0 ? burnsToConsume : undefined,
                           consumesForetell: hitIndex === 0 && foretellsToConsume > 0 ? foretellsToConsume : undefined,
                           executionThreshold: resolved.metadata.executionThreshold,
-                          skillType: hitIndex === 0 ? skillType : undefined,
+                          skillType: skillType,
                           bestialWheelAdvance: hitIndex === 0 ? (
                             resolved.metadata.forceAlmightyMask
                               ? ((9 - bestialWheelPosition) % 9)  // Calculate positions to reach 0 (Almighty Mask)
                               : resolved.metadata.bestialWheelAdvance
                           ) : undefined,
+                          isLastHit: hitIndex === actualHitCount - 1,
                           ignoresShields: resolved.metadata.ignoresShields,
                           shouldRemoveMarked: resolved.metadata.markedDamageBonus ? false : undefined
                         };
@@ -2101,10 +2176,14 @@ export default function PlayerPage() {
                   }
 
                   // Searing Bond: Propagate damage to other Burning enemies
-                  if (hitIndex === resolved.hitCount - 1 && resolved.metadata.propagatesBurnDamage) {
+                  if (hitIndex === actualHitCount - 1 && resolved.metadata.propagatesBurnDamage) {
                     // Only propagate on last hit
                     const primaryTargetId = resolved.targetIds[0]; // Single target skill
                     const allEnemies = (player.fightInfo?.characters ?? []).filter(c => c.isEnemy);
+
+                    // Get Foretell amount from skill metadata (same as primary target)
+                    const foretellEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Foretell");
+                    const foretellAmount = foretellEffect?.amount ?? 1;
 
                     // Find other burning enemies (not the primary target)
                     const otherBurningEnemies = allEnemies.filter(enemy =>
@@ -2122,7 +2201,7 @@ export default function PlayerPage() {
                         const propagationEffects: AttackStatusEffectRequest[] = [
                           {
                             effectType: "Foretell",
-                            ammount: 1,
+                            ammount: foretellAmount,  // Same amount as primary target
                             remainingTurns: 0
                           }
                         ];
@@ -2138,7 +2217,7 @@ export default function PlayerPage() {
                           }
                         }
 
-                        // Apply half damage + 1 Foretell to each burning enemy
+                        // Apply half damage + Foretell (same amount as primary target) to each burning enemy
                         const propagationRequest: CreateAttackRequest = isNpc
                           ? {
                               sourceBattleId: source.battleID,
@@ -2202,7 +2281,7 @@ export default function PlayerPage() {
         const isMezzoForte = resolved.metadata.grantsMPDiceRoll !== undefined;
 
         if (isMezzoForte) {
-          // Mezzo Forte: Roll dice for MP recovery, maintain stance, grant AP
+          // Mezzo Forte: Roll dice for MP recovery, maintain stance, grant MP
           // Set flag to prevent duplicate execution
           setIsExecutingMezzoForte(true);
 
@@ -2236,9 +2315,9 @@ export default function PlayerPage() {
             setIsExecutingMezzoForte(false);
           }
 
-          // Grant AP
-          if (resolved.metadata.grantsAPRange) {
-            const { min, max } = resolved.metadata.grantsAPRange;
+          // Grant MP
+          if (resolved.metadata.grantsMPRange) {
+            const { min, max } = resolved.metadata.grantsMPRange;
             const apGrant = Math.floor(Math.random() * (max - min + 1)) + min;
             if (apGrant > 0) {
               const currentAP = source.chargePoints ?? 0;
@@ -2302,17 +2381,17 @@ export default function PlayerPage() {
 
       await applySpecialEffects(resolved.effects, player.fightInfo?.characters ?? [], foretellHealBonus);
 
-      // Orphelin Cheers: Grant AP to affected allies if at Caster/Almighty Mask
-      if (resolved.metadata.grantsApAtCasterMask) {
+      // Orphelin Cheers: Grant MP to affected allies if at Caster/Almighty Mask
+      if (resolved.metadata.grantsMpAtCasterMask) {
         const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
         const bestialWheelPosition = source.bestialWheelPosition ?? -1;
         const currentMask = wheelPattern[bestialWheelPosition] ?? "";
         const isCasterOrAlmighty = currentMask === "blue" || currentMask === "gold";
 
         if (isCasterOrAlmighty) {
-          const apToGrant = resolved.metadata.grantsApAtCasterMask;
+          const apToGrant = resolved.metadata.grantsMpAtCasterMask;
           for (const targetId of resolved.targetIds) {
-            // Grant AP logic would need backend support - for now, just show toast
+            // Grant MP logic would need backend support - for now, just show toast
             showToast(`${apToGrant} PM concedidos ao aliado!`);
           }
         }
@@ -2338,9 +2417,14 @@ export default function PlayerPage() {
         }
       }
 
-      if (resolved.metadata.canBreak) {
+      if (resolved.metadata.canBreak && player.fightInfo?.characters) {
         for (const targetId of resolved.targetIds) {
-          await APIBattle.breakTarget(targetId);
+          const target = player.fightInfo.characters.find(c => c.battleID === targetId);
+          const isFragile = target?.status?.some(s => s.effectName === "Fragile") ?? false;
+
+          if (isFragile) {
+            await APIBattle.breakTarget(targetId);
+          }
         }
       }
 
@@ -2387,6 +2471,52 @@ export default function PlayerPage() {
         }
       }
 
+      // Dark Cleansing: Cleanses target and copies buffs to other allies
+      if (resolved.metadata.cleansesAndCopiesBuffs && player.fightInfo?.characters) {
+        const targetId = resolved.targetIds[0];
+        const target = player.fightInfo.characters.find(c => c.battleID === targetId);
+
+        if (target) {
+          // Cleanse debuffs from target
+          await APIBattle.cleanse(targetId);
+
+          // Get all buffs from target (positive effects)
+          const buffs = target.status?.filter(s => {
+            const buffTypes = ["Empowered", "Protected", "Hastened", "Shield", "Regeneration", "Shell", "Twilight"];
+            return buffTypes.includes(s.effectName);
+          }) ?? [];
+
+          if (buffs.length > 0) {
+            // Get all other allies (excluding target)
+            const otherAllies = player.fightInfo.characters.filter(
+              c => !c.isEnemy && c.battleID !== targetId && c.healthPoints > 0
+            );
+
+            // Copy buffs to other allies
+            for (const ally of otherAllies) {
+              for (const buff of buffs) {
+                // Special check: Twilight can only be copied to Sciel characters
+                if (buff.effectName === "Twilight") {
+                  const isSciel = ally.id.toLowerCase().includes("sciel");
+                  if (!isSciel) {
+                    continue; // Skip copying Twilight to non-Sciel characters
+                  }
+                }
+
+                await APIBattle.addStatus({
+                  battleCharacterId: ally.battleID,
+                  effectType: buff.effectName as any,
+                  ammount: buff.ammount ?? 0,
+                  remainingTurns: buff.remainingTurns ?? null
+                });
+              }
+            }
+
+            showToast(`Buffs copiados para outros aliados!`);
+          }
+        }
+      }
+
       // Our Sacrifice: Consume Foretell from all enemies
       if (resolved.metadata.consumesAllEnemiesForetell && allEnemiesForetellConsumed > 0) {
         const allCharacters = player.fightInfo?.characters ?? [];
@@ -2425,13 +2555,13 @@ export default function PlayerPage() {
         }
       }
 
-      // Last Chance: Set HP to 1 and refill AP to maximum
+      // Last Chance: Set HP to 1 and refill MP to maximum
       if (resolved.metadata.setsHpTo !== undefined) {
         await APIBattle.updateCharacterHp(source.battleID, resolved.metadata.setsHpTo);
         showToast(`Vida reduzida para ${resolved.metadata.setsHpTo}!`);
       }
 
-      if (resolved.metadata.refillsAP) {
+      if (resolved.metadata.refillsMP) {
         const maxMp = source.maxMagicPoints ?? 0;
         await APIBattle.updateCharacterMp(source.battleID, maxMp);
         showToast(`PA recarregado para ${maxMp}!`);
@@ -2447,9 +2577,9 @@ export default function PlayerPage() {
       }
 
       // Swift Stride: Grant random MP between min and max
-      // NOTE: Mezzo Forte handles its own MP/AP, so skip this for skills with dice roll MP
-      if (resolved.metadata.grantsAPRange && !resolved.metadata.grantsMPDiceRoll) {
-        const { min, max } = resolved.metadata.grantsAPRange;
+      // NOTE: Mezzo Forte handles its own MP/MP, so skip this for skills with dice roll MP
+      if (resolved.metadata.grantsMPRange && !resolved.metadata.grantsMPDiceRoll) {
+        const { min, max } = resolved.metadata.grantsMPRange;
         const apGranted = Math.floor(Math.random() * (max - min + 1)) + min;
         // Calculate MP after skill cost was consumed by backend
         const mpAfterCost = (source.magicPoints ?? 0) - skillCost;
@@ -2458,6 +2588,49 @@ export default function PlayerPage() {
         await APIBattle.updateCharacterMp(source.battleID, newMp);
         if (apGranted > 0) {
           showToast(`+${apGranted} PM concedidos! (${mpAfterCost} → ${newMp})`);
+        }
+      }
+
+      // Intervention: Grant MP and immediate turn to ally
+      if ((resolved.metadata.grantsImmediateTurn || resolved.metadata.grantsMP) && player.fightInfo?.characters) {
+        const targetId = resolved.targetIds[0];
+        const target = player.fightInfo.characters.find(c => c.battleID === targetId);
+
+        if (target) {
+          // Grant MP to target
+          if (resolved.metadata.grantsMP) {
+            const currentMP = target.magicPoints ?? 0;
+            const maxMP = target.maxMagicPoints ?? 10;
+            const newMP = Math.min(currentMP + resolved.metadata.grantsMP, maxMP);
+            await APIBattle.updateCharacterMp(targetId, newMP);
+            showToast(`${target.name} recebeu ${resolved.metadata.grantsMP} PM! (${currentMP} → ${newMP})`);
+          }
+
+          // Grant immediate turn (reorder turns to put target next)
+          if (resolved.metadata.grantsImmediateTurn && player.fightInfo.turns) {
+            const turns = player.fightInfo.turns;
+
+            // Find current turn index (should be 0 - the one that just played)
+            const currentTurnIndex = 0;
+
+            // Find target's next turn
+            const targetTurnIndex = turns.findIndex((t, idx) =>
+              idx > currentTurnIndex && t.battleCharacterId === targetId
+            );
+
+            if (targetTurnIndex > 0) {
+              // Reorder: move target's turn to position 1 (right after current)
+              const reorderedTurns = [...turns];
+              const [targetTurn] = reorderedTurns.splice(targetTurnIndex, 1);
+              reorderedTurns.splice(1, 0, targetTurn);
+
+              // Send reordered turn IDs to backend
+              const turnIds = reorderedTurns.map(t => t.id);
+              await APIBattle.reorderTurns(turnIds);
+
+              showToast(`${target.name} jogará imediatamente!`);
+            }
+          }
         }
       }
 
@@ -2646,6 +2819,7 @@ export default function PlayerPage() {
       setPendingSkillId(null);
       setIsSelectingSkillTarget(false);
       setIsExecutingSkill(false);
+      setExcludeSelfFromTargeting(false);
 
     } catch (error) {
       console.error("Erro ao usar skill:", error);
@@ -2653,6 +2827,7 @@ export default function PlayerPage() {
       setPendingSkillId(null);
       setIsSelectingSkillTarget(false);
       setIsExecutingSkill(false);
+      setExcludeSelfFromTargeting(false);
     }
   }
 

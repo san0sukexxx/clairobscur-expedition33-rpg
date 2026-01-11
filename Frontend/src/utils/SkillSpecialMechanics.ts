@@ -192,9 +192,10 @@ export async function handleGrantMpPerForetell(
 ): Promise<void> {
   if (!ctx.resolved.metadata.grantsMpPerForetell || mpToGrant <= 0) return;
 
+  // Filter allies: alive, not the source character, and has MP system
   const aliveAllies = ctx.allCharacters.filter(c =>
     !c.isEnemy &&
-    c.battleID !== ctx.source.battleID &&
+    c.battleID !== ctx.source.battleID &&  // Exclude the character using the skill
     c.healthPoints > 0 &&
     c.maxMagicPoints !== undefined &&
     c.maxMagicPoints !== null &&
@@ -202,14 +203,19 @@ export async function handleGrantMpPerForetell(
   );
 
   if (aliveAllies.length > 0) {
-    // Select random ally
-    const randomAlly = aliveAllies[Math.floor(Math.random() * aliveAllies.length)];
-    const currentMp = randomAlly.magicPoints ?? 0;
-    const maxMp = randomAlly.maxMagicPoints ?? 0;
+    // Select ally with lowest MP percentage
+    const allyWithLowestMp = aliveAllies.reduce((lowest, current) => {
+      const currentMpPercent = ((current.magicPoints ?? 0) / (current.maxMagicPoints ?? 1)) * 100;
+      const lowestMpPercent = ((lowest.magicPoints ?? 0) / (lowest.maxMagicPoints ?? 1)) * 100;
+      return currentMpPercent < lowestMpPercent ? current : lowest;
+    });
+
+    const currentMp = allyWithLowestMp.magicPoints ?? 0;
+    const maxMp = allyWithLowestMp.maxMagicPoints ?? 0;
     const newMp = Math.min(currentMp + mpToGrant, maxMp);
 
-    await APIBattle.updateCharacterMp(randomAlly.battleID, newMp);
-    ctx.showToast(`${randomAlly.name} recebeu +${mpToGrant} PM! (${currentMp} → ${newMp})`);
+    await APIBattle.updateCharacterMp(allyWithLowestMp.battleID, newMp);
+    ctx.showToast(`${allyWithLowestMp.name} recebeu +${mpToGrant} PM! (${currentMp} → ${newMp})`);
   } else {
     ctx.showToast(`Nenhum aliado vivo para receber PM!`);
   }

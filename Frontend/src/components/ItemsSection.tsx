@@ -203,8 +203,11 @@ function ElixirsCard({
 
     function openRecoveryModal(itemId: string) {
         setSelectedItemId(itemId);
-        setRecoveryPercent(30);
-        setInputValue("30");
+        // TODO: uncomment
+        // setRecoveryPercent(30);
+        // setInputValue("30");
+        setRecoveryPercent(100);
+        setInputValue("100");
         setModalOpen(true);
     }
 

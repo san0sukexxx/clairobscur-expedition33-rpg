@@ -72,7 +72,227 @@ export const NPCsList: NPCInfo[] = [
             type: "weapon",
             itemId: "Lanceram",
             level: 1
-        }
+        },
+
+        skillList: [
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 3,
+                        type: "Shielded"
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Hastened",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Slowed",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Empowered",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Weakened",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Protected",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Unprotected",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Regeneration",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Cursed",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Stunned",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 5,
+                        type: "Confused",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Entangled",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Exhausted",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 3,
+                        type: "Frenzy",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Rage",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 3,
+                        type: "Burning",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 4,
+                        type: "Frozen",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Inverted",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Marked"
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 3,
+                        type: "Plagued"
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Silenced",
+                        remainingTurns: 2
+                    }
+                ]
+            },
+            {
+                type: "give-status",
+                statusList: [
+                    {
+                        ammount: 1,
+                        type: "Dizzy",
+                        remainingTurns: 2
+                    }
+                ]
+            }
+        ]
     },
     {
         id: "gatekeeper",

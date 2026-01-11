@@ -18,6 +18,7 @@ data class CreateAttackRequest(
         val skillType: String? = null,  // "sun" or "moon" for Sciel's charge system
         val bestialWheelAdvance: Int? = null,  // Advances Monoco's Bestial Wheel by this many positions
         val isFirstHit: Boolean? = null,  // Indicates if this is the first hit for damage modifier purposes
+        val isLastHit: Boolean? = null,  // Indicates if this is the last hit of the skill (for Twilight activation)
         val element: String? = null,  // Element type for elemental resistances (e.g., 'Physical', 'Fire', 'Ice')
         val shouldRemoveMarked: Boolean? = null  // If false, don't remove Marked status (e.g., for Gustave's Homage)
 )

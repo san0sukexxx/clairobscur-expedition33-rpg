@@ -80,7 +80,8 @@ class AttackController(
                                 }
                         }
 
-                        sourceBC.magicPoints = next
+                        // Update MP using service to sync with Player table
+                        battleCharacterService.updateCharacterMp(sourceBC.id!!, next)
 
                         // Verso's Perfection Rank: Increase rankProgress based on action type
                         if (sourceBC.characterType == "player" &&
@@ -148,16 +149,18 @@ class AttackController(
                                 }
 
                                 // Check for Twilight activation (needs at least 1 Sun AND 1 Moon charge)
+                                // Only activate on the last hit of a skill to prevent bonus damage during the same skill
                                 val sunCharges = sourceBC.sunCharges ?: 0
                                 val moonCharges = sourceBC.moonCharges ?: 0
-                                if (sunCharges >= 1 && moonCharges >= 1) {
+                                if (sunCharges >= 1 && moonCharges >= 1 && body.isLastHit == true) {
                                         // Activate Twilight: add status for 2 turns and reset charges
                                         battleStatusEffectRepository.save(
                                                 BattleStatusEffect(
                                                         battleCharacterId = sourceBC.id!!,
                                                         effectType = "Twilight",
                                                         ammount = 0,
-                                                        remainingTurns = 2
+                                                        remainingTurns = 2,
+                                                        isResolved = true
                                                 )
                                         )
                                         // Reset sun and moon charges
@@ -295,8 +298,8 @@ class AttackController(
                                         if (hasPoweredAttack) {
                                                 // Consume 1 MP for Powered Attack bonus
                                                 val currentMP = sourceBC.magicPoints ?: 0
-                                                sourceBC.magicPoints = (currentMP - 1).coerceAtLeast(0)
-                                                battleCharacterRepository.save(sourceBC)
+                                                val newMP = (currentMP - 1).coerceAtLeast(0)
+                                                battleCharacterService.updateCharacterMp(sourceBC.id!!, newMP)
                                         }
                                 }
                         }
@@ -397,8 +400,7 @@ class AttackController(
                                         val currentMP = sourceBC.magicPoints ?: 0
                                         val maxMP = sourceBC.maxMagicPoints ?: 0
                                         val newMP = (currentMP + mpToGrant).coerceAtMost(maxMP)
-                                        sourceBC.magicPoints = newMP
-                                        battleCharacterRepository.save(sourceBC)
+                                        battleCharacterService.updateCharacterMp(sourceBC.id!!, newMP)
 
                                         // Log MP recovery
                                         battleLogRepository.save(
@@ -422,8 +424,7 @@ class AttackController(
                         // Execute instantly if below threshold, otherwise apply modified damage
                         val newHp = if (shouldExecute) {
                                 // Instant execution - set HP to 0
-                                targetBC.healthPoints = 0
-                                battleCharacterRepository.save(targetBC)
+                                battleCharacterService.updateCharacterHp(targetBC.id!!, 0)
                                 0
                         } else {
                                 damageService.applyDamage(targetBC, modifiedDamage)

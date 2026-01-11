@@ -2,19 +2,19 @@
   "pictos": {
     "energy-master": {
       "name": "Energy Master",
-      "description": "Every AP gain is increased by 1."
+      "description": "Every MP gain is increased by 1."
     },
     "energising-turn": {
       "name": "Energising Turn",
-      "description": "+1 AP on turn start."
+      "description": "+1 MP on turn start."
     },
     "energising-attack-i": {
       "name": "Energising Attack I",
-      "description": "+1 AP on Base Attack."
+      "description": "+1 MP on Base Attack."
     },
     "energising-parry": {
       "name": "Energising Parry",
-      "description": "+1 AP on successful Parry."
+      "description": "+1 MP on successful Parry."
     },
     "augmented-first-strike": {
       "name": "Augmented First Strike",
@@ -34,7 +34,7 @@
     },
     "lucky-aim": {
       "name": "Lucky Aim",
-      "description": "30% chance to recover 1 AP on hitting a Weak Point."
+      "description": "30% chance to recover 1 MP on hitting a Weak Point."
     },
     "augmented-counter-i": {
       "name": "Augmented Counter I",
@@ -158,27 +158,27 @@
     },
     "dodger": {
       "name": "Dodger",
-      "description": "Gain 1 AP on Perfect Dodge. Once per turn."
+      "description": "Gain 1 MP on Perfect Dodge. Once per turn."
     },
     "energising-start-i": {
       "name": "Energising Start I",
-      "description": "+1 AP on battle start."
+      "description": "+1 MP on battle start."
     },
     "energising-start-ii": {
       "name": "Energising Start II",
-      "description": "+1 AP on battle start."
+      "description": "+1 MP on battle start."
     },
     "energising-start-iii": {
       "name": "Energising Start III",
-      "description": "+1 AP on battle start."
+      "description": "+1 MP on battle start."
     },
     "energising-start-iv": {
       "name": "Energising Start IV",
-      "description": "+1 AP on battle start."
+      "description": "+1 MP on battle start."
     },
     "perilous-parry": {
       "name": "Perilous Parry",
-      "description": "+1 AP on Parry, but damage received is doubled."
+      "description": "+1 MP on Parry, but damage received is doubled."
     },
     "confident": {
       "name": "Confident",
@@ -186,11 +186,11 @@
     },
     "bloody-bullet": {
       "name": "Bloody Bullet",
-      "description": "+1 AP on Weak Point hit."
+      "description": "+1 MP on Weak Point hit."
     },
     "energising-revive": {
       "name": "Energising Revive",
-      "description": "+3 AP to all allies when revived."
+      "description": "+3 MP to all allies when revived."
     },
     "rejuvenating-revive": {
       "name": "Rejuvenating Revive",
@@ -218,7 +218,7 @@
     },
     "dead-energy-ii": {
       "name": "Dead Energy II",
-      "description": "+3 AP on killing an enemy."
+      "description": "+3 MP on killing an enemy."
     },
     "frozen-shot": {
       "name": "Frozen Shot",
@@ -262,7 +262,7 @@
     },
     "energising-death": {
       "name": "Energising Death",
-      "description": "On death, +4 AP to allies."
+      "description": "On death, +4 MP to allies."
     },
     "shielding-death": {
       "name": "Shielding Death",
@@ -346,7 +346,7 @@
     },
     "rewarding-mark": {
       "name": "Rewarding Mark",
-      "description": "+2 AP on dealing damage to a Marked target. Once per turn."
+      "description": "+2 MP on dealing damage to a Marked target. Once per turn."
     },
     "double-mark": {
       "name": "Double Mark",
@@ -362,7 +362,7 @@
     },
     "energising-attack-ii": {
       "name": "Energising Attack II",
-      "description": "+1 AP on Base Attack."
+      "description": "+1 MP on Base Attack."
     },
     "cheater": {
       "name": "Cheater",
@@ -454,7 +454,7 @@
     },
     "energising-heal": {
       "name": "Energising Heal",
-      "description": "On Healing an ally, also give 2 AP."
+      "description": "On Healing an ally, also give 2 MP."
     },
     "protecting-heal": {
       "name": "Protecting Heal",
@@ -470,27 +470,27 @@
     },
     "dead-energy-i": {
       "name": "Dead Energy I",
-      "description": "+3 AP on killing an enemy."
+      "description": "+3 MP on killing an enemy."
     },
     "effective-support": {
       "name": "Effective Support",
-      "description": "+2 AP on using an item."
+      "description": "+2 MP on using an item."
     },
     "weakness-gain": {
       "name": "Weakness Gain",
-      "description": "+1 AP on hitting an enemy's Weakness. Once per turn."
+      "description": "+1 MP on hitting an enemy's Weakness. Once per turn."
     },
     "patient-fighter": {
       "name": "Patient Fighter",
-      "description": "+2 AP on skipping a turn."
+      "description": "+2 MP on skipping a turn."
     },
     "energetic-healer": {
       "name": "Energetic Healer",
-      "description": "+2 AP on Healing an ally. Once per turn."
+      "description": "+2 MP on Healing an ally. Once per turn."
     },
     "beneficial-contamination": {
       "name": "Beneficial Contamination",
-      "description": "+2 AP on applying a Status Effect. Once per turn."
+      "description": "+2 MP on applying a Status Effect. Once per turn."
     },
     "roulette": {
       "name": "Roulette",
@@ -574,7 +574,7 @@
     },
     "energising-shots": {
       "name": "Energising Shots",
-      "description": "20% chance to gain 1 AP on Free Aim shot."
+      "description": "20% chance to gain 1 MP on Free Aim shot."
     },
     "versatile": {
       "name": "Versatile",
@@ -614,15 +614,15 @@
     },
     "energising-pain": {
       "name": "Energising Pain",
-      "description": "No longer gain AP on Parry. +1 AP on getting hit."
+      "description": "No longer gain MP on Parry. +1 MP on getting hit."
     },
     "energising-jump": {
       "name": "Energising Jump",
-      "description": "+1 AP on Jump Counterattack."
+      "description": "+1 MP on Jump Counterattack."
     },
     "powered-attack": {
       "name": "Powered Attack",
-      "description": "On every damage dealt, try to consume 1 AP. If successful, increase damage by 20%."
+      "description": "On every damage dealt, try to consume 1 MP. If successful, increase damage by 20%."
     },
     "combo-attack-ii": {
       "name": "Combo Attack II",
@@ -642,7 +642,7 @@
     },
     "energising-break": {
       "name": "Energising Break",
-      "description": "+3 AP on Breaking a target."
+      "description": "+3 MP on Breaking a target."
     },
     "quick-break": {
       "name": "Quick Break",
@@ -670,7 +670,7 @@
     },
     "energising-gradient": {
       "name": "Energising Gradient",
-      "description": "+1 AP per Gradient Charge consumed."
+      "description": "+1 MP per Gradient Charge consumed."
     },
     "charging-attack": {
       "name": "Charging Attack",
@@ -702,11 +702,11 @@
     },
     "revive-tint-energy": {
       "name": "Revive Tint Energy",
-      "description": "Revive Tints also give 3 AP."
+      "description": "Revive Tints also give 3 MP."
     },
     "healing-tint-energy": {
       "name": "Healing Tint Energy",
-      "description": "Healing Tints also give 1 AP."
+      "description": "Healing Tints also give 1 MP."
     },
     "empowering-tint": {
       "name": "Empowering Tint",
@@ -750,7 +750,7 @@
     },
     "energising-burn": {
       "name": "Energising Burn",
-      "description": "+1 AP on applying Burn. Once per turn."
+      "description": "+1 MP on applying Burn. Once per turn."
     },
     "breaking-burn": {
       "name": "Breaking Burn",
@@ -818,15 +818,15 @@
     },
     "energising-powerful": {
       "name": "Energising Powerful",
-      "description": "Give 2 AP on applying Powerful."
+      "description": "Give 2 MP on applying Powerful."
     },
     "energising-shell": {
       "name": "Energising Shell",
-      "description": "Give 2 AP on applying Shell."
+      "description": "Give 2 MP on applying Shell."
     },
     "energising-rush": {
       "name": "Energising Rush",
-      "description": "Give 2 AP on applying Rush."
+      "description": "Give 2 MP on applying Rush."
     },
     "healing-boon": {
       "name": "Healing Boon",
@@ -850,7 +850,7 @@
     },
     "draining-cleanse": {
       "name": "Draining Cleanse",
-      "description": "Consume 1 AP to prevent Status Effects application, if possible."
+      "description": "Consume 1 MP to prevent Status Effects application, if possible."
     },
     "anti-blight": {
       "name": "Anti-Blight",
@@ -919,7 +919,7 @@
       "passives": {
         "4": "Perfection is now based on current Health. Gain 1 Rank every 20% missing Health.",
         "10": "20% increased Light damage with Skills.",
-        "20": "+1 AP on Rank Up."
+        "20": "+1 MP on Rank Up."
       }
     },
     "chevalam": {
@@ -950,7 +950,7 @@
       "name": "Corpeso",
       "passives": {
         "4": "Base Attack applies 2 Burn stack per Rank.",
-        "10": "+1 AP on Rank Up.",
+        "10": "+1 MP on Rank Up.",
         "20": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
       }
     },
@@ -966,7 +966,7 @@
       "name": "Cultam",
       "passives": {
         "4": "No Perfection loss on damage taken. Perfection is instead lost on being Healed.",
-        "10": "Gain 2 AP on Counterattack.",
+        "10": "Gain 2 MP on Counterattack.",
         "20": "Gain 1 Rank on Counterattack."
       }
     },
@@ -975,7 +975,7 @@
       "passives": {
         "4": "Base attack gives 1 Perfection per Burn on target.",
         "10": "While Powerful, 20% chance to Burn on hit.",
-        "20": "+1 AP on Rank Up."
+        "20": "+1 MP on Rank Up."
       }
     },
     "delaram": {
@@ -999,7 +999,7 @@
       "passives": {
         "4": "Gain 1 Rank on Counterattack.",
         "10": "50% increased Counterattack damage.",
-        "20": "Gain 2 AP on Counterattack."
+        "20": "Gain 2 MP on Counterattack."
       }
     },
     "dualiso": {
@@ -1023,7 +1023,7 @@
       "passives": {
         "4": "Convert Light damage from Skills to Physical damage.",
         "10": "20% increased Physical damage with Skills.",
-        "20": "-1 AP cost for Physical Skills."
+        "20": "-1 MP cost for Physical Skills."
       }
     },
     "glaceso": {
@@ -1091,7 +1091,7 @@
       "passives": {
         "4": "Bonus damage from Perfection applies to all allies at half value. Bonus damage no longer applies to Verso.",
         "10": "Perfection gained is increased by 1 while Powerful.",
-        "20": "Support Skills cost 1 less AP."
+        "20": "Support Skills cost 1 less MP."
       }
     },
     "tireso": {
@@ -1125,7 +1125,7 @@
     "benisim": {
       "name": "Benisim",
       "passives": {
-        "4": "Healing Skills cost 1 less AP.",
+        "4": "Healing Skills cost 1 less MP.",
         "10": "Generate one Earth Stain at the beginning of each turn.",
         "20": "Replay instantly on consuming Stains with a Healing Skill."
       }
@@ -1135,7 +1135,7 @@
       "passives": {
         "4": "Using a Skill that consumes Stains increases damage by 20%. Can stack up to 5 times. Resets on using a Skill without consuming Stains.",
         "10": "On turn start, if no Stains, 2 random Stains are generated.",
-        "20": "+1 AP when Stains are consumed."
+        "20": "+1 MP when Stains are consumed."
       }
     },
     "braselim": {
@@ -1150,7 +1150,7 @@
       "name": "Chapelim",
       "passives": {
         "4": "30% increased Break damage per Earth Stain.",
-        "10": "Gain 9 AP on Breaking an enemy.",
+        "10": "Gain 9 MP on Breaking an enemy.",
         "20": "Generate one Earth Stain at the beginning of each turn."
       }
     },
@@ -1166,14 +1166,14 @@
       "name": "Colim",
       "passives": {
         "4": "50% chance to generate a Light Stain when consuming Stains.",
-        "10": "+1 AP on consuming a Light Stain.",
+        "10": "+1 MP on consuming a Light Stain.",
         "20": "20% increased damage with Skills per active Light Stain."
       }
     },
     "coralim": {
       "name": "Coralim",
       "passives": {
-        "4": "Ice Skills cost 1 less AP.",
+        "4": "Ice Skills cost 1 less MP.",
         "10": "20% increased Ice damage with Skills.",
         "20": "Start battle with 1 Earth Stain."
       }
@@ -1181,7 +1181,7 @@
     "deminerim": {
       "name": "Deminerim",
       "passives": {
-        "4": "Lightning Skills cost 1 less AP.",
+        "4": "Lightning Skills cost 1 less MP.",
         "10": "20% increased Lightning damage with Skills.",
         "20": "Start battle with 1 Fire Stain."
       }
@@ -1199,13 +1199,13 @@
       "passives": {
         "4": "Casting a Skill increases the Skill damage of all other elements by 20%. Resets when casting a Skill of a previous element.",
         "10": "On turn start, if no Stains, 2 random Stains are generated.",
-        "20": "+1 AP when Stains are consumed."
+        "20": "+1 MP when Stains are consumed."
       }
     },
     "lighterim": {
       "name": "Lighterim",
       "passives": {
-        "4": "Fire Skills cost 1 less AP.",
+        "4": "Fire Skills cost 1 less MP.",
         "10": "20% increased Fire damage with Skills.",
         "20": "Start battle with 1 Ice Stain."
       }
@@ -1214,7 +1214,7 @@
       "name": "Lithelim",
       "passives": {
         "4": "50% chance to generate a Dark or Light Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain.",
-        "10": "+1 AP on consuming a Light Stain.",
+        "10": "+1 MP on consuming a Light Stain.",
         "20": "Base Attacks can consume one Dark Stain to deal 200% more damage."
       }
     },
@@ -1225,7 +1225,7 @@
     "painerim": {
       "name": "Painerim",
       "passives": {
-        "4": "Earth Skills cost 1 less AP.",
+        "4": "Earth Skills cost 1 less MP.",
         "10": "20% increased Earth damage with Skills.",
         "20": "Start battle with 1 Lightning Stain."
       }
@@ -1267,14 +1267,14 @@
       "passives": {
         "4": "Freeze self when falling below 30% health. Prevent the next instance of damage while Frozen.",
         "10": "On turn start, if Frozen, remove Freeze and recover 60% Health.",
-        "20": "Gain 2 Ice Stains and 3 AP when Frozen."
+        "20": "Gain 2 Ice Stains and 3 MP when Frozen."
       }
     },
     "trebuchim": {
       "name": "Trebuchim",
       "passives": {
         "4": "Generate a random Stain on Free Aim shot.",
-        "10": "+1 AP when Stains are consumed.",
+        "10": "+1 MP when Stains are consumed.",
         "20": "Base Attack generates 2 random Stains."
       }
     },
@@ -1330,14 +1330,14 @@
       "name": "Chantenum",
       "passives": {
         "4": "On turn start, if Stanceless, switch to Offensive Stance.",
-        "10": "Fire Skills cost 1 less AP.",
+        "10": "Fire Skills cost 1 less MP.",
         "20": "+1 Shield on switching to Offensive Stance."
       }
     },
     "clierum": {
       "name": "Clierum",
       "passives": {
-        "4": "Critical hits with Skills give 2 AP. Once per turn.",
+        "4": "Critical hits with Skills give 2 MP. Once per turn.",
         "10": "20% increased Lightning damage with Skills.",
         "20": "+50% Critical Chance while in Offensive Stance."
       }
@@ -1353,9 +1353,9 @@
     "duenum": {
       "name": "Duenum",
       "passives": {
-        "4": "In Defensive Stance, gaining AP also gives 1 AP to allies.",
+        "4": "In Defensive Stance, gaining MP also gives 1 MP to allies.",
         "10": "If Stanceless, Base Attack switches to Defensive Stance.",
-        "20": "+1 AP on Stance switch."
+        "20": "+1 MP on Stance switch."
       }
     },
     "facesum": {
@@ -1415,7 +1415,7 @@
       "passives": {
         "4": "On turn start, if Stanceless, switch to Defensive Stance.",
         "10": "In Defensive Stance, double Break damage.",
-        "20": "Support Skills cost 1 less AP."
+        "20": "Support Skills cost 1 less MP."
       }
     },
     "seashelum": {
@@ -1446,7 +1446,7 @@
       "name": "Tissenum",
       "passives": {
         "4": "In Defensive Stance, double Break damage.",
-        "10": "Gain 9 AP on Breaking an enemy.",
+        "10": "Gain 9 MP on Breaking an enemy.",
         "20": "Breaking an enemy deals a high amount of Earth damage."
       }
     },
@@ -1461,7 +1461,7 @@
     "volesterum": {
       "name": "Volesterum",
       "passives": {
-        "4": "+1 AP on Stance switch.",
+        "4": "+1 MP on Stance switch.",
         "10": "If Stanceless, Base Attack switches to Defensive Stance.",
         "20": "Recover 5% Health on Stance switch."
       }
@@ -1470,7 +1470,7 @@
       "name": "Yeverum",
       "passives": {
         "4": "Applying Shell also applies 1 Shield.",
-        "10": "On applying Shields, also give 1 AP.",
+        "10": "On applying Shields, also give 1 MP.",
         "20": "On switching to Virtuose Stance, double all Shields on allies."
       }
     },
@@ -1486,8 +1486,8 @@
       "name": "Ballaro",
       "passives": {
         "4": "Reverse Bestial Wheel order.",
-        "10": "Using an Upgraded Skill gives 1 AP to all other allies.",
-        "20": "Almighty Mask gives 2 AP to all allies."
+        "10": "Using an Upgraded Skill gives 1 MP to all other allies.",
+        "20": "Almighty Mask gives 2 MP to all allies."
       }
     },
     "boucharo": {
@@ -1502,7 +1502,7 @@
       "name": "Brumaro",
       "passives": {
         "4": "Replay instantly when in Almighty Mask.",
-        "10": "+3 AP when in Almighty Mask.",
+        "10": "+3 MP when in Almighty Mask.",
         "20": "Revive instantly with full Health if dead while in Almighty Mask. Once per Battle."
       }
     },
@@ -1511,7 +1511,7 @@
       "passives": {
         "4": "Start battle in Caster Mask.",
         "10": "Caster Mask applies Regen for 3 turns.",
-        "20": "Skills cost 1 less AP while in Caster Mask."
+        "20": "Skills cost 1 less MP while in Caster Mask."
       }
     },
     "fragaro": {
@@ -1527,7 +1527,7 @@
       "passives": {
         "4": "Start battle in Heavy Mask.",
         "10": "Heavy Mask applies Shell for 3 turns.",
-        "20": "+1 AP per hit taken."
+        "20": "+1 MP per hit taken."
       }
     },
     "joyaro": {
@@ -1551,7 +1551,7 @@
       "passives": {
         "4": "Parries increase the Bestial Wheel by 1. Taking damage resets the Bestial Wheel.",
         "10": "Upgraded Skills deal 30% more damage.",
-        "20": "+1 AP on Mask change."
+        "20": "+1 MP on Mask change."
       }
     },
     "sidaro": {
@@ -1559,14 +1559,14 @@
       "passives": {
         "4": "30% increased damage per Upgraded Skill used. Resets on using a non-Upgraded Skill.",
         "10": "Base Attack spins the Bestial Wheel to a random value.",
-        "20": "Using an Upgraded Skill gives 1 AP to all other allies."
+        "20": "Using an Upgraded Skill gives 1 MP to all other allies."
       }
     },
     "urnaro": {
       "name": "Urnaro",
       "passives": {
         "4": "Switch to Almighty Mask on Breaking an enemy.",
-        "10": "Almighty Mask gives 2 AP to all allies.",
+        "10": "Almighty Mask gives 2 MP to all allies.",
         "20": "50% increased Break damage."
       }
     },
@@ -1629,9 +1629,9 @@
     "direton": {
       "name": "Direton",
       "passives": {
-        "4": "+1 AP per Moon charge on turn start.",
+        "4": "+1 MP per Moon charge on turn start.",
         "10": "Base Attack gives 1 Moon charge.",
-        "20": "During Twilight, Base Attack consumes all AP. Base Attack applies 1 Foretell and deals 50% increased damage per AP consumed."
+        "20": "During Twilight, Base Attack consumes all MP. Base Attack applies 1 Foretell and deals 50% increased damage per MP consumed."
       }
     },
     "garganon": {
@@ -1662,7 +1662,7 @@
       "name": "Hevason",
       "passives": {
         "4": "Free Aim shots can consume a Sun charge to apply 5 Foretell and consume a Moon charge to deal 400% more damage.",
-        "10": "Consuming a Sun or Moon charge gives 1 AP.",
+        "10": "Consuming a Sun or Moon charge gives 1 MP.",
         "20": "Base Attack gives 1 Moon charge."
       }
     },
@@ -1671,7 +1671,7 @@
       "passives": {
         "4": "During Moon, all allies have Greater Rush. During Sun, all enemies have Greater Slow.",
         "10": "During Twilight, all allies have Greater Rush and all enemies have Greater Slow.",
-        "20": "+3 AP on applying a Buff or Debuff. Once per turn."
+        "20": "+3 MP on applying a Buff or Debuff. Once per turn."
       }
     },
     "lusteson": {
@@ -1694,7 +1694,7 @@
       "name": "Minason",
       "passives": {
         "4": "Sun Skills have increased damage for each Foretell on the target. Moon Skills don't generate Moon charges anymore.",
-        "10": "With at least 1 active Sun charge, gain one additional AP per Foretell consumed.",
+        "10": "With at least 1 active Sun charge, gain one additional MP per Foretell consumed.",
         "20": "Base attack can consume 1 Sun charge to apply 5 Foretell."
       }
     },
@@ -1718,7 +1718,7 @@
       "name": "Rangeson",
       "passives": {
         "4": "Recover 5% Health per Foretell applied.",
-        "10": "Healing Skills cost 1 less AP.",
+        "10": "Healing Skills cost 1 less MP.",
         "20": "30% increased Heal efficiency per Moon charge. Base Attack gives 1 Moon charge."
       }
     },
@@ -1938,13 +1938,15 @@
       "unlock": "Unlock",
       "masterUnlock": "Unlock Master",
       "selectSkill": "Select a skill",
+      "skillBlocked": "Skill Blocked",
+      "locked": "Locked",
       "gustave-lumiere-assault": {
         "name": "Lumiere Assault",
         "description": "Deals low damage to a single target. 5 hits. Uses weapon element. Critical hits generate 1 additional Charge."
       },
       "gustave-marking-shot": {
         "name": "Marking Shot",
-        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Marked to the target, making it take +50% damage."
+        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Mark to the target, making it take +50% damage."
       },
       "gustave-overcharge": {
         "name": "Overcharge",
@@ -1976,99 +1978,99 @@
       },
       "lune-immolation": {
         "name": "Immolation",
-        "description": "Skill Effect: Deals low Fire damage to a single target and 3 Queimaduras. 1 hit. Consome Gelo to causar damage aumentado. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Skill Effect: Deals low Fire damage to a single target and 3 Burns. 1 hit. Consumes Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-ice-lance": {
         "name": "Ice Lance",
-        "description": "Skill Effect: Deals medium Ice damage to a single target and Desacelera o alvo. 1 hit. Consome Terra to causar damage aumentado. Using this skill grants 1 Mancha Ice and 1 Light stain."
+        "description": "Skill Effect: Deals medium Ice damage to a single target and Slows the target. 1 hit. Consumes Earth to deal increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-earth-rising": {
         "name": "Earth Rising",
-        "description": "Skill Effect: Deals low damage Earth a all enemies. 1 hit. Consome Raio to causar damage aumentado. Using this skill grants 1 Mancha Earth and 1 Light stain."
+        "description": "Skill Effect: Deals low Earth damage to all enemies. 1 hit. Consumes Lightning to deal increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-thermal-transfer": {
         "name": "Thermal Transfer",
-        "description": "Skill Effect: Deals low Ice damage to a single target. 2 hits. Ganha 4 PM se o alvo is Burning. Consome 2 stains of Terra to jogar an second turno. Using this skill grants 1 Mancha Ice and 1 Light stain."
+        "description": "Skill Effect: Deals low Ice damage to a single target. 2 hits. Gains 4 MP if the target is Burning. Consumes 2 stains of Earth to play a second turn. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-thunderfall": {
         "name": "Thunderfall",
-        "description": "Skill Effect: Deals medium Lightning damage to enemies aleatórios. 2-6 hits. Consome Fogo to causar damage aumentado. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Skill Effect: Deals medium Lightning damage to random enemies. 2-6 hits. Consumes Fire to deal increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-wildfire": {
         "name": "Wildfire",
-        "description": "Skill Effect: Deals medium Fire damage a all enemies. 1 hit. Aplica 3 Queimaduras. Consome 2 stains of Gelo to causar damage aumentado. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Skill Effect: Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burns. Consumes 2 stains of Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-mayhem": {
         "name": "Mayhem",
-        "description": "Skill Effect: Consome all Manchas to causar damage elemental high ao alvo. Can cause Break se 4 Manchas forem consumidas."
+        "description": "Skill Effect: Consumes all Stains to deal high elemental damage to the target. Can cause Break if 4 Stains are consumed."
       },
       "lune-elemental-trick": {
         "name": "Elemental Trick",
-        "description": "Skill Effect: Deals low Ice damage, Fogo, Raio and Terra to a single target. 4 hits. Critical hits generate a Mancha correspondente ao elemento."
+        "description": "Skill Effect: Deals low Ice, Fire, Lightning and Earth damage to a single target. 4 hits. Critical hits generate a Stain corresponding to the element."
       },
       "lune-elemental-genesis": {
         "name": "Elemental Genesis",
-        "description": "Skill Effect: Deals extreme damage a all enemies. 8 hits. Cada hit causa damage to an elemento aleatório. Requer Raio, Terra, Fogo and Gelo to lançar."
+        "description": "Skill Effect: Deals extreme damage to all enemies. 8 hits. Each hit deals damage in a random element. Requires Lightning, Earth, Fire and Ice to cast."
       },
       "lune-crippling-tsunami": {
         "name": "Crippling Tsunami",
-        "description": "Skill Effect: Deals medium Ice damage a all enemies. 1 hit. Aplica Desaceleração for 3 turns. Consome all three tipos de Manchas to causar damage muito aumentado. Using this skill grants 1 Mancha Ice and 1 Light stain."
+        "description": "Skill Effect: Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-rockslide": {
         "name": "Rockslide",
-        "description": "Skill Effect: Deals medium damage Earth to a single target. 2 hits. Can cause Break. Consome all three tipos de Manchas to causar damage muito aumentado. Using this skill grants 1 Mancha Earth and 1 Light stain."
+        "description": "Skill Effect: Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-crustal-crush": {
         "name": "Crustal Crush",
-        "description": "Skill Effect: Deals high damage Earth and damage Break to a single target. 5 hits. Consome 2 stains of Raio to causar damage aumentado. Using this skill grants 1 Mancha Earth and 1 Light stain."
+        "description": "Skill Effect: Deals high Earth damage and Break damage to a single target. 5 hits. Consumes 2 stains of Lightning to deal increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-healing-light": {
         "name": "Healing Light",
-        "description": "Skill Effect: Cura o aliafrom the target and dissipa Efeitos de Status. Consome 2 stains of Terra to custar 0 PM. Using this skill grants 1 Light stain."
+        "description": "Skill Effect: Heals the target ally and dispels Status Effects. Consumes 2 stains of Earth to cost 0 MP. Using this skill grants 1 Light stain."
       },
       "lune-lightning-dance": {
         "name": "Lightning Dance",
-        "description": "Skill Effect: Deals very high Lightning damage to a single target. 6 hits. Consome all three tipos de Manchas to causar damage muito aumentado. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Skill Effect: Deals very high Lightning damage to a single target. 6 hits. Consumes all three types of Stains to deal greatly increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-storm-caller": {
         "name": "Storm Caller",
-        "description": "Skill Effect: Todos enemies recebem damage medium Lightning no fim from turno and damage low quando recebem damage. Duração: 3 turnos. Consome 2 stains of Fogo to dobrar ataques de trovão no fim from turno. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Skill Effect: All enemies receive medium Lightning damage at the end of the turn and low damage when receiving damage. Duration: 3 turns. Consumes 2 stains of Fire to double lightning attacks at the end of the turn. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-terraquake": {
         "name": "Terraquake",
-        "description": "Skill Effect: Deals low damage Earth and damage Break a all enemies a each turno. Duração: 3 turnos. Consome 2 stains of Raio to estender a duração to 5 turnos. Using this skill grants 1 Mancha Earth and 1 Light stain."
+        "description": "Skill Effect: Deals low Earth damage and Break damage to all enemies each turn. Duration: 3 turns. Consumes 2 stains of Lightning to extend the duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-typhoon": {
         "name": "Typhoon",
-        "description": "Skill Effect: No início from turno, causa damage high Ice a all enemies and heals allies. Consome 2 stains of Terra to estender a duração de 3 to 5 turnos. Using this skill grants 1 Mancha Ice and 1 Light stain."
+        "description": "Skill Effect: At the start of the turn, deals high Ice damage to all enemies and heals allies. Consumes 2 stains of Earth to extend the duration from 3 to 5 turns. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-rebirth": {
         "name": "Rebirth",
-        "description": "Skill Effect: Revive an ally com 30-70% de HP and 2 PM adicionais. Consome 3 stains of Raio to custar 0 PM. Using this skill grants 1 Light stain."
+        "description": "Skill Effect: Revives an ally with 30-70% of HP and 2 additional MP. Consumes 3 stains of Lightning to cost 0 MP. Using this skill grants 1 Light stain."
       },
       "lune-revitalization": {
         "name": "Revitalization",
-        "description": "Skill Effect: Cura 1-3 allies to 40-60% de HP. Consome 3 stains of Fogo to também aplicar Regeneração for 3 turns. Using this skill grants 1 Light stain."
+        "description": "Skill Effect: Heals 1-3 allies to 40-60% of HP. Consumes 3 stains of Fire to also apply Regeneration for 3 turns. Using this skill grants 1 Light stain."
       },
       "lune-fire-rage": {
         "name": "Fire Rage",
-        "description": "Skill Effect: Deals high Fire damage crescente a all enemies a each turno até Lune receber damage. Consome 2 stains of Gelo to causar damage aumentado. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Skill Effect: Deals high increasing Fire damage to all enemies each turn until Lune receives damage. Consumes 2 stains of Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-hell": {
         "name": "Hell",
-        "description": "Skill Effect: Deals very high Fire damage aplicando 5 Queimaduras for hit a all enemies. 2 hits. Consome all three tipos de Manchas to causar damage muito aumentado. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Skill Effect: Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-sky-break": {
         "name": "Sky Break",
-        "description": "Gradient Skill (doesn't consume turn). Deals extreme damage a all enemies. 1 hit. Can cause Break. O elemento depende de qual Mancha Lune possui more. Using this skill grants 3 stains of Luz."
+        "description": "Gradient Skill (doesn't consume turn). Deals extreme damage to all enemies. 1 hit. Can cause Break. The element depends on which Stain Lune has more. Using this skill grants 3 stains of Light."
       },
       "lune-tree-of-life": {
         "name": "Tree of Life",
-        "description": "Gradient Skill (doesn't consume turn). Remove all Efeitos de Status and heals all allies. Using this skill grants 1 Light stain."
+        "description": "Gradient Skill (doesn't consume turn). Removes all Status Effects and heals all allies. Using this skill grants 1 Light stain."
       },
       "lune-tremor": {
         "name": "Tremor",
-        "description": "Gradient Skill (doesn't consume turn). Deals high damage Earth a all enemies. 1 hit. Remove all Escudos dos enemies. Using this skill grants 1 Mancha Earth and 1 Light stain."
+        "description": "Gradient Skill (doesn't consume turn). Deals high Earth damage to all enemies. 1 hit. Removes all Shields from enemies. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "maelle-offensive-switch": {
         "name": "Offensive Switch",
@@ -2076,11 +2078,11 @@
       },
       "maelle-mezzo-forte": {
         "name": "Mezzo Forte",
-        "description": "Reapplies current stance and grants 2-4 AP. Deals no damage."
+        "description": "Reapplies current stance and grants 2-4 MP. Deals no damage."
       },
       "maelle-percee": {
         "name": "Percee",
-        "description": "Deals medium Physical damage to a single target. 1 hit. Damage increased by 50% against Marked targets. Changes to Defensive Stance. Cost reduced to 2 AP if used in Virtuose Stance."
+        "description": "Deals medium Physical damage to a single target. 1 hit. Damage increased by 50% against Marked targets. Changes to Defensive Stance. Cost reduced to 2 MP if used in Virtuose Stance."
       },
       "maelle-degagement": {
         "name": "Degagement",
@@ -2092,7 +2094,7 @@
       },
       "maelle-swift-stride": {
         "name": "Swift Stride",
-        "description": "Deals low Physical damage to a single target. 1 hit. Recovers 0-2 AP. If target is Burning, switches to Virtuose Stance."
+        "description": "Deals low Physical damage to a single target. 1 hit. Recovers 0-2 MP. If target is Burning, switches to Virtuose Stance."
       },
       "maelle-guard-down": {
         "name": "Guard Down",
@@ -2120,7 +2122,7 @@
       },
       "maelle-breaking-rules": {
         "name": "Breaking Rules",
-        "description": "Deals low Physical damage to a single target. 2 hits. Destroys all target's Shields and grants 1 AP per Shield destroyed. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Deals low Physical damage to a single target. 2 hits. Destroys all target's Shields and grants 1 MP per Shield destroyed. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-fencers-flurry": {
         "name": "Fencer's Flurry",
@@ -2144,15 +2146,15 @@
       },
       "maelle-last-chance": {
         "name": "Last Chance",
-        "description": "Reduces own HP to 1 but refills all AP. Using this skill changes Maelle's Stance to Virtuose."
+        "description": "Reduces own HP to 1 but refills all MP. Using this skill changes Maelle's Stance to Virtuose."
       },
       "maelle-momentum-strike": {
         "name": "Momentum Strike",
-        "description": "Deals high Physical damage to a single target. 1 hit. Uses weapon's element. Damage increased against Marked targets. Cost reduced to 4 AP if used in Virtuose Stance (normally 7 AP). Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals high Physical damage to a single target. 1 hit. Uses weapon's element. Damage increased against Marked targets. Cost reduced to 4 MP if used in Virtuose Stance (normally 7 MP). Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-payback": {
         "name": "Payback",
-        "description": "Deals very high Physical damage to a single target. 1 hit. Can cause Break. AP cost reduced for each attack parried since last turn (base cost 9 AP). Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals very high Physical damage to a single target. 1 hit. Can cause Break. MP cost reduced for each attack parried since last turn (base cost 9 MP). Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-stendhal": {
         "name": "Stendhal",
@@ -2164,7 +2166,7 @@
       },
       "maelle-gustaves-homage": {
         "name": "Gustave's Homage",
-        "description": "Deals high Lightning damage to a single target. 8 hits. Dano aumentado to alvos Markeds, não removes Marca."
+        "description": "Deals high Lightning damage to a single target. 8 hits. Increased damage to Marked targets, doesn't remove Mark."
       },
       "maelle-virtuose-strike": {
         "name": "Virtuose Strike",
@@ -2180,407 +2182,407 @@
       },
       "sciel-twilight-slash": {
         "name": "Twilight Slash",
-        "description": "Deals damage das Trevas low to a single target. 1 hit. Consome all Predições to aumentar o damage. Habilidade inicial de Sciel."
+        "description": "Deals low Dark damage to a single target. 1 hit. Consumes all Foretell to increase damage. Sciel's starting skill."
       },
       "sciel-focused-foretell": {
         "name": "Focused Foretell",
-        "description": "Deals damage Physical medium to a single target. 1 hit. Aplica 2 Predições. Aplica 3 Predições adicionais se o alvo não tiver Predições."
+        "description": "Deals medium Physical damage to a single target. 1 hit. Applies 2 Foretell. Applies 3 additional Foretell if target has no Foretell."
       },
       "sciel-bad-omen": {
         "name": "Bad Omen",
-        "description": "Deals damage das Trevas low to all enemies. 2 hits. Aplica 2 Predições for hit. Requires skill Marking Card."
+        "description": "Deals low Dark damage to all enemies. 2 hits. Applies 2 Foretell per hit."
       },
       "sciel-marking-card": {
         "name": "Marking Card",
-        "description": "Deals damage das Trevas medium to a single target. 2 hits. Applies Marked. Aplica 3 Predições."
+        "description": "Deals medium Dark damage to a single target. 2 hits. Applies Mark. Applies 3 Foretell."
       },
       "sciel-delaying-slash": {
         "name": "Delaying Slash",
-        "description": "Deals medium damage to a single target. 2 hits. Uses weapon element. Consome Predições to aumentar o damage and atrasar o turno from the target."
+        "description": "Deals medium damage to a single target. 2 hits. Uses weapon element. Consumes Foretell to increase damage and delay the target's turn."
       },
       "sciel-dark-cleansing": {
         "name": "Dark Cleansing",
-        "description": "Remove all efeitos de status negativos de an ally. Propaga buffs from the target to all allies."
+        "description": "Removes all negative status effects from an ally. Propagates buffs from the target to all allies."
       },
       "sciel-dark-wave": {
         "name": "Dark Wave",
-        "description": "Deals damage das Trevas high to all enemies. 3 hits. Consome all Predições to aumentar o damage."
+        "description": "Deals high Dark damage to all enemies. 3 hits. Consumes all Foretell to increase damage."
       },
       "sciel-grim-harvest": {
         "name": "Grim Harvest",
-        "description": "Deals damage das Trevas medium to a single target. 1 hit. Cura all allies to 30% from HP. Consome Predições to aumentar a heals to 5% for Predição."
+        "description": "Deals medium Dark damage to a single target. 1 hit. Heals all allies for 30% of HP. Consumes Foretell to increase healing by 5% per Foretell."
       },
       "sciel-harvest": {
         "name": "Harvest",
-        "description": "Deals medium damage to a single target. 1 hit. Uses weapon element. Cura Sciel to 40% from HP. Consome all Predições to aumentar a heals to 5% for Predição."
+        "description": "Deals medium damage to a single target. 1 hit. Uses weapon element. Heals Sciel for 40% of HP. Consumes all Foretell to increase healing by 5% per Foretell."
       },
       "sciel-searing-bond": {
         "name": "Searing Bond",
-        "description": "Deals damage das Trevas medium to a single target. 1 hit. Aplica 5 Predições. Deals damage and applies Predições to all outros enemies Burning."
+        "description": "Deals medium Dark damage to a single target. 1 hit. Applies 5 Foretell. Deals damage and applies Foretell to all other Burning enemies."
       },
       "sciel-phantom-blade": {
         "name": "Phantom Blade",
-        "description": "Deals damage das Trevas high to a single target. 1 hit. Consome all Predições to aumentar o damage. Can cause Break."
+        "description": "Deals high Dark damage to a single target. 1 hit. Consumes all Foretell to increase damage. Can cause Break."
       },
       "sciel-sealed-fate": {
         "name": "Sealed Fate",
-        "description": "Deals high damage to a single target. 5-7 hits. Uses weapon element. Cada hit pode consumir 1 Predição to causar 200% more damage."
+        "description": "Deals high damage to a single target. 5-7 hits. Uses weapon element. Each hit can consume 1 Foretell to deal 200% more damage."
       },
       "sciel-spectral-sweep": {
         "name": "Spectral Sweep",
-        "description": "Deals medium damage to a single target. 2-6 hits. Uses weapon element. Aplica 1 Predição for hit. Acertos críticos aplicam Predição adicional."
+        "description": "Deals medium damage to a single target. 2-6 hits. Uses weapon element. Applies 1 Foretell per hit. Critical hits apply additional Foretell."
       },
       "sciel-firing-shadow": {
         "name": "Firing Shadow",
-        "description": "Deals damage das Trevas low to all enemies. 3 hits. Consome 1 Predição for hit to aumentar o damage."
+        "description": "Deals low Dark damage to all enemies. 3 hits. Consumes 1 Foretell per hit to increase damage."
       },
       "sciel-fortunes-fury": {
         "name": "Fortune's Fury",
-        "description": "Um aliafrom the target causa o dobro de damage durante 1 turno."
+        "description": "An ally of the target deals double damage for 1 turn."
       },
       "sciel-our-sacrifice": {
         "name": "Our Sacrifice",
-        "description": "Deals damage das Trevas extreme to all enemies. 1 hit. Absorve HP dos allies and Predições dos enemies to aumentar o damage."
+        "description": "Deals extreme Dark damage to all enemies. 1 hit. Absorbs HP from allies and Foretell from enemies to increase damage."
       },
       "sciel-plentiful-harvest": {
         "name": "Plentiful Harvest",
-        "description": "Deals damage Physical medium to a single target. 2 hits. Consome all Predições from the target and Grants 1 PM a an ally for Predição consumida."
+        "description": "Deals medium Physical damage to a single target. 2 hits. Consumes all Foretell from the target and grants 1 MP to an ally for each Foretell consumed."
       },
       "sciel-rush": {
         "name": "Rush",
-        "description": "Aplica Rapidez to 1-3 allies, aumentando a Velocidade for 3 turns."
+        "description": "Applies Haste, increasing Speed for 3 turns. Roll 1d6: 1-2 applies to target only, 3-6 applies to all allies."
       },
       "sciel-all-set": {
         "name": "All Set",
-        "description": "Aplica Escudo, Poderoso and Rapidez to all allies."
+        "description": "Applies Protected, Empowered and Hastened to all allies."
       },
       "sciel-intervention": {
         "name": "Intervention",
-        "description": "Um aliafrom the target joga imediatamente and ganha 4 PM."
+        "description": "Target ally plays immediately and gains 4 MP."
       },
       "sciel-card-weaver": {
         "name": "Card Weaver",
-        "description": "Deals low Physical damage to a single target. 1 hit. Propaga Predições from the target to all enemies. Joga an second turno."
+        "description": "Deals low Physical damage to a single target. 1 hit. Redistributes Foretell from the target to all enemies. Grants an extra turn."
       },
       "sciel-final-path": {
         "name": "Final Path",
-        "description": "Deals damage das Trevas extreme to a single target. 1 hit. Aplica 10 Predições. Can cause Break."
+        "description": "Deals extreme Dark damage to a single target. 1 hit. Applies 10 Foretell. Can cause Break."
       },
       "sciel-twilight-dance": {
         "name": "Twilight Dance",
-        "description": "Deals damage das Trevas extreme to a single target. 4 hits. Durante o Crepúsculo, estende a duração from Crepúsculo to 1 turno. Consome all Predições to aumentar o damage."
+        "description": "Deals extreme Dark damage to a single target. 4 hits. During Twilight, extends the duration of Twilight by 1 turn. Consumes all Foretell to increase damage."
       },
       "sciel-shadow-bringer": {
         "name": "Shadow Bringer",
-        "description": "Gradient Skill (doesn't consume turn). Deals damage das Trevas high to enemies aleatórios. 10 hits. Aplica 1 Predição for hit."
+        "description": "Gradient Skill (doesn't consume turn). Deals high Dark damage to random enemies. 10 hits. Applies 1 Foretell per hit."
       },
       "sciel-doom": {
         "name": "Doom",
-        "description": "Gradient Skill (doesn't consume turn). Deals damage das Trevas muito high to a single target. 3 hits. Aplica Fraco, Indefeso and Lento for 3 turns. Can cause Break."
+        "description": "Gradient Skill (doesn't consume turn). Deals very high Dark damage to a single target. 3 hits. Applies Weakened, Defenceless and Slowed for 3 turns. Can cause Break."
       },
       "sciel-end-slice": {
         "name": "End Slice",
-        "description": "Gradient Skill (doesn't consume turn). Deals damage Physical extreme to a single target. 1 hit. O damage escala com a quantidade de Predições consumidas."
+        "description": "Gradient Skill (doesn't consume turn). Deals extreme Physical damage to a single target. 1 hit. Damage scales with the amount of Foretell consumed."
       },
       "verso-angels-eyes": {
         "name": "Angel's Eyes",
-        "description": "Gradient Skill (doesn't consume turn). Deals damage Physical extremo. 8 golpes. Ganha 1 Perfeição adicional for golpe. Aplica Auréola to Verso, revivendo-o se morrer."
+        "description": "Gradient Skill (doesn't consume turn). Deals extreme Physical damage. 8 hits. Gains 1 additional Perfection per hit. Applies Aureole to Verso, reviving him if he dies."
       },
       "verso-ascending-assault": {
         "name": "Ascending Assault",
-        "description": "Deals low damage to a single target. 1 golpe. Uses weapon element. Aumenta damage a each uso. If Verso usar esta habilidade no Rank S de Perfeição, o custo de AP is reduzido de 5 to 2."
+        "description": "Deals low damage to a single target. 1 hit. Uses weapon element. Increases damage with each use. If Verso uses this skill at Perfection Rank S, the MP cost is reduced from 5 to 2."
       },
       "verso-assault-zero": {
         "name": "Assault Zero",
-        "description": "Deals low damage to a single target. 5 golpes. Uses weapon element. Acertos Críticos geram 1 Perfeição adicional. If Verso usar esta habilidade no Rank B de Perfeição, o damage is aumentado."
+        "description": "Deals low damage to a single target. 5 hits. Uses weapon element. Critical hits generate 1 additional Perfection. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-berserk-slash": {
         "name": "Berserk Slash",
-        "description": "Deals damage Physical medium to a single target. 3 golpes. Dano aumenta to each vida que Verso está faltando. If Verso usar esta habilidade no Rank C de Perfeição, o damage is aumentado."
+        "description": "Deals medium Physical damage to a single target. 3 hits. Damage increases for each HP that Verso is missing. If Verso uses this skill at Perfection Rank C, the damage is increased."
       },
       "verso-blitz": {
         "name": "Blitz",
-        "description": "Deals low Physical damage to a single target. 1 golpe. Joga a segunda vez. Mata enemies não-chefes com less de 10% de vida. If Verso usar esta habilidade no Rank B de Perfeição, o damage is aumentado."
+        "description": "Deals low Physical damage to a single target. 1 hit. Plays a second time. Kills non-boss enemies with less than 10% HP. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-burden": {
         "name": "Burden",
-        "description": "Remove all Efeitos de Status de all allies and applies to Verso. Ganha 1 Rank."
+        "description": "Removes all Status Effects from all allies and applies them to Verso. Gains 1 Rank."
       },
       "verso-defiant-strike": {
         "name": "Defiant Strike",
-        "description": "Deals damage Physical high to a single target que applies Marca. 2 golpes. Custa 30% from vida atual. If Verso usar esta habilidade no Rank B de Perfeição, o damage is aumentado."
+        "description": "Deals high Physical damage to a single target and applies Mark. 2 hits. Costs 30% of current HP. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-endbringer": {
         "name": "Endbringer",
-        "description": "Deals damage Physical extreme to a single target. 6 golpes. Dano aumentado se o alvo is Atordoado. If Verso usar esta habilidade no Rank A de Perfeição, pode reaplicar Atordoamento."
+        "description": "Deals extreme Physical damage to a single target. 6 hits. Damage increased if the target is Stunned. If Verso uses this skill at Perfection Rank A, can reapply Stun."
       },
       "verso-followup": {
         "name": "Follow Up",
-        "description": "Deals damage Light medium to a single target. 1 golpe. Dano aumentado to each tiro de Mira Livre neste turno, até 10 vezes. If Verso usar esta habilidade no Rank S de Perfeição, o custo de AP is reduzido de 5 to 2."
+        "description": "Deals medium Light damage to a single target. 1 hit. Damage increased for each Free Aim shot this turn, up to 10 times. If Verso uses this skill at Perfection Rank S, the MP cost is reduced from 5 to 2."
       },
       "verso-from-fire": {
         "name": "From Fire",
-        "description": "Deals medium damage to a single target. 3 golpes. Uses weapon element. Cura Verso to 20% de HP se o alvo is Burning. If Verso usar esta habilidade no Rank B de Perfeição, o damage is aumentado."
+        "description": "Deals medium damage to a single target. 3 hits. Uses weapon element. Heals Verso for 20% of HP if the target is Burning. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-leadership": {
         "name": "Leadership",
-        "description": "Reduz o Rank atual. Dá 2-4 AP to outros allies. If Verso usar esta habilidade no Rank C de Perfeição, dá +1 AP adicional to outros allies."
+        "description": "Reduces current Rank. Gives 2-4 MP to other allies. If Verso uses this skill at Perfection Rank C, gives +1 additional MP to other allies."
       },
       "verso-light-holder": {
         "name": "Light Holder",
-        "description": "Deals damage Light medium to a single target. 5 golpes. Ao completar, ganha 1 Rank. If Verso usar esta habilidade no Rank A de Perfeição, Grants 2 AP adicionais to Verso."
+        "description": "Deals medium Light damage to a single target. 5 hits. Upon completion, gains 1 Rank. If Verso uses this skill at Perfection Rank A, grants 2 additional MP to Verso."
       },
       "verso-marking-shot": {
         "name": "Marking Shot (Verso)",
-        "description": "Deals low Lightning damage to a single target. 1 golpe. Aplica Marca."
+        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Mark."
       },
       "verso-overload": {
         "name": "Overload",
-        "description": "Aumenta o Rank to S and reenche todo o AP, mas define a vida própria to 1."
+        "description": "Increases Rank to S and refills all MP, but sets own HP to 1."
       },
       "verso-paradigm-shift": {
         "name": "Paradigm Shift",
-        "description": "Deals low Physical damage to a single target and devolve 1-3 AP. 3 golpes. If Verso usar esta habilidade no Rank C de Perfeição, Grants 1 AP adicional to Verso."
+        "description": "Deals low Physical damage to a single target and returns 1-3 MP. 3 hits. If Verso uses this skill at Perfection Rank C, grants 1 additional MP to Verso."
       },
       "verso-perfect-break": {
         "name": "Perfect Break",
-        "description": "Deals damage Light muito high to a single target. 1 golpe. Pode Quebrar. If Verso usar esta habilidade no Rank B de Perfeição, o custo de AP is reduzido de 7 to 5."
+        "description": "Deals very high Light damage to a single target. 1 hit. Can cause Break. If Verso uses this skill at Perfection Rank B, the MP cost is reduced from 7 to 5."
       },
       "verso-perfect-recovery": {
         "name": "Perfect Recovery",
-        "description": "Recupera 50% de HP and dissipa Efeitos de Status. Dá 0-2 Perfeição. If Verso usar esta habilidade no Rank C de Perfeição, o efeito de heals is aumentado to 100%."
+        "description": "Recovers 50% of HP and dispels Status Effects. Gives 0-2 Perfection. If Verso uses this skill at Perfection Rank C, the heal effect is increased to 100%."
       },
       "verso-phantom-stars": {
         "name": "Phantom Stars",
-        "description": "Deals damage Light extreme to all enemies. 5 golpes. Pode Quebrar. If Verso usar esta habilidade no Rank S de Perfeição, o custo de AP is reduzido de 9 to 5."
+        "description": "Deals extreme Light damage to all enemies. 5 hits. Can cause Break. If Verso uses this skill at Perfection Rank S, the MP cost is reduced from 9 to 5."
       },
       "verso-powerful": {
         "name": "Powerful",
-        "description": "Applies Empowered (aumenta damage) to 1-3 allies for 3 turns. Rola 1d6: (1-3) apenas Verso, (4-6) toda equipe. If Verso usar esta habilidade no Rank A de Perfeição, a duração aumenta to 5 turnos."
+        "description": "Applies Empowered (increases damage) to 1-3 allies for 3 turns. Rolls 1d6: (1-3) only Verso, (4-6) whole team. If Verso uses this skill at Perfection Rank A, the duration increases to 5 turns."
       },
       "verso-purification": {
         "name": "Purification",
-        "description": "Deals damage Light medium to a single target. 2 golpes. Dissipa Efeitos de Status próprios. If Verso usar esta habilidade no Rank B de Perfeição, o damage is aumentado."
+        "description": "Deals medium Light damage to a single target. 2 hits. Dispels own Status Effects. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-quick-strike": {
         "name": "Quick Strike",
-        "description": "Deals low Physical damage to a single target. 1 golpe. If Verso usar esta habilidade no Rank D de Perfeição: Dá more Perfeição."
+        "description": "Deals low Physical damage to a single target. 1 hit. If Verso uses this skill at Perfection Rank D: Gives more Perfection."
       },
       "verso-radiant-slash": {
         "name": "Radiant Slash",
-        "description": "Deals damage Light low to all enemies. 1 golpe. Pode Quebrar. If Verso usar esta habilidade no Rank C de Perfeição, o damage is aumentado."
+        "description": "Deals low Light damage to all enemies. 1 hit. Can cause Break. If Verso uses this skill at Perfection Rank C, the damage is increased."
       },
       "verso-sabotage": {
         "name": "Sabotage",
-        "description": "Gradient Skill (doesn't consume turn). Deals damage Physical medium to all enemies. 1 golpe. Aplica Marca."
+        "description": "Gradient Skill (doesn't consume turn). Deals medium Physical damage to all enemies. 1 hit. Applies Mark."
       },
       "verso-speedburst": {
         "name": "Speed Burst",
-        "description": "Deals damage Light high to a single target. 5 golpes. Dano aumentado pela diferença de Velocidade com o alvo. If Verso usar esta habilidade no Rank C de Perfeição, o damage is aumentado."
+        "description": "Deals high Light damage to a single target. 5 hits. Damage increased by the Speed difference with the target. If Verso uses this skill at Perfection Rank C, the damage is increased."
       },
       "verso-steeled-strike": {
         "name": "Steeled Strike",
-        "description": "Após 1 turno, causa damage Physical extreme to a single target. 13 golpes. Interrompido se receber qualquer damage. If Verso usar esta habilidade no Rank S de Perfeição, o damage is aumentado."
+        "description": "After 1 turn, deals extreme Physical damage to a single target. 13 hits. Interrupted if receiving any damage. If Verso uses this skill at Perfection Rank S, the damage is increased."
       },
       "verso-striker": {
         "name": "Striker",
-        "description": "Gradient Skill (doesn't consume turn). Deals damage Physical high to a single target. 1 golpe. Pode Quebrar."
+        "description": "Gradient Skill (doesn't consume turn). Deals high Physical damage to a single target. 1 hit. Can cause Break."
       },
       "verso-strike-storm": {
         "name": "Strike Storm",
-        "description": "Deals very high damage to a single target. 6 golpes. Uses weapon element. Acertos Críticos geram 2 additional Charges."
+        "description": "Deals very high damage to a single target. 6 hits. Uses weapon element. Critical hits generate 2 additional Charges."
       },
       "monoco-abbest-wind": {
         "name": "Abbest Wind",
-        "description": "Wind-based attack. Efeito: Deals low Physical damage to a single target. 1 hit. Joga an second turno. Normalmente custa 2 PM, mas quando o Ponteiro from Roda Bestial está posicionado to a Máscara Ágil or Máscara Onipotente, o custo reduz to 0 PM. Usar esta habilidade avança o Ponteiro from Roda Bestial to 2 posições. Pré-requisito: Derrote and adquira o pé de an enemy Abbest enquanto Monoco is no grupo ativo."
+        "description": "Wind-based attack. Effect: Deals low Physical damage to a single target. 1 hit. Takes a second turn. Normally costs 2 MP, but when the Bestial Wheel Pointer is positioned on an Agile Mask or Omnipotent Mask, the cost reduces to 0 MP. Using this skill advances the Bestial Wheel Pointer by 2 positions.\nPrerequisite: Defeat and acquire the foot of an Abbest enemy while Monoco is in the active group."
       },
       "monoco-aberration-light": {
         "name": "Aberration Light",
-        "description": "Aberration light attack. Efeito: Deals damage Light high to all enemies. 2 hits. Aplica 4 Queimaduras for hit. Máscara Ágil: Aplica 2 Queimaduras adicionais for hit. Custa 7 PM. Usar esta habilidade avança o Ponteiro from Roda Bestial to 4 posições. Pré-requisito: Derrote and adquira o pé de an enemy Aberration enquanto Monoco is no grupo ativo."
+        "description": "Aberration light attack. Effect: Deals high Light damage to all enemies. 2 hits. Applies 4 Burns per hit. Agile Mask: Applies 2 additional Burns per hit. Costs 7 MP. Using this skill advances the Bestial Wheel Pointer by 4 positions.\nPrerequisite: Defeat and acquire the foot of an Aberration enemy while Monoco is in the active group."
       },
       "monoco-ballet-charm": {
         "name": "Ballet Charm",
-        "description": "Charming ballet-style attack. Efeito: Deals damage Light low to a single target. 1 hit. Aplica Indefeso to the target for 3 turns. Aumenta o damage quando usado com Máscara de Conjurador equipada. Usar esta habilidade avança o Ponteiro from Roda Bestial to 3 posições. Pré-requisito: Derrote and adquira o pé de an enemy Ballet enquanto Monoco is no grupo ativo."
+        "description": "Charming ballet-style attack. Effect: Deals low Light damage to a single target. 1 hit. Applies Vulnerable to the target for 3 turns. Increases damage when used with Conjurer Mask equipped. Using this skill advances the Bestial Wheel Pointer by 3 positions.\nPrerequisite: Defeat and acquire the foot of a Ballet enemy while Monoco is in the active group."
       },
       "monoco-benisseur-mortar": {
         "name": "Benisseur Mortar",
-        "description": "Mortar bombardment attack. Efeito: Deals Ice damage medium to a single target. 3 hits. Muda to Máscara Onipotente se o alvo is Marked. Máscara de Conjurador: Dano aumentado. Pré-requisito: Derrote and adquira o pé de an enemy Bénisseur enquanto Monoco is no grupo ativo."
+        "description": "Mortar bombardment attack. Effect: Deals medium Ice damage to a single target. 3 hits. Changes to Omnipotent Mask if the target is Marked. Conjurer Mask: Increased damage.\nPrerequisite: Defeat and acquire the foot of a Bénisseur enemy while Monoco is in the active group."
       },
       "monoco-boucheclier-fortify": {
         "name": "Boucheclier Fortify",
-        "description": "Shield fortification skill. Efeito: Aplica Carapaça to 1-3 allies for 3 turns. Máscara Pesada: Também applies 1 Escudo. Usar esta habilidade move o Ponteiro from Roda Bestial to 5 posições. Quando o ponteiro está to Máscara Pesada or Máscara Onipotente, Grants 1 Escudo aos allies afetados. Pré-requisito: Derrote and adquira o pé de an enemy Boucheclier enquanto Monoco is no grupo ativo."
+        "description": "Shield fortification skill. Effect: Applies Shell to 1-3 allies for 3 turns. Heavy Mask: Also applies 1 Shield. Using this skill moves the Bestial Wheel Pointer by 5 positions. When the pointer is on Heavy Mask or Omnipotent Mask, grants 1 Shield to affected allies.\nPrerequisite: Defeat and acquire the foot of a Boucheclier enemy while Monoco is in the active group."
       },
       "monoco-braseleur-smash": {
         "name": "Braseleur Smash",
-        "description": "Powerful smashing attack. Efeito: Deals medium Fire damage to a single target and applies 3 Queimaduras. 2 hits. Dano aumentado quando o Ponteiro from Roda Bestial está posicionado to Máscara Equilibrada or Máscara Onipotente. Usar esta habilidade avança o Ponteiro from Roda Bestial to 2 posições. Pré-requisito: Derrote and adquira o pé de an enemy Braseleur enquanto Monoco is no grupo ativo."
+        "description": "Powerful smashing attack. Effect: Deals medium Fire damage to a single target and applies 3 Burns. 2 hits. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask. Using this skill advances the Bestial Wheel Pointer by 2 positions.\nPrerequisite: Defeat and acquire the foot of a Braseleur enemy while Monoco is in the active group."
       },
       "monoco-break-point": {
         "name": "Break Point",
-        "description": "Critical break point attack. Efeito: Deals extreme damage to a single target. 1 hit. Uses weapon element. Preenche a Barra de Break from the target and causa Break. Habilidade Gradiente (não consome turno). Pré-requisito: Alcance Nível de Relacionamento 7 com Monoco."
+        "description": "Critical break point attack. Effect: Deals extreme damage to a single target. 1 hit. Uses weapon element. Fills the target's Break Bar and causes Break. Gradient Skill (doesn't consume turn).\nPrerequisite: Reach Relationship Level 7 with Monoco."
       },
       "monoco-bruler-bash": {
         "name": "Bruler Bash",
-        "description": "Burning bash attack. Efeito: Deals damage Physical medium to a single target. 3 hits. Can cause Break. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro from Roda Bestial to 4 posições. Pré-requisito: Derrote and adquira o pé de an enemy Bruler enquanto Monoco is no grupo ativo."
+        "description": "Burning bash attack. Effect: Deals medium Physical damage to a single target. 3 hits. Can cause Break. Increased damage when Conjurer Mask is active. Advances the Bestial Wheel Pointer by 4 positions.\nPrerequisite: Defeat and acquire the foot of a Bruler enemy while Monoco is in the active group."
       },
       "monoco-chalier-combo": {
         "name": "Chalier Combo",
-        "description": "Multi-hit combo attack. Efeito: Deals damage Physical high to a single target. 6 hits. Interrompido se falhar. Dano aumentado quando usado com Máscara Equilibrada ativa. Pré-requisito: Habilidade inicial de Monoco, não requer pré-requisito."
+        "description": "Multi-hit combo attack. Effect: Deals high Physical damage to a single target. 6 hits. Interrupted if missed. Increased damage when used with Balanced Mask active.\nPrerequisite: Monoco's starting skill, no prerequisite required."
       },
       "monoco-chapelier-slash": {
         "name": "Chapelier Slash",
-        "description": "Slashing attack. Efeito: Deals damage Physical high to all enemies. 3 hits. Aplica Marca. Move o Ponteiro from Roda Bestial to 4 posições. Dano aumentado quando usado enquanto o ponteiro está to Máscara Ágil or Máscara Onipotente. Pré-requisito: Derrote and adquira o pé de an enemy Chapelier enquanto Monoco is no grupo ativo."
+        "description": "Slashing attack. Effect: Deals high Physical damage to all enemies. 3 hits. Applies Mark. Moves the Bestial Wheel Pointer by 4 positions. Increased damage when used while the pointer is on Agile Mask or Omnipotent Mask.\nPrerequisite: Defeat and acquire the foot of a Chapelier enemy while Monoco is in the active group."
       },
       "monoco-chevaliere-ice": {
         "name": "Chevaliere Ice",
-        "description": "Ice-based knight attack. Efeito: Deals high Ice damage to all enemies. 3 hits. Aplica Lento nos alvos for 3 turns. Modificador de Máscara Equilibrada aumenta o damage quando o Ponteiro from Roda Bestial está posicionado to Máscara Equilibrada or Máscara Onipotente. Pré-requisito: Derrote and adquira o pé de an enemy Gold Chevalière enquanto Monoco is no grupo ativo."
+        "description": "Ice-based knight attack. Effect: Deals high Ice damage to all enemies. 3 hits. Applies Slow to targets for 3 turns. Balanced Mask modifier increases damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask.\nPrerequisite: Defeat and acquire the foot of a Gold Chevalière enemy while Monoco is in the active group."
       },
       "monoco-chevaliere-piercing": {
         "name": "Chevaliere Piercing",
-        "description": "Piercing knight attack. Efeito: Deals damage Physical to a single target atravessando Escudos. 6 hits. Dano aumentado to each Escudo to the target. Dano aumentado quando usado com Máscara Ágil equipada. Pré-requisito: Derrote and adquira o pé de an enemy Ceramic Chevalière enquanto Monoco is no grupo ativo."
+        "description": "Piercing knight attack. Effect: Deals Physical damage to a single target piercing through Shields. 6 hits. Increased damage for each Shield on the target. Increased damage when used with Agile Mask equipped.\nPrerequisite: Defeat and acquire the foot of a Ceramic Chevalière enemy while Monoco is in the active group."
       },
       "monoco-chevaliere-thrusts": {
         "name": "Chevaliere Thrusts",
-        "description": "Multiple thrusting attacks. Efeito: Deals damage Physical high to all enemies. 3 hits. Acertos Críticos causam o dobro from damage. Máscara Pesada: Dano aumentado. Pré-requisito: Derrote and adquira o pé de an enemy Steel Chevalière enquanto Monoco is no grupo ativo."
+        "description": "Multiple thrusting attacks. Effect: Deals high Physical damage to all enemies. 3 hits. Critical hits deal double damage. Heavy Mask: Increased damage.\nPrerequisite: Defeat and acquire the foot of a Steel Chevalière enemy while Monoco is in the active group."
       },
       "monoco-clair-enfeeble": {
         "name": "Clair Enfeeble",
-        "description": "Enfeebling light attack. Efeito: Deals damage Light medium to all enemies. 1 hit. Aplica Indefeso for 3 turns. Usar enquanto o Ponteiro from Roda Bestial está to Máscara Equilibrada or Máscara Onipotente aumenta o damage. Pré-requisito: Derrote and adquira o pé de an enemy Clair enquanto Monoco is no grupo ativo."
+        "description": "Enfeebling light attack. Effect: Deals medium Light damage to all enemies. 1 hit. Applies Vulnerable for 3 turns. Using while the Bestial Wheel Pointer is on Balanced Mask or Omnipotent Mask increases damage.\nPrerequisite: Defeat and acquire the foot of a Clair enemy while Monoco is in the active group."
       },
       "monoco-contorsionniste-blast": {
         "name": "Contorsionniste Blast",
-        "description": "Contortionist explosive blast. Efeito: Deals damage Physical medium to all enemies. 1 hit. Cura all allies to 10% de HP to each enemy atingido. Dano aumentado quando o Ponteiro from Roda Bestial está posicionado to Máscara Equilibrada or Máscara Onipotente. Pré-requisito: Derrote and adquira o pé de an enemy Contorsionniste enquanto Monoco is no grupo ativo."
+        "description": "Contortionist explosive blast. Effect: Deals medium Physical damage to all enemies. 1 hit. Heals all allies by 10% HP for each enemy hit. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask.\nPrerequisite: Defeat and acquire the foot of a Contorsionniste enemy while Monoco is in the active group."
       },
       "monoco-creation-void": {
         "name": "Creation Void",
-        "description": "Creates void energy. Efeito: Deals Void damage extreme to alvos aleatórios. 3 hits. Dano aumentado se o mesmo alvo for atingido múltiplas vezes. Recebe aumento de damage quando utilizado enquanto o Ponteiro from Roda Bestial se alinha com Máscara de Conjurador or Máscara Onipotente. Pré-requisito: Derrote and adquira o pé de an enemy Création enquanto Monoco is no grupo ativo."
+        "description": "Creates void energy. Effect: Deals extreme Void damage to random targets. 3 hits. Increased damage if the same target is hit multiple times. Receives damage increase when used while the Bestial Wheel Pointer aligns with Conjurer Mask or Omnipotent Mask.\nPrerequisite: Defeat and acquire the foot of a Création enemy while Monoco is in the active group."
       },
       "monoco-cruler-barrier": {
         "name": "Cruler Barrier",
-        "description": "Protective barrier skill. Efeito: Aplica 1-2 Escudos to the target. Máscara Pesada: Grants 2 PM ao alvo. Usar esta habilidade avança o Ponteiro from Roda Bestial to 4 posições. Quando ativado enquanto o ponteiro está to Máscara Pesada or Máscara Onipotente, Grants 2 PM adicionais ao alvo. Pré-requisito: Derrote and adquira o pé de an enemy Cruler enquanto Monoco is no grupo ativo."
+        "description": "Protective barrier skill. Effect: Applies 1-2 Shields to the target. Heavy Mask: Grants 2 MP to the target. Using this skill advances the Bestial Wheel Pointer by 4 positions. When activated while the pointer is on Heavy Mask or Omnipotent Mask, grants 2 additional MP to the target.\nPrerequisite: Defeat and acquire the foot of a Cruler enemy while Monoco is in the active group."
       },
       "monoco-cultist-blood": {
         "name": "Cultist Blood",
-        "description": "Blood-based cultist attack. Efeito: Deals damage das Trevas medium to all enemies. 3 hits. Sacrifica 90% de HP to aumentar o damage. Máscara Pesada: Dano aumentado. Usar esta habilidade avança o Ponteiro from Roda Bestial to 5 posições. Pré-requisito: Derrote and adquira o pé de an enemy Greatsword Cultist enquanto Monoco is no grupo ativo."
+        "description": "Blood-based cultist attack. Effect: Deals medium Darkness damage to all enemies. 3 hits. Sacrifices 90% HP to increase damage. Heavy Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 5 positions.\nPrerequisite: Defeat and acquire the foot of a Greatsword Cultist enemy while Monoco is in the active group."
       },
       "monoco-cultist-slashes": {
         "name": "Cultist Slashes",
-        "description": "Multiple cultist slashing attacks. Efeito: Deals damage das Trevas medium to a single target. 3 hits. Causa more damage quanto less HP Monoco tiver. Dano aumentado quando o Ponteiro from Roda Bestial se alinha com Máscara Ágil or Máscara Onipotente. Usar esta habilidade avança o Ponteiro from Roda Bestial to 3 posições. Pré-requisito: Derrote and adquira o pé de an enemy Reaper Cultist enquanto Monoco is no grupo ativo."
+        "description": "Multiple cultist slashing attacks. Effect: Deals medium Darkness damage to a single target. 3 hits. Deals more damage the less HP Monoco has. Increased damage when the Bestial Wheel Pointer aligns with Agile Mask or Omnipotent Mask. Using this skill advances the Bestial Wheel Pointer by 3 positions.\nPrerequisite: Defeat and acquire the foot of a Reaper Cultist enemy while Monoco is in the active group."
       },
       "monoco-danseuse-waltz": {
         "name": "Danseuse Waltz",
-        "description": "Graceful waltzing attack. Efeito: Deals high Fire damage to a single target. 3 hits. Causa more damage against alvos Burning. Máscara Equilibrada: Dano aumentado. Usar esta habilidade avança o Ponteiro from Roda Bestial to 3 posições. Pré-requisito: Derrote and adquira o pé de an enemy Danseuses enquanto Monoco is no grupo ativo."
+        "description": "Graceful waltzing attack. Effect: Deals high Fire damage to a single target. 3 hits. Deals more damage against Burning targets. Balanced Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 3 positions.\nPrerequisite: Defeat and acquire the foot of a Danseuses enemy while Monoco is in the active group."
       },
       "monoco-demineur-thunder": {
         "name": "Demineur Thunder",
-        "description": "Thunder-based explosive attack. Efeito: Deals low Lightning damage to a single target. 1 hit. Deals damage de Break extra. Bônus de damage Break aumentado quando a Máscara de Conjurador está ativa. Usar esta habilidade avança o Ponteiro from Roda Bestial to 5 posições. Pré-requisito: Derrote and adquira o pé de an enemy Demineur enquanto Monoco is no grupo ativo."
+        "description": "Thunder-based explosive attack. Effect: Deals low Lightning damage to a single target. 1 hit. Deals extra Break damage. Break damage bonus increased when Conjurer Mask is active. Using this skill advances the Bestial Wheel Pointer by 5 positions.\nPrerequisite: Defeat and acquire the foot of a Demineur enemy while Monoco is in the active group."
       },
       "monoco-duallist-storm": {
         "name": "Duallist Storm",
-        "description": "Dual-wielding storm attack. Efeito: Deals damage Physical extreme to a single target. 4 hits. Can cause Break. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro from Roda Bestial to 1 posição. Pré-requisito: Derrote and adquira o pé de an enemy Dualliste enquanto Monoco is no grupo ativo."
+        "description": "Dual-wielding storm attack. Effect: Deals extreme Physical damage to a single target. 4 hits. Can cause Break. Omnipotent Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 1 position.\nPrerequisite: Defeat and acquire the foot of a Dualliste enemy while Monoco is in the active group."
       },
       "monoco-echassier-stabs": {
         "name": "Echassier Stabs",
-        "description": "Multiple stabbing attacks. Efeito: Deals damage Physical medium to a single target. 2 hits. O second hit applies Marca to the target. Máscara Ágil: Dano aumentado. Usar esta habilidade avança o Ponteiro from Roda Bestial to 4 posições. Pré-requisito: Derrote and adquira o pé de an enemy Échassier enquanto Monoco is no grupo ativo."
+        "description": "Multiple stabbing attacks. Effect: Deals medium Physical damage to a single target. 2 hits. The second hit applies Mark to the target. Agile Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 4 positions.\nPrerequisite: Defeat and acquire the foot of an Échassier enemy while Monoco is in the active group."
       },
       "monoco-eveque-spear": {
         "name": "Eveque Spear",
-        "description": "Bishop's spear attack. Efeito: Deals damage Earth high to a single target and applies Impotente for 3 turns. 1 hit. Dano aumentado quando usado com modificador de Máscara Pesada. Usar esta habilidade avança o Ponteiro from Roda Bestial to 3 posições. Pré-requisito: Derrote and adquira o pé de an enemy Évêque enquanto Monoco is no grupo ativo."
+        "description": "Bishop's spear attack. Effect: Deals high Earth damage to a single target and applies Impotent for 3 turns. 1 hit. Increased damage when used with Heavy Mask modifier. Using this skill advances the Bestial Wheel Pointer by 3 positions.\nPrerequisite: Defeat and acquire the foot of an Évêque enemy while Monoco is in the active group."
       },
       "monoco-gault-fury": {
         "name": "Gault Fury",
-        "description": "Furious rage attack. Efeito: Deals low Physical damage to a single target. 4 hits. Aplica Marca. Máscara Equilibrada: Dano aumentado. Usar esta habilidade avança o Ponteiro from Roda Bestial to 2 posições. Quando ativado enquanto o ponteiro está to Máscara Equilibrada or Máscara Onipotente, o damage aumenta. Pré-requisito: Derrote and adquira o pé de an enemy Gault enquanto Monoco is no grupo ativo."
+        "description": "Furious rage attack. Effect: Deals low Physical damage to a single target. 4 hits. Applies Mark. Balanced Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 2 positions. When activated while the pointer is on Balanced Mask or Omnipotent Mask, damage increases.\nPrerequisite: Defeat and acquire the foot of a Gault enemy while Monoco is in the active group."
       },
       "monoco-glaise-earthquakes": {
         "name": "Glaise Earthquakes",
-        "description": "Earth-shaking earthquake attack. Efeito: Deals damage Earth medium to all enemies. 3 hits. Applies Empowered to si mesmo. Máscara Pesada: applies Empowered to all allies. Usar esta habilidade avança o Ponteiro from Roda Bestial to 6 posições. Pré-requisito: Derrote and adquira o pé de an enemy Glaise enquanto Monoco is no grupo ativo."
+        "description": "Earth-shaking earthquake attack. Effect: Deals medium Earth damage to all enemies. 3 hits. Applies Empowered to self. Heavy Mask: applies Empowered to all allies. Using this skill advances the Bestial Wheel Pointer by 6 positions.\nPrerequisite: Defeat and acquire the foot of a Glaise enemy while Monoco is in the active group."
       },
       "monoco-hexga-crush": {
         "name": "Hexga Crush",
-        "description": "Crushing hex attack. Efeito: Deals damage Earth medium to a single target. 2 hits. Aplica Indefeso to the target for 3 turns. Modificador de Máscara Pesada aumenta o damage. Requer 5 PM to lançar and avança o Ponteiro from Roda Bestial to 6 posições. Quando usado enquanto o ponteiro está to Máscara Pesada or Máscara Onipotente, a duração from debuff aumenta to 5 turnos. Pré-requisito: Derrote and adquira o pé de an enemy Hexga enquanto Monoco is no grupo ativo."
+        "description": "Crushing hex attack. Effect: Deals medium Earth damage to a single target. 2 hits. Applies Vulnerable to the target for 3 turns. Heavy Mask modifier increases damage. Requires 5 MP to cast and advances the Bestial Wheel Pointer by 6 positions. When used while the pointer is on Heavy Mask or Omnipotent Mask, the debuff duration increases to 5 turns.\nPrerequisite: Defeat and acquire the foot of a Hexga enemy while Monoco is in the active group."
       },
       "monoco-jar-lampstorm": {
         "name": "Jar Lampstorm",
-        "description": "Lamp jar storm attack. Efeito: Deals damage Physical medium to all enemies. 4 hits. Máscara Pesada: Dano aumentado. Pré-requisito: Derrote and adquira o pé de an enemy Jar enquanto Monoco is no grupo ativo."
+        "description": "Lamp jar storm attack. Effect: Deals medium Physical damage to all enemies. 4 hits. Heavy Mask: Increased damage.\nPrerequisite: Defeat and acquire the foot of a Jar enemy while Monoco is in the active group."
       },
       "monoco-lampmaster-light": {
         "name": "Lampmaster Light",
-        "description": "Master lamp light attack. Efeito: Deals damage Light high to all enemies. 1 hit. Dano aumentado a each uso. Inclui aprimoramento de Máscara Onipotente que fornece damage aumentado. O damage escala com each uso sucessivo, atingindo o maximum após five lançamentos. Pré-requisito: Derrote and adquira o pé de an enemy Lampmaster enquanto Monoco is no grupo ativo."
+        "description": "Master lamp light attack. Effect: Deals high Light damage to all enemies. 1 hit. Increased damage with each use. Includes Omnipotent Mask enhancement that provides increased damage. Damage scales with each successive use, reaching maximum after five casts.\nPrerequisite: Defeat and acquire the foot of a Lampmaster enemy while Monoco is in the active group."
       },
       "monoco-lancelier-impale": {
         "name": "Lancelier Impale",
-        "description": "Impaling lance attack. Efeito: Deals low Ice damage to a single target. 1 hit. Desacelera o alvo for 3 turns. Dano aumentado quando usado com o aprimoramento de Máscara Ágil ativo no Ponteiro from Roda Bestial. Pré-requisito: Derrote and adquira o pé de an enemy Lancelier enquanto Monoco is no grupo ativo."
+        "description": "Impaling lance attack. Effect: Deals low Ice damage to a single target. 1 hit. Slows the target for 3 turns. Increased damage when used with Agile Mask enhancement active on the Bestial Wheel Pointer.\nPrerequisite: Defeat and acquire the foot of a Lancelier enemy while Monoco is in the active group."
       },
       "monoco-luster-slices": {
         "name": "Luster Slices",
-        "description": "Lustrous slicing attacks. Efeito: Deals low Physical damage to a single target. 3 hits. Aplica Rapidez to si mesmo for 3 turns. Ter Máscara Ágil or Máscara Onipotente ativa aumenta o damage. Pré-requisito: Derrote and adquira o pé de an enemy Luster enquanto Monoco is no grupo ativo."
+        "description": "Lustrous slicing attacks. Effect: Deals low Physical damage to a single target. 3 hits. Applies Haste to self for 3 turns. Having Agile Mask or Omnipotent Mask active increases damage.\nPrerequisite: Defeat and acquire the foot of a Luster enemy while Monoco is in the active group."
       },
       "monoco-mighty-strike": {
         "name": "Mighty Strike",
-        "description": "Powerful mighty strike. Efeito: Deals high damage to a single target. 2 hits. Uses weapon element. Causa o dobro from damage se o alvo is Atordoado. Vai to Máscara Onipotente. Pré-requisito: Desbloqueado automaticamente ao aprender o recurso de Ataques/Habilidades Gradiente, que fica disponível ao progredir na história."
+        "description": "Powerful mighty strike. Effect: Deals high damage to a single target. 2 hits. Uses weapon element. Deals double damage if the target is Stunned. Goes to Omnipotent Mask.\nPrerequisite: Automatically unlocked upon learning the Gradient Attacks/Skills feature, which becomes available as you progress through the story."
       },
       "monoco-moissonneuse-vendange": {
         "name": "Moissonneuse Vendange",
-        "description": "Harvesting reaper attack. Efeito: Deals damage Physical high to a single target. 3 hits. Can cause Break. Dano aumentado quando Máscara Equilibrada or Máscara Onipotente está ativa no Ponteiro from Roda Bestial. Usar esta habilidade avança o ponteiro to 2 posições. Pré-requisito: Derrote and adquira o pé de an enemy Moissoneusse enquanto Monoco is no grupo ativo."
+        "description": "Harvesting reaper attack. Effect: Deals high Physical damage to a single target. 3 hits. Can cause Break. Increased damage when Balanced Mask or Omnipotent Mask is active on the Bestial Wheel Pointer. Using this skill advances the pointer by 2 positions.\nPrerequisite: Defeat and acquire the foot of a Moissoneusse enemy while Monoco is in the active group."
       },
       "monoco-obscur-sword": {
         "name": "Obscur Sword",
-        "description": "Dark shadow sword attack. Efeito: Deals damage das Trevas high to a single target. 5 hits. Causa more damage against alvos Indefesos. Máscara Pesada: Dano aumentado. Pré-requisito: Derrote and adquira o pé de an enemy Obscur enquanto Monoco is no grupo ativo."
+        "description": "Dark shadow sword attack. Effect: Deals high Darkness damage to a single target. 5 hits. Deals more damage against Vulnerable targets. Heavy Mask: Increased damage.\nPrerequisite: Defeat and acquire the foot of an Obscur enemy while Monoco is in the active group."
       },
       "monoco-orphelin-cheers": {
         "name": "Orphelin Cheers",
-        "description": "Orphan's cheerful buff. Efeito: Applies Empowered to 1-3 allies. Máscara de Conjurador: Também Grants 3 PM aos alvos. Usar esta habilidade avança o Ponteiro from Roda Bestial to 3 posições. Quando o ponteiro está to Máscara de Conjurador or Máscara Onipotente, allies afetados recebem benefícios triplicados. Pré-requisito: Derrote and adquira o pé de an enemy Orphelin enquanto Monoco is no grupo ativo."
+        "description": "Orphan's cheerful buff. Effect: Applies Empowered to 1-3 allies. Conjurer Mask: Also grants 3 MP to targets. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, affected allies receive tripled benefits.\nPrerequisite: Defeat and acquire the foot of an Orphelin enemy while Monoco is in the active group."
       },
       "monoco-pelerin-heal": {
         "name": "Pelerin Heal",
-        "description": "Pilgrim's healing skill. Efeito: Aplica Regeneração to all allies. Máscara de Conjurador: também heals 40% de HP. Usar esta habilidade avança o Ponteiro from Roda Bestial to 3 posições. Quando o ponteiro está to Máscara de Conjurador or Máscara Onipotente, o time recebe an aumento de heals de 40%. Pré-requisito: Derrote and adquira o pé de an enemy Pelerin enquanto Monoco is no grupo ativo."
+        "description": "Pilgrim's healing skill. Effect: Applies Regeneration to all allies. Conjurer Mask: also heals 40% HP. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, the team receives a 40% healing increase.\nPrerequisite: Defeat and acquire the foot of a Pelerin enemy while Monoco is in the active group."
       },
       "monoco-portier-crash": {
         "name": "Portier Crash",
-        "description": "Door-breaking crash attack. Efeito: Deals damage Physical high to all enemies. 1 hit. Can cause Break. Máscara Pesada: Dano aumentado. Pré-requisito: Derrote and adquira o pé de an enemy Portier enquanto Monoco is no grupo ativo."
+        "description": "Door-breaking crash attack. Effect: Deals high Physical damage to all enemies. 1 hit. Can cause Break. Heavy Mask: Increased damage.\nPrerequisite: Defeat and acquire the foot of a Portier enemy while Monoco is in the active group."
       },
       "monoco-potier-energy": {
         "name": "Potier Energy",
-        "description": "Potter's energy skill. Efeito: Grants 1-3 PM a all allies. Com aprimoramento de Máscara de Conjurador, fornece 1 PM adicional. Usar esta habilidade avança o Ponteiro from Roda Bestial to 6 posições. Quando ativado to Máscara de Conjurador or Máscara Onipotente, allies recebem an PM extra. Pré-requisito: Derrote and adquira o pé de an enemy Potier enquanto Monoco is no grupo ativo."
+        "description": "Potter's energy skill. Effect: Grants 1-3 MP to all allies. With Conjurer Mask enhancement, provides 1 additional MP. Using this skill advances the Bestial Wheel Pointer by 6 positions. When activated on Conjurer Mask or Omnipotent Mask, allies receive an extra MP.\nPrerequisite: Defeat and acquire the foot of a Potier enemy while Monoco is in the active group."
       },
       "monoco-ramasseur-bonk": {
         "name": "Ramasseur Bonk",
-        "description": "Collector's bonking attack. Efeito: Deals damage das Trevas low to a single target. 1 hit. Can cause Break. Efeito Máscara Ágil preenche 20% from Barra de Break from the target. Move o Ponteiro from Roda Bestial to 4 posições. Quando usado enquanto o ponteiro está to Máscara Ágil or Máscara Onipotente, preenche a Barra de Break from enemy to 20% ao acertar. Pré-requisito: Derrote and adquira o pé de an enemy Ramasseur enquanto Monoco is no grupo ativo."
+        "description": "Collector's bonking attack. Effect: Deals low Darkness damage to a single target. 1 hit. Can cause Break. Agile Mask effect fills 20% of the target's Break Bar. Moves the Bestial Wheel Pointer by 4 positions. When used while the pointer is on Agile Mask or Omnipotent Mask, fills the enemy's Break Bar by 20% on hit.\nPrerequisite: Defeat and acquire the foot of a Ramasseur enemy while Monoco is in the active group."
       },
       "monoco-rocher-hammering": {
         "name": "Rocher Hammering",
-        "description": "Rock hammering attack. Efeito: Deals damage Physical medium to a single target. 4 hits. Can cause Break. Modificador de Máscara Pesada fornece damage aumentado. Avança o Ponteiro from Roda Bestial to 3 posições and ganha damage aprimorado quando usado to Máscara Pesada or Máscara Onipotente. Pré-requisito: Derrote and adquira o pé de an enemy Rocher enquanto Monoco is no grupo ativo."
+        "description": "Rock hammering attack. Effect: Deals medium Physical damage to a single target. 4 hits. Can cause Break. Heavy Mask modifier provides increased damage. Advances the Bestial Wheel Pointer by 3 positions and gains enhanced damage when used on Heavy Mask or Omnipotent Mask.\nPrerequisite: Defeat and acquire the foot of a Rocher enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-estoc": {
         "name": "Sakapatate Estoc",
-        "description": "Estoc thrusting attack. Efeito: Deals low Lightning damage to a single target. 1 hit. Causa more damage se o alvo is Atordoado. Máscara Equilibrada: Dano aumentado. Pré-requisito: Derrote and adquira o pé de an enemy Ranger Sakapatate enquanto Monoco is no grupo ativo."
+        "description": "Estoc thrusting attack. Effect: Deals low Lightning damage to a single target. 1 hit. Deals more damage if the target is Stunned. Balanced Mask: Increased damage.\nPrerequisite: Defeat and acquire the foot of a Ranger Sakapatate enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-explosion": {
         "name": "Sakapatate Explosion",
-        "description": "Explosive attack. Efeito: Deals medium Lightning damage to enemies aleatórios. 3 hits. Acertos Críticos acionam an hit adicional. Máscara de Conjurador: Dano aumentado. Pré-requisito: Derrote and adquira o pé de an enemy Catapult Sakapatate enquanto Monoco is no grupo ativo."
+        "description": "Explosive attack. Effect: Deals medium Lightning damage to random enemies. 3 hits. Critical hits trigger an additional hit. Conjurer Mask: Increased damage.\nPrerequisite: Defeat and acquire the foot of a Catapult Sakapatate enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-fire": {
         "name": "Sakapatate Fire",
-        "description": "Fire-based attack. Efeito: Deals Fire damage extreme to all enemies. 3 hits. Aplica 3 Queimaduras for hit (9 total possível). Máscara Onipotente: Dano aumentado. Roda Bestial: +1 posição. Combo ótimo: Sakapatate Fire → Sapling Absorption → skill intermediária → Sakapatate Fire. Pré-requisito: Derrote and adquira o pé from enemy Ultimate Sakapatate enquanto Monoco is no grupo ativo."
+        "description": "Fire-based attack. Effect: Deals extreme Fire damage to all enemies. 3 hits. Applies 3 Burns per hit (9 total possible). Omnipotent Mask: Increased damage. Bestial Wheel: +1 position. Optimal combo: Sakapatate Fire → Sapling Absorption → intermediate skill → Sakapatate Fire.\nPrerequisite: Defeat and acquire the foot of an Ultimate Sakapatate enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-slam": {
         "name": "Sakapatate Slam",
-        "description": "Powerful slamming attack. Efeito: Deals damage Physical high to all enemies. 1 hit. Dano aumentado against alvos Markeds. Máscara Pesada or Onipotente: Dano aumentado. Roda Bestial: +5 posições. Pré-requisito: Derrote and adquira o pé de an enemy Robust Sakapatate enquanto Monoco is no grupo ativo."
+        "description": "Powerful slamming attack. Effect: Deals high Physical damage to all enemies. 1 hit. Increased damage against Marked targets. Heavy Mask or Omnipotent: Increased damage. Bestial Wheel: +5 positions.\nPrerequisite: Defeat and acquire the foot of a Robust Sakapatate enemy while Monoco is in the active group."
       },
       "monoco-sanctuary": {
         "name": "Sanctuary",
-        "description": "Creates protective sanctuary. Efeito: Habilidade Gradient (2 cargas). Grants 2 Escudos and applies Regeneração to all allies for 3 turns. Não consome turno. Pré-requisito: Alcance Nível de Relacionamento 4 com Monoco."
+        "description": "Creates protective sanctuary. Effect: Gradient Skill (2 charges). Grants 2 Shields and applies Regeneration to all allies for 3 turns. Doesn't consume turn.\nPrerequisite: Reach Relationship Level 4 with Monoco."
       },
       "monoco-sapling-absorption": {
         "name": "Sapling Absorption",
-        "description": "Absorbs energy like a sapling. Efeito: Deals damage das Trevas alto. 3 hits. Recupera 5% de HP for hit (10% na Máscara de Conjurador or Onipotente). Roda Bestial: +5 posições. Pré-requisito: Derrote and adquira o pé de an enemy Sapling enquanto Monoco is no grupo ativo."
+        "description": "Absorbs energy like a sapling. Effect: Deals high Darkness damage. 3 hits. Recovers 5% HP per hit (10% on Conjurer Mask or Omnipotent). Bestial Wheel: +5 positions.\nPrerequisite: Defeat and acquire the foot of a Sapling enemy while Monoco is in the active group."
       },
       "monoco-stalact-punches": {
         "name": "Stalact Punches",
-        "description": "Stalactite-like punching attacks. Efeito: Deals Ice damage medium to a single target. 4 hits. high damage Break. Máscara Pesada or Onipotente: Dano aumentado. Roda Bestial: +4 posições. Pré-requisito: Habilidade inicial de Monoco ao se juntar ao grupo, não requer pré-requisito."
+        "description": "Stalactite-like punching attacks. Effect: Deals medium Ice damage to a single target. 4 hits. High Break damage. Heavy Mask or Omnipotent: Increased damage. Bestial Wheel: +4 positions.\nPrerequisite: Monoco's starting skill upon joining the group, no prerequisite required."
       },
       "monoco-troubadour-trumpet": {
         "name": "Troubadour Trumpet",
-        "description": "Trumpet sound attack. Efeito: Aplica 1 buff aleatório to 1-3 allies (Empowered, Protected, Shielded, Regeneration or Hastened). Máscara de Conjurador or Onipotente: applies 2 buffs aleatórios for ally. Roda Bestial: +4 posições. Pré-requisito: Derrote and adquira o pé de an enemy Troubadour enquanto Monoco is no grupo ativo."
+        "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Protected, Shielded, Regeneration or Hastened). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions.\nPrerequisite: Defeat and acquire the foot of a Troubadour enemy while Monoco is in the active group."
       }
     },
     "items": {
@@ -2661,7 +2663,9 @@
       "title": "Pending effects",
       "message": "Resolve the effects below before performing your actions this turn.",
       "turn": "turn",
-      "turns": "turns"
+      "turns": "turns",
+      "resolveAll": "Resolve All",
+      "resolvingAll": "Resolving..."
     },
     "errors": {
       "failedToLoad": "Failed to load campaign data",

@@ -78,13 +78,14 @@ export interface CreateAttackRequest {
     consumesCharge?: boolean
     isGradient?: boolean
     destroysShields?: boolean
-    grantsAPPerShield?: number
+    grantsMPPerShield?: number
     consumesBurn?: number  // Number of Burn stacks to consume from target
     consumesForetell?: number  // Number of Foretell stacks to consume from target
     executionThreshold?: number  // If target HP% <= this, execute instantly (kill)
     skillType?: string  // "sun" or "moon" for Sciel's charge system
     bestialWheelAdvance?: number  // Advances Monoco's Bestial Wheel by this many positions
     ignoresShields?: boolean  // Damage goes through shields without removing them (Chevaliere Piercing)
+    isLastHit?: boolean  // Indicates if this is the last hit of the skill (for Twilight activation)
     shouldRemoveMarked?: boolean  // If false, don't remove Marked status (e.g., for Gustave's Homage)
 }
 

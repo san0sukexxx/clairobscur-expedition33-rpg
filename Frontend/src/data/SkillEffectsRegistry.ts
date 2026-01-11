@@ -14,7 +14,9 @@ export interface SkillMetadata {
 
     // Damage
     damageLevel: "none" | "low" | "medium" | "high" | "very-high" | "extreme";  // none=0%, low=50%, medium=100%, high=150%, very-high=200%, extreme=250%
-    hitCount: number;             // 1 to 8 hits
+    hitCount: number;             // 1 to 8 hits (or average if using minHits/maxHits)
+    minHits?: number;             // Minimum hits for variable hit skills (e.g., 5 for 5-7 hits)
+    maxHits?: number;             // Maximum hits for variable hit skills (e.g., 7 for 5-7 hits)
     targetScope: "single" | "all" | "self" | "random" | "ally" | "all-allies" | "all-enemies";  // single = alvo selecionado, all = todos do tipo, self = si mesmo, random = alvos aleatórios, ally = aliado, all-allies = todos aliados, all-enemies = todos inimigos
     usesWeaponElement: boolean;   // Use weapon's element?
     forcedElement?: Element;      // Overrides weapon element (Physical, Fire, Lightning, Void, etc)
@@ -33,7 +35,7 @@ export interface SkillMetadata {
     changesStanceTo?: Stance | null;     // Using this skill changes the user's stance to this (Breaking Rules -> Offensive)
     preservesVirtuoseStance?: boolean;   // If true and in Virtuose stance, keep Virtuose; otherwise go Stanceless (Fleuret Fury)
     destroysShields?: boolean;           // Destroys all Shielded status effects (Breaking Rules)
-    grantsAPPerShield?: number;          // Grants AP per shield destroyed (Breaking Rules)
+    grantsMPPerShield?: number;          // Grants MP per shield destroyed (Breaking Rules)
     damageScalesWithBurn?: boolean;      // Damage increases per Burn stack on target (Burning Canvas)
     burnDamageBonus?: number;            // % damage bonus per Burn stack (default 10%)
     consumesBurn?: boolean;              // Consumes Burn stacks for damage (Combustion)
@@ -42,14 +44,15 @@ export interface SkillMetadata {
     executionThreshold?: number;         // If target HP% is below this, execute instantly (Gommage: 25%)
     markedDamageBonus?: number;          // % damage bonus against Marked targets (Gustave's Homage: 50%)
     setsHpTo?: number;                   // Sets self HP to specific value (Last Chance: 1)
-    refillsAP?: boolean;                 // Refills all AP to maximum (Last Chance)
+    refillsMP?: boolean;                 // Refills all MP to maximum (Last Chance)
     reappliesStance?: boolean;           // Reapplies current stance (Mezzo Forte)
     maintainsStance?: boolean;           // Skill maintains current stance without changing it (prevents auto-reset to None)
-    grantsAPRange?: { min: number; max: number };  // Grants random AP between min and max (Mezzo Forte: 2-4)
+    grantsMPRange?: { min: number; max: number };  // Grants random MP between min and max (Mezzo Forte: 2-4)
+    grantsMP?: number;                   // Grants X MP to target ally (Intervention: 4)
     grantsMPDiceRoll?: { low: number; high: number };  // Rolls 1d6: 1-3 grants 'low' MP, 4-6 grants 'high' MP (Mezzo Forte: {low: 2, high: 4})
     costReductionFromStance?: { stance: Stance; reducedCost: number };  // Cost reduction when used from specific stance (Percee, Momentum Strike)
     damageScalesWithHitsReceived?: boolean;  // Damage increases per hit taken since last turn (Revenge, Payback)
-    costReductionPerParry?: number;      // AP cost reduced per successful parry (Payback)
+    costReductionPerParry?: number;      // MP cost reduced per successful parry (Payback)
     switchesToVirtuoseIfBurning?: boolean;  // Switches to Virtuose if target is burning (Swift Stride)
     appliesSelfDefenseless?: boolean;    // Applies Defenseless to self (Stendhal)
     conditionalBurnBonus?: { fromStance: Stance; bonusBurn: number };  // Extra burn when used from specific stance (Spark, Rain of Fire, Pyrolyse)
@@ -63,9 +66,8 @@ export interface SkillMetadata {
     foretellPerHitMultiplier?: number;   // Damage multiplier when consuming Foretell per hit (default 3.0 = 200% bonus)
     appliesForetellOnCrit?: number;      // Applies additional Foretell stacks on critical hits (Spectral Sweep: +1 per crit)
     propagatesBurnDamage?: boolean;      // Propagates damage to other Burning enemies (Searing Bond: 50% damage + 1 Foretell)
-    grantsMpPerForetell?: number;        // Grants MP to random ally per Foretell consumed (Plentiful Harvest: 1 MP per stack)
-    grantsApPerForetell?: number;        // Grants AP to random ally per Foretell consumed
-    drainsAlliesHp?: boolean;            // Drains all allies HP to 1, adds drained HP to damage (Our Sacrifice)
+    grantsMpPerForetell?: number;        // Grants MP to ally with lowest MP% per Foretell consumed (Plentiful Harvest: 1 MP per stack)
+    drainsAlliesHp?: boolean;            // Drains ALL allies (including self) HP to 1, adds drained HP to damage (Our Sacrifice)
     consumesAllEnemiesForetell?: boolean; // Consumes Foretell from ALL enemies, adds to damage (Our Sacrifice: +1 per stack)
     redistributesForetell?: boolean;     // Redistributes target's Foretell to all other enemies (Card Weaver)
     grantsExtraTurn?: boolean;           // Grants an extra turn to the user (Card Weaver - shows toast only)
@@ -84,9 +86,9 @@ export interface SkillMetadata {
     doubleDamageVsStunned?: boolean;     // Double damage if target is Stunned (Mighty Strike)
     forceAlmightyMask?: boolean;         // Forces Bestial Wheel to Almighty Mask position (0) (Mighty Strike)
     bonusDamageVsPowerless?: boolean;    // Bonus damage against Powerless targets (Obscur Sword)
-    grantsApAtCasterMask?: number;       // Grants this much AP to targets if at Caster/Almighty Mask (Orphelin Cheers: 3)
+    grantsMpAtCasterMask?: number;       // Grants this much MP to targets if at Caster/Almighty Mask (Orphelin Cheers: 3)
     healsHpPercentAtCasterMask?: number; // Heals this % of max HP if at Caster/Almighty Mask (Pelerin Heal: 40%)
-    grantsApToAllAllies?: { min: number; max: number }; // Grants random AP (min-max) to all allies (Potier Energy: 1-3)
+    grantsMpToAllAllies?: { min: number; max: number }; // Grants random MP (min-max) to all allies (Potier Energy: 1-3)
     fillsBreakBarAtAgileMask?: number;   // Fills X% of Break Bar if at Agile/Almighty Mask (Ramasseur Bonk: 20%)
     critTriggersExtraHit?: boolean;      // Critical hits add an additional hit (Sakapatate Explosion)
     healsHpPercentPerHit?: number;       // Heals this % of max HP per hit (Sapling Absorption: 5%, doubled at Caster/Almighty Mask)
@@ -106,9 +108,9 @@ export interface SkillMetadata {
     rankConditionalBonus?: {              // Additional bonuses when used at specific rank
         rank: string;
         damageMultiplier?: number;        // Additional damage multiplier (Assault Zero at B: +50%)
-        bonusApReturn?: number;           // Extra AP returned (Fleuret Fury at C: +1)
-        grantsAp?: number;                // AP granted (Poignée Forte at A: +2)
-        bonusApToAllies?: number;         // Extra AP to allies (Fleuret Eperdu at C: +1)
+        bonusMpReturn?: number;           // Extra MP returned (Fleuret Fury at C: +1)
+        grantsMp?: number;                // MP granted (Poignée Forte at A: +2)
+        bonusMpToAllies?: number;         // Extra MP to allies (Fleuret Eperdu at C: +1)
         canReapplyStun?: boolean;         // Can reapply Stun (Assaut Concussif at A)
     };
     rollsForTargetScope?: boolean;       // Rolls 1d6 to determine target scope: 1-3 = self only, 4-6 = all allies (Powerful)
@@ -123,8 +125,8 @@ export interface SkillMetadata {
     upgradesRankToSOnBreak?: boolean;    // When enemy breaks, auto-upgrade Perfection to S Rank (Le Tremblement)
     costsHpPercent?: number;             // Costs X% of current HP to use (Poignée Forte: 30%)
     transfersAllStatusToSelf?: boolean;  // Removes all status from allies and applies to Verso (Fléau)
-    returnsAp?: { min: number; max: number };  // Returns X-Y AP back (Fleuret Fury: 1-3)
-    grantsApToAllies?: { min: number; max: number };  // Grants X-Y AP to other allies (Fleuret Eperdu: 2-4)
+    returnsMp?: { min: number; max: number };  // Returns X-Y MP back (Fleuret Fury: 1-3)
+    grantsMpToAllies?: { min: number; max: number };  // Grants X-Y MP to other allies (Fleuret Eperdu: 2-4)
     scalesWithSpeedDifference?: boolean; // Damage increased by Speed difference with target (Escrime Rapide)
     interruptedIfDamaged?: boolean;      // Interrupted if any damage taken during charge (Plongeant Espadon)
     setsRankToS?: boolean;               // Sets Perfection Rank to S (Ultimate skills)
@@ -132,7 +134,6 @@ export interface SkillMetadata {
     reducesRank?: number;                // Reduces Perfection Rank by X levels (Verso Demoralisation: -1)
     grantsImmediateTurn?: boolean;       // Grants an immediate turn to the user (Free Action skills)
     scalesWithBattleForetellCount?: boolean;  // Damage scales with total Foretell count across all enemies in battle
-    grantsAP?: number;                   // Grants X AP to the user
 }
 
 export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
@@ -358,7 +359,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         changesStanceTo: "Offensive",     // Using this skill changes stance to Offensive
         destroysShields: true,            // Destroys all Shielded status effects
-        grantsAPPerShield: 1,             // Gains 1 AP per shield destroyed
+        grantsMPPerShield: 1,             // Gains 1 MP per shield destroyed
         primaryEffects: [],
         conditionalEffects: [
             {
@@ -508,7 +509,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: false,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
-        costReductionFromStance: { stance: "Virtuous", reducedCost: 2 },  // 5 AP normally, 2 AP from Virtuose
+        costReductionFromStance: { stance: "Virtuous", reducedCost: 2 },  // 5 MP normally, 2 MP from Virtuose
         markedDamageBonus: 50,           // +50% damage against Marked targets
         primaryEffects: [],
         conditionalEffects: []
@@ -522,7 +523,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         maintainsStance: true,              // Maintains stance (or switches to Virtuose if burning)
         switchesToVirtuoseIfBurning: true,  // Switches to Virtuose if target is burning
-        grantsAPRange: { min: 0, max: 2 },  // Grants 0-2 AP randomly
+        grantsMPRange: { min: 0, max: 2 },  // Grants 0-2 MP randomly
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -547,7 +548,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: true,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
-        costReductionFromStance: { stance: "Virtuous", reducedCost: 4 },  // 7 AP normally, 4 AP from Virtuose
+        costReductionFromStance: { stance: "Virtuous", reducedCost: 4 },  // 7 MP normally, 4 MP from Virtuose
         markedDamageBonus: 50,           // +50% damage against Marked targets
         primaryEffects: [],
         conditionalEffects: []
@@ -561,7 +562,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         changesStanceTo: "Virtuous",     // Changes stance to Virtuose
         setsHpTo: 1,                     // Reduces self HP to 1
-        refillsAP: true,                 // Refills all AP to maximum
+        refillsMP: true,                 // Refills all MP to maximum
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -603,7 +604,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         maintainsStance: true,           // Maintains current stance without changing
         reappliesStance: true,           // Reapplies current stance (maintains position)
-        grantsAPRange: { min: 2, max: 4 },  // Grants 2-4 AP randomly
+        grantsMPRange: { min: 2, max: 4 },  // Grants 2-4 MP randomly
         grantsMPDiceRoll: { low: 2, high: 4 },  // Roll 1d6: 1-3 = 2 MP, 4-6 = 4 MP
         primaryEffects: [],
         conditionalEffects: []
@@ -617,7 +618,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
         damageScalesWithHitsReceived: true,  // Damage increases per hit taken since last turn
-        costReductionPerParry: 1,        // AP cost reduced by 1 per successful parry (from 9 AP base)
+        costReductionPerParry: 1,        // MP cost reduced by 1 per successful parry (from 9 MP base)
         primaryEffects: [],
         conditionalEffects: [],
         canBreak: true
@@ -781,14 +782,16 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [],
         consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth for second turn
         gainsStains: ["Ice", "Light"]
-        // Gains 4 AP if target is Burning (implemented in battle logic)
+        // Gains 4 MP if target is Burning (implemented in battle logic)
         // Second turn mechanic when 2 Earth consumed (implemented in battle logic)
     },
 
     "lune-thunderfall": {
         skillId: "lune-thunderfall",
         damageLevel: "medium",
-        hitCount: 2,  // 2-6 random, +1 per crit
+        hitCount: 4,  // Average of 2-6 hits
+        minHits: 2,
+        maxHits: 6,
         targetScope: "random",
         usesWeaponElement: false,
         forcedElement: "Lightning",
@@ -908,7 +911,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth for 0 AP cost
+        consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth for 0 MP cost
         gainsStains: ["Light"]
     },
 
@@ -921,7 +924,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Light",
         primaryEffects: [],
         conditionalEffects: [],
-        consumesStains: [{ stain: "Lightning", count: 3 }],  // Consumes 3 Lightning for 0 AP cost
+        consumesStains: [{ stain: "Lightning", count: 3 }],  // Consumes 3 Lightning for 0 MP cost
         gainsStains: ["Light"]
     },
 
@@ -1285,8 +1288,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
-        returnsAp: { min: 1, max: 3 },  // Returns 1-3 AP back
-        rankConditionalBonus: { rank: "C", bonusApReturn: 1 }  // At C Rank: +1 AP (2-4 total)
+        returnsMp: { min: 1, max: 3 },  // Returns 1-3 MP back
+        rankConditionalBonus: { rank: "C", bonusMpReturn: 1 }  // At C Rank: +1 MP (2-4 total)
     },
 
     "verso-follow-up": {
@@ -1298,7 +1301,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Light",
         primaryEffects: [],
         conditionalEffects: []
-        // Perfection: S Rank = AP cost reduces to 2 (from 5)
+        // Perfection: S Rank = MP cost reduces to 2 (from 5)
         // Damage increases per Free Aim shot this turn (up to 10 stacks)
     },
 
@@ -1322,7 +1325,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: []
-        // Perfection: S Rank = AP cost reduces to 2 (from 5)
+        // Perfection: S Rank = MP cost reduces to 2 (from 5)
         // Damage +30% per use (max 150% after 5 uses)
     },
 
@@ -1350,7 +1353,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [],
         canBreak: true,
         upgradesRankToSOnBreak: true  // When enemy breaks, auto-upgrade Perfection to S Rank
-        // Perfection: B Rank = AP cost reduces to 5 (from 7)
+        // Perfection: B Rank = MP cost reduces to 5 (from 7)
     },
 
     "verso-defiant-strike": {
@@ -1393,8 +1396,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         reducesRank: 1,  // Reduces Verso's Perfection Rank by 1
-        grantsApToAllies: { min: 2, max: 4 },  // Gives 2-4 AP to other allies
-        rankConditionalBonus: { rank: "C", bonusApToAllies: 1 }  // At C Rank: +1 AP (3-5 total)
+        grantsMpToAllies: { min: 2, max: 4 },  // Gives 2-4 MP to other allies
+        rankConditionalBonus: { rank: "C", bonusMpToAllies: 1 }  // At C Rank: +1 MP (3-5 total)
     },
 
     "verso-overload": {
@@ -1406,7 +1409,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         setsRankToS: true,  // Sets Perfection to S Rank
-        refillsAP: true,  // Refills all AP
+        refillsMP: true,  // Refills all MP
         setsHpTo: 1  // Sets HP to 1 (high risk/reward)
     },
 
@@ -1433,7 +1436,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         gainsPerfectionRank: 1,  // Gains +1 Perfection Rank upon completion
-        rankConditionalBonus: { rank: "A", grantsAp: 2 }  // At A Rank: Grants +2 AP
+        rankConditionalBonus: { rank: "A", grantsMp: 2 }  // At A Rank: Grants +2 MP
     },
 
     "verso-phantom-stars": {
@@ -1446,7 +1449,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         canBreak: true
-        // Perfection: S Rank = AP cost reduces to 5 (from 9)
+        // Perfection: S Rank = MP cost reduces to 5 (from 9)
     },
 
     "verso-end-bringer": {
@@ -2318,7 +2321,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [],
         bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
-        // Grants 2 AP to target at Heavy/Almighty Mask
+        // Grants 2 MP to target at Heavy/Almighty Mask
     },
 
     "monoco-orphelin-cheers": {
@@ -2338,10 +2341,10 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [],
         randomAllyCount: { min: 1, max: 3 },
         bestialWheelAdvance: 3,
-        grantsApAtCasterMask: 3
+        grantsMpAtCasterMask: 3
         // Bestial Wheel: +3 positions
         // Applies to 1-3 random allies
-        // At Caster/Almighty: grants 3 AP to affected allies
+        // At Caster/Almighty: grants 3 MP to affected allies
     },
 
     "monoco-pelerin-heal": {
@@ -2374,11 +2377,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         bestialWheelAdvance: 6,
-        grantsApToAllAllies: { min: 1, max: 3 },
-        grantsApAtCasterMask: 1  // +1 extra AP at Caster/Almighty
+        grantsMpToAllAllies: { min: 1, max: 3 },
+        grantsMpAtCasterMask: 1  // +1 extra MP at Caster/Almighty
         // Bestial Wheel: +6 positions
-        // Grants 1-3 AP to all allies (random per ally)
-        // At Caster/Almighty: +1 extra AP (total 2-4 per ally)
+        // Grants 1-3 MP to all allies (random per ally)
+        // At Caster/Almighty: +1 extra MP (total 2-4 per ally)
     },
 
     "monoco-troubadour-trumpet": {
@@ -2550,7 +2553,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
     "sciel-sealed-fate": {
         skillId: "sciel-sealed-fate",
         damageLevel: "high",  // 150% weapon damage per hit
-        hitCount: 6,  // Variable 5-7 hits (using 6 as average)
+        hitCount: 6,  // Average of 5-7 hits
+        minHits: 5,
+        maxHits: 7,
         targetScope: "single",
         usesWeaponElement: true,
         primaryEffects: [],
@@ -2625,7 +2630,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "sciel-dark-cleansing",
         damageLevel: "none",  // 0% damage
         hitCount: 0,
-        targetScope: "single",  // Aliado alvo
+        targetScope: "ally",  // Aliado alvo
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
@@ -2636,7 +2641,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "sciel-dark-wave",
         damageLevel: "high",  // 150% weapon damage
         hitCount: 3,
-        targetScope: "all",
+        targetScope: "all-enemies",
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
@@ -2719,6 +2724,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "sciel-spectral-sweep",
         damageLevel: "medium",  // 100% weapon damage (2-6 hits variable)
         hitCount: 4,  // Average of 2-6 hits
+        minHits: 2,
+        maxHits: 6,
         targetScope: "single",
         usesWeaponElement: true,
         primaryEffects: [
@@ -2743,7 +2750,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         consumesForetellPerHit: true,    // ✅ Cada hit consome 1 Predição
-        foretellPerHitMultiplier: 3.0    // ✅ 200% bonus = 3x dano total quando consome
+        foretellPerHitMultiplier: 2.0    // ✅ 100% bonus = 2x dano total quando consome
     },
 
     "sciel-fortunes-fury": {
@@ -2768,12 +2775,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "sciel-our-sacrifice",
         damageLevel: "extreme",  // 250% weapon damage base
         hitCount: 1,
-        targetScope: "all",  // All enemies
+        targetScope: "all-enemies",  // All enemies
         usesWeaponElement: false,
         forcedElement: "Dark",
         primaryEffects: [],
         conditionalEffects: [],
-        drainsAlliesHp: true,              // Drains all allies to 1 HP (+1 damage per HP drained)
+        drainsAlliesHp: true,              // Drains all allies INCLUDING SELF to 1 HP (+1 damage per HP drained)
         consumesAllEnemiesForetell: true   // Consumes Foretell from ALL enemies (+1 damage per Foretell)
     },
 
@@ -2786,14 +2793,15 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         consumesForetell: true,         // Consumes all Foretell from target
-        grantsApPerForetell: 1          // Grants 1 AP per Foretell consumed (NOT MP!)
+        grantsMpPerForetell: 1          // Grants 1 MP per Foretell to ally with lowest MP%
     },
 
     "sciel-rush": {
         skillId: "sciel-rush",
         damageLevel: "none",  // No damage, buff only
         hitCount: 0,
-        targetScope: "ally",  // Random allies
+        targetScope: "ally",  // Can be single or all allies based on dice roll
+        rollsForTargetScope: true,  // Roll 1d6 to determine if single ally or all allies
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -2803,8 +2811,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "ally"
             }
         ],
-        conditionalEffects: [],
-        randomAllyCount: { min: 1, max: 3 }  // Applies to 1-3 random allies
+        conditionalEffects: []
     },
 
     "sciel-all-set": {
@@ -2815,19 +2822,19 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "Protected",  // Shell: Reduces damage by 20%
+                effectType: "Protected",  // Protegido: Reduces damage by 20%
                 amount: 1,
                 remainingTurns: 3,
                 targetType: "all-allies"
             },
             {
-                effectType: "Empowered",  // Powerful: Increases damage by 25%
+                effectType: "Empowered",  // Poderoso: Increases damage by 25%
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "all-allies"
             },
             {
-                effectType: "Hastened",  // Rush: Increases Speed by 33%
+                effectType: "Hastened",  // Rapidez: Increases Speed by 33%
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "all-allies"
@@ -2846,7 +2853,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         grantsImmediateTurn: true,  // Ally plays immediately
-        grantsAP: 4  // Ally gains 4 AP
+        grantsMP: 4  // Ally gains 4 MP
     },
 
     "sciel-card-weaver": {
@@ -2873,7 +2880,6 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             {
                 effectType: "Foretell",
                 amount: 10,
-                remainingTurns: 1,  // 1-hit duration
                 targetType: "enemy"
             }
         ],
@@ -2902,11 +2908,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 1,
         targetScope: "single",
         usesWeaponElement: true,
+        consumesForetell: true,          // Consumes all Foretell from target
+        foretellDamageBonus: 10,         // +10 damage per Foretell consumed
         primaryEffects: [],
-        conditionalEffects: [],
-        // Wiki: "Damage increases for each Foretell consumed since the beginning of the battle"
-        // This suggests cumulative tracking across the battle, not instant consumption
-        // Current implementation uses instant consumption as placeholder
-        scalesWithBattleForetellCount: true  // TODO: Track total Foretell consumed in battle
+        conditionalEffects: []
     }
 };

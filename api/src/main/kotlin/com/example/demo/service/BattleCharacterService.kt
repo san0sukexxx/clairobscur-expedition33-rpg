@@ -24,7 +24,8 @@ class BattleCharacterService(
         private val battleRepository: BattleRepository,
         private val objectMapper: ObjectMapper,
         private val playerPictoRepository: com.example.demo.repository.PlayerPictoRepository,
-        private val damageModifierService: DamageModifierService
+        private val damageModifierService: DamageModifierService,
+        private val playerRepository: com.example.demo.repository.PlayerRepository
 ) {
         @Transactional
         fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
@@ -195,6 +196,19 @@ class BattleCharacterService(
 
                 repository.save(entity)
 
+                // Sync HP with Player table if this is a player character
+                if (entity.characterType.equals("player", ignoreCase = true)) {
+                        val playerId = entity.externalId.toIntOrNull()
+                        if (playerId != null) {
+                                val playerOpt = playerRepository.findById(playerId)
+                                if (playerOpt.isPresent) {
+                                        val player = playerOpt.get()
+                                        player.hpCurrent = finalHp
+                                        playerRepository.save(player)
+                                }
+                        }
+                }
+
                 val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
 
                 // Check if character died or revived
@@ -270,6 +284,19 @@ class BattleCharacterService(
                 entity.magicPoints = finalMp
 
                 repository.save(entity)
+
+                // Sync MP with Player table if this is a player character
+                if (entity.characterType.equals("player", ignoreCase = true)) {
+                        val playerId = entity.externalId.toIntOrNull()
+                        if (playerId != null) {
+                                val playerOpt = playerRepository.findById(playerId)
+                                if (playerOpt.isPresent) {
+                                        val player = playerOpt.get()
+                                        player.mpCurrent = finalMp
+                                        playerRepository.save(player)
+                                }
+                        }
+                }
 
                 val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
 
@@ -440,6 +467,19 @@ class BattleCharacterService(
                 entity.magicPoints = newMP
 
                 repository.save(entity)
+
+                // Sync MP with Player table if this is a player character
+                if (entity.characterType.equals("player", ignoreCase = true)) {
+                        val playerId = entity.externalId.toIntOrNull()
+                        if (playerId != null) {
+                                val playerOpt = playerRepository.findById(playerId)
+                                if (playerOpt.isPresent) {
+                                        val player = playerOpt.get()
+                                        player.mpCurrent = newMP
+                                        playerRepository.save(player)
+                                }
+                        }
+                }
 
                 val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
 

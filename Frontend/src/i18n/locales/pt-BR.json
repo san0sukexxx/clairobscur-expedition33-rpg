@@ -1938,13 +1938,15 @@
       "unlock": "Desbloquear",
       "masterUnlock": "Desbloquear Mestre",
       "selectSkill": "Selecione uma habilidade",
+      "skillBlocked": "Habilidade Bloqueada",
+      "locked": "Bloqueado",
       "gustave-lumiere-assault": {
         "name": "Assalto Luimièriano",
         "description": "Causa dano baixo em alvo único. 5 acertos. Usa elemento da arma. Acertos críticos geram 1 Carga adicional."
       },
       "gustave-marking-shot": {
         "name": "Tiro Marcante",
-        "description": "Causa dano de Raio baixo em alvo único. 1 acerto. Aplica Marcado no alvo, fazendo-o receber +50% de dano."
+        "description": "Causa dano de Raio baixo em alvo único. 1 acerto. Aplica Marca no alvo, fazendo-o receber +50% de dano."
       },
       "gustave-overcharge": {
         "name": "Sobrecarga",
@@ -2188,11 +2190,11 @@
       },
       "sciel-bad-omen": {
         "name": "Mau Presságio",
-        "description": "Causa dano das Trevas baixo em todos os inimigos. 2 acertos. Aplica 2 Predições por acerto. Requer habilidade Marking Card."
+        "description": "Causa dano das Trevas baixo em todos os inimigos. 2 acertos. Aplica 2 Predições por acerto."
       },
       "sciel-marking-card": {
         "name": "Carta Marcante",
-        "description": "Causa dano das Trevas médio em alvo único. 2 acertos. Aplica Marcado. Aplica 3 Predições."
+        "description": "Causa dano das Trevas médio em alvo único. 2 acertos. Aplica Marca. Aplica 3 Predições."
       },
       "sciel-delaying-slash": {
         "name": "Corte Retardante",
@@ -2248,11 +2250,11 @@
       },
       "sciel-rush": {
         "name": "Investida",
-        "description": "Aplica Rapidez em 1-3 aliados, aumentando a Velocidade por 3 turnos."
+        "description": "Aplica Rapidez, aumentando a Velocidade por 3 turnos. Role 1d6: 1-2 aplica apenas no alvo, 3-6 aplica em todos os aliados."
       },
       "sciel-all-set": {
         "name": "Tudo Pronto",
-        "description": "Aplica Escudo, Poderoso e Rapidez em todos os aliados."
+        "description": "Aplica Protegido, Poderoso e Rapidez em todos os aliados."
       },
       "sciel-intervention": {
         "name": "Intervenção",
@@ -2288,7 +2290,7 @@
       },
       "verso-ascending-assault": {
         "name": "Assalto Ascendente",
-        "description": "Causa dano baixo em alvo único. 1 golpe. Usa elemento da arma. Aumenta dano a cada uso. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de AP é reduzido de 5 para 2."
+        "description": "Causa dano baixo em alvo único. 1 golpe. Usa elemento da arma. Aumenta dano a cada uso. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 5 para 2."
       },
       "verso-assault-zero": {
         "name": "Assalto Zero",
@@ -2316,7 +2318,7 @@
       },
       "verso-followup": {
         "name": "Sequência",
-        "description": "Causa dano de Luz médio em alvo único. 1 golpe. Dano aumentado para cada tiro de Mira Livre neste turno, até 10 vezes. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de AP é reduzido de 5 para 2."
+        "description": "Causa dano de Luz médio em alvo único. 1 golpe. Dano aumentado para cada tiro de Mira Livre neste turno, até 10 vezes. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 5 para 2."
       },
       "verso-from-fire": {
         "name": "Do Fogo",
@@ -2324,11 +2326,11 @@
       },
       "verso-leadership": {
         "name": "Leadership",
-        "description": "Reduz o Rank atual. Dá 2-4 AP para outros aliados. Se Verso usar esta habilidade no Rank C de Perfeição, dá +1 AP adicional para outros aliados."
+        "description": "Reduz o Rank atual. Dá 2-4 PM para outros aliados. Se Verso usar esta habilidade no Rank C de Perfeição, dá +1 PM adicional para outros aliados."
       },
       "verso-light-holder": {
         "name": "Portador da Luz",
-        "description": "Causa dano de Luz médio em alvo único. 5 golpes. Ao completar, ganha 1 Rank. Se Verso usar esta habilidade no Rank A de Perfeição, concede 2 AP adicionais para Verso."
+        "description": "Causa dano de Luz médio em alvo único. 5 golpes. Ao completar, ganha 1 Rank. Se Verso usar esta habilidade no Rank A de Perfeição, concede 2 PM adicionais para Verso."
       },
       "verso-marking-shot": {
         "name": "Tiro Marcante (Verso)",
@@ -2336,15 +2338,15 @@
       },
       "verso-overload": {
         "name": "Sobrecarga",
-        "description": "Aumenta o Rank para S e reenche todo o AP, mas define a vida própria para 1."
+        "description": "Aumenta o Rank para S e reenche todo o PM, mas define a vida própria para 1."
       },
       "verso-paradigm-shift": {
         "name": "Mudança de Paradigma",
-        "description": "Causa dano Físico baixo em alvo único e devolve 1-3 AP. 3 golpes. Se Verso usar esta habilidade no Rank C de Perfeição, concede 1 AP adicional para Verso."
+        "description": "Causa dano Físico baixo em alvo único e devolve 1-3 PM. 3 golpes. Se Verso usar esta habilidade no Rank C de Perfeição, concede 1 PM adicional para Verso."
       },
       "verso-perfect-break": {
         "name": "Quebra Perfeita",
-        "description": "Causa dano de Luz muito alto em alvo único. 1 golpe. Pode Quebrar. Se Verso usar esta habilidade no Rank B de Perfeição, o custo de AP é reduzido de 7 para 5."
+        "description": "Causa dano de Luz muito alto em alvo único. 1 golpe. Pode Quebrar. Se Verso usar esta habilidade no Rank B de Perfeição, o custo de PM é reduzido de 7 para 5."
       },
       "verso-perfect-recovery": {
         "name": "Recuperação Perfeita",
@@ -2352,7 +2354,7 @@
       },
       "verso-phantom-stars": {
         "name": "Estrelas Fantasmas",
-        "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Pode Quebrar. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de AP é reduzido de 9 para 5."
+        "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Pode Quebrar. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 9 para 5."
       },
       "verso-powerful": {
         "name": "Poderoso",
@@ -2661,7 +2663,9 @@
       "title": "Efeitos pendentes",
       "message": "Resolva os efeitos abaixo antes de realizar suas ações neste turno.",
       "turn": "turno",
-      "turns": "turnos"
+      "turns": "turnos",
+      "resolveAll": "Resolver todos",
+      "resolvingAll": "Resolvendo..."
     },
     "errors": {
       "failedToLoad": "Falha ao carregar dados da campanha",

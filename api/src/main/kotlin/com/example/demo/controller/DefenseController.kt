@@ -25,7 +25,8 @@ class DefenseController(
         private val attackStatusEffectRepository: AttackStatusEffectRepository,
         private val battleTurnService: BattleTurnService,
         private val damageService: DamageService,
-        private val battleService: BattleService
+        private val battleService: BattleService,
+        private val battleCharacterService: com.example.demo.service.BattleCharacterService
 ) {
 
     @PostMapping
@@ -223,8 +224,8 @@ class DefenseController(
             val currentMp = defenderBC.magicPoints ?: 0
             val maxMp = defenderBC.maxMagicPoints ?: 0
             if (maxMp > 0) {
-                defenderBC.magicPoints = (currentMp + 1).coerceAtMost(maxMp)
-                battleCharacterRepository.save(defenderBC)
+                val newMp = (currentMp + 1).coerceAtMost(maxMp)
+                battleCharacterService.updateCharacterMp(defenderBC.id!!, newMp)
             }
         }
 

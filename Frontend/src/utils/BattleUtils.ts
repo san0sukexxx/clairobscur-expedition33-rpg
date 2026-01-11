@@ -152,7 +152,8 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Fleeing",
         "Twilight",
         "FireVulnerability",
-        "Guardian"
+        "Guardian",
+        "Vulnerable"
     ];
 
     return !skillsWithoutAmmount.includes(type);

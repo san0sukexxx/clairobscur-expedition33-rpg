@@ -17,6 +17,7 @@ interface BattleGroupStatusProps {
     isReviveMode?: boolean;
     isExecutingSkill?: boolean;
     isAdmin?: boolean;
+    excludeSelf?: boolean;
 }
 
 function pct(cur: number, max: number) {
@@ -31,7 +32,8 @@ export default function BattleGroupStatus({
     onSelectTarget,
     isReviveMode = false,
     isExecutingSkill = false,
-    isAdmin = false
+    isAdmin = false,
+    excludeSelf = false
 }: BattleGroupStatusProps) {
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -54,7 +56,8 @@ export default function BattleGroupStatus({
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {characters.map((ch) => {
                             const isDead = ch.healthPoints === 0;
-                            const isSelectable = !isExecutingSkill && ((isAttacking && !isDead) || (isReviveMode && isDead));
+                            const isSelf = excludeSelf && currentCharacter && ch.battleID === currentCharacter.battleID;
+                            const isSelectable = !isExecutingSkill && !isSelf && ((isAttacking && !isDead) || (isReviveMode && isDead));
 
                             return (
                                 <div
