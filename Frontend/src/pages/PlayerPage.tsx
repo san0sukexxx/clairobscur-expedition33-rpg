@@ -26,6 +26,7 @@ import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
 import { executeAllSpecialMechanics } from "../utils/SkillSpecialMechanics";
 import { getVersoPerfectionDamageMultiplier } from "../utils/BattleUtils";
 import { hasRequiredStains, consumeStains, addStains, updateCharacterStains, transformStain, getDominantElement } from "../utils/StainUtils";
+import { translateElementName } from "../utils/StainTextUtils";
 import { triggerOnHealAlly, triggerOnFreeAim, triggerOnBattleStart, triggerOnTurnStart, triggerOnKill, triggerOnDodge } from "../utils/PictoEffectsIntegration";
 import { executeWeaponPassives } from "../utils/WeaponPassives_Index";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
@@ -96,6 +97,7 @@ export default function PlayerPage() {
   const [isSelectingSkillTarget, setIsSelectingSkillTarget] = useState(false);
   const [isExecutingSkill, setIsExecutingSkill] = useState(false);
   const [excludeSelfFromTargeting, setExcludeSelfFromTargeting] = useState(false);
+  const [hitCharacters, setHitCharacters] = useState<Set<number>>(new Set());
   const { showToast } = useToast();
   const { pathname } = useLocation();
   const isAdmin = !!matchPath(
@@ -314,7 +316,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "combate" && (
-            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelfFromTargeting={excludeSelfFromTargeting} />
+            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelfFromTargeting={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
           )}
 
           {!loading && !error && tab === "habilidades" && (
@@ -960,6 +962,16 @@ export default function PlayerPage() {
             }
 
             await APIBattle.attack(attackInfo)
+
+            // Visual feedback: Add hit effect to target
+            setHitCharacters(prev => new Set(prev).add(target.battleID));
+            setTimeout(() => {
+              setHitCharacters(prev => {
+                const next = new Set(prev);
+                next.delete(target.battleID);
+                return next;
+              });
+            }, 600);  // Clear after 600ms
           } else {
             const attackInfo: CreateAttackRequest = {
               totalPower: total,
@@ -969,6 +981,16 @@ export default function PlayerPage() {
             }
 
             await APIBattle.attack(attackInfo)
+
+            // Visual feedback: Add hit effect to target
+            setHitCharacters(prev => new Set(prev).add(target.battleID));
+            setTimeout(() => {
+              setHitCharacters(prev => {
+                const next = new Set(prev);
+                next.delete(target.battleID);
+                return next;
+              });
+            }, 600);  // Clear after 600ms
           }
 
           // Check if enemy was killed (Dead Energy picto trigger)
@@ -1239,6 +1261,25 @@ export default function PlayerPage() {
       return;
     }
 
+    // Auto-execute random targeting skills (like Thunderfall)
+    if (skillMetadata.targetScope === "random" && currentCharacter) {
+      // Find first enemy as primary target (random selection happens per hit)
+      const enemies = player?.fightInfo?.characters?.filter(
+        c => c.isEnemy !== currentCharacter.isEnemy && c.healthPoints > 0
+      );
+
+      if (enemies && enemies.length > 0) {
+        setPendingSkillId(skillId);
+        setTab("combate");
+        setIsUsingSkillMode(false);
+        handleExecuteSkill(skillId, enemies[0]);
+        return;
+      } else {
+        showToast("Nenhum inimigo válido encontrado!");
+        return;
+      }
+    }
+
     // Store the skill to be used and switch to combat tab for target selection
     setPendingSkillId(skillId);
     setTab("combate");
@@ -1344,8 +1385,8 @@ export default function PlayerPage() {
         }
       }
 
-      // Stain consumption: Cost 0 MP if sufficient stains available (Earth/Light)
-      if (skillMetadata.consumesStains && !isGradientSkill) {
+      // Stain consumption for free cast: Cost 0 MP if sufficient stains available (only if consumeStainsForFreeCast is true)
+      if (skillMetadata.consumeStainsForFreeCast && skillMetadata.consumesStains && !isGradientSkill) {
         let canConsumeStains = true;
 
         for (const { stain, count } of skillMetadata.consumesStains) {
@@ -1402,6 +1443,7 @@ export default function PlayerPage() {
 
       // Try to consume stains if available (for bonus effects)
       let stainsConsumed = false;
+      let consumedStainsList: string[] = [];
       let currentStainsAfterConsumption: [string | null, string | null, string | null, string | null] = [
         source.stainSlot1 ?? null,
         source.stainSlot2 ?? null,
@@ -1420,6 +1462,28 @@ export default function PlayerPage() {
           await updateCharacterStains(source.battleID, newStains);
           stainsConsumed = true;
           currentStainsAfterConsumption = newStains; // Save stains after consumption
+
+          // Track which stains were consumed for weapon passives
+          originalStains.forEach((stain, idx) => {
+            if (stain !== newStains[idx] && stain) {
+              consumedStainsList.push(stain);
+            }
+          });
+
+          // Trigger weapon passives for stain consumption
+          if (weaponInfo.details?.name && weaponInfo.weapon?.level && player.fightInfo?.battleId) {
+            await executeWeaponPassives(
+              "on-stain-consumed",
+              source,
+              player.fightInfo.characters ?? [],
+              player.fightInfo.battleId,
+              weaponInfo.details.name,
+              weaponInfo.weapon.level,
+              undefined,
+              { stainsConsumed: consumedStainsList }
+            );
+          }
+
           await checkPlayerLoop(); // Update frontend immediately
         }
       }
@@ -1727,7 +1791,7 @@ export default function PlayerPage() {
       let lastDiceResult: number[] = [];
 
       // Calculate actual hit count (random if minHits/maxHits defined)
-      const actualHitCount = resolved.metadata.minHits && resolved.metadata.maxHits
+      let actualHitCount = resolved.metadata.minHits && resolved.metadata.maxHits
         ? Math.floor(Math.random() * (resolved.metadata.maxHits - resolved.metadata.minHits + 1)) + resolved.metadata.minHits
         : resolved.hitCount;
 
@@ -1737,7 +1801,8 @@ export default function PlayerPage() {
       }
 
       if (actualHitCount > 0) {
-        for (let hitIndex = 0; hitIndex < actualHitCount; hitIndex++) {
+        let hitIndex = 0;
+        while (hitIndex < actualHitCount) {
           await new Promise<void>((resolve, reject) => {
             rollWithTimeout(
               diceBoardRef,
@@ -1890,6 +1955,17 @@ export default function PlayerPage() {
                   const isMonoco = source.id?.toLowerCase().includes("monoco");
                   const almightyMaskMultiplier = (isMonoco && currentMask === "gold") ? 1.5 : 1.0;
 
+                  // Lune's Stain System: Damage bonus when stains consumed
+                  // Each stain consumed grants +25% damage (unless noStainDamageBonus is true)
+                  let stainDamageMultiplier = 1.0;
+                  if (stainsConsumed && consumedStainsList.length > 0 && !resolved.metadata.noStainDamageBonus) {
+                    stainDamageMultiplier = 1.0 + (consumedStainsList.length * 0.25);
+                    if (hitIndex === 0) {
+                      const bonusPercent = Math.round((stainDamageMultiplier - 1.0) * 100);
+                      showToast(`${consumedStainsList.length} Mancha${consumedStainsList.length > 1 ? 's' : ''} consumida${consumedStainsList.length > 1 ? 's' : ''}! Dano +${bonusPercent}%`);
+                    }
+                  }
+
                   let primaryTargetDamage = 0;  // Save damage for Searing Bond propagation
 
                   // For random targeting, select one random enemy per hit
@@ -1965,12 +2041,16 @@ export default function PlayerPage() {
                     const hitsReceivedMultiplier = 1.0 + (hitsReceivedBonus / 100);  // Convert percentage to multiplier
                     const damageWithHitsReceived = Math.floor(damageWithLampmaster * hitsReceivedMultiplier);
                     const damageWithAlmightyMask = Math.floor(damageWithHitsReceived * almightyMaskMultiplier);
-                    const damageWithBurningTarget = Math.floor(damageWithAlmightyMask * burningTargetMultiplier);
+                    const damageWithStains = Math.floor(damageWithAlmightyMask * stainDamageMultiplier);
+                    const damageWithBurningTarget = Math.floor(damageWithStains * burningTargetMultiplier);
                     const damageWithStunnedTarget = Math.floor(damageWithBurningTarget * stunnedTargetMultiplier);
                     const damageWithPowerlessTarget = Math.floor(damageWithStunnedTarget * powerlessTargetMultiplier);
                     const damageWithBurnConsumption = Math.floor(damageWithPowerlessTarget * burnConsumptionMultiplier);
                     const damageWithFireVulnerability = Math.floor(damageWithBurnConsumption * fireVulnerabilityMultiplier);
                     const hitDamage = Math.floor(damageWithFireVulnerability * markedDamageMultiplier);
+
+                    // Show damage toast for this hit
+                    showToast(`Ataque ${hitIndex + 1}: ${hitDamage} de dano`);
 
                     // Save damage from first target for Searing Bond propagation
                     if (targetId === resolved.targetIds[0]) {
@@ -2123,7 +2203,8 @@ export default function PlayerPage() {
                       // Sky Break: Element determined by dominant stain type
                       attackElement = getDominantElement(source);
                       if (hitIndex === 0) {
-                        showToast(`Elemento do ataque: ${attackElement}`);
+                        const elementPt = translateElementName(attackElement || "");
+                        showToast(`Elemento do ataque: ${elementPt}`);
                       }
                     } else if (resolved.metadata.forcedElement) {
                       attackElement = resolved.metadata.forcedElement;
@@ -2185,6 +2266,16 @@ export default function PlayerPage() {
                         };
 
                     await APIBattle.attack(attackRequest);
+
+                    // Visual feedback: Add hit effect to target
+                    setHitCharacters(prev => new Set(prev).add(targetId));
+                    setTimeout(() => {
+                      setHitCharacters(prev => {
+                        const next = new Set(prev);
+                        next.delete(targetId);
+                        return next;
+                      });
+                    }, 600);  // Clear after 600ms
 
                     // Check if enemy was killed (Dead Energy picto trigger)
                     if (player.fightInfo?.battleId) {
@@ -2294,6 +2385,16 @@ export default function PlayerPage() {
 
                         await APIBattle.attack(propagationRequest);
 
+                        // Visual feedback: Add hit effect to propagation target
+                        setHitCharacters(prev => new Set(prev).add(enemy.battleID));
+                        setTimeout(() => {
+                          setHitCharacters(prev => {
+                            const next = new Set(prev);
+                            next.delete(enemy.battleID);
+                            return next;
+                          });
+                        }, 600);  // Clear after 600ms
+
                         // Check if propagated damage killed the enemy (Dead Energy trigger)
                         if (player.fightInfo?.battleId) {
                           const updatedBattle = await APIBattle.getById(player.fightInfo.battleId);
@@ -2319,8 +2420,14 @@ export default function PlayerPage() {
                     }
                   }
 
-                  // Show toast with damage
-                  showToast(`Total: ${primaryTargetDamage}`);
+                  // Thunderfall / Sakapatate: Critical hits add extra hit
+                  if (resolved.metadata.critTriggersExtraHit && critMulti > 1) {
+                    actualHitCount++;
+                    showToast("Crítico! +1 acerto extra!");
+                  }
+
+                  // Increment hit index for while loop
+                  hitIndex++;
 
                   resolve();
                 } catch (error) {
@@ -2424,11 +2531,13 @@ export default function PlayerPage() {
 
           if (effects.length > 0) {
             for (const effect of effects) {
+              console.log(`[PlayerPage] Adding status - effectType: ${effect.effectType}, targetId: ${targetId}, sourceCharacterId: ${source.battleID}`);
               await APIBattle.addStatus({
                 battleCharacterId: targetId,
                 effectType: effect.effectType,
                 ammount: effect.ammount ?? 0,
-                remainingTurns: effect.remainingTurns ?? 0
+                remainingTurns: effect.remainingTurns ?? 0,
+                sourceCharacterId: source.battleID
               });
             }
           }
@@ -2542,7 +2651,11 @@ export default function PlayerPage() {
         }
       }
 
-      if (resolved.metadata.canBreak && player.fightInfo?.characters) {
+      // Check if skill can cause Break
+      const canCauseBreak = resolved.metadata.canBreak ||
+        (resolved.metadata.canBreakWithStains && consumedStainsList.length >= 4);
+
+      if (canCauseBreak && player.fightInfo?.characters) {
         for (const targetId of resolved.targetIds) {
           const target = player.fightInfo.characters.find(c => c.battleID === targetId);
           const isFragile = target?.status?.some(s => s.effectName === "Fragile") ?? false;
@@ -2867,10 +2980,24 @@ export default function PlayerPage() {
         showToast
       }, mpToGrant);
 
-      // Gain stains after skill execution
+      // Handle Electrify: Transform Fire to Light BEFORE gaining stains
+      let stainsAfterTransform = currentStainsAfterConsumption;
+      if (skillMetadata.transformsStainToLight) {
+        const { from, to } = skillMetadata.transformsStainToLight;
+        // Transform using current stains (after consumption but before gains)
+        const stainsCopy: BattleCharacterInfo = {
+          ...source,
+          stainSlot1: currentStainsAfterConsumption[0],
+          stainSlot2: currentStainsAfterConsumption[1],
+          stainSlot3: currentStainsAfterConsumption[2],
+          stainSlot4: currentStainsAfterConsumption[3]
+        };
+        stainsAfterTransform = transformStain(stainsCopy, from, to);
+      }
+
+      // Gain stains after skill execution (after transformation)
       if (skillMetadata.gainsStains && skillMetadata.gainsStains.length > 0) {
-        // Use stains after consumption (not from player state which might be stale)
-        const newStains = addStains(currentStainsAfterConsumption, skillMetadata.gainsStains);
+        const newStains = addStains(stainsAfterTransform, skillMetadata.gainsStains);
         await updateCharacterStains(source.battleID, newStains);
         await checkPlayerLoop(); // Update frontend immediately
       }
@@ -2903,20 +3030,11 @@ export default function PlayerPage() {
         }
       }
 
-      // Handle Electrify: Transform Fire to Light
-      if (skillMetadata.transformsStainToLight) {
-        const updatedSource = player.fightInfo?.characters?.find(
-          c => c.battleID === player.fightInfo?.playerBattleID
-        );
-
-        if (updatedSource) {
-          const { from, to } = skillMetadata.transformsStainToLight;
-          const newStains = transformStain(updatedSource, from, to);
-          await updateCharacterStains(source.battleID, newStains);
-          await checkPlayerLoop(); // Update frontend immediately
-
-          showToast(`Mancha ${from} transformada em ${to}!`);
-        }
+      // Thermal Transfer: Grant second turn when stains consumed
+      if (stainsConsumed && skillMetadata.stainGrantsSecondTurn) {
+        showToast("Segundo turno concedido!");
+        // Simply return without ending turn - skill execution continues
+        // Player can immediately use another action
       }
 
       // Handle Assault Zero: Rank up on crit
@@ -3025,10 +3143,21 @@ export default function PlayerPage() {
         }
       };
 
-      const callCounter = async (battleCharacterId: number, maxDamage: number) => {
+      const callCounter = async (battleCharacterId: number, maxDamage: number, attackerBattleId: number) => {
         try {
           await APIBattle.applyDefense(battleCharacterId, maxDamage);
+
+          // Visual feedback: Add hit effect to attacker when counter damage is dealt
           if (maxDamage > 0) {
+            setHitCharacters(prev => new Set(prev).add(attackerBattleId));
+            setTimeout(() => {
+              setHitCharacters(prev => {
+                const next = new Set(prev);
+                next.delete(attackerBattleId);
+                return next;
+              });
+            }, 600);  // Clear after 600ms
+
             showToast("Você contra-atacou!");
           } else {
             showToast("Você não contra-atacou");
@@ -3125,9 +3254,9 @@ export default function PlayerPage() {
       };
 
       if (defense == "counter") {
-        callCounter(attack.targetBattleId, calculateMaxCounterDamage(player, weaponList));
+        callCounter(attack.targetBattleId, calculateMaxCounterDamage(player, weaponList), attack.sourceBattleId);
       } else if (defense == "cancel-counter") {
-        callCounter(attack.targetBattleId, 0);
+        callCounter(attack.targetBattleId, 0, attack.sourceBattleId);
       } else if (defense != "take") {
         setIsExecutingSkill(true);
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForDefense(player, weaponInfo, defense), result => {

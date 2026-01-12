@@ -56,12 +56,10 @@ export default function PendingAttacksModal({
     const canDodge = !playerHasEntangled(player) && !hasSuccessiveParry
 
     const handleDefenseClick = async (attack: AttackResponse, defense: DefenseOption) => {
-        console.log("Defense clicked, setting isDefending to true");
         setIsDefending(true);
         try {
             await onSelectDefense(attack, defense);
         } finally {
-            console.log("Defense finished, setting isDefending to false");
             setIsDefending(false);
         }
     };
@@ -75,8 +73,6 @@ export default function PendingAttacksModal({
         )
     );
     const firstCounterAttack = counterAttacks[0];
-
-    console.log("Rendering PendingAttacksModal, isDefending:", isDefending);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
@@ -169,7 +165,8 @@ export default function PendingAttacksModal({
                                                     ?.map(e => {
                                                         const showAmmount = shouldShowStatusAmmount(e.effectType);
                                                         const ammountText = showAmmount && e.ammount != null ? ` ${e.ammount}` : "";
-                                                        const turnsText = e.remainingTurns ? ` (por ${e.remainingTurns} turno${e.remainingTurns > 1 ? "s" : ""})` : "";
+                                                        const showTurns = e.effectType !== "IntenseFlames" && e.remainingTurns != null;
+                                                        const turnsText = showTurns ? ` (por ${e.remainingTurns} turno${e.remainingTurns > 1 ? "s" : ""})` : "";
                                                         return `${getStatusLabel(e.effectType)}${ammountText}${turnsText}`;
                                                     })
                                                     .join("; ")}

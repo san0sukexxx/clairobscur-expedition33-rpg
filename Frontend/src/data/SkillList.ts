@@ -131,6 +131,7 @@ const SkillsBaseData = [
     character: "lune",
     cost: 3,
     unlockCost: 0,
+    masterUnlock: true,
     image: "Lune_Mayhem.webp",
     preRequisite: ["lune-electrify","lune-thermal-transfer"]
   },

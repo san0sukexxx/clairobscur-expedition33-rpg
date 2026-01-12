@@ -1974,7 +1974,7 @@
       },
       "lune-electrify": {
         "name": "Electrify",
-        "description": "Deals low Lightning damage to a single target. 3 hits. Consumes Fire to generate a Light stain. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals low Lightning damage to a single target. 3 hits. Consumes Fire to generate a Light stain. Critical hits add an extra hit. Using this skill grants 2 Lightning stains."
       },
       "lune-immolation": {
         "name": "Immolation",
@@ -2014,11 +2014,11 @@
       },
       "lune-crippling-tsunami": {
         "name": "Crippling Tsunami",
-        "description": "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes Earth stain, Fire stain and Lightning stain to deal greatly increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-rockslide": {
         "name": "Rockslide",
-        "description": "Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes Lightning stain, Ice stain and Fire stain to deal greatly increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-crustal-crush": {
         "name": "Crustal Crush",
@@ -2030,7 +2030,7 @@
       },
       "lune-lightning-dance": {
         "name": "Lightning Dance",
-        "description": "Deals very high Lightning damage to a single target. 6 hits. Consumes all three types of Stains to deal greatly increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals very high Lightning damage to a single target. 6 hits. Consumes Earth stain, Ice stain and Fire stain to deal greatly increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-storm-caller": {
         "name": "Storm Caller",
@@ -2058,7 +2058,7 @@
       },
       "lune-hell": {
         "name": "Hell",
-        "description": "Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes Ice stain, Earth stain and Lightning stain to deal greatly increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-sky-break": {
         "name": "Sky Break",

@@ -21,9 +21,10 @@ interface CombatsSectionProps {
     isExecutingSkill?: boolean;
     isAdmin: boolean;
     excludeSelfFromTargeting?: boolean;
+    hitCharacters?: Set<number>;
 }
 
-export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters }: CombatsSectionProps) {
     const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
 
@@ -150,11 +151,11 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
             <GradientBar characters={player?.fightInfo?.characters} player={player} turns={player?.fightInfo?.turns} />
 
             {tab === "enemies" && (
-                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} />
+                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
             )}
 
             {tab === "team" && (
-                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} />
+                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
             )}
 
             <CombatMenu

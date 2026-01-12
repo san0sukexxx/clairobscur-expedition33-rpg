@@ -95,7 +95,8 @@ class DefenseController(
                                         battleCharacterId = targetBC.id!!,
                                         effectType = eff.effectType,
                                         ammount = eff.ammount,
-                                        remainingTurns = eff.remainingTurns
+                                        remainingTurns = eff.remainingTurns,
+                                        sourceCharacterId = attack.sourceBattleId
                                 )
 
                 battleStatusEffectRepository.save(toSave)
@@ -133,7 +134,8 @@ class DefenseController(
                         ammount = 1,  // First stack
                         remainingTurns = 2,  // Lasts current turn + next turn
                         isResolved = true,
-                        skipNextDecrement = false
+                        skipNextDecrement = false,
+                        sourceCharacterId = targetBC.id
                     )
 
                     battleStatusEffectRepository.save(toSave)
@@ -166,7 +168,8 @@ class DefenseController(
                         ammount = 1,  // First stack
                         remainingTurns = 2,  // Lasts current turn + next turn
                         isResolved = true,
-                        skipNextDecrement = false
+                        skipNextDecrement = false,
+                        sourceCharacterId = targetBC.id
                     )
 
                     battleStatusEffectRepository.save(toSave)
@@ -199,7 +202,8 @@ class DefenseController(
                         ammount = 1,  // First stack
                         remainingTurns = 2,  // Lasts current turn + next turn
                         isResolved = true,
-                        skipNextDecrement = false
+                        skipNextDecrement = false,
+                        sourceCharacterId = targetBC.id
                     )
 
                     battleStatusEffectRepository.save(toSave)

@@ -64,7 +64,7 @@ export interface PictoEffectContext {
         isCritical?: boolean;
         isWeakPoint?: boolean;
         statusApplied?: StatusType;
-        apGained?: number;
+        mpGained?: number;
         gradientChargesConsumed?: number;
     };
 }
@@ -155,16 +155,11 @@ export async function executePictoEffects(
     // Get all equipped picto/lumina names
     const equippedEffects = getEquippedEffectNames(pictos, luminas);
 
-    console.log("[executePictoEffects] Trigger:", trigger);
-    console.log("[executePictoEffects] Equipped effects:", equippedEffects);
-    console.log("[executePictoEffects] Available handlers:", Object.keys(pictoEffectHandlers));
-
     const results: PictoEffectResult[] = [];
 
     for (const pictoName of equippedEffects) {
         const handlerKey = pictoName.toLowerCase();
         const handler = pictoEffectHandlers[handlerKey];
-        console.log(`[executePictoEffects] Looking for handler: "${handlerKey}", found: ${!!handler}`);
 
         if (handler) {
             try {

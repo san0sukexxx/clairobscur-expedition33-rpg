@@ -97,7 +97,13 @@ export interface SkillMetadata {
     doublesBuffsAtCasterMask?: boolean;  // Applies double the buffs when at Caster/Almighty Mask (Troubadour Trumpet)
 
     // Lune's Stain System
-    consumesStains?: Array<{ stain: "Lightning" | "Earth" | "Fire" | "Ice"; count: number }>;  // Stains consumed for enhanced effect
+    consumesStains?: Array<{ stain: "Lightning" | "Earth" | "Fire" | "Ice"; count: number }>;  // Stains consumed for enhanced effect (each stain = +25% damage)
+    noStainDamageBonus?: boolean;        // If true, consuming stains does NOT grant damage bonus (Electrify)
+    consumeStainsForFreeCast?: boolean;  // If true, having sufficient stains reduces MP cost to 0 (Healing Light, Rebirth)
+    stainGrantsSecondTurn?: boolean;     // Grants a second turn when stains consumed (Thermal Transfer)
+    stainDoublesDamage?: boolean;        // Doubles damage when stains consumed (Storm Caller)
+    stainGrantsRegeneration?: boolean;   // Applies Regeneration when stains consumed (Revitalization)
+    stainExtendsDoT?: { baseDuration: number; extendedDuration: number };  // Extends DoT duration (Terraquake, Typhoon)
     gainsStains?: Array<"Lightning" | "Earth" | "Fire" | "Ice" | "Light">;  // Stains gained after using skill
     requiresAllStains?: boolean;         // Requires Lightning, Earth, Fire, and Ice to cast (Elemental Genesis)
     stainDeterminedElement?: boolean;    // Element determined by stain composition (Sky Break)
@@ -761,15 +767,17 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
     "lune-electrify": {
         skillId: "lune-electrify",
         damageLevel: "low",
-        hitCount: 3,  // +1 per crit
+        hitCount: 3,
         targetScope: "single",
         usesWeaponElement: false,
         forcedElement: "Lightning",
         primaryEffects: [],
         conditionalEffects: [],
         consumesStains: [{ stain: "Fire", count: 1 }],
+        noStainDamageBonus: true,  // Consumes Fire only to transform, not for damage bonus
         transformsStainToLight: { from: "Fire", to: "Light" },
-        gainsStains: ["Lightning", "Light"]
+        critTriggersExtraHit: true,  // Critical hits add extra hit
+        gainsStains: ["Lightning", "Lightning"]  // Gains 2 Lightning Stains
     },
 
     "lune-thermal-transfer": {
@@ -782,9 +790,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth for second turn
+        stainGrantsSecondTurn: true,  // Grants second turn when 2 Earth consumed
         gainsStains: ["Ice", "Light"]
         // Gains 4 MP if target is Burning (implemented in battle logic)
-        // Second turn mechanic when 2 Earth consumed (implemented in battle logic)
     },
 
     "lune-thunderfall": {
@@ -799,6 +807,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         consumesStains: [{ stain: "Fire", count: 1 }],  // Consumes Fire for increased damage
+        critTriggersExtraHit: true,  // Critical hits add extra hit
         gainsStains: ["Lightning", "Light"]
     },
 
@@ -839,6 +848,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 1,
         targetScope: "single",
         usesWeaponElement: false,
+        stainDeterminedElement: true,  // Element determined by dominant stain type
         primaryEffects: [],
         conditionalEffects: [],
         canBreakWithStains: true,  // Can Break if 4+ stains consumed
@@ -913,6 +923,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         ],
         conditionalEffects: [],
         consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth/Light (wildcard) for 0 MP cost
+        consumeStainsForFreeCast: true,  // Having 2 Earth/Light stains reduces cost to 0 MP
         gainsStains: ["Light"],
         canTargetSelf: true  // Allow targeting self
     },
@@ -960,7 +971,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
     "lune-lightning-dance": {
         skillId: "lune-lightning-dance",
         damageLevel: "very-high",
-        hitCount: 6,  // +1 per crit
+        hitCount: 6,
         targetScope: "single",
         usesWeaponElement: false,
         forcedElement: "Lightning",
@@ -971,6 +982,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             { stain: "Ice", count: 1 },
             { stain: "Fire", count: 1 }
         ],
+        critTriggersExtraHit: true,  // Critical hits add extra hit
         gainsStains: ["Lightning", "Light"]
     },
 
@@ -1048,11 +1060,18 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
     "lune-fire-rage": {
         skillId: "lune-fire-rage",
         damageLevel: "high",
-        hitCount: 0,  // Duration-based (until damaged)
+        hitCount: 1,
         targetScope: "all",
         usesWeaponElement: false,
         forcedElement: "Fire",
-        primaryEffects: [],
+        primaryEffects: [
+            {
+                effectType: "IntenseFlames",
+                amount: 3,
+                remainingTurns: 999,  // No turn limit - removed when Lune takes damage
+                targetType: "enemy"
+            }
+        ],
         conditionalEffects: [],
         consumesStains: [{ stain: "Ice", count: 2 }],
         gainsStains: ["Fire", "Light"]

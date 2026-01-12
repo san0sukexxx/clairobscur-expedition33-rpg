@@ -94,6 +94,7 @@ export function getStatusLabel(status: StatusType): string {
         case "Marked": return t("battle.statusEffects.Marked");
         case "Plagued": return t("battle.statusEffects.Plagued");
         case "Burning": return t("battle.statusEffects.Burning");
+        case "IntenseFlames": return t("battle.statusEffects.IntenseFlames");
         case "Silenced": return t("battle.statusEffects.Silenced");
         case "Dizzy": return t("battle.statusEffects.Dizzy");
         case "Fragile": return t("battle.statusEffects.Fragile");
@@ -164,6 +165,7 @@ export function getStatusDescription(status: StatusType): string {
         case "Frozen": return t("battle.statusDescriptions.Frozen");
         case "Shielded": return t("battle.statusDescriptions.Shielded");
         case "Burning": return t("battle.statusDescriptions.Burning");
+        case "IntenseFlames": return t("battle.statusDescriptions.IntenseFlames");
         case "Hastened": return t("battle.statusDescriptions.Hastened");
         case "Slowed": return t("battle.statusDescriptions.Slowed");
         case "Empowered": return t("battle.statusDescriptions.Empowered");
@@ -222,6 +224,7 @@ export function getResolveButtonLabel(status: StatusType): string {
     switch (status) {
         case "Frozen":
         case "Burning":
+        case "IntenseFlames":
         case "Confused":
             return t("battle.resolveButton.resolve");
         default:
@@ -233,6 +236,7 @@ export function statusNeedsResolveRoll(status: StatusResponse): boolean {
     switch (status.effectName) {
         case "Frozen":
         case "Burning":
+        case "IntenseFlames":
         case "Confused":
             return true;
         default:

@@ -87,6 +87,24 @@ class BattleStatusController(
                     }
                 }
             }
+        } else if (body.effectType == "IntenseFlames") {
+            // IntenseFlames: Roll Xd6 damage based on current stacks
+            // Note: Stacks increase at end of turn, not when resolved
+            val damage = body.totalValue
+
+            if (damage > 0) {
+                val newHp = damageService.applyDamage(battleCharacter, damage)
+
+                // Only mark as resolved if character survived
+                if (newHp > 0) {
+                    effects.forEach { eff ->
+                        val id = eff.id
+                        if (id != null && battleStatusEffectRepository.existsById(id)) {
+                            battleStatusEffectRepository.save(eff.copy(isResolved = true))
+                        }
+                    }
+                }
+            }
         } else if (body.effectType == "Regeneration") {
             val baseHeal = body.totalValue.coerceAtLeast(0)
 
@@ -312,7 +330,9 @@ class BattleStatusController(
                 if (existing != null) {
                     val nextAmount = (existing.ammount ?: 0) + body.ammount
                     val nextTurns = body.remainingTurns ?: existing.remainingTurns
-                    existing.copy(ammount = nextAmount, remainingTurns = nextTurns, isResolved = shouldBeResolved, skipNextDecrement = shouldSkipNextDecrement)
+                    // Keep original sourceCharacterId if exists, otherwise use new one
+                    val sourceId = existing.sourceCharacterId ?: body.sourceCharacterId
+                    existing.copy(ammount = nextAmount, remainingTurns = nextTurns, isResolved = shouldBeResolved, skipNextDecrement = shouldSkipNextDecrement, sourceCharacterId = sourceId)
                 } else {
                     BattleStatusEffect(
                             battleCharacterId = bc.id!!,
@@ -320,7 +340,8 @@ class BattleStatusController(
                             ammount = body.ammount,
                             remainingTurns = body.remainingTurns,
                             isResolved = shouldBeResolved,
-                            skipNextDecrement = shouldSkipNextDecrement
+                            skipNextDecrement = shouldSkipNextDecrement,
+                            sourceCharacterId = body.sourceCharacterId
                     )
                 }
 
@@ -359,7 +380,7 @@ class BattleStatusController(
                 "Fragile", "Inverted", "Flying", "Plagued", "Broken" -> true
 
                 "Burning", "Frozen", "Regeneration", "Cursed",
-                "Confused", "Bleeding", "Poisoned", "Fleeing" -> false
+                "Confused", "Bleeding", "Poisoned", "Fleeing", "IntenseFlames" -> false
 
                 else -> false
             }
@@ -368,7 +389,7 @@ class BattleStatusController(
             when (effectType) {
                 "Burning", "Frozen", "Cursed", "Confused", "Bleeding", "Poisoned",
                 "Fleeing", "Weakened", "Slowed", "Unprotected", "Dizzy", "Exhausted",
-                "Silenced", "Stunned", "Fragile", "Inverted", "Plagued", "Marked", "Broken" -> true
+                "Silenced", "Stunned", "Fragile", "Inverted", "Plagued", "Marked", "Broken", "IntenseFlames" -> true
 
                 "Empowered", "Hastened", "Protected", "Shield", "Regeneration", "Flying" -> false
 
@@ -593,7 +614,8 @@ class BattleStatusController(
                             battleCharacterId = battleCharacterId,
                             effectType = "Broken",
                             ammount = 0,
-                            remainingTurns = 1
+                            remainingTurns = 1,
+                            sourceCharacterId = fragileEffect.sourceCharacterId
                     )
             )
 

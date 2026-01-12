@@ -9,6 +9,7 @@ export function rollCommandForResolveStatus(status: StatusResponse) {
 
     switch (status.effectName) {
         case "Burning":
+        case "IntenseFlames":
             dices = status.ammount
             break
         default:
@@ -23,6 +24,7 @@ export function calculateNpcStatusResolvedTotalValue(battleCharacterInfo: Battle
 
     switch (status.effectName) {
         case "Burning":
+        case "IntenseFlames":
             return rollD6(status.ammount).total
         case "Regeneration":
             return Math.floor((battleCharacterInfo?.maxHealthPoints ?? 0) / status.ammount / 10);

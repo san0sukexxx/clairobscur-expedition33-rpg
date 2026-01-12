@@ -95,7 +95,7 @@ export default function PendingStatusModal({ player, onTapResolve }: PendingStat
                                         <span className="flex-1">
                                             {getStatusLabel(st.effectName)}{" "}
                                             {showAmmount && st.ammount != null ? st.ammount : ""}{" "}
-                                            {st.remainingTurns
+                                            {st.effectName !== "IntenseFlames" && st.remainingTurns != null
                                                 ? `(${st.remainingTurns} ${
                                                       st.remainingTurns > 1 ? t("pendingStatus.turns") : t("pendingStatus.turn")
                                                   })`

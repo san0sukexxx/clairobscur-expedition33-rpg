@@ -77,7 +77,7 @@ export interface WeaponPassiveContext {
     foretellStacks?: number;
     sunCharges?: number;
     moonCharges?: number;
-    apGained?: number;
+    mpGained?: number;
     wasUpgradedSkill?: boolean;
     isTwilight?: boolean;
     isMoonPhase?: boolean;

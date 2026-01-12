@@ -221,6 +221,11 @@ class DamageService(
             }
         }
 
+        // IntenseFlames mechanic: If character took damage (and survived), remove IntenseFlames effects they caused
+        if (damage > 0 && newHp > 0 && battleId != null) {
+            removeIntenseFlamesFromSource(battleId, targetBC)
+        }
+
         // Track damage for Clea's Life picto (only track actual damage, not healing)
         if (damage > 0 && battleId != null) {
             trackDamage(battleId, targetBC.id!!, damage)
@@ -756,6 +761,50 @@ class DamageService(
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Removes IntenseFlames status effects caused by a character when they take damage
+     */
+    @Transactional
+    private fun removeIntenseFlamesFromSource(battleId: Int, sourceCharacter: BattleCharacter) {
+        val sourceId = sourceCharacter.id ?: return
+
+        println("[DamageService] Checking IntenseFlames removal - sourceCharacterId: $sourceId, characterName: ${sourceCharacter.characterName}")
+
+        // Find all IntenseFlames effects caused by this character
+        val intenseFlamesEffects = battleStatusEffectRepository.findByEffectTypeAndSourceCharacterId(
+                "IntenseFlames",
+                sourceId
+        )
+
+        println("[DamageService] Found ${intenseFlamesEffects.size} IntenseFlames effect(s) caused by this character")
+
+        // Remove all IntenseFlames effects caused by this character
+        intenseFlamesEffects.forEach { effect ->
+            battleStatusEffectRepository.delete(effect)
+
+            // Log the removal
+            val eventJson = objectMapper.writeValueAsString(
+                    mapOf(
+                            "sourceCharacterId" to sourceId,
+                            "sourceName" to sourceCharacter.characterName,
+                            "targetCharacterId" to effect.battleCharacterId,
+                            "effectRemoved" to "IntenseFlames",
+                            "reason" to "source_took_damage"
+                    )
+            )
+
+            battleLogRepository.save(
+                    BattleLog(
+                            battleId = battleId,
+                            eventType = "STATUS_REMOVED",
+                            eventJson = eventJson
+                    )
+            )
+
+            println("[DamageService] Removed IntenseFlames from character ${effect.battleCharacterId} (caused by ${sourceCharacter.characterName})")
         }
     }
 

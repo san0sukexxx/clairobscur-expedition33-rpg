@@ -429,7 +429,8 @@ class PlayerItemController(
                 battleCharacterId = battleCharacter.id!!,
                 effectType = "Hastened",
                 ammount = 0,
-                remainingTurns = 2
+                remainingTurns = 2,
+                sourceCharacterId = battleCharacter.id
             )
             battleStatusEffectRepository.save(hastenedEffect)
         }

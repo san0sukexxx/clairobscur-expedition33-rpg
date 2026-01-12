@@ -383,8 +383,8 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             }
         }
 
-        // Stain consumption: Cost 0 MP if sufficient stains available (Earth/Light)
-        if (skillMetadata?.consumesStains && !skill.isGradient && source) {
+        // Stain consumption for free cast: Cost 0 MP if sufficient stains available (only if consumeStainsForFreeCast is true)
+        if (skillMetadata?.consumeStainsForFreeCast && skillMetadata?.consumesStains && !skill.isGradient && source) {
             let canConsumeStains = true;
 
             for (const { stain, count } of skillMetadata.consumesStains) {

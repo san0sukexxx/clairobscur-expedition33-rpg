@@ -25,7 +25,8 @@ class BattleCharacterService(
         private val objectMapper: ObjectMapper,
         private val playerPictoRepository: com.example.demo.repository.PlayerPictoRepository,
         private val damageModifierService: DamageModifierService,
-        private val playerRepository: com.example.demo.repository.PlayerRepository
+        private val playerRepository: com.example.demo.repository.PlayerRepository,
+        private val battleStatusEffectRepository: com.example.demo.repository.BattleStatusEffectRepository
 ) {
         @Transactional
         fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
@@ -210,6 +211,12 @@ class BattleCharacterService(
                 }
 
                 val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                // IntenseFlames mechanic: If character takes damage, remove IntenseFlames effects they caused
+                val tookDamage = finalHp < oldHp && finalHp > 0
+                if (tookDamage) {
+                        removeIntenseFlamesFromSource(entity)
+                }
 
                 // Check if character died or revived
                 val wasDead = oldHp == 0
@@ -882,6 +889,48 @@ class BattleCharacterService(
                                 multiplier = 1.2,  // 20% more damage (1 + 0.2)
                                 flatBonus = 0,
                                 condition = "has-mp"  // Only when character has MP available
+                        )
+                }
+        }
+
+        /**
+         * Removes IntenseFlames status effects caused by a character when they take damage
+         */
+        private fun removeIntenseFlamesFromSource(sourceCharacter: BattleCharacter) {
+                val sourceId = sourceCharacter.id ?: return
+                val battleId = sourceCharacter.battleId ?: return
+
+                println("[BattleCharacterService] Checking IntenseFlames removal - sourceCharacterId: $sourceId, characterName: ${sourceCharacter.characterName}")
+
+                // Find all IntenseFlames effects caused by this character
+                val intenseFlamesEffects = battleStatusEffectRepository.findByEffectTypeAndSourceCharacterId(
+                        "IntenseFlames",
+                        sourceId
+                )
+
+                println("[BattleCharacterService] Found ${intenseFlamesEffects.size} IntenseFlames effect(s) caused by this character")
+
+                // Remove all IntenseFlames effects caused by this character
+                intenseFlamesEffects.forEach { effect ->
+                        battleStatusEffectRepository.delete(effect)
+
+                        // Log the removal
+                        val eventJson = objectMapper.writeValueAsString(
+                                mapOf(
+                                        "sourceCharacterId" to sourceId,
+                                        "sourceName" to sourceCharacter.characterName,
+                                        "targetCharacterId" to effect.battleCharacterId,
+                                        "effectRemoved" to "IntenseFlames",
+                                        "reason" to "source_took_damage"
+                                )
+                        )
+
+                        battleLogRepository.save(
+                                BattleLog(
+                                        battleId = battleId,
+                                        eventType = "INTENSE_FLAMES_REMOVED",
+                                        eventJson = eventJson
+                                )
                         )
                 }
         }

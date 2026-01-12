@@ -44,16 +44,20 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
             >
                 {ch.status && ch.status.length > 0 && (
                     <div className="mb-2 flex flex-row flex-wrap gap-1">
-                        {ch.status.map((st, idx) => (
-                            <span
-                                key={idx}
-                                className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-90"
-                            >
-                                {getStatusLabel(st.effectName)}{" "}
-                                {shouldShowStatusAmmount(st.effectName) && st.ammount}
-                                {st.remainingTurns ? ` (${st.remainingTurns})` : ""}
-                            </span>
-                        ))}
+                        {ch.status.map((st, idx) => {
+                            const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns != null;
+
+                            return (
+                                <span
+                                    key={idx}
+                                    className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-90"
+                                >
+                                    {getStatusLabel(st.effectName)}{" "}
+                                    {shouldShowStatusAmmount(st.effectName) && st.ammount}
+                                    {showTurns ? ` (${st.remainingTurns})` : ""}
+                                </span>
+                            );
+                        })}
                     </div>
                 )}
 

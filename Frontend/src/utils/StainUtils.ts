@@ -80,18 +80,43 @@ export function consumeStains(
         character.stainSlot4
     ];
 
-    for (const { stain, count } of skillMetadata.consumesStains) {
-        let toRemove = count;
+    // Check if this is a "consume all available" skill (count: 99)
+    const isConsumeAllSkill = skillMetadata.consumesStains.some(req => req.count >= 99);
 
+    if (!isConsumeAllSkill) {
+        // For normal skills: verify ALL requirements can be met BEFORE consuming anything
+        for (const { stain, count } of skillMetadata.consumesStains) {
+            const specificCount = stains.filter(s => s === stain).length;
+            const lightCount = stains.filter(s => s === "Light").length;
+            const totalAvailable = specificCount + lightCount;
+
+            // If we don't have enough of this stain type, don't consume anything
+            if (totalAvailable < count) {
+                return [
+                    character.stainSlot1 ?? null,
+                    character.stainSlot2 ?? null,
+                    character.stainSlot3 ?? null,
+                    character.stainSlot4 ?? null
+                ];
+            }
+        }
+    }
+
+    // All requirements met (or it's a consume-all skill), proceed with consumption
+    for (const { stain, count } of skillMetadata.consumesStains) {
         // Count how many we can remove (specific stain + Light wildcards)
         const specificCount = stains.filter(s => s === stain).length;
         const lightCount = stains.filter(s => s === "Light").length;
         const totalAvailable = specificCount + lightCount;
 
-        // If we don't have enough (specific + Light), don't consume anything for this stain requirement
-        if (totalAvailable < count) {
-            continue; // Skip this stain requirement, don't consume anything
+        // If no stains available, skip this requirement
+        if (totalAvailable === 0) {
+            continue;
         }
+
+        // Consume up to 'count' stains, or all available (whichever is smaller)
+        // This allows skills with count: 99 to consume all available stains
+        let toRemove = Math.min(count, totalAvailable);
 
         // First, try to remove the specific stain type
         for (let i = 0; i < stains.length && toRemove > 0; i++) {
@@ -120,9 +145,10 @@ export function consumeStains(
  * Returns the new stain slots
  *
  * Rules when all 4 slots are full:
- * - Replace a non-Light stain (Lightning, Earth, Fire, Ice)
- * - NEVER replace Light stains
- * - If all 4 slots are Light, do nothing (stain is lost)
+ * - Both Light and non-Light stains will replace non-Light stains
+ * - Light stains are NEVER replaced automatically
+ * - If all 4 slots are Light, new stains are lost
+ * - Light stains are processed FIRST to ensure they get priority
  */
 export function addStains(
     currentStains: [string | null, string | null, string | null, string | null],
@@ -130,7 +156,14 @@ export function addStains(
 ): [string | null, string | null, string | null, string | null] {
     const stains = [...currentStains];
 
-    for (const stain of stainsToAdd) {
+    // Separate Light and non-Light stains
+    const lightStains = stainsToAdd.filter(s => s === "Light");
+    const nonLightStains = stainsToAdd.filter(s => s !== "Light");
+
+    // Process Light stains first, then non-Light stains
+    const orderedStains = [...lightStains, ...nonLightStains];
+
+    for (const stain of orderedStains) {
         // First, try to find an empty slot
         const emptyIndex = stains.findIndex(s => s === null);
         if (emptyIndex !== -1) {
@@ -139,6 +172,7 @@ export function addStains(
         }
 
         // No empty slots - need to replace
+        // Both Light and non-Light stains will replace non-Light stains
         // Find first non-Light stain to replace
         const replaceableIndex = stains.findIndex(s => s !== null && s !== "Light");
 

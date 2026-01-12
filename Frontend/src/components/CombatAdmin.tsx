@@ -773,13 +773,14 @@ export default function CombatAdmin({
                                 <div className="flex flex-col items-center text-sm opacity-80">
                                     {atk.statusList?.map((s, i) => {
                                         const showAmmount = shouldShowStatusAmmount(s.type);
+                                        const showTurns = s.type !== "IntenseFlames" && s.remainingTurns !== undefined;
 
                                         return (
                                             <div key={i} className="leading-tight text-center">
                                                 {getStatusLabel(s.type)}{" "}
                                                 {showAmmount && s.ammount != null ? s.ammount : ""}{" "}
-                                                {s.remainingTurns !== undefined
-                                                    ? ` (Por ${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
+                                                {showTurns
+                                                    ? ` (Por ${s.remainingTurns} turno${s.remainingTurns! > 1 ? "s" : ""})`
                                                     : ""}
                                             </div>
                                         );
@@ -806,11 +807,12 @@ export default function CombatAdmin({
                                         <div className="flex flex-col items-center text-sm opacity-80">
                                             {skill.statusList?.map((s, i) => {
                                                 const showAmount = shouldShowStatusAmmount(s.type);
+                                                const showTurns = s.type !== "IntenseFlames" && s.remainingTurns !== undefined;
 
                                                 return (
                                                     <div key={i} className="leading-tight text-center">
                                                         {getStatusLabel(s.type)} {showAmount ? s.ammount : ""}
-                                                        {s.remainingTurns !== undefined
+                                                        {showTurns && s.remainingTurns
                                                             ? ` (${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
                                                             : ""}
                                                     </div>
@@ -977,6 +979,7 @@ export default function CombatAdmin({
                                                                 ?.filter(s => s.effectName != "free-shot")
                                                                 .map((st, idx) => {
                                                                     const showAmount = shouldShowStatusAmmount(st.effectName);
+                                                                    const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
 
                                                                     return (
                                                                         <span
@@ -984,7 +987,7 @@ export default function CombatAdmin({
                                                                             className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80"
                                                                         >
                                                                             {getStatusLabel(st.effectName)} {showAmount ? st.ammount : ""}
-                                                                            {st.remainingTurns ? ` (${st.remainingTurns})` : ""}
+                                                                            {showTurns ? ` (${st.remainingTurns})` : ""}
                                                                         </span>
                                                                     );
                                                                 })}
@@ -1845,6 +1848,7 @@ export default function CombatAdmin({
             try {
                 const currentNpc = getActiveTurnCharacterFromBattle(battleDetailsInfo)
                 const total = calculateNpcStatusResolvedTotalValue(currentNpc, status)
+
                 await APIBattle.resolveStatus({
                     battleCharacterId: currentNpc?.battleID ?? 0,
                     effectType: status.effectName,

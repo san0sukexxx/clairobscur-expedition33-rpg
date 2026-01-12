@@ -73,7 +73,7 @@ class BattleTurnController(
                         attackRepository.deleteAll(attacks)
                 }
 
-                val ignoreRemainingTurns = listOf("Burning", "Frozen", "Regeneration", "Cursed", "Fleeing", "Foretell")
+                val ignoreRemainingTurns = listOf("Burning", "Frozen", "Regeneration", "Cursed", "Fleeing", "Foretell", "IntenseFlames")
 
                 val statusList = battleStatusEffectRepository.findByBattleCharacterId(bc.id!!)
                 statusList.forEach { eff ->
@@ -84,6 +84,13 @@ class BattleTurnController(
                                                 isResolved = if (eff.isResolved) false else eff.isResolved
                                         )
                                 )
+                                return@forEach
+                        }
+
+                        // IntenseFlames: Increase stacks by 2 at end of turn (damage happens via manual resolution)
+                        if (eff.effectType == "IntenseFlames") {
+                                val currentAmmount = eff.ammount
+                                battleStatusEffectRepository.save(eff.copy(ammount = currentAmmount + 2, isResolved = false))
                                 return@forEach
                         }
 

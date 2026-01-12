@@ -123,6 +123,7 @@ export interface AddStatusRequest {
     effectType: StatusType;
     ammount: number;
     remainingTurns?: number | null;
+    sourceCharacterId?: number;
 }
 
 export class APIBattle {
@@ -472,7 +473,7 @@ export class APIBattle {
             effectType: request.effectType,
             ammount: request.amount,
             remainingTurns: request.remainingTurns,
-            source: request.source
+            sourceCharacterId: request.source
         });
     }
 }

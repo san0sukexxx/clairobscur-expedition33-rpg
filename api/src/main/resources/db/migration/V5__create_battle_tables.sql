@@ -60,7 +60,9 @@ CREATE TABLE
         remaining_turns INTEGER,
         is_resolved BOOLEAN DEFAULT 0,
         skip_next_decrement BOOLEAN NOT NULL DEFAULT 0,
-        FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE
+        source_character_id INTEGER,
+        FOREIGN KEY (battle_character_id) REFERENCES battle_character (id) ON DELETE CASCADE,
+        FOREIGN KEY (source_character_id) REFERENCES battle_character (id) ON DELETE SET NULL
     );
 
 CREATE TABLE

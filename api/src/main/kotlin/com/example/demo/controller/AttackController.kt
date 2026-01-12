@@ -160,7 +160,8 @@ class AttackController(
                                                         effectType = "Twilight",
                                                         ammount = 0,
                                                         remainingTurns = 2,
-                                                        isResolved = true
+                                                        isResolved = true,
+                                                        sourceCharacterId = sourceBC.id
                                                 )
                                         )
                                         // Reset sun and moon charges
@@ -532,7 +533,8 @@ class AttackController(
                                                 ammount = 1,
                                                 remainingTurns = 1,
                                                 isResolved = true,
-                                                skipNextDecrement = false
+                                                skipNextDecrement = false,
+                                                sourceCharacterId = body.sourceBattleId
                                         )
                                         battleStatusEffectRepository.save(brokenEffect)
 
@@ -578,7 +580,8 @@ class AttackController(
                                                                 ammount = 1,
                                                                 remainingTurns = 1,
                                                                 isResolved = true,
-                                                                skipNextDecrement = false
+                                                                skipNextDecrement = false,
+                                                                sourceCharacterId = body.sourceBattleId
                                                         )
                                                         battleStatusEffectRepository.save(brokenEffect)
 
@@ -626,7 +629,8 @@ class AttackController(
                                                                 ammount = 1,
                                                                 remainingTurns = 1,
                                                                 isResolved = true,
-                                                                skipNextDecrement = false
+                                                                skipNextDecrement = false,
+                                                                sourceCharacterId = body.sourceBattleId
                                                         )
                                                         battleStatusEffectRepository.save(brokenEffect)
 
@@ -763,7 +767,8 @@ class AttackController(
                                                         battleCharacterId = targetBC.id!!,
                                                         effectType = eff.effectType,
                                                         ammount = amount,
-                                                        remainingTurns = eff.remainingTurns
+                                                        remainingTurns = eff.remainingTurns,
+                                                        sourceCharacterId = body.sourceBattleId
                                                 )
                                         )
 
@@ -822,11 +827,12 @@ class AttackController(
                                 val next = (existing?.ammount ?: 0) + 1
 
                                 val toSave =
-                                        existing?.copy(ammount = next)
+                                        existing?.copy(ammount = next, sourceCharacterId = existing.sourceCharacterId ?: body.sourceBattleId)
                                                 ?: BattleStatusEffect(
                                                         battleCharacterId = targetBC.id!!,
                                                         effectType = "free-shot",
-                                                        ammount = next
+                                                        ammount = next,
+                                                        sourceCharacterId = body.sourceBattleId
                                                 )
 
                                 battleStatusEffectRepository.save(toSave)
@@ -857,7 +863,8 @@ class AttackController(
                                                         ammount = 1,
                                                         remainingTurns = 1,
                                                         isResolved = true,
-                                                        skipNextDecrement = false
+                                                        skipNextDecrement = false,
+                                                        sourceCharacterId = sourceBC.id
                                                 )
                                                 battleStatusEffectRepository.save(versatileBuff)
 

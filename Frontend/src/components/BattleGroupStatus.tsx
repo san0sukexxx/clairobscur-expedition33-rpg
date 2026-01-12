@@ -18,6 +18,7 @@ interface BattleGroupStatusProps {
     isExecutingSkill?: boolean;
     isAdmin?: boolean;
     excludeSelf?: boolean;
+    hitCharacters?: Set<number>;
 }
 
 function pct(cur: number, max: number) {
@@ -33,7 +34,8 @@ export default function BattleGroupStatus({
     isReviveMode = false,
     isExecutingSkill = false,
     isAdmin = false,
-    excludeSelf = false
+    excludeSelf = false,
+    hitCharacters
 }: BattleGroupStatusProps) {
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -58,6 +60,7 @@ export default function BattleGroupStatus({
                             const isDead = ch.healthPoints === 0;
                             const isSelf = excludeSelf && currentCharacter && ch.battleID === currentCharacter.battleID;
                             const isSelectable = !isExecutingSkill && !isSelf && ((isAttacking && !isDead) || (isReviveMode && isDead));
+                            const isHit = hitCharacters?.has(ch.battleID) && !isDead;
 
                             return (
                                 <div
@@ -74,6 +77,7 @@ export default function BattleGroupStatus({
                                             : "pointer-events-none"
                                         }
                 ${isExecutingSkill ? "opacity-50" : ""}
+                ${isHit ? "animate-pulse !bg-error/30 !shadow-lg !shadow-error/50" : ""}
             `}
                                 >
                                     <div className="flex items-center gap-3">
@@ -101,12 +105,13 @@ export default function BattleGroupStatus({
                                                     })
                                                     .map((st, idx) => {
                                                         const showAmmount = shouldShowStatusAmmount(st.effectName);
+                                                        const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
 
                                                         return (
                                                             <span key={idx} className="px-1 py-0.5 rounded bg-base-300">
                                                                 {getStatusLabel(st.effectName)}{" "}
                                                                 {showAmmount && st.ammount != null ? st.ammount : ""}{" "}
-                                                                {st.remainingTurns ? `(${st.remainingTurns})` : ""}
+                                                                {showTurns ? `(${st.remainingTurns})` : ""}
                                                             </span>
                                                         );
                                                     })}

@@ -17,6 +17,26 @@ const STAIN_IMAGES: Record<string, string> = {
 };
 
 /**
+ * Mapeamento de nomes de elementos em inglês para português
+ */
+const ELEMENT_NAMES_PT: Record<string, string> = {
+    "Lightning": "Raio",
+    "Earth": "Terra",
+    "Fire": "Fogo",
+    "Ice": "Gelo",
+    "Light": "Luz"
+};
+
+/**
+ * Traduz o nome de um elemento de inglês para português
+ * @param elementName Nome do elemento em inglês
+ * @returns Nome do elemento em português
+ */
+export function translateElementName(elementName: string): string {
+    return ELEMENT_NAMES_PT[elementName] || elementName;
+}
+
+/**
  * Substitui texto "Mancha de X" e nomes de elementos completamente por imagens
  * @param text Texto da descrição da habilidade
  * @returns Array de React nodes com texto e imagens

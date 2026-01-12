@@ -578,7 +578,7 @@
     },
     "versatile": {
       "name": "Versátil",
-      "description": "Após um acerto de Mira Livre, dano de Ataque Base é aumentado em 50% por 1 turno."
+      "description": "Após um ataque de Mira Livre, dano de Ataque Base é aumentado em 50% por 1 turno."
     },
     "empowering-attack": {
       "name": "Ataque Fortalecedor",
@@ -1527,7 +1527,7 @@
       "passives": {
         "4": "Começa a batalha na Máscara Pesada.",
         "10": "Máscara Pesada aplica Carapaça por 3 turnos.",
-        "20": "+1 PM por acerto recebido."
+        "20": "+1 PM por ataque recebido."
       }
     },
     "joyaro": {
@@ -1637,7 +1637,7 @@
     "garganon": {
       "name": "Garganon",
       "passives": {
-        "4": "Enquanto tiver pelo menos 1 carga de Sol ativa, aplica um acúmulo de Queimadura por acerto recebido.",
+        "4": "Enquanto tiver pelo menos 1 carga de Sol ativa, aplica um acúmulo de Queimadura por ataque recebido.",
         "10": "Contra-ataques aplicam 1 Queimadura por carga de Sol ativa.",
         "20": "Ataque Base pode consumir 1 carga de Sol para aplicar 5 Prenúncios."
       }
@@ -1942,15 +1942,15 @@
       "locked": "Bloqueado",
       "gustave-lumiere-assault": {
         "name": "Assalto Luimièriano",
-        "description": "Causa dano baixo em alvo único. 5 acertos. Usa elemento da arma. Acertos críticos geram 1 Carga adicional."
+        "description": "Causa dano baixo em alvo único. 5 ataques. Usa elemento da arma. Acertos críticos geram 1 Carga adicional."
       },
       "gustave-marking-shot": {
         "name": "Tiro Marcante",
-        "description": "Causa dano de Raio baixo em alvo único. 1 acerto. Aplica Marca no alvo, fazendo-o receber +50% de dano."
+        "description": "Causa dano de Raio baixo em alvo único. 1 ataque. Aplica Marca no alvo, fazendo-o receber +50% de dano."
       },
       "gustave-overcharge": {
         "name": "Sobrecarga",
-        "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 acerto. Pode causar quebra."
+        "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 ataque. Pode causar quebra."
       },
       "gustave-powerful": {
         "name": "Poderoso",
@@ -1962,43 +1962,43 @@
       },
       "gustave-from-fire": {
         "name": "Do Fogo",
-        "description": "Causa dano médio em alvo único usando elemento da arma. 3 acertos. Se o alvo estiver Queimando, Gustave se cura em 20% da Vida máxima. Requer habilidade Marking Shot."
+        "description": "Causa dano médio em alvo único usando elemento da arma. 3 ataques. Se o alvo estiver Queimando, Gustave se cura em 20% da Vida máxima. Requer habilidade Marking Shot."
       },
       "gustave-shatter": {
         "name": "Estilhaçar",
-        "description": "Causa dano de Raio alto em todos os inimigos. 1 acerto. Pode causar quebra. Se um alvo sofrer Break pelo acerto, Overcharge é totalmente carregado."
+        "description": "Causa dano de Raio alto em todos os inimigos. 1 ataque. Pode causar quebra. Se um alvo sofrer Break pelo ataque, Overcharge é totalmente carregado."
       },
       "gustave-strike-storm": {
         "name": "Tempestade de Golpes",
-        "description": "Causa dano muito alto em alvo único. 6 acertos. Usa elemento da arma. Acertos críticos geram 2 Cargas adicionais."
+        "description": "Causa dano muito alto em alvo único. 6 ataques. Usa elemento da arma. Acertos críticos geram 2 Cargas adicionais."
       },
       "lune-electrify": {
         "name": "Eletrificar",
-        "description": "Causa dano baixo de Raio a um único alvo. 3 acertos. Consome Fogo para gerar uma Mancha de Luz. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Raio a um único alvo. 3 ataques. Consome Fogo para gerar uma Mancha de Luz. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 2 Manchas de Raio."
       },
       "lune-immolation": {
         "name": "Imolação",
-        "description": "Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 acerto. Consome Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 ataque. Consome Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-ice-lance": {
         "name": "Lança de Gelo",
-        "description": "Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 acerto. Consome Terra para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 ataque. Consome Terra para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-earth-rising": {
         "name": "Ascensão Terrestre",
-        "description": "Causa dano baixo de Terra a todos os inimigos. 1 acerto. Consome Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Terra a todos os inimigos. 1 ataque. Consome Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-thermal-transfer": {
         "name": "Transferência Térmica",
-        "description": "Causa dano baixo de Gelo a um único alvo. 2 acertos. Ganha 4 PM se o alvo estiver Queimando. Consome 2 Manchas de Terra para jogar um segundo turno. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Gelo a um único alvo. 2 ataques. Ganha 4 PM se o alvo estiver Queimando. Consome 2 Manchas de Terra para jogar um segundo turno. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-thunderfall": {
         "name": "Queda do Trovão",
-        "description": "Causa dano médio de Raio em inimigos aleatórios. 2-6 acertos. Consome Fogo para causar dano aumentado. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano médio de Raio em inimigos aleatórios. 2-6 ataques. Consome Fogo para causar dano aumentado. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-wildfire": {
         "name": "Fogo Selvagem",
-        "description": "Causa dano médio de Fogo a todos os inimigos. 1 acerto. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Fogo a todos os inimigos. 1 ataque. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-mayhem": {
         "name": "Caos",
@@ -2006,23 +2006,23 @@
       },
       "lune-elemental-trick": {
         "name": "Truque Elemental",
-        "description": "Causa dano baixo de Gelo, Fogo, Raio e Terra a um único alvo. 4 acertos. Acertos críticos geram a Mancha correspondente ao elemento."
+        "description": "Causa dano baixo de Gelo, Fogo, Raio e Terra a um único alvo. 4 ataques. Acertos críticos geram a Mancha correspondente ao elemento."
       },
       "lune-elemental-genesis": {
         "name": "Gênese Elemental",
-        "description": "Causa dano extremo a todos os inimigos. 8 acertos. Cada acerto causa dano em um elemento aleatório. Requer Raio, Terra, Fogo e Gelo para lançar."
+        "description": "Causa dano extremo a todos os inimigos. 8 ataques. Cada ataque causa dano em um elemento aleatório. Requer Raio, Terra, Fogo e Gelo para lançar."
       },
       "lune-crippling-tsunami": {
         "name": "Tsunami Paralisante",
-        "description": "Causa dano médio de Gelo a todos os inimigos. 1 acerto. Aplica Desaceleração por 3 turnos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Gelo a todos os inimigos. 1 ataque. Aplica Desaceleração por 3 turnos. Consome mancha de Terra, mancha de Fogo e mancha de Raio para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-rockslide": {
         "name": "Deslizamento de Rochas",
-        "description": "Causa dano médio de Terra a um único alvo. 2 acertos. Pode causar quebra. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Pode causar quebra. Consome mancha de Raio, mancha de Gelo e mancha de Fogo para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-crustal-crush": {
         "name": "Esmagamento da Crosta",
-        "description": "Causa dano alto de Terra e dano de Break a um único alvo. 5 acertos. Consome 2 Manchas de Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano alto de Terra e dano de Quebra a um único alvo. 5 ataques. Consome 2 Manchas de Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-healing-light": {
         "name": "Luz Curativa",
@@ -2030,7 +2030,7 @@
       },
       "lune-lightning-dance": {
         "name": "Dança do Relâmpago",
-        "description": "Causa dano muito alto de Raio a um único alvo. 6 acertos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano muito alto de Raio a um único alvo. 6 ataques. Consome mancha de Terra, mancha de Gelo e mancha de Fogo para causar dano muito aumentado. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-storm-caller": {
         "name": "Invocador da Tempestade",
@@ -2058,11 +2058,11 @@
       },
       "lune-hell": {
         "name": "Inferno",
-        "description": "Causa dano muito alto de Fogo aplicando 5 Queimaduras por acerto a todos os inimigos. 2 acertos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano muito alto de Fogo aplicando 5 Queimaduras por ataque a todos os inimigos. 2 ataques. Consome mancha de Gelo, mancha de Terra e mancha de Raio para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-sky-break": {
         "name": "Quebra do Céu",
-        "description": "Habilidade Gradiente (não consome turno). Causa dano extremo a todos os inimigos. 1 acerto. Pode causar quebra. O elemento depende de qual Mancha Lune possui mais. Usar esta habilidade concede 3 Manchas de Luz."
+        "description": "Habilidade Gradiente (não consome turno). Causa dano extremo a todos os inimigos. 1 ataque. Pode causar quebra. O elemento depende de qual Mancha Lune possui mais. Usar esta habilidade concede 3 Manchas de Luz."
       },
       "lune-tree-of-life": {
         "name": "Árvore da Vida",
@@ -2070,11 +2070,11 @@
       },
       "lune-tremor": {
         "name": "Tremor",
-        "description": "Habilidade Gradiente (não consome turno). Causa dano alto de Terra a todos os inimigos. 1 acerto. Remove todos os Escudos dos inimigos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Habilidade Gradiente (não consome turno). Causa dano alto de Terra a todos os inimigos. 1 ataque. Remove todos os Escudos dos inimigos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "maelle-offensive-switch": {
         "name": "Mudança Ofensiva",
-        "description": "Causa dano baixo em alvo único. 1 acerto. Usa o elemento da arma. Aplica Indefeso por 3 turnos. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Causa dano baixo em alvo único. 1 ataque. Usa o elemento da arma. Aplica Indefeso por 3 turnos. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-mezzo-forte": {
         "name": "Mezzo Forte",
@@ -2082,11 +2082,11 @@
       },
       "maelle-percee": {
         "name": "Investida",
-        "description": "Causa dano Físico médio em alvo único. 1 acerto. Dano aumentado em 50% contra alvos Marcados. Muda para Postura Defensiva. Custo reduzido para 2 MP se usado na Postura Virtuosa."
+        "description": "Causa dano Físico médio em alvo único. 1 ataque. Dano aumentado em 50% contra alvos Marcados. Muda para Postura Defensiva. Custo reduzido para 2 MP se usado na Postura Virtuosa."
       },
       "maelle-degagement": {
         "name": "Desengajamento",
-        "description": "Causa dano de Fogo baixo em alvo único. 1 acerto. O alvo fica vulnerável a dano de Fogo por 2 turnos. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Causa dano de Fogo baixo em alvo único. 1 ataque. O alvo fica vulnerável a dano de Fogo por 2 turnos. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-guard-up": {
         "name": "Aumentar Guarda",
@@ -2094,7 +2094,7 @@
       },
       "maelle-swift-stride": {
         "name": "Passo Veloz",
-        "description": "Causa dano Físico baixo em alvo único. 1 acerto. Recupera 0-2 MP. Se o alvo estiver Queimando, muda para Postura Virtuosa."
+        "description": "Causa dano Físico baixo em alvo único. 1 ataque. Recupera 0-2 MP. Se o alvo estiver Queimando, muda para Postura Virtuosa."
       },
       "maelle-guard-down": {
         "name": "Diminuir Guarda",
@@ -2106,43 +2106,43 @@
       },
       "maelle-spark": {
         "name": "Centelha",
-        "description": "Causa dano de Fogo baixo em alvo único. 1 acerto. Aplica 3 Queimaduras (5 Queimaduras se usado da Postura Ofensiva). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano de Fogo baixo em alvo único. 1 ataque. Aplica 3 Queimaduras (5 Queimaduras se usado da Postura Ofensiva). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-rain-of-fire": {
         "name": "Chuva de Fogo",
-        "description": "Causa dano de Fogo médio em alvo único. 2 acertos. Aplica 3 Queimaduras por acerto (5 por acerto se usado da Postura Defensiva). Muda para Postura Ofensiva."
+        "description": "Causa dano de Fogo médio em alvo único. 2 ataques. Aplica 3 Queimaduras por ataque (5 por ataque se usado da Postura Defensiva). Muda para Postura Ofensiva."
       },
       "maelle-combustion": {
         "name": "Combustão",
-        "description": "Causa dano Físico médio em alvo único. 2 acertos. Consome até 10 Queimaduras para aumentar o dano. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Causa dano Físico médio em alvo único. 2 ataques. Consome até 10 Queimaduras para aumentar o dano. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-fleuret-fury": {
         "name": "Fúria do Florete",
-        "description": "Causa dano Físico alto em alvo único. 3 acertos. Pode causar Quebra. Se Maelle usar esta habilidade enquanto estiver na Postura Virtuosa, permanece na Virtuosa. Usar esta habilidade muda a Postura de Maelle para Sem Postura."
+        "description": "Causa dano Físico alto em alvo único. 3 ataques. Pode causar Quebra. Se Maelle usar esta habilidade enquanto estiver na Postura Virtuosa, permanece na Virtuosa. Usar esta habilidade muda a Postura de Maelle para Sem Postura."
       },
       "maelle-breaking-rules": {
         "name": "Quebrando Regras",
-        "description": "Causa dano Físico baixo em alvo único. 2 acertos. Destrói todos os Escudos do alvo e concede 1 MP por Escudo destruído. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Causa dano Físico baixo em alvo único. 2 ataques. Destrói todos os Escudos do alvo e concede 1 MP por Escudo destruído. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-fencers-flurry": {
         "name": "Rajada do Espadachim",
-        "description": "Causa dano médio em todos os inimigos. 1 acerto. Usa o elemento da arma. Aplica Indefeso por 1 turno (inimigos recebem 25% mais dano). Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Causa dano médio em todos os inimigos. 1 ataque. Usa o elemento da arma. Aplica Indefeso por 1 turno (inimigos recebem 25% mais dano). Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-phantom-strike": {
         "name": "Golpe Fantasma",
-        "description": "Causa dano de Vazio muito alto em todos os inimigos. 4 acertos. Concede +35% de Carga Gradiente. Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano de Vazio muito alto em todos os inimigos. 4 ataques. Concede +35% de Carga Gradiente. Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-burning-canvas": {
         "name": "Tela Ardente",
-        "description": "Causa dano de Vazio alto em alvo único. 5 acertos. Aplica 1 Queimadura por acerto. Dano aumentado em +2 para cada Queimadura no alvo. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Causa dano de Vazio alto em alvo único. 5 ataques. Aplica 1 Queimadura por ataque. Dano aumentado em +2 para cada Queimadura no alvo. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-revenge": {
         "name": "Vingança",
-        "description": "Causa dano de Fogo alto em alvo único. 1 acerto. Dano aumentado para cada ataque que causou dano em você desde o turno anterior. Pode causar Quebra. Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano de Fogo alto em alvo único. 1 ataque. Dano aumentado para cada ataque que causou dano em você desde o turno anterior. Pode causar Quebra. Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-pyrolyse": {
         "name": "Pirólise",
-        "description": "Causa dano de Fogo extremo em alvo único. 3 acertos. Aplica 5 Queimaduras por acerto (7 por acerto se usado da Postura Ofensiva). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano de Fogo extremo em alvo único. 3 ataques. Aplica 5 Queimaduras por ataque (7 por ataque se usado da Postura Ofensiva). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-last-chance": {
         "name": "Última Chance",
@@ -2150,27 +2150,27 @@
       },
       "maelle-momentum-strike": {
         "name": "Golpe de Momento",
-        "description": "Causa dano Físico alto em alvo único. 1 acerto. Usa o elemento da arma. Dano aumentado contra alvos Marcados. Custo reduzido para 4 MP se usado na Postura Virtuosa (normalmente 7 MP). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano Físico alto em alvo único. 1 ataque. Usa o elemento da arma. Dano aumentado contra alvos Marcados. Custo reduzido para 4 MP se usado na Postura Virtuosa (normalmente 7 MP). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-payback": {
         "name": "Retribuição",
-        "description": "Causa dano Físico muito alto em alvo único. 1 acerto. Pode causar Quebra. Custo de MP reduzido para cada ataque aparado desde o último turno (custo base 9 MP). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano Físico muito alto em alvo único. 1 ataque. Pode causar Quebra. Custo de MP reduzido para cada ataque aparado desde o último turno (custo base 9 MP). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-stendhal": {
         "name": "Stendhal",
-        "description": "Causa dano de Vazio extremo em alvo único. 1 acerto. Remove os próprios Escudos e aplica Indefeso em si mesmo. Usar esta habilidade muda a Postura de Maelle para Sem Postura."
+        "description": "Causa dano de Vazio extremo em alvo único. 1 ataque. Remove os próprios Escudos e aplica Indefeso em si mesmo. Usar esta habilidade muda a Postura de Maelle para Sem Postura."
       },
       "maelle-sword-ballet": {
         "name": "Balé de Espadas",
-        "description": "Causa dano extremo em alvo único. 5 acertos. Usa o elemento da arma. Acertos Críticos causam dano dobrado. Se Maelle usar esta habilidade enquanto estiver na Postura Defensiva, pode ser ativada. Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano extremo em alvo único. 5 ataques. Usa o elemento da arma. Acertos Críticos causam dano dobrado. Se Maelle usar esta habilidade enquanto estiver na Postura Defensiva, pode ser ativada. Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-gustaves-homage": {
         "name": "Homenagem a Gustave",
-        "description": "Causa dano de Raio alto em alvo único. 8 acertos. Dano aumentado em alvos Marcados, não remove Marca."
+        "description": "Causa dano de Raio alto em alvo único. 8 ataques. Dano aumentado em alvos Marcados, não remove Marca."
       },
       "maelle-virtuose-strike": {
         "name": "Golpe Virtuoso",
-        "description": "Habilidade Gradiente (não consome turno). Causa dano Físico alto em alvo único. 5 acertos. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
+        "description": "Habilidade Gradiente (não consome turno). Causa dano Físico alto em alvo único. 5 ataques. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
       },
       "maelle-gommage": {
         "name": "Gommage",
@@ -2182,23 +2182,23 @@
       },
       "sciel-twilight-slash": {
         "name": "Corte Crepuscular",
-        "description": "Causa dano das Trevas baixo em alvo único. 1 acerto. Consome todas as Predições para aumentar o dano. Habilidade inicial de Sciel."
+        "description": "Causa dano das Trevas baixo em alvo único. 1 ataque. Consome todas as Predições para aumentar o dano. Habilidade inicial de Sciel."
       },
       "sciel-focused-foretell": {
         "name": "Presságio Focado",
-        "description": "Causa dano Físico médio em alvo único. 1 acerto. Aplica 2 Predições. Aplica 3 Predições adicionais se o alvo não tiver Predições."
+        "description": "Causa dano Físico médio em alvo único. 1 ataque. Aplica 2 Predições. Aplica 3 Predições adicionais se o alvo não tiver Predições."
       },
       "sciel-bad-omen": {
         "name": "Mau Presságio",
-        "description": "Causa dano das Trevas baixo em todos os inimigos. 2 acertos. Aplica 2 Predições por acerto."
+        "description": "Causa dano das Trevas baixo em todos os inimigos. 2 ataques. Aplica 2 Predições por ataque."
       },
       "sciel-marking-card": {
         "name": "Carta Marcante",
-        "description": "Causa dano das Trevas médio em alvo único. 2 acertos. Aplica Marca. Aplica 3 Predições."
+        "description": "Causa dano das Trevas médio em alvo único. 2 ataques. Aplica Marca. Aplica 3 Predições."
       },
       "sciel-delaying-slash": {
         "name": "Corte Retardante",
-        "description": "Causa dano médio em alvo único. 2 acertos. Usa elemento da arma. Consome Predições para aumentar o dano e atrasar o turno do alvo."
+        "description": "Causa dano médio em alvo único. 2 ataques. Usa elemento da arma. Consome Predições para aumentar o dano e atrasar o turno do alvo."
       },
       "sciel-dark-cleansing": {
         "name": "Purificação Sombria",
@@ -2206,35 +2206,35 @@
       },
       "sciel-dark-wave": {
         "name": "Onda Sombria",
-        "description": "Causa dano das Trevas alto em todos os inimigos. 3 acertos. Consome todas as Predições para aumentar o dano."
+        "description": "Causa dano das Trevas alto em todos os inimigos. 3 ataques. Consome todas as Predições para aumentar o dano."
       },
       "sciel-grim-harvest": {
         "name": "Colheita Sombria",
-        "description": "Causa dano das Trevas médio em alvo único. 1 acerto. Cura todos os aliados em 30% da Vida. Consome Predições para aumentar a cura em 5% por Predição."
+        "description": "Causa dano das Trevas médio em alvo único. 1 ataque. Cura todos os aliados em 30% da Vida. Consome Predições para aumentar a cura em 5% por Predição."
       },
       "sciel-harvest": {
         "name": "Colheita",
-        "description": "Causa dano médio em alvo único. 1 acerto. Usa elemento da arma. Cura Sciel em 40% da Vida. Consome todas as Predições para aumentar a cura em 5% por Predição."
+        "description": "Causa dano médio em alvo único. 1 ataque. Usa elemento da arma. Cura Sciel em 40% da Vida. Consome todas as Predições para aumentar a cura em 5% por Predição."
       },
       "sciel-searing-bond": {
         "name": "Vínculo Ardente",
-        "description": "Causa dano das Trevas médio em alvo único. 1 acerto. Aplica 5 Predições. Causa dano e aplica Predições em todos os outros inimigos Queimando."
+        "description": "Causa dano das Trevas médio em alvo único. 1 ataque. Aplica 5 Predições. Causa dano e aplica Predições em todos os outros inimigos Queimando."
       },
       "sciel-phantom-blade": {
         "name": "Lâmina Fantasma",
-        "description": "Causa dano das Trevas alto em alvo único. 1 acerto. Consome todas as Predições para aumentar o dano. Pode causar quebra."
+        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições para aumentar o dano. Pode causar quebra."
       },
       "sciel-sealed-fate": {
         "name": "Destino Selado",
-        "description": "Causa dano alto em alvo único. 5-7 acertos. Usa elemento da arma. Cada acerto pode consumir 1 Predição para causar 200% mais dano."
+        "description": "Causa dano alto em alvo único. 5-7 ataques. Usa elemento da arma. Cada ataque pode consumir 1 Predição para causar 200% mais dano."
       },
       "sciel-spectral-sweep": {
         "name": "Varredura Espectral",
-        "description": "Causa dano médio em alvo único. 2-6 acertos. Usa elemento da arma. Aplica 1 Predição por acerto. Acertos críticos aplicam Predição adicional."
+        "description": "Causa dano médio em alvo único. 2-6 ataques. Usa elemento da arma. Aplica 1 Predição por ataque. Acertos críticos aplicam Predição adicional."
       },
       "sciel-firing-shadow": {
         "name": "Sombra Flamejante",
-        "description": "Causa dano das Trevas baixo em todos os inimigos. 3 acertos. Consome 1 Predição por acerto para aumentar o dano."
+        "description": "Causa dano das Trevas baixo em todos os inimigos. 3 ataques. Consome 1 Predição por ataque para aumentar o dano."
       },
       "sciel-fortunes-fury": {
         "name": "Fúria da Fortuna",
@@ -2242,11 +2242,11 @@
       },
       "sciel-our-sacrifice": {
         "name": "Nosso Sacrifício",
-        "description": "Causa dano das Trevas extremo em todos os inimigos. 1 acerto. Absorve Vida dos aliados e Predições dos inimigos para aumentar o dano."
+        "description": "Causa dano das Trevas extremo em todos os inimigos. 1 ataque. Absorve Vida dos aliados e Predições dos inimigos para aumentar o dano."
       },
       "sciel-plentiful-harvest": {
         "name": "Colheita Abundante",
-        "description": "Causa dano Físico médio em alvo único. 2 acertos. Consome todas as Predições do alvo e concede 1 PM a um aliado por Predição consumida."
+        "description": "Causa dano Físico médio em alvo único. 2 ataques. Consome todas as Predições do alvo e concede 1 PM a um aliado por Predição consumida."
       },
       "sciel-rush": {
         "name": "Investida",
@@ -2262,27 +2262,27 @@
       },
       "sciel-card-weaver": {
         "name": "Tecelão de Cartas",
-        "description": "Causa dano Físico baixo em alvo único. 1 acerto. Propaga as Predições do alvo para todos os inimigos. Joga um segundo turno."
+        "description": "Causa dano Físico baixo em alvo único. 1 ataque. Propaga as Predições do alvo para todos os inimigos. Joga um segundo turno."
       },
       "sciel-final-path": {
         "name": "Caminho Final",
-        "description": "Causa dano das Trevas extremo em alvo único. 1 acerto. Aplica 10 Predições. Pode causar quebra."
+        "description": "Causa dano das Trevas extremo em alvo único. 1 ataque. Aplica 10 Predições. Pode causar quebra."
       },
       "sciel-twilight-dance": {
         "name": "Dança Crepuscular",
-        "description": "Causa dano das Trevas extremo em alvo único. 4 acertos. Durante o Crepúsculo, estende a duração do Crepúsculo em 1 turno. Consome todas as Predições para aumentar o dano."
+        "description": "Causa dano das Trevas extremo em alvo único. 4 ataques. Durante o Crepúsculo, estende a duração do Crepúsculo em 1 turno. Consome todas as Predições para aumentar o dano."
       },
       "sciel-shadow-bringer": {
         "name": "Arauto das Sombras",
-        "description": "Habilidade Gradiente (não consome turno). Causa dano das Trevas alto em inimigos aleatórios. 10 acertos. Aplica 1 Predição por acerto."
+        "description": "Habilidade Gradiente (não consome turno). Causa dano das Trevas alto em inimigos aleatórios. 10 ataques. Aplica 1 Predição por ataque."
       },
       "sciel-doom": {
         "name": "Perdição",
-        "description": "Habilidade Gradiente (não consome turno). Causa dano das Trevas muito alto em alvo único. 3 acertos. Aplica Fraco, Indefeso e Lento por 3 turnos. Pode causar quebra."
+        "description": "Habilidade Gradiente (não consome turno). Causa dano das Trevas muito alto em alvo único. 3 ataques. Aplica Fraco, Indefeso e Lento por 3 turnos. Pode causar quebra."
       },
       "sciel-end-slice": {
         "name": "Corte Final",
-        "description": "Habilidade Gradiente (não consome turno). Causa dano Físico extremo em alvo único. 1 acerto. O dano escala com a quantidade de Predições consumidas."
+        "description": "Habilidade Gradiente (não consome turno). Causa dano Físico extremo em alvo único. 1 ataque. O dano escala com a quantidade de Predições consumidas."
       },
       "verso-angels-eyes": {
         "name": "Olhos do Anjo",
@@ -2394,19 +2394,19 @@
       },
       "monoco-abbest-wind": {
         "name": "Vento Abbest",
-        "description": "Ataque baseado em vento. Efeito: Causa dano Físico baixo em alvo único. 1 acerto. Joga um segundo turno. Normalmente custa 2 PM, mas quando o Ponteiro da Roda Bestial está posicionado em uma Máscara Ágil ou Máscara Onipotente, o custo reduz para 0 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Abbest enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque baseado em vento. Efeito: Causa dano Físico baixo em alvo único. 1 ataque. Joga um segundo turno. Normalmente custa 2 PM, mas quando o Ponteiro da Roda Bestial está posicionado em uma Máscara Ágil ou Máscara Onipotente, o custo reduz para 0 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Abbest enquanto Monoco estiver no grupo ativo."
       },
       "monoco-aberration-light": {
         "name": "Luz da Aberração",
-        "description": "Ataque de luz da aberração. Efeito: Causa dano de Luz alto em todos os inimigos. 2 acertos. Aplica 4 Queimaduras por acerto. Máscara Ágil: Aplica 2 Queimaduras adicionais por acerto. Custa 7 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Aberration enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de luz da aberração. Efeito: Causa dano de Luz alto em todos os inimigos. 2 ataques. Aplica 4 Queimaduras por ataque. Máscara Ágil: Aplica 2 Queimaduras adicionais por ataque. Custa 7 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Aberration enquanto Monoco estiver no grupo ativo."
       },
       "monoco-ballet-charm": {
         "name": "Encanto do Balé",
-        "description": "Ataque estilo balé encantador. Efeito: Causa dano de Luz baixo em alvo único. 1 acerto. Aplica Indefeso no alvo por 3 turnos. Aumenta o dano quando usado com Máscara de Conjurador equipada. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Ballet enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque estilo balé encantador. Efeito: Causa dano de Luz baixo em alvo único. 1 ataque. Aplica Indefeso no alvo por 3 turnos. Aumenta o dano quando usado com Máscara de Conjurador equipada. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Ballet enquanto Monoco estiver no grupo ativo."
       },
       "monoco-benisseur-mortar": {
         "name": "Morteiro do Benfeitor",
-        "description": "Ataque de bombardeio de morteiro. Efeito: Causa dano de Gelo médio em alvo único. 3 acertos. Muda para Máscara Onipotente se o alvo estiver Marcado. Máscara de Conjurador: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Bénisseur enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de bombardeio de morteiro. Efeito: Causa dano de Gelo médio em alvo único. 3 ataques. Muda para Máscara Onipotente se o alvo estiver Marcado. Máscara de Conjurador: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Bénisseur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-boucheclier-fortify": {
         "name": "Fortificação Boucheclier",
@@ -2414,47 +2414,47 @@
       },
       "monoco-braseleur-smash": {
         "name": "Esmagamento Braseleur",
-        "description": "Ataque de esmagamento poderoso. Efeito: Causa dano de Fogo médio em alvo único e aplica 3 Queimaduras. 2 acertos. Dano aumentado quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Braseleur enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de esmagamento poderoso. Efeito: Causa dano de Fogo médio em alvo único e aplica 3 Queimaduras. 2 ataques. Dano aumentado quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Braseleur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-break-point": {
         "name": "Ponto de Ruptura",
-        "description": "Ataque crítico de ponto de ruptura. Efeito: Causa dano extremo em alvo único. 1 acerto. Usa elemento da arma. Preenche a Barra de Break do alvo e causa Break. Habilidade Gradiente (não consome turno).\nPré-requisito: Alcance Nível de Relacionamento 7 com Monoco."
+        "description": "Ataque crítico de ponto de ruptura. Efeito: Causa dano extremo em alvo único. 1 ataque. Usa elemento da arma. Preenche a Barra de Break do alvo e causa Break. Habilidade Gradiente (não consome turno).\nPré-requisito: Alcance Nível de Relacionamento 7 com Monoco."
       },
       "monoco-bruler-bash": {
         "name": "Pancada Bruler",
-        "description": "Ataque flamejante. Efeito: Causa dano Físico médio em alvo único. 3 acertos. Pode causar quebra. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Bruler enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque flamejante. Efeito: Causa dano Físico médio em alvo único. 3 ataques. Pode causar quebra. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Bruler enquanto Monoco estiver no grupo ativo."
       },
       "monoco-chalier-combo": {
         "name": "Combo Chalier",
-        "description": "Ataque combo de múltiplos golpes. Efeito: Causa dano Físico alto em alvo único. 6 acertos. Interrompido se falhar. Dano aumentado quando usado com Máscara Equilibrada ativa.\nPré-requisito: Habilidade inicial de Monoco, não requer pré-requisito."
+        "description": "Ataque combo de múltiplos golpes. Efeito: Causa dano Físico alto em alvo único. 6 ataques. Interrompido se falhar. Dano aumentado quando usado com Máscara Equilibrada ativa.\nPré-requisito: Habilidade inicial de Monoco, não requer pré-requisito."
       },
       "monoco-chapelier-slash": {
         "name": "Corte do Chapeleiro",
-        "description": "Ataque cortante. Efeito: Causa dano Físico alto em todos os inimigos. 3 acertos. Aplica Marca. Move o Ponteiro da Roda Bestial em 4 posições. Dano aumentado quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Chapelier enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque cortante. Efeito: Causa dano Físico alto em todos os inimigos. 3 ataques. Aplica Marca. Move o Ponteiro da Roda Bestial em 4 posições. Dano aumentado quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Chapelier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-chevaliere-ice": {
         "name": "Gelo da Cavaleira",
-        "description": "Ataque de cavaleiro baseado em gelo. Efeito: Causa dano de Gelo alto em todos os inimigos. 3 acertos. Aplica Lento nos alvos por 3 turnos. Modificador de Máscara Equilibrada aumenta o dano quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Gold Chevalière enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de cavaleiro baseado em gelo. Efeito: Causa dano de Gelo alto em todos os inimigos. 3 ataques. Aplica Lento nos alvos por 3 turnos. Modificador de Máscara Equilibrada aumenta o dano quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Gold Chevalière enquanto Monoco estiver no grupo ativo."
       },
       "monoco-chevaliere-piercing": {
         "name": "Perfuração da Cavaleira",
-        "description": "Ataque perfurante de cavaleiro. Efeito: Causa dano Físico em alvo único atravessando Escudos. 6 acertos. Dano aumentado para cada Escudo no alvo. Dano aumentado quando usado com Máscara Ágil equipada.\nPré-requisito: Derrote e adquira o pé de um inimigo Ceramic Chevalière enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque perfurante de cavaleiro. Efeito: Causa dano Físico em alvo único atravessando Escudos. 6 ataques. Dano aumentado para cada Escudo no alvo. Dano aumentado quando usado com Máscara Ágil equipada.\nPré-requisito: Derrote e adquira o pé de um inimigo Ceramic Chevalière enquanto Monoco estiver no grupo ativo."
       },
       "monoco-chevaliere-thrusts": {
         "name": "Estocadas da Cavaleira",
-        "description": "Múltiplas estocadas. Efeito: Causa dano Físico alto em todos os inimigos. 3 acertos. Acertos Críticos causam o dobro do dano. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Steel Chevalière enquanto Monoco estiver no grupo ativo."
+        "description": "Múltiplas estocadas. Efeito: Causa dano Físico alto em todos os inimigos. 3 ataques. Acertos Críticos causam o dobro do dano. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Steel Chevalière enquanto Monoco estiver no grupo ativo."
       },
       "monoco-clair-enfeeble": {
         "name": "Enfraquecimento Clair",
-        "description": "Ataque de luz enfraquecedor. Efeito: Causa dano de Luz médio em todos os inimigos. 1 acerto. Aplica Indefeso por 3 turnos. Usar enquanto o Ponteiro da Roda Bestial está em Máscara Equilibrada ou Máscara Onipotente aumenta o dano.\nPré-requisito: Derrote e adquira o pé de um inimigo Clair enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de luz enfraquecedor. Efeito: Causa dano de Luz médio em todos os inimigos. 1 ataque. Aplica Indefeso por 3 turnos. Usar enquanto o Ponteiro da Roda Bestial está em Máscara Equilibrada ou Máscara Onipotente aumenta o dano.\nPré-requisito: Derrote e adquira o pé de um inimigo Clair enquanto Monoco estiver no grupo ativo."
       },
       "monoco-contorsionniste-blast": {
         "name": "Explosão Contorsionista",
-        "description": "Explosão explosiva contorcionista. Efeito: Causa dano Físico médio em todos os inimigos. 1 acerto. Cura todos os aliados em 10% de Vida para cada inimigo atingido. Dano aumentado quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Contorsionniste enquanto Monoco estiver no grupo ativo."
+        "description": "Explosão explosiva contorcionista. Efeito: Causa dano Físico médio em todos os inimigos. 1 ataque. Cura todos os aliados em 10% de Vida para cada inimigo atingido. Dano aumentado quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Contorsionniste enquanto Monoco estiver no grupo ativo."
       },
       "monoco-creation-void": {
         "name": "Criação do Vazio",
-        "description": "Cria energia do vazio. Efeito: Causa dano de Vazio extremo em alvos aleatórios. 3 acertos. Dano aumentado se o mesmo alvo for atingido múltiplas vezes. Recebe aumento de dano quando utilizado enquanto o Ponteiro da Roda Bestial se alinha com Máscara de Conjurador ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Création enquanto Monoco estiver no grupo ativo."
+        "description": "Cria energia do vazio. Efeito: Causa dano de Vazio extremo em alvos aleatórios. 3 ataques. Dano aumentado se o mesmo alvo for atingido múltiplas vezes. Recebe aumento de dano quando utilizado enquanto o Ponteiro da Roda Bestial se alinha com Máscara de Conjurador ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Création enquanto Monoco estiver no grupo ativo."
       },
       "monoco-cruler-barrier": {
         "name": "Barreira Cruler",
@@ -2462,71 +2462,71 @@
       },
       "monoco-cultist-blood": {
         "name": "Sangue Cultista",
-        "description": "Ataque cultista baseado em sangue. Efeito: Causa dano das Trevas médio em todos os inimigos. 3 acertos. Sacrifica 90% de Vida para aumentar o dano. Máscara Pesada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Greatsword Cultist enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque cultista baseado em sangue. Efeito: Causa dano das Trevas médio em todos os inimigos. 3 ataques. Sacrifica 90% de Vida para aumentar o dano. Máscara Pesada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Greatsword Cultist enquanto Monoco estiver no grupo ativo."
       },
       "monoco-cultist-slashes": {
         "name": "Cortes Cultistas",
-        "description": "Múltiplos ataques cortantes cultistas. Efeito: Causa dano das Trevas médio em alvo único. 3 acertos. Causa mais dano quanto menos Vida Monoco tiver. Dano aumentado quando o Ponteiro da Roda Bestial se alinha com Máscara Ágil ou Máscara Onipotente. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Reaper Cultist enquanto Monoco estiver no grupo ativo."
+        "description": "Múltiplos ataques cortantes cultistas. Efeito: Causa dano das Trevas médio em alvo único. 3 ataques. Causa mais dano quanto menos Vida Monoco tiver. Dano aumentado quando o Ponteiro da Roda Bestial se alinha com Máscara Ágil ou Máscara Onipotente. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Reaper Cultist enquanto Monoco estiver no grupo ativo."
       },
       "monoco-danseuse-waltz": {
         "name": "Valsa da Dançarina",
-        "description": "Ataque de valsa graciosa. Efeito: Causa dano de Fogo alto em alvo único. 3 acertos. Causa mais dano contra alvos Queimando. Máscara Equilibrada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Danseuses enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de valsa graciosa. Efeito: Causa dano de Fogo alto em alvo único. 3 ataques. Causa mais dano contra alvos Queimando. Máscara Equilibrada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Danseuses enquanto Monoco estiver no grupo ativo."
       },
       "monoco-demineur-thunder": {
         "name": "Trovão Demineur",
-        "description": "Ataque explosivo baseado em trovão. Efeito: Causa dano de Raio baixo em alvo único. 1 acerto. Causa dano de Break extra. Bônus de dano de Break aumentado quando a Máscara de Conjurador está ativa. Usar esta habilidade avança o Ponteiro da Roda Bestial em 5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Demineur enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque explosivo baseado em trovão. Efeito: Causa dano de Raio baixo em alvo único. 1 ataque. Causa dano de Break extra. Bônus de dano de Break aumentado quando a Máscara de Conjurador está ativa. Usar esta habilidade avança o Ponteiro da Roda Bestial em 5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Demineur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-duallist-storm": {
         "name": "Tempestade do Duelista",
-        "description": "Ataque de tempestade de duas armas. Efeito: Causa dano Físico extremo em alvo único. 4 acertos. Pode causar quebra. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.\nPré-requisito: Derrote e adquira o pé de um inimigo Dualliste enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de tempestade de duas armas. Efeito: Causa dano Físico extremo em alvo único. 4 ataques. Pode causar quebra. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.\nPré-requisito: Derrote e adquira o pé de um inimigo Dualliste enquanto Monoco estiver no grupo ativo."
       },
       "monoco-echassier-stabs": {
         "name": "Punhaladas Echassier",
-        "description": "Múltiplas punhaladas. Efeito: Causa dano Físico médio em alvo único. 2 acertos. O segundo acerto aplica Marca no alvo. Máscara Ágil: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Échassier enquanto Monoco estiver no grupo ativo."
+        "description": "Múltiplas punhaladas. Efeito: Causa dano Físico médio em alvo único. 2 ataques. O segundo ataque aplica Marca no alvo. Máscara Ágil: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Échassier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-eveque-spear": {
         "name": "Lança Eveque",
-        "description": "Ataque de lança do bispo. Efeito: Causa dano de Terra alto em alvo único e aplica Impotente por 3 turnos. 1 acerto. Dano aumentado quando usado com modificador de Máscara Pesada. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Évêque enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de lança do bispo. Efeito: Causa dano de Terra alto em alvo único e aplica Impotente por 3 turnos. 1 ataque. Dano aumentado quando usado com modificador de Máscara Pesada. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Évêque enquanto Monoco estiver no grupo ativo."
       },
       "monoco-gault-fury": {
         "name": "Fúria de Gault",
-        "description": "Ataque de fúria furiosa. Efeito: Causa dano Físico baixo em alvo único. 4 acertos. Aplica Marca. Máscara Equilibrada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições. Quando ativado enquanto o ponteiro está em Máscara Equilibrada ou Máscara Onipotente, o dano aumenta.\nPré-requisito: Derrote e adquira o pé de um inimigo Gault enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de fúria furiosa. Efeito: Causa dano Físico baixo em alvo único. 4 ataques. Aplica Marca. Máscara Equilibrada: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições. Quando ativado enquanto o ponteiro está em Máscara Equilibrada ou Máscara Onipotente, o dano aumenta.\nPré-requisito: Derrote e adquira o pé de um inimigo Gault enquanto Monoco estiver no grupo ativo."
       },
       "monoco-glaise-earthquakes": {
         "name": "Terremotos Glaise",
-        "description": "Ataque de terremoto devastador. Efeito: Causa dano de Terra médio em todos os inimigos. 3 acertos. Aplica Fortalecido em si mesmo. Máscara Pesada: aplica Fortalecido em todos os aliados. Usar esta habilidade avança o Ponteiro da Roda Bestial em 6 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Glaise enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de terremoto devastador. Efeito: Causa dano de Terra médio em todos os inimigos. 3 ataques. Aplica Fortalecido em si mesmo. Máscara Pesada: aplica Fortalecido em todos os aliados. Usar esta habilidade avança o Ponteiro da Roda Bestial em 6 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Glaise enquanto Monoco estiver no grupo ativo."
       },
       "monoco-hexga-crush": {
         "name": "Esmagamento Hexga",
-        "description": "Ataque de maldição esmagadora. Efeito: Causa dano de Terra médio em alvo único. 2 acertos. Aplica Indefeso no alvo por 3 turnos. Modificador de Máscara Pesada aumenta o dano. Requer 5 PM para lançar e avança o Ponteiro da Roda Bestial em 6 posições. Quando usado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, a duração do debuff aumenta para 5 turnos.\nPré-requisito: Derrote e adquira o pé de um inimigo Hexga enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de maldição esmagadora. Efeito: Causa dano de Terra médio em alvo único. 2 ataques. Aplica Indefeso no alvo por 3 turnos. Modificador de Máscara Pesada aumenta o dano. Requer 5 PM para lançar e avança o Ponteiro da Roda Bestial em 6 posições. Quando usado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, a duração do debuff aumenta para 5 turnos.\nPré-requisito: Derrote e adquira o pé de um inimigo Hexga enquanto Monoco estiver no grupo ativo."
       },
       "monoco-jar-lampstorm": {
         "name": "Tempestade de Lâmpadas Jar",
-        "description": "Ataque de tempestade de lâmpadas. Efeito: Causa dano Físico médio em todos os inimigos. 4 acertos. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Jar enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de tempestade de lâmpadas. Efeito: Causa dano Físico médio em todos os inimigos. 4 ataques. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Jar enquanto Monoco estiver no grupo ativo."
       },
       "monoco-lampmaster-light": {
         "name": "Luz do Mestre das Lâmpadas",
-        "description": "Ataque de luz do mestre das lâmpadas. Efeito: Causa dano de Luz alto em todos os inimigos. 1 acerto. Dano aumentado a cada uso. Inclui aprimoramento de Máscara Onipotente que fornece dano aumentado. O dano escala com cada uso sucessivo, atingindo o máximo após cinco lançamentos.\nPré-requisito: Derrote e adquira o pé de um inimigo Lampmaster enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de luz do mestre das lâmpadas. Efeito: Causa dano de Luz alto em todos os inimigos. 1 ataque. Dano aumentado a cada uso. Inclui aprimoramento de Máscara Onipotente que fornece dano aumentado. O dano escala com cada uso sucessivo, atingindo o máximo após cinco lançamentos.\nPré-requisito: Derrote e adquira o pé de um inimigo Lampmaster enquanto Monoco estiver no grupo ativo."
       },
       "monoco-lancelier-impale": {
         "name": "Empalamento Lancelier",
-        "description": "Ataque de lança empaladora. Efeito: Causa dano de Gelo baixo em alvo único. 1 acerto. Desacelera o alvo por 3 turnos. Dano aumentado quando usado com o aprimoramento de Máscara Ágil ativo no Ponteiro da Roda Bestial.\nPré-requisito: Derrote e adquira o pé de um inimigo Lancelier enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de lança empaladora. Efeito: Causa dano de Gelo baixo em alvo único. 1 ataque. Desacelera o alvo por 3 turnos. Dano aumentado quando usado com o aprimoramento de Máscara Ágil ativo no Ponteiro da Roda Bestial.\nPré-requisito: Derrote e adquira o pé de um inimigo Lancelier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-luster-slices": {
         "name": "Fatias Lustrosas",
-        "description": "Ataques cortantes lustrosos. Efeito: Causa dano Físico baixo em alvo único. 3 acertos. Aplica Rapidez em si mesmo por 3 turnos. Ter Máscara Ágil ou Máscara Onipotente ativa aumenta o dano.\nPré-requisito: Derrote e adquira o pé de um inimigo Luster enquanto Monoco estiver no grupo ativo."
+        "description": "Ataques cortantes lustrosos. Efeito: Causa dano Físico baixo em alvo único. 3 ataques. Aplica Rapidez em si mesmo por 3 turnos. Ter Máscara Ágil ou Máscara Onipotente ativa aumenta o dano.\nPré-requisito: Derrote e adquira o pé de um inimigo Luster enquanto Monoco estiver no grupo ativo."
       },
       "monoco-mighty-strike": {
         "name": "Golpe Poderoso",
-        "description": "Golpe poderoso e forte. Efeito: Causa dano alto em alvo único. 2 acertos. Usa elemento da arma. Causa o dobro do dano se o alvo estiver Atordoado. Vai para Máscara Onipotente.\nPré-requisito: Desbloqueado automaticamente ao aprender o recurso de Ataques/Habilidades Gradiente, que fica disponível ao progredir na história."
+        "description": "Golpe poderoso e forte. Efeito: Causa dano alto em alvo único. 2 ataques. Usa elemento da arma. Causa o dobro do dano se o alvo estiver Atordoado. Vai para Máscara Onipotente.\nPré-requisito: Desbloqueado automaticamente ao aprender o recurso de Ataques/Habilidades Gradiente, que fica disponível ao progredir na história."
       },
       "monoco-moissonneuse-vendange": {
         "name": "Vindima Moissonneuse",
-        "description": "Ataque ceifador de colheita. Efeito: Causa dano Físico alto em alvo único. 3 acertos. Pode causar quebra. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Moissoneusse enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque ceifador de colheita. Efeito: Causa dano Físico alto em alvo único. 3 ataques. Pode causar quebra. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Moissoneusse enquanto Monoco estiver no grupo ativo."
       },
       "monoco-obscur-sword": {
         "name": "Espada Obscura",
-        "description": "Ataque de espada das trevas sombrias. Efeito: Causa dano das Trevas alto em alvo único. 5 acertos. Causa mais dano contra alvos Indefesos. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Obscur enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de espada das trevas sombrias. Efeito: Causa dano das Trevas alto em alvo único. 5 ataques. Causa mais dano contra alvos Indefesos. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Obscur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-orphelin-cheers": {
         "name": "Encorajamento do Órfão",
@@ -2538,7 +2538,7 @@
       },
       "monoco-portier-crash": {
         "name": "Colisão Portier",
-        "description": "Ataque de colisão que quebra portas. Efeito: Causa dano Físico alto em todos os inimigos. 1 acerto. Pode causar quebra. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de colisão que quebra portas. Efeito: Causa dano Físico alto em todos os inimigos. 1 ataque. Pode causar quebra. Máscara Pesada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-potier-energy": {
         "name": "Energia do Oleiro",
@@ -2546,27 +2546,27 @@
       },
       "monoco-ramasseur-bonk": {
         "name": "Pancada do Coletor",
-        "description": "Ataque de pancada do coletor. Efeito: Causa dano das Trevas baixo em alvo único. 1 acerto. Pode causar quebra. Efeito Máscara Ágil preenche 20% da Barra de Break do alvo. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, preenche a Barra de Break do inimigo em 20% ao acertar.\nPré-requisito: Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de pancada do coletor. Efeito: Causa dano das Trevas baixo em alvo único. 1 ataque. Pode causar quebra. Efeito Máscara Ágil preenche 20% da Barra de Break do alvo. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, preenche a Barra de Break do inimigo em 20% ao acertar.\nPré-requisito: Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-rocher-hammering": {
         "name": "Martelamento Rocher",
-        "description": "Ataque de martelamento rochoso. Efeito: Causa dano Físico médio em alvo único. 4 acertos. Pode causar quebra. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Rocher enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de martelamento rochoso. Efeito: Causa dano Físico médio em alvo único. 4 ataques. Pode causar quebra. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.\nPré-requisito: Derrote e adquira o pé de um inimigo Rocher enquanto Monoco estiver no grupo ativo."
       },
       "monoco-sakapatate-estoc": {
         "name": "Sakapatate Estoc",
-        "description": "Ataque de estocada. Efeito: Causa dano de Raio baixo em alvo único. 1 acerto. Causa mais dano se o alvo estiver Atordoado. Máscara Equilibrada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Ranger Sakapatate enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de estocada. Efeito: Causa dano de Raio baixo em alvo único. 1 ataque. Causa mais dano se o alvo estiver Atordoado. Máscara Equilibrada: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Ranger Sakapatate enquanto Monoco estiver no grupo ativo."
       },
       "monoco-sakapatate-explosion": {
         "name": "Explosão Sakapatate",
-        "description": "Ataque explosivo. Efeito: Causa dano de Raio médio em inimigos aleatórios. 3 acertos. Acertos Críticos acionam um acerto adicional. Máscara de Conjurador: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Catapult Sakapatate enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque explosivo. Efeito: Causa dano de Raio médio em inimigos aleatórios. 3 ataques. Acertos Críticos acionam um ataque adicional. Máscara de Conjurador: Dano aumentado.\nPré-requisito: Derrote e adquira o pé de um inimigo Catapult Sakapatate enquanto Monoco estiver no grupo ativo."
       },
       "monoco-sakapatate-fire": {
         "name": "Fogo Sakapatate",
-        "description": "Ataque baseado em fogo. Efeito: Causa dano de Fogo extremo em todos os inimigos. 3 acertos. Aplica 3 Queimaduras por acerto (9 total possível). Máscara Onipotente: Dano aumentado. Roda Bestial: +1 posição. Combo ótimo: Sakapatate Fire → Sapling Absorption → skill intermediária → Sakapatate Fire.\nPré-requisito: Derrote e adquira o pé do inimigo Ultimate Sakapatate enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque baseado em fogo. Efeito: Causa dano de Fogo extremo em todos os inimigos. 3 ataques. Aplica 3 Queimaduras por ataque (9 total possível). Máscara Onipotente: Dano aumentado. Roda Bestial: +1 posição. Combo ótimo: Sakapatate Fire → Sapling Absorption → skill intermediária → Sakapatate Fire.\nPré-requisito: Derrote e adquira o pé do inimigo Ultimate Sakapatate enquanto Monoco estiver no grupo ativo."
       },
       "monoco-sakapatate-slam": {
         "name": "Sakapatate Slam",
-        "description": "Ataque de impacto poderoso. Efeito: Causa dano Físico alto em todos os inimigos. 1 acerto. Dano aumentado contra alvos Marcados. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Robust Sakapatate enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de impacto poderoso. Efeito: Causa dano Físico alto em todos os inimigos. 1 ataque. Dano aumentado contra alvos Marcados. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Robust Sakapatate enquanto Monoco estiver no grupo ativo."
       },
       "monoco-sanctuary": {
         "name": "Santuário",
@@ -2574,11 +2574,11 @@
       },
       "monoco-sapling-absorption": {
         "name": "Absorção da Muda",
-        "description": "Absorve energia como uma muda. Efeito: Causa dano das Trevas alto. 3 acertos. Recupera 5% de Vida por acerto (10% na Máscara de Conjurador ou Onipotente). Roda Bestial: +5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Sapling enquanto Monoco estiver no grupo ativo."
+        "description": "Absorve energia como uma muda. Efeito: Causa dano das Trevas alto. 3 ataques. Recupera 5% de Vida por ataque (10% na Máscara de Conjurador ou Onipotente). Roda Bestial: +5 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Sapling enquanto Monoco estiver no grupo ativo."
       },
       "monoco-stalact-punches": {
         "name": "Socos Stalact",
-        "description": "Ataques de socos como estalactites. Efeito: Causa dano de Gelo médio em alvo único. 4 acertos. Alto dano de Break. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +4 posições.\nPré-requisito: Habilidade inicial de Monoco ao se juntar ao grupo, não requer pré-requisito."
+        "description": "Ataques de socos como estalactites. Efeito: Causa dano de Gelo médio em alvo único. 4 ataques. Alto dano de Break. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +4 posições.\nPré-requisito: Habilidade inicial de Monoco ao se juntar ao grupo, não requer pré-requisito."
       },
       "monoco-troubadour-trumpet": {
         "name": "Trombeta do Trovador",
@@ -2764,6 +2764,7 @@
         "Defenceless": "Indefeso",
         "Regen": "Regeneração",
         "Curse": "Maldição",
+        "IntenseFlames": "Chamas Intensas",
         "freeShot": "Free Shot",
         "jump": "Pular",
         "gradient": "Gradiente",
@@ -2819,6 +2820,7 @@
         "Defenceless": "O personagem não pode se defender de ataques.",
         "Regen": "Regenera pontos de vida ao longo do tempo.",
         "Curse": "Maldição que causa efeitos negativos contínuos.",
+        "IntenseFlames": "Rola Xd6 de dano quando resolvido (X = acúmulos atuais). Aumenta em 2 acúmulos no fim do turno. Não expira. Removido de todos os inimigos quando o conjurador recebe dano.",
         "freeShot": "Acumula bônus para ataques básicos.",
         "jump": "Ignora terreno ou obstáculos temporariamente.",
         "gradient": "Efeito especial de uso interno.",
