@@ -145,9 +145,9 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }, []);
 
     const highlight = (text: string, skillId?: string) => {
-        // Only apply stain text rendering (converts "Mancha de X" to images) for Sciel's skills
-        const isScielSkill = skillId?.toLowerCase().includes("sciel") ?? false;
-        const stainRendered = isScielSkill ? renderStainText(text) : [text];
+        // Only apply stain text rendering (converts "Mancha de X" to images) for Lune's skills
+        const isLuneSkill = skillId?.toLowerCase().includes("lune") ?? false;
+        const stainRendered = isLuneSkill ? renderStainText(text) : [text];
 
         // Check if this is a Maelle skill
         const isMaelleSkill = skillId?.toLowerCase().includes("maelle") ?? false;
@@ -380,6 +380,27 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                 const reductionPerParry = skillMetadata.costReductionPerParry;
                 const totalReduction = parriesCount * reductionPerParry;
                 baseCost = Math.max(0, baseCost - totalReduction);
+            }
+        }
+
+        // Stain consumption: Cost 0 MP if sufficient stains available (Earth/Light)
+        if (skillMetadata?.consumesStains && !skill.isGradient && source) {
+            let canConsumeStains = true;
+
+            for (const { stain, count } of skillMetadata.consumesStains) {
+                const stains = [source.stainSlot1, source.stainSlot2, source.stainSlot3, source.stainSlot4];
+                const specificCount = stains.filter(s => s === stain).length;
+                const lightCount = stains.filter(s => s === "Light").length;
+                const totalAvailable = specificCount + lightCount;
+
+                if (totalAvailable < count) {
+                    canConsumeStains = false;
+                    break;
+                }
+            }
+
+            if (canConsumeStains) {
+                baseCost = 0;
             }
         }
 

@@ -1974,91 +1974,91 @@
       },
       "lune-electrify": {
         "name": "Eletrificar",
-        "description": "Efeito da Habilidade: Causa dano baixo de Raio a um único alvo. 3 acertos. Consome Fogo para gerar uma Mancha de Luz. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Raio a um único alvo. 3 acertos. Consome Fogo para gerar uma Mancha de Luz. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-immolation": {
         "name": "Imolação",
-        "description": "Efeito da Habilidade: Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 acerto. Consome Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 acerto. Consome Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-ice-lance": {
         "name": "Lança de Gelo",
-        "description": "Efeito da Habilidade: Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 acerto. Consome Terra para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 acerto. Consome Terra para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-earth-rising": {
         "name": "Ascensão Terrestre",
-        "description": "Efeito da Habilidade: Causa dano baixo de Terra a todos os inimigos. 1 acerto. Consome Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Terra a todos os inimigos. 1 acerto. Consome Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-thermal-transfer": {
         "name": "Transferência Térmica",
-        "description": "Efeito da Habilidade: Causa dano baixo de Gelo a um único alvo. 2 acertos. Ganha 4 PM se o alvo estiver Queimando. Consome 2 Manchas de Terra para jogar um segundo turno. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Gelo a um único alvo. 2 acertos. Ganha 4 PM se o alvo estiver Queimando. Consome 2 Manchas de Terra para jogar um segundo turno. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-thunderfall": {
         "name": "Queda do Trovão",
-        "description": "Efeito da Habilidade: Causa dano médio de Raio em inimigos aleatórios. 2-6 acertos. Consome Fogo para causar dano aumentado. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano médio de Raio em inimigos aleatórios. 2-6 acertos. Consome Fogo para causar dano aumentado. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-wildfire": {
         "name": "Fogo Selvagem",
-        "description": "Efeito da Habilidade: Causa dano médio de Fogo a todos os inimigos. 1 acerto. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Fogo a todos os inimigos. 1 acerto. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-mayhem": {
         "name": "Caos",
-        "description": "Efeito da Habilidade: Consome todas as Manchas para causar dano elemental alto ao alvo. Pode causar quebra se 4 Manchas forem consumidas."
+        "description": "Consome todas as Manchas para causar dano elemental alto ao alvo. Pode causar quebra se 4 Manchas forem consumidas."
       },
       "lune-elemental-trick": {
         "name": "Truque Elemental",
-        "description": "Efeito da Habilidade: Causa dano baixo de Gelo, Fogo, Raio e Terra a um único alvo. 4 acertos. Acertos críticos geram a Mancha correspondente ao elemento."
+        "description": "Causa dano baixo de Gelo, Fogo, Raio e Terra a um único alvo. 4 acertos. Acertos críticos geram a Mancha correspondente ao elemento."
       },
       "lune-elemental-genesis": {
         "name": "Gênese Elemental",
-        "description": "Efeito da Habilidade: Causa dano extremo a todos os inimigos. 8 acertos. Cada acerto causa dano em um elemento aleatório. Requer Raio, Terra, Fogo e Gelo para lançar."
+        "description": "Causa dano extremo a todos os inimigos. 8 acertos. Cada acerto causa dano em um elemento aleatório. Requer Raio, Terra, Fogo e Gelo para lançar."
       },
       "lune-crippling-tsunami": {
         "name": "Tsunami Paralisante",
-        "description": "Efeito da Habilidade: Causa dano médio de Gelo a todos os inimigos. 1 acerto. Aplica Desaceleração por 3 turnos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Gelo a todos os inimigos. 1 acerto. Aplica Desaceleração por 3 turnos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-rockslide": {
         "name": "Deslizamento de Rochas",
-        "description": "Efeito da Habilidade: Causa dano médio de Terra a um único alvo. 2 acertos. Pode causar quebra. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano médio de Terra a um único alvo. 2 acertos. Pode causar quebra. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-crustal-crush": {
         "name": "Esmagamento da Crosta",
-        "description": "Efeito da Habilidade: Causa dano alto de Terra e dano de Break a um único alvo. 5 acertos. Consome 2 Manchas de Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano alto de Terra e dano de Break a um único alvo. 5 acertos. Consome 2 Manchas de Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-healing-light": {
         "name": "Luz Curativa",
-        "description": "Efeito da Habilidade: Cura o aliado alvo e dissipa Efeitos de Status. Consome 2 Manchas de Terra para custar 0 PM. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Cura o aliado alvo e dissipa Efeitos de Status. Consome 2 Manchas de Terra para custar 0 PM. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-lightning-dance": {
         "name": "Dança do Relâmpago",
-        "description": "Efeito da Habilidade: Causa dano muito alto de Raio a um único alvo. 6 acertos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano muito alto de Raio a um único alvo. 6 acertos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Acertos críticos adicionam um acerto extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-storm-caller": {
         "name": "Invocador da Tempestade",
-        "description": "Efeito da Habilidade: Todos os inimigos recebem dano médio de Raio no fim do turno e dano baixo quando recebem dano. Duração: 3 turnos. Consome 2 Manchas de Fogo para dobrar os ataques de trovão no fim do turno. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Todos os inimigos recebem dano médio de Raio no fim do turno e dano baixo quando recebem dano. Duração: 3 turnos. Consome 2 Manchas de Fogo para dobrar os ataques de trovão no fim do turno. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-terraquake": {
         "name": "Terremoto",
-        "description": "Efeito da Habilidade: Causa dano baixo de Terra e dano de Break a todos os inimigos a cada turno. Duração: 3 turnos. Consome 2 Manchas de Raio para estender a duração para 5 turnos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Terra e dano de Break a todos os inimigos a cada turno. Duração: 3 turnos. Consome 2 Manchas de Raio para estender a duração para 5 turnos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-typhoon": {
         "name": "Tufão",
-        "description": "Efeito da Habilidade: No início do turno, causa dano alto de Gelo a todos os inimigos e cura aliados. Consome 2 Manchas de Terra para estender a duração de 3 para 5 turnos. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "No início do turno, causa dano alto de Gelo a todos os inimigos e cura aliados. Consome 2 Manchas de Terra para estender a duração de 3 para 5 turnos. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-rebirth": {
         "name": "Renascimento",
-        "description": "Efeito da Habilidade: Revive um aliado com 30-70% de Vida e 2 PM adicionais. Consome 3 Manchas de Raio para custar 0 PM. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Revive um aliado com 30-70% de Vida e 2 PM adicionais. Consome 3 Manchas de Raio para custar 0 PM. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-revitalization": {
         "name": "Revitalização",
-        "description": "Efeito da Habilidade: Cura 1-3 aliados em 40-60% de Vida. Consome 3 Manchas de Fogo para também aplicar Regeneração por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Cura 1-3 aliados em 40-60% de Vida. Consome 3 Manchas de Fogo para também aplicar Regeneração por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-fire-rage": {
         "name": "Fúria Flamejante",
-        "description": "Efeito da Habilidade: Causa dano alto de Fogo crescente a todos os inimigos a cada turno até Lune receber dano. Consome 2 Manchas de Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano alto de Fogo crescente a todos os inimigos a cada turno até Lune receber dano. Consome 2 Manchas de Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-hell": {
         "name": "Inferno",
-        "description": "Efeito da Habilidade: Causa dano muito alto de Fogo aplicando 5 Queimaduras por acerto a todos os inimigos. 2 acertos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano muito alto de Fogo aplicando 5 Queimaduras por acerto a todos os inimigos. 2 acertos. Consome todos os três tipos de Manchas para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-sky-break": {
         "name": "Quebra do Céu",

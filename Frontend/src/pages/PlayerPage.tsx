@@ -25,7 +25,7 @@ import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
 import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
 import { executeAllSpecialMechanics } from "../utils/SkillSpecialMechanics";
 import { getVersoPerfectionDamageMultiplier } from "../utils/BattleUtils";
-import { hasRequiredStains, consumeStains, addStains, updateCharacterStains, transformStain } from "../utils/StainUtils";
+import { hasRequiredStains, consumeStains, addStains, updateCharacterStains, transformStain, getDominantElement } from "../utils/StainUtils";
 import { triggerOnHealAlly, triggerOnFreeAim, triggerOnBattleStart, triggerOnTurnStart, triggerOnKill, triggerOnDodge } from "../utils/PictoEffectsIntegration";
 import { executeWeaponPassives } from "../utils/WeaponPassives_Index";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
@@ -1210,6 +1210,25 @@ export default function PlayerPage() {
       return;
     }
 
+    // Auto-execute all skills (like Sky Break - attacks all enemies)
+    if (skillMetadata.targetScope === "all" && currentCharacter) {
+      // Find first enemy as primary target (needed for resolveTargets logic)
+      const enemies = player?.fightInfo?.characters?.filter(
+        c => c.isEnemy !== currentCharacter.isEnemy && c.healthPoints > 0
+      );
+
+      if (enemies && enemies.length > 0) {
+        setPendingSkillId(skillId);
+        setTab("combate");
+        setIsUsingSkillMode(false);
+        handleExecuteSkill(skillId, enemies[0]);
+        return;
+      } else {
+        showToast("Nenhum inimigo válido encontrado!");
+        return;
+      }
+    }
+
     // Auto-execute all-allies skills (like All Set)
     if (skillMetadata.targetScope === "all-allies" && currentCharacter) {
       setPendingSkillId(skillId);
@@ -1225,8 +1244,8 @@ export default function PlayerPage() {
     setTab("combate");
     setIsUsingSkillMode(false);
 
-    // Skills with targetScope "ally" should exclude self from targeting
-    setExcludeSelfFromTargeting(skillMetadata.targetScope === "ally");
+    // Skills with targetScope "ally" should exclude self from targeting (unless canTargetSelf is true)
+    setExcludeSelfFromTargeting(skillMetadata.targetScope === "ally" && !skillMetadata.canTargetSelf);
 
     // Determine correct tab based on target type and character's team
     // If character is on enemy team (isEnemy = true):
@@ -1322,6 +1341,27 @@ export default function PlayerPage() {
           const originalCost = skillCost;
           skillCost = Math.max(0, skillCost - totalReduction);
           showToast(`${parriesCount} Aparada(s) bem sucedida(s)! Custo reduzido de ${originalCost} para ${skillCost} MP`);
+        }
+      }
+
+      // Stain consumption: Cost 0 MP if sufficient stains available (Earth/Light)
+      if (skillMetadata.consumesStains && !isGradientSkill) {
+        let canConsumeStains = true;
+
+        for (const { stain, count } of skillMetadata.consumesStains) {
+          const stains = [source.stainSlot1, source.stainSlot2, source.stainSlot3, source.stainSlot4];
+          const specificCount = stains.filter(s => s === stain).length;
+          const lightCount = stains.filter(s => s === "Light").length;
+          const totalAvailable = specificCount + lightCount;
+
+          if (totalAvailable < count) {
+            canConsumeStains = false;
+            break;
+          }
+        }
+
+        if (canConsumeStains) {
+          skillCost = 0;
         }
       }
 
@@ -2077,6 +2117,20 @@ export default function PlayerPage() {
                       }
                     }
 
+                    // Determine attack element
+                    let attackElement: string | undefined;
+                    if (resolved.metadata.stainDeterminedElement) {
+                      // Sky Break: Element determined by dominant stain type
+                      attackElement = getDominantElement(source);
+                      if (hitIndex === 0) {
+                        showToast(`Elemento do ataque: ${attackElement}`);
+                      }
+                    } else if (resolved.metadata.forcedElement) {
+                      attackElement = resolved.metadata.forcedElement;
+                    } else if (resolved.metadata.usesWeaponElement && weaponInfo.details) {
+                      attackElement = weaponInfo.details.attributes.element;
+                    }
+
                     // NPCs receive totalDamage (direct damage), players receive totalPower (pending attack)
                     const attackRequest: CreateAttackRequest = isNpcTarget
                       ? {
@@ -2101,7 +2155,8 @@ export default function PlayerPage() {
                           ) : undefined,
                           isLastHit: hitIndex === actualHitCount - 1,
                           ignoresShields: resolved.metadata.ignoresShields,
-                          shouldRemoveMarked: resolved.metadata.markedDamageBonus ? false : undefined
+                          shouldRemoveMarked: resolved.metadata.markedDamageBonus ? false : undefined,
+                          element: attackElement
                         }
                       : {
                           sourceBattleId: source.battleID,
@@ -2125,7 +2180,8 @@ export default function PlayerPage() {
                           ) : undefined,
                           isLastHit: hitIndex === actualHitCount - 1,
                           ignoresShields: resolved.metadata.ignoresShields,
-                          shouldRemoveMarked: resolved.metadata.markedDamageBonus ? false : undefined
+                          shouldRemoveMarked: resolved.metadata.markedDamageBonus ? false : undefined,
+                          element: attackElement
                         };
 
                     await APIBattle.attack(attackRequest);
@@ -2375,6 +2431,75 @@ export default function PlayerPage() {
                 remainingTurns: effect.remainingTurns ?? 0
               });
             }
+          }
+        }
+      }
+
+      // Tree of Life: Process Heal and Cleanse effects for all-allies
+      if (resolved.metadata.targetScope === "all-allies" && resolved.metadata.primaryEffects && player.fightInfo) {
+        const allAllies = (player.fightInfo.characters ?? []).filter(
+          c => c.isEnemy === source.isEnemy && c.healthPoints > 0
+        );
+
+        // Process Heal effect
+        const healEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Heal");
+        if (healEffect && healEffect.amount > 0) {
+          const healPercent = healEffect.amount; // 100% for Tree of Life
+
+          for (const ally of allAllies) {
+            const healAmount = Math.floor(ally.maxHealthPoints * (healPercent / 100));
+            const newHp = Math.min(ally.healthPoints + healAmount, ally.maxHealthPoints);
+            await APIBattle.updateCharacterHp(ally.battleID, newHp);
+
+            // Trigger picto effects for heal
+            if (player.fightInfo.battleId) {
+              const allChars = player.fightInfo.characters ?? [];
+              await triggerOnHealAlly(source, ally, allChars, player.fightInfo.battleId, player.pictos, player.luminas, healAmount);
+            }
+          }
+
+          showToast(`Todos os aliados curados para ${healPercent}% de HP!`);
+        }
+
+        // Process Cleanse effect
+        const cleanseEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Cleanse");
+        if (cleanseEffect) {
+          for (const ally of allAllies) {
+            await APIBattle.cleanse(ally.battleID);
+          }
+
+          showToast(`Todos os debuffs removidos dos aliados!`);
+        }
+      }
+
+      // Healing Light: Process Heal and Cleanse effects for single ally target
+      if (resolved.metadata.targetScope === "ally" && resolved.metadata.primaryEffects && player.fightInfo && resolved.targetIds.length > 0) {
+        const targetId = resolved.targetIds[0];
+        const target = player.fightInfo.characters?.find(c => c.battleID === targetId);
+
+        if (target) {
+          // Process Heal effect
+          const healEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Heal");
+          if (healEffect && healEffect.amount > 0) {
+            const healPercent = healEffect.amount; // 25% for Healing Light
+            const healAmount = Math.floor(target.maxHealthPoints * (healPercent / 100));
+            const newHp = Math.min(target.healthPoints + healAmount, target.maxHealthPoints);
+            await APIBattle.updateCharacterHp(target.battleID, newHp);
+
+            // Trigger picto effects for heal
+            if (player.fightInfo.battleId) {
+              const allChars = player.fightInfo.characters ?? [];
+              await triggerOnHealAlly(source, target, allChars, player.fightInfo.battleId, player.pictos, player.luminas, healAmount);
+            }
+
+            showToast(`${target.name} curado em ${healPercent}% (${healAmount} HP)!`);
+          }
+
+          // Process Cleanse effect
+          const cleanseEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Cleanse");
+          if (cleanseEffect) {
+            await APIBattle.cleanse(target.battleID);
+            showToast(`Debuffs removidos de ${target.name}!`);
           }
         }
       }

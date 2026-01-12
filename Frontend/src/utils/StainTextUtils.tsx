@@ -29,7 +29,8 @@ export function renderStainText(text: string): React.ReactNode[] {
     // - "1 Mancha de Gelo"
     // - "2 Manchas de Fogo"
     // - Palavras isoladas: "Gelo", "Fogo", "Raio", "Terra", "Luz" (word boundary)
-    const stainPattern = /(\d+\s+)?Manchas?\s+de\s+(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)|\b(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)\b/gi;
+    // - EXCETO quando precedido por "de " (para evitar "dano de Fogo")
+    const stainPattern = /(\d+\s+)?Manchas?\s+de\s+(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)|(?<!de )\b(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)\b/gi;
 
     let lastIndex = 0;
     let match: RegExpExecArray | null = null;

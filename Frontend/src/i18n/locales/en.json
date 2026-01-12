@@ -1974,91 +1974,91 @@
       },
       "lune-electrify": {
         "name": "Electrify",
-        "description": "Skill Effect: Deals low Lightning damage to a single target. 3 hits. Consumes Fire to generate a Light stain. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals low Lightning damage to a single target. 3 hits. Consumes Fire to generate a Light stain. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-immolation": {
         "name": "Immolation",
-        "description": "Skill Effect: Deals low Fire damage to a single target and 3 Burns. 1 hit. Consumes Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals low Fire damage to a single target and 3 Burns. 1 hit. Consumes Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-ice-lance": {
         "name": "Ice Lance",
-        "description": "Skill Effect: Deals medium Ice damage to a single target and Slows the target. 1 hit. Consumes Earth to deal increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals medium Ice damage to a single target and Slows the target. 1 hit. Consumes Earth to deal increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-earth-rising": {
         "name": "Earth Rising",
-        "description": "Skill Effect: Deals low Earth damage to all enemies. 1 hit. Consumes Lightning to deal increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals low Earth damage to all enemies. 1 hit. Consumes Lightning to deal increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-thermal-transfer": {
         "name": "Thermal Transfer",
-        "description": "Skill Effect: Deals low Ice damage to a single target. 2 hits. Gains 4 MP if the target is Burning. Consumes 2 stains of Earth to play a second turn. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals low Ice damage to a single target. 2 hits. Gains 4 MP if the target is Burning. Consumes 2 stains of Earth to play a second turn. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-thunderfall": {
         "name": "Thunderfall",
-        "description": "Skill Effect: Deals medium Lightning damage to random enemies. 2-6 hits. Consumes Fire to deal increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals medium Lightning damage to random enemies. 2-6 hits. Consumes Fire to deal increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-wildfire": {
         "name": "Wildfire",
-        "description": "Skill Effect: Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burns. Consumes 2 stains of Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burns. Consumes 2 stains of Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-mayhem": {
         "name": "Mayhem",
-        "description": "Skill Effect: Consumes all Stains to deal high elemental damage to the target. Can cause Break if 4 Stains are consumed."
+        "description": "Consumes all Stains to deal high elemental damage to the target. Can cause Break if 4 Stains are consumed."
       },
       "lune-elemental-trick": {
         "name": "Elemental Trick",
-        "description": "Skill Effect: Deals low Ice, Fire, Lightning and Earth damage to a single target. 4 hits. Critical hits generate a Stain corresponding to the element."
+        "description": "Deals low Ice, Fire, Lightning and Earth damage to a single target. 4 hits. Critical hits generate a Stain corresponding to the element."
       },
       "lune-elemental-genesis": {
         "name": "Elemental Genesis",
-        "description": "Skill Effect: Deals extreme damage to all enemies. 8 hits. Each hit deals damage in a random element. Requires Lightning, Earth, Fire and Ice to cast."
+        "description": "Deals extreme damage to all enemies. 8 hits. Each hit deals damage in a random element. Requires Lightning, Earth, Fire and Ice to cast."
       },
       "lune-crippling-tsunami": {
         "name": "Crippling Tsunami",
-        "description": "Skill Effect: Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-rockslide": {
         "name": "Rockslide",
-        "description": "Skill Effect: Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-crustal-crush": {
         "name": "Crustal Crush",
-        "description": "Skill Effect: Deals high Earth damage and Break damage to a single target. 5 hits. Consumes 2 stains of Lightning to deal increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals high Earth damage and Break damage to a single target. 5 hits. Consumes 2 stains of Lightning to deal increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-healing-light": {
         "name": "Healing Light",
-        "description": "Skill Effect: Heals the target ally and dispels Status Effects. Consumes 2 stains of Earth to cost 0 MP. Using this skill grants 1 Light stain."
+        "description": "Heals the target ally and dispels Status Effects. Consumes 2 stains of Earth to cost 0 MP. Using this skill grants 1 Light stain."
       },
       "lune-lightning-dance": {
         "name": "Lightning Dance",
-        "description": "Skill Effect: Deals very high Lightning damage to a single target. 6 hits. Consumes all three types of Stains to deal greatly increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals very high Lightning damage to a single target. 6 hits. Consumes all three types of Stains to deal greatly increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-storm-caller": {
         "name": "Storm Caller",
-        "description": "Skill Effect: All enemies receive medium Lightning damage at the end of the turn and low damage when receiving damage. Duration: 3 turns. Consumes 2 stains of Fire to double lightning attacks at the end of the turn. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "All enemies receive medium Lightning damage at the end of the turn and low damage when receiving damage. Duration: 3 turns. Consumes 2 stains of Fire to double lightning attacks at the end of the turn. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-terraquake": {
         "name": "Terraquake",
-        "description": "Skill Effect: Deals low Earth damage and Break damage to all enemies each turn. Duration: 3 turns. Consumes 2 stains of Lightning to extend the duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals low Earth damage and Break damage to all enemies each turn. Duration: 3 turns. Consumes 2 stains of Lightning to extend the duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-typhoon": {
         "name": "Typhoon",
-        "description": "Skill Effect: At the start of the turn, deals high Ice damage to all enemies and heals allies. Consumes 2 stains of Earth to extend the duration from 3 to 5 turns. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "At the start of the turn, deals high Ice damage to all enemies and heals allies. Consumes 2 stains of Earth to extend the duration from 3 to 5 turns. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-rebirth": {
         "name": "Rebirth",
-        "description": "Skill Effect: Revives an ally with 30-70% of HP and 2 additional MP. Consumes 3 stains of Lightning to cost 0 MP. Using this skill grants 1 Light stain."
+        "description": "Revives an ally with 30-70% of HP and 2 additional MP. Consumes 3 stains of Lightning to cost 0 MP. Using this skill grants 1 Light stain."
       },
       "lune-revitalization": {
         "name": "Revitalization",
-        "description": "Skill Effect: Heals 1-3 allies to 40-60% of HP. Consumes 3 stains of Fire to also apply Regeneration for 3 turns. Using this skill grants 1 Light stain."
+        "description": "Heals 1-3 allies to 40-60% of HP. Consumes 3 stains of Fire to also apply Regeneration for 3 turns. Using this skill grants 1 Light stain."
       },
       "lune-fire-rage": {
         "name": "Fire Rage",
-        "description": "Skill Effect: Deals high increasing Fire damage to all enemies each turn until Lune receives damage. Consumes 2 stains of Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals high increasing Fire damage to all enemies each turn until Lune receives damage. Consumes 2 stains of Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-hell": {
         "name": "Hell",
-        "description": "Skill Effect: Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes all three types of Stains to deal greatly increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-sky-break": {
         "name": "Sky Break",

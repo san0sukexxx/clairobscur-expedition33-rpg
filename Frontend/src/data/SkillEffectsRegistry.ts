@@ -134,6 +134,7 @@ export interface SkillMetadata {
     reducesRank?: number;                // Reduces Perfection Rank by X levels (Verso Demoralisation: -1)
     grantsImmediateTurn?: boolean;       // Grants an immediate turn to the user (Free Action skills)
     scalesWithBattleForetellCount?: boolean;  // Damage scales with total Foretell count across all enemies in battle
+    canTargetSelf?: boolean;             // Allows targeting self even with targetScope "ally" (Healing Light)
 }
 
 export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
@@ -895,13 +896,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "lune-healing-light",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "ally",
+        targetScope: "ally",  // Can target allies including self
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
             {
                 effectType: "Heal",
-                amount: 0,  // Healing amount calculated separately
+                amount: 25,  // 25% HP heal
                 targetType: "ally"
             },
             {
@@ -911,8 +912,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth for 0 MP cost
-        gainsStains: ["Light"]
+        consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth/Light (wildcard) for 0 MP cost
+        gainsStains: ["Light"],
+        canTargetSelf: true  // Allow targeting self
     },
 
     "lune-rebirth": {
@@ -1106,7 +1108,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [
             {
                 effectType: "Heal",
-                amount: 0,
+                amount: 100,  // 100% HP heal for all allies
                 targetType: "all-allies"
             },
             {
@@ -1116,7 +1118,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        gainsStains: ["Light", "Light"]  // Generates +2 Light Stains
+        gainsStains: ["Light"]  // Generates +1 Light Stain
         // Gradient Skill: 2 Gradient Charges, does not consume a turn
     },
 

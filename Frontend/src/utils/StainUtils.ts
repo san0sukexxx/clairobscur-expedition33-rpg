@@ -83,6 +83,16 @@ export function consumeStains(
     for (const { stain, count } of skillMetadata.consumesStains) {
         let toRemove = count;
 
+        // Count how many we can remove (specific stain + Light wildcards)
+        const specificCount = stains.filter(s => s === stain).length;
+        const lightCount = stains.filter(s => s === "Light").length;
+        const totalAvailable = specificCount + lightCount;
+
+        // If we don't have enough (specific + Light), don't consume anything for this stain requirement
+        if (totalAvailable < count) {
+            continue; // Skip this stain requirement, don't consume anything
+        }
+
         // First, try to remove the specific stain type
         for (let i = 0; i < stains.length && toRemove > 0; i++) {
             if (stains[i] === stain) {

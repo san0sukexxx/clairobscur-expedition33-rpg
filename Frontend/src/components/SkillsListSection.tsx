@@ -88,9 +88,9 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
     }
 
     const highlight = (text: string, skillId?: string) => {
-        // Only apply stain text rendering (converts "Mancha de X" to images) for Sciel's skills
-        const isScielSkill = skillId?.toLowerCase().includes("sciel") ?? false;
-        const stainRendered = isScielSkill ? renderStainText(text) : [text];
+        // Only apply stain text rendering (converts "Mancha de X" to images) for Lune's skills
+        const isLuneSkill = skillId?.toLowerCase().includes("lune") ?? false;
+        const stainRendered = isLuneSkill ? renderStainText(text) : [text];
 
         // Check if this is a Maelle skill
         const isMaelleSkill = skillId?.toLowerCase().includes("maelle") ?? false;

@@ -87,6 +87,7 @@ export interface CreateAttackRequest {
     ignoresShields?: boolean  // Damage goes through shields without removing them (Chevaliere Piercing)
     isLastHit?: boolean  // Indicates if this is the last hit of the skill (for Twilight activation)
     shouldRemoveMarked?: boolean  // If false, don't remove Marked status (e.g., for Gustave's Homage)
+    element?: string  // Element type for elemental resistances (e.g., 'Physical', 'Fire', 'Ice')
 }
 
 export interface AttackStatusEffectRequest {
