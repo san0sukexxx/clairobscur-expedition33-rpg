@@ -276,8 +276,8 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
 
                                     <div className="min-w-0 flex-1">
                                         <div className="flex flex-wrap items-center gap-2 min-w-0">
-                                            <h3 className="truncate font-serif text-lg font-semibold tracking-wide text-neutral-100 min-w-0">
-                                                <span className={`${disabled ? "opacity-70 grayscale" : ""} [font-variant-caps:small-caps] block truncate`}>{skillInfo.name}</span>
+                                            <h3 className="truncate text-lg font-semibold tracking-wide text-neutral-100 min-w-0">
+                                                <span className={`${disabled ? "opacity-70 grayscale" : ""} block truncate`}>{skillInfo.name}</span>
                                             </h3>
 
                                             {skillInfo.type && (

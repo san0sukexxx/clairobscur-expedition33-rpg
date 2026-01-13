@@ -214,6 +214,10 @@ export class APIBattle {
     }
 
     static async addStatus(body: AddStatusRequest): Promise<void> {
+        // Block "Heal" and "Cleanse" - these should NEVER be added as status
+        if ((body.effectType as string) === "Heal" || (body.effectType as string) === "Cleanse") {
+            return; // Silently block invalid status types
+        }
         await api.post("battle-status/add", body);
     }
 
@@ -301,6 +305,16 @@ export class APIBattle {
             {}
         );
         return response.success;
+    }
+
+    static async addPerfectionPoints(
+        battleCharacterId: number,
+        points: number
+    ): Promise<{ success: boolean; rankedUp: boolean; newRank: string; progress: number; pointsAdded: number }> {
+        return api.post<{ points: number }, { success: boolean; rankedUp: boolean; newRank: string; progress: number; pointsAdded: number }>(
+            `battles/characters/${battleCharacterId}/add-perfection`,
+            { points }
+        );
     }
 
     static async updateCharacterStance(id: number, newStance: Stance | null): Promise<void> {
@@ -466,14 +480,14 @@ export class APIBattle {
         effectType: StatusType;
         amount: number;
         remainingTurns?: number;
-        source?: string;
+        source?: string;  // Descriptive source (e.g., "faster-than-strong"), not sourceCharacterId
     }): Promise<void> {
         await this.addStatus({
             battleCharacterId: request.battleCharacterId,
             effectType: request.effectType,
             ammount: request.amount,
-            remainingTurns: request.remainingTurns,
-            sourceCharacterId: request.source
+            remainingTurns: request.remainingTurns
+            // Note: source is descriptive, not mapped to sourceCharacterId
         });
     }
 }

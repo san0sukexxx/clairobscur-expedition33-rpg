@@ -19,7 +19,7 @@ import { APICampaign, type Campaign } from "../api/APICampaign";
 import { APIBattle, type AttackStatusEffectRequest, type CreateAttackRequest, type CreateDefenseRequest, type ResolveStatusRequest } from "../api/APIBattle";
 import { APIItem } from "../api/APIItem";
 import { APISkill } from "../api/APISkill";
-import { type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse, type StatusType } from "../api/ResponseModel";
+import { type BattleCharacterInfo, type AttackResponse, type DefenseOption, type AttackType, type WeaponInfo, type StatusResponse, type StatusType, type StainType } from "../api/ResponseModel";
 import { resolveSkill, calculateSkillHitDamage, applySpecialEffects, getStatusEffectsForTarget } from "../utils/BattleSkillUtils";
 import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
 import { getEnrichedCharacterSkills, getSkillById } from "../utils/SkillUtils";
@@ -75,6 +75,7 @@ import { statusNeedsResolveRoll } from "../utils/BattleUtils";
 export default function PlayerPage() {
   const [tab, setTab] = useState<"ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas">("ficha");
   const alreadyRan = useRef(false);
+  const isExecutingSkillRef = useRef(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [wasMasterEditing, setWasMasterEditing] = useState<boolean>(false);
@@ -197,8 +198,8 @@ export default function PlayerPage() {
       if (hadBattle !== hasBattleNow) {
         showToast(
           hasBattleNow
-            ? "Uma batalha está em andamento"
-            : "A batalha foi encerrada"
+            ? t("playerPage.battle.battleInProgress")
+            : t("playerPage.battle.battleEnded")
         );
       }
 
@@ -226,7 +227,7 @@ export default function PlayerPage() {
         return prev;
       });
     } catch (e: any) {
-      showToast("Erro ao verificar editing");
+      showToast(t("playerPage.errors.errorCheckingEditing"));
     }
   }, [player, lastBattleLog]);
 
@@ -280,7 +281,7 @@ export default function PlayerPage() {
             }`}
           >
             <MdOutlineKeyboardBackspace className="text-2xl" />
-            <span>Ficha do Jogador</span>
+            <span>{t("playerPage.title")}</span>
           </button>
         </div>
       </div>
@@ -316,7 +317,7 @@ export default function PlayerPage() {
           )}
 
           {!loading && !error && tab === "combate" && (
-            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelfFromTargeting={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
+            <CombatSection onMenuAction={handleCombatMenuAction} player={player} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode || pendingSkillId === "lune-rebirth"} isSelectingSkillTarget={isSelectingSkillTarget} forcedTab={combatTab} onTabChange={setCombatTab} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelfFromTargeting={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
           )}
 
           {!loading && !error && tab === "habilidades" && (
@@ -332,7 +333,7 @@ export default function PlayerPage() {
             className={`py-3 ${tab === "ficha" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !isExecutingSkill && setTab("ficha")}
             disabled={isExecutingSkill}
-            aria-label="Ficha"
+            aria-label={t("playerPage.navigation.tabs.sheet")}
           >
             <FaUser className="mx-auto text-2xl" />
           </button>
@@ -341,7 +342,7 @@ export default function PlayerPage() {
             className={`py-3 ${tab === "arma" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !isExecutingSkill && setTab("arma")}
             disabled={isExecutingSkill}
-            aria-label="Arma"
+            aria-label={t("playerPage.navigation.tabs.weapon")}
           >
             <LuSword className="mx-auto text-2xl" />
           </button>
@@ -350,7 +351,7 @@ export default function PlayerPage() {
             className={`py-3 ${tab === "pictos" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !isExecutingSkill && setTab("pictos")}
             disabled={isExecutingSkill}
-            aria-label="Pictos"
+            aria-label={t("playerPage.navigation.tabs.pictos")}
           >
             <GiStoneTablet className="mx-auto text-2xl" />
           </button>
@@ -359,7 +360,7 @@ export default function PlayerPage() {
             className={`py-3 ${tab === "luminas" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !isExecutingSkill && setTab("luminas")}
             disabled={isExecutingSkill}
-            aria-label="Luminas"
+            aria-label={t("playerPage.navigation.tabs.luminas")}
           >
             <GiCrystalShine className="mx-auto text-2xl" />
           </button>
@@ -368,7 +369,7 @@ export default function PlayerPage() {
             className={`py-3 ${tab === "inventario" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !isExecutingSkill && setTab("inventario")}
             disabled={isExecutingSkill}
-            aria-label="Inventário"
+            aria-label={t("playerPage.navigation.tabs.inventory")}
           >
             <GiBackpack className="mx-auto text-2xl" />
           </button>
@@ -377,7 +378,7 @@ export default function PlayerPage() {
             className={`py-3 ${tab === "habilidades" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !isExecutingSkill && setTab("habilidades")}
             disabled={isExecutingSkill}
-            aria-label="Habilidades"
+            aria-label={t("playerPage.navigation.tabs.skills")}
           >
             <GiMagicSwirl className="mx-auto text-2xl" />
           </button>
@@ -386,7 +387,7 @@ export default function PlayerPage() {
             className={`py-3 ${tab === "combate" ? "text-primary" : "text-base-content/70"} ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={() => !isExecutingSkill && setTab("combate")}
             disabled={isExecutingSkill}
-            aria-label="Combate"
+            aria-label={t("playerPage.navigation.tabs.combat")}
           >
             <LuSwords className="mx-auto text-2xl" />
           </button>
@@ -454,19 +455,33 @@ export default function PlayerPage() {
       "BATTLE_FINISHED",
       "TURN_ENDED",
       "TURN_ADDED",
+      "TURN_DELAYED",
       "TURNS_REORDERED",
       "ALLOW_COUNTER",
       "STATUS_ADDED",
+      "STATUS_REMOVED",
+      "STATUS_EXTENDED",
       "ATTACK_PENDING",
       "COUNTER_RESOLVED",
       "DAMAGE_DEALT",
       "STATUS_RESOLVED",
       "HP_CHANGED",
+      "MAX_HP_CHANGED",
       "MP_CHANGED",
+      "MP_RECOVERED",
+      "AP_CHANGED",
+      "GRADIENT_CHANGED",
+      "STAINS_CHANGED",
+      "STANCE_CHANGED",
+      "RANK_CHANGED",
       "FLEEING",
       "HEAL_APPLIED",
       "STATUS_CLEANSED",
-      "BREAK_APPLIED"
+      "BREAK_APPLIED",
+      "AUTO_DEATH",
+      "PICTO_EFFECT_TRACKED",
+      "PICTO_EFFECTS_CLEARED",
+      "PICTO_EFFECTS_RESET"
     ])
 
     const sheetEvents = new Set([
@@ -478,7 +493,12 @@ export default function PlayerPage() {
       "BATTLE_FINISHED",
       "HEAL_APPLIED",
       "STATUS_CLEANSED",
-      "BREAK_APPLIED"
+      "BREAK_APPLIED",
+      "HP_CHANGED",
+      "MAX_HP_CHANGED",
+      "MP_CHANGED",
+      "AP_CHANGED",
+      "RANK_CHANGED"
     ])
 
     const shouldUpdateFight = logs.some(log => fightEvents.has(log.eventType))
@@ -560,25 +580,25 @@ export default function PlayerPage() {
       const failures = countFailuresRolls(result)
       const failuresDiv = calculateFailureDiv(result)
 
-      setModalTitle("Resultado da rolagem")
+      setModalTitle(t("playerPage.modals.rollResult"))
 
       setModalBody(
         <div className="space-y-2">
-          <p>Rolagem: {rollTotal}</p>
+          <p>{t("playerPage.initiative.roll")}: {rollTotal}</p>
           {criticalRolls > 0 && (
             <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
               <FaCheckCircle className="w-6 h-6" />
-              Críticos: <b>{criticalRolls}</b>
+              {t("playerPage.initiative.criticals")}: <b>{criticalRolls}</b>
             </h3>
           )}
           {failures > 0 && (
             <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
               <FaSkull className="w-6 h-6" />
-              Falhas críticas: <b>{failures}</b>
+              {t("playerPage.initiative.criticalFailures")}: <b>{failures}</b>
             </h3>
           )}
           <p>
-            Habilidade: <b>{player.playerSheet?.hability ?? 0}</b>
+            {t("playerPage.initiative.ability")}: <b>{player.playerSheet?.hability ?? 0}</b>
             {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
             {failures > 0 && (
               <span className="inline-flex items-center gap-1 font-bold ml-2">
@@ -586,8 +606,8 @@ export default function PlayerPage() {
               </span>
             )}
           </p>
-          <p>Bônus Pictos: <b>{playerPictosTotalSpeed(player)}</b></p>
-          <h1 className="text-2xl font-bold">Total: {total}</h1>
+          <p>{t("playerPage.initiative.pictoBonus")}: <b>{playerPictosTotalSpeed(player)}</b></p>
+          <h1 className="text-2xl font-bold">{t("playerPage.initiative.total")}: {total}</h1>
         </div>
       )
 
@@ -638,7 +658,7 @@ export default function PlayerPage() {
             }
           }
         } catch (err) {
-          showToast("Erro ao registrar iniciativa")
+          showToast(t("playerPage.errors.errorRegisteringInitiative"))
         }
         setIsExecutingSkill(false);
       };
@@ -667,9 +687,9 @@ export default function PlayerPage() {
         await APIBattle.joinBattle({
           battleCharacterId: player.fightInfo?.playerBattleID ?? 0
         })
-        showToast("Agora você está participando da batalha");
+        showToast(t("playerPage.battle.joinedBattle"));
       } catch (e) {
-        showToast("Erro ao salvar player");
+        showToast(t("playerPage.errors.errorSavingPlayer"));
       }
     };
 
@@ -683,7 +703,7 @@ export default function PlayerPage() {
       try {
         await APIBattle.endTurn(player.fightInfo?.playerBattleID ?? 0)
       } catch (e) {
-        showToast("Erro ao encerrar o turno");
+        showToast(t("playerPage.errors.errorEndingTurn"));
       }
     };
 
@@ -706,7 +726,7 @@ export default function PlayerPage() {
     }
 
     if (npcIsFlying(target) && attackType != "free-shot") {
-      showToast("Este inimigo está voando e só pode ser atingido por tiros livres", { duration: 3000 });
+      showToast(t("playerPage.battle.flyingEnemyWarning"), { duration: 3000 });
       return;
     }
 
@@ -727,7 +747,7 @@ export default function PlayerPage() {
           totalHits = 1 + extraHits;
 
           if (totalHits > 1) {
-            showToast(`Combo Attack! ${totalHits} hits!`);
+            showToast(t("playerPage.battle.comboAttack", { count: totalHits }));
           }
         } catch (error) {
           console.error("Error getting combo modifiers:", error);
@@ -814,25 +834,25 @@ export default function PlayerPage() {
       // Augmented Counter: Counter damage bonus is applied in backend DamageModifierService
       // No need to show in UI as it's automatically calculated during counterattacks
 
-      setModalTitle("Resultado da rolagem")
+      setModalTitle(t("playerPage.modals.rollResult"))
 
       setModalBody(
         <div className="space-y-2">
-          <p>Rolagem: {rollTotal}</p>
+          <p>t("playerPage.initiative.roll"): {rollTotal}</p>
           {criticalRolls > 0 && (
             <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
               <FaCheckCircle className="w-6 h-6" />
-              Críticos: <b>{criticalRolls}</b>
+              t("playerPage.initiative.criticals"): <b>{criticalRolls}</b>
             </h3>
           )}
           {failures > 0 && (
             <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
               <FaSkull className="w-6 h-6" />
-              Falhas críticas: <b>{failures}</b>
+              t("playerPage.initiative.criticalFailures"): <b>{failures}</b>
             </h3>
           )}
           <p>
-            Poder: <b>{player.playerSheet?.power ?? 0}</b>
+            t("playerPage.attack.power"): <b>{player.playerSheet?.power ?? 0}</b>
             {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
             {failures > 0 && (
               <span className="inline-flex items-center gap-1 font-bold ml-2">
@@ -842,12 +862,12 @@ export default function PlayerPage() {
           </p>
           {isEmpowered && (
             <p>
-              Poderoso: <b>(x2)</b>
+              t("playerPage.attack.empowered"): <b>(x2)</b>
             </p>
           )}
           {isWeakened && (
             <p>
-              Enfraquecido:
+              t("playerPage.attack.weakened"):
               <span className="inline-flex items-center gap-1 font-bold ml-2">
                 (<FaDivide className="w-4 h-4" /> 2 )
               </span>
@@ -855,18 +875,18 @@ export default function PlayerPage() {
           )}
           {weaponPower > 0 && (
             <p>
-              Arma: <b>{weaponPower}</b>
+              t("playerPage.attack.weapon"): <b>{weaponPower}</b>
             </p>
           )}
           {freeShotPlus > 0 && (
             <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
               <FaCheckCircle className="w-6 h-6" />
-              Vulnerabilidade tiro-livre <b>(+{freeShotPlus})</b>
+              {t("playerPage.attack.freeAimVulnerability")} <b>(+{freeShotPlus})</b>
             </h3>
           )}
           {((playerFrenzy?.ammount ?? 0) > 0) && attackType != "free-shot" && (
             <p>
-              Frenesi <b>(+{playerFrenzy?.ammount})</b>
+              {t("playerPage.attack.frenzy")} <b>(+{playerFrenzy?.ammount})</b>
             </p>
           )}
           {isVerso && versoPerfectionMultiplier > 1.0 && (
@@ -876,7 +896,7 @@ export default function PlayerPage() {
           )}
           {elementModifier != undefined && (
             <p>
-              Elemento da arma: <b>{getElementModifierText(elementModifier.type)}</b>
+              {t("playerPage.attack.weaponElement")}: <b>{getElementModifierText(elementModifier.type)}</b>
               <span className="inline-flex items-center gap-1 font-bold ml-2">
                 (x{elementModifier.multiplier})
               </span>
@@ -884,7 +904,7 @@ export default function PlayerPage() {
           )}
           {isDizzy && attackType == "free-shot" && (
             <p>
-              Está tonto:
+              {t("playerPage.attack.dizzy")}:
               <span className="inline-flex items-center gap-1 font-bold ml-2">
                 (<FaDivide className="w-4 h-4" /> 2 )
               </span>
@@ -929,10 +949,10 @@ export default function PlayerPage() {
           {isShielded && (
             <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
               <FaShieldAlt className="w-6 h-6" />
-              Possui escudo (Anula todo dano)
+              {t("playerPage.attack.hasShield")}
             </h3>
           )}
-          <h1 className="text-2xl font-bold">Total: {total}</h1>
+          <h1 className="text-2xl font-bold">t("playerPage.initiative.total"): {total}</h1>
         </div>
       )
 
@@ -1062,7 +1082,7 @@ export default function PlayerPage() {
           }
 
         } catch (e) {
-          showToast("Erro ao atacar")
+          showToast(t("playerPage.errors.errorAttacking"))
         }
 
         resolve(); // Resolve the Promise for this hit
@@ -1081,6 +1101,11 @@ export default function PlayerPage() {
   }
 
   function handleModalClose() {
+    // Remove focus from modal content before closing to avoid aria-hidden warning
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     if (timeoutDiceBoardRef.current) {
       diceBoardRef.current?.hideBoard();
       clearTimeout(timeoutDiceBoardRef.current);
@@ -1130,17 +1155,17 @@ export default function PlayerPage() {
   }
 
   function attemptFlee() {
-    setModalTitle("Tentar fugir");
+    setModalTitle(t("playerPage.flee.title"));
     setModalBody(
       <div className="space-y-4">
-        <p>Tem certeza que deseja tentar fugir da batalha?</p>
-        <p className="text-sm text-gray-500">Toda sua equipe receberá o status "Fugindo".</p>
+        <p>{t("playerPage.flee.confirmation")}</p>
+        <p className="text-sm text-gray-500">{t("playerPage.flee.warning")}</p>
         <div className="flex gap-2 justify-end">
           <button className="btn btn-ghost" onClick={handleModalClose}>
-            Cancelar
+            {t("playerPage.flee.cancel")}
           </button>
           <button className="btn btn-primary" onClick={confirmFlee}>
-            Confirmar
+            {t("playerPage.flee.confirm")}
           </button>
         </div>
       </div>
@@ -1156,13 +1181,13 @@ export default function PlayerPage() {
       const playerBattleId = player.fightInfo?.playerBattleID;
       if (!playerBattleId) return;
 
-      showToast("Tentando fugir...");
+      showToast(t("playerPage.battle.attemptingFlee"));
       await APIBattle.flee(playerId, playerBattleId);
       await APIBattle.endTurn(playerBattleId);
       handleModalClose();
     } catch (e) {
       console.error("Erro ao tentar fugir:", e);
-      showToast("Erro ao tentar fugir");
+      showToast(t("playerPage.errors.errorFleeing"));
     }
   }
 
@@ -1188,8 +1213,26 @@ export default function PlayerPage() {
     const skillMetadata = SkillEffectsRegistry[skillId];
 
     if (!skillMetadata) {
-      showToast("Erro: Habilidade não encontrada");
+      showToast(t("playerPage.errors.errorSkillNotFound"));
       return;
+    }
+
+    // Special validation for Rebirth (Renascimento) - check if there are dead allies
+    if (skillId === "lune-rebirth") {
+      const currentCharacter = player?.fightInfo?.characters?.find(
+        c => c.battleID === player.fightInfo?.playerBattleID
+      );
+
+      if (currentCharacter) {
+        const deadAllies = player?.fightInfo?.characters?.filter(
+          c => c.isEnemy === currentCharacter.isEnemy && c.healthPoints <= 0
+        );
+
+        if (!deadAllies || deadAllies.length === 0) {
+          showToast(t("skills.noDeadAllies") || "Não há aliados mortos");
+          return;
+        }
+      }
     }
 
     // Determine if skill targets enemies or allies
@@ -1218,7 +1261,7 @@ export default function PlayerPage() {
       if (currentCharacter) {
         handleExecuteSkill(skillId, currentCharacter);
       } else {
-        showToast("Erro: Personagem não encontrado");
+        showToast(t("playerPage.errors.errorCharacterNotFound"));
       }
       return;
     }
@@ -1246,7 +1289,7 @@ export default function PlayerPage() {
         handleExecuteSkill(skillId, enemies[0]);
         return;
       } else {
-        showToast("Nenhum inimigo válido encontrado!");
+        showToast(t("playerPage.skills.noValidEnemies"));
         return;
       }
     }
@@ -1275,7 +1318,7 @@ export default function PlayerPage() {
         handleExecuteSkill(skillId, enemies[0]);
         return;
       } else {
-        showToast("Nenhum inimigo válido encontrado!");
+        showToast(t("playerPage.skills.noValidEnemies"));
         return;
       }
     }
@@ -1313,8 +1356,17 @@ export default function PlayerPage() {
   async function handleExecuteSkill(skillId: string, target: BattleCharacterInfo) {
     if (!player?.fightInfo) return;
 
+    // Prevent duplicate execution using ref for immediate synchronous check
+    if (isExecutingSkillRef.current) {
+      return;
+    }
+
+    // Set ref immediately to prevent duplicate calls
+    isExecutingSkillRef.current = true;
+
     // Prevent duplicate execution for Mezzo Forte
     if (skillId === "maelle-mezzo-forte" && isExecutingMezzoForte) {
+      isExecutingSkillRef.current = false;
       return;
     }
 
@@ -1324,21 +1376,22 @@ export default function PlayerPage() {
       );
 
       if (!source) {
-        showToast("Erro: Personagem não encontrado na batalha");
+        showToast(t("playerPage.errors.errorCharacterNotFoundInBattle"));
+        isExecutingSkillRef.current = false;
         return;
       }
 
       // Get skill cost and check if player has enough MP
       const skillMetadata = SkillEffectsRegistry[skillId];
       if (!skillMetadata) {
-        showToast("Erro: Habilidade não encontrada");
+        showToast(t("playerPage.errors.errorSkillNotFound"));
         return;
       }
 
       // Get skill info from SkillList to get the cost
       const skillInfo = player.skills?.find(s => s.skillId === skillId);
       if (!skillInfo) {
-        showToast("Erro: Você não possui esta habilidade");
+        showToast(t("playerPage.errors.errorSkillNotOwned"));
         return;
       }
 
@@ -1381,7 +1434,7 @@ export default function PlayerPage() {
           const totalReduction = parriesCount * reductionPerParry;
           const originalCost = skillCost;
           skillCost = Math.max(0, skillCost - totalReduction);
-          showToast(`${parriesCount} Aparada(s) bem sucedida(s)! Custo reduzido de ${originalCost} para ${skillCost} MP`);
+          showToast(t("playerPage.skills.parriesReducedCost", { count: parriesCount, original: originalCost, new: skillCost }));
         }
       }
 
@@ -1410,7 +1463,7 @@ export default function PlayerPage() {
       if (isGradientSkill) {
         const currentGradientCharges = Math.floor((source.gradientPoints ?? 0) / 12);
         if (currentGradientCharges < skillCost) {
-          showToast(`Cargas de Gradiente insuficientes! Necessário: ${skillCost}, Disponível: ${currentGradientCharges}`);
+          showToast(t("playerPage.skills.insufficientGradientCharges", { required: skillCost, available: currentGradientCharges }));
           setPendingSkillId(null);
           setIsSelectingSkillTarget(false);
           setExcludeSelfFromTargeting(false);
@@ -1419,7 +1472,7 @@ export default function PlayerPage() {
       } else {
         const currentMp = source.magicPoints ?? 0;
         if (currentMp < skillCost) {
-          showToast(`MP insuficiente! Necessário: ${skillCost}, Disponível: ${currentMp}`);
+          showToast(t("playerPage.skills.insufficientMP", { required: skillCost, available: currentMp }));
           setPendingSkillId(null);
           setIsSelectingSkillTarget(false);
           setExcludeSelfFromTargeting(false);
@@ -1431,10 +1484,11 @@ export default function PlayerPage() {
       if (!hasRequiredStains(source, skillMetadata)) {
         // Only block if skill requires all 4 elemental stains (e.g., Elemental Genesis)
         if (skillMetadata.requiresAllStains) {
-          showToast("Requer todas as 4 manchas elementais (Raio, Terra, Fogo, Gelo)!");
+          showToast(t("playerPage.skills.requiresAllStains"));
           setPendingSkillId(null);
           setIsSelectingSkillTarget(false);
           setIsExecutingSkill(false);
+          isExecutingSkillRef.current = false;
           setExcludeSelfFromTargeting(false);
           return;
         }
@@ -1444,7 +1498,7 @@ export default function PlayerPage() {
       // Try to consume stains if available (for bonus effects)
       let stainsConsumed = false;
       let consumedStainsList: string[] = [];
-      let currentStainsAfterConsumption: [string | null, string | null, string | null, string | null] = [
+      let currentStainsAfterConsumption: [StainType | null, StainType | null, StainType | null, StainType | null] = [
         source.stainSlot1 ?? null,
         source.stainSlot2 ?? null,
         source.stainSlot3 ?? null,
@@ -1505,7 +1559,6 @@ export default function PlayerPage() {
 
               if (diceRoll >= 3) {
                 // 3-6: All allies
-                showToast(`Rolou ${diceRoll}! Rapidez aplicada em todos os aliados!`);
                 const alliesTargets = (player.fightInfo?.characters ?? [])
                   .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
                   .map(c => c.battleID);
@@ -1524,7 +1577,6 @@ export default function PlayerPage() {
                 };
               } else {
                 // 1-2: Single ally only (keep original target)
-                showToast(`Rolou ${diceRoll}! Rapidez aplicada apenas no alvo escolhido.`);
               }
 
               resolvePromise();
@@ -1539,7 +1591,7 @@ export default function PlayerPage() {
 
               if (diceRoll >= 3) {
                 // 3-6: All allies
-                showToast(`Rolou ${diceRoll}! Escudo aplicado em toda a equipe!`);
+                showToast(t("playerPage.skills.rolledDiceShieldApplied", { value: diceRoll }));
                 const alliesTargets = (player.fightInfo?.characters ?? [])
                   .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
                   .map(c => c.battleID);
@@ -1558,7 +1610,7 @@ export default function PlayerPage() {
                 };
               } else {
                 // 1-2: Single target only (keep original target)
-                showToast(`Rolou ${diceRoll}! Escudo aplicado apenas no alvo escolhido.`);
+                showToast(t("playerPage.skills.rolledDiceShieldSingleTarget", { value: diceRoll }));
                 // Update effects to have correct targetBattleId for the chosen ally
                 const chosenTargetId = resolved.targetIds[0];
                 resolved = {
@@ -1580,7 +1632,7 @@ export default function PlayerPage() {
           const diceRoll = Math.floor(Math.random() * 6) + 1;  // 1-6
           if (diceRoll >= 4) {
             // 4-6: All allies
-            showToast(`Rolou ${diceRoll}! Powerful afeta toda equipe!`);
+            showToast(t("playerPage.skills.rolledDicePowerfulTeam", { value: diceRoll }));
             const alliesTargets = (player.fightInfo?.characters ?? [])
               .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
               .map(c => c.battleID);
@@ -1596,7 +1648,7 @@ export default function PlayerPage() {
             };
           } else {
             // 1-3: Self only
-            showToast(`Rolou ${diceRoll}! Powerful afeta apenas Verso.`);
+            showToast(t("playerPage.skills.rolledDicePowerfulVerso", { value: diceRoll }));
             resolved = {
               ...resolved,
               targetIds: [source.battleID]
@@ -1660,7 +1712,7 @@ export default function PlayerPage() {
           burnsToConsume = Math.min(burnStacks, maxConsume);
           const bonusPerBurn = (resolved.metadata.burnConsumptionBonus ?? 10) / 100;
           burnConsumptionMultiplier = 1.0 + (burnsToConsume * bonusPerBurn);
-          showToast(`Consumindo ${burnsToConsume} Queimadura(s)! Dano +${Math.floor(burnsToConsume * bonusPerBurn * 100)}%`);
+          showToast(t("playerPage.skills.burnsConsumed", { count: burnsToConsume, percent: Math.floor(burnsToConsume * bonusPerBurn * 100) }));
         }
       }
 
@@ -1671,7 +1723,7 @@ export default function PlayerPage() {
         const hasFireVulnerability = targetStatuses.some(s => s.effectName === "FireVulnerability");
         if (hasFireVulnerability) {
           fireVulnerabilityMultiplier = 2.0;  // Double damage
-          showToast("Alvo vulnerável a Fogo! Dano x2!");
+          showToast(t("playerPage.skills.fireVulnerability"));
         }
       }
 
@@ -1683,7 +1735,7 @@ export default function PlayerPage() {
         if (isMarked) {
           const bonusPercent = resolved.metadata.markedDamageBonus;
           markedDamageMultiplier = 1.0 + (bonusPercent / 100);
-          showToast(`Alvo Marcado! Dano +${bonusPercent}%`);
+          showToast(t("playerPage.skills.markedTarget", { percent: bonusPercent }));
         }
       }
 
@@ -1729,7 +1781,7 @@ export default function PlayerPage() {
           }
 
           if (hpDrained > 0) {
-            showToast(`HP drenado de aliados em combate: ${hpDrained} (Dano +${hpDrained})`);
+            showToast(t("playerPage.skills.hpDrained", { amount: hpDrained }));
           }
         }
 
@@ -1749,7 +1801,7 @@ export default function PlayerPage() {
           }
 
           if (allEnemiesForetellConsumed > 0) {
-            showToast(`Predição total de inimigos: ${allEnemiesForetellConsumed} (Dano +${allEnemiesForetellConsumed})`);
+            showToast(t("playerPage.skills.totalEnemyForetell", { amount: allEnemiesForetellConsumed }));
           }
         }
       }
@@ -1771,24 +1823,26 @@ export default function PlayerPage() {
           // Harvest: Calcula bonus de cura
           if (resolved.metadata.foretellHealBonus) {
             foretellHealBonus = foretellStacks * resolved.metadata.foretellHealBonus;
-            showToast(`Consumindo ${foretellsToConsume} Predições! Cura +${foretellHealBonus}%`);
+            showToast(t("playerPage.skills.foretellsConsumedHeal", { count: foretellsToConsume, bonus: foretellHealBonus }));
           }
           // Plentiful Harvest: Calcula MP a conceder para aliado
           else if (resolved.metadata.grantsMpPerForetell) {
             mpToGrant = foretellStacks * resolved.metadata.grantsMpPerForetell;
-            showToast(`Consumindo ${foretellsToConsume} Predições! MP a conceder: ${mpToGrant}`);
+            showToast(t("playerPage.skills.foretellsConsumedMP", { count: foretellsToConsume, amount: mpToGrant }));
           }
           // Twilight Slash: Calcula bonus de dano
           else if (resolved.metadata.foretellDamageBonus) {
             const bonusPerForetell = resolved.metadata.foretellDamageBonus;
             foretellBonus = foretellStacks * bonusPerForetell;
-            showToast(`Consumindo ${foretellsToConsume} Predições! Dano +${foretellBonus}`);
+            showToast(t("playerPage.skills.foretellsConsumed", { count: foretellsToConsume, bonus: foretellBonus }));
           }
         }
       }
 
       // Variable to store last dice result for mechanics that need it (e.g., Elemental Trick)
-      let lastDiceResult: number[] = [];
+      let lastDiceResult: any[] = [];
+      // Variable to store ALL dice results for counting total crits across all hits (e.g., Assault Zero)
+      let allDiceResults: any[][] = [];
 
       // Calculate actual hit count (random if minHits/maxHits defined)
       let actualHitCount = resolved.metadata.minHits && resolved.metadata.maxHits
@@ -1797,7 +1851,7 @@ export default function PlayerPage() {
 
       // Show toast for variable hit skills
       if (resolved.metadata.minHits && resolved.metadata.maxHits) {
-        showToast(`${actualHitCount} acerto(s)!`);
+        showToast(t("playerPage.skills.hitsCountAnnouncement", { count: actualHitCount }));
       }
 
       if (actualHitCount > 0) {
@@ -1810,8 +1864,10 @@ export default function PlayerPage() {
               rollCommandForAttack(weaponInfo, "basic"),
               async (result) => {
                 try {
-                  // Store last dice result
+                  // Store last dice result for single-use mechanics
                   lastDiceResult = result;
+                  // Store all dice results for accumulating crits across all hits
+                  allDiceResults.push(result);
                   // Calculate base damage similar to basic attack (player power + weapon + dice + criticals)
                   const total = diceTotal(result);
                   const failures = calculateFailureDiv(result);
@@ -1829,7 +1885,7 @@ export default function PlayerPage() {
                   if (resolved.metadata.doubleCritDamage && critMulti > 1) {
                     critMulti = critMulti * 2;  // 2x becomes 4x
                     if (hitIndex === 0) {
-                      showToast(`Crítico duplo! (${critMulti}x de dano)`);
+                      showToast(t("playerPage.skills.doubleCritDamage", { multiplier: critMulti }));
                     }
                   }
 
@@ -1855,7 +1911,7 @@ export default function PlayerPage() {
                       const newHp = currentHp - hpToSacrifice;
                       await APIBattle.updateCharacterHp(source.battleID, Math.max(1, newHp));
                       hpSacrificeBonus = hpToSacrifice;
-                      showToast(`Sacrificando ${percentToSacrifice}% HP (${hpToSacrifice})! Dano +${hpSacrificeBonus}`);
+                      showToast(t("playerPage.skills.hpSacrifice", { percent: percentToSacrifice, amount: hpToSacrifice, bonus: hpSacrificeBonus }));
                     }
                   }
 
@@ -1872,7 +1928,7 @@ export default function PlayerPage() {
                       foretellConsumedPerTarget.set(targetId, consumed);
                       if (consumed && hitIndex === 0) {
                         const targetChar = (player.fightInfo?.characters ?? []).find(c => c.battleID === targetId);
-                        showToast(`${targetChar?.name ?? 'Alvo'}: Predição consumida! Dano x${resolved.metadata.foretellPerHitMultiplier ?? 2.0}`);
+                        showToast(t("playerPage.skills.foretellConsumed", { target: targetChar?.name ?? "Alvo", multiplier: resolved.metadata.foretellPerHitMultiplier ?? 2.0 }));
                       }
                     }
                   }
@@ -1895,15 +1951,8 @@ export default function PlayerPage() {
                       const baseBonus = versoPerfectionMultiplier - 1.0;  // e.g., 1.4 - 1.0 = 0.4 (40%)
                       const conditionalBonus = damageMultiplier - 1.0;    // e.g., 1.5 - 1.0 = 0.5 (50%)
                       versoPerfectionMultiplier = 1.0 + baseBonus + conditionalBonus;  // 1.0 + 0.4 + 0.5 = 1.9 (90%)
-                      const totalBonusPercent = Math.round((versoPerfectionMultiplier - 1.0) * 100);
-                      showToast(`Rank ${rank} de Perfeição! Dano +${totalBonusPercent}% (bônus da habilidade!)`);
-                    } else if (versoPerfectionMultiplier > 1.0) {
-                      const bonusPercent = Math.round((versoPerfectionMultiplier - 1.0) * 100);
-                      showToast(`Rank ${source.perfectionRank} de Perfeição! Dano +${bonusPercent}%`);
+                      // Rank bonus toast removed - only show perfection points gained
                     }
-                  } else if (isVerso && versoPerfectionMultiplier > 1.0) {
-                    const bonusPercent = Math.round((versoPerfectionMultiplier - 1.0) * 100);
-                    showToast(`Rank ${source.perfectionRank} de Perfeição! Dano +${bonusPercent}%`);
                   }
 
                   // Cultist Slashes: Damage scales inversely with HP (lower HP = more damage)
@@ -1914,7 +1963,7 @@ export default function PlayerPage() {
                     lowHpMultiplier = 1.0 + (1.0 - hpPercent);  // 100% HP = 1.0x, 50% HP = 1.5x, 0% HP = 2.0x
                     if (hitIndex === 0 && lowHpMultiplier > 1.0) {
                       const bonusPercent = Math.round((lowHpMultiplier - 1.0) * 100);
-                      showToast(`HP baixo! Dano +${bonusPercent}%`);
+                      showToast(t("playerPage.skills.lowHPBonus", { percent: bonusPercent }));
                     }
                   }
 
@@ -1925,7 +1974,7 @@ export default function PlayerPage() {
                     if (hitIndex === 0) {
                       const bonusPercent = Math.round((lampmasterMultiplier - 1.0) * 100);
                       if (bonusPercent > 0) {
-                        showToast(`Lampmaster Stacks: ${lampmasterStacks} (+${bonusPercent}% dano)`);
+                        showToast(t("playerPage.skills.lampmasterStacks", { count: lampmasterStacks, percent: bonusPercent }));
                       }
                       // Increment stacks after this use (max 5)
                       setLampmasterStacks(prev => Math.min(prev + 1, 5));
@@ -1962,7 +2011,7 @@ export default function PlayerPage() {
                     stainDamageMultiplier = 1.0 + (consumedStainsList.length * 0.25);
                     if (hitIndex === 0) {
                       const bonusPercent = Math.round((stainDamageMultiplier - 1.0) * 100);
-                      showToast(`${consumedStainsList.length} Mancha${consumedStainsList.length > 1 ? 's' : ''} consumida${consumedStainsList.length > 1 ? 's' : ''}! Dano +${bonusPercent}%`);
+                      showToast(t("playerPage.skills.stainsConsumed", { count: consumedStainsList.length, percent: bonusPercent }));
                     }
                   }
 
@@ -1995,7 +2044,7 @@ export default function PlayerPage() {
                       if (isBurning) {
                         burningTargetMultiplier = 1.5;  // 50% bonus damage vs Burning
                         if (hitIndex === 0) {
-                          showToast(`Alvo queimando! Dano +50%`);
+                          showToast(t("playerPage.skills.burningTarget"));
                         }
                       }
                     }
@@ -2008,7 +2057,7 @@ export default function PlayerPage() {
                       if (isStunned) {
                         stunnedTargetMultiplier = 2.0;  // Double damage vs Stunned
                         if (hitIndex === 0) {
-                          showToast(`Alvo atordoado! Dano x2`);
+                          showToast(t("playerPage.skills.stunnedTarget"));
                         }
                       }
                     }
@@ -2021,7 +2070,7 @@ export default function PlayerPage() {
                       if (isPowerless) {
                         powerlessTargetMultiplier = 1.5;  // 50% bonus damage vs Powerless
                         if (hitIndex === 0) {
-                          showToast(`Alvo impotente! Dano +50%`);
+                          showToast(t("playerPage.skills.powerlessTarget"));
                         }
                       }
                     }
@@ -2050,7 +2099,7 @@ export default function PlayerPage() {
                     const hitDamage = Math.floor(damageWithFireVulnerability * markedDamageMultiplier);
 
                     // Show damage toast for this hit
-                    showToast(`Ataque ${hitIndex + 1}: ${hitDamage} de dano`);
+                    showToast(t("playerPage.battle.attackDamage", { index: hitIndex + 1, damage: hitDamage }));
 
                     // Save damage from first target for Searing Bond propagation
                     if (targetId === resolved.targetIds[0]) {
@@ -2103,7 +2152,7 @@ export default function PlayerPage() {
                           }
                           return effect;
                         });
-                        showToast("Duração do Égide estendida! (3 turnos)");
+                        showToast(t("playerPage.skills.aegidExtended"));
                       }
                     }
 
@@ -2156,7 +2205,7 @@ export default function PlayerPage() {
                           if (effect.effectType === "Burning") {
                             const newAmount = (effect.ammount ?? 0) + bonusBurn;
                             if (hitIndex === 0) {
-                              showToast(`Bonus de postura! +${bonusBurn} Queimaduras por acerto`);
+                              showToast(t("playerPage.skills.stanceBonusApplied", { count: bonusBurn }));
                             }
                             return { ...effect, ammount: newAmount };
                           }
@@ -2181,7 +2230,7 @@ export default function PlayerPage() {
                       await APIBattle.updateCharacterHp(source.battleID, newHp);
 
                       if (hitIndex === 0) {
-                        showToast(`Absorção! Cura de ${healPercent}% HP (${healAmount})`);
+                        showToast(t("playerPage.skills.absorptionHeal", { percent: healPercent, amount: healAmount }));
                       }
                     }
 
@@ -2199,12 +2248,16 @@ export default function PlayerPage() {
 
                     // Determine attack element
                     let attackElement: string | undefined;
-                    if (resolved.metadata.stainDeterminedElement) {
+                    if (resolved.metadata.randomElementPerHit && resolved.metadata.randomElements) {
+                      // Elemental Genesis: Random element per hit
+                      const randomElements = resolved.metadata.randomElements;
+                      attackElement = randomElements[Math.floor(Math.random() * randomElements.length)];
+                    } else if (resolved.metadata.stainDeterminedElement) {
                       // Sky Break: Element determined by dominant stain type
                       attackElement = getDominantElement(source);
                       if (hitIndex === 0) {
                         const elementPt = translateElementName(attackElement || "");
-                        showToast(`Elemento do ataque: ${elementPt}`);
+                        showToast(t("playerPage.skills.elementAttack", { element: elementPt }));
                       }
                     } else if (resolved.metadata.forcedElement) {
                       attackElement = resolved.metadata.forcedElement;
@@ -2416,14 +2469,27 @@ export default function PlayerPage() {
                         }
                       }
 
-                      showToast(`Vínculo Ardente: ${otherBurningEnemies.length} inimigo(s) afetado(s)!`);
+                      showToast(t("playerPage.skills.searingBond", { count: otherBurningEnemies.length }));
                     }
                   }
 
                   // Thunderfall / Sakapatate: Critical hits add extra hit
                   if (resolved.metadata.critTriggersExtraHit && critMulti > 1) {
                     actualHitCount++;
-                    showToast("Crítico! +1 acerto extra!");
+                    showToast(t("playerPage.skills.criticalExtraHit"));
+                  }
+
+                  // Gain perfection points per hit (with optional critical bonus)
+                  if (resolved.metadata.gainsPerfectionPerHit && isVerso) {
+                    const basePoints = resolved.metadata.gainsPerfectionPerHit;
+                    const isCritical = critMulti > 1;
+                    const hasCritBonus = resolved.metadata.criticalGivesPerfectionBonus === true;
+                    const pointsPerHit = (isCritical && hasCritBonus) ? basePoints + 1 : basePoints;
+                    try {
+                      await APIBattle.addPerfectionPoints(source.battleID, pointsPerHit);
+                    } catch (error) {
+                      console.error("Erro ao adicionar pontos de perfeição por golpe:", error);
+                    }
                   }
 
                   // Increment hit index for while loop
@@ -2501,7 +2567,7 @@ export default function PlayerPage() {
             const gradientCost = skillCost * 12;
             const newGradient = Math.max(0, currentGradientPoints - gradientCost);
             await APIBattle.updateTeamGradient(source.battleID, newGradient);
-            showToast(`${skillCost} Carga(s) de Gradiente consumida(s)!`);
+            showToast(t("playerPage.skills.gradientChargesConsumed", { count: skillCost }));
           } else if (skillCost > 0) {
             const currentMp = source.magicPoints ?? 0;
             const newMp = currentMp - skillCost;
@@ -2509,9 +2575,17 @@ export default function PlayerPage() {
           }
         }
 
-        // Apply status effects
-        for (const targetId of resolved.targetIds) {
-          let effects = getStatusEffectsForTarget(resolved.effects, targetId);
+        // Check if this skill has special handling that will manually apply effects
+        const hasSpecialHandling =
+          skillId === "lune-storm-caller" || // Storm Caller (manual stain-based amount)
+          resolved.metadata.randomAllyCount !== undefined || // Revitalization
+          (resolved.metadata.targetScope === "all-allies" && resolved.metadata.primaryEffects?.some(e => e.effectType === "Heal" || e.effectType === "Cleanse")) || // Tree of Life
+          (resolved.metadata.targetScope === "ally" && resolved.metadata.primaryEffects?.some(e => e.effectType === "Heal" || e.effectType === "Cleanse")); // Healing Light
+
+        // Apply status effects (skip if skill has special handling below)
+        if (!hasSpecialHandling) {
+          for (const targetId of resolved.targetIds) {
+            let effects = getStatusEffectsForTarget(resolved.effects, targetId);
 
           // Egide: Extend Guardian duration if source has Protected (Shield) status
           if (skillId === "maelle-egide") {
@@ -2525,13 +2599,12 @@ export default function PlayerPage() {
                 }
                 return effect;
               });
-              showToast("Duração do Égide estendida! (3 turnos)");
+              showToast(t("playerPage.skills.aegidExtended"));
             }
           }
 
           if (effects.length > 0) {
             for (const effect of effects) {
-              console.log(`[PlayerPage] Adding status - effectType: ${effect.effectType}, targetId: ${targetId}, sourceCharacterId: ${source.battleID}`);
               await APIBattle.addStatus({
                 battleCharacterId: targetId,
                 effectType: effect.effectType,
@@ -2541,8 +2614,12 @@ export default function PlayerPage() {
               });
             }
           }
+          }
         }
       }
+
+      // Track if we manually handle special effects (Heal/Cleanse) to avoid duplicate processing
+      let manuallyHandledSpecialEffects = false;
 
       // Tree of Life: Process Heal and Cleanse effects for all-allies
       if (resolved.metadata.targetScope === "all-allies" && resolved.metadata.primaryEffects && player.fightInfo) {
@@ -2553,6 +2630,7 @@ export default function PlayerPage() {
         // Process Heal effect
         const healEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Heal");
         if (healEffect && healEffect.amount > 0) {
+          manuallyHandledSpecialEffects = true;
           const healPercent = healEffect.amount; // 100% for Tree of Life
 
           for (const ally of allAllies) {
@@ -2567,17 +2645,18 @@ export default function PlayerPage() {
             }
           }
 
-          showToast(`Todos os aliados curados para ${healPercent}% de HP!`);
+          showToast(t("playerPage.skills.allAlliesHealed", { percent: healPercent }));
         }
 
         // Process Cleanse effect
         const cleanseEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Cleanse");
         if (cleanseEffect) {
+          manuallyHandledSpecialEffects = true;
           for (const ally of allAllies) {
             await APIBattle.cleanse(ally.battleID);
           }
 
-          showToast(`Todos os debuffs removidos dos aliados!`);
+          showToast(t("playerPage.skills.allDebuffsRemoved"));
         }
       }
 
@@ -2590,6 +2669,7 @@ export default function PlayerPage() {
           // Process Heal effect
           const healEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Heal");
           if (healEffect && healEffect.amount > 0) {
+            manuallyHandledSpecialEffects = true;
             const healPercent = healEffect.amount; // 25% for Healing Light
             const healAmount = Math.floor(target.maxHealthPoints * (healPercent / 100));
             const newHp = Math.min(target.healthPoints + healAmount, target.maxHealthPoints);
@@ -2601,19 +2681,113 @@ export default function PlayerPage() {
               await triggerOnHealAlly(source, target, allChars, player.fightInfo.battleId, player.pictos, player.luminas, healAmount);
             }
 
-            showToast(`${target.name} curado em ${healPercent}% (${healAmount} HP)!`);
+            showToast(t("playerPage.skills.allyHealed", { name: target.name, percent: healPercent, amount: healAmount }));
           }
 
           // Process Cleanse effect
           const cleanseEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Cleanse");
           if (cleanseEffect) {
+            manuallyHandledSpecialEffects = true;
             await APIBattle.cleanse(target.battleID);
-            showToast(`Debuffs removidos de ${target.name}!`);
+            showToast(t("playerPage.skills.debuffsRemovedFrom", { name: target.name }));
           }
         }
       }
 
-      await applySpecialEffects(resolved.effects, player.fightInfo?.characters ?? [], foretellHealBonus);
+      // Revitalization: Heal single ally or all allies and apply Regeneration if stains consumed
+      if (resolved.metadata.randomAllyCount && resolved.metadata.primaryEffects && player.fightInfo) {
+        const healEffect = resolved.metadata.primaryEffects.find(e => e.effectType === "Heal");
+
+        if (healEffect) {
+          manuallyHandledSpecialEffects = true;
+          await new Promise<void>((resolvePromise) => {
+            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
+              const diceRoll = result && result.length > 0 ? result[0].value : 3;
+              // 1-2 = 40% for 1 ally, 3-6 = 60% for all allies
+              const healPercent = diceRoll <= 2 ? 40 : 60;
+              const healSingleAlly = diceRoll <= 2;
+
+              // Get all living allies
+              const allAllies = (player.fightInfo!.characters ?? []).filter(
+                c => c.isEnemy === source.isEnemy && c.healthPoints > 0
+              );
+
+              // Select allies based on dice roll
+              let selectedAllies;
+              if (healSingleAlly) {
+                // 1-2: Heal single ally (either selected target or random)
+                if (resolved.targetIds.length > 0) {
+                  const targetAlly = allAllies.find(a => a.battleID === resolved.targetIds[0]);
+                  selectedAllies = targetAlly ? [targetAlly] : [];
+                } else {
+                  // Pick random ally
+                  const randomAlly = allAllies[Math.floor(Math.random() * allAllies.length)];
+                  selectedAllies = randomAlly ? [randomAlly] : [];
+                }
+              } else {
+                // 3-6: Heal all allies
+                selectedAllies = allAllies;
+              }
+
+              // Heal each selected ally
+              for (const ally of selectedAllies) {
+                const healAmount = Math.floor(ally.maxHealthPoints * (healPercent / 100));
+                const newHp = Math.min(ally.healthPoints + healAmount, ally.maxHealthPoints);
+                await APIBattle.updateCharacterHp(ally.battleID, newHp);
+
+                // Trigger picto effects for heal
+                if (player.fightInfo!.battleId) {
+                  const allChars = player.fightInfo!.characters ?? [];
+                  await triggerOnHealAlly(source, ally, allChars, player.fightInfo!.battleId, player.pictos, player.luminas, healAmount);
+                }
+
+                // Apply Regeneration if stains were consumed
+                if (stainsConsumed && resolved.metadata.conditionalEffects) {
+                  const regenEffect = resolved.metadata.conditionalEffects.find(
+                    e => e.effectType === "Regeneration" && e.condition === "stains-consumed"
+                  );
+
+                  if (regenEffect) {
+                    await APIBattle.addStatus({
+                      battleCharacterId: ally.battleID,
+                      effectType: "Regeneration",
+                      ammount: regenEffect.amount,
+                      remainingTurns: regenEffect.remainingTurns ?? 3,
+                      sourceCharacterId: source.battleID
+                    });
+                  }
+                }
+              }
+
+              resolvePromise();
+            });
+          });
+        }
+      }
+
+      // Only apply special effects if we haven't manually handled them above
+      if (!manuallyHandledSpecialEffects) {
+        await applySpecialEffects(resolved.effects, player.fightInfo?.characters ?? [], foretellHealBonus);
+      }
+
+      // Apply self-targeted status effects (e.g., Aureole from Angel's Eyes)
+      const selfEffects = resolved.effects.filter(
+        e => e.targetBattleId === source.battleID &&
+             e.effectType !== "Heal" &&
+             e.effectType !== "Cleanse"
+      );
+      for (const effect of selfEffects) {
+        try {
+          await APIBattle.addStatus({
+            battleCharacterId: source.battleID,
+            effectType: effect.effectType as StatusType,
+            ammount: effect.amount,
+            remainingTurns: effect.remainingTurns ?? null
+          });
+        } catch (error) {
+          console.error("Erro ao aplicar efeito self:", error);
+        }
+      }
 
       // Orphelin Cheers: Grant MP to affected allies if at Caster/Almighty Mask
       if (resolved.metadata.grantsMpAtCasterMask) {
@@ -2626,7 +2800,7 @@ export default function PlayerPage() {
           const apToGrant = resolved.metadata.grantsMpAtCasterMask;
           for (const targetId of resolved.targetIds) {
             // Grant MP logic would need backend support - for now, just show toast
-            showToast(`${apToGrant} PM concedidos ao aliado!`);
+            showToast(t("playerPage.skills.mpConceded", { amount: apToGrant }));
           }
         }
       }
@@ -2647,7 +2821,7 @@ export default function PlayerPage() {
             await APIBattle.updateCharacterHp(ally.battleID, Math.min(ally.healthPoints + healAmount, ally.maxHealthPoints));
           }
 
-          showToast(`Cura instantânea de ${healPercent}% HP aplicada a todos os aliados!`);
+          showToast(t("playerPage.skills.instantHeal", { percent: healPercent }));
         }
       }
 
@@ -2678,17 +2852,46 @@ export default function PlayerPage() {
               const diceRoll = result && result.length > 0 ? result[0].value : 1;
               const revivePercent = diceRoll >= 4 ? 70 : 50;
 
-              showToast(`Rolou ${diceRoll}! Revivendo aliados com ${revivePercent}% de HP!`);
+              showToast(t("playerPage.skills.rolledDiceReviving", { value: diceRoll, percent: revivePercent }));
 
               for (const ally of deadAllies) {
                 const reviveHp = Math.floor(ally.maxHealthPoints * (revivePercent / 100));
                 await APIBattle.updateCharacterHp(ally.battleID, reviveHp);
               }
 
+              await checkPlayerLoop(); // Update frontend immediately
+
               resolvePromise();
             });
           });
         }
+      }
+
+      // Rebirth: Revive single ally with 30-70% HP based on dice roll and 2 MP
+      if (skillId === "lune-rebirth" && player.fightInfo && target.healthPoints === 0) {
+        await new Promise<void>((resolvePromise) => {
+          rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
+            const diceRoll = result && result.length > 0 ? result[0].value : 1;
+            const revivePercent = diceRoll >= 4 ? 70 : 30;
+
+            showToast(t("playerPage.skills.rolledDiceRevivingAlly", { value: diceRoll, name: target.name, percent: revivePercent }));
+
+            // Revive with calculated HP
+            const reviveHp = Math.floor(target.maxHealthPoints * (revivePercent / 100));
+            await APIBattle.updateCharacterHp(target.battleID, reviveHp);
+
+            // Set MP to 2
+            const maxMp = target.maxMagicPoints ?? 0;
+            const newMp = Math.min(maxMp, 2);
+            await APIBattle.updateCharacterMp(target.battleID, newMp);
+
+            await checkPlayerLoop(); // Update frontend immediately
+
+            showToast(t("playerPage.skills.allyRevivedWithMP", { name: target.name }));
+
+            resolvePromise();
+          });
+        });
       }
 
       // Twilight Dance: Extend Twilight duration if source has Twilight status
@@ -2697,7 +2900,7 @@ export default function PlayerPage() {
         const hasTwilight = sourceStatuses.some(s => s.effectName === "Twilight");
         if (hasTwilight) {
           await APIBattle.extendStatusDuration(source.battleID, "Twilight", 1);
-          showToast("Duração do Crepúsculo estendida! (+1 turno)");
+          showToast(t("playerPage.skills.twilightExtended"));
         }
       }
 
@@ -2705,7 +2908,7 @@ export default function PlayerPage() {
       if (resolved.metadata.delaysTurn) {
         for (const targetId of resolved.targetIds) {
           await APIBattle.delayTurn(targetId, resolved.metadata.delaysTurn);
-          showToast(`Turno atrasado em ${resolved.metadata.delaysTurn} posições!`);
+          showToast(t("playerPage.skills.turnDelayed", { positions: resolved.metadata.delaysTurn }));
         }
       }
 
@@ -2750,7 +2953,7 @@ export default function PlayerPage() {
               }
             }
 
-            showToast(`Buffs copiados para outros aliados!`);
+            showToast(t("playerPage.skills.buffsCopied"));
           }
         }
       }
@@ -2789,20 +2992,20 @@ export default function PlayerPage() {
           const stanceName = newStance === 'Offensive' ? 'Ofensiva' :
                             newStance === 'Defensive' ? 'Defensiva' :
                             newStance === 'Virtuous' ? 'Virtuosa' : 'Sem Postura';
-          showToast(`Postura alterada para ${stanceName}!`);
+          showToast(t("playerPage.skills.stanceChanged", { stance: stanceName }));
         }
       }
 
       // Last Chance: Set HP to 1 and refill MP to maximum
       if (resolved.metadata.setsHpTo !== undefined) {
         await APIBattle.updateCharacterHp(source.battleID, resolved.metadata.setsHpTo);
-        showToast(`Vida reduzida para ${resolved.metadata.setsHpTo}!`);
+        showToast(t("playerPage.skills.healthReduced", { amount: resolved.metadata.setsHpTo }));
       }
 
       if (resolved.metadata.refillsMP) {
         const maxMp = source.maxMagicPoints ?? 0;
         await APIBattle.updateCharacterMp(source.battleID, maxMp);
-        showToast(`PA recarregado para ${maxMp}!`);
+        showToast(t("playerPage.skills.mpRefilled", { amount: maxMp }));
       }
 
       // Mezzo Forte: Reapply current stance (triggers stance benefits again)
@@ -2811,7 +3014,7 @@ export default function PlayerPage() {
         const stanceName = source.stance === 'Offensive' ? 'Ofensiva' :
                           source.stance === 'Defensive' ? 'Defensiva' :
                           source.stance === 'Virtuous' ? 'Virtuosa' : 'Sem Postura';
-        showToast(`Postura ${stanceName} reaplicada!`);
+        showToast(t("playerPage.skills.stanceReapplied", { stance: stanceName }));
       }
 
       // Swift Stride: Grant random MP between min and max
@@ -2825,7 +3028,7 @@ export default function PlayerPage() {
         const newMp = Math.min(mpAfterCost + apGranted, maxMp);
         await APIBattle.updateCharacterMp(source.battleID, newMp);
         if (apGranted > 0) {
-          showToast(`+${apGranted} PM concedidos! (${mpAfterCost} → ${newMp})`);
+          showToast(t("playerPage.skills.mpGranted", { amount: apGranted, before: mpAfterCost, after: newMp }));
         }
       }
 
@@ -2841,7 +3044,7 @@ export default function PlayerPage() {
             const maxMP = target.maxMagicPoints ?? 10;
             const newMP = Math.min(currentMP + resolved.metadata.grantsMP, maxMP);
             await APIBattle.updateCharacterMp(targetId, newMP);
-            showToast(`${target.name} recebeu ${resolved.metadata.grantsMP} PM! (${currentMP} → ${newMP})`);
+            showToast(t("playerPage.skills.allyReceivedMP", { name: target.name, amount: resolved.metadata.grantsMP, before: currentMP, after: newMP }));
           }
 
           // Grant immediate turn (reorder turns to put target next)
@@ -2866,33 +3069,15 @@ export default function PlayerPage() {
               const turnIds = reorderedTurns.map(t => t.id);
               await APIBattle.reorderTurns(turnIds);
 
-              showToast(`${target.name} jogará imediatamente!`);
+              showToast(t("playerPage.skills.allyPlaysImmediately", { name: target.name }));
             }
           }
         }
       }
 
       // From Fire: Heal self if target is burning
-      if (targetIsBurning && resolved.metadata.conditionalEffects) {
-        const healEffect = resolved.metadata.conditionalEffects.find(
-          e => e.effectType === "Heal" && e.condition === "target-burning"
-        );
-
-        if (healEffect) {
-          const healPercent = healEffect.amount;  // 20%
-          const maxHp = source.maxHealthPoints;
-          const healAmount = Math.floor(maxHp * (healPercent / 100));
-
-          await APIBattle.heal(source.battleID, healAmount);
-          showToast(`Alvo Queimando! Verso curado em ${healPercent}% (${healAmount} HP)!`);
-
-          // Trigger picto effects for heal (Verso self-heal from burn)
-          if (player.fightInfo && player.fightInfo.battleId) {
-            const allChars = player.fightInfo.characters ?? [];
-            await triggerOnHealAlly(source, source, allChars, player.fightInfo.battleId, player.pictos, player.luminas, healAmount);
-          }
-        }
-      }
+      // NOTE: The healing is now handled automatically by applySpecialEffects() in BattleSkillUtils.ts
+      // which processes conditionalEffects. No need to manually apply heal here.
 
       // Swift Stride: Switch to Virtuose if target is burning
       if (resolved.metadata.switchesToVirtuoseIfBurning) {
@@ -2900,7 +3085,7 @@ export default function PlayerPage() {
         const isBurning = targetStatuses.some(s => s.effectName === "Burning");
         if (isBurning) {
           await APIBattle.updateCharacterStance(source.battleID, "Virtuous");
-          showToast("Alvo está Queimando! Mudou para postura Virtuosa!");
+          showToast(t("playerPage.skills.burningTargetStance"));
         }
       }
 
@@ -2946,7 +3131,7 @@ export default function PlayerPage() {
         }
 
         const buffText = buffsPerAlly === 2 ? "2 buffs aleatórios" : "1 buff aleatório";
-        showToast(`Trombeta! ${buffText} aplicados em ${selectedAllies.length} aliado(s)!`);
+        showToast(t("playerPage.skills.trumpetBuffs", { buffs: buffText, count: selectedAllies.length }));
       }
 
       // Stendhal: Remove self-Shields
@@ -2956,7 +3141,7 @@ export default function PlayerPage() {
 
         if (shieldEffects.length > 0) {
           await APIBattle.removeStatus(source.battleID, "Shielded");
-          showToast(`${shieldEffects.length} Escudo(s) removido(s)!`);
+          showToast(t("playerPage.skills.shieldsRemoved", { count: shieldEffects.length }));
         }
       }
 
@@ -2968,7 +3153,7 @@ export default function PlayerPage() {
           ammount: 0,
           remainingTurns: 2
         });
-        showToast("Indefeso aplicado em si mesma!");
+        showToast(t("playerPage.skills.defenselessApplied"));
       }
 
       // Execute all special skill mechanics
@@ -3014,7 +3199,7 @@ export default function PlayerPage() {
             const randomStains = ["Lightning", "Earth", "Fire", "Ice"] as const;
             const randomStain = randomStains[Math.floor(Math.random() * randomStains.length)];
 
-            const currentStains: [string | null, string | null, string | null, string | null] = [
+            const currentStains: [StainType | null, StainType | null, StainType | null, StainType | null] = [
               updatedSource.stainSlot1 ?? null,
               updatedSource.stainSlot2 ?? null,
               updatedSource.stainSlot3 ?? null,
@@ -3025,36 +3210,68 @@ export default function PlayerPage() {
             await updateCharacterStains(source.battleID, newStains);
             await checkPlayerLoop(); // Update frontend immediately
 
-            showToast(`Crítico! Mancha ${randomStain} ganha!`);
+            showToast(t("playerPage.skills.criticalStainGained", { stain: randomStain }));
           }
         }
       }
 
       // Thermal Transfer: Grant second turn when stains consumed
       if (stainsConsumed && skillMetadata.stainGrantsSecondTurn) {
-        showToast("Segundo turno concedido!");
+        showToast(t("playerPage.skills.secondTurnGranted"));
         // Simply return without ending turn - skill execution continues
         // Player can immediately use another action
       }
 
-      // Handle Assault Zero: Rank up on crit
-      if (skillMetadata.ranksUpOnCrit) {
-        const critRolls = countCriticalRolls(lastDiceResult);
-        if (critRolls > 0) {
+      // Storm Caller: Apply status with correct amount based on stain consumption
+      if (skillId === "lune-storm-caller" && player.fightInfo) {
+        const stainAmount = stainsConsumed && consumedStainsList.length >= 2 ? 6 : 3;
+
+        // Apply StormCaller status to all enemies
+        const allEnemies = (player.fightInfo.characters ?? []).filter(c => c.isEnemy !== source.isEnemy);
+
+        for (const enemy of allEnemies) {
+          await APIBattle.addStatus({
+            battleCharacterId: enemy.battleID,
+            effectType: "StormCaller",
+            ammount: stainAmount,  // 3d6 or 6d6 based on stain consumption
+            remainingTurns: 3
+          });
+        }
+
+        // Show appropriate message
+        if (stainAmount === 6) {
+          showToast(t("playerPage.skills.stormCallerDoubled"));
+        } else {
+          showToast(t("playerPage.skills.stormCallerActivated"));
+        }
+      }
+
+      // Handle Perfection Points System (Verso)
+      if (skillMetadata.grantsPerfectionPoints || skillMetadata.bonusPerfectionOnCrit) {
+        const basePoints = skillMetadata.grantsPerfectionPoints || 0;
+
+        // Count critical rolls across ALL hits (not just the last one)
+        let totalCrits = 0;
+        for (const diceResult of allDiceResults) {
+          totalCrits += countCriticalRolls(diceResult);
+        }
+
+        // If ANY critical hit occurred, add the full bonus (not multiplied by crit count)
+        const critBonus = (totalCrits > 0 && skillMetadata.bonusPerfectionOnCrit)
+          ? skillMetadata.bonusPerfectionOnCrit
+          : 0;
+        const totalPoints = basePoints + critBonus;
+
+        if (totalPoints > 0) {
           try {
-            const success = await APIBattle.rankUpCharacter(source.battleID);
-            if (success) {
-              await checkPlayerLoop(); // Update frontend immediately to show new rank
+            const result = await APIBattle.addPerfectionPoints(source.battleID, totalPoints);
 
-              const updatedSource = player.fightInfo?.characters?.find(
-                c => c.battleID === player.fightInfo?.playerBattleID
-              );
-              const newRank = updatedSource?.perfectionRank ?? "?";
-
-              showToast(`Crítico! Rank subiu para ${newRank}!`);
+            if (result.success) {
+              await checkPlayerLoop(); // Update frontend immediately
+              // Perfection points and rank up are shown in the UI - no toast needed
             }
           } catch (error) {
-            console.error("Erro ao subir rank:", error);
+            console.error("Erro ao adicionar pontos de perfeição:", error);
           }
         }
       }
@@ -3062,14 +3279,16 @@ export default function PlayerPage() {
       setPendingSkillId(null);
       setIsSelectingSkillTarget(false);
       setIsExecutingSkill(false);
+      isExecutingSkillRef.current = false;
       setExcludeSelfFromTargeting(false);
 
     } catch (error) {
       console.error("Erro ao usar skill:", error);
-      showToast("Erro ao usar habilidade");
+      showToast(t("playerPage.errors.errorUsingSkill"));
       setPendingSkillId(null);
       setIsSelectingSkillTarget(false);
       setIsExecutingSkill(false);
+      isExecutingSkillRef.current = false;
       setExcludeSelfFromTargeting(false);
     }
   }
@@ -3102,10 +3321,10 @@ export default function PlayerPage() {
       }
 
       setIsReviveMode(false);
-      showToast(`${target.name} foi revivido com ${revivePercent}% de HP!`);
+      showToast(t("playerPage.revive.success", { name: target.name, percent: revivePercent }));
     } catch (e) {
       console.error("Erro ao reviver:", e);
-      showToast("Erro ao usar poção de reviver");
+      showToast(t("playerPage.errors.errorReviving"));
     }
   }
 
@@ -3138,7 +3357,7 @@ export default function PlayerPage() {
           checkBattleLog(playerInfo);
           resolve();
         } catch (e) {
-          showToast("Erro ao encerrar o defender");
+          showToast(t("playerPage.errors.errorDefending"));
           reject(e);
         }
       };
@@ -3158,16 +3377,16 @@ export default function PlayerPage() {
               });
             }, 600);  // Clear after 600ms
 
-            showToast("Você contra-atacou!");
+            showToast(t("playerPage.defense.counterAttacked"));
           } else {
-            showToast("Você não contra-atacou");
+            showToast(t("playerPage.defense.didNotCounterAttack"));
           }
           // Reload player data after API call
           const playerInfo = await APIPlayer.get(player.id, lastBattleLog);
           checkBattleLog(playerInfo);
           resolve();
         } catch (e) {
-          showToast("Erro ao encerrar o executar o counter");
+          showToast(t("playerPage.errors.errorCountering"));
           reject(e);
         }
       };
@@ -3187,25 +3406,25 @@ export default function PlayerPage() {
             }
           }
 
-          let description = "Você recebeu todo o dano.";
+          let description = t("playerPage.defense.tookFullDamage");
 
           if (defense === "block") {
             if (defenseValue > 0) {
-              description = `Você não conseguiu aparar, o golpe causou ${defenseValue} de dano`;
+              description = t("playerPage.defense.failedToParry", { damage: defenseValue });
             } else {
-              description = `Você conseguiu aparar o golpe!`;
+              description = t("playerPage.defense.successfulParry");
             }
           } else if (defense === "gradient-block") {
             if (defenseValue > 0) {
-              description = `Você não conseguiu aparar, o golpe causou ${defenseValue} de dano`;
+              description = t("playerPage.defense.failedToParry", { damage: defenseValue });
             } else {
-              description = `Você conseguiu aparar o golpe! É hora de um contra-ataque!`;
+              description = t("playerPage.defense.successfulParryCounter");
             }
           } else if (defense === "dodge") {
             if (defenseValue > 0) {
-              description = `Você não conseguiu desviar, o golpe causou ${defenseValue} de dano`;
+              description = t("playerPage.defense.failedToDodge", { damage: defenseValue });
             } else {
-              description = `Você conseguiu desviar do golpe!`;
+              description = t("playerPage.defense.successfulDodge");
 
               // Trigger picto effects on successful dodge
               if (playerChar && player.fightInfo?.battleId) {
@@ -3222,14 +3441,14 @@ export default function PlayerPage() {
             }
           } else if (defense === "jump") {
             if (defenseValue > 0) {
-              description = `Você não conseguiu pular do ataque e recebeu ${defenseValue} de dano`;
+              description = t("playerPage.defense.failedToJump", { damage: defenseValue });
             } else {
-              description = `Você conseguiu pular do ataque!`;
+              description = t("playerPage.defense.successfulJump");
             }
           }
 
           if (defenseValue == 0 && playerHasShield(player)) {
-            description = "Um escudo foi usado, você não recebeu dano"
+            description = t("playerPage.defense.shieldUsed")
           }
 
           const payload: CreateDefenseRequest = {
@@ -3243,7 +3462,7 @@ export default function PlayerPage() {
           showToast(description);
           setIsExecutingSkill(false);
         } catch (e) {
-          showToast("Falha ao registrar a defesa");
+          showToast(t("playerPage.errors.errorRegisteringDefense"));
           setIsExecutingSkill(false);
           reject(e);
         }
@@ -3274,7 +3493,7 @@ export default function PlayerPage() {
         await APIBattle.resolveStatus(payload);
         setIsExecutingSkill(false);
       } catch (e) {
-        showToast("Erro resolver o status");
+        showToast(t("playerPage.errors.errorResolvingStatus"));
         setIsExecutingSkill(false);
       }
     };

@@ -108,9 +108,13 @@ export interface SkillMetadata {
     requiresAllStains?: boolean;         // Requires Lightning, Earth, Fire, and Ice to cast (Elemental Genesis)
     stainDeterminedElement?: boolean;    // Element determined by stain composition (Sky Break)
     canBreakWithStains?: boolean;        // Can Break if 4 stains consumed (Mayhem)
+    randomElementPerHit?: boolean;       // Each hit uses a random element (Elemental Genesis)
+    randomElements?: Element[];          // Array of elements to randomly choose from per hit
 
     // Verso's Perfection Rank System
-    ranksUpOnCrit?: boolean;             // Ranks up user by 1 level if at least 1 critical hit occurs (Assault Zero)
+    ranksUpOnCrit?: boolean;             // DEPRECATED: Use grantsPerfectionPoints instead
+    grantsPerfectionPoints?: number;     // Base perfection points granted when using this skill (Assault Zero: 5)
+    bonusPerfectionOnCrit?: number;      // Fixed bonus if ANY critical hit occurs (not multiplied) (Assault Zero: +10 = 1 full rank)
     rankConditionalBonus?: {              // Additional bonuses when used at specific rank
         rank: string;
         damageMultiplier?: number;        // Additional damage multiplier (Assault Zero at B: +50%)
@@ -123,9 +127,9 @@ export interface SkillMetadata {
     rankConditionalDuration?: { rank: string; duration: number };  // Changes effect duration at specific rank (Powerful at A: 5 turns)
     gainsStainOnCrit?: boolean;          // Gains corresponding stain on critical hits (Elemental Trick)
     transformsStainToLight?: { from: "Fire"; to: "Light" };  // Transforms Fire stain to Light stain (Electrify)
-    gainsPerfectionOnCrit?: boolean;     // Critical hits generate +1 Perfection (Assault Zero)
     gainsPerfection?: { min: number; max: number };  // Gives random Perfection progress (Verso Puissant)
     gainsPerfectionPerHit?: number;      // +X Perfection per hit (Fleuret Fury: +1 per hit, 8 total)
+    criticalGivesPerfectionBonus?: boolean;  // Critical hits add +1 extra Perfection per hit (Assault Zero only)
     gainsPerfectionRank?: number;        // Gains +X Perfection Rank (Fléau: +1, Poignée Forte: +1)
     playsSecondTime?: boolean;           // Plays a second time (Deux Moulinet: total 2 hits)
     upgradesRankToSOnBreak?: boolean;    // When enemy breaks, auto-upgrade Perfection to S Rank (Le Tremblement)
@@ -945,26 +949,28 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "lune-revitalization",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "all-allies",  // 1-3 allies (random)
+        targetScope: "ally",  // Can target single ally or use without target to heal all
+        canTargetSelf: true,  // Allow healing self
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [
             {
                 effectType: "Heal",
-                amount: 0,  // 40-60% Health
+                amount: 0,  // 40-60% Health (determined by dice roll)
                 targetType: "ally"
             }
         ],
         conditionalEffects: [
             {
                 effectType: "Regeneration",
-                amount: 0,
+                amount: 2,
                 remainingTurns: 3,
-                targetType: "ally"
+                targetType: "ally",
+                condition: "stains-consumed"
             }
         ],
         consumesStains: [{ stain: "Fire", count: 3 }],  // Consumes 3 Fire to apply Regeneration
-        randomAllyCount: { min: 1, max: 3 },  // Heals 1-3 random allies
+        randomAllyCount: { min: 1, max: 1 },  // Flag for Revitalization special handling
         gainsStains: ["Light"]
     },
 
@@ -993,23 +999,40 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "all",
         usesWeaponElement: false,
         forcedElement: "Lightning",
-        primaryEffects: [],
-        conditionalEffects: [],
+        primaryEffects: [
+            {
+                effectType: "StormCaller",
+                amount: 3,  // 3d6 Lightning damage per turn (base)
+                remainingTurns: 3,
+                targetType: "all-enemies"
+            }
+        ],
+        conditionalEffects: [
+            {
+                effectType: "StormCaller",
+                amount: 6,  // 6d6 Lightning damage per turn (if 2 Fire stains consumed)
+                remainingTurns: 3,
+                targetType: "all-enemies",
+                condition: "stains-consumed"
+            }
+        ],
         consumesStains: [{ stain: "Fire", count: 2 }],
         gainsStains: ["Lightning", "Light"]
     },
 
     "lune-terraquake": {
         skillId: "lune-terraquake",
-        damageLevel: "low",
-        hitCount: 0,  // Duration-based (3-5 turns)
+        damageLevel: "none",
+        hitCount: 0,
         targetScope: "all",
         usesWeaponElement: false,
         forcedElement: "Earth",
-        primaryEffects: [],
+        primaryEffects: [
+            { effectType: "Earthquake", amount: 1, remainingTurns: 3, targetType: "all-enemies" }
+        ],
         conditionalEffects: [],
-        canBreak: true,
         consumesStains: [{ stain: "Lightning", count: 2 }],
+        stainExtendsDoT: { baseDuration: 3, extendedDuration: 5 },
         gainsStains: ["Earth", "Light"]
     },
 
@@ -1046,9 +1069,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 8,  // Random element per hit
         targetScope: "all",
         usesWeaponElement: false,
+        randomElementPerHit: true,  // Each hit uses a random element
+        randomElements: ["Lightning", "Earth", "Fire", "Ice"],
         primaryEffects: [],
         conditionalEffects: [],
         requiresAllStains: true,  // Requires Lightning, Earth, Fire, and Ice to cast
+        noStainDamageBonus: true,  // Consuming stains does NOT grant damage bonus
         consumesStains: [
             { stain: "Lightning", count: 1 },
             { stain: "Earth", count: 1 },
@@ -1169,9 +1195,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        gainsPerfectionOnCrit: true,  // Critical hits generate +1 Perfection
+        gainsPerfectionPerHit: 1,  // +1 per hit, +2 if critical
+        criticalGivesPerfectionBonus: true,  // Critical hits give +1 extra Perfection
         rankConditionalBonus: { rank: "B", damageMultiplier: 1.5 }  // At Rank B: +50% damage bonus
-        // Perfection: B Rank increases damage
         // Starting skill for Verso
     },
 
@@ -1546,14 +1572,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "Aureole",  // Revives Verso if he dies
+                effectType: "Aureole",  // Revives Verso if he dies (no turn limit)
                 amount: 1,
-                remainingTurns: 0,
                 targetType: "self"
             }
         ],
         conditionalEffects: [],
-        gainsPerfectionPerHit: 1  // +1 Perfection per hit (8 total)
+        gainsPerfectionPerHit: 2  // +2 Perfection per hit (16 total, +3 if critical)
         // Gradient Skill: Does not consume a turn
         // Requires Relationship Level 7 with Esquie
     },

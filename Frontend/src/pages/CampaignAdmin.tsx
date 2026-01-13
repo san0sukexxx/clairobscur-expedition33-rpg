@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiShare2 } from "react-icons/fi";
 import { FaUserFriends, FaFileAlt, FaShieldAlt } from "react-icons/fa";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
@@ -9,6 +9,7 @@ import { APICampaign, type Campaign } from "../api/APICampaign";
 import CampaignAdminSheets from "../components/CampaignAdminSheets";
 import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
 import { t } from "../i18n";
+import { useToast } from "../components/Toast";
 
 export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
@@ -18,6 +19,7 @@ export default function CampaignAdmin() {
     const { campaign } = useParams<{ campaign?: string }>();
     const campaignId = campaign ? parseInt(campaign, 10) : null;
     const navigate = useNavigate();
+    const { showToast } = useToast();
 
     const { items, loading, error, reload } = useApiListRaw<GetPlayerResponse>(
         () => (campaignId !== null ? APICampaignPlayer.list(campaignId) : Promise.resolve([])),
@@ -76,6 +78,43 @@ export default function CampaignAdmin() {
         }
     }
 
+    function handleShareCampaign() {
+        if (campaignId !== null) {
+            const url = `${window.location.origin}/character-sheet-list/${campaignId}`;
+
+            // Método alternativo caso navigator.clipboard não esteja disponível
+            const copyToClipboard = async (text: string) => {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(text);
+                } else {
+                    // Fallback para navegadores mais antigos
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        return Promise.resolve();
+                    } catch (err) {
+                        document.body.removeChild(textArea);
+                        return Promise.reject(err);
+                    }
+                }
+            };
+
+            copyToClipboard(url)
+                .then(() => {
+                    showToast(t("campaigns.linkCopied"));
+                })
+                .catch(() => {
+                    showToast(t("errors.copyFailed"));
+                });
+        }
+    }
+
     return (
         <div className="min-h-dvh bg-base-200 flex flex-col">
             {/* Navbar */}
@@ -84,7 +123,15 @@ export default function CampaignAdmin() {
                     <span className="text-xl font-bold text-primary">{t("campaigns.campaignPanel")}</span>
                 </div>
 
-                <div className="flex-none">
+                <div className="flex-none flex gap-2">
+                    <button
+                        onClick={handleShareCampaign}
+                        className="btn btn-ghost gap-2"
+                        title="Compartilhar campanha"
+                    >
+                        <FiShare2 />
+                        {t("campaigns.share") || "Compartilhar"}
+                    </button>
                     <button
                         onClick={() => navigate("/")}
                         className="btn btn-ghost gap-2"

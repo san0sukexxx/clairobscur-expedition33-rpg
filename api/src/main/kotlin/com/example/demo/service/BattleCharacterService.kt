@@ -237,6 +237,10 @@ class BattleCharacterService(
 
                         // Character revived: add back to turn queue
                         if (wasDead && isAlive) {
+                                // Set canRollInitiative to false since they're joining the battle automatically
+                                entity.canRollInitiative = false
+                                repository.save(entity)
+
                                 // Add character to the end of the turn queue
                                 val lastTurn = battleTurnRepository.findTopByBattleIdOrderByPlayOrderDesc(battleId)
                                 val nextOrder = (lastTurn?.playOrder ?: 0) + 1
@@ -451,6 +455,74 @@ class BattleCharacterService(
                 )
 
                 return true
+        }
+
+        @Transactional
+        fun addPerfectionPoints(id: Int, points: Int): Map<String, Any> {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return mapOf("success" to false)
+
+                val entity = opt.get()
+                val currentRank = entity.perfectionRank ?: "D"
+                var currentProgress = entity.rankProgress ?: 0
+
+                // If already at S rank, don't add more points
+                if (currentRank == "S") {
+                        return mapOf(
+                                "success" to true,
+                                "rankedUp" to false,
+                                "newRank" to "S",
+                                "progress" to 0,
+                                "pointsAdded" to 0
+                        )
+                }
+
+                // Add points
+                currentProgress += points
+
+                // Points needed to rank up (10 points per rank)
+                val pointsNeeded = 10
+                var rankedUp = false
+                var newRank = currentRank
+
+                // Check if we can rank up (may rank up multiple times if we have enough points)
+                while (currentProgress >= pointsNeeded && newRank != "S") {
+                        currentProgress -= pointsNeeded
+                        newRank = when (newRank) {
+                                "D" -> "C"
+                                "C" -> "B"
+                                "B" -> "A"
+                                "A" -> "S"
+                                else -> break
+                        }
+                        rankedUp = true
+                }
+
+                // If reached S rank, reset progress to 0 (no overflow)
+                if (newRank == "S") {
+                        currentProgress = 0
+                }
+
+                // Save changes
+                entity.perfectionRank = newRank
+                entity.rankProgress = currentProgress
+                repository.save(entity)
+
+                // Log rank change if ranked up
+                if (rankedUp) {
+                        val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+                        battleLogRepository.save(
+                                BattleLog(battleId = battleId, eventType = "RANK_CHANGED", eventJson = null)
+                        )
+                }
+
+                return mapOf(
+                        "success" to true,
+                        "rankedUp" to rankedUp,
+                        "newRank" to newRank,
+                        "progress" to currentProgress,
+                        "pointsAdded" to points
+                )
         }
 
         @Transactional
@@ -900,15 +972,11 @@ class BattleCharacterService(
                 val sourceId = sourceCharacter.id ?: return
                 val battleId = sourceCharacter.battleId ?: return
 
-                println("[BattleCharacterService] Checking IntenseFlames removal - sourceCharacterId: $sourceId, characterName: ${sourceCharacter.characterName}")
-
                 // Find all IntenseFlames effects caused by this character
                 val intenseFlamesEffects = battleStatusEffectRepository.findByEffectTypeAndSourceCharacterId(
                         "IntenseFlames",
                         sourceId
                 )
-
-                println("[BattleCharacterService] Found ${intenseFlamesEffects.size} IntenseFlames effect(s) caused by this character")
 
                 // Remove all IntenseFlames effects caused by this character
                 intenseFlamesEffects.forEach { effect ->

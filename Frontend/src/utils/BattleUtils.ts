@@ -95,6 +95,7 @@ export function getStatusLabel(status: StatusType): string {
         case "Plagued": return t("battle.statusEffects.Plagued");
         case "Burning": return t("battle.statusEffects.Burning");
         case "IntenseFlames": return t("battle.statusEffects.IntenseFlames");
+        case "StormCaller": return t("battle.statusEffects.StormCaller");
         case "Silenced": return t("battle.statusEffects.Silenced");
         case "Dizzy": return t("battle.statusEffects.Dizzy");
         case "Fragile": return t("battle.statusEffects.Fragile");
@@ -124,6 +125,7 @@ export function getStatusLabel(status: StatusType): string {
         case "Defenceless": return t("battle.statusEffects.Defenceless");
         case "Regen": return t("battle.statusEffects.Regen");
         case "Curse": return t("battle.statusEffects.Curse");
+        case "Earthquake": return t("battle.statusEffects.Earthquake");
         case "free-shot": return t("battle.statusEffects.freeShot");
         case "jump": return t("battle.statusEffects.jump");
         case "gradient": return t("battle.statusEffects.gradient");
@@ -166,6 +168,7 @@ export function getStatusDescription(status: StatusType): string {
         case "Shielded": return t("battle.statusDescriptions.Shielded");
         case "Burning": return t("battle.statusDescriptions.Burning");
         case "IntenseFlames": return t("battle.statusDescriptions.IntenseFlames");
+        case "StormCaller": return t("battle.statusDescriptions.StormCaller");
         case "Hastened": return t("battle.statusDescriptions.Hastened");
         case "Slowed": return t("battle.statusDescriptions.Slowed");
         case "Empowered": return t("battle.statusDescriptions.Empowered");
@@ -212,6 +215,7 @@ export function getStatusDescription(status: StatusType): string {
         case "Defenceless": return t("battle.statusDescriptions.Defenceless");
         case "Regen": return t("battle.statusDescriptions.Regen");
         case "Curse": return t("battle.statusDescriptions.Curse");
+        case "Earthquake": return t("battle.statusDescriptions.Earthquake");
         case "free-shot": return t("battle.statusDescriptions.freeShot");
         case "jump": return t("battle.statusDescriptions.jump");
         case "gradient": return t("battle.statusDescriptions.gradient");
@@ -225,6 +229,8 @@ export function getResolveButtonLabel(status: StatusType): string {
         case "Frozen":
         case "Burning":
         case "IntenseFlames":
+        case "Earthquake":
+        case "StormCaller":
         case "Confused":
             return t("battle.resolveButton.resolve");
         default:
@@ -237,6 +243,8 @@ export function statusNeedsResolveRoll(status: StatusResponse): boolean {
         case "Frozen":
         case "Burning":
         case "IntenseFlames":
+        case "Earthquake":
+        case "StormCaller":
         case "Confused":
             return true;
         default:

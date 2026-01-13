@@ -101,7 +101,7 @@ export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: Wea
 export function calculateStatusResolvedTotalValue(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, status: StatusResponse): number {
     switch (status.effectName) {
         case "Regeneration":
-            return Math.floor(calculateMaxHP(player, weaponInfo) / status.ammount / 10);
+            return Math.floor(calculateMaxHP(player, weaponInfo) * status.ammount / 10);
         default:
             return 0;
     }

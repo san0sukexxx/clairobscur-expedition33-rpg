@@ -1794,7 +1794,9 @@
       "title": "Campanhas",
       "noCampaigns": "Nenhuma campanha disponível.",
       "campaignPanel": "Painel da Campanha",
-      "campaignAdmin": "Administração da campanha"
+      "campaignAdmin": "Administração da campanha",
+      "share": "Compartilhar",
+      "linkCopied": "Link copiado para o clipboard!"
     },
     "createCampaign": {
       "title": "Criar Campanha",
@@ -1940,6 +1942,7 @@
       "selectSkill": "Selecione uma habilidade",
       "skillBlocked": "Habilidade Bloqueada",
       "locked": "Bloqueado",
+      "noDeadAllies": "Não há aliados mortos",
       "gustave-lumiere-assault": {
         "name": "Assalto Luimièriano",
         "description": "Causa dano baixo em alvo único. 5 ataques. Usa elemento da arma. Acertos críticos geram 1 Carga adicional."
@@ -2034,11 +2037,11 @@
       },
       "lune-storm-caller": {
         "name": "Invocador da Tempestade",
-        "description": "Todos os inimigos recebem dano médio de Raio no fim do turno e dano baixo quando recebem dano. Duração: 3 turnos. Consome 2 Manchas de Fogo para dobrar os ataques de trovão no fim do turno. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Todos os inimigos recebem dano médio de Raio no começo do turno e dano baixo quando recebem dano. Duração: 3 turnos. Consome 2 Manchas de Fogo para dobrar os ataques de trovão no começo do turno. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-terraquake": {
         "name": "Terremoto",
-        "description": "Causa dano baixo de Terra e dano de Break a todos os inimigos a cada turno. Duração: 3 turnos. Consome 2 Manchas de Raio para estender a duração para 5 turnos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Aplica o status Terremoto a todos os inimigos por 3 turnos. No início de seus turnos, personagens com Terremoto recebem 1d6 de dano e sofrem quebra se estiverem frágeis (recebem 150% do dano que causou a quebra). Consome 2 Manchas de Raio para estender a duração para 5 turnos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-typhoon": {
         "name": "Tufão",
@@ -2050,7 +2053,7 @@
       },
       "lune-revitalization": {
         "name": "Revitalização",
-        "description": "Cura 1-3 aliados em 40-60% de Vida. Consome 3 Manchas de Fogo para também aplicar Regeneração por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Role 1d6: 1-2 = cura 1 aliado em 40% de Vida, 3-6 = cura todos os aliados em 60% de Vida. Consome 3 Manchas de Fogo para também aplicar Regeneração 2 por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-fire-rage": {
         "name": "Fúria Flamejante",
@@ -2286,15 +2289,15 @@
       },
       "verso-angels-eyes": {
         "name": "Olhos do Anjo",
-        "description": "Habilidade Gradiente (não consome turno). Causa dano Físico extremo. 8 golpes. Ganha 1 Perfeição adicional por golpe. Aplica Auréola em Verso, revivendo-o se morrer."
+        "description": "Habilidade Gradiente (não consome turno). Causa dano Físico extremo. 8 golpes. Ganha +2 pontos de Perfeição por golpe. Aplica Auréola em Verso, revivendo-o se morrer."
       },
       "verso-ascending-assault": {
         "name": "Assalto Ascendente",
         "description": "Causa dano baixo em alvo único. 1 golpe. Usa elemento da arma. Aumenta dano a cada uso. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 5 para 2."
       },
       "verso-assault-zero": {
-        "name": "Assalto Zero",
-        "description": "Causa dano baixo em alvo único. 5 golpes. Usa elemento da arma. Acertos Críticos geram 1 Perfeição adicional. Se Verso usar esta habilidade no Rank B de Perfeição, o dano é aumentado."
+        "name": "Ofensiva Zero",
+        "description": "Causa dano baixo em alvo único. 5 golpes. Usa elemento da arma. Ganha +1 ponto de Perfeição por golpe. Se Verso usar esta habilidade no Rank B de Perfeição, o dano é aumentado."
       },
       "verso-berserk-slash": {
         "name": "Corte Berserk",
@@ -2385,7 +2388,7 @@
         "description": "Após 1 turno, causa dano Físico extremo em alvo único. 13 golpes. Interrompido se receber qualquer dano. Se Verso usar esta habilidade no Rank S de Perfeição, o dano é aumentado."
       },
       "verso-striker": {
-        "name": "Atacante",
+        "name": "Estocada",
         "description": "Habilidade Gradiente (não consome turno). Causa dano Físico alto em alvo único. 1 golpe. Pode Quebrar."
       },
       "verso-strike-storm": {
@@ -2670,7 +2673,8 @@
     "errors": {
       "failedToLoad": "Falha ao carregar dados da campanha",
       "errorLoading": "Erro ao carregar:",
-      "errorReloading": "Erro ao recarregar dados do player:"
+      "errorReloading": "Erro ao recarregar dados do player:",
+      "copyFailed": "Erro ao copiar link"
     },
     "placeholders": {
       "enterName": "Digite o nome...",
@@ -2735,6 +2739,7 @@
         "Marked": "Marcado",
         "Plagued": "Pesteado",
         "Burning": "Queimando",
+        "StormCaller": "⚡ Tempestade",
         "Silenced": "Silenciado",
         "Dizzy": "Tonto",
         "Fragile": "Frágil",
@@ -2765,6 +2770,7 @@
         "Regen": "Regeneração",
         "Curse": "Maldição",
         "IntenseFlames": "Chamas Intensas",
+        "Earthquake": "Terremoto",
         "freeShot": "Free Shot",
         "jump": "Pular",
         "gradient": "Gradiente",
@@ -2774,6 +2780,7 @@
         "Frozen": "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.",
         "Shielded": "Cada escudo anula um ataque completamente.",
         "Burning": "Causa dano no início do turno. Cada queimadura causa 1d6 de dano.",
+        "StormCaller": "Causa dano de Raio no início do turno. Cada stack causa 1d6 de dano de Raio.",
         "Hastened": "Melhora a esquiva e o pulo.",
         "Slowed": "Dificulta a esquiva e o pulo.",
         "Empowered": "Melhora seu ataque.",
@@ -2793,7 +2800,7 @@
         "Plagued": "O personagem tem –5 PV máximos até o fim da cena. Essa condição pode acumular, diminuindo 5 PV por cada acumulo, até o personagem ficar com o mínimo de 1 PV máximo.",
         "Silenced": "Não pode usar habilidades.",
         "Dizzy": "Perda em ataques usando tiro livre ou habilidades.",
-        "Fragile": "Receber um dano maior que o dobro de sua resistência te torna frágil. Estando frágil você fica vulnerável a quebra.",
+        "Fragile": "Receber um dano maior que o dobro de sua resistência te torna frágil por 3 turnos. Estando frágil você fica vulnerável a quebra.",
         "Broken": "Você não pode se defender ou pode agir.",
         "Fleeing": "O personagem está tentando fugir da batalha e não pode realizar nenhuma outra ação.",
         "FireVulnerability": "O personagem recebe dano aumentado de ataques de Fogo.",
@@ -2814,12 +2821,13 @@
         "EnfeeblingMark": "Marca que enfraquece o alvo, reduzindo seu poder.",
         "DamageReduction": "Reduz o dano recebido de todas as fontes.",
         "SuccessiveParry": "Melhora a capacidade de aparar ataques consecutivos.",
-        "Aureole": "Aura de proteção que concede benefícios.",
+        "Aureole": "Revive o personagem com 30% de HP quando ele morre. Consumido ao ser usado.",
         "Vulnerable": "O personagem recebe dano aumentado de todas as fontes.",
         "DoubleDamage": "O próximo ataque causa o dobro de dano.",
         "Defenceless": "O personagem não pode se defender de ataques.",
         "Regen": "Regenera pontos de vida ao longo do tempo.",
         "Curse": "Maldição que causa efeitos negativos contínuos.",
+        "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano. Se o personagem estiver frágil, sofre quebra e recebe 150% do dano que causou a quebra.",
         "IntenseFlames": "Rola Xd6 de dano quando resolvido (X = acúmulos atuais). Aumenta em 2 acúmulos no fim do turno. Não expira. Removido de todos os inimigos quando o conjurador recebe dano.",
         "freeShot": "Acumula bônus para ataques básicos.",
         "jump": "Ignora terreno ou obstáculos temporariamente.",
@@ -2830,6 +2838,178 @@
       "resolveButton": {
         "resolve": "Resolver",
         "ok": "Ok"
+      }
+    },
+    "playerPage": {
+      "title": "Ficha do Jogador",
+      "loading": "Carregando...",
+      "battle": {
+        "battleInProgress": "Uma batalha está em andamento",
+        "battleEnded": "A batalha foi encerrada",
+        "joinedBattle": "Agora você está participando da batalha",
+        "flyingEnemyWarning": "Este inimigo está voando e só pode ser atingido por tiros livres",
+        "comboAttack": "Combo Attack! {count} hits!",
+        "attemptingFlee": "Tentando fugir...",
+        "attackDamage": "Ataque {index}: {damage} de dano"
+      },
+      "initiative": {
+        "rollResult": "Resultado da rolagem",
+        "roll": "Rolagem",
+        "ability": "Habilidade",
+        "pictoBonus": "Bônus Pictos",
+        "total": "Total",
+        "criticals": "Críticos",
+        "criticalFailures": "Falhas críticas"
+      },
+      "attack": {
+        "power": "Poder",
+        "weapon": "Arma",
+        "empowered": "Poderoso",
+        "weakened": "Enfraquecido",
+        "freeAimVulnerability": "Vulnerabilidade tiro-livre",
+        "frenzy": "Frenesi",
+        "weaponElement": "Elemento da arma",
+        "dizzy": "Está tonto",
+        "breaker": "Breaker: Alvo {status}",
+        "breakingBurn": "Breaking Burn: Alvo Burning+{status}",
+        "markedPenalty": "Você está Marcado! Alvo pode ter Enfeebling Mark",
+        "burnAffinity": "Burn Affinity: Alvo Burning",
+        "teamwork": "Teamwork: Todos aliados vivos",
+        "fasterThanStrong": "Faster Than Strong: Turno extra ativo",
+        "hasShield": "Possui escudo (Anula todo dano)"
+      },
+      "errors": {
+        "errorCheckingEditing": "Erro ao verificar editing",
+        "errorRegisteringInitiative": "Erro ao registrar iniciativa",
+        "errorSavingPlayer": "Erro ao salvar player",
+        "errorEndingTurn": "Erro ao encerrar o turno",
+        "errorAttacking": "Erro ao atacar",
+        "errorFleeing": "Erro ao tentar fugir",
+        "errorSkillNotFound": "Erro: Habilidade não encontrada",
+        "errorCharacterNotFound": "Erro: Personagem não encontrado",
+        "errorCharacterNotFoundInBattle": "Erro: Personagem não encontrado na batalha",
+        "errorSkillNotOwned": "Erro: Você não possui esta habilidade",
+        "errorUsingSkill": "Erro ao usar habilidade",
+        "errorReviving": "Erro ao usar poção de reviver",
+        "errorDefending": "Erro ao encerrar o defender",
+        "errorCountering": "Erro ao encerrar o executar o counter",
+        "errorRegisteringDefense": "Falha ao registrar a defesa",
+        "errorResolvingStatus": "Erro resolver o status"
+      },
+      "skills": {
+        "noDeadAllies": "Não há aliados mortos",
+        "noValidEnemies": "Nenhum inimigo válido encontrado!",
+        "requiresAllStains": "Requer todas as 4 manchas elementais (Raio, Terra, Fogo, Gelo)!",
+        "insufficientGradientCharges": "Cargas de Gradiente insuficientes! Necessário: {required}, Disponível: {available}",
+        "insufficientMP": "MP insuficiente! Necessário: {required}, Disponível: {available}",
+        "parriesReducedCost": "{count} Aparada(s) bem sucedida(s)! Custo reduzido de {original} para {new} MP",
+        "fireVulnerability": "Alvo vulnerável a Fogo! Dano x2!",
+        "foretellConsumed": "{target}: Predição consumida! Dano x{multiplier}",
+        "stainsConsumed": "{count} Mancha(s) consumida(s)! Dano +{percent}%",
+        "aegidExtended": "Duração do Égide estendida! (3 turnos)",
+        "criticalExtraHit": "Crítico! +1 acerto extra!",
+        "gradientChargesConsumed": "{count} Carga(s) de Gradiente consumida(s)!",
+        "allAlliesHealed": "Todos os aliados curados para {percent}% de HP!",
+        "allDebuffsRemoved": "Todos os debuffs removidos dos aliados!",
+        "allyHealed": "{name} curado em {percent}% ({amount} HP)!",
+        "debuffsRemovedFrom": "Debuffs removidos de {name}!",
+        "buffsCopied": "Buffs copiados para outros aliados!",
+        "stanceChanged": "Postura alterada para {stance}!",
+        "healthReduced": "Vida reduzida para {amount}!",
+        "mpRefilled": "PA recarregado para {amount}!",
+        "stanceReapplied": "Postura {stance} reaplicada!",
+        "mpGranted": "+{amount} PM concedidos! ({before} → {after})",
+        "allyReceivedMP": "{name} recebeu {amount} PM! ({before} → {after})",
+        "allyPlaysImmediately": "{name} jogará imediatamente!",
+        "burningTargetHeal": "Alvo Queimando! Verso curado em {percent}% ({amount} HP)!",
+        "burningTargetStance": "Alvo está Queimando! Mudou para postura Virtuosa!",
+        "trumpetBuffs": "Trombeta! {buffs} aplicados em {count} aliado(s)!",
+        "shieldsRemoved": "{count} Escudo(s) removido(s)!",
+        "defenselessApplied": "Indefeso aplicado em si mesma!",
+        "criticalStainGained": "Crítico! Mancha {stain} ganha!",
+        "secondTurnGranted": "Segundo turno concedido!",
+        "stormCallerActivated": "Tempestade ativada! Inimigos sofrerão 3d6 de dano de Raio por turno durante 3 turnos.",
+        "stormCallerDoubled": "Tempestade DOBRADA! Inimigos sofrerão 6d6 de dano de Raio por turno durante 3 turnos!",
+        "criticalRankUp": "Crítico! Rank subiu para {rank}!",
+        "perfectionGained": "+{points} Perfeição ({progress}/{max})",
+        "perfectionRankUp": "Subiu para Rank {rank}!",
+        "perfectionMax": "Max",
+        "elementAttack": "Elemento do ataque: {element}",
+        "rolledDiceValue": "Rolou {value}!",
+        "rolledDiceShieldApplied": "Rolou {value}! Escudo aplicado em toda a equipe!",
+        "rolledDiceShieldSingleTarget": "Rolou {value}! Escudo aplicado apenas no alvo escolhido.",
+        "rolledDicePowerfulTeam": "Rolou {value}! Powerful afeta toda equipe!",
+        "rolledDicePowerfulVerso": "Rolou {value}! Powerful afeta apenas Verso.",
+        "rolledDiceReviving": "Rolou {value}! Revivendo aliados com {percent}% de HP!",
+        "rolledDiceRevivingAlly": "Rolou {value}! Revivendo {name} com {percent}% de HP!",
+        "allyRevivedWithMP": "{name} revivido com 2 PM!",
+        "twilightExtended": "Duração do Crepúsculo estendida! (+1 turno)",
+        "turnDelayed": "Turno atrasado em {positions} posições!",
+        "stanceBonusApplied": "Bonus de postura! +{count} Queimaduras por acerto",
+        "absorptionHeal": "Absorção! Cura de {percent}% HP ({amount})",
+        "searingBond": "Vínculo Ardente: {count} inimigo(s) afetado(s)!",
+        "doubleCritDamage": "Crítico duplo! ({multiplier}x de dano)",
+        "hpSacrifice": "Sacrificando {percent}% HP ({amount})! Dano +{bonus}",
+        "hpDrained": "HP drenado de aliados em combate: {amount} (Dano +{amount})",
+        "totalEnemyForetell": "Predição total de inimigos: {amount} (Dano +{amount})",
+        "foretellsConsumed": "Consumindo {count} Predições! Dano +{bonus}",
+        "foretellsConsumedHeal": "Consumindo {count} Predições! Cura +{bonus}%",
+        "foretellsConsumedMP": "Consumindo {count} Predições! MP a conceder: {amount}",
+        "burnsConsumed": "Consumindo {count} Queimadura(s)! Dano +{percent}%",
+        "markedTarget": "Alvo Marcado! Dano +{percent}%",
+        "perfectionRank": "Rank {rank} de Perfeição! Dano +{percent}%",
+        "perfectionRankBonus": "Rank {rank} de Perfeição! Dano +{percent}% (bônus da habilidade!)",
+        "lowHPBonus": "HP baixo! Dano +{percent}%",
+        "lampmasterStacks": "Lampmaster Stacks: {count} (+{percent}% dano)",
+        "burningTarget": "Alvo queimando! Dano +50%",
+        "stunnedTarget": "Alvo atordoado! Dano x2",
+        "powerlessTarget": "Alvo impotente! Dano +50%",
+        "healPerHit": "Acertos recebidos: {count} (+{percent}% dano)",
+        "criticalForetell": "Crítico! +{count} Predição adicional",
+        "targetBurning": "Alvo queimando! Dano +50%",
+        "hitsCountAnnouncement": "{count} acerto(s)!",
+        "trumpetRandomBuffs": "2 buffs aleatórios",
+        "trumpetSingleBuff": "1 buff aleatório",
+        "mpConceded": "{amount} PM concedidos ao aliado!",
+        "instantHeal": "Cura instantânea de {percent}% HP aplicada a todos os aliados!"
+      },
+      "defense": {
+        "tookFullDamage": "Você recebeu todo o dano.",
+        "failedToParry": "Você não conseguiu aparar, o golpe causou {damage} de dano",
+        "successfulParry": "Você conseguiu aparar o golpe!",
+        "failedToParryCounter": "Você não conseguiu aparar, o golpe causou {damage} de dano",
+        "successfulParryCounter": "Você conseguiu aparar o golpe! É hora de um contra-ataque!",
+        "failedToDodge": "Você não conseguiu desviar, o golpe causou {damage} de dano",
+        "successfulDodge": "Você conseguiu desviar do golpe!",
+        "failedToJump": "Você não conseguiu pular do ataque e recebeu {damage} de dano",
+        "successfulJump": "Você conseguiu pular do ataque!",
+        "shieldUsed": "Um escudo foi usado, você não recebeu dano",
+        "counterAttacked": "Você contra-atacou!",
+        "didNotCounterAttack": "Você não contra-atacou"
+      },
+      "flee": {
+        "title": "Tentar fugir",
+        "confirmation": "Tem certeza que deseja tentar fugir da batalha?",
+        "warning": "Toda sua equipe receberá o status \"Fugindo\".",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar"
+      },
+      "revive": {
+        "success": "{name} foi revivido com {percent}% de HP!"
+      },
+      "modals": {
+        "rollResult": "Resultado da rolagem"
+      },
+      "navigation": {
+        "tabs": {
+          "sheet": "Ficha",
+          "weapon": "Arma",
+          "pictos": "Pictos",
+          "luminas": "Luminas",
+          "inventory": "Inventário",
+          "skills": "Habilidades",
+          "combat": "Combate"
+        }
       }
     }
   }

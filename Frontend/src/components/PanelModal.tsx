@@ -54,9 +54,8 @@ export default function PanelModal({
 
     return (
         <div
-            aria-hidden={!open}
-            aria-modal="true"
-            role="dialog"
+            aria-modal={open ? "true" : undefined}
+            role={open ? "dialog" : undefined}
             className={[
                 "fixed inset-0 z-[1000] flex items-center justify-center",
                 "transition-opacity duration-200",

@@ -4,6 +4,7 @@ import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
+import { t } from "../i18n";
 
 interface PlayerStatusFloatingProps {
     player: GetPlayerResponse | null;
@@ -21,6 +22,9 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
         characters.find(c => c.battleID === playerBattleID) ?? characters.find(c => !c.isEnemy);
 
     if (!ch) return null;
+
+    // Don't show if player can still roll initiative (hasn't joined battle yet)
+    if (ch.canRollInitiative) return null;
 
     // Check if player is in the turns queue
     const playerInTurns = player?.fightInfo?.turns?.some(
@@ -244,11 +248,11 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                             <div className="flex items-center justify-between text-[10px] mb-0.5">
                                 <span className="opacity-50">Progresso</span>
                                 <span className="font-mono text-xs">
-                                    {rankProgress}/{rankMax}
+                                    {currentRank === "S" ? t("playerPage.skills.perfectionMax") : `${rankProgress}/${rankMax}`}
                                 </span>
                             </div>
                             <AnimatedStatBar
-                                value={pct(rankProgress, rankMax)}
+                                value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
                                 label="Rank Progress"
                                 fillClass={getRankFillClass(currentRank)}
                                 ghostClass={getRankGhostClass(currentRank)}
@@ -274,7 +278,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                             return (
                                                 <div
                                                     key={idx}
-                                                    className="w-5 h-5 rounded-full border-2 border-base-300 bg-base-200/30"
+                                                    className="w-5 h-5 rounded-full border-2 border-gray-500/60 bg-gray-400/15"
                                                     title="Empty Slot"
                                                 />
                                             );

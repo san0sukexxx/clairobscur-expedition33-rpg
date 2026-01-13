@@ -291,11 +291,20 @@ export function getAllWeaponIds(): string[] {
 /**
  * Get a translated UI text by path (e.g., "common.save", "combat.attack")
  * @param path Dot-separated path to the text (e.g., "common.save")
- * @param locale The locale to use (defaults to current locale)
+ * @param optionsOrLocale Variables for interpolation OR locale to use
  * @returns The translated text
  */
-export function t(path: string, locale?: Locale): string {
-  const targetLocale = locale || currentLocale;
+export function t(path: string, optionsOrLocale?: Record<string, string | number | null | undefined> | Locale): string {
+  let targetLocale = currentLocale;
+  let variables: Record<string, string | number | null | undefined> | undefined;
+
+  // Check if second parameter is locale or variables
+  if (typeof optionsOrLocale === "string" && (optionsOrLocale === "en" || optionsOrLocale === "pt-BR")) {
+    targetLocale = optionsOrLocale;
+  } else if (optionsOrLocale && typeof optionsOrLocale === "object") {
+    variables = optionsOrLocale;
+  }
+
   const keys = path.split(".");
 
   let current: any = translations[targetLocale]?.ui;
@@ -309,7 +318,19 @@ export function t(path: string, locale?: Locale): string {
     }
   }
 
-  return typeof current === "string" ? current : path;
+  let text = typeof current === "string" ? current : path;
+
+  // Interpolate variables if provided
+  if (variables) {
+    for (const [key, value] of Object.entries(variables)) {
+      // Skip null/undefined values - keep the placeholder
+      if (value !== null && value !== undefined) {
+        text = text.replace(new RegExp(`\\{${key}\\}`, 'g'), String(value));
+      }
+    }
+  }
+
+  return text;
 }
 
 /**
@@ -328,11 +349,14 @@ export const translate = t;
  * // Translation: "Hello, {name}!"
  * tv("greeting.hello", {name: "John"}) // "Hello, John!"
  */
-export function tv(path: string, variables: Record<string, string | number>, locale?: Locale): string {
+export function tv(path: string, variables: Record<string, string | number | null | undefined>, locale?: Locale): string {
   let text = t(path, locale);
 
   for (const [key, value] of Object.entries(variables)) {
-    text = text.replace(new RegExp(`\\{${key}\\}`, 'g'), String(value));
+    // Skip null/undefined values - keep the placeholder
+    if (value !== null && value !== undefined) {
+      text = text.replace(new RegExp(`\\{${key}\\}`, 'g'), String(value));
+    }
   }
 
   return text;

@@ -1,6 +1,7 @@
 package com.example.demo.controller
 
 import com.example.demo.dto.AddBattleCharacterRequest
+import com.example.demo.dto.AddPerfectionRequest
 import com.example.demo.dto.UpdateHpRequest
 import com.example.demo.dto.UpdateMpRequest
 import com.example.demo.dto.UpdateStanceRequest
@@ -122,6 +123,15 @@ class BattleCharacterController(private val service: BattleCharacterService) {
     fun rankDownCharacter(@PathVariable id: Int): ResponseEntity<Map<String, Boolean>> {
         val success = service.rankDownCharacter(id)
         return ResponseEntity.ok(mapOf("success" to success))
+    }
+
+    @PostMapping("/characters/{id}/add-perfection")
+    fun addPerfectionPoints(
+            @PathVariable id: Int,
+            @RequestBody body: AddPerfectionRequest
+    ): ResponseEntity<Map<String, Any>> {
+        val result = service.addPerfectionPoints(id, body.points)
+        return ResponseEntity.ok(result)
     }
 
     @PostMapping("/characters/{id}/mp")

@@ -59,7 +59,10 @@ export default function BattleGroupStatus({
                         {characters.map((ch) => {
                             const isDead = ch.healthPoints === 0;
                             const isSelf = excludeSelf && currentCharacter && ch.battleID === currentCharacter.battleID;
-                            const isSelectable = !isExecutingSkill && !isSelf && ((isAttacking && !isDead) || (isReviveMode && isDead));
+                            const isSelectable = !isExecutingSkill && !isSelf && (
+                                (isReviveMode && isDead) ||
+                                (!isReviveMode && isAttacking && !isDead)
+                            );
                             const isHit = hitCharacters?.has(ch.battleID) && !isDead;
 
                             return (
@@ -264,11 +267,11 @@ export default function BattleGroupStatus({
                                                     <div className="flex items-center justify-between text-xs mb-0.5">
                                                         <span className="opacity-50">Progresso</span>
                                                         <span className="font-mono">
-                                                            {rankProgress}/{rankMax}
+                                                            {currentRank === "S" ? t("playerPage.skills.perfectionMax") : `${rankProgress}/${rankMax}`}
                                                         </span>
                                                     </div>
                                                     <AnimatedStatBar
-                                                        value={pct(rankProgress, rankMax)}
+                                                        value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
                                                         label="Rank Progress"
                                                         fillClass={getRankFillClass(currentRank)}
                                                         ghostClass={getRankGhostClass(currentRank)}

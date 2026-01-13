@@ -50,14 +50,28 @@ class DefenseController(
 
         val newHp = damageService.applyDamage(targetBC, body.totalDamage)
 
-        attack.totalDefended = body.totalDamage
-        attack.isResolved = true
-        attack.defenseType = body.defenseType
-        attackRepository.save(attack)
-
+        // Log damage dealt
         battleLogRepository.save(
                 BattleLog(battleId = attack.battleId, eventType = "DAMAGE_DEALT", eventJson = null)
         )
+
+        // If character died (HP = 0), attacks were already deleted by DamageService
+        // No need to save the attack or apply post-damage effects
+        if (newHp == 0) {
+            return ResponseEntity.ok().build()
+        }
+
+        // Check if attack still exists (may have been deleted if target died)
+        val attackStillExists = attackRepository.existsById(attack.id!!)
+        if (attackStillExists) {
+            attack.totalDefended = body.totalDamage
+            attack.isResolved = true
+            attack.defenseType = body.defenseType
+            attackRepository.save(attack)
+        } else {
+            // Attack was deleted (character died) - just return success
+            return ResponseEntity.ok().build()
+        }
 
         battleService.consumeShield(targetBC.id!!)
         battleService.removeMarked(targetBC.id!!)
@@ -67,6 +81,37 @@ class DefenseController(
         // Track hits taken for Revenge skill (only if damage was actually dealt)
         if (damage > 0) {
             targetBC.hitsTakenThisTurn += 1
+            battleCharacterRepository.save(targetBC)
+        }
+
+        // Reduce Perfection Rank by 10 points per hit taken (Verso only)
+        if (damage > 0 && targetBC.perfectionRank != null) {
+            var currentRank = targetBC.perfectionRank ?: "D"
+            var currentProgress = targetBC.rankProgress ?: 0
+
+            // Subtract 10 points
+            currentProgress -= 10
+
+            // If progress goes negative, rank down
+            while (currentProgress < 0 && currentRank != "D") {
+                val previousRank = when (currentRank) {
+                    "S" -> "A"
+                    "A" -> "B"
+                    "B" -> "C"
+                    "C" -> "D"
+                    else -> "D"
+                }
+                currentProgress += 10  // Add back 10 points from previous rank
+                currentRank = previousRank
+            }
+
+            // If at D rank and progress is negative, set to 0
+            if (currentRank == "D" && currentProgress < 0) {
+                currentProgress = 0
+            }
+
+            targetBC.perfectionRank = currentRank
+            targetBC.rankProgress = currentProgress
             battleCharacterRepository.save(targetBC)
         }
 
@@ -285,7 +330,14 @@ class DefenseController(
             attack.isCounterResolved = true
         }
 
-        attackRepository.saveAll(usedAttacks)
+        // Filter attacks that still exist (may have been deleted if characters died)
+        val stillExistingAttacks = usedAttacks.filter { attack ->
+            attack.id?.let { attackRepository.existsById(it) } ?: false
+        }
+
+        if (stillExistingAttacks.isNotEmpty()) {
+            attackRepository.saveAll(stillExistingAttacks)
+        }
 
         val finalBattleId = battleId
 

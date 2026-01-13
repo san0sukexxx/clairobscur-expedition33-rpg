@@ -1794,7 +1794,9 @@
       "title": "Campaigns",
       "noCampaigns": "No campaigns available.",
       "campaignPanel": "Campaign Panel",
-      "campaignAdmin": "Campaign administration"
+      "campaignAdmin": "Campaign administration",
+      "share": "Share",
+      "linkCopied": "Link copied to clipboard!"
     },
     "createCampaign": {
       "title": "Create Campaign",
@@ -1940,6 +1942,7 @@
       "selectSkill": "Select a skill",
       "skillBlocked": "Skill Blocked",
       "locked": "Locked",
+      "noDeadAllies": "No dead allies",
       "gustave-lumiere-assault": {
         "name": "Lumiere Assault",
         "description": "Deals low damage to a single target. 5 hits. Uses weapon element. Critical hits generate 1 additional Charge."
@@ -2034,11 +2037,11 @@
       },
       "lune-storm-caller": {
         "name": "Storm Caller",
-        "description": "All enemies receive medium Lightning damage at the end of the turn and low damage when receiving damage. Duration: 3 turns. Consumes 2 stains of Fire to double lightning attacks at the end of the turn. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "All enemies receive medium Lightning damage at the start of the turn and low damage when receiving damage. Duration: 3 turns. Consumes 2 Fire stains to double lightning attacks at the start of the turn. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-terraquake": {
         "name": "Terraquake",
-        "description": "Deals low Earth damage and Break damage to all enemies each turn. Duration: 3 turns. Consumes 2 stains of Lightning to extend the duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Applies Earthquake status to all enemies for 3 turns. At the start of their turns, characters with Earthquake take 1d6 damage and suffer Break if Fragile (taking 150% of the damage that caused the Break). Consumes 2 stains of Lightning to extend duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-typhoon": {
         "name": "Typhoon",
@@ -2050,7 +2053,7 @@
       },
       "lune-revitalization": {
         "name": "Revitalization",
-        "description": "Heals 1-3 allies to 40-60% of HP. Consumes 3 stains of Fire to also apply Regeneration for 3 turns. Using this skill grants 1 Light stain."
+        "description": "Roll 1d6: 1-2 = heals 1 ally for 40% HP, 3-6 = heals all allies for 60% HP. Consumes 3 stains of Fire to also apply Regeneration 2 for 3 turns. Using this skill grants 1 Light stain."
       },
       "lune-fire-rage": {
         "name": "Fire Rage",
@@ -2286,7 +2289,7 @@
       },
       "verso-angels-eyes": {
         "name": "Angel's Eyes",
-        "description": "Gradient Skill (doesn't consume turn). Deals extreme Physical damage. 8 hits. Gains 1 additional Perfection per hit. Applies Aureole to Verso, reviving him if he dies."
+        "description": "Gradient Skill (doesn't consume turn). Deals extreme Physical damage. 8 hits. Gains +2 Perfection points per hit. Applies Aureole to Verso, reviving him if he dies."
       },
       "verso-ascending-assault": {
         "name": "Ascending Assault",
@@ -2294,7 +2297,7 @@
       },
       "verso-assault-zero": {
         "name": "Assault Zero",
-        "description": "Deals low damage to a single target. 5 hits. Uses weapon element. Critical hits generate 1 additional Perfection. If Verso uses this skill at Perfection Rank B, the damage is increased."
+        "description": "Deals low damage to a single target. 5 hits. Uses weapon element. Gains +1 Perfection point per hit. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-berserk-slash": {
         "name": "Berserk Slash",
@@ -2670,7 +2673,8 @@
     "errors": {
       "failedToLoad": "Failed to load campaign data",
       "errorLoading": "Error loading:",
-      "errorReloading": "Error reloading player data:"
+      "errorReloading": "Error reloading player data:",
+      "copyFailed": "Failed to copy link"
     },
     "placeholders": {
       "enterName": "Enter name...",
@@ -2735,6 +2739,7 @@
         "Marked": "Marked",
         "Plagued": "Plagued",
         "Burning": "Burning",
+        "StormCaller": "⚡ Storm Caller",
         "Silenced": "Silenced",
         "Dizzy": "Dizzy",
         "Fragile": "Fragile",
@@ -2764,6 +2769,7 @@
         "Defenceless": "Defenceless",
         "Regen": "Regeneration",
         "Curse": "Curse",
+        "Earthquake": "Earthquake",
         "freeShot": "Free Shot",
         "jump": "Jump",
         "gradient": "Gradient",
@@ -2773,6 +2779,7 @@
         "Frozen": "Cannot perform actions. Each 1d6 value reduces freezing by 1. Receiving an attack removes all freezing.",
         "Shielded": "Each shield completely negates one attack.",
         "Burning": "Deals damage at the start of turn. Each burn deals 1d6 damage.",
+        "StormCaller": "Deals Lightning damage at the start of turn. Each stack deals 1d6 Lightning damage.",
         "Hastened": "Improves dodge and jump.",
         "Slowed": "Hinders dodge and jump.",
         "Empowered": "Improves your attack.",
@@ -2792,7 +2799,7 @@
         "Plagued": "The character has –5 maximum HP until the end of the scene. This condition can stack, reducing 5 HP per stack, until the character has a minimum of 1 maximum HP.",
         "Silenced": "Cannot use skills.",
         "Dizzy": "Loss on attacks using free shot or skills.",
-        "Fragile": "Taking damage greater than twice your resistance makes you fragile. While fragile you are vulnerable to breaking.",
+        "Fragile": "Taking damage greater than twice your resistance makes you fragile for 3 turns. While fragile you are vulnerable to breaking.",
         "Broken": "You cannot defend or act.",
         "Fleeing": "The character is trying to flee the battle and cannot perform any other action.",
         "FireVulnerability": "The character takes increased damage from Fire attacks.",
@@ -2813,12 +2820,13 @@
         "EnfeeblingMark": "Mark that weakens the target, reducing their power.",
         "DamageReduction": "Reduces damage taken from all sources.",
         "SuccessiveParry": "Improves ability to parry consecutive attacks.",
-        "Aureole": "Protective aura that grants benefits.",
+        "Aureole": "Revives the character with 30% HP when they die. Consumed on use.",
         "Vulnerable": "The character takes increased damage from all sources.",
         "DoubleDamage": "The next attack deals double damage.",
         "Defenceless": "The character cannot defend against attacks.",
         "Regen": "Regenerates health points over time.",
         "Curse": "Curse that causes continuous negative effects.",
+        "Earthquake": "Deals damage at the start of turn. Each stack deals 1d6 damage. If the character is fragile, suffers Break and takes 150% of the damage that caused the Break.",
         "freeShot": "Accumulates bonus for basic attacks.",
         "jump": "Ignores terrain or obstacles temporarily.",
         "gradient": "Special internal use effect.",
@@ -2828,6 +2836,176 @@
       "resolveButton": {
         "resolve": "Resolve",
         "ok": "Ok"
+      }
+    },
+    "playerPage": {
+      "title": "Player Sheet",
+      "loading": "Loading...",
+      "battle": {
+        "battleInProgress": "A battle is in progress",
+        "battleEnded": "The battle has ended",
+        "joinedBattle": "You are now participating in the battle",
+        "flyingEnemyWarning": "This enemy is flying and can only be hit by free shots",
+        "comboAttack": "Combo Attack! {count} hits!",
+        "attemptingFlee": "Attempting to flee...",
+        "attackDamage": "Attack {index}: {damage} damage"
+      },
+      "initiative": {
+        "rollResult": "Roll result",
+        "roll": "Roll",
+        "ability": "Ability",
+        "pictoBonus": "Picto Bonus",
+        "total": "Total",
+        "criticals": "Criticals",
+        "criticalFailures": "Critical failures"
+      },
+      "attack": {
+        "power": "Power",
+        "weapon": "Weapon",
+        "empowered": "Empowered",
+        "weakened": "Weakened",
+        "freeAimVulnerability": "Free-aim vulnerability",
+        "frenzy": "Frenzy",
+        "weaponElement": "Weapon element",
+        "dizzy": "Is dizzy",
+        "breaker": "Breaker: Target {status}",
+        "breakingBurn": "Breaking Burn: Target Burning+{status}",
+        "markedPenalty": "You are Marked! Target may have Enfeebling Mark",
+        "burnAffinity": "Burn Affinity: Target Burning",
+        "teamwork": "Teamwork: All allies alive",
+        "fasterThanStrong": "Faster Than Strong: Extra turn active",
+        "hasShield": "Has shield (Negates all damage)"
+      },
+      "errors": {
+        "errorCheckingEditing": "Error checking editing",
+        "errorRegisteringInitiative": "Error registering initiative",
+        "errorSavingPlayer": "Error saving player",
+        "errorEndingTurn": "Error ending turn",
+        "errorAttacking": "Error attacking",
+        "errorFleeing": "Error attempting to flee",
+        "errorSkillNotFound": "Error: Skill not found",
+        "errorCharacterNotFound": "Error: Character not found",
+        "errorCharacterNotFoundInBattle": "Error: Character not found in battle",
+        "errorSkillNotOwned": "Error: You do not have this skill",
+        "errorUsingSkill": "Error using skill",
+        "errorReviving": "Error using revive potion",
+        "errorDefending": "Error ending defend",
+        "errorCountering": "Error executing counter",
+        "errorRegisteringDefense": "Failed to register defense",
+        "errorResolvingStatus": "Error resolving status"
+      },
+      "skills": {
+        "noDeadAllies": "No dead allies",
+        "noValidEnemies": "No valid enemies found!",
+        "requiresAllStains": "Requires all 4 elemental stains (Lightning, Earth, Fire, Ice)!",
+        "insufficientGradientCharges": "Insufficient Gradient charges! Required: {required}, Available: {available}",
+        "insufficientMP": "Insufficient MP! Required: {required}, Available: {available}",
+        "parriesReducedCost": "{count} successful parry(s)! Cost reduced from {original} to {new} MP",
+        "fireVulnerability": "Target vulnerable to Fire! Damage x2!",
+        "foretellConsumed": "{target}: Foretell consumed! Damage x{multiplier}",
+        "stainsConsumed": "{count} Stain(s) consumed! Damage +{percent}%",
+        "aegidExtended": "Aegis duration extended! (3 turns)",
+        "criticalExtraHit": "Critical! +1 extra hit!",
+        "gradientChargesConsumed": "{count} Gradient Charge(s) consumed!",
+        "allAlliesHealed": "All allies healed to {percent}% HP!",
+        "allDebuffsRemoved": "All debuffs removed from allies!",
+        "allyHealed": "{name} healed by {percent}% ({amount} HP)!",
+        "debuffsRemovedFrom": "Debuffs removed from {name}!",
+        "buffsCopied": "Buffs copied to other allies!",
+        "stanceChanged": "Stance changed to {stance}!",
+        "healthReduced": "Health reduced to {amount}!",
+        "mpRefilled": "MP recharged to {amount}!",
+        "stanceReapplied": "{stance} stance reapplied!",
+        "mpGranted": "+{amount} MP granted! ({before} → {after})",
+        "allyReceivedMP": "{name} received {amount} MP! ({before} → {after})",
+        "allyPlaysImmediately": "{name} will play immediately!",
+        "burningTargetHeal": "Target Burning! Verso healed by {percent}% ({amount} HP)!",
+        "burningTargetStance": "Target is Burning! Changed to Virtuous stance!",
+        "trumpetBuffs": "Trumpet! {buffs} applied to {count} ally(s)!",
+        "shieldsRemoved": "{count} Shield(s) removed!",
+        "defenselessApplied": "Defenseless applied to self!",
+        "criticalStainGained": "Critical! {stain} stain gained!",
+        "secondTurnGranted": "Second turn granted!",
+        "stormCallerActivated": "Storm Caller activated! Enemies will suffer 3d6 Lightning damage per turn for 3 turns.",
+        "stormCallerDoubled": "Storm Caller DOUBLED! Enemies will suffer 6d6 Lightning damage per turn for 3 turns!",
+        "criticalRankUp": "Critical! Rank up to {rank}!",
+        "perfectionGained": "+{points} Perfection ({progress}/{max})",
+        "perfectionRankUp": "Ranked up to {rank}!",
+        "perfectionMax": "Max",
+        "elementAttack": "Attack element: {element}",
+        "rolledDiceValue": "Rolled {value}!",
+        "rolledDiceShieldApplied": "Rolled {value}! Shield applied to entire team!",
+        "rolledDiceShieldSingleTarget": "Rolled {value}! Shield applied only to chosen target.",
+        "rolledDicePowerfulTeam": "Rolled {value}! Powerful affects entire team!",
+        "rolledDicePowerfulVerso": "Rolled {value}! Powerful affects Verso only.",
+        "rolledDiceReviving": "Rolled {value}! Reviving allies with {percent}% HP!",
+        "rolledDiceRevivingAlly": "Rolled {value}! Reviving {name} with {percent}% HP!",
+        "allyRevivedWithMP": "{name} revived with 2 MP!",
+        "twilightExtended": "Twilight duration extended! (+1 turn)",
+        "turnDelayed": "Turn delayed by {positions} positions!",
+        "stanceBonusApplied": "Stance bonus! +{count} Burns per hit",
+        "absorptionHeal": "Absorption! Heal of {percent}% HP ({amount})",
+        "searingBond": "Searing Bond: {count} enemy(s) affected!",
+        "doubleCritDamage": "Double critical! ({multiplier}x damage)",
+        "hpSacrifice": "Sacrificing {percent}% HP ({amount})! Damage +{bonus}",
+        "hpDrained": "HP drained from allies in combat: {amount} (Damage +{amount})",
+        "totalEnemyForetell": "Total enemy Foretell: {amount} (Damage +{amount})",
+        "foretellsConsumed": "Consuming {count} Foretell(s)! Damage +{bonus}",
+        "foretellsConsumedHeal": "Consuming {count} Foretell(s)! Heal +{bonus}%",
+        "foretellsConsumedMP": "Consuming {count} Foretell(s)! MP to grant: {amount}",
+        "burnsConsumed": "Consuming {count} Burn(s)! Damage +{percent}%",
+        "markedTarget": "Marked Target! Damage +{percent}%",
+        "perfectionRank": "Rank {rank} of Perfection! Damage +{percent}%",
+        "perfectionRankBonus": "Rank {rank} of Perfection! Damage +{percent}% (skill bonus!)",
+        "lowHPBonus": "Low HP! Damage +{percent}%",
+        "lampmasterStacks": "Lampmaster Stacks: {count} (+{percent}% damage)",
+        "burningTarget": "Target burning! Damage +50%",
+        "stunnedTarget": "Target stunned! Damage x2",
+        "powerlessTarget": "Target powerless! Damage +50%",
+        "healPerHit": "Hits received: {count} (+{percent}% damage)",
+        "criticalForetell": "Critical! +{count} additional Foretell",
+        "targetBurning": "Target burning! Damage +50%",
+        "hitsCountAnnouncement": "{count} hit(s)!",
+        "trumpetRandomBuffs": "2 random buffs",
+        "trumpetSingleBuff": "1 random buff"
+      },
+      "defense": {
+        "tookFullDamage": "You took all the damage.",
+        "failedToParry": "You failed to parry, the blow dealt {damage} damage",
+        "successfulParry": "You successfully parried the blow!",
+        "failedToParryCounter": "You failed to parry, the blow dealt {damage} damage",
+        "successfulParryCounter": "You successfully parried the blow! It's time for a counterattack!",
+        "failedToDodge": "You failed to dodge, the blow dealt {damage} damage",
+        "successfulDodge": "You successfully dodged the blow!",
+        "failedToJump": "You failed to jump from the attack and took {damage} damage",
+        "successfulJump": "You successfully jumped from the attack!",
+        "shieldUsed": "A shield was used, you took no damage",
+        "counterAttacked": "You counterattacked!",
+        "didNotCounterAttack": "You did not counterattack"
+      },
+      "flee": {
+        "title": "Attempt to flee",
+        "confirmation": "Are you sure you want to attempt to flee from the battle?",
+        "warning": "Your entire team will receive the 'Fleeing' status.",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
+      "revive": {
+        "success": "{name} was revived with {percent}% HP!"
+      },
+      "modals": {
+        "rollResult": "Roll result"
+      },
+      "navigation": {
+        "tabs": {
+          "sheet": "Sheet",
+          "weapon": "Weapon",
+          "pictos": "Pictos",
+          "luminas": "Luminas",
+          "inventory": "Inventory",
+          "skills": "Skills",
+          "combat": "Combat"
+        }
       }
     }
   }

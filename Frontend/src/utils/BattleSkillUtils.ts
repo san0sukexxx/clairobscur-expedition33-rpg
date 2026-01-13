@@ -72,6 +72,12 @@ export function evaluateCondition(
             const currentMask = wheelPattern[bestialWheelPosition] ?? "";
             return currentMask === "green";
 
+        case "stains-consumed":
+            // This condition is evaluated at runtime, not here
+            // Return false so it doesn't get included in resolved.effects
+            // The skill code will manually apply the effect if stains were consumed
+            return false;
+
         default:
             console.warn(`Unknown condition: ${condition}`);
             return false;

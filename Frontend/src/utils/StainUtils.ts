@@ -63,14 +63,14 @@ export function hasRequiredStains(character: BattleCharacterInfo, skillMetadata:
 export function consumeStains(
     character: BattleCharacterInfo,
     skillMetadata: SkillMetadata
-): [string | null, string | null, string | null, string | null] {
+): [StainType | null, StainType | null, StainType | null, StainType | null] {
     if (!skillMetadata.consumesStains) {
         return [
             character.stainSlot1 ?? null,
             character.stainSlot2 ?? null,
             character.stainSlot3 ?? null,
             character.stainSlot4 ?? null
-        ];
+        ] as [StainType | null, StainType | null, StainType | null, StainType | null];
     }
 
     const stains = [
@@ -85,20 +85,29 @@ export function consumeStains(
 
     if (!isConsumeAllSkill) {
         // For normal skills: verify ALL requirements can be met BEFORE consuming anything
+        // We need to track how many Light stains will be used as wildcards
+        let lightsNeeded = 0;
+
         for (const { stain, count } of skillMetadata.consumesStains) {
             const specificCount = stains.filter(s => s === stain).length;
-            const lightCount = stains.filter(s => s === "Light").length;
-            const totalAvailable = specificCount + lightCount;
+            const missing = count - specificCount;
 
-            // If we don't have enough of this stain type, don't consume anything
-            if (totalAvailable < count) {
-                return [
-                    character.stainSlot1 ?? null,
-                    character.stainSlot2 ?? null,
-                    character.stainSlot3 ?? null,
-                    character.stainSlot4 ?? null
-                ];
+            // If we're missing some of this specific stain, we'll need Light as wildcard
+            if (missing > 0) {
+                lightsNeeded += missing;
             }
+        }
+
+        // Check if we have enough Light stains to cover all missing requirements
+        const lightCount = stains.filter(s => s === "Light").length;
+        if (lightsNeeded > lightCount) {
+            // Not enough stains to satisfy all requirements
+            return [
+                character.stainSlot1 ?? null,
+                character.stainSlot2 ?? null,
+                character.stainSlot3 ?? null,
+                character.stainSlot4 ?? null
+            ] as [StainType | null, StainType | null, StainType | null, StainType | null];
         }
     }
 
@@ -137,7 +146,7 @@ export function consumeStains(
         }
     }
 
-    return [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null];
+    return [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null] as [StainType | null, StainType | null, StainType | null, StainType | null];
 }
 
 /**
@@ -151,9 +160,9 @@ export function consumeStains(
  * - Light stains are processed FIRST to ensure they get priority
  */
 export function addStains(
-    currentStains: [string | null, string | null, string | null, string | null],
+    currentStains: [StainType | null, StainType | null, StainType | null, StainType | null],
     stainsToAdd: StainType[]
-): [string | null, string | null, string | null, string | null] {
+): [StainType | null, StainType | null, StainType | null, StainType | null] {
     const stains = [...currentStains];
 
     // Separate Light and non-Light stains
@@ -183,7 +192,7 @@ export function addStains(
         // If all 4 slots are Light, do nothing (stain is lost)
     }
 
-    return [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null];
+    return [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null] as [StainType | null, StainType | null, StainType | null, StainType | null];
 }
 
 /**
@@ -194,7 +203,7 @@ export function transformStain(
     character: BattleCharacterInfo,
     from: StainType,
     to: StainType
-): [string | null, string | null, string | null, string | null] {
+): [StainType | null, StainType | null, StainType | null, StainType | null] {
     const stains = [
         character.stainSlot1,
         character.stainSlot2,
@@ -208,7 +217,7 @@ export function transformStain(
         stains[index] = to;
     }
 
-    return [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null];
+    return [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null] as [StainType | null, StainType | null, StainType | null, StainType | null];
 }
 
 /**
@@ -216,7 +225,7 @@ export function transformStain(
  */
 export async function updateCharacterStains(
     battleCharacterId: number,
-    stains: [string | null, string | null, string | null, string | null]
+    stains: [StainType | null, StainType | null, StainType | null, StainType | null]
 ): Promise<void> {
     await APIBattle.updateStains(battleCharacterId, {
         stainSlot1: stains[0],

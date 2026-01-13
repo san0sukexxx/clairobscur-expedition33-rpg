@@ -188,6 +188,7 @@ export default function CombatAdmin({
     const [showGradientModal, setShowGradientModal] = useState(false);
     const [gradientCharges, setGradientCharges] = useState(0);
     const [editingTeamIsEnemy, setEditingTeamIsEnemy] = useState(false);
+    const [isPassingTurn, setIsPassingTurn] = useState(false);
 
     const processedEffectsRef = useRef<Set<string>>(new Set())
     const lastActiveCharacterIdRef = useRef<number | undefined>(undefined)
@@ -525,7 +526,7 @@ export default function CombatAdmin({
             team: targetTeam,
             healthPoints: entity.currentHp,
             maxHealthPoints: entity.maxHp,
-            magicPoints: entity.currentMp,
+            magicPoints: entity.currentHp === 0 ? 0 : entity.currentMp,
             maxMagicPoints: entity.maxMp,
             chargePoints: isGustave ? 0 : undefined,
             maxChargePoints: isGustave ? 10 : undefined,
@@ -563,7 +564,7 @@ export default function CombatAdmin({
                 team: targetTeam,
                 healthPoints: ent.currentHp,
                 maxHealthPoints: ent.maxHp,
-                magicPoints: ent.currentMp,
+                magicPoints: ent.currentHp === 0 ? 0 : ent.currentMp,
                 maxMagicPoints: ent.maxMp,
                 canRollInitiative: ent.type == "player"
             })
@@ -761,6 +762,7 @@ export default function CombatAdmin({
                                 <button
                                     className="btn btn-md btn-primary"
                                     onClick={() => npcCustomAttackTapped(atk)}
+                                    disabled={isPassingTurn}
                                 >
                                     {atk.name || getAttackTypeLabel(atk.type)}
                                     {atk.quantity && atk.quantity > 1 && (
@@ -800,6 +802,7 @@ export default function CombatAdmin({
                                         <button
                                             className="btn btn-md btn-primary"
                                             onClick={() => npcSkillTapped(skill)}
+                                            disabled={isPassingTurn}
                                         >
                                             {getSkillLabel(skill.type)}
                                         </button>
@@ -829,22 +832,38 @@ export default function CombatAdmin({
                         <h3 className="text-lg font-semibold">Outras ações</h3>
 
                         <div className="flex flex-row flex-wrap items-center gap-4">
-                            <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("basic")}>
+                            <button
+                                className="btn btn-md btn-primary"
+                                onClick={() => npcAttackTapped("basic")}
+                                disabled={isPassingTurn}
+                            >
                                 <FaFistRaised className="mr-1" />
                                 Ataque básico
                             </button>
 
-                            <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("jump")}>
+                            <button
+                                className="btn btn-md btn-primary"
+                                onClick={() => npcAttackTapped("jump")}
+                                disabled={isPassingTurn}
+                            >
                                 <FaArrowUp className="mr-1" />
                                 Pular em um
                             </button>
 
-                            <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("jump-all")}>
+                            <button
+                                className="btn btn-md btn-primary"
+                                onClick={() => npcAttackTapped("jump-all")}
+                                disabled={isPassingTurn}
+                            >
                                 <FaArrowsDownToLine className="mr-1" />
                                 Pular em todos
                             </button>
 
-                            <button className="btn btn-md btn-primary" onClick={() => npcAttackTapped("gradient")}>
+                            <button
+                                className="btn btn-md btn-primary"
+                                onClick={() => npcAttackTapped("gradient")}
+                                disabled={isPassingTurn}
+                            >
                                 <FaFireAlt className="mr-1" />
                                 Ataque Gradiente
                             </button>
@@ -852,12 +871,17 @@ export default function CombatAdmin({
                             <button
                                 className="btn btn-md btn-warning hover:brightness-110"
                                 onClick={() => npcPassTurnTapped()}
+                                disabled={isPassingTurn}
                             >
                                 <FaHourglassHalf className="mr-1" />
                                 Passar o turno
                             </button>
 
-                            <button className="btn btn-md btn-info" onClick={() => actionAllowCounter()}>
+                            <button
+                                className="btn btn-md btn-info"
+                                onClick={() => actionAllowCounter()}
+                                disabled={isPassingTurn}
+                            >
                                 <FaShieldAlt className="mr-1" />
                                 Permitir counter
                             </button>
@@ -1549,20 +1573,32 @@ export default function CombatAdmin({
             "DAMAGE_DEALT",
             "TURN_ADDED",
             "TURN_ENDED",
+            "TURN_DELAYED",
             "TURNS_REORDERED",
             "ATTACK_PENDING",
             "ALLOW_COUNTER",
             "COUNTER_RESOLVED",
             "STATUS_RESOLVED",
             "STATUS_ADDED",
+            "STATUS_REMOVED",
+            "STATUS_EXTENDED",
             "HP_CHANGED",
+            "MAX_HP_CHANGED",
             "MP_CHANGED",
             "MP_RECOVERED",
+            "AP_CHANGED",
             "GRADIENT_CHANGED",
+            "STAINS_CHANGED",
+            "STANCE_CHANGED",
+            "RANK_CHANGED",
             "FLEEING",
             "HEAL_APPLIED",
             "STATUS_CLEANSED",
-            "BREAK_APPLIED"
+            "BREAK_APPLIED",
+            "AUTO_DEATH",
+            "PICTO_EFFECT_TRACKED",
+            "PICTO_EFFECTS_CLEARED",
+            "PICTO_EFFECTS_RESET"
         ]);
 
         const shouldUpdate = logs.some(log => relevantEvents.has(log.eventType));
@@ -1815,11 +1851,14 @@ export default function CombatAdmin({
 
     function npcPassTurnTapped() {
         const endTurnCall = async () => {
+            setIsPassingTurn(true);
             try {
                 const character = getActiveTurnCharacter()
                 await APIBattle.endTurn(character?.battleID ?? 0)
             } catch (e) {
                 showToast("Erro ao encerrar o turno");
+            } finally {
+                setIsPassingTurn(false);
             }
         };
 

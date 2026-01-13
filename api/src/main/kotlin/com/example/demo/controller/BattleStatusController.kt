@@ -31,7 +31,8 @@ class BattleStatusController(
         private val objectMapper: ObjectMapper,
         private val immunityService: com.example.demo.service.ImmunityService,
         private val pictoEffectTrackerService: com.example.demo.service.PictoEffectTrackerService,
-        private val playerPictoRepository: com.example.demo.repository.PlayerPictoRepository
+        private val playerPictoRepository: com.example.demo.repository.PlayerPictoRepository,
+        private val elementResistanceService: com.example.demo.service.ElementResistanceService
 ) {
 
     @PostMapping("/resolve")
@@ -71,9 +72,16 @@ class BattleStatusController(
                 }
             }
         } else if (body.effectType == "Burning") {
-            val damage = body.totalValue
+            val baseDamage = body.totalValue
 
-            if (damage > 0) {
+            if (baseDamage > 0) {
+                // Apply Fire element resistance/weakness modifiers
+                val damage = elementResistanceService.calculateElementalDamage(
+                    body.battleCharacterId,
+                    baseDamage,
+                    "Fire"
+                )
+
                 val newHp = damageService.applyDamage(battleCharacter, damage)
 
                 if (newHp > 0) {
@@ -90,9 +98,16 @@ class BattleStatusController(
         } else if (body.effectType == "IntenseFlames") {
             // IntenseFlames: Roll Xd6 damage based on current stacks
             // Note: Stacks increase at end of turn, not when resolved
-            val damage = body.totalValue
+            val baseDamage = body.totalValue
 
-            if (damage > 0) {
+            if (baseDamage > 0) {
+                // Apply Fire element resistance/weakness modifiers
+                val damage = elementResistanceService.calculateElementalDamage(
+                    body.battleCharacterId,
+                    baseDamage,
+                    "Fire"
+                )
+
                 val newHp = damageService.applyDamage(battleCharacter, damage)
 
                 // Only mark as resolved if character survived
@@ -101,6 +116,79 @@ class BattleStatusController(
                         val id = eff.id
                         if (id != null && battleStatusEffectRepository.existsById(id)) {
                             battleStatusEffectRepository.save(eff.copy(isResolved = true))
+                        }
+                    }
+                }
+            }
+        } else if (body.effectType == "Earthquake") {
+            var baseDamage = body.totalValue
+
+            if (baseDamage > 0) {
+                // Apply Earth element resistance/weakness modifiers first
+                var damage = elementResistanceService.calculateElementalDamage(
+                    body.battleCharacterId,
+                    baseDamage,
+                    "Earth"
+                )
+
+                // Check if character is Fragile
+                val fragileEffects = battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
+                        body.battleCharacterId,
+                        "Fragile"
+                )
+                val isFragile = fragileEffects.isNotEmpty()
+
+                if (isFragile) {
+                    // Apply 150% damage and cause Break
+                    damage = (damage * 1.5).toInt()
+
+                    // Apply Broken status
+                    val brokenEffect = com.example.demo.model.BattleStatusEffect(
+                            battleCharacterId = body.battleCharacterId,
+                            effectType = "Broken",
+                            ammount = 1,
+                            remainingTurns = 1,
+                            isResolved = false
+                    )
+                    battleStatusEffectRepository.save(brokenEffect)
+
+                    // Remove Fragile status when Break is caused
+                    battleStatusEffectRepository.deleteAll(fragileEffects)
+                }
+
+                val newHp = damageService.applyDamage(battleCharacter, damage)
+
+                if (newHp > 0) {
+                    effects.forEach { eff ->
+                        val remaining = (eff.remainingTurns ?: 0) - 1
+                        if (remaining <= 0) {
+                            battleStatusEffectRepository.delete(eff)
+                        } else {
+                            battleStatusEffectRepository.save(eff.copy(remainingTurns = remaining))
+                        }
+                    }
+                }
+            }
+        } else if (body.effectType == "StormCaller") {
+            val baseDamage = body.totalValue
+
+            if (baseDamage > 0) {
+                // Apply Lightning element resistance/weakness modifiers
+                val damage = elementResistanceService.calculateElementalDamage(
+                    body.battleCharacterId,
+                    baseDamage,
+                    "Lightning"
+                )
+
+                val newHp = damageService.applyDamage(battleCharacter, damage)
+
+                if (newHp > 0) {
+                    effects.forEach { eff ->
+                        val remaining = (eff.remainingTurns ?: 0) - 1
+                        if (remaining <= 0) {
+                            battleStatusEffectRepository.delete(eff)
+                        } else {
+                            battleStatusEffectRepository.save(eff.copy(remainingTurns = remaining))
                         }
                     }
                 }
@@ -246,6 +334,12 @@ class BattleStatusController(
             return ResponseEntity.noContent().build()
         }
 
+        // Reject "Heal" and "Cleanse" - these are special effects, not battle statuses
+        if (body.effectType == "Heal" || body.effectType == "Cleanse") {
+            println("[BattleStatusController] Rejected invalid status type: ${body.effectType}")
+            return ResponseEntity.noContent().build()
+        }
+
         // Check if character is immune to this status
         if (!immunityService.canApplyStatus(bc.id!!, body.effectType)) {
             // Character is immune or resisted the status, log it and return
@@ -380,7 +474,7 @@ class BattleStatusController(
                 "Fragile", "Inverted", "Flying", "Plagued", "Broken" -> true
 
                 "Burning", "Frozen", "Regeneration", "Cursed",
-                "Confused", "Bleeding", "Poisoned", "Fleeing", "IntenseFlames" -> false
+                "Confused", "Bleeding", "Poisoned", "Fleeing", "IntenseFlames", "Earthquake", "StormCaller" -> false
 
                 else -> false
             }
@@ -389,9 +483,9 @@ class BattleStatusController(
             when (effectType) {
                 "Burning", "Frozen", "Cursed", "Confused", "Bleeding", "Poisoned",
                 "Fleeing", "Weakened", "Slowed", "Unprotected", "Dizzy", "Exhausted",
-                "Silenced", "Stunned", "Fragile", "Inverted", "Plagued", "Marked", "Broken", "IntenseFlames" -> true
+                "Silenced", "Stunned", "Fragile", "Inverted", "Plagued", "Marked", "Broken", "IntenseFlames", "Earthquake", "StormCaller" -> true
 
-                "Empowered", "Hastened", "Protected", "Shield", "Regeneration", "Flying" -> false
+                "Empowered", "Hastened", "Protected", "Shield", "Regeneration", "Flying", "Aureole" -> false
 
                 else -> false
             }
