@@ -1885,6 +1885,8 @@
       "rank": "Rank",
       "progress": "Progress",
       "stains": "Stains",
+      "noStains": "None",
+      "stainOf": "{element} Stain",
       "emptySlot": "Empty Slot",
       "charge": "Charge",
       "gradient": "Gradient",
@@ -1943,6 +1945,7 @@
       "skillBlocked": "Skill Blocked",
       "locked": "Locked",
       "noDeadAllies": "No dead allies",
+      "noSkills": "No skills available for this character.",
       "gustave-lumiere-assault": {
         "name": "Lumiere Assault",
         "description": "Deals low damage to a single target. 5 hits. Uses weapon element. Critical hits generate 1 additional Charge."
@@ -2587,6 +2590,35 @@
         "name": "Troubadour Trumpet",
         "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Protected, Shielded, Regeneration or Hastened). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions.\nPrerequisite: Defeat and acquire the foot of a Troubadour enemy while Monoco is in the active group."
       }
+    },
+    "skillPicker": {
+      "title": "SKILLS",
+      "searchPlaceholder": "Search skill...",
+      "gradient": "Gradient",
+      "charge": "charge",
+      "charges": "charges",
+      "equipError": "Error equipping skill:",
+      "unequipError": "Error unequipping skill:",
+      "cannotEquipInBattle": "Cannot equip or unequip skills during battle",
+      "selectEquippedToCombat": "Select an equipped skill to use in combat",
+      "selectSkillAlt": "Select skill",
+      "removeFromSlot": "Remove skill from slot",
+      "selectASkill": "Select a Skill",
+      "noSkillsFound": "No skills found."
+    },
+    "skillsList": {
+      "title": "Skills",
+      "subtitle": "Complete list of character skills",
+      "itemCount": "{count} item(s)",
+      "skillPoints": "Skill Points:",
+      "excess": "Excess: {count}",
+      "notUnlocked": "Skill not yet unlocked",
+      "insufficientPoints": "Insufficient points (required: {required}, available: {available})",
+      "free": "Free",
+      "unlockPrerequisite": "Obtain one of these skills to unlock",
+      "unlockError": "Error unlocking skill:",
+      "removeError": "Error removing skill:",
+      "sectionAriaLabel": "Skills section"
     },
     "items": {
       "title": "Items",

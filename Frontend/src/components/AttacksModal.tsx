@@ -35,17 +35,17 @@ export function AttacksModal({ isOpen, attacks, onClose, onRollDefense, battleDe
                 <div className="p-4 overflow-auto">
                     {attacks.length === 0 ? (
                         <div className="text-sm text-neutral-400 text-center py-6">
-                            Nenhum ataque pendente.
+                            {t("combat.noPendingAttacks")}
                         </div>
                     ) : (
                         <table className="table table-sm w-full">
                             <thead>
                                 <tr>
-                                    <th>Poder total</th>
-                                    <th>Atacante</th>
-                                    <th>Alvo</th>
-                                    <th>Efeitos</th>
-                                    <th className="text-right">Ação</th>
+                                    <th>{t("combat.totalPower")}</th>
+                                    <th>{t("combat.attacker")}</th>
+                                    <th>{t("combat.target")}</th>
+                                    <th>{t("combat.effects")}</th>
+                                    <th className="text-right">{t("combat.action")}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -71,7 +71,7 @@ export function AttacksModal({ isOpen, attacks, onClose, onRollDefense, battleDe
                                                     className="btn btn-primary btn-xs"
                                                     onClick={() => onRollDefense(attack)}
                                                 >
-                                                    Rolar defesa
+                                                    {t("combat.rollDefense")}
                                                 </button>
                                             </td>
                                         </tr>
@@ -88,7 +88,7 @@ export function AttacksModal({ isOpen, attacks, onClose, onRollDefense, battleDe
                         className="btn btn-ghost btn-sm"
                         onClick={onClose}
                     >
-                        Fechar
+                        {t("common.close")}
                     </button>
                 </div>
             </div>

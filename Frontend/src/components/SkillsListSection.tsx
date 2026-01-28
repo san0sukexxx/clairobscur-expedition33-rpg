@@ -61,7 +61,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                 return { ...prev, skills: [...(prev.skills ?? []), newSkill] };
             });
         } catch (error) {
-            console.error("Erro ao desbloquear habilidade:", error);
+            console.error(t("skillsList.unlockError"), error);
         }
     }
 
@@ -83,7 +83,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                 };
             });
         } catch (error) {
-            console.error("Erro ao remover habilidade:", error);
+            console.error(t("skillsList.removeError"), error);
         }
     }
 
@@ -190,20 +190,20 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
     };
 
     return (
-        <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6" aria-label="Seção de habilidades">
+        <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6" aria-label={t("skillsList.sectionAriaLabel")}>
             <header className="mb-4">
-                <h2 className="text-xl font-semibold leading-none text-left">Habilidades</h2>
-                <p className="text-sm opacity-70 text-left">Lista completa das habilidades do personagem</p>
-                <span className="mt-2 block text-sm opacity-70 text-left">{list.length} item(ns)</span>
+                <h2 className="text-xl font-semibold leading-none text-left">{t("skillsList.title")}</h2>
+                <p className="text-sm opacity-70 text-left">{t("skillsList.subtitle")}</p>
+                <span className="mt-2 block text-sm opacity-70 text-left">{t("skillsList.itemCount", { count: list.length })}</span>
             </header>
 
             <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-[#141414] px-4 py-2">
-                <span className="text-sm opacity-80">Pontos de Habilidade:</span>
+                <span className="text-sm opacity-80">{t("skillsList.skillPoints")}</span>
                 <span className={`text-lg font-bold ${remainingPoints < 0 ? 'text-red-400' : 'text-green-400'}`}>
                     {usedPoints} / {totalPoints}
                 </span>
                 {remainingPoints < 0 && (
-                    <span className="ml-2 text-xs text-red-400">(Excesso: {Math.abs(remainingPoints)})</span>
+                    <span className="ml-2 text-xs text-red-400">({t("skillsList.excess", { count: Math.abs(remainingPoints) })})</span>
                 )}
             </div>
 
@@ -292,19 +292,19 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
 
                                             {skillInfo.isGradient && (
                                                 <span className="shrink-0 rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-xs text-fuchsia-200">
-                                                    Gradiente
+                                                    {t("skillPicker.gradient")}
                                                 </span>
                                             )}
 
                                             <span className={`ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${skillInfo.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                                                {skillInfo.isGradient ? `${skillInfo.cost} ${skillInfo.cost === 1 ? 'carga' : 'cargas'}` : skillInfo.cost}
+                                                {skillInfo.isGradient ? `${skillInfo.cost} ${skillInfo.cost === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : skillInfo.cost}
                                             </span>
                                         </div>
 
                                         {disabled && (
                                             <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] text-amber-200">
                                                 <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
-                                                <span>Habilidade ainda não desbloqueada</span>
+                                                <span>{t("skillsList.notUnlocked")}</span>
                                             </div>
                                         )}
                                     </div>
@@ -315,7 +315,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                 <div className="mt-4 flex justify-end">
                                     {skillInfo.unlockCost !== undefined && remainingPoints < skillInfo.unlockCost ? (
                                         <div className="text-xs text-red-400">
-                                            Pontos insuficientes (necessário: {skillInfo.unlockCost}, disponível: {remainingPoints})
+                                            {t("skillsList.insufficientPoints", { required: skillInfo.unlockCost, available: remainingPoints })}
                                         </div>
                                     ) : (
                                         <button
@@ -333,11 +333,11 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                             <FaUnlock className="h-3.5 w-3.5" aria-hidden />
                                             {skillInfo.masterUnlock ? (
                                                 skillInfo.unlockCost === undefined || skillInfo.unlockCost === 0
-                                                    ? `${t("skills.unlock")} (Grátis) - ${t("skills.masterUnlock")}`
+                                                    ? `${t("skills.unlock")} (${t("skillsList.free")}) - ${t("skills.masterUnlock")}`
                                                     : `${t("skills.unlock")} (${skillInfo.unlockCost}) - ${t("skills.masterUnlock")}`
                                             ) : (
                                                 skillInfo.unlockCost === undefined || skillInfo.unlockCost === 0
-                                                    ? `${t("skills.unlock")} (Grátis)`
+                                                    ? `${t("skills.unlock")} (${t("skillsList.free")})`
                                                     : `${t("skills.unlock")} (${skillInfo.unlockCost})`
                                             )}
                                         </button>
@@ -386,7 +386,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                                 <div className="flex flex-wrap gap-3">
                                                     <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] text-amber-200">
                                                         <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
-                                                        <span>Obtenha uma dessas habilidades para desbloquear</span>
+                                                        <span>{t("skillsList.unlockPrerequisite")}</span>
                                                     </div>
 
                                                     {skillInfo.preRequisite?.map((prerequisite, index) => {

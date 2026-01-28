@@ -39,7 +39,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
         <div className="p-4">
             <input
                 className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
-                placeholder="Buscar habilidade..."
+                placeholder={t("skillPicker.searchPlaceholder")}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
             />
@@ -62,7 +62,7 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
                 <div className="flex items-start gap-2 justify-between flex-wrap">
                     <div className="text-base font-semibold leading-tight">{skill.name}</div>
                     <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md flex-shrink-0 ${skill.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                        {skill.isGradient ? `${skill.cost} ${skill.cost === 1 ? 'carga' : 'cargas'}` : skill.cost}
+                        {skill.isGradient ? `${skill.cost} ${skill.cost === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : skill.cost}
                     </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
@@ -76,7 +76,7 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
                         </span>
                     )}
                     {skill.isGradient && (
-                        <span className="rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-fuchsia-200">Gradiente</span>
+                        <span className="rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-fuchsia-200">{t("skillPicker.gradient")}</span>
                     )}
                 </div>
             </div>
@@ -304,7 +304,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
 
             setOpenSlot(null);
         } catch (error) {
-            console.error("Erro ao equipar habilidade:", error);
+            console.error(t("skillPicker.equipError"), error);
         }
     }
 
@@ -331,7 +331,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                 };
             });
         } catch (error) {
-            console.error("Erro ao desequipar habilidade:", error);
+            console.error(t("skillPicker.unequipError"), error);
         }
     }
 
@@ -433,17 +433,17 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
 
     return (
         <div className="text-white">
-            <div className="text-center text-lg tracking-widest pb-3 opacity-90">HABILIDADES</div>
+            <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("skillPicker.title")}</div>
 
             {inBattle && !isUsingSkillMode && (
                 <div className="mb-4 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-center text-sm text-amber-200">
-                    Não é possível equipar ou desequipar habilidades durante a batalha
+                    {t("skillPicker.cannotEquipInBattle")}
                 </div>
             )}
 
             {isUsingSkillMode && inBattle && (
                 <div className="mb-4 rounded-lg border border-blue-400/30 bg-blue-400/10 p-3 text-center text-sm text-blue-200">
-                    Selecione uma habilidade equipada para usar em combate
+                    {t("skillPicker.selectEquippedToCombat")}
                 </div>
             )}
 
@@ -489,7 +489,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                             >
                                 {/* Losango lateral */}
                                 <div className="absolute left-5 top-1/2 -translate-y-1/2">
-                                    <DiamondThumb image={selected?.image} alt={selected?.name ?? "Selecionar habilidade"} />
+                                    <DiamondThumb image={selected?.image} alt={selected?.name ?? t("skillPicker.selectSkillAlt")} />
                                 </div>
 
                                 {selected ? (
@@ -507,11 +507,11 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                             )}
                                             {selected.isGradient && (
                                                 <span className="shrink-0 rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-xs text-fuchsia-200">
-                                                    Gradiente
+                                                    {t("skillPicker.gradient")}
                                                 </span>
                                             )}
                                             <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${selected.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                                                {selected.isGradient ? `${getEffectiveCost(selected)} ${getEffectiveCost(selected) === 1 ? 'carga' : 'cargas'}` : getEffectiveCost(selected)}
+                                                {selected.isGradient ? `${getEffectiveCost(selected)} ${getEffectiveCost(selected) === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : getEffectiveCost(selected)}
                                             </span>
                                         </div>
 
@@ -529,9 +529,9 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                                     }
                                                 }}
                                                 disabled={!canUseSkill(selected)}
-                                                aria-label={`Usar ${selected.name}`}
+                                                aria-label={`${t("common.use")} ${selected.name}`}
                                             >
-                                                Usar
+                                                {t("common.use")}
                                             </button>
                                         ) : (
                                             <button
@@ -545,14 +545,14 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                                     if (!inBattle) clearSlot(idx);
                                                 }}
                                                 disabled={inBattle}
-                                                aria-label="Remover habilidade do slot"
+                                                aria-label={t("skillPicker.removeFromSlot")}
                                             >
                                                 ×
                                             </button>
                                         )}
                                     </>
                                 ) : (
-                                    <div className="w-full opacity-60 py-4">Selecione uma Habilidade</div>
+                                    <div className="w-full opacity-60 py-4">{t("skillPicker.selectASkill")}</div>
                                 )}
                             </div>
 
@@ -591,7 +591,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                         <SkillCard key={s.id} skill={s} onPick={(ss) => upsertSkillAt(openSlot ?? 0, ss)} />
                     ))}
                     {filtered.length === 0 && (
-                        <div className="opacity-70 p-8 text-center">Nenhuma habilidade encontrada.</div>
+                        <div className="opacity-70 p-8 text-center">{t("skillPicker.noSkillsFound")}</div>
                     )}
                 </div>
             </SkillModal>

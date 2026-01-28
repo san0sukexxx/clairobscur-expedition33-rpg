@@ -46,12 +46,12 @@ export default function BattleGroupStatus({
             <div className="card bg-base-100 shadow">
                 <div className="card-body">
                     <h2 className="card-title justify-center">
-                        {currentCharacter?.isEnemy != isEnemies ? "Inimigos" : "Equipe"}
+                        {currentCharacter?.isEnemy != isEnemies ? t("combat.enemies") : t("combat.team")}
                     </h2>
 
                     {characters.length == 0 && (
                         <div className="text-sm text-neutral-500 italic text-center">
-                            Ninguém por aqui ainda
+                            {t("combat.noOneHere")}
                         </div>
                     )}
 
@@ -121,12 +121,12 @@ export default function BattleGroupStatus({
 
                                                 {npcIsFlying(ch) && (
                                                     <span key="flying" className="px-1 py-0.5 rounded bg-base-300">
-                                                        Voando
+                                                        {t("combat.flying")}
                                                     </span>
                                                 )}
                                             </div>
 
-                                            {isDead && <FaSkull className="text-error" title="Morto" />}
+                                            {isDead && <FaSkull className="text-error" title={t("combat.dead")} />}
                                         </div>
                                     </div>
 
@@ -181,9 +181,9 @@ export default function BattleGroupStatus({
 
                                             return (
                                                 <div className="mt-2 flex items-center gap-2 text-xs">
-                                                    <span className="opacity-70 uppercase">Manchas</span>
+                                                    <span className="opacity-70 uppercase">{t("combat.stains")}</span>
                                                     {!hasAnyStain ? (
-                                                        <div className="badge badge-ghost badge-sm opacity-60">Nenhuma</div>
+                                                        <div className="badge badge-ghost badge-sm opacity-60">{t("combat.noStains")}</div>
                                                     ) : (
                                                         <div className="flex items-center gap-1.5">
                                                             {stains.map((stain, idx) => {
@@ -192,7 +192,7 @@ export default function BattleGroupStatus({
                                                                         <div
                                                                             key={idx}
                                                                             className="w-5 h-5 rounded-full border-2 border-base-300 bg-base-200/30"
-                                                                            title="Empty Slot"
+                                                                            title={t("combat.emptySlot")}
                                                                         />
                                                                     );
                                                                 }
@@ -203,7 +203,7 @@ export default function BattleGroupStatus({
                                                                         key={idx}
                                                                         src={`/stains/${stainLower}-stain.png`}
                                                                         alt={stain}
-                                                                        title={`${stain} Stain`}
+                                                                        title={t("combat.stainOf", { element: stain })}
                                                                         className="w-5 h-5 object-contain"
                                                                     />
                                                                 );
@@ -256,23 +256,23 @@ export default function BattleGroupStatus({
                                             return (
                                                 <div className="mt-2">
                                                     <div className="flex items-center justify-between mb-1">
-                                                        <span className="text-xs opacity-70 uppercase">Perfeição</span>
+                                                        <span className="text-xs opacity-70 uppercase">{t("combat.perfection")}</span>
                                                         <div className={`
                                                             px-2 py-0.5 rounded border-2 font-bold text-sm
                                                             ${getRankColor(currentRank)}
                                                         `}>
-                                                            Rank {currentRank}
+                                                            {t("combat.rank")} {currentRank}
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center justify-between text-xs mb-0.5">
-                                                        <span className="opacity-50">Progresso</span>
+                                                        <span className="opacity-50">{t("combat.progress")}</span>
                                                         <span className="font-mono">
                                                             {currentRank === "S" ? t("playerPage.skills.perfectionMax") : `${rankProgress}/${rankMax}`}
                                                         </span>
                                                     </div>
                                                     <AnimatedStatBar
                                                         value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
-                                                        label="Rank Progress"
+                                                        label={t("combat.progress")}
                                                         fillClass={getRankFillClass(currentRank)}
                                                         ghostClass={getRankGhostClass(currentRank)}
                                                     />
@@ -285,14 +285,14 @@ export default function BattleGroupStatus({
                                             ch.maxChargePoints > 0 && (
                                                 <div>
                                                     <div className="flex items-center justify-between text-xs uppercase">
-                                                        <span className="opacity-70">Carga</span>
+                                                        <span className="opacity-70">{t("combat.charge")}</span>
                                                         <span className="font-mono">
                                                             {ch.chargePoints ?? 0}/{ch.maxChargePoints}
                                                         </span>
                                                     </div>
                                                     <AnimatedStatBar
                                                         value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
-                                                        label="Carga"
+                                                        label={t("combat.charge")}
                                                         fillClass="bg-warning"
                                                         ghostClass="bg-warning/30"
                                                     />
@@ -322,18 +322,18 @@ export default function BattleGroupStatus({
                                          ch.id.toLowerCase().includes("maelle") && (
                                             <div className="mt-2">
                                                 <div className="flex items-center gap-2 text-xs">
-                                                    <span className="opacity-70">Postura</span>
+                                                    <span className="opacity-70">{t("combat.stance")}</span>
                                                     {ch.stance === "Defensive" && (
-                                                        <div className="badge badge-info badge-sm">Defensiva</div>
+                                                        <div className="badge badge-info badge-sm">{t("combat.defensive")}</div>
                                                     )}
                                                     {ch.stance === "Offensive" && (
-                                                        <div className="badge badge-error badge-sm">Ofensiva</div>
+                                                        <div className="badge badge-error badge-sm">{t("combat.offensive")}</div>
                                                     )}
                                                     {ch.stance === "Virtuous" && (
-                                                        <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">Virtuosa</div>
+                                                        <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">{t("combat.virtuous")}</div>
                                                     )}
                                                     {!ch.stance && (
-                                                        <div className="badge badge-ghost badge-sm">Sem postura</div>
+                                                        <div className="badge badge-ghost badge-sm">{t("combat.noStance")}</div>
                                                     )}
                                                 </div>
                                             </div>

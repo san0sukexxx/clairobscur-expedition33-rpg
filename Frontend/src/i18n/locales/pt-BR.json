@@ -1885,6 +1885,8 @@
       "rank": "Rank",
       "progress": "Progresso",
       "stains": "Manchas",
+      "noStains": "Nenhuma",
+      "stainOf": "Mancha de {element}",
       "emptySlot": "Slot Vazio",
       "victoryTitle": "Vitória!",
       "noRewards": "Nenhuma recompensa foi obtida nesta batalha.",
@@ -1943,6 +1945,7 @@
       "skillBlocked": "Habilidade Bloqueada",
       "locked": "Bloqueado",
       "noDeadAllies": "Não há aliados mortos",
+      "noSkills": "Nenhuma habilidade disponível para este personagem.",
       "gustave-lumiere-assault": {
         "name": "Assalto Luimièriano",
         "description": "Causa dano baixo em alvo único. 5 ataques. Usa elemento da arma. Acertos críticos geram 1 Carga adicional."
@@ -2587,6 +2590,35 @@
         "name": "Trombeta do Trovador",
         "description": "Ataque de som de trombeta. Efeito: Aplica 1 buff aleatório em 1-3 aliados (Empowered, Protected, Shielded, Regeneration ou Hastened). Máscara de Conjurador ou Onipotente: aplica 2 buffs aleatórios por aliado. Roda Bestial: +4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Troubadour enquanto Monoco estiver no grupo ativo."
       }
+    },
+    "skillPicker": {
+      "title": "HABILIDADES",
+      "searchPlaceholder": "Buscar habilidade...",
+      "gradient": "Gradiente",
+      "charge": "carga",
+      "charges": "cargas",
+      "equipError": "Erro ao equipar habilidade:",
+      "unequipError": "Erro ao desequipar habilidade:",
+      "cannotEquipInBattle": "Não é possível equipar ou desequipar habilidades durante a batalha",
+      "selectEquippedToCombat": "Selecione uma habilidade equipada para usar em combate",
+      "selectSkillAlt": "Selecionar habilidade",
+      "removeFromSlot": "Remover habilidade do slot",
+      "selectASkill": "Selecione uma Habilidade",
+      "noSkillsFound": "Nenhuma habilidade encontrada."
+    },
+    "skillsList": {
+      "title": "Habilidades",
+      "subtitle": "Lista completa das habilidades do personagem",
+      "itemCount": "{count} item(ns)",
+      "skillPoints": "Pontos de Habilidade:",
+      "excess": "Excesso: {count}",
+      "notUnlocked": "Habilidade ainda não desbloqueada",
+      "insufficientPoints": "Pontos insuficientes (necessário: {required}, disponível: {available})",
+      "free": "Grátis",
+      "unlockPrerequisite": "Obtenha uma dessas habilidades para desbloquear",
+      "unlockError": "Erro ao desbloquear habilidade:",
+      "removeError": "Erro ao remover habilidade:",
+      "sectionAriaLabel": "Seção de habilidades"
     },
     "items": {
       "title": "Itens",

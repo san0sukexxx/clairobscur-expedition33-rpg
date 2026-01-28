@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { t } from "../i18n";
 
 // Bestial Wheel pattern: 1 Gold, 2 Blue, 2 Purple, 2 Red, 2 Green (repeating infinitely)
 const WHEEL_PATTERN = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
@@ -29,7 +30,7 @@ export const BestialWheel: React.FC<BestialWheelProps> = ({ position }) => {
 
     return (
         <div className="flex flex-col gap-1 w-full">
-            <div className="text-xs uppercase opacity-70 font-semibold">Roda Bestial</div>
+            <div className="text-xs uppercase opacity-70 font-semibold">{t("combat.bestialWheel")}</div>
             <div className="flex gap-1 w-full">
                 {visibleSlots.map((color, index) => (
                     <div
@@ -40,7 +41,7 @@ export const BestialWheel: React.FC<BestialWheelProps> = ({ position }) => {
                             ${COLOR_CLASSES[color]}
                             ${index === 0 ? "bestial-active" : ""}
                         `}
-                        title={`${color.charAt(0).toUpperCase() + color.slice(1)} ${index === 0 ? "(Atual)" : ""}`}
+                        title={`${color.charAt(0).toUpperCase() + color.slice(1)} ${index === 0 ? `(${t("combat.current")})` : ""}`}
                     />
                 ))}
             </div>
