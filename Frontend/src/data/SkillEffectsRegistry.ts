@@ -1195,7 +1195,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        gainsPerfectionPerHit: 1,  // +1 per hit, +2 if critical
+        gainsPerfectionPerHit: 2,  // +2 per hit (total: 10), +3 if critical
         criticalGivesPerfectionBonus: true,  // Critical hits give +1 extra Perfection
         rankConditionalBonus: { rank: "B", damageMultiplier: 1.5 }  // At Rank B: +50% damage bonus
         // Starting skill for Verso

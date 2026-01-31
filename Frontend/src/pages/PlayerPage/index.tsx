@@ -547,23 +547,6 @@ export default function PlayerPage() {
                 }, 600);
               }
 
-              // Gain perfection points per hit (Verso only - all skills grant points)
-              if (isVersoChar) {
-                const basePoints = resolved.metadata.gainsPerfectionPerHit ?? 1; // Default +1 per hit
-                const isCritical = critMulti > 1;
-                const hasCritBonus = resolved.metadata.criticalGivesPerfectionBonus === true;
-                const pointsPerHit = (isCritical && hasCritBonus) ? basePoints + 1 : basePoints;
-                try {
-                  const perfResult = await APIBattle.addPerfectionPoints(source.battleID, pointsPerHit);
-                  if (perfResult.rankedUp) {
-                    showToast(t("playerPage.skills.perfectionRankUp", { rank: perfResult.newRank }));
-                  }
-                  await checkPlayerLoop();
-                } catch (error) {
-                  console.error("Erro ao adicionar pontos de perfeição por golpe:", error);
-                }
-              }
-
               hitIndex++;
               resolvePromise();
             });
@@ -587,67 +570,6 @@ export default function PlayerPage() {
               remainingTurns: effect.remainingTurns ?? 0,
               sourceCharacterId: source.battleID
             });
-          }
-        }
-      }
-
-      await executeAllSpecialMechanics({
-        source,
-        target,
-        resolved,
-        allCharacters: player.fightInfo?.characters ?? [],
-        showToast
-      }, 0);
-
-      // Check if skill can cause Break (Fragile -> Broken)
-      if (skillMetadata.canBreak && player.fightInfo?.battleId) {
-        // Fetch updated battle data to check current status
-        const updatedBattle = await APIBattle.getById(player.fightInfo.battleId);
-        const updatedCharacters = updatedBattle.characters ?? [];
-
-        for (const targetId of resolved.targetIds) {
-          const targetChar = updatedCharacters.find(c => c.battleID === targetId);
-          const isFragile = targetChar?.status?.some(s => s.effectName === "Fragile") ?? false;
-
-          if (isFragile) {
-            try {
-              await APIBattle.breakTarget(targetId);
-              showToast(t("playerPage.battle.targetBroken", { name: targetChar?.name }));
-            } catch (error) {
-              console.error("Erro ao quebrar alvo:", error);
-            }
-          }
-        }
-        await checkPlayerLoop();
-      }
-
-      // Grant perfection points at end of skill (Verso only)
-      if (isVersoChar && (skillMetadata.grantsPerfectionPoints || skillMetadata.bonusPerfectionOnCrit)) {
-        const basePoints = skillMetadata.grantsPerfectionPoints || 0;
-
-        // Count critical rolls across ALL hits
-        let totalCrits = 0;
-        for (const diceResult of allDiceResults) {
-          totalCrits += countCriticalRolls(diceResult);
-        }
-
-        // If ANY critical hit occurred, add the full bonus (not multiplied by crit count)
-        const critBonus = (totalCrits > 0 && skillMetadata.bonusPerfectionOnCrit)
-          ? skillMetadata.bonusPerfectionOnCrit
-          : 0;
-        const totalPoints = basePoints + critBonus;
-
-        if (totalPoints > 0) {
-          try {
-            const result = await APIBattle.addPerfectionPoints(source.battleID, totalPoints);
-            if (result.success) {
-              await checkPlayerLoop();
-              if (result.rankedUp) {
-                showToast(t("playerPage.skills.perfectionRankUp", { rank: result.newRank }));
-              }
-            }
-          } catch (error) {
-            console.error("Erro ao adicionar pontos de perfeição:", error);
           }
         }
       }
