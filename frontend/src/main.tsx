@@ -6,7 +6,7 @@ import './index.css'
 import App from './App.tsx'
 import TransitionLayout from "./transitions/TransitionLayout.tsx";
 import MasterPage from "./pages/MasterPage.tsx";
-import PlayerPage from "./pages/PlayerPage.tsx";
+import PlayerPage from "./pages/PlayerPage";
 import CreateCampaign from "./pages/CreateCampaign.tsx";
 import CampaignAdmin from "./pages/CampaignAdmin.tsx";
 import CampaignList from "./pages/CampaignList.tsx";

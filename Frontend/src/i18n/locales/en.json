@@ -2880,7 +2880,8 @@
         "flyingEnemyWarning": "This enemy is flying and can only be hit by free shots",
         "comboAttack": "Combo Attack! {count} hits!",
         "attemptingFlee": "Attempting to flee...",
-        "attackDamage": "Attack {index}: {damage} damage"
+        "attackDamage": "Attack {index}: {damage} damage",
+        "targetBroken": "{name} was Broken!"
       },
       "initiative": {
         "rollResult": "Roll result",

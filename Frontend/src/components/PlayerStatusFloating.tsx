@@ -196,8 +196,8 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                 )}
 
                 {/* Verso's Perfection Rank System */}
-                {ch.id.toLowerCase().includes("verso") && ch.perfectionRank && (() => {
-                    const currentRank = ch.perfectionRank; // D, C, B, A, S
+                {ch.id.toLowerCase().includes("verso") && (() => {
+                    const currentRank = ch.perfectionRank ?? "D"; // D, C, B, A, S (default to D)
                     const rankProgress = ch.rankProgress ?? 0; // Current progress
                     const rankMax = 10; // Points needed for next rank (always 10)
 

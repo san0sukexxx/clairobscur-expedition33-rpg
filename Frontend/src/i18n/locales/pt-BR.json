@@ -2882,7 +2882,8 @@
         "flyingEnemyWarning": "Este inimigo está voando e só pode ser atingido por tiros livres",
         "comboAttack": "Combo Attack! {count} hits!",
         "attemptingFlee": "Tentando fugir...",
-        "attackDamage": "Ataque {index}: {damage} de dano"
+        "attackDamage": "Ataque {index}: {damage} de dano",
+        "targetBroken": "{name} foi Quebrado!"
       },
       "initiative": {
         "rollResult": "Resultado da rolagem",
