@@ -11,15 +11,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Free Aim shots can consume 1 Foretell to deal 100% more damage."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack applies 3 Foretell."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "During Twilight, Free Aim shots deal double damage."
       }
     ],
@@ -37,15 +37,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Kill self on battle start."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Revive with 100% Health. Once per battle."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Play first."
       }
     ],
@@ -63,15 +63,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "While having at least 1 active Moon charge, Moon Skills are always Critical but damage taken is doubled."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "25% increased damage per Moon charge."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack gives 1 Moon charge."
       }
     ],
@@ -89,15 +89,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Consuming Foretell applies 2 Burn on target per Sun Charge."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "100% increased Burn damage in Twilight state."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Sun Skills give one more charge."
       }
     ],
@@ -115,15 +115,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "100% Critical Chance during Twilight."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Apply 1 Foretell on Critical hit."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
       }
     ],
@@ -141,15 +141,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Sun Skills always apply 10 Foretell, but all damage taken is doubled."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack gives 1 Moon charge and consumes all Foretell to apply Burn."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "100% increased Burn damage in Twilight state."
       }
     ],
@@ -167,15 +167,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Curse self on battle start. Deal 50% more damage while Cursed."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Reset Curse duration when entering Twilight state."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Play again when entering Twilight state."
       }
     ],
@@ -193,15 +193,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "+1 AP per Moon charge on turn start."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack gives 1 Moon charge."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "During Twilight, Base Attack consumes all AP. Base Attack applies 1 Foretell and deals 50% increased damage per AP consumed."
       }
     ],
@@ -219,15 +219,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "While having at least 1 active Sun charge, apply one Burn stack per hit taken."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Counterattacks apply 1 Burn per active Sun charge."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base attack can consume 1 Sun charge to apply 5 Foretell."
       }
     ],
@@ -245,15 +245,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "During Twilight, every time Foretell is applied it also affects another random enemy."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Apply 1 Burn every 3 Foretell applied with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "20% increased Fire damage with Skills."
       }
     ],
@@ -271,15 +271,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "On Twilight Start, apply Mark to all enemies."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Hitting a Marked enemy during Twilight doesn't remove Mark."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Apply 3 Foretell on applying Mark."
       }
     ],
@@ -297,15 +297,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Free Aim shots can consume a Sun charge to apply 5 Foretell and consume a Moon charge to deal 400% more damage."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Consuming a Sun or Moon charge gives 1 AP."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack gives 1 Moon charge."
       }
     ],
@@ -323,15 +323,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "During Moon, all allies have Greater Rush. During Sun, all enemies have Greater Slow."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "During Twilight, all allies have Greater Rush and all enemies have Greater Slow."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+3 AP on applying a Buff or Debuff. Once per turn."
       }
     ],
@@ -349,15 +349,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Killing an enemy with Foretell applies its Foretell to another random enemy."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Apply Mark on consuming Foretell."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "20% increased Dark damage with Skills."
       }
     ],
@@ -375,15 +375,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "On Twilight Start, deal damage to all enemies based on the amount of charges."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "On Twilight Start, apply 2 Foretell per charge to all enemies."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Double Sun and Moon charge generation."
       }
     ],
@@ -401,15 +401,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Sun Skills have increased damage for each Foretell on the target. Moon Skills don't generate Moon charges anymore."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "With at least 1 active Sun charge, gain one additional AP per Foretell consumed."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base attack can consume 1 Sun charge to apply 5 Foretell."
       }
     ],
@@ -427,15 +427,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "During Twilight, all damage dealt is converted to Dark damage."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Dark damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Apply Shell during Moon, Powerful during Sun, and Rush during Twilight."
       }
     ],
@@ -453,15 +453,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Can consume 1 Moon charge on turn start to recover 20% of each ally's Health."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack gives 1 Moon charge."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Moon Skills give one more charge."
       }
     ],
@@ -479,15 +479,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Recover 5% Health per Foretell applied."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Healing Skills cost 1 less AP."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "30% increased Heal efficiency per Moon charge. Base Attack gives 1 Moon charge."
       }
     ],
@@ -505,15 +505,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "On turn start, gain 1 Shield if at least 1 Sun charge is active."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Apply 5 Foretell on enemies that break Shields."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+2 Sun charges on Counterattack."
       }
     ],
@@ -544,15 +544,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Extend Twilight by one turn on using a Moon Skill. +50% Twilight damage increase on using a Sun Skill."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Twilight duration is increased by 1."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Play again when entering Twilight state."
       }
     ],

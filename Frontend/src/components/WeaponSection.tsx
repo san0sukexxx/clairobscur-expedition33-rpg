@@ -1,11 +1,10 @@
 import { useRef, useMemo, useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaList, FaDice, FaChartLine } from "react-icons/fa";
-import { GiStripedSword, GiLifeBar } from "react-icons/gi";
+import { FaChevronLeft, FaChevronRight, FaList, FaChartLine } from "react-icons/fa";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPlusDices, displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus } from "../utils/WeaponCalculator";
+import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE } from "../utils/ElementUtils";
 import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
 
@@ -88,8 +87,8 @@ function findWeaponByName(weaponList: WeaponDTO[], name: string): WeaponDTO | un
 }
 
 const levelColor = (lvl: number) =>
-  lvl >= 20 ? "text-red-400"
-    : lvl >= 10 ? "text-yellow-400"
+  lvl >= 4 ? "text-red-400"
+    : lvl >= 3 ? "text-yellow-400"
       : "text-sky-400";
 
 export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }: WeaponSectionProps) {
@@ -163,7 +162,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
     }
 
     const pickedWeaponId = pendingWeaponToAdd.name;
-    const level = clamp(pendingWeaponLevel, 1, 33);
+    const level = clamp(pendingWeaponLevel, 1, 4);
 
     closeLevelDialog();
 
@@ -195,7 +194,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
   async function updateLevel(newLevel: number) {
     if (!player?.playerSheet?.weaponId) return;
 
-    const clamped = clamp(newLevel, 1, 33);
+    const clamped = clamp(newLevel, 1, 4);
     const equippedWeaponId = player.playerSheet.weaponId;
 
     setPlayer(prev =>
@@ -437,7 +436,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                     <button
                       className="btn btn-sm btn-ghost"
                       onClick={handleIncrease}
-                      disabled={activeWeapon.level >= 33}>
+                      disabled={activeWeapon.level >= 4}>
                       <FaChevronRight />
                     </button>
                   </div>
@@ -452,16 +451,9 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
               <div className="grid grid-cols-4 gap-4 text-center mt-6">
                 <div>
                   <span className="block text-xs uppercase opacity-70">{t("weapons.power")}</span>
-                  {displayWeaponPlusDices(activeWeapon.power, activeWeapon.level) !== null && (
-                    <span className="inline-flex items-center justify-center gap-1 text-2xl font-bold">
-                      {displayWeaponPlusDices(activeWeapon.power, activeWeapon.level)}
-                      <FaDice aria-hidden="true" />
-                    </span>
-                  )}
                   {displayWeaponPlusPower(activeWeapon.power, activeWeapon.level) !== null && (
                     <span className="inline-flex items-center justify-center gap-1 text-2xl font-bold">
                       {displayWeaponPlusPower(activeWeapon.power, activeWeapon.level)}
-                      <GiStripedSword aria-hidden="true" />
                     </span>
                   )}
                 </div>
@@ -485,25 +477,21 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                       {label == t("weapons.vitality") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponVitalityBonus(value, activeWeapon.level)}
-                          <GiLifeBar />
                         </span>
                       )}
                       {label == t("weapons.defense") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponDefenseBonus(value, activeWeapon.level)}
-                          <FaDice />
                         </span>
                       )}
                       {label == t("weapons.luck") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponLuckBonus(value, activeWeapon.level)}
-                          <FaDice />
                         </span>
                       )}
                       {label == t("weapons.agility") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponAgilityBonus(value, activeWeapon.level)}
-                          <FaDice />
                         </span>
                       )}
                     </div>
@@ -594,17 +582,9 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                           <div>
                             <div className="uppercase tracking-wide text-sm opacity-70 mb-1">PODER</div>
                             <div className="space-y-1">
-                              {displayWeaponPlusDices(weaponDetails.attributes.power, w.level) !== null && (
-                                <div className="flex items-center justify-center gap-1 text-2xl font-bold">
-                                  {displayWeaponPlusDices(weaponDetails.attributes.power, w.level)}
-                                  <FaDice aria-hidden="true" />
-                                </div>
-                              )}
-
                               {displayWeaponPlusPower(weaponDetails.attributes.power, w.level) !== null && (
                                 <div className="flex items-center justify-center gap-1 text-2xl font-bold">
                                   {displayWeaponPlusPower(weaponDetails.attributes.power, w.level)}
-                                  <GiStripedSword aria-hidden="true" />
                                 </div>
                               )}
                             </div>
@@ -631,25 +611,21 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                                 {label == "Vitalidade" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponVitalityBonus(value, w.level)}
-                                    <GiLifeBar />
                                   </span>
                                 )}
                                 {label == "Defesa" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponDefenseBonus(value, w.level)}
-                                    <FaDice />
                                   </span>
                                 )}
                                 {label == "Sorte" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponLuckBonus(value, w.level)}
-                                    <FaDice />
                                   </span>
                                 )}
                                 {label == "Agilidade" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponAgilityBonus(value, w.level)}
-                                    <FaDice />
                                   </span>
                                 )}
                               </div>
@@ -695,13 +671,13 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
           <div className="px-6 py-4 space-y-4">
             <p className="text-sm text-neutral-300">
-              Selecione o nível desta arma (1 a 33).
+              Selecione o nível desta arma (1 a 4).
             </p>
 
             <div className="flex items-center gap-4 justify-center">
               <button
                 className="btn btn-sm btn-ghost"
-                onClick={() => setPendingWeaponLevel(v => clamp(v - 1, 1, 33))}
+                onClick={() => setPendingWeaponLevel(v => clamp(v - 1, 1, 4))}
                 disabled={pendingWeaponLevel <= 1}
               >
                 <FaChevronLeft />
@@ -713,8 +689,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
               <button
                 className="btn btn-sm btn-ghost"
-                onClick={() => setPendingWeaponLevel(v => clamp(v + 1, 1, 33))}
-                disabled={pendingWeaponLevel >= 33}
+                onClick={() => setPendingWeaponLevel(v => clamp(v + 1, 1, 4))}
+                disabled={pendingWeaponLevel >= 4}
               >
                 <FaChevronRight />
               </button>

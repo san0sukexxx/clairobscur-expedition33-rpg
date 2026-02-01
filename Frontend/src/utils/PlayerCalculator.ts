@@ -1,5 +1,5 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
-import { calculateWeaponPlusDices, calculateWeaponPlusPower, calculateWeaponCounterMaxPower } from "./WeaponCalculator";
+import { calculateWeaponPlusPower, calculateWeaponCounterMaxPower, calculateWeaponLuckBonus } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
 import { type AttackType, type BattleCharacterInfo, type DefenseOption, type StatusResponse, type StatusType, type WeaponInfo, type Stance } from "../api/ResponseModel";
 import {
@@ -76,15 +76,15 @@ export function playerPictosTotalCritical(player: GetPlayerResponse | null): num
     return total;
 }
 
-export function calculatePlayerCriticalMulti(diceResult: any, player: GetPlayerResponse | null, target?: BattleCharacterInfo): number {
-    // Pass pictos and target to calculateCriticalMulti so it can check for Critical Burn picto
+export function calculatePlayerCriticalMulti(diceResult: any, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, target?: BattleCharacterInfo): number {
     const pictos = player?.pictos ?? [];
-    const baseCriticalMulti = calculateCriticalMulti(diceResult, pictos, target);
-    const criticalRolls = countCriticalRolls(diceResult, pictos, target);
+    const baseCriticalMulti = calculateCriticalMulti(diceResult);
+    const criticalRolls = countCriticalRolls(diceResult);
 
     if (criticalRolls > 0) {
         const pictoCritical = playerPictosTotalCritical(player);
-        return baseCriticalMulti + pictoCritical;
+        const luckBonus = calculateWeaponLuckBonus(weaponInfo);
+        return baseCriticalMulti + pictoCritical + luckBonus;
     }
 
     return baseCriticalMulti;
@@ -135,7 +135,7 @@ export function calculateAttackDamage(player: GetPlayerResponse | null, weaponIn
     if (attackType == "basic") {
         damage = calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo.id, diceResult, playerChar);
     } else if (attackType == "free-shot") {
-        damage = calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType, playerChar);
+        damage = calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType, weaponInfo, playerChar);
     } else {
         damage = 1;
     }
@@ -165,10 +165,10 @@ export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattl
     return 0
 }
 
-export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, playerChar?: BattleCharacterInfo): number {
+export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, weaponInfo: WeaponInfo | null, playerChar?: BattleCharacterInfo): number {
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
-    var criticalMulti = calculatePlayerCriticalMulti(diceResult, player)
+    var criticalMulti = calculatePlayerCriticalMulti(diceResult, player, weaponInfo);
 
     var playerPower = (player?.playerSheet?.power ?? 0) * criticalMulti;
     if (failures > 0) {
@@ -201,7 +201,7 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     let empoweredMulti = playerHasEmpowered(player) ? 2 : 1;
     empoweredMulti = playerHasWeakened(player) ? 0.5 : empoweredMulti;
 
-    var playerPower = (player?.playerSheet?.power ?? 0) * calculatePlayerCriticalMulti(diceResult, player) * empoweredMulti;
+    var playerPower = (player?.playerSheet?.power ?? 0) * calculatePlayerCriticalMulti(diceResult, player, weaponInfo) * empoweredMulti;
 
     if (failures > 0) {
         playerPower = Math.floor(playerPower / failures);
@@ -256,14 +256,14 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     var playerDefense = 0;
 
     if (defenseOption == "block" || defenseOption == "dodge") {
-        var resistance = (player?.playerSheet?.resistance ?? 0) * calculatePlayerCriticalMulti(diceResult, player) * protectedMulti;
+        var resistance = (player?.playerSheet?.resistance ?? 0) * calculatePlayerCriticalMulti(diceResult, player, weaponInfo) * protectedMulti;
         if (failures > 0) {
             resistance = Math.floor(resistance / failures);
         }
 
         playerDefense = resistance + diceTotalSum;
     } else if (defenseOption == "gradient-block") {
-        var power = (player?.playerSheet?.power ?? 0) * calculatePlayerCriticalMulti(diceResult, player);
+        var power = (player?.playerSheet?.power ?? 0) * calculatePlayerCriticalMulti(diceResult, player, weaponInfo);
 
         if (failures > 0) {
             power = Math.floor(power / failures);
@@ -273,7 +273,7 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 
         playerDefense = power + diceTotalSum;
     } else if (defenseOption == "jump") {
-        var hability = (player?.playerSheet?.hability ?? 0) * calculatePlayerCriticalMulti(diceResult, player) * hastenedMulti;
+        var hability = (player?.playerSheet?.hability ?? 0) * calculatePlayerCriticalMulti(diceResult, player, weaponInfo) * hastenedMulti;
         if (failures > 0) {
             hability = hability / failures
         }
@@ -293,6 +293,18 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 
     if (defenseOption == "block") {
         playerDefense += playerPictosTotalDefense(player);
+    }
+    
+    switch (defenseOption) {
+        case "dodge":
+        case "jump":
+            playerDefense += calculateWeaponAgilityBonus(weaponInfo)
+            break
+        case "block":
+            playerDefense += calculateWeaponDefenseBonus(weaponInfo)
+            break
+        case "gradient-block":
+            playerDefense += calculateRawWeaponPower(weaponInfo, "basic")
     }
 
     playerDefense = playerHasMarked(player) ? Math.floor(playerDefense * 0.5) : playerDefense;
@@ -342,48 +354,26 @@ export function calculateMaxPA(player: GetPlayerResponse | null): number {
 }
 
 export function rollCommandForInitiative(weaponInfo: WeaponInfo | null) {
-    const agilityBonus = calculateWeaponAgilityBonus(weaponInfo) + 1
-    return agilityBonus + "d6";
+    return "1d6";
 }
 
 export function rollCommandForBasicAttack(weaponInfo: WeaponInfo | null) {
-    const dices = calculateWeaponPlusDices(weaponInfo?.details?.attributes.power ?? 0, weaponInfo?.weapon?.level ?? 0) + 1;
-    return `${dices}d6`;
+    return `1d6`;
 }
 
 export function rollCommandForAttack(weaponInfo: WeaponInfo | null, attackType: AttackType) {
-    var dices = 1;
-
-    if (attackType == "basic") {
-        dices = calculateWeaponPlusDices(weaponInfo?.details?.attributes.power ?? 0, weaponInfo?.weapon?.level ?? 0) + 1;
-    } else if (attackType == "free-shot") {
-        dices = 1;
-    }
-    return `${dices}d6`;
+    return `1d6`;
 }
 
 export function rollCommandForDefense(player: GetPlayerResponse, weaponInfo: WeaponInfo | null, defenseOption: DefenseOption) {
-    var defenseDices = 1
-
-    switch (defenseOption) {
-        case "dodge":
-        case "jump":
-            defenseDices += calculateWeaponAgilityBonus(weaponInfo)
-            break
-        case "block":
-            defenseDices += calculateWeaponDefenseBonus(weaponInfo)
-            break
-        case "gradient-block":
-            return rollCommandForBasicAttack(weaponInfo)
-    }
-    return defenseDices + "d6";
+    return "1d6";
 }
 
 export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult);
     const pictos = player?.pictos ?? [];
-    var playerInitiative = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult, pictos);
+    var playerInitiative = (player?.playerSheet?.hability ?? 0) * calculateCriticalMulti(diceResult);
 
     if (failures > 0) {
         playerInitiative = Math.floor(playerInitiative / failures);
@@ -396,15 +386,15 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any) {
 
 export function playerHasStatus(player: GetPlayerResponse | null, status: StatusType): boolean {
     const currentCharacter = getPlayerCharacter(player);
-    if(!currentCharacter) { return false }
-    
+    if (!currentCharacter) { return false }
+
     return hasStatus(currentCharacter, status);
 }
 
 export function getPlayerStatus(player: GetPlayerResponse | null, status: StatusType): StatusResponse | undefined {
     const currentCharacter = getPlayerCharacter(player);
-    if(!currentCharacter) { return undefined }
-    
+    if (!currentCharacter) { return undefined }
+
     return currentCharacter.status?.find(s => s.effectName === status);
 }
 

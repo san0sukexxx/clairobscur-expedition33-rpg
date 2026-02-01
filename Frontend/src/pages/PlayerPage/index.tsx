@@ -167,7 +167,7 @@ export default function PlayerPage() {
     setIsExecutingSkill(true);
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForInitiative(weaponInfo), async (result) => {
       const criticalRolls = countCriticalRolls(result);
-      const criticalMulti = calculatePlayerCriticalMulti(result, player);
+      const criticalMulti = calculatePlayerCriticalMulti(result, player, weaponInfo);
       const rollTotal = diceTotal(result);
       const total = initiativeTotal(player, result);
       const failures = countFailuresRolls(result);
@@ -500,7 +500,7 @@ export default function PlayerPage() {
             rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, "basic"), async (result) => {
               allDiceResults.push(result);
               const total = diceTotal(result);
-              const critMulti = calculatePlayerCriticalMulti(result, player, target);
+              const critMulti = calculatePlayerCriticalMulti(result, player, weaponInfo);
               let playerPower = (player?.playerSheet?.power ?? 0) * critMulti;
               const weaponPower = calculateRawWeaponPower(weaponInfo, "basic");
               const basePower = playerPower + weaponPower + total;
@@ -617,6 +617,8 @@ export default function PlayerPage() {
               if (willGetFragile) {
                 effects.push({ effectType: "Fragile", ammount: 1, remainingTurns: 2 });
               }
+
+              showToast("Total: " + totalDamageToNpc)
 
               await APIBattle.attack({
                 totalDamage: totalDamageToNpc,

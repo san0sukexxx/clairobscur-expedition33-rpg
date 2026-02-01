@@ -25,7 +25,7 @@ interface UseDefenseActionsParams {
   setPlayer: Dispatch<SetStateAction<GetPlayerResponse | null>>;
   weaponInfo: WeaponInfo;
   weaponList: WeaponDTO[];
-  diceBoardRef: RefObject<DiceBoardRef>;
+  diceBoardRef: RefObject<DiceBoardRef | null>;
   timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
   showToast: (message: string, options?: { duration?: number }) => void;
   lastBattleLog: number | undefined;

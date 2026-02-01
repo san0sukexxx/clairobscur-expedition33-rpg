@@ -18,7 +18,8 @@ export default function DiceBoard({ ref }: DiceBoardProps) {
     useEffect(() => {
         if (boxRef.current) return;
 
-        const diceBox = new DiceBox(`#${BOX_ID}`, {
+        const diceBox = new DiceBox({
+            container: `#${BOX_ID}`,
             assetPath: "/assets/dice-box/",
             scale: 7,
             startingHeight: 8,
