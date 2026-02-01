@@ -2881,6 +2881,7 @@
         "joinedBattle": "Agora você está participando da batalha",
         "flyingEnemyWarning": "Este inimigo está voando e só pode ser atingido por tiros livres",
         "comboAttack": "Combo Attack! {count} hits!",
+        "weakPointHit": "Ponto fraco! +{bonus} de dano",
         "attemptingFlee": "Tentando fugir...",
         "attackDamage": "Ataque {index}: {damage} de dano",
         "targetBroken": "{name} foi Quebrado!"
@@ -2890,6 +2891,7 @@
         "roll": "Rolagem",
         "ability": "Habilidade",
         "pictoBonus": "Bônus Pictos",
+        "weaponBonus": "Bônus Arma",
         "total": "Total",
         "criticals": "Críticos",
         "criticalFailures": "Falhas críticas"

@@ -88,6 +88,7 @@ export interface CreateAttackRequest {
     isLastHit?: boolean  // Indicates if this is the last hit of the skill (for Twilight activation)
     shouldRemoveMarked?: boolean  // If false, don't remove Marked status (e.g., for Gustave's Homage)
     element?: string  // Element type for elemental resistances (e.g., 'Physical', 'Fire', 'Ice')
+    chargeIncrease?: number  // Amount to increase charge (Gustave's Lumiere Assault: 1 normal, 2 on crit)
 }
 
 export interface AttackStatusEffectRequest {

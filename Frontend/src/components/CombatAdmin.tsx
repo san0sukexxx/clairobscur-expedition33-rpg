@@ -142,11 +142,11 @@ function calculateNPCDifficulty(npcId: string): number {
 
     // Propriedades extras (+1 cada)
     if (npc.playFirst) difficulty += 1;
-    if (npc.weakTo) difficulty += 1;
+    if (npc.weakTo) difficulty -= 1;
     if (npc.resistentTo) difficulty += 1;
     if (npc.imuneTo) difficulty += 1;
     if (npc.absorbElement) difficulty += 1;
-    if (npc.freeShotWeakPoints) difficulty += 1;
+    if (npc.freeShotWeakPoints) difficulty -= 1;
     if (npc.attackList && npc.attackList.length > 0) difficulty += 1;
     if (npc.skillList && npc.skillList.length > 0) difficulty += 1;
     if (npc.isFlying) difficulty += 1;
@@ -197,44 +197,31 @@ export default function CombatAdmin({
     const collectBattleRewards = useCallback((characters: BattleCharacterInfo[]) => {
         const rewards: BattleReward[] = [];
 
-        console.log("=== collectBattleRewards ===");
-        console.log("Total de personagens:", characters.length);
-
         // Verificar se há algum jogador vivo
         const hasAlivePlayer = characters.some(
             ch => ch.type === "player" && ch.healthPoints > 0
         );
-        console.log("Há jogador vivo?", hasAlivePlayer);
 
         if (!hasAlivePlayer) {
-            console.log("Nenhum jogador vivo, sem recompensas");
             return rewards; // Sem recompensas se todos os jogadores morreram
         }
 
         // Coletar recompensas de todos os NPCs mortos
         characters.forEach(ch => {
-            console.log(`Personagem: ${ch.name} (${ch.id}), Tipo: ${ch.type}, HP: ${ch.healthPoints}`);
             if (ch.type === "npc" && ch.healthPoints <= 0) {
-                console.log(`  -> NPC morto, buscando recompensa para ID: ${ch.id}`);
                 const npc = getNpcById(ch.id);
-                console.log(`  -> NPC encontrado:`, npc);
                 if (npc?.reward) {
-                    console.log(`  -> Recompensa encontrada:`, npc.reward);
                     rewards.push(npc.reward);
-                } else {
-                    console.log(`  -> Nenhuma recompensa definida para este NPC`);
                 }
             }
         });
 
-        console.log("Total de recompensas coletadas:", rewards.length);
         return rewards;
     }, []);
 
     // Coletar recompensas quando a batalha estiver finalizada (ao carregar ou recarregar a página)
     useEffect(() => {
         if (battleStatus === 'finished' && battleDetails?.characters && battleRewards.length === 0) {
-            console.log("Batalha já finalizada, coletando recompensas...");
             const rewards = collectBattleRewards(battleDetails.characters);
             if (rewards.length > 0) {
                 setBattleRewards(rewards);
@@ -420,15 +407,10 @@ export default function CombatAdmin({
 
             // Se a batalha foi finalizada, buscar os dados atualizados e coletar recompensas
             if (newStatus === "finished") {
-                console.log("Batalha finalizada, buscando dados para coletar recompensas...");
                 const updatedBattle = await APIBattle.getById(campaignInfo.battleId);
-                console.log("Dados da batalha atualizada:", updatedBattle);
                 if (updatedBattle?.characters) {
-                    console.log("Coletando recompensas...");
                     const rewards = collectBattleRewards(updatedBattle.characters);
                     setBattleRewards(rewards);
-                } else {
-                    console.log("Nenhum personagem encontrado na batalha atualizada");
                 }
             }
         } catch (error) {
@@ -1616,8 +1598,6 @@ export default function CombatAdmin({
             // Coletar recompensas quando a batalha terminar
             if (battleInfo.characters) {
                 const rewards = collectBattleRewards(battleInfo.characters);
-                console.log("Recompensas coletadas:", rewards);
-                console.log("Personagens:", battleInfo.characters);
                 setBattleRewards(rewards);
             }
         }

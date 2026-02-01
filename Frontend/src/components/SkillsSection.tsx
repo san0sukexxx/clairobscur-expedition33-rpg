@@ -46,7 +46,7 @@ export default function SkillSection({ player, setPlayer, isAdmin, initialTab = 
     const rotateY = tab === "picker" ? 180 : 0;
 
     return (
-        <div className="relative">
+        <div className="relative pb-100">
             <div
                 className="relative w-full"
                 style={{ perspective: 1200 }}

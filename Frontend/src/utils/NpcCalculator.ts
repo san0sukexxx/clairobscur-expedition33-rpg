@@ -2,7 +2,7 @@ import { type NPCInfo, type ElementModifier, type WeaponInfo, type BattleCharact
 import { getNpcById } from "../utils/NpcUtils"
 
 import {
-    calculateCriticalMulti,
+    calculateCriticalBonus,
     calculateFailureDiv,
     diceTotal
 } from "./DiceCalculator";
@@ -14,36 +14,50 @@ export function randomizeNpcInitiativeTotal(npc: NPCInfo) {
         return 1;
     }
 
-    const criticalMulti = diceResult == 6 ? 2 : 1;
-    const failureDiv = diceResult == 1 ? 2 : 1;
+    const criticalBonus = diceResult == 6 ? 4 : 0;
+    const failurePenalty = diceResult == 1 ? 2 : 0;
     const initiativeBonus = npc.initiativeBonus ?? 0;
 
-    return diceResult + (npc.hability * criticalMulti / failureDiv) + initiativeBonus;
+    return diceResult + npc.hability + criticalBonus - failurePenalty + initiativeBonus;
 }
 
 export function randomizeNpcDefenseTotal(npc: NPCInfo, target: BattleCharacterInfo) {
     let diceResult = Math.floor(Math.random() * 6) + 1
 
-    const criticalMulti = diceResult == 6 ? 2 : 1;
-    const failureDiv = diceResult == 1 ? 2 : 1;
-    let hability = 0
+    const criticalBonus = diceResult == 6 ? 4 : 0;
+    const failurePenalty = diceResult == 1 ? 2 : 0;
+    let habilityBonus = 0
+    let slowedPenalty = 0
 
     if (hasSlowed(target)) {
-        diceResult = Math.floor(diceResult / 2);
+        slowedPenalty = 4;
     }
     if (hasHastened(target)) {
-        hability = npc.hability;
+        habilityBonus = npc.hability;
     }
 
     let resistance = npc.resistance
+    let protectionBonus = 0
     if (hasUnprotected(target)) {
-        resistance = Math.floor(resistance / 2);
+        protectionBonus = -4;
     }
     if (hasProtected(target)) {
-        resistance *= 2;
+        protectionBonus = 4;
     }
 
-    return diceResult + (resistance * criticalMulti / failureDiv) + hability;
+    const total = diceResult + resistance + criticalBonus - failurePenalty + habilityBonus - slowedPenalty + protectionBonus;
+
+    console.log("=== NPC Defense Roll ===");
+    console.log("Dice:", diceResult);
+    console.log("Resistance:", resistance);
+    if (criticalBonus > 0) console.log("Critical Bonus:", criticalBonus);
+    if (failurePenalty > 0) console.log("Failure Penalty:", -failurePenalty);
+    if (habilityBonus > 0) console.log("Hability Bonus (Hastened):", habilityBonus);
+    if (slowedPenalty > 0) console.log("Slowed Penalty:", -slowedPenalty);
+    if (protectionBonus !== 0) console.log("Protection Bonus:", protectionBonus);
+    console.log("Defense Total:", total);
+
+    return total;
 }
 
 export function getNPCMaxHealth(npc: NPCInfo) {
@@ -70,12 +84,25 @@ export function calculateNpcAttackReceivedDamage(target: BattleCharacterInfo, da
     if (npcInfo == undefined) { return 1 }
 
     if (hasShield(target)) {
+        console.log("=== NPC Defense (Shielded) ===");
+        console.log("NPC:", target.name);
+        console.log("Damage blocked by shield");
         return 0;
     }
 
     let totalDefense = randomizeNpcDefenseTotal(npcInfo, target);
-    totalDefense = hasMarked(target) ? Math.floor(totalDefense * 0.5) : totalDefense 
-    return Math.max(1, damage - totalDefense)
+    const markedPenalty = hasMarked(target) ? 4 : 0;
+    totalDefense = totalDefense - markedPenalty;
+    const finalDamage = Math.max(1, damage - totalDefense);
+
+    console.log("=== NPC Damage Calculation ===");
+    console.log("NPC:", target.name);
+    console.log("Incoming Damage:", damage);
+    if (markedPenalty > 0) console.log("Marked Penalty:", -markedPenalty);
+    console.log("Total Defense:", totalDefense);
+    console.log("Final Damage Received:", finalDamage);
+
+    return finalDamage;
 }
 
 export function checkForFragile(target: BattleCharacterInfo, damage: number): boolean {
@@ -90,12 +117,12 @@ export function calculateNpcAttackPower(character: BattleCharacterInfo, diceResu
     const npcInfo = getNpcById(character.id)
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult)
-    var npcPower = (npcInfo?.power ?? 0) * calculateCriticalMulti(diceResult);
+    var npcPower = (npcInfo?.power ?? 0) + calculateCriticalBonus(diceResult);
 
     if (failures > 0) {
-        npcPower = Math.floor(npcPower / failures);
+        npcPower = npcPower - (failures * 2);
     }
-    return npcPower + total + (getFrenzyStatus(character)?.ammount ?? 0);
+    return Math.max(0, npcPower) + total + (getFrenzyStatus(character)?.ammount ?? 0);
 }
 
 export function rollCommandForNpcInitiative(id: string) {
@@ -116,25 +143,25 @@ export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | nu
         if (weaponInfo != undefined && weaponInfo.details != null) {
             if (npcInfo?.absorbElement == weaponInfo.details?.attributes.element) {
                 return {
-                    multiplier: -1,  // Negative multiplier = healing
+                    flatBonus: -8,  // Negative bonus = healing
                     type: "absorb"
                 };
             }
             if (npcInfo?.imuneTo == weaponInfo.details?.attributes.element) {
                 return {
-                    multiplier: 0,
+                    flatBonus: -999,  // Nullifies damage
                     type: "imune"
                 };
             }
             if (npcInfo?.resistentTo == weaponInfo.details?.attributes.element) {
                 return {
-                    multiplier: 0.5,
+                    flatBonus: -4,
                     type: "resistent"
                 };
             }
             if (npcInfo?.weakTo == weaponInfo.details?.attributes.element) {
                 return {
-                    multiplier: 1.5,
+                    flatBonus: 4,
                     type: "weak"
                 };
             }

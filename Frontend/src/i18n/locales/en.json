@@ -2879,6 +2879,7 @@
         "joinedBattle": "You are now participating in the battle",
         "flyingEnemyWarning": "This enemy is flying and can only be hit by free shots",
         "comboAttack": "Combo Attack! {count} hits!",
+        "weakPointHit": "Weak point! +{bonus} damage",
         "attemptingFlee": "Attempting to flee...",
         "attackDamage": "Attack {index}: {damage} damage",
         "targetBroken": "{name} was Broken!"
@@ -2888,6 +2889,7 @@
         "roll": "Roll",
         "ability": "Ability",
         "pictoBonus": "Picto Bonus",
+        "weaponBonus": "Weapon Bonus",
         "total": "Total",
         "criticals": "Criticals",
         "criticalFailures": "Critical failures"

@@ -3,21 +3,21 @@ import { type AttackType, type AttackResponse, type StatusType, type BattleChara
 import { t } from "../i18n";
 
 /**
- * Calcula o multiplicador de dano baseado no Rank de Perfeição do Verso
- * D: 1.0 (sem bônus)
- * C: 1.2 (+20%)
- * B: 1.4 (+40%)
- * A: 1.5 (+50%)
- * S: 2.0 (+100%)
+ * Calcula o bônus de dano baseado no Rank de Perfeição do Verso
+ * D: +0 (sem bônus)
+ * C: +2
+ * B: +4
+ * A: +6
+ * S: +8
  */
-export function getVersoPerfectionDamageMultiplier(rank: string | null | undefined): number {
+export function getVersoPerfectionDamageBonus(rank: string | null | undefined): number {
     switch (rank) {
-        case "S": return 2.0;   // +100%
-        case "A": return 1.5;   // +50%
-        case "B": return 1.4;   // +40%
-        case "C": return 1.2;   // +20%
-        case "D": return 1.0;   // sem bônus
-        default: return 1.0;
+        case "S": return 8;
+        case "A": return 6;
+        case "B": return 4;
+        case "C": return 2;
+        case "D": return 0;
+        default: return 0;
     }
 }
 

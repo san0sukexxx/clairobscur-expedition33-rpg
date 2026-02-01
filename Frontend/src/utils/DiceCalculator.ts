@@ -4,6 +4,10 @@ export function calculateCriticalMulti(diceResult: any) {
     return 1 + countCriticalRolls(diceResult);
 }
 
+export function calculateCriticalBonus(diceResult: any) {
+    return countCriticalRolls(diceResult) * 4;
+}
+
 export function calculateFailureDiv(diceResult: any) {
     return 1 + countFailuresRolls(diceResult);
 }

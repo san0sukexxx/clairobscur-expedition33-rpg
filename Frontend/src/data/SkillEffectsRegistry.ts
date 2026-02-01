@@ -32,6 +32,7 @@ export interface SkillMetadata {
     canBreak?: boolean;                  // Overcharge, Shatter
     consumesCharge?: boolean;            // Skill consumes all charges when used
     damageScalesWithCharge?: boolean;    // Damage scales with charge amount
+    extraChargePerHit?: number;          // Extra charge on critical hits (Lumiere Assault: 1 = +1 extra on crit)
     changesStanceTo?: Stance | null;     // Using this skill changes the user's stance to this (Breaking Rules -> Offensive)
     preservesVirtuoseStance?: boolean;   // If true and in Virtuose stance, keep Virtuose; otherwise go Stanceless (Fleuret Fury)
     destroysShields?: boolean;           // Destroys all Shielded status effects (Breaking Rules)
@@ -158,7 +159,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        generatesMagicOnCrit: true
+        generatesMagicOnCrit: true,
+        extraChargePerHit: 1
     },
 
     "gustave-marking-shot": {

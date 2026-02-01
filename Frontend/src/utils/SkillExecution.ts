@@ -17,10 +17,10 @@ export interface SkillExecutionContext {
   skillId: string;
   weaponInfo: WeaponInfo;
   diceBoardRef: React.RefObject<DiceBoardRef>;
-  timeoutDiceBoardRef: React.RefObject<NodeJS.Timeout | null>;
+  timeoutDiceBoardRef: React.RefObject<ReturnType<typeof setTimeout> | null>;
   rollWithTimeout: (
     diceBoardRef: React.RefObject<DiceBoardRef>,
-    timeoutRef: React.RefObject<NodeJS.Timeout | null>,
+    timeoutRef: React.RefObject<ReturnType<typeof setTimeout> | null>,
     command: string,
     callback: (result: number) => void | Promise<void>
   ) => void;

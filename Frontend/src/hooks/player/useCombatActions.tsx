@@ -19,9 +19,10 @@ import {
   getPlayerFrenzy,
   playerHasDizzy,
   playerPictosTotalSpeed,
-  calculatePlayerCriticalMulti,
+  calculatePlayerCriticalBonus,
   calculateRawWeaponPower
 } from "../../utils/PlayerCalculator";
+import { calculateWeaponAgilityBonus } from "../../utils/WeaponCalculator";
 import {
   calculateFailureDiv,
   diceTotal,
@@ -29,9 +30,8 @@ import {
   countFailuresRolls
 } from "../../utils/DiceCalculator";
 import { calculateNpcAttackReceivedDamage, checkForFragile, getWeaponElementModifier, hasShield, npcIsFlying } from "../../utils/NpcCalculator";
-import { getVersoPerfectionDamageMultiplier } from "../../utils/BattleUtils";
+import { getVersoPerfectionDamageBonus } from "../../utils/BattleUtils";
 import { triggerOnBattleStart, triggerOnFreeAim, triggerOnKill } from "../../utils/PictoEffectsIntegration";
-import { executeWeaponPassives } from "../../utils/WeaponPassives_Index";
 import { getElementModifierText } from "../../utils/ElementUtils";
 import type { PlayerTab, CombatTabType, SkillsTabType } from "../../pages/PlayerPage/PlayerPage.types";
 
@@ -39,7 +39,7 @@ interface UseCombatActionsParams {
   player: GetPlayerResponse | null;
   setPlayer: Dispatch<SetStateAction<GetPlayerResponse | null>>;
   weaponInfo: WeaponInfo;
-  diceBoardRef: RefObject<DiceBoardRef>;
+  diceBoardRef: RefObject<DiceBoardRef | null>;
   timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
   showToast: (message: string, options?: { duration?: number }) => void;
   openModal: (title: string, body: React.ReactNode) => void;
@@ -109,11 +109,12 @@ export function useCombatActions({
     setIsExecutingSkill(true);
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForInitiative(weaponInfo), result => {
       const criticalRolls = countCriticalRolls(result);
-      const criticalMulti = calculatePlayerCriticalMulti(result, player);
+      const criticalBonus = calculatePlayerCriticalBonus(result, player, weaponInfo);
       const rollTotal = diceTotal(result);
-      const total = initiativeTotal(player, result);
+      const total = initiativeTotal(player, result, weaponInfo);
       const failures = countFailuresRolls(result);
       const failuresDiv = calculateFailureDiv(result);
+      const weaponAgilityBonus = calculateWeaponAgilityBonus(weaponInfo);
 
       openModal(
         t("playerPage.modals.rollResult"),
@@ -133,14 +134,17 @@ export function useCombatActions({
           )}
           <p>
             {t("playerPage.initiative.ability")}: <b>{player.playerSheet?.hability ?? 0}</b>
-            {criticalRolls > 0 && <b> (x{criticalMulti})</b>}
+            {criticalRolls > 0 && <b> (+{criticalBonus})</b>}
             {failures > 0 && (
               <span className="inline-flex items-center gap-1 font-bold ml-2">
-                (<FaDivide className="w-4 h-4" /> {failuresDiv} )
+                (-{failures * 2})
               </span>
             )}
           </p>
           <p>{t("playerPage.initiative.pictoBonus")}: <b>{playerPictosTotalSpeed(player)}</b></p>
+          {weaponAgilityBonus > 0 && (
+            <p>{t("playerPage.initiative.weaponBonus")}: <b>+{weaponAgilityBonus}</b></p>
+          )}
           <h1 className="text-2xl font-bold">{t("playerPage.initiative.total")}: {total}</h1>
         </div>
       );
@@ -175,18 +179,6 @@ export function useCombatActions({
             const allChars = player.fightInfo.characters ?? [];
             if (sourceChar && player.fightInfo.battleId) {
               await triggerOnBattleStart(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
-
-              // Trigger weapon passive effects for battle start
-              if (weaponInfo.details?.name && weaponInfo.weapon?.level) {
-                await executeWeaponPassives(
-                  "on-battle-start",
-                  sourceChar,
-                  allChars,
-                  player.fightInfo.battleId,
-                  weaponInfo.details.name,
-                  weaponInfo.weapon.level
-                );
-              }
             }
           }
         } catch (err) {
@@ -356,10 +348,16 @@ export function useCombatActions({
         await new Promise<void>((resolve) => {
           rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), async (result) => {
             const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
-            const criticalRolls = countCriticalRolls(result, player?.pictos, target);
+            const criticalRolls = countCriticalRolls(result);
             const rollTotal = diceTotal(result);
             const weaponPower = calculateRawWeaponPower(weaponInfo, attackType);
             const total = calculateAttackDamage(player, weaponInfo, target, result, attackType, playerChar?.stance, playerChar);
+
+            // Show toast when hitting weak point
+            const freeShotBonus = calculateFreeShotPlus(player, target, attackType);
+            if (freeShotBonus > 0) {
+              showToast(t("playerPage.battle.weakPointHit", { bonus: freeShotBonus }));
+            }
 
             try {
               if (target.type == "npc") {
@@ -428,44 +426,12 @@ export function useCombatActions({
                 }
               }
 
-              // Trigger weapon passives for basic attack
-              if (attackType === "basic" && player.fightInfo) {
-                const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
-                const allChars = player.fightInfo.characters ?? [];
-                if (sourceChar && player.fightInfo.battleId && weaponInfo.details?.name && weaponInfo.weapon?.level) {
-                  const damageAmount = target.type === "npc" ? calculateNpcAttackReceivedDamage(target, total) : total;
-                  await executeWeaponPassives(
-                    "on-base-attack",
-                    sourceChar,
-                    allChars,
-                    player.fightInfo.battleId,
-                    weaponInfo.details.name,
-                    weaponInfo.weapon.level,
-                    target,
-                    { damageAmount }
-                  );
-                }
-              }
-
               // Trigger picto effects for free aim
               if (attackType === "free-shot" && player.fightInfo) {
                 const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
                 const allChars = player.fightInfo.characters ?? [];
                 if (sourceChar && player.fightInfo.battleId) {
                   await triggerOnFreeAim(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
-
-                  if (weaponInfo.details?.name && weaponInfo.weapon?.level) {
-                    await executeWeaponPassives(
-                      "on-free-aim",
-                      sourceChar,
-                      allChars,
-                      player.fightInfo.battleId,
-                      weaponInfo.details.name,
-                      weaponInfo.weapon.level,
-                      undefined,
-                      { damageAmount: rollTotal }
-                    );
-                  }
                 }
               }
 

@@ -249,7 +249,7 @@ export interface AttackStatusEffectResponse {
 
 export interface ElementModifier {
     type: ElementModifierType
-    multiplier: number
+    flatBonus: number
 }
 
 export interface WeaponInfo {

@@ -122,11 +122,12 @@ class AttackController(
                                 // Overcharge or other skill that consumes all charges
                                 sourceBC.chargePoints = 0
                         } else {
-                                // All actions increment charge (+1), including each hit of multi-hit skills
+                                // Increment charge by chargeIncrease (default 1), including each hit of multi-hit skills
+                                val chargeIncrease = body.chargeIncrease ?: 1
                                 val currentCharge = sourceBC.chargePoints ?: 0
                                 val maxCharge = sourceBC.maxChargePoints ?: 0
-                                if (maxCharge > 0) {
-                                        sourceBC.chargePoints = (currentCharge + 1).coerceAtMost(maxCharge)
+                                if (maxCharge > 0 && chargeIncrease > 0) {
+                                        sourceBC.chargePoints = (currentCharge + chargeIncrease).coerceAtMost(maxCharge)
                                 }
                         }
 

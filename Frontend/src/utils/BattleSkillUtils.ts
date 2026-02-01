@@ -200,34 +200,42 @@ function resolveTargets(
  */
 export function calculateSkillHitDamage(
     resolved: ResolvedSkill,
-    weaponPower: number,
-    _diceResult: any
+    basePower: number,
+    diceRoll: number[]
 ): number {
-    // Determinar multiplicador baseado no nível de dano
-    let multiplier: number;
+    // Determinar bônus baseado no nível de dano
+    let damageBonus: number;
     switch (resolved.damageLevel) {
         case "none":
             return 0;  // Sem dano
         case "low":
-            multiplier = 1.0;  // 100% do dano base (era 50%)
+            damageBonus = -4;  // -4 dano
             break;
         case "medium":
-            multiplier = 1.5;  // 150% do dano base (era 100%)
+            damageBonus = 0;  // Dano base
             break;
         case "high":
-            multiplier = 2.0;  // 200% do dano base (era 150%)
+            damageBonus = 4;  // +4 dano
             break;
         case "very-high":
-            multiplier = 2.5;  // 250% do dano base (era 200%)
+            damageBonus = 8;  // +8 dano
             break;
         case "extreme":
-            multiplier = 3.0;  // 300% do dano base (era 250%)
+            damageBonus = 12;  // +12 dano
             break;
         default:
-            multiplier = 1.5;
+            damageBonus = 0;
     }
 
-    let damage = Math.floor(weaponPower * multiplier);
+    let damage = basePower + damageBonus;
+
+    console.log("=== calculateSkillHitDamage ===");
+    console.log("Skill:", resolved.skillId);
+    console.log("Dice Roll:", diceRoll.join(", "));
+    console.log("Damage Level:", resolved.damageLevel);
+    console.log("Base Power (player + weapon + dice):", basePower);
+    console.log("Skill Damage Bonus:", damageBonus);
+    console.log("Total Damage:", damage);
 
     return damage;
 }
