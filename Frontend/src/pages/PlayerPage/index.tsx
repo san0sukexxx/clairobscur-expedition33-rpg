@@ -644,24 +644,11 @@ export default function PlayerPage() {
                 return next;
               });
             }, 600);
-
-            if (player.fightInfo?.battleId) {
-              const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
-              if (sourceChar) {
-                const updatedBattle = await APIBattle.getById(player.fightInfo.battleId);
-                const allChars = updatedBattle.characters ?? [];
-                const targetAfterAttack = allChars.find(c => c.battleID === target.battleID);
-
-                if (!targetAfterAttack || targetAfterAttack.healthPoints <= 0) {
-                  if (target.isEnemy) {
-                    await triggerOnKill(sourceChar, target, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
-                  }
-                }
-              }
-            }
           } catch (e) {
             showToast(t("playerPage.errors.errorAttacking"));
           }
+
+          checkForDead(target);
 
           resolve();
         });
@@ -672,6 +659,39 @@ export default function PlayerPage() {
 
     executeAttack();
   }, [player, attackType, weaponInfo, diceBoardRef, timeoutDiceBoardRef, showToast]);
+
+  const checkForDead = useCallback(
+    async (target: BattleCharacterInfo) => {
+      if (!player?.fightInfo?.battleId) return;
+
+      const sourceChar = player.fightInfo.characters?.find(
+        c => c.battleID === player.fightInfo?.playerBattleID
+      );
+      if (!sourceChar) return;
+
+      const updatedBattle = await APIBattle.getById(player.fightInfo.battleId);
+      const allChars = updatedBattle.characters ?? [];
+
+      const targetAfterAttack = allChars.find(
+        c => c.battleID === target.battleID
+      );
+
+      if (!targetAfterAttack || targetAfterAttack.healthPoints <= 0) {
+        if (target.isEnemy) {
+          await triggerOnKill(
+            sourceChar,
+            target,
+            allChars,
+            player.fightInfo.battleId,
+            player.pictos,
+            player.luminas
+          );
+        }
+      }
+    },
+    [player, triggerOnKill]
+  );
+
 
   // Target selection handler
   const handleSelectTarget = useCallback((target: BattleCharacterInfo) => {
