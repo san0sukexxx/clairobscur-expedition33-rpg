@@ -1,0 +1,61 @@
+import type { BattleCharacterInfo } from "../../../api/ResponseModel";
+import type { GetPlayerResponse } from "../../../api/APIPlayer";
+import { SkillEffectsRegistry, type SkillMetadata } from "../../../data/SkillEffectsRegistry";
+import { getEnrichedCharacterSkills } from "../../../utils/SkillUtils";
+
+export interface ValidationResult {
+  valid: boolean;
+  error?: string;
+  source?: BattleCharacterInfo;
+  skillMetadata?: SkillMetadata;
+  skillCost?: number;
+  isGradientSkill?: boolean;
+}
+
+export function validateSkillExecution(
+  player: GetPlayerResponse | null | undefined,
+  skillId: string
+): ValidationResult {
+  if (!player?.fightInfo) {
+    return { valid: false, error: "playerPage.errors.errorCharacterNotFoundInBattle" };
+  }
+
+  const source = player.fightInfo?.characters?.find(
+    c => c.battleID === player.fightInfo?.playerBattleID
+  );
+
+  if (!source) {
+    return { valid: false, error: "playerPage.errors.errorCharacterNotFoundInBattle" };
+  }
+
+  const skillMetadata = SkillEffectsRegistry[skillId];
+  if (!skillMetadata) {
+    return { valid: false, error: "playerPage.errors.errorSkillNotFound" };
+  }
+
+  const enrichedSkills = getEnrichedCharacterSkills(player);
+  const fullSkill = enrichedSkills.find(s => s.id === skillId);
+  const skillCost = fullSkill?.cost ?? 0;
+  const isGradientSkill = fullSkill?.isGradient ?? false;
+
+  // Validate MP for non-gradient skills
+  if (!isGradientSkill) {
+    const currentMp = source.magicPoints ?? 0;
+    if (currentMp < skillCost) {
+      return {
+        valid: false,
+        error: "playerPage.skills.insufficientMP",
+        skillCost,
+        source
+      };
+    }
+  }
+
+  return {
+    valid: true,
+    source,
+    skillMetadata,
+    skillCost,
+    isGradientSkill
+  };
+}

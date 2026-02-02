@@ -1,8 +1,15 @@
+import type { DiceTheme } from "../components/DiceBoard";
+
+export interface RollOptions {
+    theme?: DiceTheme;
+}
+
 export function rollWithTimeout(
     diceBoardRef: React.RefObject<any>,
     timeoutDiceBoardRef: React.RefObject<number | null>,
     command: string,
-    callback: (result: any) => void
+    callback: (result: any) => void,
+    options?: RollOptions
 ) {
     if (!diceBoardRef.current) return
 
@@ -22,7 +29,7 @@ export function rollWithTimeout(
             diceBoardRef.current?.hideBoard()
             timeoutDiceBoardRef.current = null
         }, 5000)
-    })
+    }, options?.theme)
 }
 
 export type DiceRollResult = {

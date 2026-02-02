@@ -208,8 +208,19 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     let attackDamage = Math.max(0, playerPower) + calculateRawWeaponPower(weaponInfo, "basic") + total;
 
     if (npcInfo != undefined) {
-        const elementBonus = getWeaponElementModifier(npcId, weaponInfo)?.flatBonus ?? 0;
+        const weaponElement = weaponInfo?.details?.attributes?.element;
+        const elementModifier = getWeaponElementModifier(npcId, weaponInfo);
+        const elementBonus = elementModifier?.flatBonus ?? 0;
         attackDamage = attackDamage + elementBonus;
+
+        console.log("=== Basic Attack Element ===");
+        console.log("Weapon Element:", weaponElement ?? "None");
+        if (elementModifier) {
+            console.log("Element Modifier Type:", elementModifier.type);
+            console.log("Element Bonus:", elementBonus);
+        } else {
+            console.log("No element modifier (neutral)");
+        }
     }
 
     attackDamage += (getPlayerFrenzy(player)?.ammount ?? 0);

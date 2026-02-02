@@ -146,6 +146,13 @@ export interface SkillMetadata {
     grantsImmediateTurn?: boolean;       // Grants an immediate turn to the user (Free Action skills)
     scalesWithBattleForetellCount?: boolean;  // Damage scales with total Foretell count across all enemies in battle
     canTargetSelf?: boolean;             // Allows targeting self even with targetScope "ally" (Healing Light)
+
+    // Conditional heal with dice roll (From Fire)
+    conditionalHealWithRoll?: {
+        condition: string;                // Condition to trigger heal (e.g., "target-burning")
+        baseStat: "resistance" | "power"; // Base stat for heal calculation
+        dice: string;                     // Dice to roll (e.g., "1d6")
+    };
 }
 
 export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
@@ -240,14 +247,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: [
-            {
-                effectType: "Heal",
-                amount: 20,  // 20% of max HP
-                targetType: "self",
-                condition: "target-burning"
-            }
-        ]
+        conditionalEffects: [],
+        conditionalHealWithRoll: {
+            condition: "target-burning",
+            baseStat: "resistance",
+            dice: "1d6"
+        }
     },
 
     "gustave-shatter": {

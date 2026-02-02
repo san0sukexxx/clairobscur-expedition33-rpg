@@ -353,6 +353,9 @@ export function useCombatActions({
             const weaponPower = calculateRawWeaponPower(weaponInfo, attackType);
             const total = calculateAttackDamage(player, weaponInfo, target, result, attackType, playerChar?.stance, playerChar);
 
+            // Show total damage toast
+            showToast(`Total: ${total}`);
+
             // Show toast when hitting weak point
             const freeShotBonus = calculateFreeShotPlus(player, target, attackType);
             if (freeShotBonus > 0) {

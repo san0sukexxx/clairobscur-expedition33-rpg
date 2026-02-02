@@ -1960,15 +1960,15 @@
       },
       "gustave-powerful": {
         "name": "Powerful",
-        "description": "Applies Empowered to 1-3 allies for 3 turns, increasing damage dealt by 25%. Grants 0-2 random Charges. Requires Lumiere Assault skill."
+        "description": "Applies Empowered to 1-3 allies for 3 turns, increasing damage dealt by 25%. Grants 0-2 random Charges."
       },
       "gustave-recovery": {
         "name": "Recovery",
-        "description": "Restores 50% of Gustave's max HP and removes all negative status effects. Grants 0-2 random Charges. Requires Powerful skill."
+        "description": "Restores 50% of Gustave's max HP and removes all negative status effects. Grants 0-2 random Charges."
       },
       "gustave-from-fire": {
         "name": "From Fire",
-        "description": "Deals medium damage to a single target using weapon element. 3 hits. If target is Burning, Gustave heals for 20% of max HP. Requires Marking Shot skill."
+        "description": "Deals medium damage to a single target using weapon element. 3 hits. If target is Burning, Gustave heals equal to his Resistance +1d6."
       },
       "gustave-shatter": {
         "name": "Shatter",
@@ -2945,6 +2945,7 @@
         "allAlliesHealed": "All allies healed to {percent}% HP!",
         "allDebuffsRemoved": "All debuffs removed from allies!",
         "allyHealed": "{name} healed by {percent}% ({amount} HP)!",
+        "healedFor": "Healed {amount} HP!",
         "debuffsRemovedFrom": "Debuffs removed from {name}!",
         "buffsCopied": "Buffs copied to other allies!",
         "stanceChanged": "Stance changed to {stance}!",

@@ -169,6 +169,44 @@ export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | nu
     }
 }
 
+/**
+ * Gets element modifier for a skill attack based on a specific element (not from weapon)
+ * Used for skills with forcedElement or usesWeaponElement
+ */
+export function getElementModifier(npcId: string, element: string | undefined): ElementModifier | undefined {
+    if (!element) return undefined;
+
+    const npcInfo = getNpcById(npcId)
+    if (!npcInfo) return undefined;
+
+    if (npcInfo.absorbElement === element) {
+        return {
+            flatBonus: -8,  // Negative bonus = healing
+            type: "absorb"
+        };
+    }
+    if (npcInfo.imuneTo === element) {
+        return {
+            flatBonus: -999,  // Nullifies damage
+            type: "imune"
+        };
+    }
+    if (npcInfo.resistentTo === element) {
+        return {
+            flatBonus: -4,
+            type: "resistent"
+        };
+    }
+    if (npcInfo.weakTo === element) {
+        return {
+            flatBonus: 4,
+            type: "weak"
+        };
+    }
+
+    return undefined;
+}
+
 export function getStatus(target: BattleCharacterInfo, status: StatusType): StatusResponse | undefined {
     return target.status?.find(s => s.effectName === status);
 }

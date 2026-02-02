@@ -1,8 +1,10 @@
 import { useImperativeHandle, forwardRef, useEffect, useRef } from "react";
 import DiceBox from "@3d-dice/dice-box";
 
+export type DiceTheme = "dice-of-rolling" | "blue-green-metal";
+
 export interface DiceBoardRef {
-    roll: (command: string, onRollComplete: (result: any) => void) => void;
+    roll: (command: string, onRollComplete: (result: any) => void, theme?: DiceTheme) => void;
     hideBoard: () => void;
 }
 
@@ -32,7 +34,7 @@ export default function DiceBoard({ ref }: DiceBoardProps) {
     }, []);
 
     useImperativeHandle(ref, () => ({
-        roll: (command: string, onRollComplete: (result: any) => void) => {
+        roll: async (command: string, onRollComplete: (result: any) => void, theme?: DiceTheme) => {
             boxRef.current.onRollComplete = onRollComplete;
 
             if (containerRef.current) {
@@ -40,6 +42,12 @@ export default function DiceBoard({ ref }: DiceBoardProps) {
             }
 
             if (boxRef.current) {
+                // Change theme if specified
+                if (theme) {
+                    await boxRef.current.updateConfig({ theme });
+                } else {
+                    await boxRef.current.updateConfig({ theme: "dice-of-rolling" });
+                }
                 boxRef.current.roll(command);
             }
         },
