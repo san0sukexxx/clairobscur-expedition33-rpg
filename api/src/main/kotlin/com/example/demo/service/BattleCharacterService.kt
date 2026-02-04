@@ -621,6 +621,27 @@ class BattleCharacterService(
                 )
         }
 
+        @Transactional
+        fun updateCharacterChargePoints(id: Int, newChargePoints: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                val maxCharges = entity.maxChargePoints ?: 10
+                val finalChargePoints = newChargePoints.coerceIn(0, maxCharges)
+
+                entity.chargePoints = finalChargePoints
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "CHARGE_POINTS_CHANGED", eventJson = null)
+                )
+        }
+
         /**
          * Checks if character has Solo Fighter picto and adds the damage modifier.
          * Solo Fighter: "Deal 50% more damage if fighting alone."

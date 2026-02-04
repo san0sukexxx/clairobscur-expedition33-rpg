@@ -72,7 +72,20 @@ export function useSkillExecution({
         setIsExecutingSkill(true);
         await executeAttackHits(skillId, source!, target, resolved, skillCost!, isGradientSkill!, actualHitCount);
       } else {
-        await handleUtilitySkill(source!, resolved, skillCost!, isGradientSkill!);
+        const skillMetadata = SkillEffectsRegistry[skillId];
+        await handleUtilitySkill({
+          source: source!,
+          target,
+          player,
+          allCharacters: player.fightInfo?.characters ?? [],
+          resolved,
+          metadata: skillMetadata,
+          skillCost: skillCost!,
+          isGradientSkill: isGradientSkill!,
+          diceBoardRef,
+          timeoutDiceBoardRef,
+          showToast: showToastRef.current
+        });
       }
 
       resetState();

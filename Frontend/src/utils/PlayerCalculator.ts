@@ -125,6 +125,32 @@ export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackTyp
     return (calculateWeaponPlusPower(weaponInfo.details?.attributes.power ?? 0, weaponInfo.weapon?.level ?? 0) ?? 0);
 }
 
+/**
+ * Calculates base power for attacks (used by both basic attacks and skills)
+ * Includes: player power, critical bonus, empowered/weakened, failures, weapon power, dice total, frenzy
+ * Does NOT include: element modifiers, Verso perfection bonus (those are applied separately)
+ */
+export function calculateBasePower(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any): number {
+    const total = diceTotal(diceResult);
+    const failures = calculateFailureDiv(diceResult);
+
+    let empoweredBonus = playerHasEmpowered(player) ? 4 : 0;
+    empoweredBonus = playerHasWeakened(player) ? -4 : empoweredBonus;
+
+    let playerPower = (player?.playerSheet?.power ?? 0) + calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + empoweredBonus;
+
+    if (failures > 0) {
+        playerPower = playerPower - (failures * 2);
+    }
+
+    let basePower = Math.max(0, playerPower) + calculateRawWeaponPower(weaponInfo, "basic") + total;
+
+    // Add frenzy bonus
+    basePower += (getPlayerFrenzy(player)?.ammount ?? 0);
+
+    return basePower;
+}
+
 export function calculateAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, stance?: Stance | null, playerChar?: BattleCharacterInfo): number {
     if (hasShield(npcBattleCharacterInfo)) {
         return 0;
@@ -194,19 +220,10 @@ export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, 
 export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcId: string, diceResult: any, playerChar?: BattleCharacterInfo): number {
     const npcInfo = getNpcById(npcId)
 
-    const total = diceTotal(diceResult);
-    const failures = calculateFailureDiv(diceResult)
+    // Use calculateBasePower for common calculations
+    let attackDamage = calculateBasePower(player, weaponInfo, diceResult);
 
-    let empoweredBonus = playerHasEmpowered(player) ? 4 : 0;
-    empoweredBonus = playerHasWeakened(player) ? -4 : empoweredBonus;
-
-    var playerPower = (player?.playerSheet?.power ?? 0) + calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + empoweredBonus;
-
-    if (failures > 0) {
-        playerPower = playerPower - (failures * 2);
-    }
-    let attackDamage = Math.max(0, playerPower) + calculateRawWeaponPower(weaponInfo, "basic") + total;
-
+    // Apply element modifier (specific to basic attacks)
     if (npcInfo != undefined) {
         const weaponElement = weaponInfo?.details?.attributes?.element;
         const elementModifier = getWeaponElementModifier(npcId, weaponInfo);
@@ -222,8 +239,6 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
             console.log("No element modifier (neutral)");
         }
     }
-
-    attackDamage += (getPlayerFrenzy(player)?.ammount ?? 0);
 
     // Verso's Perfection Rank: Damage bonus for basic attacks
     const isVerso = playerChar?.id?.toLowerCase().includes("verso");

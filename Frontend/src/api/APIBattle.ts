@@ -292,6 +292,13 @@ export class APIBattle {
         )
     }
 
+    static async updateCharacterChargePoints(id: number, newChargePoints: number): Promise<void> {
+        await api.put<{ newChargePoints: number }, void>(
+            `battles/characters/${id}/charge-points`,
+            { newChargePoints }
+        )
+    }
+
     static async rankUpCharacter(battleCharacterId: number): Promise<boolean> {
         const response = await api.post<{}, { success: boolean }>(
             `battles/characters/${battleCharacterId}/rank-up`,

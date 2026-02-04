@@ -10,6 +10,7 @@ import com.example.demo.dto.UpdateRankRequest
 import com.example.demo.dto.UpdateAPRequest
 import com.example.demo.dto.UpdateNewAPRequest
 import com.example.demo.dto.UpdateGradientRequest
+import com.example.demo.dto.UpdateChargePointsRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.service.BattleCharacterService
 import jakarta.validation.Valid
@@ -92,6 +93,15 @@ class BattleCharacterController(private val service: BattleCharacterService) {
             @RequestBody body: UpdateGradientRequest
     ): ResponseEntity<Void> {
         service.updateCharacterGradient(id, body.newGradient)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/charge-points")
+    fun updateCharacterChargePoints(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateChargePointsRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterChargePoints(id, body.newChargePoints)
         return ResponseEntity.noContent().build()
     }
 

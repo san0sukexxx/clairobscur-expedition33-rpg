@@ -5,9 +5,11 @@ import type { BattleCharacterInfo } from "../../../api/ResponseModel";
 import type { GetPlayerResponse } from "../../../api/APIPlayer";
 import type { DiceBoardRef } from "../../../components/DiceBoard";
 import type { ResolvedSkill } from "../../../utils/BattleSkillUtils";
+import type { SkillMetadata } from "../../../data/SkillEffectsRegistry";
 import { evaluateCondition, getStatusEffectsForTarget } from "../../../utils/BattleSkillUtils";
 import { rollWithTimeout } from "../../../utils/RollUtils";
 import { diceTotal } from "../../../utils/DiceCalculator";
+import { handleAttributeTests } from "../../../utils/SkillSpecialMechanics";
 
 export interface PostAttackContext {
   player: GetPlayerResponse;
@@ -74,15 +76,48 @@ export async function handleConditionalHealWithRoll(
   });
 }
 
+export interface UtilitySkillContext {
+  source: BattleCharacterInfo;
+  target: BattleCharacterInfo;
+  player: GetPlayerResponse;
+  allCharacters: BattleCharacterInfo[];
+  resolved: ResolvedSkill;
+  metadata: SkillMetadata;
+  skillCost: number;
+  isGradientSkill: boolean;
+  diceBoardRef: RefObject<DiceBoardRef | null>;
+  timeoutDiceBoardRef: RefObject<ReturnType<typeof setTimeout> | null>;
+  showToast: (message: string) => void;
+}
+
 /**
  * Handles utility skills (no damage, just effects)
  */
-export async function handleUtilitySkill(
-  source: BattleCharacterInfo,
-  resolved: ResolvedSkill,
-  skillCost: number,
-  isGradientSkill: boolean
-): Promise<void> {
+export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void> {
+  const { source, target, player, allCharacters, resolved, metadata, skillCost, isGradientSkill, diceBoardRef, timeoutDiceBoardRef, showToast } = ctx;
+
+  // Handle attribute tests if defined
+  if (metadata.attributeTests) {
+    // Consume MP first
+    if (skillCost > 0 && !isGradientSkill) {
+      const currentMp = source.magicPoints ?? 0;
+      await APIBattle.updateCharacterMp(source.battleID, currentMp - skillCost);
+    }
+
+    await handleAttributeTests({
+      source,
+      target,
+      player,
+      allCharacters,
+      metadata,
+      diceBoardRef: diceBoardRef as React.RefObject<any>,
+      timeoutDiceBoardRef: timeoutDiceBoardRef as React.MutableRefObject<ReturnType<typeof setTimeout> | null>,
+      showToast
+    });
+    return;
+  }
+
+  // Standard utility skill handling
   // Consume MP
   if (skillCost > 0 && !isGradientSkill) {
     const currentMp = source.magicPoints ?? 0;

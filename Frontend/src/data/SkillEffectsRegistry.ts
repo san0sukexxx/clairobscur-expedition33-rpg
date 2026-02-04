@@ -153,6 +153,21 @@ export interface SkillMetadata {
         baseStat: "resistance" | "power"; // Base stat for heal calculation
         dice: string;                     // Dice to roll (e.g., "1d6")
     };
+
+    // Attribute Tests System (Gustave Powerful, etc.)
+    attributeTests?: {
+        type: "hability" | "power" | "resistance";  // Tipo do atributo a testar
+        dc: number;                                  // Dificuldade (CD)
+        count: number;                               // Quantidade de testes
+        onSuccess?: {
+            applyStatus?: {
+                effectType: StatusType;
+                remainingTurns: number;
+                targetPriority: "selected-first" | "random-allies" | "self";  // Primeiro o alvo selecionado, depois aliados aleatórios
+            };
+            addCharges?: number;                     // Cargas a adicionar por sucesso
+        };
+    };
 }
 
 export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
@@ -206,17 +221,24 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "gustave-powerful",
         damageLevel: "none",  // No damage
         hitCount: 0,
-        targetScope: "all",  // Atinge todos aliados
+        targetScope: "ally",  // Seleciona um aliado como alvo principal
+        canTargetSelf: true,  // Pode selecionar a si mesmo
         usesWeaponElement: false,
-        primaryEffects: [
-            {
-                effectType: "Empowered",
-                amount: 0,
-                remainingTurns: 3,
-                targetType: "all-allies"
+        primaryEffects: [],   // Efeitos aplicados via attributeTests
+        conditionalEffects: [],
+        attributeTests: {
+            type: "hability",
+            dc: 5,
+            count: 3,
+            onSuccess: {
+                applyStatus: {
+                    effectType: "Empowered",
+                    remainingTurns: 3,
+                    targetPriority: "selected-first"  // Primeiro o alvo, depois aliados aleatórios
+                },
+                addCharges: 1
             }
-        ],
-        conditionalEffects: []
+        }
     },
 
     "gustave-recovery": {

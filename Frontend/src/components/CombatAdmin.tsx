@@ -188,10 +188,15 @@ export default function CombatAdmin({
     const [showGradientModal, setShowGradientModal] = useState(false);
     const [gradientCharges, setGradientCharges] = useState(0);
     const [editingTeamIsEnemy, setEditingTeamIsEnemy] = useState(false);
+    const [showGustaveChargeModal, setShowGustaveChargeModal] = useState(false);
+    const [gustaveChargePoints, setGustaveChargePoints] = useState(0);
+    const [editingGustaveCharacterId, setEditingGustaveCharacterId] = useState<number | null>(null);
     const [isPassingTurn, setIsPassingTurn] = useState(false);
 
     const processedEffectsRef = useRef<Set<string>>(new Set())
     const lastActiveCharacterIdRef = useRef<number | undefined>(undefined)
+    const lastReloadTimeRef = useRef<number>(0)
+    const isReloadingRef = useRef<boolean>(false)
 
     // Função para coletar recompensas de NPCs derrotados
     const collectBattleRewards = useCallback((characters: BattleCharacterInfo[]) => {
@@ -271,6 +276,15 @@ export default function CombatAdmin({
 
     const reloadBattleDetails = useCallback(async () => {
         if (!campaignInfo.battleId) return
+
+        // Throttle: só permite uma chamada a cada 2 segundos
+        const now = Date.now()
+        if (now - lastReloadTimeRef.current < 2000) return
+        if (isReloadingRef.current) return
+
+        isReloadingRef.current = true
+        lastReloadTimeRef.current = now
+
         try {
             const battleDetailsInfo = await APIBattle.getById(campaignInfo.battleId, lastBattleLog)
             if (battleDetails == null) {
@@ -287,6 +301,8 @@ export default function CombatAdmin({
             }
         } catch (error) {
             console.error("Erro ao carregar detalhes da batalha:", error)
+        } finally {
+            isReloadingRef.current = false
         }
     }, [campaignInfo.battleId, battleStatus, lastBattleLog, processUnresolvedStatuses])
 
@@ -322,6 +338,29 @@ export default function CombatAdmin({
             showToast("Erro ao atualizar gradiente.");
         }
     }, [gradientCharges, editingTeamIsEnemy, battleDetails?.characters, reloadBattleDetails, showToast]);
+
+    const handleOpenGustaveChargeModal = useCallback((character: BattleCharacterInfo) => {
+        setGustaveChargePoints(character.chargePoints ?? 0);
+        setEditingGustaveCharacterId(character.battleID);
+        setShowGustaveChargeModal(true);
+    }, []);
+
+    const handleConfirmGustaveCharge = useCallback(async () => {
+        if (editingGustaveCharacterId === null) {
+            showToast("Nenhum personagem selecionado.");
+            return;
+        }
+
+        try {
+            await APIBattle.updateCharacterChargePoints(editingGustaveCharacterId, gustaveChargePoints);
+            setShowGustaveChargeModal(false);
+            await reloadBattleDetails();
+            showToast(`Cargas de Gustave atualizadas para ${gustaveChargePoints}`);
+        } catch (error) {
+            console.error("Erro ao atualizar cargas:", error);
+            showToast("Erro ao atualizar cargas.");
+        }
+    }, [gustaveChargePoints, editingGustaveCharacterId, reloadBattleDetails, showToast]);
 
     useEffect(() => {
         reloadBattleDetails()
@@ -1163,6 +1202,45 @@ export default function CombatAdmin({
         );
     }
 
+    function renderGustaveChargeModal() {
+        if (!showGustaveChargeModal) return null;
+
+        const activeChar = getActiveTurnCharacter();
+        const maxCharges = activeChar?.maxChargePoints ?? 10;
+
+        return (
+            <dialog className="modal modal-open">
+                <div className="modal-box space-y-4">
+                    <h3 className="font-bold text-lg">Editar Cargas de Gustave</h3>
+
+                    <div>
+                        <label className="label">
+                            <span className="label-text">Cargas (0-{maxCharges})</span>
+                        </label>
+                        <input
+                            type="number"
+                            className="input input-bordered w-full"
+                            value={gustaveChargePoints}
+                            min={0}
+                            max={maxCharges}
+                            onChange={(e) => setGustaveChargePoints(parseInt(e.target.value) || 0)}
+                        />
+                    </div>
+
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => setShowGustaveChargeModal(false)}>
+                            Cancelar
+                        </button>
+
+                        <button className="btn btn-primary" onClick={handleConfirmGustaveCharge}>
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+        );
+    }
+
     function renderAddModal() {
         if (!showAddModal) return null
         return (
@@ -1521,6 +1599,46 @@ export default function CombatAdmin({
                                 isAdmin={true}
                                 onEditGradient={() => handleOpenGradientModal(getActiveTurnCharacter()?.isEnemy ?? false)}
                             />
+
+                            {/* Barra de Cargas do Gustave - só aparece se o personagem ativo for Gustave */}
+                            {(() => {
+                                const activeChar = getActiveTurnCharacter();
+                                const isGustave = activeChar && (
+                                    activeChar.id?.toLowerCase() === "gustave" ||
+                                    activeChar.id?.toLowerCase().includes("gustave")
+                                );
+                                if (!isGustave || activeChar.maxChargePoints === undefined) return null;
+
+                                const chargePoints = activeChar.chargePoints ?? 0;
+                                const maxChargePoints = activeChar.maxChargePoints ?? 10;
+                                const pct = Math.max(0, Math.min(100, Math.round((chargePoints / maxChargePoints) * 100)));
+
+                                return (
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                        <div>
+                                            <div className="flex items-center justify-between text-sm mb-2">
+                                                <span>Cargas de Gustave</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-bold">{chargePoints}/{maxChargePoints}</span>
+                                                    <button
+                                                        onClick={() => handleOpenGustaveChargeModal(activeChar)}
+                                                        className="btn btn-xs btn-ghost"
+                                                        title="Editar cargas de Gustave"
+                                                    >
+                                                        <FaEdit />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <AnimatedStatBar
+                                                value={pct}
+                                                label="Cargas"
+                                                fillClass="bg-yellow-500"
+                                                ghostClass="bg-yellow-500/30"
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                         </>
                     )}
 
@@ -1534,6 +1652,7 @@ export default function CombatAdmin({
 
                     {renderEditEntityModal()}
                     {renderGradientModal()}
+                    {renderGustaveChargeModal()}
                 </div>
             </div>
 
@@ -1570,6 +1689,7 @@ export default function CombatAdmin({
             "MP_RECOVERED",
             "AP_CHANGED",
             "GRADIENT_CHANGED",
+            "CHARGE_POINTS_CHANGED",
             "STAINS_CHANGED",
             "STANCE_CHANGED",
             "RANK_CHANGED",

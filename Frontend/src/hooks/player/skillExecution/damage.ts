@@ -1,8 +1,8 @@
 import type { BattleCharacterInfo, WeaponInfo, Element } from "../../../api/ResponseModel";
 import type { GetPlayerResponse } from "../../../api/APIPlayer";
 import type { ResolvedSkill } from "../../../utils/BattleSkillUtils";
-import { calculatePlayerCriticalBonus, calculateRawWeaponPower } from "../../../utils/PlayerCalculator";
-import { diceTotal, countCriticalRolls } from "../../../utils/DiceCalculator";
+import { calculateBasePower } from "../../../utils/PlayerCalculator";
+import { countCriticalRolls } from "../../../utils/DiceCalculator";
 import { calculateSkillHitDamage } from "../../../utils/BattleSkillUtils";
 import { calculateNpcAttackReceivedDamage, getElementModifier } from "../../../utils/NpcCalculator";
 import type { HitResult } from "./types";
@@ -21,6 +21,7 @@ export function determineSkillElement(
 
 /**
  * Calculates damage for a single hit
+ * Uses calculateBasePower (same as basic attack) plus skill damage bonus
  */
 export function calculateHitDamage(
   diceResult: any,
@@ -28,11 +29,9 @@ export function calculateHitDamage(
   weaponInfo: WeaponInfo | null,
   resolved: ResolvedSkill
 ): { baseDamage: number; hasCritical: boolean } {
-  const total = diceTotal(diceResult);
-  const critBonus = calculatePlayerCriticalBonus(diceResult, player ?? null, weaponInfo);
-  const playerPower = (player?.playerSheet?.power ?? 0) + critBonus;
-  const weaponPower = calculateRawWeaponPower(weaponInfo, "basic");
-  const basePower = playerPower + weaponPower + total;
+  // Use calculateBasePower for common calculations (same as basic attack)
+  const basePower = calculateBasePower(player ?? null, weaponInfo, diceResult);
+
   const diceRoll = diceResult.flatMap((group: any) => group.rolls?.map((r: any) => r.value) ?? []);
   const baseDamage = calculateSkillHitDamage(resolved, basePower, diceRoll);
   const hasCritical = countCriticalRolls(diceResult) > 0;
