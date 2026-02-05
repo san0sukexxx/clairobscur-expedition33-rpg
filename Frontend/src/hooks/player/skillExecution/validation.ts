@@ -35,8 +35,16 @@ export function validateSkillExecution(
 
   const enrichedSkills = getEnrichedCharacterSkills(player);
   const fullSkill = enrichedSkills.find(s => s.id === skillId);
-  const skillCost = fullSkill?.cost ?? 0;
+  let skillCost = fullSkill?.cost ?? 0;
   const isGradientSkill = fullSkill?.isGradient ?? false;
+
+  // Check for stance-based cost reduction
+  if (skillMetadata.costReductionFromStance) {
+    const { stance, reducedCost } = skillMetadata.costReductionFromStance;
+    if (source.stance === stance) {
+      skillCost = reducedCost;
+    }
+  }
 
   // Validate MP for non-gradient skills
   if (!isGradientSkill) {

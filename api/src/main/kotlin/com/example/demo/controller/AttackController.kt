@@ -184,6 +184,16 @@ class AttackController(
                                                 val currentGradient = battle.teamAGradientPoints
                                                 battle.teamAGradientPoints = (currentGradient - gradientCost).coerceAtLeast(0)
                                         }
+                                } else if (body.grantsGradientPoints != null && body.grantsGradientPoints > 0) {
+                                        // Skill has custom gradient gain (replaces normal MP-based gain)
+                                        val maxGradient = 36  // 3 charges * 12 points per charge
+                                        if (sourceBC.isEnemy) {
+                                                val currentGradient = battle.teamBGradientPoints
+                                                battle.teamBGradientPoints = (currentGradient + body.grantsGradientPoints).coerceAtMost(maxGradient)
+                                        } else {
+                                                val currentGradient = battle.teamAGradientPoints
+                                                battle.teamAGradientPoints = (currentGradient + body.grantsGradientPoints).coerceAtMost(maxGradient)
+                                        }
                                 } else if (body.attackType == "skill" && body.skillCost != null && body.skillCost > 0) {
                                         // Using skills with MP cost charges gradient bar (MP cost = gradient points gained)
                                         // Max gradient points = 36 (3 charges * 12 points each)
@@ -196,6 +206,7 @@ class AttackController(
                                                 battle.teamAGradientPoints = (currentGradient + body.skillCost).coerceAtMost(maxGradient)
                                         }
                                 }
+
                                 battleRepository.save(battle)
                         }
 
@@ -539,6 +550,9 @@ class AttackController(
                                         )
                                         battleStatusEffectRepository.save(brokenEffect)
 
+                                        // Break causes stance loss
+                                        applyBreakStanceLoss(targetBC)
+
                                         battleLogRepository.save(
                                                 BattleLog(
                                                         battleId = battleId,
@@ -585,6 +599,9 @@ class AttackController(
                                                                 sourceCharacterId = body.sourceBattleId
                                                         )
                                                         battleStatusEffectRepository.save(brokenEffect)
+
+                                                        // Break causes stance loss
+                                                        applyBreakStanceLoss(targetBC)
 
                                                         battleLogRepository.save(
                                                                 BattleLog(
@@ -634,6 +651,9 @@ class AttackController(
                                                                 sourceCharacterId = body.sourceBattleId
                                                         )
                                                         battleStatusEffectRepository.save(brokenEffect)
+
+                                                        // Break causes stance loss
+                                                        applyBreakStanceLoss(targetBC)
 
                                                         battleLogRepository.save(
                                                                 BattleLog(
@@ -1040,6 +1060,17 @@ class AttackController(
                                         )
                                 )
                         }
+                }
+        }
+
+        /**
+         * Break causes stance loss - when a character is hit by Break, they lose their current stance
+         * This affects characters like Maelle who rely on stances for their combat style
+         */
+        private fun applyBreakStanceLoss(targetBC: com.example.demo.model.BattleCharacter) {
+                if (targetBC.stance != null) {
+                        targetBC.stance = null
+                        battleCharacterRepository.save(targetBC)
                 }
         }
 }

@@ -5,7 +5,9 @@ import type { BattleCharacterInfo } from "../../api/ResponseModel";
 import { SkillEffectsRegistry } from "../../data/SkillEffectsRegistry";
 import { rollWithTimeout } from "../../utils/RollUtils";
 import { rollCommandForAttack } from "../../utils/PlayerCalculator";
-import { resolveSkill } from "../../utils/BattleSkillUtils";
+import { resolveSkill, getStatusStacks } from "../../utils/BattleSkillUtils";
+import { hasStatus } from "../../utils/NpcCalculator";
+import { diceTotal } from "../../utils/DiceCalculator";
 
 import type { UseSkillExecutionParams } from "./skillExecution/types";
 import { validateSkillExecution } from "./skillExecution/validation";
@@ -122,6 +124,16 @@ export function useSkillExecution({
     const skillElement = determineSkillElement(resolved, weaponInfo);
     logElementConfiguration(skillId, resolved, weaponElement, skillElement);
 
+    // Calculate charge bonus (Overcharge: +1 damage per charge)
+    let chargeBonus = 0;
+    const shouldConsumeCharge = resolved.metadata.consumesCharge === true;
+    if (resolved.metadata.damageScalesWithCharge) {
+      chargeBonus = source.chargePoints ?? 0;
+      if (chargeBonus > 0) {
+        showToastRef.current(`Cargas: ${chargeBonus} (Dano +${chargeBonus})`);
+      }
+    }
+
     // Execute hits
     while (hitIndex < actualHitCount) {
       await new Promise<void>((resolvePromise) => {
@@ -129,16 +141,46 @@ export function useSkillExecution({
           const { baseDamage, hasCritical } = calculateHitDamage(result, player, weaponInfo, resolved);
           const chargeIncrease = calculateChargeIncrease(resolved, hasCritical);
 
-          showToastRef.current(`Total: ${baseDamage}`);
+          // Add charge bonus to damage
+          const totalDamage = baseDamage + chargeBonus;
+
+          showToastRef.current(`Total: ${totalDamage}${chargeBonus > 0 ? ` (${baseDamage}+${chargeBonus})` : ""}`);
 
           // Process each target
-          for (const targetId of resolved.targetIds) {
+          for (let targetIndex = 0; targetIndex < resolved.targetIds.length; targetIndex++) {
+            const targetId = resolved.targetIds[targetIndex];
             const targetChar = (player?.fightInfo?.characters ?? []).find((c: BattleCharacterInfo) => c.battleID === targetId);
             const isNpcTarget = targetChar?.type === "npc";
 
+            // Check for bonus damage vs Marked targets
+            let markedBonus = 0;
+            if (resolved.metadata.bonusDamageVsMarked && targetChar) {
+              const hasMarked = targetChar.status?.some(s => s.effectName === "Marked") ?? false;
+              if (hasMarked) {
+                markedBonus = resolved.metadata.bonusDamageVsMarked;
+                showToastRef.current(t("playerPage.skills.bonusDamageVsMarked", { bonus: markedBonus }));
+              }
+            }
+
+            // Check for burn consumption bonus (Combustion)
+            let burnBonus = 0;
+            let burnToConsume = 0;
+            if (resolved.metadata.consumesBurn && targetChar) {
+              const burnStacks = getStatusStacks(targetChar, "Burning");
+              const maxConsume = resolved.metadata.maxBurnConsumption ?? 10;
+              const bonusPerBurn = resolved.metadata.burnConsumptionBonus ?? 2;
+              burnToConsume = Math.min(burnStacks, maxConsume);
+              burnBonus = burnToConsume * bonusPerBurn;
+              if (burnBonus > 0) {
+                showToastRef.current(t("playerPage.skills.burnConsumptionBonus", { stacks: burnToConsume, bonus: burnBonus }));
+              }
+            }
+
+            const damageWithBonus = totalDamage + markedBonus + burnBonus;
+
             if (isNpcTarget && targetChar) {
-              const { damageWithElement, elementMod } = applyElementModifier(baseDamage, targetChar.id, skillElement);
-              logElementVsNpc(targetChar, skillElement, elementMod, baseDamage, damageWithElement);
+              const { damageWithElement, elementMod } = applyElementModifier(damageWithBonus, targetChar, skillElement);
+              logElementVsNpc(targetChar, skillElement, elementMod, damageWithBonus, damageWithElement);
 
               const finalDamage = calculateFinalDamage(targetChar, damageWithElement);
 
@@ -147,13 +189,16 @@ export function useSkillExecution({
                 targetId,
                 targetChar,
                 resolved,
-                hitDamage: baseDamage,
+                hitDamage: damageWithBonus,
                 finalDamage,
                 skillCost,
                 isGradientSkill,
                 hitIndex,
                 totalHits: actualHitCount,
-                chargeIncrease
+                chargeIncrease,
+                consumesCharge: shouldConsumeCharge,
+                consumesBurn: burnToConsume > 0 ? burnToConsume : undefined,
+                targetIndex
               });
 
               await APIBattle.attack(attackRequest);
@@ -163,13 +208,16 @@ export function useSkillExecution({
                 targetId,
                 targetChar,
                 resolved,
-                hitDamage: baseDamage,
-                finalDamage: baseDamage,
+                hitDamage: damageWithBonus,
+                finalDamage: damageWithBonus,
                 skillCost,
                 isGradientSkill,
                 hitIndex,
                 totalHits: actualHitCount,
-                chargeIncrease
+                chargeIncrease,
+                consumesCharge: shouldConsumeCharge,
+                consumesBurn: burnToConsume > 0 ? burnToConsume : undefined,
+                targetIndex
               });
 
               await APIBattle.attack(attackRequest);
@@ -192,6 +240,31 @@ export function useSkillExecution({
       });
     }
 
+    // Handle Fragile → Broken conversion (Shatter)
+    if (resolved.metadata.convertsFragileToBroken) {
+      for (const targetId of resolved.targetIds) {
+        const targetChar = (player?.fightInfo?.characters ?? []).find(
+          (c: BattleCharacterInfo) => c.battleID === targetId
+        );
+        const hasFragile = targetChar?.status?.some(s => s.effectName === "Fragile") ?? false;
+        if (hasFragile) {
+          await APIBattle.removeStatus(targetId, "Fragile");
+          await APIBattle.addStatus({
+            battleCharacterId: targetId,
+            effectType: "Broken",
+            ammount: 1,
+            remainingTurns: 1,
+            sourceCharacterId: source.battleID
+          });
+          const maxCharge = source.maxChargePoints ?? 0;
+          if (maxCharge > 0) {
+            await APIBattle.updateCharacterChargePoints(source.battleID, maxCharge);
+            showToastRef.current(t("playerPage.skills.shatterFullCharge"));
+          }
+        }
+      }
+    }
+
     // Handle post-attack effects
     await handleConditionalHealWithRoll({
       player: player!,
@@ -202,6 +275,48 @@ export function useSkillExecution({
       timeoutDiceBoardRef,
       showToast: showToastRef.current
     });
+
+    // Handle MP grant with dice roll (Swift Stride)
+    if (resolved.metadata.grantsMPDiceRoll) {
+      await new Promise<void>((resolveMp) => {
+        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
+          const roll = diceTotal(result);
+          const mpGrant = roll <= 3 ? resolved.metadata.grantsMPDiceRoll!.low : resolved.metadata.grantsMPDiceRoll!.high;
+          const currentMp = source.magicPoints ?? 0;
+          const maxMp = source.maxMagicPoints ?? 99;
+          const newMp = Math.min(currentMp + mpGrant, maxMp);
+
+          await APIBattle.updateCharacterMp(source.battleID, newMp);
+          showToastRef.current(t("playerPage.skills.gainedMP", { amount: mpGrant, roll }));
+
+          resolveMp();
+        }, { theme: "dice-of-rolling" });
+      });
+    }
+
+    // Handle stance change after attack with special conditions
+    // Rule: If skill doesn't say "changes to stance X" or "maintains stance", stance is lost
+    if (!resolved.metadata.maintainsStance) {
+      // Determine target stance (default to null = lose stance)
+      let targetStance: string | null = resolved.metadata.changesStanceTo ?? null;
+
+      // Preserve Virtuous stance if configured and currently in Virtuous (Fleuret Fury)
+      if (resolved.metadata.preservesVirtuoseStance && source.stance === "Virtuous") {
+        targetStance = "Virtuous";
+      }
+
+      // Switch to Virtuous if target is burning (Swift Stride)
+      if (resolved.metadata.switchesToVirtuoseIfBurning && hasStatus(target, "Burning")) {
+        targetStance = "Virtuous";
+        showToastRef.current(t("playerPage.skills.switchedToVirtuose"));
+      }
+
+      // Always update stance (even to null to lose stance)
+      await APIBattle.updateCharacterStance(source.battleID, targetStance);
+      if (targetStance) {
+        showToastRef.current(t("playerPage.skills.stanceChanged", { stance: targetStance }));
+      }
+    }
   }
 
   const handleUseSkill = useCallback((skillId: string) => {
@@ -220,6 +335,31 @@ export function useSkillExecution({
       setPendingSkillId(skillId);
       setTab("combate");
       setIsUsingSkillMode(false);
+      if (currentCharacter) {
+        handleExecuteSkill(skillId, currentCharacter);
+      }
+      return;
+    }
+
+    // Auto-execute all-enemies skills (no target selection needed)
+    if (skillMetadata.targetScope === "all" && skillMetadata.damageLevel !== "none") {
+      const allCharacters = player?.fightInfo?.characters ?? [];
+      const anyEnemy = allCharacters.find(c => c.isEnemy !== currentCharacter?.isEnemy && c.healthPoints > 0);
+      if (anyEnemy) {
+        setPendingSkillId(skillId);
+        setTab("combate");
+        setIsUsingSkillMode(false);
+        handleExecuteSkill(skillId, anyEnemy);
+      }
+      return;
+    }
+
+    // Auto-execute skills that target all enemies and/or revive dead allies (Phoenix Flame)
+    if (skillMetadata.targetScope === "all-enemies" || skillMetadata.revivesDeadAllies) {
+      setPendingSkillId(skillId);
+      setTab("combate");
+      setIsUsingSkillMode(false);
+      // Use currentCharacter as dummy target - actual targets resolved in handleExecuteSkill
       if (currentCharacter) {
         handleExecuteSkill(skillId, currentCharacter);
       }

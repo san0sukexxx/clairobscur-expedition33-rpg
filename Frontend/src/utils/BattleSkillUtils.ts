@@ -120,12 +120,25 @@ export function resolveSkill(
     );
 
     // Resolver efeitos primários
-    const primaryEffects = resolveEffects(
+    let primaryEffects = resolveEffects(
         metadata.primaryEffects,
         source,
         allCharacters,
         targetIds
     );
+
+    // Apply conditionalBurnBonus if source is in the specified stance
+    if (metadata.conditionalBurnBonus) {
+        const { fromStance, bonusBurn } = metadata.conditionalBurnBonus;
+        if (source.stance === fromStance) {
+            primaryEffects = primaryEffects.map(effect => {
+                if (effect.effectType === "Burning") {
+                    return { ...effect, amount: effect.amount + bonusBurn };
+                }
+                return effect;
+            });
+        }
+    }
 
     // Resolver efeitos condicionais
     const conditionalEffects = metadata.conditionalEffects
@@ -227,7 +240,7 @@ export function calculateSkillHitDamage(
             damageBonus = 0;
     }
 
-    let damage = basePower + damageBonus;
+    let damage = Math.max(1, basePower + damageBonus);  // Minimum 1 damage
 
     console.log("=== calculateSkillHitDamage ===");
     console.log("Skill:", resolved.skillId);

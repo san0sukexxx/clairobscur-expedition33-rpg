@@ -110,7 +110,6 @@ export function getStatusLabel(status: StatusType): string {
         case "Burn": return t("battle.statusEffects.Burn");
         case "Shield": return t("battle.statusEffects.Shield");
         case "Powerful": return t("battle.statusEffects.Powerful");
-        case "Mark": return t("battle.statusEffects.Mark");
         case "Shell": return t("battle.statusEffects.Shell");
         case "Slow": return t("battle.statusEffects.Slow");
         case "Freeze": return t("battle.statusEffects.Freeze");
@@ -122,7 +121,6 @@ export function getStatusLabel(status: StatusType): string {
         case "Aureole": return t("battle.statusEffects.Aureole");
         case "Vulnerable": return t("battle.statusEffects.Vulnerable");
         case "DoubleDamage": return t("battle.statusEffects.DoubleDamage");
-        case "Defenceless": return t("battle.statusEffects.Defenceless");
         case "Regen": return t("battle.statusEffects.Regen");
         case "Curse": return t("battle.statusEffects.Curse");
         case "Earthquake": return t("battle.statusEffects.Earthquake");
@@ -200,7 +198,6 @@ export function getStatusDescription(status: StatusType): string {
         case "Burn": return t("battle.statusDescriptions.Burn");
         case "Shield": return t("battle.statusDescriptions.Shield");
         case "Powerful": return t("battle.statusDescriptions.Powerful");
-        case "Mark": return t("battle.statusDescriptions.Mark");
         case "Shell": return t("battle.statusDescriptions.Shell");
         case "Slow": return t("battle.statusDescriptions.Slow");
         case "Freeze": return t("battle.statusDescriptions.Freeze");
@@ -212,7 +209,6 @@ export function getStatusDescription(status: StatusType): string {
         case "Aureole": return t("battle.statusDescriptions.Aureole");
         case "Vulnerable": return t("battle.statusDescriptions.Vulnerable");
         case "DoubleDamage": return t("battle.statusDescriptions.DoubleDamage");
-        case "Defenceless": return t("battle.statusDescriptions.Defenceless");
         case "Regen": return t("battle.statusDescriptions.Regen");
         case "Curse": return t("battle.statusDescriptions.Curse");
         case "Earthquake": return t("battle.statusDescriptions.Earthquake");

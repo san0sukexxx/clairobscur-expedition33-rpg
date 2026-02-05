@@ -134,9 +134,6 @@ class BattleTurnController(
                                         val newMp = (currentMp + 1).coerceAtMost(maxMp)
                                         battleCharacterService.updateCharacterMp(nextCharacter.id!!, newMp)
                                 }
-
-                                // Check for Clea's Life picto - heal to 100% if no damage taken last turn
-                                damageService.checkCleasLife(battleId, nextCharacter)
                         }
                 }
 

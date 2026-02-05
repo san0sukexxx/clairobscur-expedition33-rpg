@@ -276,6 +276,15 @@ class DamageModifierService(
             }
         }
 
+        // Marked: +4 flat damage if target has Marked status
+        if (targetId != null) {
+            val targetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetId)
+            val targetHasMarked = targetEffects.any { it.effectType == "Marked" }
+            if (targetHasMarked) {
+                modifiedDamage += 4
+            }
+        }
+
         // Then apply flat bonuses (additive)
         val totalFlatBonus = validModifiers.sumOf { it.flatBonus }
         modifiedDamage += totalFlatBonus

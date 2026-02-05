@@ -2106,11 +2106,11 @@ export const PictosList: PictoInfo[] = [
         luminaCost: 15
     },
     {
-        id: "greater-defenceless",
-        imageId: getPictoEnglishName("greater-defenceless"),
-        name: getPictoName("greater-defenceless"),
+        id: "greater-unprotected",
+        imageId: getPictoEnglishName("greater-unprotected"),
+        name: getPictoName("greater-unprotected"),
         status: { speed: 266, criticalRate: 22 },
-        description: getPictoDescription("greater-defenceless"),
+        description: getPictoDescription("greater-unprotected"),
         color: "green",
         luminaCost: 15
     },

@@ -4,7 +4,7 @@ import type { ResolvedSkill } from "../../../utils/BattleSkillUtils";
 import { calculateBasePower } from "../../../utils/PlayerCalculator";
 import { countCriticalRolls } from "../../../utils/DiceCalculator";
 import { calculateSkillHitDamage } from "../../../utils/BattleSkillUtils";
-import { calculateNpcAttackReceivedDamage, getElementModifier } from "../../../utils/NpcCalculator";
+import { calculateNpcAttackReceivedDamage, getElementModifier, hasStatus } from "../../../utils/NpcCalculator";
 import type { HitResult } from "./types";
 
 /**
@@ -41,21 +41,31 @@ export function calculateHitDamage(
 
 /**
  * Applies element modifier to damage against an NPC
+ * Also checks for FireVulnerability status (works like weakTo Fire)
  */
 export function applyElementModifier(
   baseDamage: number,
-  targetId: string,
+  target: BattleCharacterInfo,
   skillElement: Element | undefined
 ): { damageWithElement: number; elementMod: any } {
   if (!skillElement) {
     return { damageWithElement: baseDamage, elementMod: null };
   }
 
-  const elementMod = getElementModifier(targetId, skillElement);
+  // Check for NPC elemental properties first
+  const elementMod = getElementModifier(target.id, skillElement);
   if (elementMod) {
     return {
       damageWithElement: baseDamage + elementMod.flatBonus,
       elementMod
+    };
+  }
+
+  // Check for FireVulnerability status (works like weakTo Fire: +4 damage)
+  if (skillElement === "Fire" && hasStatus(target, "FireVulnerability")) {
+    return {
+      damageWithElement: baseDamage + 4,
+      elementMod: { flatBonus: 4, type: "weak" }
     };
   }
 

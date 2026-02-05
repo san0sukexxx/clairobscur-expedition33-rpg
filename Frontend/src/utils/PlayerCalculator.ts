@@ -158,7 +158,7 @@ export function calculateAttackDamage(player: GetPlayerResponse | null, weaponIn
 
     let damage = 0;
     if (attackType == "basic") {
-        damage = calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo.id, diceResult, playerChar);
+        damage = calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo, diceResult, playerChar);
     } else if (attackType == "free-shot") {
         damage = calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType, weaponInfo, playerChar);
     } else {
@@ -167,12 +167,13 @@ export function calculateAttackDamage(player: GetPlayerResponse | null, weaponIn
 
     // Apply stance modifiers to damage dealt
     if (stance === "Offensive") {
-        damage = damage + 4;  // +4 damage
+        damage = damage + 4;  // +4 damage dealt
     } else if (stance === "Virtuous") {
-        damage = damage + 8;  // +8 damage
+        damage = damage + 8;  // +8 damage dealt
     }
+    // Note: Defensive stance does NOT reduce damage dealt
 
-    return damage;
+    return Math.max(0, damage);
 }
 
 export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, attackType: AttackType): number {
@@ -217,27 +218,31 @@ export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, 
     return Math.max(0, damage);
 }
 
-export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcId: string, diceResult: any, playerChar?: BattleCharacterInfo): number {
-    const npcInfo = getNpcById(npcId)
+export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcTarget: BattleCharacterInfo, diceResult: any, playerChar?: BattleCharacterInfo): number {
+    const npcInfo = getNpcById(npcTarget.id)
 
     // Use calculateBasePower for common calculations
     let attackDamage = calculateBasePower(player, weaponInfo, diceResult);
 
     // Apply element modifier (specific to basic attacks)
-    if (npcInfo != undefined) {
-        const weaponElement = weaponInfo?.details?.attributes?.element;
-        const elementModifier = getWeaponElementModifier(npcId, weaponInfo);
-        const elementBonus = elementModifier?.flatBonus ?? 0;
-        attackDamage = attackDamage + elementBonus;
+    const weaponElement = weaponInfo?.details?.attributes?.element;
+    let elementModifier = npcInfo ? getWeaponElementModifier(npcTarget.id, weaponInfo) : undefined;
 
-        console.log("=== Basic Attack Element ===");
-        console.log("Weapon Element:", weaponElement ?? "None");
-        if (elementModifier) {
-            console.log("Element Modifier Type:", elementModifier.type);
-            console.log("Element Bonus:", elementBonus);
-        } else {
-            console.log("No element modifier (neutral)");
-        }
+    // Check for FireVulnerability status (works like weakTo Fire: +4 damage)
+    if (!elementModifier && weaponElement === "Fire" && hasStatus(npcTarget, "FireVulnerability")) {
+        elementModifier = { flatBonus: 4, type: "weak" };
+    }
+
+    const elementBonus = elementModifier?.flatBonus ?? 0;
+    attackDamage = attackDamage + elementBonus;
+
+    console.log("=== Basic Attack Element ===");
+    console.log("Weapon Element:", weaponElement ?? "None");
+    if (elementModifier) {
+        console.log("Element Modifier Type:", elementModifier.type);
+        console.log("Element Bonus:", elementBonus);
+    } else {
+        console.log("No element modifier (neutral)");
     }
 
     // Verso's Perfection Rank: Damage bonus for basic attacks

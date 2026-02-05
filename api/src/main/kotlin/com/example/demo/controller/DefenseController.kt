@@ -256,6 +256,16 @@ class DefenseController(
             }
         }
 
+        // Defensive Stance: +1 MP when successfully parrying (block)
+        if (body.defenseType == "block" && targetBC.characterType == "player" && targetBC.stance == "Defensive") {
+            val currentMp = targetBC.magicPoints ?: 0
+            val maxMp = targetBC.maxMagicPoints ?: 0
+            if (maxMp > 0) {
+                val newMp = (currentMp + 1).coerceAtMost(maxMp)
+                battleCharacterService.updateCharacterMp(targetBC.id!!, newMp)
+            }
+        }
+
         return ResponseEntity.noContent().build()
     }
 
@@ -267,16 +277,6 @@ class DefenseController(
     ): ResponseEntity<Void> {
 
         val defenderBC = battleCharacterRepository.findById(battleCharacterId).orElse(null)
-
-        // Apply defensive stance bonus: +1 MP when blocking or dodging
-        if (defenderBC != null && defenderBC.characterType == "player" && defenderBC.stance == "Defensive") {
-            val currentMp = defenderBC.magicPoints ?: 0
-            val maxMp = defenderBC.maxMagicPoints ?: 0
-            if (maxMp > 0) {
-                val newMp = (currentMp + 1).coerceAtMost(maxMp)
-                battleCharacterService.updateCharacterMp(defenderBC.id!!, newMp)
-            }
-        }
 
         // Increment charge for defending (if character has charge system)
         if (defenderBC != null && defenderBC.characterType == "player") {

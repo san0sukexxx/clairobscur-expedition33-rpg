@@ -43,19 +43,19 @@ export interface SkillMetadata {
     maxBurnConsumption?: number;         // Maximum Burn stacks consumed (default 10)
     burnConsumptionBonus?: number;       // % damage bonus per Burn consumed (default 10%)
     executionThreshold?: number;         // If target HP% is below this, execute instantly (Gommage: 25%)
-    markedDamageBonus?: number;          // % damage bonus against Marked targets (Gustave's Homage: 50%)
     setsHpTo?: number;                   // Sets self HP to specific value (Last Chance: 1)
     refillsMP?: boolean;                 // Refills all MP to maximum (Last Chance)
     reappliesStance?: boolean;           // Reapplies current stance (Mezzo Forte)
     maintainsStance?: boolean;           // Skill maintains current stance without changing it (prevents auto-reset to None)
     grantsMPRange?: { min: number; max: number };  // Grants random MP between min and max (Mezzo Forte: 2-4)
     grantsMP?: number;                   // Grants X MP to target ally (Intervention: 4)
-    grantsMPDiceRoll?: { low: number; high: number };  // Rolls 1d6: 1-3 grants 'low' MP, 4-6 grants 'high' MP (Mezzo Forte: {low: 2, high: 4})
+    grantsMPDiceRoll?: { low: number; high: number };  // Rolls 1d6: 1-3 grants 'low' MP, 4-6 grants 'high' MP
+    grantsMPWithTest?: { dc: number; onSuccess: number; onFailure: number };  // Hability test: success grants onSuccess MP, failure grants onFailure MP (Mezzo Forte)
     costReductionFromStance?: { stance: Stance; reducedCost: number };  // Cost reduction when used from specific stance (Percee, Momentum Strike)
     damageScalesWithHitsReceived?: boolean;  // Damage increases per hit taken since last turn (Revenge, Payback)
     costReductionPerParry?: number;      // MP cost reduced per successful parry (Payback)
     switchesToVirtuoseIfBurning?: boolean;  // Switches to Virtuose if target is burning (Swift Stride)
-    appliesSelfDefenseless?: boolean;    // Applies Defenseless to self (Stendhal)
+    appliesSelfUnprotected?: boolean;    // Applies Unprotected to self (Stendhal)
     conditionalBurnBonus?: { fromStance: Stance; bonusBurn: number };  // Extra burn when used from specific stance (Spark, Rain of Fire, Pyrolyse)
     doubleCritDamage?: boolean;          // Critical hits deal double damage instead of normal crit (Sword Ballet)
     consumesForetell?: boolean;          // Consumes all Foretell stacks from target for bonus damage/heal (Twilight Slash, Harvest)
@@ -74,6 +74,7 @@ export interface SkillMetadata {
     grantsExtraTurn?: boolean;           // Grants an extra turn to the user (Card Weaver - shows toast only)
     cleansesAndCopiesBuffs?: boolean;    // Cleanses all debuffs from target and copies buffs to other allies (Dark Cleansing)
     randomAllyCount?: { min: number; max: number };  // Applies to random number of allies (Rush: 1-3)
+    grantsGradientPoints?: number;   // Grants gradient points to team (12 points = 1 charge) (Phantom Strike: 12)
 
     // Monoco's Bestial Wheel System
     bestialWheelAdvance?: number;        // Advances Monoco's Bestial Wheel by this many positions (wraps around at 9)
@@ -87,6 +88,8 @@ export interface SkillMetadata {
     doubleDamageVsStunned?: boolean;     // Double damage if target is Stunned (Mighty Strike)
     forceAlmightyMask?: boolean;         // Forces Bestial Wheel to Almighty Mask position (0) (Mighty Strike)
     bonusDamageVsPowerless?: boolean;    // Bonus damage against Powerless targets (Obscur Sword)
+    bonusDamageVsMarked?: number;        // Flat bonus damage against Marked targets (Percée/Investida: +4)
+    dontRemoveMark?: boolean;            // If true, don't remove Marked status after attacking (Gustave's Homage)
     grantsMpAtCasterMask?: number;       // Grants this much MP to targets if at Caster/Almighty Mask (Orphelin Cheers: 3)
     healsHpPercentAtCasterMask?: number; // Heals this % of max HP if at Caster/Almighty Mask (Pelerin Heal: 40%)
     grantsMpToAllAllies?: { min: number; max: number }; // Grants random MP (min-max) to all allies (Potier Energy: 1-3)
@@ -154,6 +157,18 @@ export interface SkillMetadata {
         dice: string;                     // Dice to roll (e.g., "1d6")
     };
 
+    // Unconditional heal with dice roll (Recovery)
+    healWithRoll?: {
+        baseStat: "resistance" | "power"; // Base stat for heal calculation
+        dice: string;                     // Dice to roll (e.g., "2d6")
+    };
+
+    // Grant charges unconditionally (Recovery: 2)
+    grantsCharges?: number;
+
+    // Converts Fragile to Broken on targets and fully charges source (Shatter)
+    convertsFragileToBroken?: boolean;
+
     // Attribute Tests System (Gustave Powerful, etc.)
     attributeTests?: {
         type: "hability" | "power" | "resistance";  // Tipo do atributo a testar
@@ -167,6 +182,13 @@ export interface SkillMetadata {
             };
             addCharges?: number;                     // Cargas a adicionar por sucesso
         };
+    };
+
+    // Revival with attribute test (Phoenix Flame)
+    revivesDeadAllies?: {
+        dc: number;                        // DC for ability test
+        onSuccess: { hpPercent: number };  // % of max HP on success
+        onFailure: { hpPercent: number };  // % of max HP on failure
     };
 }
 
@@ -249,17 +271,17 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "Heal",
-                amount: 50,  // 50% of max HP
-                targetType: "self"
-            },
-            {
                 effectType: "Cleanse",
                 amount: 0,
                 targetType: "self"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        healWithRoll: {
+            baseStat: "resistance",
+            dice: "2d6"
+        },
+        grantsCharges: 2
     },
 
     "gustave-from-fire": {
@@ -286,7 +308,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Lightning",
         primaryEffects: [],
         conditionalEffects: [],
-        canBreak: true
+        canBreak: true,
+        convertsFragileToBroken: true
     },
 
     "gustave-strike-storm": {
@@ -296,7 +319,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
+        extraChargePerHit: 2
     },
 
     // ==================== MAELLE ====================
@@ -311,7 +335,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         changesStanceTo: "Offensive",    // Changes stance to Offensive
         primaryEffects: [
             {
-                effectType: "Unprotected",  // Defenceless
+                effectType: "Unprotected",  // Unprotected
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "enemy"
@@ -329,7 +353,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
         primaryEffects: [
             {
-                effectType: "Unprotected",  // Defenseless - enemies take +25% damage for 3 turns
+                effectType: "Unprotected",  // Unprotected - enemies take +25% damage for 3 turns
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "all-enemies"
@@ -407,7 +431,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 amount: 1,
                 remainingTurns: 0,
                 targetType: "self",
-                condition: "target-unprotected"  // If target is Defenseless
+                condition: "target-unprotected"  // If target is Unprotected
             }
         ]
     },
@@ -421,7 +445,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
         primaryEffects: [
             {
-                effectType: "Unprotected",   // Defenseless - enemies take +25% damage
+                effectType: "Unprotected",   // Unprotected - enemies take +25% damage
                 amount: 0,
                 remainingTurns: 1,
                 targetType: "all-enemies"
@@ -478,14 +502,15 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 0,
         targetScope: "ally",  // Choose an ally, then roll 1d6
         usesWeaponElement: false,
+        canTargetSelf: true,                 // Can also target self
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
-        rollsForTargetScope: true,           // Roll 1d6: 3-6 = all allies, 1-2 = single target only
+        rollsForTargetScope: true,           // Roll 1d6: 4-6 = all allies, 1-3 = single target only
         primaryEffects: [
             {
                 effectType: "Protected",  // Shell - reduces damage taken, extends Egide duration
                 amount: 0,
                 remainingTurns: 3,
-                targetType: "self"  // Will be changed to "all-allies" or kept as single based on roll
+                targetType: "ally"  // Applies to selected ally or all allies based on roll
             }
         ],
         conditionalEffects: []
@@ -519,7 +544,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Void",
         changesStanceTo: "Defensive",    // Changes stance to Defensive
-        primaryEffects: [],  // Gradient charge gain (+35%) not implemented in status system
+        grantsGradientPoints: 11,        // +11 gradient points (skill grants gradient per attack flavor)
+        primaryEffects: [],
         conditionalEffects: []
     },
 
@@ -548,9 +574,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 1,
         targetScope: "single",
         usesWeaponElement: false,
+        forcedElement: "Physical",
         changesStanceTo: "Defensive",    // Changes stance to Defensive
         costReductionFromStance: { stance: "Virtuous", reducedCost: 2 },  // 5 MP normally, 2 MP from Virtuose
-        markedDamageBonus: 50,           // +50% damage against Marked targets
+        bonusDamageVsMarked: 4,          // +4 damage against Marked targets (cumulative with Marked bonus)
+
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -589,7 +617,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
         costReductionFromStance: { stance: "Virtuous", reducedCost: 4 },  // 7 MP normally, 4 MP from Virtuose
-        markedDamageBonus: 50,           // +50% damage against Marked targets
+
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -613,11 +641,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         damageLevel: "medium",
         hitCount: 2,
         targetScope: "single",
+        forcedElement: "Physical",
         usesWeaponElement: false,
         changesStanceTo: "Offensive",     // Changes stance to Offensive when used
         consumesBurn: true,               // Consumes Burn stacks from target
         maxBurnConsumption: 10,           // Maximum 10 Burn stacks consumed
-        burnConsumptionBonus: 10,         // +10% damage per Burn consumed
+        burnConsumptionBonus: 2,
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -631,7 +660,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Void",
         changesStanceTo: null,           // Changes to Stanceless
         consumesShield: true,            // Removes self-Shields
-        appliesSelfDefenseless: true,    // Applies Defenseless to self
+        appliesSelfUnprotected: true,    // Applies Unprotected to self
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -642,10 +671,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 0,
         targetScope: "self",
         usesWeaponElement: false,
-        maintainsStance: true,           // Maintains current stance without changing
-        reappliesStance: true,           // Reapplies current stance (maintains position)
-        grantsMPRange: { min: 2, max: 4 },  // Grants 2-4 MP randomly
-        grantsMPDiceRoll: { low: 2, high: 4 },  // Roll 1d6: 1-3 = 2 MP, 4-6 = 4 MP
+        reappliesStance: true,           // Reapplies current stance
+        grantsMPWithTest: {              // Hability test DC 6: success = 4 MP, failure = 2 MP
+            dc: 6,
+            onSuccess: 4,
+            onFailure: 2
+        },
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -684,9 +715,10 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Lightning",
         changesStanceTo: "Virtuous",         // Changes to Virtuose stance
-        markedDamageBonus: 50,               // +50% damage against Marked targets (doesn't remove Mark)
+        bonusDamageVsMarked: 4,              // +4 damage against Marked targets
+        dontRemoveMark: true,                // Don't remove Marked status after attacking
         primaryEffects: [],
-        conditionalEffects: []
+        conditionalEffects: [],
     },
 
     // Gradient Skills
@@ -706,7 +738,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "all-enemies"
             }
         ],
-        conditionalEffects: []  // Mass revival (50-70% HP) implemented in PlayerPage.tsx
+        conditionalEffects: [],
+        revivesDeadAllies: {
+            dc: 6,                           // DC 6 ability test
+            onSuccess: { hpPercent: 100 },   // Full HP on success
+            onFailure: { hpPercent: 50 }     // Half HP on failure
+        }
     },
 
     "maelle-gommage": {
@@ -728,6 +765,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 5,
         targetScope: "single",
         usesWeaponElement: false,
+        forcedElement: "Physical",
         changesStanceTo: "Virtuous",     // Changes stance to Virtuose
         primaryEffects: [],
         conditionalEffects: []
@@ -2107,7 +2145,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [
             {
-                effectType: "Unprotected",  // Defenceless
+                effectType: "Unprotected",  // Unprotected
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "enemy"
@@ -2127,7 +2165,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Earth",
         primaryEffects: [
             {
-                effectType: "Unprotected",  // Defenceless
+                effectType: "Unprotected",  // Unprotected
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "enemy"
@@ -2136,7 +2174,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [
             {
                 condition: "heavy-mask",
-                effectType: "Unprotected",  // Defenceless for 5 turns
+                effectType: "Unprotected",  // Unprotected for 5 turns
                 amount: 0,
                 remainingTurns: 5,
                 targetType: "enemy"
@@ -2144,7 +2182,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         ],
         bestialWheelAdvance: 6
         // Bestial Wheel: +6 positions
-        // Defenceless duration: 3 turns (5 at Heavy/Almighty)
+        // Unprotected duration: 3 turns (5 at Heavy/Almighty)
     },
 
     "monoco-jar-lampstorm": {
@@ -2673,7 +2711,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             },
             {
-                effectType: "Vulnerable",  // Defenceless: +20% damage taken
+                effectType: "Vulnerable",  // Unprotected: +20% damage taken
                 amount: 0,
                 remainingTurns: 3,
                 targetType: "enemy"

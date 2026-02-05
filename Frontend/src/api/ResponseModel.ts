@@ -8,8 +8,8 @@ export type StatusType =
     "Inverted" | "Marked" | "Plagued" | "Burning" |
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Guardian" | "Foretell" | "Twilight" | "Powerless" |
-    "Rush" | "Burn" | "Shield" | "Powerful" | "Mark" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
-    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "DoubleDamage" | "Defenceless" | "Regen" | "Curse" | "IntenseFlames" | "Earthquake" | "StormCaller";
+    "Rush" | "Burn" | "Shield" | "Powerful" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
+    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "DoubleDamage" | "Regen" | "Curse" | "IntenseFlames" | "Earthquake" | "StormCaller";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";

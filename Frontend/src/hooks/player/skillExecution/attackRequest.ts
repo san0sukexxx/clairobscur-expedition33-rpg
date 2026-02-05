@@ -15,6 +15,9 @@ export interface AttackRequestParams {
   hitIndex: number;
   totalHits: number;
   chargeIncrease?: number;
+  consumesCharge?: boolean;
+  consumesBurn?: number;  // Number of Burn stacks to consume from target
+  targetIndex?: number;   // Index of target in targetIds array (for applying effects only once)
 }
 
 /**
@@ -23,7 +26,7 @@ export interface AttackRequestParams {
 export function buildNpcAttackRequest(params: AttackRequestParams): CreateAttackRequest {
   const {
     source, targetId, targetChar, resolved, hitDamage, finalDamage,
-    skillCost, isGradientSkill, hitIndex, totalHits, chargeIncrease
+    skillCost, isGradientSkill, hitIndex, totalHits, chargeIncrease, consumesCharge, consumesBurn, targetIndex
   } = params;
 
   const effects = [...getStatusEffectsForTarget(resolved.effects, targetId)];
@@ -40,16 +43,24 @@ export function buildNpcAttackRequest(params: AttackRequestParams): CreateAttack
     }
   }
 
+  // Only apply once-per-skill effects on first hit AND first target
+  const isFirstHitFirstTarget = hitIndex === 0 && (targetIndex === 0 || targetIndex === undefined);
+
   return {
     sourceBattleId: source.battleID,
     targetBattleId: targetId,
     totalDamage: finalDamage,
     attackType: "skill",
     effects: effects,
-    skillCost: hitIndex === 0 ? skillCost : 0,
-    isGradient: hitIndex === 0 && isGradientSkill,
+    skillCost: isFirstHitFirstTarget ? skillCost : 0,  // Only charge MP once
+    isGradient: isFirstHitFirstTarget && isGradientSkill,
     isLastHit: hitIndex === totalHits - 1,
-    chargeIncrease: chargeIncrease
+    chargeIncrease: chargeIncrease,
+    consumesCharge: isFirstHitFirstTarget ? consumesCharge : undefined,
+    consumesBurn: consumesBurn,
+    executionThreshold: resolved.metadata.executionThreshold,
+    shouldRemoveMarked: resolved.metadata.dontRemoveMark ? false : undefined,
+    grantsGradientPoints: isFirstHitFirstTarget ? resolved.metadata.grantsGradientPoints : undefined
   };
 }
 
@@ -59,10 +70,13 @@ export function buildNpcAttackRequest(params: AttackRequestParams): CreateAttack
 export function buildPlayerAttackRequest(params: AttackRequestParams): CreateAttackRequest {
   const {
     source, targetId, resolved, hitDamage,
-    skillCost, isGradientSkill, hitIndex, totalHits, chargeIncrease
+    skillCost, isGradientSkill, hitIndex, totalHits, chargeIncrease, consumesCharge, consumesBurn, targetIndex
   } = params;
 
   const effects = [...getStatusEffectsForTarget(resolved.effects, targetId)];
+
+  // Only apply once-per-skill effects on first hit AND first target
+  const isFirstHitFirstTarget = hitIndex === 0 && (targetIndex === 0 || targetIndex === undefined);
 
   return {
     sourceBattleId: source.battleID,
@@ -70,9 +84,14 @@ export function buildPlayerAttackRequest(params: AttackRequestParams): CreateAtt
     totalPower: hitDamage,
     attackType: "skill",
     effects: effects,
-    skillCost: hitIndex === 0 ? skillCost : 0,
-    isGradient: hitIndex === 0 && isGradientSkill,
+    skillCost: isFirstHitFirstTarget ? skillCost : 0,  // Only charge MP once
+    isGradient: isFirstHitFirstTarget && isGradientSkill,
     isLastHit: hitIndex === totalHits - 1,
-    chargeIncrease: chargeIncrease
+    chargeIncrease: chargeIncrease,
+    consumesCharge: isFirstHitFirstTarget ? consumesCharge : undefined,
+    consumesBurn: consumesBurn,
+    executionThreshold: resolved.metadata.executionThreshold,
+    shouldRemoveMarked: resolved.metadata.dontRemoveMark ? false : undefined,
+    grantsGradientPoints: isFirstHitFirstTarget ? resolved.metadata.grantsGradientPoints : undefined
   };
 }

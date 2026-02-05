@@ -129,14 +129,12 @@ class PlayerItemController(
             }
             "healing-elixir" -> {
                 val percent = body.recoveryPercent ?: 30
-                val baseRecoveryAmount = (body.maxHp * percent) / 100
+                val recoveryAmount = (body.maxHp * percent) / 100
 
                 val battleCharacter = battleCharacterRepository.findAll()
                     .firstOrNull { it.externalId == body.playerId.toString() && it.characterType.equals("player", ignoreCase = true) }
 
                 battleCharacter?.let {
-                    // Apply Effective Heal modifier (doubles healing if equipped)
-                    val recoveryAmount = damageService.applyEffectiveHeal(it, baseRecoveryAmount)
                     val newHp = minOf(playerEntity.hpCurrent + recoveryAmount, body.maxHp)
 
                     it.healthPoints = newHp
@@ -148,9 +146,6 @@ class PlayerItemController(
                     battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)
                     )
-
-                    // Apply Healing Share: distribute 15% of heal to characters with healing-share picto
-                    damageService.applyHealingShare(battleId, it, recoveryAmount)
 
                     // Cleansing Tint: Remove all negative status effects
                     applyCleansingTint(it)
@@ -202,9 +197,7 @@ class PlayerItemController(
                 val target = targetCharacter.get()
                 val wasDeadBefore = target.healthPoints <= 0
 
-                val baseRecoveryAmount = (target.maxHealthPoints * percent) / 100
-                // Apply Effective Heal modifier (doubles healing if equipped)
-                val recoveryAmount = damageService.applyEffectiveHeal(target, baseRecoveryAmount)
+                val recoveryAmount = (target.maxHealthPoints * percent) / 100
                 val newHp = minOf(recoveryAmount, target.maxHealthPoints)
 
                 target.healthPoints = newHp
@@ -214,9 +207,6 @@ class PlayerItemController(
                 battleLogRepository.save(
                     BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)
                 )
-
-                // Apply Healing Share: distribute 15% of heal to characters with healing-share picto
-                damageService.applyHealingShare(battleId, target, recoveryAmount)
 
                 // Check for Revive Paradox picto - make character play immediately after revive
                 if (wasDeadBefore && newHp > 0) {

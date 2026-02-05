@@ -234,7 +234,7 @@
     },
     "defense-breaker-dodge": {
       "name": "Defense Breaker Dodge",
-      "description": "Successful Dodges can apply Defenseless to the attacker."
+      "description": "Successful Dodges can apply Unprotected to the attacker."
     },
     "defense-riser-dodge": {
       "name": "Defense Riser Dodge",
@@ -594,7 +594,7 @@
     },
     "exposing-attack": {
       "name": "Exposing Attack",
-      "description": "Base Attack applies Defenseless for 1 turn."
+      "description": "Base Attack applies Unprotected for 1 turn."
     },
     "empowering-parry": {
       "name": "Empowering Parry",
@@ -782,7 +782,7 @@
     },
     "critical-vulnerability": {
       "name": "Critical Vulnerability",
-      "description": "25% increased Critical Chance on Defenceless enemies."
+      "description": "25% increased Critical Chance on Unprotected enemies."
     },
     "empowering-dodge": {
       "name": "Empowering Dodge",
@@ -836,9 +836,9 @@
       "name": "Greater Powerless",
       "description": "+15% to Powerless damage reduction."
     },
-    "greater-defenceless": {
-      "name": "Greater Defenceless",
-      "description": "+15% to Defenceless damage amplification."
+    "greater-unprotected": {
+      "name": "Greater Unprotected",
+      "description": "+2 to Unprotected damage bonus."
     },
     "greater-slow": {
       "name": "Greater Slow",
@@ -1454,7 +1454,7 @@
       "name": "Veremum",
       "passives": {
         "2": "If Stanceless, Base Attack switches to Offensive Stance.",
-        "3": "Counterattacks apply Defenceless.",
+        "3": "Counterattacks apply Unprotected.",
         "4": "+50% Critical Chance while in Offensive Stance."
       }
     },
@@ -1952,7 +1952,7 @@
       },
       "gustave-marking-shot": {
         "name": "Marking Shot",
-        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Mark to the target, making it take +50% damage."
+        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Marked to the target for 3 turns, making it take +4 damage for 1 attack."
       },
       "gustave-overcharge": {
         "name": "Overcharge",
@@ -2044,7 +2044,7 @@
       },
       "lune-terraquake": {
         "name": "Terraquake",
-        "description": "Applies Earthquake status to all enemies for 3 turns. At the start of their turns, characters with Earthquake take 1d6 damage and suffer Break if Fragile (taking 150% of the damage that caused the Break). Consumes 2 stains of Lightning to extend duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Applies Earthquake status to all enemies for 3 turns. At the start of their turns, characters with Earthquake take 1d6 damage and suffer Break if Fragile. Consumes 2 stains of Lightning to extend duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-typhoon": {
         "name": "Typhoon",
@@ -2052,11 +2052,11 @@
       },
       "lune-rebirth": {
         "name": "Rebirth",
-        "description": "Revives an ally with 30-70% of HP and 2 additional MP. Consumes 3 stains of Lightning to cost 0 MP. Using this skill grants 1 Light stain."
+        "description": "Revives an ally with 2 additional MP. Roll 1d6: 1-2 = revive with low HP, 3-4 = revive with half HP, 5-6 = revive with full HP. Consumes 3 stains of Lightning to cost 0 MP. Using this skill grants 1 Light stain."
       },
       "lune-revitalization": {
         "name": "Revitalization",
-        "description": "Roll 1d6: 1-2 = heals 1 ally for 40% HP, 3-6 = heals all allies for 60% HP. Consumes 3 stains of Fire to also apply Regeneration 2 for 3 turns. Using this skill grants 1 Light stain."
+        "description": "Roll 1d6: 1-2 = heals 1 ally for Resistance +2d6, 3-6 = heals all allies for Resistance +3d6. Consumes 3 stains of Fire to also apply Regeneration 2 for 3 turns. Using this skill grants 1 Light stain."
       },
       "lune-fire-rage": {
         "name": "Fire Rage",
@@ -2068,19 +2068,19 @@
       },
       "lune-sky-break": {
         "name": "Sky Break",
-        "description": "Gradient Skill (doesn't consume turn). Deals extreme damage to all enemies. 1 hit. Can cause Break. The element depends on which Stain Lune has more. Using this skill grants 3 stains of Light."
+        "description": "Does not consume turn. Deals extreme damage to all enemies. 1 hit. Can cause Break. The element depends on which Stain Lune has more. Using this skill grants 3 stains of Light."
       },
       "lune-tree-of-life": {
         "name": "Tree of Life",
-        "description": "Gradient Skill (doesn't consume turn). Removes all Status Effects and heals all allies. Using this skill grants 1 Light stain."
+        "description": "Does not consume turn. Removes all Status Effects and heals all allies. Using this skill grants 1 Light stain."
       },
       "lune-tremor": {
         "name": "Tremor",
-        "description": "Gradient Skill (doesn't consume turn). Deals high Earth damage to all enemies. 1 hit. Removes all Shields from enemies. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Does not consume turn. Deals high Earth damage to all enemies. 1 hit. Removes all Shields from enemies. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "maelle-offensive-switch": {
         "name": "Offensive Switch",
-        "description": "Deals low damage to a single target. 1 hit. Uses weapon's element. Applies Defenceless for 3 turns. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Deals low damage to a single target. 1 hit. Uses weapon's element. Applies Unprotected for 3 turns. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-mezzo-forte": {
         "name": "Mezzo Forte",
@@ -2088,7 +2088,7 @@
       },
       "maelle-percee": {
         "name": "Percee",
-        "description": "Deals medium Physical damage to a single target. 1 hit. Damage increased by 50% against Marked targets. Changes to Defensive Stance. Cost reduced to 2 MP if used in Virtuose Stance."
+        "description": "Deals medium Physical damage to a single target. 1 hit. +4 damage against Marked targets. Changes to Defensive Stance. Cost reduced to 2 MP if used in Virtuose Stance."
       },
       "maelle-degagement": {
         "name": "Degagement",
@@ -2104,7 +2104,7 @@
       },
       "maelle-guard-down": {
         "name": "Guard Down",
-        "description": "Applies Defenceless to all enemies for 3 turns. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Applies Unprotected to all enemies for 3 turns. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-egide": {
         "name": "Egide",
@@ -2132,11 +2132,11 @@
       },
       "maelle-fencers-flurry": {
         "name": "Fencer's Flurry",
-        "description": "Deals medium damage to all enemies. 1 hit. Uses weapon's element. Applies Defenceless for 1 turn (enemies take 25% increased damage). Using this skill changes Maelle's Stance to Offensive."
+        "description": "Deals medium damage to all enemies. 1 hit. Uses weapon's element. Applies Unprotected for 1 turn. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-phantom-strike": {
         "name": "Phantom Strike",
-        "description": "Deals very high Void damage to all enemies. 4 hits. Grants +35% of a Gradient Charge. Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals very high Void damage to all enemies. 4 hits. Grants +1 Gradient Charge per attack. This skill grants 11 gradient points. Changes to Defensive Stance."
       },
       "maelle-burning-canvas": {
         "name": "Burning Canvas",
@@ -2156,7 +2156,7 @@
       },
       "maelle-momentum-strike": {
         "name": "Momentum Strike",
-        "description": "Deals high Physical damage to a single target. 1 hit. Uses weapon's element. Damage increased against Marked targets. Cost reduced to 4 MP if used in Virtuose Stance (normally 7 MP). Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals high Physical damage to a single target. 1 hit. Uses weapon's element. +4 damage against Marked targets. Cost reduced to 4 MP if used in Virtuose Stance (normally 7 MP). Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-payback": {
         "name": "Payback",
@@ -2164,7 +2164,7 @@
       },
       "maelle-stendhal": {
         "name": "Stendhal",
-        "description": "Deals extreme Void damage to a single target. 1 hit. Removes own Shields and applies Defenceless to self. Using this skill changes Maelle's Stance to Stanceless."
+        "description": "Deals extreme Void damage to a single target. 1 hit. Removes own Shields and applies Unprotected to self. Using this skill changes Maelle's Stance to Stanceless."
       },
       "maelle-sword-ballet": {
         "name": "Sword Ballet",
@@ -2172,19 +2172,19 @@
       },
       "maelle-gustaves-homage": {
         "name": "Gustave's Homage",
-        "description": "Deals high Lightning damage to a single target. 8 hits. Increased damage to Marked targets, doesn't remove Mark."
+        "description": "Deals high Lightning damage to a single target. 8 hits. +4 damage against Marked targets, doesn't remove Mark."
       },
       "maelle-virtuose-strike": {
         "name": "Virtuose Strike",
-        "description": "Gradient Skill (does not consume turn). Deals high Physical damage to a single target. 5 hits. Using this skill changes Maelle's Stance to Virtuose."
+        "description": "Does not consume turn. Deals high Physical damage to a single target. 5 hits. Using this skill changes Maelle's Stance to Virtuose."
       },
       "maelle-gommage": {
         "name": "Gommage",
-        "description": "Gradient Skill (does not consume turn). Kills weak targets. Otherwise deals extreme Void damage to a single target. Using this skill changes Maelle's Stance to Virtuose."
+        "description": "Does not consume turn. Kills targets with HP ≤ 25%. Otherwise deals extreme Void damage to a single target. Using this skill changes Maelle's Stance to Virtuose."
       },
       "maelle-phoenix-flame": {
         "name": "Phoenix Flame",
-        "description": "Gradient Skill (does not consume turn). Applies 10 Burn to all enemies. Revives all allies with 50-70% HP. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Does not consume turn. Applies 10 Burn to all enemies. Revives all allies. Make an ability test DC 6. On success, revive with full HP. On failure, revive with half HP. Using this skill changes Maelle's Stance to Offensive."
       },
       "sciel-twilight-slash": {
         "name": "Twilight Slash",
@@ -2216,11 +2216,11 @@
       },
       "sciel-grim-harvest": {
         "name": "Grim Harvest",
-        "description": "Deals medium Dark damage to a single target. 1 hit. Heals all allies for 30% of HP. Consumes Foretell to increase healing by 5% per Foretell."
+        "description": "Deals medium Dark damage to a single target. 1 hit. Heals all allies for Resistance +1d6. Consumes Foretell to add +1 healing per Foretell."
       },
       "sciel-harvest": {
         "name": "Harvest",
-        "description": "Deals medium damage to a single target. 1 hit. Uses weapon element. Heals Sciel for 40% of HP. Consumes all Foretell to increase healing by 5% per Foretell."
+        "description": "Deals medium damage to a single target. 1 hit. Uses weapon element. Heals Sciel for Resistance +2d6. Consumes all Foretell to add +1 healing per Foretell."
       },
       "sciel-searing-bond": {
         "name": "Searing Bond",
@@ -2232,7 +2232,7 @@
       },
       "sciel-sealed-fate": {
         "name": "Sealed Fate",
-        "description": "Deals high damage to a single target. 5-7 hits. Uses weapon element. Each hit can consume 1 Foretell to deal 200% more damage."
+        "description": "Deals high damage to a single target. 5-7 hits. Uses weapon element. Each hit can consume 1 Foretell to deal double damage."
       },
       "sciel-spectral-sweep": {
         "name": "Spectral Sweep",
@@ -2280,19 +2280,19 @@
       },
       "sciel-shadow-bringer": {
         "name": "Shadow Bringer",
-        "description": "Gradient Skill (doesn't consume turn). Deals high Dark damage to random enemies. 10 hits. Applies 1 Foretell per hit."
+        "description": "Does not consume turn. Deals high Dark damage to random enemies. 10 hits. Applies 1 Foretell per hit."
       },
       "sciel-doom": {
         "name": "Doom",
-        "description": "Gradient Skill (doesn't consume turn). Deals very high Dark damage to a single target. 3 hits. Applies Weakened, Defenceless and Slowed for 3 turns. Can cause Break."
+        "description": "Does not consume turn. Deals very high Dark damage to a single target. 3 hits. Applies Weakened, Unprotected and Slowed for 3 turns. Can cause Break."
       },
       "sciel-end-slice": {
         "name": "End Slice",
-        "description": "Gradient Skill (doesn't consume turn). Deals extreme Physical damage to a single target. 1 hit. Damage scales with the amount of Foretell consumed."
+        "description": "Does not consume turn. Deals extreme Physical damage to a single target. 1 hit. Damage scales with the amount of Foretell consumed."
       },
       "verso-angels-eyes": {
         "name": "Angel's Eyes",
-        "description": "Gradient Skill (doesn't consume turn). Deals extreme Physical damage. 8 hits. Gains +2 Perfection points per hit. Applies Aureole to Verso, reviving him if he dies."
+        "description": "Does not consume turn. Deals extreme Physical damage. 8 hits. Gains +2 Perfection points per hit. Applies Aureole to Verso, reviving him if he dies."
       },
       "verso-ascending-assault": {
         "name": "Ascending Assault",
@@ -2308,7 +2308,7 @@
       },
       "verso-blitz": {
         "name": "Blitz",
-        "description": "Deals low Physical damage to a single target. 1 hit. Plays a second time. Kills non-boss enemies with less than 10% HP. If Verso uses this skill at Perfection Rank B, the damage is increased."
+        "description": "Deals low Physical damage to a single target. 1 hit. Plays a second time. Kills non-boss enemies with very low HP. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-burden": {
         "name": "Burden",
@@ -2316,7 +2316,7 @@
       },
       "verso-defiant-strike": {
         "name": "Defiant Strike",
-        "description": "Deals high Physical damage to a single target and applies Mark. 2 hits. Costs 30% of current HP. If Verso uses this skill at Perfection Rank B, the damage is increased."
+        "description": "Deals high Physical damage to a single target and applies Mark. 2 hits. Costs 2d6 HP. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-endbringer": {
         "name": "Endbringer",
@@ -2328,7 +2328,7 @@
       },
       "verso-from-fire": {
         "name": "From Fire",
-        "description": "Deals medium damage to a single target. 3 hits. Uses weapon element. Heals Verso for 20% of HP if the target is Burning. If Verso uses this skill at Perfection Rank B, the damage is increased."
+        "description": "Deals medium damage to a single target. 3 hits. Uses weapon element. If the target is Burning, heals Verso for Resistance +1d6. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-leadership": {
         "name": "Leadership",
@@ -2356,7 +2356,7 @@
       },
       "verso-perfect-recovery": {
         "name": "Perfect Recovery",
-        "description": "Recovers 50% of HP and dispels Status Effects. Gives 0-2 Perfection. If Verso uses this skill at Perfection Rank C, the heal effect is increased to 100%."
+        "description": "Recovers Resistance +2d6 HP and dispels Status Effects. Gives 0-2 Perfection. If Verso uses this skill at Perfection Rank C, the heal effect is doubled."
       },
       "verso-phantom-stars": {
         "name": "Phantom Stars",
@@ -2380,7 +2380,7 @@
       },
       "verso-sabotage": {
         "name": "Sabotage",
-        "description": "Gradient Skill (doesn't consume turn). Deals medium Physical damage to all enemies. 1 hit. Applies Mark."
+        "description": "Does not consume turn. Deals medium Physical damage to all enemies. 1 hit. Applies Mark."
       },
       "verso-speedburst": {
         "name": "Speed Burst",
@@ -2392,7 +2392,7 @@
       },
       "verso-striker": {
         "name": "Striker",
-        "description": "Gradient Skill (doesn't consume turn). Deals high Physical damage to a single target. 1 hit. Can cause Break."
+        "description": "Does not consume turn. Deals high Physical damage to a single target. 1 hit. Can cause Break."
       },
       "verso-strike-storm": {
         "name": "Strike Storm",
@@ -2456,7 +2456,7 @@
       },
       "monoco-contorsionniste-blast": {
         "name": "Contorsionniste Blast",
-        "description": "Contortionist explosive blast. Effect: Deals medium Physical damage to all enemies. 1 hit. Heals all allies by 10% HP for each enemy hit. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask.\nPrerequisite: Defeat and acquire the foot of a Contorsionniste enemy while Monoco is in the active group."
+        "description": "Contortionist explosive blast. Effect: Deals medium Physical damage to all enemies. 1 hit. Heals all allies by 1d6 HP for each enemy hit. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask.\nPrerequisite: Defeat and acquire the foot of a Contorsionniste enemy while Monoco is in the active group."
       },
       "monoco-creation-void": {
         "name": "Creation Void",
@@ -2468,7 +2468,7 @@
       },
       "monoco-cultist-blood": {
         "name": "Cultist Blood",
-        "description": "Blood-based cultist attack. Effect: Deals medium Darkness damage to all enemies. 3 hits. Sacrifices 90% HP to increase damage. Heavy Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 5 positions.\nPrerequisite: Defeat and acquire the foot of a Greatsword Cultist enemy while Monoco is in the active group."
+        "description": "Blood-based cultist attack. Effect: Deals medium Darkness damage to all enemies. 3 hits. Sacrifices most HP to increase damage. Heavy Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 5 positions.\nPrerequisite: Defeat and acquire the foot of a Greatsword Cultist enemy while Monoco is in the active group."
       },
       "monoco-cultist-slashes": {
         "name": "Cultist Slashes",
@@ -2540,7 +2540,7 @@
       },
       "monoco-pelerin-heal": {
         "name": "Pelerin Heal",
-        "description": "Pilgrim's healing skill. Effect: Applies Regeneration to all allies. Conjurer Mask: also heals 40% HP. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, the team receives a 40% healing increase.\nPrerequisite: Defeat and acquire the foot of a Pelerin enemy while Monoco is in the active group."
+        "description": "Pilgrim's healing skill. Effect: Applies Regeneration to all allies. Conjurer Mask: also heals Resistance +2d6 HP. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, the team receives additional healing.\nPrerequisite: Defeat and acquire the foot of a Pelerin enemy while Monoco is in the active group."
       },
       "monoco-portier-crash": {
         "name": "Portier Crash",
@@ -2552,7 +2552,7 @@
       },
       "monoco-ramasseur-bonk": {
         "name": "Ramasseur Bonk",
-        "description": "Collector's bonking attack. Effect: Deals low Darkness damage to a single target. 1 hit. Can cause Break. Agile Mask effect fills 20% of the target's Break Bar. Moves the Bestial Wheel Pointer by 4 positions. When used while the pointer is on Agile Mask or Omnipotent Mask, fills the enemy's Break Bar by 20% on hit.\nPrerequisite: Defeat and acquire the foot of a Ramasseur enemy while Monoco is in the active group."
+        "description": "Collector's bonking attack. Effect: Deals low Darkness damage to a single target. 1 hit. Can cause Break. Agile Mask effect adds +2 to Break damage. Moves the Bestial Wheel Pointer by 4 positions. When used while the pointer is on Agile Mask or Omnipotent Mask, adds +2 Break damage on hit.\nPrerequisite: Defeat and acquire the foot of a Ramasseur enemy while Monoco is in the active group."
       },
       "monoco-rocher-hammering": {
         "name": "Rocher Hammering",
@@ -2580,7 +2580,7 @@
       },
       "monoco-sapling-absorption": {
         "name": "Sapling Absorption",
-        "description": "Absorbs energy like a sapling. Effect: Deals high Darkness damage. 3 hits. Recovers 5% HP per hit (10% on Conjurer Mask or Omnipotent). Bestial Wheel: +5 positions.\nPrerequisite: Defeat and acquire the foot of a Sapling enemy while Monoco is in the active group."
+        "description": "Absorbs energy like a sapling. Effect: Deals high Darkness damage. 3 hits. Recovers 1d6 HP per hit (2d6 on Conjurer Mask or Omnipotent). Bestial Wheel: +5 positions.\nPrerequisite: Defeat and acquire the foot of a Sapling enemy while Monoco is in the active group."
       },
       "monoco-stalact-punches": {
         "name": "Stalact Punches",
@@ -2786,7 +2786,6 @@
         "Burn": "Burn",
         "Shield": "Shield",
         "Powerful": "Powerful",
-        "Mark": "Mark",
         "Shell": "Shell",
         "Slow": "Slow",
         "Freeze": "Freeze",
@@ -2798,7 +2797,6 @@
         "Aureole": "Aureole",
         "Vulnerable": "Vulnerable",
         "DoubleDamage": "Double Damage",
-        "Defenceless": "Defenceless",
         "Regen": "Regeneration",
         "Curse": "Curse",
         "Earthquake": "Earthquake",
@@ -2843,7 +2841,6 @@
         "Burn": "Deals continuous fire damage to the character.",
         "Shield": "Protects the character from damage.",
         "Powerful": "Significantly increases attack power.",
-        "Mark": "Marks the target to receive increased damage.",
         "Shell": "Significantly reduces damage taken.",
         "Slow": "Reduces the character's speed.",
         "Freeze": "Freezes the character, preventing actions.",
@@ -2855,7 +2852,6 @@
         "Aureole": "Revives the character with 30% HP when they die. Consumed on use.",
         "Vulnerable": "The character takes increased damage from all sources.",
         "DoubleDamage": "The next attack deals double damage.",
-        "Defenceless": "The character cannot defend against attacks.",
         "Regen": "Regenerates health points over time.",
         "Curse": "Curse that causes continuous negative effects.",
         "Earthquake": "Deals damage at the start of turn. Each stack deals 1d6 damage. If the character is fragile, suffers Break and takes 150% of the damage that caused the Break.",
@@ -2947,6 +2943,13 @@
         "allyHealed": "{name} healed by {percent}% ({amount} HP)!",
         "healedFor": "Healed {amount} HP!",
         "debuffsRemovedFrom": "Debuffs removed from {name}!",
+        "gainedCharges": "gained {amount} charge(s)!",
+        "shatterFullCharge": "Break! Charges fully loaded!",
+        "revivedFullHp": "{name} revived with full HP! ({hp} HP)",
+        "revivedHalfHp": "{name} revived with half HP! ({hp} HP)",
+        "noDeadAlliesToRevive": "No dead allies to revive!",
+        "bonusDamageVsMarked": "Target Marked! +{bonus} damage!",
+        "burnConsumptionBonus": "Consumed {stacks} Burns! +{bonus} damage!",
         "buffsCopied": "Buffs copied to other allies!",
         "stanceChanged": "Stance changed to {stance}!",
         "healthReduced": "Health reduced to {amount}!",
@@ -2959,7 +2962,7 @@
         "burningTargetStance": "Target is Burning! Changed to Virtuous stance!",
         "trumpetBuffs": "Trumpet! {buffs} applied to {count} ally(s)!",
         "shieldsRemoved": "{count} Shield(s) removed!",
-        "defenselessApplied": "Defenseless applied to self!",
+        "defenselessApplied": "Unprotected applied to self!",
         "criticalStainGained": "Critical! {stain} stain gained!",
         "secondTurnGranted": "Second turn granted!",
         "stormCallerActivated": "Storm Caller activated! Enemies will suffer 3d6 Lightning damage per turn for 3 turns.",
@@ -3003,7 +3006,13 @@
         "targetBurning": "Target burning! Damage +50%",
         "hitsCountAnnouncement": "{count} hit(s)!",
         "trumpetRandomBuffs": "2 random buffs",
-        "trumpetSingleBuff": "1 random buff"
+        "trumpetSingleBuff": "1 random buff",
+        "gainedMP": "Rolled {roll}! +{amount} MP gained!",
+        "switchedToVirtuose": "Target burning! Switched to Virtuose!",
+        "effectAppliesToAllAllies": "Rolled {roll}! Effect applies to all allies!",
+        "effectAppliesToSingleTarget": "Rolled {roll}! Effect applies to single target only.",
+        "habilityTestSuccessMP": "Success! +{mp} MP gained!",
+        "habilityTestFailureMP": "Failure! +{mp} MP gained."
       },
       "defense": {
         "tookFullDamage": "You took all the damage.",

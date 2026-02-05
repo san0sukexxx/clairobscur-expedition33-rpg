@@ -21,5 +21,6 @@ data class CreateAttackRequest(
         val isLastHit: Boolean? = null,  // Indicates if this is the last hit of the skill (for Twilight activation)
         val element: String? = null,  // Element type for elemental resistances (e.g., 'Physical', 'Fire', 'Ice')
         val shouldRemoveMarked: Boolean? = null,  // If false, don't remove Marked status (e.g., for Gustave's Homage)
-        val chargeIncrease: Int? = null  // Amount to increase charge (Gustave's Lumiere Assault: 1 normal, 2 on crit)
+        val chargeIncrease: Int? = null,  // Amount to increase charge (Gustave's Lumiere Assault: 1 normal, 2 on crit)
+        val grantsGradientPoints: Int? = null  // Grants gradient points to team (12 = 1 charge) (Phantom Strike)
 )

@@ -72,7 +72,15 @@ class BattleStatusController(
                 }
             }
         } else if (body.effectType == "Burning") {
-            val baseDamage = body.totalValue
+            var baseDamage = body.totalValue
+
+            // Check for FireVulnerability status (+2 burn damage)
+            val hasFireVulnerability = battleStatusEffectRepository
+                .findByBattleCharacterIdAndEffectType(body.battleCharacterId, "FireVulnerability")
+                .isNotEmpty()
+            if (hasFireVulnerability) {
+                baseDamage += 2
+            }
 
             if (baseDamage > 0) {
                 // Apply Fire element resistance/weakness modifiers
@@ -152,6 +160,12 @@ class BattleStatusController(
                     )
                     battleStatusEffectRepository.save(brokenEffect)
 
+                    // Break causes stance loss
+                    if (battleCharacter.stance != null) {
+                        battleCharacter.stance = null
+                        battleCharacterRepository.save(battleCharacter)
+                    }
+
                     // Remove Fragile status when Break is caused
                     battleStatusEffectRepository.deleteAll(fragileEffects)
                 }
@@ -218,8 +232,7 @@ class BattleStatusController(
                             )
                     )
                 } else {
-                    // Apply Effective Heal modifier (doubles healing if equipped)
-                    val heal = damageService.applyEffectiveHeal(battleCharacter, baseHeal)
+                    val heal = baseHeal
 
                     val invertedEffects =
                             battleStatusEffectRepository.findByBattleCharacterIdAndEffectType(
@@ -238,9 +251,6 @@ class BattleStatusController(
 
                         battleCharacter.healthPoints = nextHp
                         battleCharacterRepository.save(battleCharacter)
-
-                        // Apply Healing Share: distribute 15% of heal to characters with healing-share picto
-                        damageService.applyHealingShare(battleId, battleCharacter, heal)
                     }
                 }
             }
@@ -440,6 +450,12 @@ class BattleStatusController(
                 }
 
         battleStatusEffectRepository.save(toSave)
+
+        // Break causes stance loss (Maelle loses her stance when hit by Break)
+        if (body.effectType == "Broken" && bc.stance != null) {
+            bc.stance = null
+            battleCharacterRepository.save(bc)
+        }
 
         val oppositeTypes = getOppositeStatusTypes(body.effectType)
         if (oppositeTypes.isNotEmpty()) {
@@ -712,6 +728,12 @@ class BattleStatusController(
                             sourceCharacterId = fragileEffect.sourceCharacterId
                     )
             )
+
+            // Break causes stance loss
+            if (bc.stance != null) {
+                bc.stance = null
+                battleCharacterRepository.save(bc)
+            }
 
             val eventJson = objectMapper.writeValueAsString(
                     mapOf(

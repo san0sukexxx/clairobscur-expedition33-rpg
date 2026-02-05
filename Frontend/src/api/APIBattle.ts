@@ -89,6 +89,7 @@ export interface CreateAttackRequest {
     shouldRemoveMarked?: boolean  // If false, don't remove Marked status (e.g., for Gustave's Homage)
     element?: string  // Element type for elemental resistances (e.g., 'Physical', 'Fire', 'Ice')
     chargeIncrease?: number  // Amount to increase charge (Gustave's Lumiere Assault: 1 normal, 2 on crit)
+    grantsGradientPoints?: number  // Grants gradient points to team (12 = 1 charge) (Phantom Strike)
 }
 
 export interface AttackStatusEffectRequest {

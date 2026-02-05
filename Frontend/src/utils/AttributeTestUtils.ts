@@ -22,7 +22,8 @@ export function performAttributeTest(
     player: GetPlayerResponse | null,
     testType: AttributeTestType,
     dc: number,
-    callback: (result: AttributeTestResult) => void
+    callback: (result: AttributeTestResult) => void,
+    options?: { theme?: string }
 ): void {
     const attribute = getAttributeValue(player, testType);
 
@@ -38,7 +39,7 @@ export function performAttributeTest(
             dc,
             success
         });
-    });
+    }, options);
 }
 
 /**

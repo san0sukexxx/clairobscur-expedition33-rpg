@@ -177,11 +177,14 @@ export default function CombatAdmin({
     const [attackType, setAttackType] = useState<AttackType | null>(null)
     const [npcAttack, setNPCAttack] = useState<NPCAttack | null>(null)
     const [npcSkill, setNPCSkill] = useState<NPCSkill | null>(null)
+    const [npcSkillIndex, setNpcSkillIndex] = useState<number | null>(null)
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
     const [editingHp, setEditingHp] = useState<CombatEntity | null>(null);
     const [newHpValue, setNewHpValue] = useState("");
+    const [editingMp, setEditingMp] = useState<CombatEntity | null>(null);
+    const [newMpValue, setNewMpValue] = useState("");
     const [sortColumn, setSortColumn] = useState<"name" | "difficulty" | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
     const [battleRewards, setBattleRewards] = useState<BattleReward[]>([]);
@@ -274,12 +277,12 @@ export default function CombatAdmin({
         lastActiveCharacterIdRef.current = currentId
     }
 
-    const reloadBattleDetails = useCallback(async () => {
+    const reloadBattleDetails = useCallback(async (force?: boolean) => {
         if (!campaignInfo.battleId) return
 
         // Throttle: só permite uma chamada a cada 2 segundos
         const now = Date.now()
-        if (now - lastReloadTimeRef.current < 2000) return
+        if (!force && now - lastReloadTimeRef.current < 2000) return
         if (isReloadingRef.current) return
 
         isReloadingRef.current = true
@@ -603,7 +606,7 @@ export default function CombatAdmin({
         if (!rowId) return
         try {
             await APIBattle.removeCharacter(rowId)
-            await reloadBattleDetails()
+            await reloadBattleDetails(true)
         } catch (error) {
             console.error("Erro ao remover personagem:", error)
         }
@@ -818,14 +821,24 @@ export default function CombatAdmin({
                             <h3 className="text-lg font-semibold">Habilidades</h3>
 
                             <div className="flex flex-row flex-wrap items-center gap-4">
-                                {npcInfo?.skillList?.map((skill, idx) => (
+                                {npcInfo?.skillList?.map((skill, idx) => {
+                                    const isSelected = isSelectingTarget && npcSkillIndex === idx;
+                                    return (
                                     <div key={idx} className="flex flex-col items-center gap-2">
                                         <button
-                                            className="btn btn-md btn-primary"
-                                            onClick={() => npcSkillTapped(skill)}
+                                            className={`btn btn-md ${isSelected ? "btn-error" : "btn-primary"}`}
+                                            onClick={() => {
+                                                if (isSelected) {
+                                                    setNPCSkill(null);
+                                                    setNpcSkillIndex(null);
+                                                    setIsSelectingTarget(false);
+                                                } else {
+                                                    npcSkillTapped(skill, idx);
+                                                }
+                                            }}
                                             disabled={isPassingTurn}
                                         >
-                                            {getSkillLabel(skill.type)}
+                                            {isSelected ? "Cancelar" : getSkillLabel(skill.type)}
                                         </button>
 
                                         <div className="flex flex-col items-center text-sm opacity-80">
@@ -844,7 +857,8 @@ export default function CombatAdmin({
                                             })}
                                         </div>
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
@@ -987,14 +1001,12 @@ export default function CombatAdmin({
                                                                 />
                                                             </div>
 
-                                                            {m.type == "npc" && (
-                                                                <button
-                                                                    className="btn btn-xs btn-ghost text-info"
-                                                                    onClick={() => openHpEditModal(m)}
-                                                                >
-                                                                    <FaEdit size={12} />
-                                                                </button>
-                                                            )}
+                                                            <button
+                                                                className="btn btn-xs btn-ghost text-info"
+                                                                onClick={() => openHpEditModal(m)}
+                                                            >
+                                                                <FaEdit size={12} />
+                                                            </button>
                                                         </div>
                                                     </td>
 
@@ -1005,12 +1017,22 @@ export default function CombatAdmin({
                                                                 <div className="text-xs font-mono mb-1">
                                                                     {m.currentMp}/{m.maxMp}
                                                                 </div>
-                                                                <AnimatedStatBar
-                                                                    value={Math.round((m.currentMp / m.maxMp) * 100)}
-                                                                    label="MP"
-                                                                    fillClass="bg-info"
-                                                                    ghostClass="bg-info/30"
-                                                                />
+                                                                <div className="flex items-center gap-2">
+                                                                    <div className="flex-1">
+                                                                        <AnimatedStatBar
+                                                                            value={Math.round((m.currentMp / m.maxMp) * 100)}
+                                                                            label="MP"
+                                                                            fillClass="bg-info"
+                                                                            ghostClass="bg-info/30"
+                                                                        />
+                                                                    </div>
+                                                                    <button
+                                                                        className="btn btn-xs btn-ghost text-info"
+                                                                        onClick={() => openMpEditModal(m)}
+                                                                    >
+                                                                        <FaEdit size={12} />
+                                                                    </button>
+                                                                </div>
                                                             </>
                                                         ) : (
                                                             <span className="opacity-60">—</span>
@@ -1154,6 +1176,42 @@ export default function CombatAdmin({
                         </button>
 
                         <button className="btn btn-primary" onClick={confirmHpEdit}>
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+        );
+    }
+
+    function renderEditMpModal() {
+        if (!editingMp) return null;
+
+        return (
+            <dialog className="modal modal-open">
+                <div className="modal-box space-y-4">
+                    <h3 className="font-bold text-lg">Alterar Mana</h3>
+
+                    <p className="text-sm opacity-80">
+                        Mana atual: <span className="font-mono">{editingMp.currentMp}</span><br />
+                        Mana máxima: <span className="font-mono">{editingMp.maxMp}</span>
+                    </p>
+
+                    <input
+                        type="number"
+                        className="input input-bordered w-full"
+                        value={newMpValue}
+                        min={0}
+                        max={editingMp.maxMp}
+                        onChange={(e) => setNewMpValue(e.target.value)}
+                    />
+
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => setEditingMp(null)}>
+                            Cancelar
+                        </button>
+
+                        <button className="btn btn-primary" onClick={confirmMpEdit}>
                             Confirmar
                         </button>
                     </div>
@@ -1639,6 +1697,68 @@ export default function CombatAdmin({
                                     </div>
                                 );
                             })()}
+
+                            {/* Barra de Postura da Maelle - só aparece se Maelle estiver no Time A */}
+                            {(() => {
+                                const maelleChar = battleDetails?.characters?.find(c =>
+                                    !c.isEnemy && (
+                                        c.id?.toLowerCase() === "maelle" ||
+                                        c.id?.toLowerCase().includes("maelle")
+                                    )
+                                );
+                                if (!maelleChar) return null;
+
+                                const currentStance = maelleChar.stance;
+                                const stanceLabels: Record<string, string> = {
+                                    "Offensive": "Ofensiva",
+                                    "Defensive": "Defensiva",
+                                    "Virtuous": "Virtuosa"
+                                };
+                                const stanceColors: Record<string, string> = {
+                                    "Offensive": "btn-error",
+                                    "Defensive": "btn-info",
+                                    "Virtuous": "bg-purple-500 text-white border-purple-500"
+                                };
+
+                                const handleStanceChange = async (newStance: "Offensive" | "Defensive" | "Virtuous") => {
+                                    await APIBattle.updateCharacterStance(maelleChar.battleID, newStance);
+                                    showToast(`Postura de Maelle alterada para ${stanceLabels[newStance]}`);
+                                    reloadBattleDetails();
+                                };
+
+                                return (
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                        <div>
+                                            <div className="flex items-center justify-between text-sm mb-3">
+                                                <span>Postura de Maelle</span>
+                                                <span className={`badge ${currentStance ? stanceColors[currentStance] : "badge-ghost"}`}>
+                                                    {currentStance ? stanceLabels[currentStance] : "Nenhuma"}
+                                                </span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    className={`btn btn-sm flex-1 ${currentStance === "Offensive" ? "btn-error" : "btn-outline btn-error"}`}
+                                                    onClick={() => handleStanceChange("Offensive")}
+                                                >
+                                                    Ofensiva
+                                                </button>
+                                                <button
+                                                    className={`btn btn-sm flex-1 ${currentStance === "Defensive" ? "btn-info" : "btn-outline btn-info"}`}
+                                                    onClick={() => handleStanceChange("Defensive")}
+                                                >
+                                                    Defensiva
+                                                </button>
+                                                <button
+                                                    className={`btn btn-sm flex-1 ${currentStance === "Virtuous" ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600" : "btn-outline border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"}`}
+                                                    onClick={() => handleStanceChange("Virtuous")}
+                                                >
+                                                    Virtuosa
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                         </>
                     )}
 
@@ -1651,6 +1771,7 @@ export default function CombatAdmin({
                     </div>
 
                     {renderEditEntityModal()}
+                    {renderEditMpModal()}
                     {renderGradientModal()}
                     {renderGustaveChargeModal()}
                 </div>
@@ -1784,10 +1905,11 @@ export default function CombatAdmin({
         startTargeting(npcAttack.type)
     }
 
-    function npcSkillTapped(skill: NPCSkill) {
+    function npcSkillTapped(skill: NPCSkill, index: number) {
         setAttackType(null)
         setNPCAttack(null)
         setNPCSkill(skill)
+        setNpcSkillIndex(index)
         startTargeting(undefined)
     }
 
@@ -2023,6 +2145,29 @@ export default function CombatAdmin({
         } catch (e) {
             console.error(e)
             showToast("Erro ao atualizar vida")
+        }
+    }
+
+    function openMpEditModal(entity: CombatEntity) {
+        setEditingMp(entity);
+        setNewMpValue((entity.currentMp ?? 0).toString());
+    }
+
+    function confirmMpEdit() {
+        const value = parseInt(newMpValue, 10);
+        if (!isNaN(value) && editingMp) {
+            handleMpSet(editingMp, value);
+        }
+        setEditingMp(null);
+    }
+
+    async function handleMpSet(entity: CombatEntity, value: number) {
+        try {
+            await APIBattle.updateCharacterMp(entity.rowId ?? 0, value)
+            showToast("Mana atualizada")
+        } catch (e) {
+            console.error(e)
+            showToast("Erro ao atualizar mana")
         }
     }
 }
