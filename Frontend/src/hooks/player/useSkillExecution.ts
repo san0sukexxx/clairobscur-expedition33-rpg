@@ -134,17 +134,33 @@ export function useSkillExecution({
       }
     }
 
+    // Calculate hits received bonus (Revenge, Payback: +2 damage per hit received)
+    let hitsReceivedBonus = 0;
+    if (resolved.metadata.damageScalesWithHitsReceived) {
+      const hitsReceived = source.hitsReceivedThisTurn ?? 0;
+      hitsReceivedBonus = hitsReceived * 2;  // +2 damage per hit taken
+      if (hitsReceivedBonus > 0) {
+        showToastRef.current(t("playerPage.skills.hitsReceivedBonus", { hits: hitsReceived, bonus: hitsReceivedBonus }));
+      }
+    }
+
     // Execute hits
     while (hitIndex < actualHitCount) {
       await new Promise<void>((resolvePromise) => {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, "basic"), async (result) => {
-          const { baseDamage, hasCritical } = calculateHitDamage(result, player, weaponInfo, resolved);
+          let { baseDamage, hasCritical } = calculateHitDamage(result, player, weaponInfo, resolved);
           const chargeIncrease = calculateChargeIncrease(resolved, hasCritical);
 
-          // Add charge bonus to damage
-          const totalDamage = baseDamage + chargeBonus;
+          // Double critical damage (Sword Ballet: 4x instead of 2x)
+          if (hasCritical && resolved.metadata.doubleCritDamage) {
+            baseDamage = baseDamage * 2;  // Double the already-doubled critical
+            showToastRef.current(t("playerPage.skills.doubleCritDamage", { multiplier: 4 }));
+          }
 
-          showToastRef.current(`Total: ${totalDamage}${chargeBonus > 0 ? ` (${baseDamage}+${chargeBonus})` : ""}`);
+          // Add charge bonus and hits received bonus to damage
+          const totalDamage = baseDamage + chargeBonus + hitsReceivedBonus;
+
+          showToastRef.current(`Total: ${totalDamage}${chargeBonus > 0 ? ` (${baseDamage}+${chargeBonus})` : ""}${hitsReceivedBonus > 0 ? ` (+${hitsReceivedBonus} vingança)` : ""}`);
 
           // Process each target
           for (let targetIndex = 0; targetIndex < resolved.targetIds.length; targetIndex++) {
@@ -176,7 +192,18 @@ export function useSkillExecution({
               }
             }
 
-            const damageWithBonus = totalDamage + markedBonus + burnBonus;
+            // Check for burn scaling bonus (Burning Canvas: +2 damage per burn stack)
+            let burnScalingBonus = 0;
+            if (resolved.metadata.damageScalesWithBurn && targetChar) {
+              const burnStacks = getStatusStacks(targetChar, "Burning");
+              const bonusPerBurn = resolved.metadata.burnDamageBonus ?? 2;
+              burnScalingBonus = burnStacks * bonusPerBurn;
+              if (burnScalingBonus > 0) {
+                showToastRef.current(t("playerPage.skills.burnScalingBonus", { stacks: burnStacks, bonus: burnScalingBonus }));
+              }
+            }
+
+            const damageWithBonus = totalDamage + markedBonus + burnBonus + burnScalingBonus;
 
             if (isNpcTarget && targetChar) {
               const { damageWithElement, elementMod } = applyElementModifier(damageWithBonus, targetChar, skillElement);
@@ -261,6 +288,34 @@ export function useSkillExecution({
             await APIBattle.updateCharacterChargePoints(source.battleID, maxCharge);
             showToastRef.current(t("playerPage.skills.shatterFullCharge"));
           }
+        }
+      }
+    }
+
+    // Handle Breaking Rules: Destroy all target shields and grant MP per shield
+    if (resolved.metadata.destroysShields) {
+      let totalShieldsDestroyed = 0;
+      for (const targetId of resolved.targetIds) {
+        const targetChar = (player?.fightInfo?.characters ?? []).find(
+          (c: BattleCharacterInfo) => c.battleID === targetId
+        );
+        const shieldStacks = getStatusStacks(targetChar!, "Shield");
+        if (shieldStacks > 0) {
+          await APIBattle.removeStatus(targetId, "Shield");
+          totalShieldsDestroyed += shieldStacks;
+        }
+      }
+      if (totalShieldsDestroyed > 0) {
+        showToastRef.current(t("playerPage.skills.shieldsDestroyed", { count: totalShieldsDestroyed }));
+
+        // Grant MP per shield destroyed
+        if (resolved.metadata.grantsMPPerShield) {
+          const mpGain = totalShieldsDestroyed * resolved.metadata.grantsMPPerShield;
+          const currentMp = source.magicPoints ?? 0;
+          const maxMp = source.maxMagicPoints ?? 99;
+          const newMp = Math.min(currentMp + mpGain, maxMp);
+          await APIBattle.updateCharacterMp(source.battleID, newMp);
+          showToastRef.current(t("playerPage.skills.mpFromShields", { mp: mpGain }));
         }
       }
     }

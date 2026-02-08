@@ -228,6 +228,40 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
     showToast(`${source.name} ${t("playerPage.skills.gainedCharges", { amount: metadata.grantsCharges })}`);
   }
 
+  // Handle Last Chance: Set HP to 1 and refill MP
+  if (metadata.setsHpTo !== undefined) {
+    await APIBattle.updateCharacterHp(source.battleID, metadata.setsHpTo);
+    showToast(t("playerPage.skills.hpSetTo", { amount: metadata.setsHpTo }));
+  }
+
+  if (metadata.refillsMP) {
+    const maxMp = source.maxMagicPoints ?? 0;
+    await APIBattle.updateCharacterMp(source.battleID, maxMp);
+    showToast(t("playerPage.skills.mpRefilled", { amount: maxMp }));
+  }
+
+  // Handle Stendhal: Consume own shields and apply Unprotected to self
+  if (metadata.consumesShield) {
+    const shieldStatus = source.status?.filter(s => s.effectName === "Shield") ?? [];
+    for (const shield of shieldStatus) {
+      await APIBattle.removeStatus(source.battleID, "Shield");
+    }
+    if (shieldStatus.length > 0) {
+      showToast(t("playerPage.skills.shieldsConsumed", { count: shieldStatus.length }));
+    }
+  }
+
+  if (metadata.appliesSelfUnprotected) {
+    await APIBattle.addStatus({
+      battleCharacterId: source.battleID,
+      effectType: "Unprotected",
+      ammount: 0,
+      remainingTurns: 2,
+      sourceCharacterId: source.battleID
+    });
+    showToast(t("playerPage.skills.unprotectedApplied"));
+  }
+
   // Handle revival with attribute test (Phoenix Flame)
   if (metadata.revivesDeadAllies) {
     const reviveConfig = metadata.revivesDeadAllies;

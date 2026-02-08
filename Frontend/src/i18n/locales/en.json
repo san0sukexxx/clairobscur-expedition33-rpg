@@ -3012,7 +3012,14 @@
         "effectAppliesToAllAllies": "Rolled {roll}! Effect applies to all allies!",
         "effectAppliesToSingleTarget": "Rolled {roll}! Effect applies to single target only.",
         "habilityTestSuccessMP": "Success! +{mp} MP gained!",
-        "habilityTestFailureMP": "Failure! +{mp} MP gained."
+        "habilityTestFailureMP": "Failure! +{mp} MP gained.",
+        "hitsReceivedBonus": "{hits} hits received! Damage +{bonus}!",
+        "burnScalingBonus": "{stacks} Burns on target! Damage +{bonus}!",
+        "hpSetTo": "HP reduced to {amount}!",
+        "shieldsConsumed": "{count} Shield(s) consumed!",
+        "unprotectedApplied": "Unprotected applied to self!",
+        "shieldsDestroyed": "{count} enemy Shield(s) destroyed!",
+        "mpFromShields": "+{mp} MP from destroyed shields!"
       },
       "defense": {
         "tookFullDamage": "You took all the damage.",

@@ -46,6 +46,13 @@ export function validateSkillExecution(
     }
   }
 
+  // Check for parry-based cost reduction (Payback)
+  if (skillMetadata.costReductionPerParry) {
+    const parriesCount = source.parriesThisTurn ?? 0;
+    const reduction = parriesCount * skillMetadata.costReductionPerParry;
+    skillCost = Math.max(0, skillCost - reduction);
+  }
+
   // Validate MP for non-gradient skills
   if (!isGradientSkill) {
     const currentMp = source.magicPoints ?? 0;

@@ -3015,6 +3015,13 @@
         "effectAppliesToSingleTarget": "Rolou {roll}! Efeito afeta apenas o alvo.",
         "habilityTestSuccessMP": "Sucesso! +{mp} PM ganho!",
         "habilityTestFailureMP": "Falha! +{mp} PM ganho.",
+        "hitsReceivedBonus": "{hits} ataques recebidos! Dano +{bonus}!",
+        "burnScalingBonus": "{stacks} Queimaduras no alvo! Dano +{bonus}!",
+        "hpSetTo": "HP reduzido para {amount}!",
+        "shieldsConsumed": "{count} Escudo(s) consumido(s)!",
+        "unprotectedApplied": "Desprotegido aplicado em si mesmo!",
+        "shieldsDestroyed": "{count} Escudo(s) do inimigo destruído(s)!",
+        "mpFromShields": "+{mp} PM por escudos destruídos!",
         "mpConceded": "{amount} PM concedidos ao aliado!",
         "instantHeal": "Cura instantânea de {percent}% HP aplicada a todos os aliados!"
       },
