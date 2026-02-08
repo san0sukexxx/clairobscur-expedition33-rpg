@@ -344,9 +344,10 @@ class BattleStatusController(
             return ResponseEntity.noContent().build()
         }
 
-        // Reject "Heal" and "Cleanse" - these are special effects, not battle statuses
-        if (body.effectType == "Heal" || body.effectType == "Cleanse") {
-            println("[BattleStatusController] Rejected invalid status type: ${body.effectType}")
+        // Reject meta effects that are not actual battle statuses
+        val metaEffects = listOf("Heal", "Cleanse", "jump", "gradient")
+        if (body.effectType in metaEffects) {
+            println("[BattleStatusController] Rejected meta effect type: ${body.effectType}")
             return ResponseEntity.noContent().build()
         }
 

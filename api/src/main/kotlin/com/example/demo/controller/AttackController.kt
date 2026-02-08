@@ -738,8 +738,11 @@ class AttackController(
 
                         val nonStackableEffects = listOf("Fragile", "Inverted", "Flying", "Dizzy", "Stunned", "Silenced", "Exhausted")
 
+                        // Meta effects that should NOT be applied as status effects (used for attack type classification only)
+                        val metaEffects = listOf("gradient", "jump")
+
                         if (newHp > 0) {
-                                body.effects.forEach { eff ->
+                                body.effects.filter { it.effectType !in metaEffects }.forEach { eff ->
                                 val allTargetEffects = battleStatusEffectRepository
                                         .findByBattleCharacterId(targetBC.id!!)
 

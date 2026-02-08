@@ -152,6 +152,35 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
     });
   }
 
+  // Handle habilityTestForScope: Hability test to determine target scope (Guard Up)
+  if (metadata.habilityTestForScope) {
+    const testConfig = metadata.habilityTestForScope;
+    await new Promise<void>((resolveTest) => {
+      performAttributeTest(
+        diceBoardRef as React.RefObject<any>,
+        timeoutDiceBoardRef as React.MutableRefObject<ReturnType<typeof setTimeout> | null>,
+        player,
+        "hability",
+        testConfig.dc,
+        async (result) => {
+          if (result.success) {
+            // Success: Apply to all allies (same team as source)
+            finalTargetIds = allCharacters
+              .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
+              .map(c => c.battleID);
+            useExpandedTargets = true;
+            showToast(t("playerPage.skills.habilityTestSuccessAllAllies"));
+          } else {
+            // Failure: Apply only to selected target
+            showToast(t("playerPage.skills.habilityTestFailureSingleTarget"));
+          }
+          resolveTest();
+        },
+        { theme: "blue-green-metal" }
+      );
+    });
+  }
+
   // Apply status effects
   if (useExpandedTargets) {
     // When rollsForTargetScope expanded to all allies, apply primary effects to all targets
@@ -389,7 +418,17 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
     // Always update stance (even to null to lose stance)
     await APIBattle.updateCharacterStance(source.battleID, targetStance);
     if (targetStance) {
-      showToast(t("playerPage.skills.stanceChanged", { stance: targetStance }));
+      const stanceKey = targetStance.toLowerCase() as "offensive" | "defensive" | "virtuous";
+      showToast(t("playerPage.skills.stanceChanged", { stance: t(`combatAdmin.stances.${stanceKey}`) }));
+
+      // Maelle: Grant +1 MP when changing to a new stance (not null)
+      if (targetStance !== source.stance) {
+        const currentMp = source.magicPoints ?? 0;
+        const maxMp = source.maxMagicPoints ?? 99;
+        const newMp = Math.min(currentMp + 1, maxMp);
+        await APIBattle.updateCharacterMp(source.battleID, newMp);
+        showToast(t("playerPage.skills.stanceChangeMpBonus"));
+      }
     }
   }
 }

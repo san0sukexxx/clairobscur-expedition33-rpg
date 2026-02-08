@@ -447,6 +447,15 @@ export function useCombatActions({
         });
       }
 
+      // Maelle: Lose stance after basic attack
+      if (attackType === "basic") {
+        const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
+        if (playerChar?.stance) {
+          await APIBattle.updateCharacterStance(playerChar.battleID, null);
+          showToast(t("playerPage.skills.stanceLostBasicAttack"));
+        }
+      }
+
       setIsExecutingSkill(false);
     };
 

@@ -108,29 +108,31 @@ export interface CombatAdminProps {
 type TeamKey = "A" | "B"
 
 function getDefenseSuccessLabel(defenseType: string): string {
-    const labels: Record<string, string> = {
-        "block": "Aparou",
-        "dodge": "Desviou",
-        "jump": "Pulou",
-        "gradient-block": "Aparou o gradiente",
-        "take": "Aceitou o dano",
-        "counter": "Contra-atacou",
-        "cancel-counter": "Cancelou counter"
+    const keyMap: Record<string, string> = {
+        "block": "block",
+        "dodge": "dodge",
+        "jump": "jump",
+        "gradient-block": "gradientBlock",
+        "take": "take",
+        "counter": "counter",
+        "cancel-counter": "cancelCounter"
     };
-    return labels[defenseType] || "Defendido";
+    const key = keyMap[defenseType];
+    return key ? t(`combatAdmin.defenseSuccess.${key}`) : t("combatAdmin.defenseSuccess.default");
 }
 
 function getDefenseFailLabel(defenseType: string): string {
-    const labels: Record<string, string> = {
-        "block": "Falhou em aparar",
-        "dodge": "Falhou em desviar",
-        "jump": "Falhou em pular",
-        "gradient-block": "Falhou em aparar o gradiente",
-        "take": "Recebeu todo o dano",
-        "counter": "Falhou no counter",
-        "cancel-counter": "Falhou em cancelar counter"
+    const keyMap: Record<string, string> = {
+        "block": "block",
+        "dodge": "dodge",
+        "jump": "jump",
+        "gradient-block": "gradientBlock",
+        "take": "take",
+        "counter": "counter",
+        "cancel-counter": "cancelCounter"
     };
-    return labels[defenseType] || "Falhou na defesa";
+    const key = keyMap[defenseType];
+    return key ? t(`combatAdmin.defenseFail.${key}`) : t("combatAdmin.defenseFail.default");
 }
 
 function calculateNPCDifficulty(npcId: string): number {
@@ -325,7 +327,7 @@ export default function CombatAdmin({
             : battleDetails?.characters?.find(ch => !ch.isEnemy);
 
         if (!teamCharacter?.battleID) {
-            showToast("Nenhum personagem encontrado neste time.");
+            showToast(t("combatAdmin.toasts.noCharacterInTeam"));
             return;
         }
 
@@ -335,10 +337,10 @@ export default function CombatAdmin({
             await APIBattle.updateTeamGradient(teamCharacter.battleID, newGradientPoints);
             setShowGradientModal(false);
             await reloadBattleDetails();
-            showToast(`Cargas de gradiente atualizadas para ${gradientCharges}/3`);
+            showToast(t("combatAdmin.toasts.gradientChargesUpdated", { charges: gradientCharges }));
         } catch (error) {
             console.error("Erro ao atualizar gradiente:", error);
-            showToast("Erro ao atualizar gradiente.");
+            showToast(t("combatAdmin.toasts.errorUpdatingGradient"));
         }
     }, [gradientCharges, editingTeamIsEnemy, battleDetails?.characters, reloadBattleDetails, showToast]);
 
@@ -350,7 +352,7 @@ export default function CombatAdmin({
 
     const handleConfirmGustaveCharge = useCallback(async () => {
         if (editingGustaveCharacterId === null) {
-            showToast("Nenhum personagem selecionado.");
+            showToast(t("combatAdmin.toasts.noCharacterSelected"));
             return;
         }
 
@@ -358,10 +360,10 @@ export default function CombatAdmin({
             await APIBattle.updateCharacterChargePoints(editingGustaveCharacterId, gustaveChargePoints);
             setShowGustaveChargeModal(false);
             await reloadBattleDetails();
-            showToast(`Cargas de Gustave atualizadas para ${gustaveChargePoints}`);
+            showToast(t("combatAdmin.toasts.gustaveChargesUpdated", { charges: gustaveChargePoints }));
         } catch (error) {
             console.error("Erro ao atualizar cargas:", error);
-            showToast("Erro ao atualizar cargas.");
+            showToast(t("combatAdmin.toasts.errorUpdatingCharges"));
         }
     }, [gustaveChargePoints, editingGustaveCharacterId, reloadBattleDetails, showToast]);
 
@@ -458,7 +460,7 @@ export default function CombatAdmin({
         } catch (error) {
             console.error("Erro completo ao atualizar o status do combate:", error);
             console.error("Stack trace:", error instanceof Error ? error.stack : "N/A");
-            alert("Erro ao atualizar o status do combate: " + (error instanceof Error ? error.message : String(error)))
+            alert(t("combatAdmin.toasts.errorUpdatingCombatStatus") + " " + (error instanceof Error ? error.message : String(error)))
             setBattleStatus(initialStatus)
         } finally {
             setUpdatingStatus(false)
@@ -745,13 +747,13 @@ export default function CombatAdmin({
             <div className="card bg-base-200 shadow-inner flex-1">
                 <div className="card-body gap-4">
                     <div className="flex flex-col items-start">
-                        <div className="text-lg font-semibold">Turno do Jogador</div>
+                        <div className="text-lg font-semibold">{t("combatAdmin.labels.playerTurn")}</div>
                     </div>
 
                     <div className="flex flex-row flex-wrap items-center gap-4">
                         <button className="btn btn-md btn-info" onClick={() => actionAllowCounter()}>
                             <FaShieldAlt className="mr-1" />
-                            Permitir counter
+                            {t("combatAdmin.labels.allowCounter")}
                         </button>
                     </div>
                 </div>
@@ -776,8 +778,7 @@ export default function CombatAdmin({
             <div className="card bg-base-200 shadow-inner flex-1">
                 <div className="card-body gap-4">
                     <div className="flex flex-col items-start">
-                        <div className="text-lg font-semibold">Turno do NPC</div>
-                        <div className="text-md font-normal opacity-50">O que ele vai fazer?</div>
+                        <div className="text-lg font-semibold">{t("combatAdmin.labels.npcTurn")}</div>
                     </div>
 
                     <div className="flex flex-row flex-wrap gap-6">
@@ -818,7 +819,7 @@ export default function CombatAdmin({
 
                     {(npcInfo?.skillList?.length ?? 0) > 0 && (
                         <div className="flex flex-col gap-2 mt-2">
-                            <h3 className="text-lg font-semibold">Habilidades</h3>
+                            <h3 className="text-lg font-semibold">{t("combatAdmin.labels.skills")}</h3>
 
                             <div className="flex flex-row flex-wrap items-center gap-4">
                                 {npcInfo?.skillList?.map((skill, idx) => {
@@ -838,7 +839,7 @@ export default function CombatAdmin({
                                             }}
                                             disabled={isPassingTurn}
                                         >
-                                            {isSelected ? "Cancelar" : getSkillLabel(skill.type)}
+                                            {isSelected ? t("combatAdmin.labels.cancel") : getSkillLabel(skill.type)}
                                         </button>
 
                                         <div className="flex flex-col items-center text-sm opacity-80">
@@ -864,7 +865,7 @@ export default function CombatAdmin({
                     )}
 
                     <div className="flex flex-col gap-2 mt-2">
-                        <h3 className="text-lg font-semibold">Outras ações</h3>
+                        <h3 className="text-lg font-semibold">{t("combatAdmin.labels.otherActions")}</h3>
 
                         <div className="flex flex-row flex-wrap items-center gap-4">
                             <button
@@ -873,7 +874,7 @@ export default function CombatAdmin({
                                 disabled={isPassingTurn}
                             >
                                 <FaFistRaised className="mr-1" />
-                                Ataque básico
+                                {t("combatAdmin.labels.basicAttack")}
                             </button>
 
                             <button
@@ -882,7 +883,7 @@ export default function CombatAdmin({
                                 disabled={isPassingTurn}
                             >
                                 <FaArrowUp className="mr-1" />
-                                Pular em um
+                                {t("combatAdmin.labels.jumpOnOne")}
                             </button>
 
                             <button
@@ -891,7 +892,7 @@ export default function CombatAdmin({
                                 disabled={isPassingTurn}
                             >
                                 <FaArrowsDownToLine className="mr-1" />
-                                Pular em todos
+                                {t("combatAdmin.labels.jumpOnAll")}
                             </button>
 
                             <button
@@ -900,7 +901,7 @@ export default function CombatAdmin({
                                 disabled={isPassingTurn}
                             >
                                 <FaFireAlt className="mr-1" />
-                                Ataque Gradiente
+                                {t("combatAdmin.labels.gradientAttack")}
                             </button>
 
                             <button
@@ -909,7 +910,7 @@ export default function CombatAdmin({
                                 disabled={isPassingTurn}
                             >
                                 <FaHourglassHalf className="mr-1" />
-                                Passar o turno
+                                {t("combatAdmin.labels.passTurn")}
                             </button>
 
                             <button
@@ -918,7 +919,7 @@ export default function CombatAdmin({
                                 disabled={isPassingTurn}
                             >
                                 <FaShieldAlt className="mr-1" />
-                                Permitir counter
+                                {t("combatAdmin.labels.allowCounter")}
                             </button>
                         </div>
                     </div>
@@ -934,25 +935,25 @@ export default function CombatAdmin({
                     <div className="flex items-center justify-between">
                         <div className="text-lg font-semibold">{title}</div>
                         <button className="btn btn-xs btn-primary" onClick={() => openAddModal(teamKey)}>
-                            Adicionar
+                            {t("combatAdmin.labels.add")}
                         </button>
                     </div>
 
                     {members.length === 0 ? (
-                        <div className="text-sm opacity-60">Nenhum membro neste time.</div>
+                        <div className="text-sm opacity-60">{t("combatAdmin.labels.noTeamMembers")}</div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="table table-zebra w-full">
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>ID</th>
-                                        <th>Nome</th>
-                                        <th>Vida</th>
-                                        <th>Mana</th>
-                                        <th>Pronto?</th>
-                                        <th>Efeitos</th>
-                                        <th className="w-1/6 text-right">Ações</th>
+                                        <th>{t("combatAdmin.labels.id")}</th>
+                                        <th>{t("combatAdmin.labels.name")}</th>
+                                        <th>{t("combatAdmin.labels.hp")}</th>
+                                        <th>{t("combatAdmin.labels.mp")}</th>
+                                        <th>{t("combatAdmin.labels.readyStatus")}</th>
+                                        <th>{t("combatAdmin.labels.effects")}</th>
+                                        <th className="w-1/6 text-right">{t("combatAdmin.labels.actions")}</th>
                                     </tr>
                                 </thead>
 
@@ -981,7 +982,7 @@ export default function CombatAdmin({
                                                             </span>
 
                                                             {m.currentHp === 0 && (
-                                                                <FaSkull className="ml-4 text-red-600 w-4 h-4" title="Morto" />
+                                                                <FaSkull className="ml-4 text-red-600 w-4 h-4" title={t("combatAdmin.labels.dead")} />
                                                             )}
                                                         </div>
                                                     </td>
@@ -1039,7 +1040,7 @@ export default function CombatAdmin({
                                                         )}
                                                     </td>
 
-                                                    <td>{m.isReadyToStart ? "Pronto" : "Aguardando"}</td>
+                                                    <td>{m.isReadyToStart ? t("combatAdmin.labels.ready") : t("combatAdmin.labels.waiting")}</td>
                                                     <td>
                                                         <div className="flex flex-row flex-wrap gap-1">
                                                             {m.status
@@ -1089,32 +1090,32 @@ export default function CombatAdmin({
                                                         <tr key={`attack-${a.id}`} className="bg-base-300/40">
                                                             <td colSpan={6} className="py-2">
                                                                 <div className="flex items-center gap-3">
-                                                                    <span className="badge badge-sm badge-error">ATACADO</span>
+                                                                    <span className="badge badge-sm badge-error">{t("combatAdmin.labels.attacked")}</span>
 
-                                                                    <span className="opacity-70">Poder total:</span>
+                                                                    <span className="opacity-70">{t("combatAdmin.labels.totalPower")}:</span>
                                                                     <span className="font-mono">{a.totalPower}</span>
 
-                                                                    <span className="opacity-70">Atacante:</span>
+                                                                    <span className="opacity-70">{t("combatAdmin.labels.attacker")}:</span>
                                                                     <span className="font-mono">#{a.sourceBattleId}</span>
 
                                                                     {!a.isResolved && (
-                                                                        <span className="badge badge-warning badge-sm">PENDENTE</span>
+                                                                        <span className="badge badge-warning badge-sm">{t("combatAdmin.labels.pending")}</span>
                                                                     )}
 
                                                                     {a.isResolved && (
                                                                         <>
-                                                                            <span className="opacity-70">Dano recebido:</span>
+                                                                            <span className="opacity-70">{t("combatAdmin.labels.damageReceived")}:</span>
                                                                             <span className="font-mono">{a.totalDefended ?? 0}</span>
 
                                                                             {!defesaFalhou && (
                                                                                 <span className="badge badge-success badge-sm">
-                                                                                    {a.defenseType ? getDefenseSuccessLabel(a.defenseType) : 'Defendido'}
+                                                                                    {a.defenseType ? getDefenseSuccessLabel(a.defenseType) : t("combatAdmin.defenseSuccess.default")}
                                                                                 </span>
                                                                             )}
 
                                                                             {defesaFalhou && (
                                                                                 <span className="badge badge-error badge-sm">
-                                                                                    {a.defenseType ? getDefenseFailLabel(a.defenseType) : 'Falhou na defesa'}
+                                                                                    {a.defenseType ? getDefenseFailLabel(a.defenseType) : t("combatAdmin.defenseFail.default")}
                                                                                 </span>
                                                                             )}
                                                                         </>
@@ -1123,11 +1124,11 @@ export default function CombatAdmin({
                                                                     {a.allowCounter && (
                                                                         <>
                                                                             {!a.isCounterResolved && (
-                                                                                <span className="badge badge-info badge-sm">Counter permitido</span>
+                                                                                <span className="badge badge-info badge-sm">{t("combatAdmin.labels.counterAllowed")}</span>
                                                                             )}
 
                                                                             {a.isCounterResolved && (
-                                                                                <span className="badge badge-success badge-sm">Counter executado</span>
+                                                                                <span className="badge badge-success badge-sm">{t("combatAdmin.labels.counterExecuted")}</span>
                                                                             )}
                                                                         </>
                                                                     )}
@@ -1154,11 +1155,11 @@ export default function CombatAdmin({
         return (
             <dialog className="modal modal-open">
                 <div className="modal-box space-y-4">
-                    <h3 className="font-bold text-lg">Alterar Vida</h3>
+                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.changeHp")}</h3>
 
                     <p className="text-sm opacity-80">
-                        Vida atual: <span className="font-mono">{editingHp.currentHp}</span><br />
-                        Vida máxima: <span className="font-mono">{editingHp.maxHp}</span>
+                        {t("combatAdmin.labels.currentHp")}: <span className="font-mono">{editingHp.currentHp}</span><br />
+                        {t("combatAdmin.labels.maxHp")}: <span className="font-mono">{editingHp.maxHp}</span>
                     </p>
 
                     <input
@@ -1172,11 +1173,11 @@ export default function CombatAdmin({
 
                     <div className="modal-action">
                         <button className="btn" onClick={() => setEditingHp(null)}>
-                            Cancelar
+                            {t("combatAdmin.labels.cancel")}
                         </button>
 
                         <button className="btn btn-primary" onClick={confirmHpEdit}>
-                            Confirmar
+                            {t("combatAdmin.labels.confirm")}
                         </button>
                     </div>
                 </div>
@@ -1190,11 +1191,11 @@ export default function CombatAdmin({
         return (
             <dialog className="modal modal-open">
                 <div className="modal-box space-y-4">
-                    <h3 className="font-bold text-lg">Alterar Mana</h3>
+                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.changeMp")}</h3>
 
                     <p className="text-sm opacity-80">
-                        Mana atual: <span className="font-mono">{editingMp.currentMp}</span><br />
-                        Mana máxima: <span className="font-mono">{editingMp.maxMp}</span>
+                        {t("combatAdmin.labels.currentMp")}: <span className="font-mono">{editingMp.currentMp}</span><br />
+                        {t("combatAdmin.labels.maxMp")}: <span className="font-mono">{editingMp.maxMp}</span>
                     </p>
 
                     <input
@@ -1208,11 +1209,11 @@ export default function CombatAdmin({
 
                     <div className="modal-action">
                         <button className="btn" onClick={() => setEditingMp(null)}>
-                            Cancelar
+                            {t("combatAdmin.labels.cancel")}
                         </button>
 
                         <button className="btn btn-primary" onClick={confirmMpEdit}>
-                            Confirmar
+                            {t("combatAdmin.labels.confirm")}
                         </button>
                     </div>
                 </div>
@@ -1226,15 +1227,15 @@ export default function CombatAdmin({
         return (
             <dialog className="modal modal-open">
                 <div className="modal-box space-y-4">
-                    <h3 className="font-bold text-lg">Editar Cargas de Gradiente</h3>
+                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.editGradientCharges")}</h3>
 
                     <p className="text-sm opacity-80">
-                        Time: <span className="font-mono">{editingTeamIsEnemy ? "Time B (Inimigos)" : "Time A (Aliados)"}</span>
+                        {t("combatAdmin.labels.team")}: <span className="font-mono">{editingTeamIsEnemy ? t("combatAdmin.labels.teamBEnemies") : t("combatAdmin.labels.teamAAllies")}</span>
                     </p>
 
                     <div>
                         <label className="label">
-                            <span className="label-text">Cargas (0-3)</span>
+                            <span className="label-text">{t("combatAdmin.labels.chargesRange")}</span>
                         </label>
                         <input
                             type="number"
@@ -1248,11 +1249,11 @@ export default function CombatAdmin({
 
                     <div className="modal-action">
                         <button className="btn" onClick={() => setShowGradientModal(false)}>
-                            Cancelar
+                            {t("combatAdmin.labels.cancel")}
                         </button>
 
                         <button className="btn btn-primary" onClick={handleConfirmGradient}>
-                            Confirmar
+                            {t("combatAdmin.labels.confirm")}
                         </button>
                     </div>
                 </div>
@@ -1269,11 +1270,11 @@ export default function CombatAdmin({
         return (
             <dialog className="modal modal-open">
                 <div className="modal-box space-y-4">
-                    <h3 className="font-bold text-lg">Editar Cargas de Gustave</h3>
+                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.editGustaveCharges")}</h3>
 
                     <div>
                         <label className="label">
-                            <span className="label-text">Cargas (0-{maxCharges})</span>
+                            <span className="label-text">{t("combatAdmin.labels.charges")} (0-{maxCharges})</span>
                         </label>
                         <input
                             type="number"
@@ -1287,11 +1288,11 @@ export default function CombatAdmin({
 
                     <div className="modal-action">
                         <button className="btn" onClick={() => setShowGustaveChargeModal(false)}>
-                            Cancelar
+                            {t("combatAdmin.labels.cancel")}
                         </button>
 
                         <button className="btn btn-primary" onClick={handleConfirmGustaveCharge}>
-                            Confirmar
+                            {t("combatAdmin.labels.confirm")}
                         </button>
                     </div>
                 </div>
@@ -1306,8 +1307,8 @@ export default function CombatAdmin({
                 <div className="modal-box max-w-5xl w-full max-h-[80vh] overflow-y-auto flex flex-col gap-6">
                     <div className="flex items-start justify-between">
                         <div>
-                            <h3 className="font-bold text-lg">Adicionar ao time {targetTeam}</h3>
-                            <p className="text-sm opacity-70">Selecione quem entra neste combate.</p>
+                            <h3 className="font-bold text-lg">{t("combatAdmin.labels.addToTeam", { team: targetTeam })}</h3>
+                            <p className="text-sm opacity-70">{t("combatAdmin.labels.selectCombatParticipants")}</p>
                         </div>
                         <button className="btn btn-sm btn-ghost" onClick={closeAddModal}>
                             ✕
@@ -1316,11 +1317,11 @@ export default function CombatAdmin({
 
                     <div className="form-control">
                         <label className="label flex items-center gap-4">
-                            <span className="label-text text-sm font-semibold">Filtro</span>
+                            <span className="label-text text-sm font-semibold">{t("combatAdmin.labels.filter")}</span>
                             <input
                                 type="text"
                                 className="input input-bordered input-sm flex-1"
-                                placeholder="Digite para filtrar por nome ou dificuldade..."
+                                placeholder={t("combatAdmin.labels.filterPlaceholder")}
                                 value={filterText}
                                 onChange={(e) => setFilterText(e.target.value)}
                             />
@@ -1329,12 +1330,12 @@ export default function CombatAdmin({
 
                     <div className="border rounded-lg">
                         <div className="px-4 py-2 border-b flex items-center justify-between">
-                            <div className="font-semibold text-sm">Jogadores</div>
+                            <div className="font-semibold text-sm">{t("combatAdmin.labels.players")}</div>
                             <div className="flex items-center gap-2">
                                 <button className="btn btn-xs btn-secondary" onClick={() => handleAddAllPlayers(filteredPlayers)}>
-                                    Adicionar todos
+                                    {t("combatAdmin.labels.addAll")}
                                 </button>
-                                {bulkAdded ? <span className="text-xs text-success font-semibold">Adicionados!</span> : null}
+                                {bulkAdded ? <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span> : null}
                             </div>
                         </div>
 
@@ -1343,16 +1344,16 @@ export default function CombatAdmin({
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Nome</th>
-                                        <th>Personagem</th>
-                                        <th className="w-1/6 text-right">Ações</th>
+                                        <th>{t("combatAdmin.labels.name")}</th>
+                                        <th>{t("combatAdmin.labels.character")}</th>
+                                        <th className="w-1/6 text-right">{t("combatAdmin.labels.actions")}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredPlayers.length === 0 ? (
                                         <tr>
                                             <td colSpan={4} className="text-center text-sm opacity-60 py-6">
-                                                Nenhum jogador encontrado.
+                                                {t("combatAdmin.labels.noPlayersFound")}
                                             </td>
                                         </tr>
                                     ) : (
@@ -1364,10 +1365,10 @@ export default function CombatAdmin({
                                                 <td className="text-right">
                                                     <div className="flex items-center gap-2 justify-end">
                                                         <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
-                                                            Adicionar
+                                                            {t("combatAdmin.labels.add")}
                                                         </button>
                                                         {justAddedId === entity.externalId ? (
-                                                            <span className="text-xs text-success font-semibold">Adicionado!</span>
+                                                            <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span>
                                                         ) : null}
                                                     </div>
                                                 </td>
@@ -1380,7 +1381,7 @@ export default function CombatAdmin({
                     </div>
 
                     <div className="border rounded-lg">
-                        <div className="px-4 py-2 border-b font-semibold text-sm">NPCs</div>
+                        <div className="px-4 py-2 border-b font-semibold text-sm">{t("combatAdmin.labels.npcs")}</div>
                         <div className="overflow-x-auto max-h-[50vh] overflow-y-auto">
                             <table className="table table-compact w-full">
                                 <thead>
@@ -1390,15 +1391,15 @@ export default function CombatAdmin({
                                             className="cursor-pointer hover:bg-base-200 select-none"
                                             onClick={() => handleSort("name")}
                                         >
-                                            Nome {getSortIcon("name")}
+                                            {t("combatAdmin.labels.name")} {getSortIcon("name")}
                                         </th>
                                         <th
                                             className="text-center cursor-pointer hover:bg-base-200 select-none"
                                             onClick={() => handleSort("difficulty")}
                                         >
-                                            Dificuldade {getSortIcon("difficulty")}
+                                            {t("combatAdmin.labels.difficulty")} {getSortIcon("difficulty")}
                                         </th>
-                                        <th className="w-1/6 text-right">Ações</th>
+                                        <th className="w-1/6 text-right">{t("combatAdmin.labels.actions")}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1421,10 +1422,10 @@ export default function CombatAdmin({
                                                 <td className="text-right">
                                                     <div className="flex items-center gap-2 justify-end">
                                                         <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
-                                                            Adicionar
+                                                            {t("combatAdmin.labels.add")}
                                                         </button>
                                                         {justAddedId === entity.externalId ? (
-                                                            <span className="text-xs text-success font-semibold">Adicionado!</span>
+                                                            <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span>
                                                         ) : null}
                                                     </div>
                                                 </td>
@@ -1454,16 +1455,16 @@ export default function CombatAdmin({
 
                         <div className="form-control w-full max-w-xs">
                             <label className="label">
-                                <span className="label-text font-semibold">Status do combate</span>
+                                <span className="label-text font-semibold">{t("combatAdmin.labels.combatStatus")}</span>
                             </label>
 
                             <div className="flex items-center gap-3">
                                 <span className="text-sm">
                                     {battleStatus === 'starting'
-                                        ? 'Aguardando início'
+                                        ? t("combatAdmin.statusLabels.waitingToStart")
                                         : battleStatus === 'started'
-                                            ? 'Em andamento'
-                                            : 'Terminada'}
+                                            ? t("combatAdmin.statusLabels.inProgress")
+                                            : t("combatAdmin.statusLabels.finished")}
                                 </span>
 
                                 {battleStatus !== 'finished' && (
@@ -1477,7 +1478,7 @@ export default function CombatAdmin({
                                         }
                                         disabled={updatingStatus}
                                     >
-                                        {battleStatus === 'starting' ? 'Iniciar batalha' : 'Encerrar batalha'}
+                                        {battleStatus === 'starting' ? t("combatAdmin.statusLabels.startBattle") : t("combatAdmin.statusLabels.endBattle")}
                                     </button>
                                 )}
                             </div>
@@ -1621,7 +1622,7 @@ export default function CombatAdmin({
                                                                     showToast(`${displayName} ${t("rewards.level")} ${reward.level} reivindicado por ${characterName}!`);
                                                                 } catch (error) {
                                                                     console.error("Erro ao reivindicar recompensa:", error);
-                                                                    showToast("Erro ao reivindicar recompensa");
+                                                                    showToast(t("combatAdmin.toasts.errorClaimingReward"));
                                                                 }
                                                             }}
                                                             className={`btn btn-sm ${isDisabled ? 'btn-disabled' : 'btn-success'}`}
@@ -1675,13 +1676,13 @@ export default function CombatAdmin({
                                     <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-2">
-                                                <span>Cargas de Gustave</span>
+                                                <span>{t("combatAdmin.labels.gustaveCharges")}</span>
                                                 <div className="flex items-center gap-2">
                                                     <span className="font-bold">{chargePoints}/{maxChargePoints}</span>
                                                     <button
                                                         onClick={() => handleOpenGustaveChargeModal(activeChar)}
                                                         className="btn btn-xs btn-ghost"
-                                                        title="Editar cargas de Gustave"
+                                                        title={t("combatAdmin.labels.editGustaveCharges")}
                                                     >
                                                         <FaEdit />
                                                     </button>
@@ -1689,7 +1690,7 @@ export default function CombatAdmin({
                                             </div>
                                             <AnimatedStatBar
                                                 value={pct}
-                                                label="Cargas"
+                                                label={t("combatAdmin.labels.charges")}
                                                 fillClass="bg-yellow-500"
                                                 ghostClass="bg-yellow-500/30"
                                             />
@@ -1698,21 +1699,22 @@ export default function CombatAdmin({
                                 );
                             })()}
 
-                            {/* Barra de Postura da Maelle - só aparece se Maelle estiver no Time A */}
+                            {/* Barra de Postura da Maelle - só aparece se for a vez da Maelle */}
                             {(() => {
-                                const maelleChar = battleDetails?.characters?.find(c =>
-                                    !c.isEnemy && (
-                                        c.id?.toLowerCase() === "maelle" ||
-                                        c.id?.toLowerCase().includes("maelle")
-                                    )
+                                const activeChar = getActiveTurnCharacter();
+                                const isMaelleTurn = activeChar && (
+                                    activeChar.id?.toLowerCase() === "maelle" ||
+                                    activeChar.id?.toLowerCase().includes("maelle")
                                 );
-                                if (!maelleChar) return null;
+                                if (!isMaelleTurn) return null;
+
+                                const maelleChar = activeChar;
 
                                 const currentStance = maelleChar.stance;
                                 const stanceLabels: Record<string, string> = {
-                                    "Offensive": "Ofensiva",
-                                    "Defensive": "Defensiva",
-                                    "Virtuous": "Virtuosa"
+                                    "Offensive": t("combatAdmin.stances.offensive"),
+                                    "Defensive": t("combatAdmin.stances.defensive"),
+                                    "Virtuous": t("combatAdmin.stances.virtuous")
                                 };
                                 const stanceColors: Record<string, string> = {
                                     "Offensive": "btn-error",
@@ -1722,7 +1724,7 @@ export default function CombatAdmin({
 
                                 const handleStanceChange = async (newStance: "Offensive" | "Defensive" | "Virtuous") => {
                                     await APIBattle.updateCharacterStance(maelleChar.battleID, newStance);
-                                    showToast(`Postura de Maelle alterada para ${stanceLabels[newStance]}`);
+                                    showToast(t("combatAdmin.toasts.stanceChanged", { stance: stanceLabels[newStance] }));
                                     reloadBattleDetails();
                                 };
 
@@ -1730,9 +1732,9 @@ export default function CombatAdmin({
                                     <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-3">
-                                                <span>Postura de Maelle</span>
+                                                <span>{t("combatAdmin.labels.maelleStance")}</span>
                                                 <span className={`badge ${currentStance ? stanceColors[currentStance] : "badge-ghost"}`}>
-                                                    {currentStance ? stanceLabels[currentStance] : "Nenhuma"}
+                                                    {currentStance ? stanceLabels[currentStance] : t("combatAdmin.stances.none")}
                                                 </span>
                                             </div>
                                             <div className="flex gap-2">
@@ -1740,19 +1742,19 @@ export default function CombatAdmin({
                                                     className={`btn btn-sm flex-1 ${currentStance === "Offensive" ? "btn-error" : "btn-outline btn-error"}`}
                                                     onClick={() => handleStanceChange("Offensive")}
                                                 >
-                                                    Ofensiva
+                                                    {t("combatAdmin.stances.offensive")}
                                                 </button>
                                                 <button
                                                     className={`btn btn-sm flex-1 ${currentStance === "Defensive" ? "btn-info" : "btn-outline btn-info"}`}
                                                     onClick={() => handleStanceChange("Defensive")}
                                                 >
-                                                    Defensiva
+                                                    {t("combatAdmin.stances.defensive")}
                                                 </button>
                                                 <button
                                                     className={`btn btn-sm flex-1 ${currentStance === "Virtuous" ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600" : "btn-outline border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"}`}
                                                     onClick={() => handleStanceChange("Virtuous")}
                                                 >
-                                                    Virtuosa
+                                                    {t("combatAdmin.stances.virtuous")}
                                                 </button>
                                             </div>
                                         </div>
@@ -1766,8 +1768,8 @@ export default function CombatAdmin({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {renderAttackOptions()}
                         {renderActionOptions()}
-                        {renderTeamCard("Time A", "A", teamA)}
-                        {renderTeamCard("Time B", "B", teamB)}
+                        {renderTeamCard(t("combatAdmin.labels.teamA"), "A", teamA)}
+                        {renderTeamCard(t("combatAdmin.labels.teamB"), "B", teamB)}
                     </div>
 
                     {renderEditEntityModal()}
@@ -2004,9 +2006,9 @@ export default function CombatAdmin({
                         remainingTurns: status.remainingTurns
                     })
                 }
-                showToast("Habilidades executadas");
+                showToast(t("combatAdmin.toasts.skillsExecuted"));
             } catch (e) {
-                showToast("Erro ao executar habilidade");
+                showToast(t("combatAdmin.toasts.errorExecutingSkill"));
             }
         };
 
@@ -2067,7 +2069,7 @@ export default function CombatAdmin({
         try {
             await APIBattle.attack(attackInfo)
         } catch (e) {
-            showToast("Erro ao encerrar o atacar");
+            showToast(t("combatAdmin.toasts.errorEndingAttack"));
         }
     }
 
@@ -2077,8 +2079,9 @@ export default function CombatAdmin({
             try {
                 const character = getActiveTurnCharacter()
                 await APIBattle.endTurn(character?.battleID ?? 0)
+                await reloadBattleDetails(true);
             } catch (e) {
-                showToast("Erro ao encerrar o turno");
+                showToast(t("combatAdmin.toasts.errorEndingTurn"));
             } finally {
                 setIsPassingTurn(false);
             }
@@ -2093,7 +2096,7 @@ export default function CombatAdmin({
             try {
                 await APIBattle.allowCounter(battleDetails?.id ?? 0)
             } catch (e) {
-                showToast("Erro ao encerrar o turno");
+                showToast(t("combatAdmin.toasts.errorEndingTurn"));
             }
         };
 
@@ -2141,10 +2144,10 @@ export default function CombatAdmin({
     async function handleHpSet(entity: CombatEntity, value: number) {
         try {
             await APIBattle.updateCharacterHp(entity.rowId ?? 0, value)
-            showToast("Vida atualizada")
+            showToast(t("combatAdmin.toasts.hpUpdated"))
         } catch (e) {
             console.error(e)
-            showToast("Erro ao atualizar vida")
+            showToast(t("combatAdmin.toasts.errorUpdatingHp"))
         }
     }
 
@@ -2164,10 +2167,10 @@ export default function CombatAdmin({
     async function handleMpSet(entity: CombatEntity, value: number) {
         try {
             await APIBattle.updateCharacterMp(entity.rowId ?? 0, value)
-            showToast("Mana atualizada")
+            showToast(t("combatAdmin.toasts.mpUpdated"))
         } catch (e) {
             console.error(e)
-            showToast("Erro ao atualizar mana")
+            showToast(t("combatAdmin.toasts.errorUpdatingMp"))
         }
     }
 }

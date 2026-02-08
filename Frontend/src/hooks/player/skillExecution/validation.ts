@@ -2,6 +2,8 @@ import type { BattleCharacterInfo } from "../../../api/ResponseModel";
 import type { GetPlayerResponse } from "../../../api/APIPlayer";
 import { SkillEffectsRegistry, type SkillMetadata } from "../../../data/SkillEffectsRegistry";
 import { getEnrichedCharacterSkills } from "../../../utils/SkillUtils";
+import { hasRequiredStains, hasAllStainTypes, shouldHaveFreeCast } from "./stainEffects";
+import { calculateHpCost } from "./perfectionEffects";
 
 export interface ValidationResult {
   valid: boolean;
@@ -51,6 +53,45 @@ export function validateSkillExecution(
     const parriesCount = source.parriesThisTurn ?? 0;
     const reduction = parriesCount * skillMetadata.costReductionPerParry;
     skillCost = Math.max(0, skillCost - reduction);
+  }
+
+  // Lune: Check for stain-based free cast
+  if (shouldHaveFreeCast(source, skillMetadata)) {
+    skillCost = 0;
+  }
+
+  // Lune: Validate required stains
+  if (skillMetadata.consumesStains && !hasRequiredStains(source, skillMetadata.consumesStains)) {
+    return {
+      valid: false,
+      error: "playerPage.skills.insufficientStains",
+      skillCost,
+      source
+    };
+  }
+
+  // Lune: Validate all stain types required (Elemental Genesis)
+  if (skillMetadata.requiresAllStains && !hasAllStainTypes(source)) {
+    return {
+      valid: false,
+      error: "playerPage.skills.requiresAllStains",
+      skillCost,
+      source
+    };
+  }
+
+  // Verso: Validate HP cost skills
+  if (skillMetadata.costsHpPercent) {
+    const hpCost = calculateHpCost(source, skillMetadata.costsHpPercent);
+    // Must have more HP than cost (can't kill self)
+    if (source.healthPoints <= hpCost) {
+      return {
+        valid: false,
+        error: "playerPage.skills.insufficientHP",
+        skillCost,
+        source
+      };
+    }
   }
 
   // Validate MP for non-gradient skills

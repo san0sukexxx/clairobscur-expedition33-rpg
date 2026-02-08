@@ -128,6 +128,7 @@ export interface SkillMetadata {
         canReapplyStun?: boolean;         // Can reapply Stun (Assaut Concussif at A)
     };
     rollsForTargetScope?: boolean;       // Rolls 1d6 to determine target scope: 1-3 = self only, 4-6 = all allies (Powerful)
+    habilityTestForScope?: { dc: number };  // Hability test to determine target scope: success = all allies, failure = single target (Guard Up)
     rankConditionalDuration?: { rank: string; duration: number };  // Changes effect duration at specific rank (Powerful at A: 5 turns)
     gainsStainOnCrit?: boolean;          // Gains corresponding stain on critical hits (Elemental Trick)
     transformsStainToLight?: { from: "Fire"; to: "Light" };  // Transforms Fire stain to Light stain (Electrify)
@@ -500,17 +501,17 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "maelle-guard-up",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "ally",  // Choose an ally, then roll 1d6
+        targetScope: "ally",  // Choose an ally, then do hability test
         usesWeaponElement: false,
         canTargetSelf: true,                 // Can also target self
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
-        rollsForTargetScope: true,           // Roll 1d6: 4-6 = all allies, 1-3 = single target only
+        habilityTestForScope: { dc: 6 },     // Hability test DC 6: success = all allies, failure = single target
         primaryEffects: [
             {
                 effectType: "Protected",  // Shell - reduces damage taken, extends Egide duration
                 amount: 0,
                 remainingTurns: 3,
-                targetType: "ally"  // Applies to selected ally or all allies based on roll
+                targetType: "ally"  // Applies to selected ally or all allies based on test
             }
         ],
         conditionalEffects: []
@@ -589,9 +590,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 1,
         targetScope: "single",
         usesWeaponElement: false,
-        maintainsStance: true,              // Maintains stance (or switches to Virtuose if burning)
+        forcedElement: "Physical",
         switchesToVirtuoseIfBurning: true,  // Switches to Virtuose if target is burning
-        grantsMPRange: { min: 0, max: 2 },  // Grants 0-2 MP randomly
+        grantsMPWithTest: { dc: 6, onSuccess: 2, onFailure: 0 },  // Hability test DC 6
         primaryEffects: [],
         conditionalEffects: []
     },
