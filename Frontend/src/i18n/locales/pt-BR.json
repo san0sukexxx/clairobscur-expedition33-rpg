@@ -2282,7 +2282,7 @@
       },
       "maelle-sword-ballet": {
         "name": "Balé de Espadas",
-        "description": "Causa dano extremo em alvo único. 5 ataques. Usa o elemento da arma. Acertos Críticos causam dano dobrado. Se Maelle usar esta habilidade enquanto estiver na Postura Defensiva, pode ser ativada. Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano extremo em alvo único. 5 ataques. Usa o elemento da arma. Acertos Críticos causam +4 de dano bônus. Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-gustaves-homage": {
         "name": "Homenagem a Gustave",
@@ -3101,7 +3101,7 @@
         "stanceBonusApplied": "Bonus de postura! +{count} Queimaduras por acerto",
         "absorptionHeal": "Absorção! Cura de {percent}% HP ({amount})",
         "searingBond": "Vínculo Ardente: {count} inimigo(s) afetado(s)!",
-        "doubleCritDamage": "Crítico duplo! ({multiplier}x de dano)",
+        "increasedCritDamage": "Crítico! +{bonus} de dano bônus",
         "hpSacrifice": "Sacrificando {percent}% HP ({amount})! Dano +{bonus}",
         "hpDrained": "HP drenado de aliados em combate: {amount} (Dano +{amount})",
         "totalEnemyForetell": "Predição total de inimigos: {amount} (Dano +{amount})",

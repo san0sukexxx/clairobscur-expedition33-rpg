@@ -842,7 +842,7 @@ class AttackController(
                                 )
                         )
 
-                        if (body.attackType == "free-shot" && newHp > 0) {
+                        if (body.attackType == "free-shot" && newHp > 0 && modifiedDamage > 0) {
                                 val effects =
                                         battleStatusEffectRepository.findByBattleCharacterId(
                                                 targetBC.id!!

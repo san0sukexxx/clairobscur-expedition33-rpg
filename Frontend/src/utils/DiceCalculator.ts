@@ -9,7 +9,7 @@ export function calculateCriticalBonus(diceResult: any) {
 }
 
 export function calculateFailureDiv(diceResult: any) {
-    return 1 + countFailuresRolls(diceResult);
+    return countFailuresRolls(diceResult);
 }
 
 export function diceTotal(diceResult: any) {

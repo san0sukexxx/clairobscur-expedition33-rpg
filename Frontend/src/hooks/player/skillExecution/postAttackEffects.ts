@@ -271,9 +271,9 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
 
   // Handle Stendhal: Consume own shields and apply Unprotected to self
   if (metadata.consumesShield) {
-    const shieldStatus = source.status?.filter(s => s.effectName === "Shield") ?? [];
+    const shieldStatus = source.status?.filter(s => s.effectName === "Shielded") ?? [];
     for (const shield of shieldStatus) {
-      await APIBattle.removeStatus(source.battleID, "Shield");
+      await APIBattle.removeStatus(source.battleID, "Shielded");
     }
     if (shieldStatus.length > 0) {
       showToast(t("playerPage.skills.shieldsConsumed", { count: shieldStatus.length }));

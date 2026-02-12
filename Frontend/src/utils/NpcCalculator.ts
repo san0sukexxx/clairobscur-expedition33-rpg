@@ -120,7 +120,7 @@ export function calculateNpcAttackPower(character: BattleCharacterInfo, diceResu
     var npcPower = (npcInfo?.power ?? 0) + calculateCriticalBonus(diceResult);
 
     if (failures > 0) {
-        npcPower = npcPower - (failures * 2);
+        npcPower = npcPower - (failures * 4);
     }
     return Math.max(0, npcPower) + total + (getFrenzyStatus(character)?.ammount ?? 0);
 }

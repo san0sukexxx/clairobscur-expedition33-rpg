@@ -140,7 +140,7 @@ export function calculateBasePower(player: GetPlayerResponse | null, weaponInfo:
     let playerPower = (player?.playerSheet?.power ?? 0) + calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + empoweredBonus;
 
     if (failures > 0) {
-        playerPower = playerPower - (failures * 2);
+        playerPower = playerPower - (failures * 4);
     }
 
     let basePower = Math.max(0, playerPower) + calculateRawWeaponPower(weaponInfo, "basic") + total;
@@ -198,7 +198,7 @@ export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, 
 
     var playerPower = (player?.playerSheet?.power ?? 0) + criticalBonus;
     if (failures > 0) {
-        playerPower = playerPower - (failures * 2);
+        playerPower = playerPower - (failures * 4);
     }
     playerPower += calculateFreeShotPlus(player, npcBattleCharacterInfo, attackType)
 
@@ -287,7 +287,7 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     if (defenseOption == "block" || defenseOption == "dodge") {
         var resistance = (player?.playerSheet?.resistance ?? 0) + calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + protectedBonus;
         if (failures > 0) {
-            resistance = resistance - (failures * 2);
+            resistance = resistance - (failures * 4);
         }
 
         playerDefense = Math.max(0, resistance) + diceTotalSum;
@@ -404,7 +404,7 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any, weap
     var playerInitiative = (player?.playerSheet?.hability ?? 0) + calculateCriticalBonus(diceResult);
 
     if (failures > 0) {
-        playerInitiative = playerInitiative - (failures * 2);
+        playerInitiative = playerInitiative - (failures * 4);
     }
 
     const pictosSpeedBonus = playerPictosTotalSpeed(player);

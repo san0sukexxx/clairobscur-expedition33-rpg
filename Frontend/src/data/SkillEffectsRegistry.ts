@@ -57,7 +57,7 @@ export interface SkillMetadata {
     switchesToVirtuoseIfBurning?: boolean;  // Switches to Virtuose if target is burning (Swift Stride)
     appliesSelfUnprotected?: boolean;    // Applies Unprotected to self (Stendhal)
     conditionalBurnBonus?: { fromStance: Stance; bonusBurn: number };  // Extra burn when used from specific stance (Spark, Rain of Fire, Pyrolyse)
-    doubleCritDamage?: boolean;          // Critical hits deal double damage instead of normal crit (Sword Ballet)
+    increasedCritDamage?: number;        // Flat bonus damage added per critical hit (Sword Ballet: +4)
     consumesForetell?: boolean;          // Consumes all Foretell stacks from target for bonus damage/heal (Twilight Slash, Harvest)
     foretellDamageBonus?: number;        // Damage bonus per Foretell consumed (default 2 = +2 damage per stack)
     foretellHealBonus?: number;          // Heal bonus per Foretell consumed (e.g., 5 = +5% heal per stack for Harvest)
@@ -618,6 +618,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
         costReductionFromStance: { stance: "Virtuous", reducedCost: 4 },  // 7 MP normally, 4 MP from Virtuose
+        bonusDamageVsMarked: 4,          // +4 damage against Marked targets
 
         primaryEffects: [],
         conditionalEffects: []
@@ -703,7 +704,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: true,
         changesStanceTo: "Defensive",    // Changes stance to Defensive
-        doubleCritDamage: true,          // Critical hits deal double damage (4x total instead of 2x)
+        increasedCritDamage: 4,          // +4 bonus damage per critical hit
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -1909,10 +1910,10 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        doubleCritDamage: true,
+        increasedCritDamage: 4,
         bestialWheelAdvance: 3
         // Bestial Wheel: +3 positions
-        // Critical hits deal double damage (2x instead of normal crit multiplier)
+        // +4 bonus damage per critical hit
         // Bonus damage at Heavy or Almighty Mask
     },
 

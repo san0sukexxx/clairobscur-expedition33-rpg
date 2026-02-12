@@ -343,6 +343,10 @@ export function useCombatActions({
         }
       }
 
+      // Track shield consumption locally to handle stale state
+      const initialShields = target.status?.find(s => s.effectName === "Shielded")?.ammount ?? 0;
+      let shieldsRemaining = initialShields;
+
       // Execute each hit sequentially
       for (let hitIndex = 0; hitIndex < totalHits; hitIndex++) {
         await new Promise<void>((resolve) => {
@@ -351,21 +355,32 @@ export function useCombatActions({
             const criticalRolls = countCriticalRolls(result);
             const rollTotal = diceTotal(result);
             const weaponPower = calculateRawWeaponPower(weaponInfo, attackType);
-            const total = calculateAttackDamage(player, weaponInfo, target, result, attackType, playerChar?.stance, playerChar);
+
+            // Use target without shield status if shields have been consumed by previous hits
+            const effectiveTarget = shieldsRemaining <= 0 && initialShields > 0
+              ? { ...target, status: target.status?.filter(s => s.effectName !== "Shielded") ?? [] }
+              : target;
+
+            const total = calculateAttackDamage(player, weaponInfo, effectiveTarget, result, attackType, playerChar?.stance, playerChar);
 
             // Show total damage toast
             showToast(`Total: ${total}`);
 
             // Show toast when hitting weak point
-            const freeShotBonus = calculateFreeShotPlus(player, target, attackType);
-            if (freeShotBonus > 0) {
+            const freeShotBonus = calculateFreeShotPlus(player, effectiveTarget, attackType);
+            if (freeShotBonus > 0 && total > 0) {
               showToast(t("playerPage.battle.weakPointHit", { bonus: freeShotBonus }));
+            }
+
+            // Consume shield locally after calculations
+            if (shieldsRemaining > 0) {
+              shieldsRemaining--;
             }
 
             try {
               if (target.type == "npc") {
-                const totalDamageToNpc = calculateNpcAttackReceivedDamage(target, total);
-                const willGetFragile = checkForFragile(target, total);
+                const totalDamageToNpc = calculateNpcAttackReceivedDamage(effectiveTarget, total);
+                const willGetFragile = checkForFragile(effectiveTarget, total);
 
                 let effects: any[] = [];
                 const attackInfo: any = {

@@ -51,7 +51,12 @@ class DamageService(
             return newHp
         }
 
-        // Normal damage flow (rawDamage >= 0)
+        // No damage to apply (e.g., shielded target) - skip all modifiers and minimum damage
+        if (rawDamage == 0) {
+            return targetBC.healthPoints
+        }
+
+        // Normal damage flow (rawDamage > 0)
         // Check if target has invisible-barrier status for -16 damage reduction
         val invisibleBarrierEffects = battleStatusEffectRepository
                 .findByBattleCharacterIdAndEffectType(targetBC.id!!, "invisible-barrier")

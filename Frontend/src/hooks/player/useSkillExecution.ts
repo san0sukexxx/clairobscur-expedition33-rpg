@@ -252,10 +252,10 @@ export function useSkillExecution({
           let { baseDamage, hasCritical } = calculateHitDamage(result, player, weaponInfo, resolved);
           const chargeIncrease = calculateChargeIncrease(resolved, hasCritical);
 
-          // Double critical damage (Sword Ballet: 4x instead of 2x)
-          if (hasCritical && resolved.metadata.doubleCritDamage) {
-            baseDamage = baseDamage * 2;  // Double the already-doubled critical
-            showToastRef.current(t("playerPage.skills.doubleCritDamage", { multiplier: 4 }));
+          // Increased critical damage (Sword Ballet: +4 per crit)
+          if (hasCritical && resolved.metadata.increasedCritDamage) {
+            baseDamage = baseDamage + resolved.metadata.increasedCritDamage;
+            showToastRef.current(t("playerPage.skills.increasedCritDamage", { bonus: resolved.metadata.increasedCritDamage }));
           }
 
           // Add charge bonus and hits received bonus to damage
@@ -484,9 +484,9 @@ export function useSkillExecution({
         const targetChar = (player?.fightInfo?.characters ?? []).find(
           (c: BattleCharacterInfo) => c.battleID === targetId
         );
-        const shieldStacks = getStatusStacks(targetChar!, "Shield");
+        const shieldStacks = getStatusStacks(targetChar!, "Shielded");
         if (shieldStacks > 0) {
-          await APIBattle.removeStatus(targetId, "Shield");
+          await APIBattle.removeStatus(targetId, "Shielded");
           totalShieldsDestroyed += shieldStacks;
         }
       }
@@ -496,7 +496,7 @@ export function useSkillExecution({
         // Grant MP per shield destroyed
         if (resolved.metadata.grantsMPPerShield) {
           const mpGain = totalShieldsDestroyed * resolved.metadata.grantsMPPerShield;
-          const currentMp = source.magicPoints ?? 0;
+          const currentMp = (source.magicPoints ?? 0) - skillCost;
           const maxMp = source.maxMagicPoints ?? 99;
           const newMp = Math.min(currentMp + mpGain, maxMp);
           await APIBattle.updateCharacterMp(source.battleID, newMp);
@@ -515,6 +515,29 @@ export function useSkillExecution({
       timeoutDiceBoardRef,
       showToast: showToastRef.current
     });
+
+    // Handle Stendhal: Consume own shields after attack
+    if (resolved.metadata.consumesShield) {
+      const shieldStatus = source.status?.filter(s => s.effectName === "Shielded") ?? [];
+      for (const shield of shieldStatus) {
+        await APIBattle.removeStatus(source.battleID, "Shielded");
+      }
+      if (shieldStatus.length > 0) {
+        showToastRef.current(t("playerPage.skills.shieldsConsumed", { count: shieldStatus.length }));
+      }
+    }
+
+    // Handle Stendhal: Apply Unprotected to self after attack
+    if (resolved.metadata.appliesSelfUnprotected) {
+      await APIBattle.addStatus({
+        battleCharacterId: source.battleID,
+        effectType: "Unprotected",
+        ammount: 0,
+        remainingTurns: 2,
+        sourceCharacterId: source.battleID
+      });
+      showToastRef.current(t("playerPage.skills.unprotectedApplied"));
+    }
 
     // Handle MP grant with dice roll (Swift Stride old)
     if (resolved.metadata.grantsMPDiceRoll) {

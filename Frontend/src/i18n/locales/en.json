@@ -2282,7 +2282,7 @@
       },
       "maelle-sword-ballet": {
         "name": "Sword Ballet",
-        "description": "Deals extreme damage to a single target. 5 hits. Uses weapon's element. Critical Hits deal double damage. If Maelle uses this skill while in Defensive Stance, can be activated. Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals extreme damage to a single target. 5 hits. Uses weapon's element. Critical Hits deal +4 bonus damage. Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-gustaves-homage": {
         "name": "Gustave's Homage",
@@ -3099,7 +3099,7 @@
         "stanceBonusApplied": "Stance bonus! +{count} Burns per hit",
         "absorptionHeal": "Absorption! Heal of {percent}% HP ({amount})",
         "searingBond": "Searing Bond: {count} enemy(s) affected!",
-        "doubleCritDamage": "Double critical! ({multiplier}x damage)",
+        "increasedCritDamage": "Critical! +{bonus} bonus damage",
         "hpSacrifice": "Sacrificing {percent}% HP ({amount})! Damage +{bonus}",
         "hpDrained": "HP drained from allies in combat: {amount} (Damage +{amount})",
         "totalEnemyForetell": "Total enemy Foretell: {amount} (Damage +{amount})",
