@@ -9,7 +9,7 @@ import { getCharacterLabelById, getActiveTurnCharacterFromBattle } from "../util
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateNpcAttackReceivedDamage, rollCommandForNpcAttack, npcIsFlying, npcIsFlyingById } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils"
-import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SkillType, type NPCSkill } from "../api/ResponseModel"
+import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SkillType, type NPCSkill, type StainType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse, type CreateAttackRequest, type AttackStatusEffectRequest } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
@@ -180,6 +180,7 @@ export default function CombatAdmin({
     const [npcAttack, setNPCAttack] = useState<NPCAttack | null>(null)
     const [npcSkill, setNPCSkill] = useState<NPCSkill | null>(null)
     const [npcSkillIndex, setNpcSkillIndex] = useState<number | null>(null)
+    const [npcAttackIndex, setNpcAttackIndex] = useState<number | null>(null)
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
@@ -196,6 +197,15 @@ export default function CombatAdmin({
     const [showGustaveChargeModal, setShowGustaveChargeModal] = useState(false);
     const [gustaveChargePoints, setGustaveChargePoints] = useState(0);
     const [editingGustaveCharacterId, setEditingGustaveCharacterId] = useState<number | null>(null);
+    const [showScielChargesModal, setShowScielChargesModal] = useState(false);
+    const [scielSunCharges, setScielSunCharges] = useState(0);
+    const [scielMoonCharges, setScielMoonCharges] = useState(0);
+    const [scielTwilight, setScielTwilight] = useState(0);
+    const [scielTwilightTurns, setScielTwilightTurns] = useState(2);
+    const [editingScielCharacterId, setEditingScielCharacterId] = useState<number | null>(null);
+    const [showLuneStainsModal, setShowLuneStainsModal] = useState(false);
+    const [luneStains, setLuneStains] = useState<(StainType | null)[]>([null, null, null, null]);
+    const [editingLuneCharacterId, setEditingLuneCharacterId] = useState<number | null>(null);
     const [isPassingTurn, setIsPassingTurn] = useState(false);
 
     const processedEffectsRef = useRef<Set<string>>(new Set())
@@ -366,6 +376,83 @@ export default function CombatAdmin({
             showToast(t("combatAdmin.toasts.errorUpdatingCharges"));
         }
     }, [gustaveChargePoints, editingGustaveCharacterId, reloadBattleDetails, showToast]);
+
+    const handleOpenScielChargesModal = useCallback((character: BattleCharacterInfo) => {
+        setScielSunCharges(character.sunCharges ?? 0);
+        setScielMoonCharges(character.moonCharges ?? 0);
+        const twilightStatus = character.status?.find(s => s.effectName === "Twilight");
+        setScielTwilight(twilightStatus?.ammount ?? 0);
+        setScielTwilightTurns(twilightStatus?.remainingTurns ?? 2);
+        setEditingScielCharacterId(character.battleID);
+        setShowScielChargesModal(true);
+    }, []);
+
+    const handleConfirmScielCharges = useCallback(async () => {
+        if (editingScielCharacterId === null) {
+            showToast(t("combatAdmin.toasts.noCharacterSelected"));
+            return;
+        }
+
+        try {
+            await APIBattle.updateSunMoonCharges(editingScielCharacterId, scielSunCharges, scielMoonCharges);
+
+            const currentChar = battleDetails?.characters?.find(ch => ch.battleID === editingScielCharacterId);
+            const hadTwilight = currentChar?.status?.some(s => s.effectName === "Twilight") ?? false;
+
+            if (scielTwilight > 0 && !hadTwilight) {
+                await APIBattle.addStatus({
+                    battleCharacterId: editingScielCharacterId,
+                    effectType: "Twilight",
+                    ammount: scielTwilight,
+                    remainingTurns: scielTwilightTurns,
+                });
+            } else if (scielTwilight > 0 && hadTwilight) {
+                await APIBattle.removeStatus(editingScielCharacterId, "Twilight");
+                await APIBattle.addStatus({
+                    battleCharacterId: editingScielCharacterId,
+                    effectType: "Twilight",
+                    ammount: scielTwilight,
+                    remainingTurns: scielTwilightTurns,
+                });
+            } else if (scielTwilight === 0 && hadTwilight) {
+                await APIBattle.removeStatus(editingScielCharacterId, "Twilight");
+            }
+
+            setShowScielChargesModal(false);
+            await reloadBattleDetails();
+            showToast(t("combatAdmin.toasts.scielChargesUpdated"));
+        } catch (error) {
+            console.error("Erro ao atualizar cargas de Sciel:", error);
+            showToast(t("combatAdmin.toasts.errorUpdatingCharges"));
+        }
+    }, [scielSunCharges, scielMoonCharges, scielTwilight, scielTwilightTurns, editingScielCharacterId, battleDetails?.characters, reloadBattleDetails, showToast]);
+
+    const handleOpenLuneStainsModal = useCallback((character: BattleCharacterInfo) => {
+        setLuneStains([
+            character.stainSlot1 ?? null,
+            character.stainSlot2 ?? null,
+            character.stainSlot3 ?? null,
+            character.stainSlot4 ?? null
+        ]);
+        setEditingLuneCharacterId(character.battleID);
+        setShowLuneStainsModal(true);
+    }, []);
+
+    const handleConfirmLuneStains = useCallback(async () => {
+        if (editingLuneCharacterId === null) return;
+        try {
+            await APIBattle.updateStains(editingLuneCharacterId, {
+                stainSlot1: luneStains[0] ?? null,
+                stainSlot2: luneStains[1] ?? null,
+                stainSlot3: luneStains[2] ?? null,
+                stainSlot4: luneStains[3] ?? null
+            });
+            setShowLuneStainsModal(false);
+            await reloadBattleDetails();
+        } catch (error) {
+            console.error("Error updating Lune stains:", error);
+        }
+    }, [luneStains, editingLuneCharacterId, reloadBattleDetails]);
 
     useEffect(() => {
         reloadBattleDetails()
@@ -576,7 +663,7 @@ export default function CombatAdmin({
             setJustAddedId((current) => (current === entity.externalId ? null : current))
         }, 2000)
 
-        await reloadBattleDetails()
+        await reloadBattleDetails(true)
     }
 
     async function handleAddAllPlayers(entities: CombatEntity[]) {
@@ -600,7 +687,7 @@ export default function CombatAdmin({
         setJustAddedId(null)
         setTimeout(() => setBulkAdded(false), 2000)
 
-        await reloadBattleDetails()
+        await reloadBattleDetails(true)
     }
 
 
@@ -782,15 +869,26 @@ export default function CombatAdmin({
                     </div>
 
                     <div className="flex flex-row flex-wrap gap-6">
-                        {npcInfo?.attackList?.map((atk, idx) => (
+                        {npcInfo?.attackList?.map((atk, idx) => {
+                            const isAtkSelected = isSelectingTarget && npcAttackIndex === idx;
+                            return (
                             <div key={idx} className="flex flex-col items-center gap-2">
                                 <button
-                                    className="btn btn-md btn-primary"
-                                    onClick={() => npcCustomAttackTapped(atk)}
+                                    className={`btn btn-md ${isAtkSelected ? "btn-error" : "btn-primary"}`}
+                                    onClick={() => {
+                                        if (isAtkSelected) {
+                                            setNPCAttack(null);
+                                            setAttackType(null);
+                                            setNpcAttackIndex(null);
+                                            setIsSelectingTarget(false);
+                                        } else {
+                                            npcCustomAttackTapped(atk, idx);
+                                        }
+                                    }}
                                     disabled={isPassingTurn}
                                 >
-                                    {atk.name || getAttackTypeLabel(atk.type)}
-                                    {atk.quantity && atk.quantity > 1 && (
+                                    {isAtkSelected ? t("combatAdmin.labels.cancel") : (atk.name || getAttackTypeLabel(atk.type))}
+                                    {!isAtkSelected && atk.quantity && atk.quantity > 1 && (
                                         <span className="ml-1 badge badge-warning badge-sm">
                                             x{atk.quantity}
                                         </span>
@@ -814,7 +912,8 @@ export default function CombatAdmin({
                                     })}
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {(npcInfo?.skillList?.length ?? 0) > 0 && (
@@ -868,23 +967,29 @@ export default function CombatAdmin({
                         <h3 className="text-lg font-semibold">{t("combatAdmin.labels.otherActions")}</h3>
 
                         <div className="flex flex-row flex-wrap items-center gap-4">
-                            <button
-                                className="btn btn-md btn-primary"
-                                onClick={() => npcAttackTapped("basic")}
-                                disabled={isPassingTurn}
-                            >
-                                <FaFistRaised className="mr-1" />
-                                {t("combatAdmin.labels.basicAttack")}
-                            </button>
-
-                            <button
-                                className="btn btn-md btn-primary"
-                                onClick={() => npcAttackTapped("jump")}
-                                disabled={isPassingTurn}
-                            >
-                                <FaArrowUp className="mr-1" />
-                                {t("combatAdmin.labels.jumpOnOne")}
-                            </button>
+                            {(["basic", "jump", "gradient"] as AttackType[]).map((type) => {
+                                const isActionSelected = isSelectingTarget && attackType === type && !npcAttack && npcSkillIndex === null && npcAttackIndex === null;
+                                const icon = type === "basic" ? <FaFistRaised className="mr-1" /> : type === "jump" ? <FaArrowUp className="mr-1" /> : <FaFireAlt className="mr-1" />;
+                                const label = type === "basic" ? t("combatAdmin.labels.basicAttack") : type === "jump" ? t("combatAdmin.labels.jumpOnOne") : t("combatAdmin.labels.gradientAttack");
+                                return (
+                                    <button
+                                        key={type}
+                                        className={`btn btn-md ${isActionSelected ? "btn-error" : "btn-primary"}`}
+                                        onClick={() => {
+                                            if (isActionSelected) {
+                                                setAttackType(null);
+                                                setIsSelectingTarget(false);
+                                            } else {
+                                                npcAttackTapped(type);
+                                            }
+                                        }}
+                                        disabled={isPassingTurn}
+                                    >
+                                        {icon}
+                                        {isActionSelected ? t("combatAdmin.labels.cancel") : label}
+                                    </button>
+                                );
+                            })}
 
                             <button
                                 className="btn btn-md btn-primary"
@@ -893,15 +998,6 @@ export default function CombatAdmin({
                             >
                                 <FaArrowsDownToLine className="mr-1" />
                                 {t("combatAdmin.labels.jumpOnAll")}
-                            </button>
-
-                            <button
-                                className="btn btn-md btn-primary"
-                                onClick={() => npcAttackTapped("gradient")}
-                                disabled={isPassingTurn}
-                            >
-                                <FaFireAlt className="mr-1" />
-                                {t("combatAdmin.labels.gradientAttack")}
                             </button>
 
                             <button
@@ -1292,6 +1388,149 @@ export default function CombatAdmin({
                         </button>
 
                         <button className="btn btn-primary" onClick={handleConfirmGustaveCharge}>
+                            {t("combatAdmin.labels.confirm")}
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+        );
+    }
+
+    function renderScielChargesModal() {
+        if (!showScielChargesModal) return null;
+
+        return (
+            <dialog className="modal modal-open">
+                <div className="modal-box space-y-4">
+                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.editScielCharges")}</h3>
+
+                    <div>
+                        <label className="label">
+                            <span className="label-text">{t("combatAdmin.labels.sunCharges")} (0-20)</span>
+                        </label>
+                        <input
+                            type="number"
+                            className="input input-bordered w-full"
+                            value={scielSunCharges}
+                            min={0}
+                            max={20}
+                            onChange={(e) => setScielSunCharges(parseInt(e.target.value) || 0)}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="label">
+                            <span className="label-text">{t("combatAdmin.labels.moonCharges")} (0-20)</span>
+                        </label>
+                        <input
+                            type="number"
+                            className="input input-bordered w-full"
+                            value={scielMoonCharges}
+                            min={0}
+                            max={20}
+                            onChange={(e) => setScielMoonCharges(parseInt(e.target.value) || 0)}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="label">
+                            <span className="label-text">{t("combatAdmin.labels.twilightEclipse")} (0 = inativo)</span>
+                        </label>
+                        <input
+                            type="number"
+                            className="input input-bordered w-full"
+                            value={scielTwilight}
+                            min={0}
+                            max={40}
+                            onChange={(e) => setScielTwilight(parseInt(e.target.value) || 0)}
+                        />
+                    </div>
+
+                    {scielTwilight > 0 && (
+                        <div>
+                            <label className="label">
+                                <span className="label-text">{t("combatAdmin.labels.twilightTurns")}</span>
+                            </label>
+                            <input
+                                type="number"
+                                className="input input-bordered w-full"
+                                value={scielTwilightTurns}
+                                min={1}
+                                max={99}
+                                onChange={(e) => setScielTwilightTurns(parseInt(e.target.value) || 1)}
+                            />
+                        </div>
+                    )}
+
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => setShowScielChargesModal(false)}>
+                            {t("combatAdmin.labels.cancel")}
+                        </button>
+
+                        <button className="btn btn-primary" onClick={handleConfirmScielCharges}>
+                            {t("combatAdmin.labels.confirm")}
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+        );
+    }
+
+    function renderLuneStainsModal() {
+        if (!showLuneStainsModal) return null;
+
+        const stainOptions: { value: StainType | ""; label: string }[] = [
+            { value: "", label: t("combatAdmin.labels.stainEmpty") },
+            { value: "Lightning", label: t("combatAdmin.labels.stainLightning") },
+            { value: "Earth", label: t("combatAdmin.labels.stainEarth") },
+            { value: "Fire", label: t("combatAdmin.labels.stainFire") },
+            { value: "Ice", label: t("combatAdmin.labels.stainIce") },
+            { value: "Light", label: t("combatAdmin.labels.stainLight") },
+        ];
+
+        const stainImageMap: Record<string, string> = {
+            Lightning: "/stains/lightning-stain.png",
+            Earth: "/stains/earth-stain.png",
+            Fire: "/stains/fire-stain.png",
+            Ice: "/stains/ice-stain.png",
+            Light: "/stains/light-stain.png"
+        };
+
+        return (
+            <dialog className="modal modal-open">
+                <div className="modal-box space-y-4">
+                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.editLuneStains")}</h3>
+
+                    {[0, 1, 2, 3].map((idx) => (
+                        <div key={idx} className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg border border-neutral-600 flex items-center justify-center bg-neutral-800">
+                                {luneStains[idx] ? (
+                                    <img src={stainImageMap[luneStains[idx]!]} alt={luneStains[idx]!} className="w-7 h-7" />
+                                ) : (
+                                    <span className="text-neutral-600">—</span>
+                                )}
+                            </div>
+                            <select
+                                className="select select-bordered flex-1"
+                                value={luneStains[idx] ?? ""}
+                                onChange={(e) => {
+                                    const newStains = [...luneStains];
+                                    newStains[idx] = e.target.value === "" ? null : e.target.value as StainType;
+                                    setLuneStains(newStains);
+                                }}
+                            >
+                                {stainOptions.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ))}
+
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => setShowLuneStainsModal(false)}>
+                            {t("combatAdmin.labels.cancel")}
+                        </button>
+                        <button className="btn btn-primary" onClick={handleConfirmLuneStains}>
                             {t("combatAdmin.labels.confirm")}
                         </button>
                     </div>
@@ -1699,6 +1938,115 @@ export default function CombatAdmin({
                                 );
                             })()}
 
+                            {/* Cargas de Sol/Lua da Sciel - só aparece se for a vez da Sciel */}
+                            {(() => {
+                                const activeChar = getActiveTurnCharacter();
+                                const isSciel = activeChar && (
+                                    activeChar.id?.toLowerCase() === "sciel" ||
+                                    activeChar.id?.toLowerCase().includes("sciel")
+                                );
+                                if (!isSciel) return null;
+
+                                const sunCharges = activeChar.sunCharges ?? 0;
+                                const moonCharges = activeChar.moonCharges ?? 0;
+                                const twilightStatus = activeChar.status?.find(s => s.effectName === "Twilight");
+
+                                return (
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                        <div>
+                                            <div className="flex items-center justify-between text-sm mb-2">
+                                                <span>{t("combatAdmin.labels.scielCharges")}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-bold">☀️ {sunCharges} / 🌙 {moonCharges}</span>
+                                                    {twilightStatus && (
+                                                        <span className="badge bg-purple-600 text-white border-purple-600 badge-sm">{t("combatAdmin.labels.twilightActive")} {twilightStatus.ammount} ({twilightStatus.remainingTurns})</span>
+                                                    )}
+                                                    <button
+                                                        onClick={() => handleOpenScielChargesModal(activeChar)}
+                                                        className="btn btn-xs btn-ghost"
+                                                        title={t("combatAdmin.labels.editScielCharges")}
+                                                    >
+                                                        <FaEdit />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <AnimatedStatBar
+                                                    value={Math.min(100, sunCharges * 5)}
+                                                    label={`☀️ ${sunCharges}`}
+                                                    fillClass="bg-amber-400"
+                                                    ghostClass="bg-amber-400/30"
+                                                />
+                                                <AnimatedStatBar
+                                                    value={Math.min(100, moonCharges * 5)}
+                                                    label={`🌙 ${moonCharges}`}
+                                                    fillClass="bg-indigo-400"
+                                                    ghostClass="bg-indigo-400/30"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+
+                            {/* Manchas da Lune - só aparece se for a vez da Lune */}
+                            {(() => {
+                                const activeChar = getActiveTurnCharacter();
+                                const isLuneTurn = activeChar && (
+                                    activeChar.id?.toLowerCase() === "lune" ||
+                                    activeChar.id?.toLowerCase().includes("lune")
+                                );
+                                if (!isLuneTurn) return null;
+
+                                const stainSlots = [
+                                    activeChar.stainSlot1,
+                                    activeChar.stainSlot2,
+                                    activeChar.stainSlot3,
+                                    activeChar.stainSlot4
+                                ];
+
+                                const stainImageMap: Record<string, string> = {
+                                    Lightning: "/stains/lightning-stain.png",
+                                    Earth: "/stains/earth-stain.png",
+                                    Fire: "/stains/fire-stain.png",
+                                    Ice: "/stains/ice-stain.png",
+                                    Light: "/stains/light-stain.png"
+                                };
+
+                                return (
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                        <div className="flex items-center justify-between text-sm mb-2">
+                                            <span>{t("combatAdmin.labels.luneStains")}</span>
+                                            <button
+                                                onClick={() => handleOpenLuneStainsModal(activeChar)}
+                                                className="btn btn-xs btn-ghost"
+                                                title={t("combatAdmin.labels.editLuneStains")}
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                        </div>
+                                        <div className="flex gap-3 justify-center">
+                                            {stainSlots.map((stain, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="w-12 h-12 rounded-lg border border-neutral-600 flex items-center justify-center bg-neutral-800"
+                                                >
+                                                    {stain ? (
+                                                        <img
+                                                            src={stainImageMap[stain]}
+                                                            alt={stain}
+                                                            className="w-8 h-8"
+                                                        />
+                                                    ) : (
+                                                        <span className="text-neutral-600 text-xs">—</span>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+
                             {/* Barra de Postura da Maelle - só aparece se for a vez da Maelle */}
                             {(() => {
                                 const activeChar = getActiveTurnCharacter();
@@ -1776,6 +2124,8 @@ export default function CombatAdmin({
                     {renderEditMpModal()}
                     {renderGradientModal()}
                     {renderGustaveChargeModal()}
+                    {renderScielChargesModal()}
+                    {renderLuneStainsModal()}
                 </div>
             </div>
 
@@ -1900,16 +2250,19 @@ export default function CombatAdmin({
         return character?.type == "player"
     }
 
-    function npcCustomAttackTapped(npcAttack: NPCAttack) {
+    function npcCustomAttackTapped(npcAttack: NPCAttack, index: number) {
         setNPCSkill(null)
+        setNpcSkillIndex(null)
         setAttackType(npcAttack.type)
         setNPCAttack(npcAttack)
+        setNpcAttackIndex(index)
         startTargeting(npcAttack.type)
     }
 
     function npcSkillTapped(skill: NPCSkill, index: number) {
         setAttackType(null)
         setNPCAttack(null)
+        setNpcAttackIndex(null)
         setNPCSkill(skill)
         setNpcSkillIndex(index)
         startTargeting(undefined)
@@ -1917,6 +2270,8 @@ export default function CombatAdmin({
 
     function npcAttackTapped(type: AttackType) {
         setNPCSkill(null)
+        setNpcSkillIndex(null)
+        setNpcAttackIndex(null)
         setAttackType(type)
         setNPCAttack(null)
         startTargeting(type)

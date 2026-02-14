@@ -29,7 +29,7 @@ import {
   countCriticalRolls,
   countFailuresRolls
 } from "../../utils/DiceCalculator";
-import { calculateNpcAttackReceivedDamage, checkForFragile, getWeaponElementModifier, hasShield, npcIsFlying } from "../../utils/NpcCalculator";
+import { calculateNpcAttackReceivedDamage, checkForFragile, getWeaponElementModifier, hasShield, hasStatus, npcIsFlying } from "../../utils/NpcCalculator";
 import { getVersoPerfectionDamageBonus } from "../../utils/BattleUtils";
 import { triggerOnBattleStart, triggerOnFreeAim, triggerOnKill } from "../../utils/PictoEffectsIntegration";
 import { getElementModifierText } from "../../utils/ElementUtils";
@@ -363,11 +363,58 @@ export function useCombatActions({
 
             const total = calculateAttackDamage(player, weaponInfo, effectiveTarget, result, attackType, playerChar?.stance, playerChar);
 
-            // Show total damage toast
-            showToast(`Total: ${total}`);
+            // === Detailed logging for basic/free-shot attack ===
+            const failures = calculateFailureDiv(result);
+            const critBonus = calculatePlayerCriticalBonus(result, player, weaponInfo);
+            const empBonus = playerHasEmpowered(player) ? 4 : (playerHasWeakened(player) ? -4 : 0);
+            const frenzyBonus = getPlayerFrenzy(player)?.ammount ?? 0;
+            const stanceBonus = playerChar?.stance === "Offensive" ? 4 : (playerChar?.stance === "Virtuous" ? 8 : 0);
+            const isVerso = playerChar?.id?.toLowerCase().includes("verso");
+            const versoBonus = isVerso ? getVersoPerfectionDamageBonus(playerChar?.perfectionRank) : 0;
 
-            // Show toast when hitting weak point
+            // Element
+            const weaponElement = weaponInfo?.details?.attributes?.element;
+            let elementBonus = 0;
+            if (attackType === "basic") {
+              const elemMod = getWeaponElementModifier(effectiveTarget.id, weaponInfo);
+              if (elemMod) {
+                elementBonus = elemMod.flatBonus;
+              } else if (weaponElement === "Fire" && hasStatus(effectiveTarget, "FireVulnerability")) {
+                elementBonus = 4;
+              }
+            }
+
+            // Free-shot weak point
             const freeShotBonus = calculateFreeShotPlus(player, effectiveTarget, attackType);
+
+            // Twilight bonus
+            const twilightStatus = playerChar?.status?.find(s => s.effectName === "Twilight");
+            const twilightBonus = twilightStatus?.ammount ? twilightStatus.ammount * 2 : 0;
+
+            // Fortune's Fury bonus
+            const fortunesFuryBonus = (playerChar && hasStatus(playerChar, "FortunesFury")) ? 8 : 0;
+
+            const finalDmg = total + twilightBonus;
+
+            console.log("=== Basic/Free-Shot Attack Breakdown ===");
+            console.log("Attack Type:", attackType);
+            console.log("Dice Total:", rollTotal);
+            console.log("Player Power:", player?.playerSheet?.power ?? 0);
+            console.log("Weapon Power:", weaponPower);
+            if (critBonus > 0) console.log("Critical Bonus:", `+${critBonus}`);
+            if (empBonus !== 0) console.log(empBonus > 0 ? "Empowered:" : "Weakened:", empBonus);
+            if (failures > 0) console.log("Failures:", failures, `(-${failures * 4})`);
+            if (frenzyBonus > 0) console.log("Frenzy:", `+${frenzyBonus}`);
+            if (elementBonus !== 0) console.log("Element Bonus:", elementBonus, `(${weaponElement})`);
+            if (freeShotBonus > 0) console.log("Weak Point:", `+${freeShotBonus}`);
+            if (stanceBonus > 0) console.log("Stance Bonus:", `+${stanceBonus}`, `(${playerChar?.stance})`);
+            if (versoBonus > 0) console.log("Verso Perfection:", `+${versoBonus}`, `(${playerChar?.perfectionRank})`);
+            if (twilightBonus > 0) console.log("Twilight Bonus:", `+${twilightBonus}`, `(${twilightStatus?.ammount} charges x 2)`);
+            if (fortunesFuryBonus > 0) console.log("Fortune's Fury:", `+${fortunesFuryBonus}`);
+            console.log("Total Power (before defense):", finalDmg);
+
+            showToast(`Total: ${finalDmg}`);
+
             if (freeShotBonus > 0 && total > 0) {
               showToast(t("playerPage.battle.weakPointHit", { bonus: freeShotBonus }));
             }
@@ -379,12 +426,12 @@ export function useCombatActions({
 
             try {
               if (target.type == "npc") {
-                const totalDamageToNpc = calculateNpcAttackReceivedDamage(effectiveTarget, total);
-                const willGetFragile = checkForFragile(effectiveTarget, total);
+                const npcDamage = calculateNpcAttackReceivedDamage(effectiveTarget, finalDmg);
+                const willGetFragile = checkForFragile(effectiveTarget, finalDmg);
 
                 let effects: any[] = [];
                 const attackInfo: any = {
-                  totalDamage: totalDamageToNpc,
+                  totalDamage: npcDamage,
                   targetBattleId: target.battleID,
                   sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
                   attackType: attackType,
@@ -402,7 +449,7 @@ export function useCombatActions({
                 await APIBattle.attack(attackInfo);
               } else {
                 const attackInfo: any = {
-                  totalPower: total,
+                  totalPower: finalDmg,
                   targetBattleId: target.battleID,
                   sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
                   attackType: attackType

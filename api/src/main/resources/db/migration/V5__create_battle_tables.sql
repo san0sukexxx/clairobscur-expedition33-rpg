@@ -36,6 +36,7 @@ CREATE TABLE
         can_roll_initiative BOOLEAN NOT NULL DEFAULT 0,
         parries_this_turn INTEGER NOT NULL DEFAULT 0,
         hits_taken_this_turn INTEGER NOT NULL DEFAULT 0,
+        foretell_consumed_total INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (battle_id) REFERENCES battle (id) ON DELETE CASCADE
     );
 

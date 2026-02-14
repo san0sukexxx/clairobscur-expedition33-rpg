@@ -18,6 +18,9 @@ export interface AttackRequestParams {
   consumesCharge?: boolean;
   consumesBurn?: number;  // Number of Burn stacks to consume from target
   targetIndex?: number;   // Index of target in targetIds array (for applying effects only once)
+  skillType?: string;     // "sun" or "moon" for Sciel's charge system
+  bestialWheelAdvance?: number;  // Monoco's Bestial Wheel advancement
+  ignoresShields?: boolean;      // Damage bypasses shields (Chevaliere Piercing)
 }
 
 /**
@@ -26,10 +29,16 @@ export interface AttackRequestParams {
 export function buildNpcAttackRequest(params: AttackRequestParams): CreateAttackRequest {
   const {
     source, targetId, targetChar, resolved, hitDamage, finalDamage,
-    skillCost, isGradientSkill, hitIndex, totalHits, chargeIncrease, consumesCharge, consumesBurn, targetIndex
+    skillCost, isGradientSkill, hitIndex, totalHits, chargeIncrease, consumesCharge, consumesBurn, targetIndex, skillType,
+    bestialWheelAdvance, ignoresShields
   } = params;
 
-  const effects = [...getStatusEffectsForTarget(resolved.effects, targetId)];
+  // For random targetScope, effects are resolved against the placeholder target,
+  // so we need to get effects for any enemy target (the first resolved targetId)
+  const effectLookupId = resolved.metadata.targetScope === "random"
+    ? resolved.targetIds[0]
+    : targetId;
+  const effects = [...getStatusEffectsForTarget(resolved.effects, effectLookupId)];
 
   // Check if attack will cause Fragile
   if (targetChar) {
@@ -60,7 +69,10 @@ export function buildNpcAttackRequest(params: AttackRequestParams): CreateAttack
     consumesBurn: consumesBurn,
     executionThreshold: resolved.metadata.executionThreshold,
     shouldRemoveMarked: resolved.metadata.dontRemoveMark ? false : undefined,
-    grantsGradientPoints: isFirstHitFirstTarget ? resolved.metadata.grantsGradientPoints : undefined
+    grantsGradientPoints: isFirstHitFirstTarget ? resolved.metadata.grantsGradientPoints : undefined,
+    // skillType NOT sent here - Sun/Moon charges are incremented explicitly via incrementSunMoonCharge
+    bestialWheelAdvance: isFirstHitFirstTarget ? bestialWheelAdvance : undefined,
+    ignoresShields: ignoresShields || undefined
   };
 }
 
@@ -70,10 +82,15 @@ export function buildNpcAttackRequest(params: AttackRequestParams): CreateAttack
 export function buildPlayerAttackRequest(params: AttackRequestParams): CreateAttackRequest {
   const {
     source, targetId, resolved, hitDamage,
-    skillCost, isGradientSkill, hitIndex, totalHits, chargeIncrease, consumesCharge, consumesBurn, targetIndex
+    skillCost, isGradientSkill, hitIndex, totalHits, chargeIncrease, consumesCharge, consumesBurn, targetIndex, skillType,
+    bestialWheelAdvance, ignoresShields
   } = params;
 
-  const effects = [...getStatusEffectsForTarget(resolved.effects, targetId)];
+  // For random targetScope, effects are resolved against the placeholder target
+  const effectLookupId = resolved.metadata.targetScope === "random"
+    ? resolved.targetIds[0]
+    : targetId;
+  const effects = [...getStatusEffectsForTarget(resolved.effects, effectLookupId)];
 
   // Only apply once-per-skill effects on first hit AND first target
   const isFirstHitFirstTarget = hitIndex === 0 && (targetIndex === 0 || targetIndex === undefined);
@@ -92,6 +109,9 @@ export function buildPlayerAttackRequest(params: AttackRequestParams): CreateAtt
     consumesBurn: consumesBurn,
     executionThreshold: resolved.metadata.executionThreshold,
     shouldRemoveMarked: resolved.metadata.dontRemoveMark ? false : undefined,
-    grantsGradientPoints: isFirstHitFirstTarget ? resolved.metadata.grantsGradientPoints : undefined
+    grantsGradientPoints: isFirstHitFirstTarget ? resolved.metadata.grantsGradientPoints : undefined,
+    // skillType NOT sent here - Sun/Moon charges are incremented explicitly via incrementSunMoonCharge
+    bestialWheelAdvance: isFirstHitFirstTarget ? bestialWheelAdvance : undefined,
+    ignoresShields: ignoresShields || undefined
   };
 }

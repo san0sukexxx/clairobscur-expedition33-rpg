@@ -2,7 +2,7 @@ import type { BattleCharacterInfo } from "../../../api/ResponseModel";
 import type { GetPlayerResponse } from "../../../api/APIPlayer";
 import { SkillEffectsRegistry, type SkillMetadata } from "../../../data/SkillEffectsRegistry";
 import { getEnrichedCharacterSkills } from "../../../utils/SkillUtils";
-import { hasRequiredStains, hasAllStainTypes, shouldHaveFreeCast } from "./stainEffects";
+import { hasAllStainTypes, shouldHaveFreeCast } from "./stainEffects";
 import { calculateHpCost } from "./perfectionEffects";
 
 export interface ValidationResult {
@@ -12,6 +12,7 @@ export interface ValidationResult {
   skillMetadata?: SkillMetadata;
   skillCost?: number;
   isGradientSkill?: boolean;
+  skillType?: string;
 }
 
 export function validateSkillExecution(
@@ -60,14 +61,12 @@ export function validateSkillExecution(
     skillCost = 0;
   }
 
-  // Lune: Validate required stains
-  if (skillMetadata.consumesStains && !hasRequiredStains(source, skillMetadata.consumesStains)) {
-    return {
-      valid: false,
-      error: "playerPage.skills.insufficientStains",
-      skillCost,
-      source
-    };
+  // Verso: Charging skills - free on second use (Steeled Strike)
+  if (skillMetadata.requiresOneTurnDelay) {
+    const hasCharging = source.status?.some(s => s.effectName === "Charging") ?? false;
+    if (hasCharging) {
+      skillCost = 0;
+    }
   }
 
   // Lune: Validate all stain types required (Elemental Genesis)
@@ -112,6 +111,7 @@ export function validateSkillExecution(
     source,
     skillMetadata,
     skillCost,
-    isGradientSkill
+    isGradientSkill,
+    skillType: fullSkill?.type
   };
 }

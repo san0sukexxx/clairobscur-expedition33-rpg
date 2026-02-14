@@ -72,6 +72,9 @@ export function evaluateCondition(
             const currentMask = wheelPattern[bestialWheelPosition] ?? "";
             return currentMask === "green";
 
+        case "target-no-foretell":
+            return !target.status?.some(s => s.effectName === "Foretell");
+
         case "stains-consumed":
             // This condition is evaluated at runtime, not here
             // Return false so it doesn't get included in resolved.effects

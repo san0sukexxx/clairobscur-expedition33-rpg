@@ -1,8 +1,8 @@
 import { useCallback, useRef } from "react";
 import { t } from "../../i18n";
 import { APIBattle } from "../../api/APIBattle";
-import type { BattleCharacterInfo, Element, Stance } from "../../api/ResponseModel";
-import { SkillEffectsRegistry } from "../../data/SkillEffectsRegistry";
+import type { BattleCharacterInfo, Element, Stance, StainType } from "../../api/ResponseModel";
+import { SkillEffectsRegistry, type SkillEffect } from "../../data/SkillEffectsRegistry";
 import { rollWithTimeout } from "../../utils/RollUtils";
 import { rollCommandForAttack } from "../../utils/PlayerCalculator";
 import { resolveSkill, getStatusStacks } from "../../utils/BattleSkillUtils";
@@ -33,7 +33,9 @@ import {
   gainStains,
   processStainEffects,
   getRandomElement,
-  gainStainOnCrit
+  gainStainOnCrit,
+  transformFireToLight,
+  type StainSlots
 } from "./skillExecution/stainEffects";
 import {
   grantPerfectionPoints,
@@ -61,15 +63,23 @@ import {
   shouldDoubleDamageVsStunned,
   hasPowerlessBonus,
   applyHealPerHit,
+  healAlliesPerHit,
   applyRandomBuffsWithMaskBonus,
-  grantMpToAllAlliesWithMaskBonus
+  grantMpToAllAlliesWithMaskBonus,
+  forceAlmightyMask,
+  switchToAlmightyIfMarked,
+  getDamageEscalationStacks,
+  calculateEscalationBonus,
+  incrementDamageEscalation
 } from "./skillExecution/bestialWheelEffects";
 import {
   consumeForetell,
   consumeForetellPerHit,
   calculateForetellDamageBonus,
-  getForetellPerHitMultiplier,
+  calculateForetellHealBonus,
+  getForetellPerHitBonus,
   consumeForetellFromAllEnemies,
+  grantMpFromForetell,
   drainAlliesHp,
   grantMpPerForetell,
   propagateBurnDamage,
@@ -120,13 +130,39 @@ export function useSkillExecution({
         return;
       }
 
-      const { source, skillCost, isGradientSkill } = validation;
+      const { source, skillCost, isGradientSkill, skillType } = validation;
       const resolved = resolveSkill(skillId, source!, target, player.fightInfo?.characters ?? []);
       const actualHitCount = resolved.hitCount;
 
-      if (actualHitCount > 0) {
+      // === VERSO: Charging skills (Steeled Strike) ===
+      if (resolved.metadata.requiresOneTurnDelay) {
+        const hasCharging = source!.status?.some(s => s.effectName === "Charging") ?? false;
+        if (!hasCharging) {
+          // First use: Consume MP and enter charging state
+          if (skillCost! > 0 && !isGradientSkill) {
+            const currentMp = source!.magicPoints ?? 0;
+            await APIBattle.updateCharacterMp(source!.battleID, currentMp - skillCost!);
+          }
+          await APIBattle.addStatus({
+            battleCharacterId: source!.battleID,
+            effectType: "Charging",
+            ammount: 0,
+            remainingTurns: 99,
+            sourceCharacterId: source!.battleID
+          });
+          showToastRef.current(t("playerPage.skills.chargingStarted"));
+          resetState();
+          return;
+        } else {
+          // Second use: Remove charging status and execute
+          await APIBattle.removeStatus(source!.battleID, "Charging");
+          showToastRef.current(t("playerPage.skills.chargingReleased"));
+        }
+      }
+
+      if (actualHitCount > 0 || resolved.metadata.hitsMatchConsumedStains) {
         setIsExecutingSkill(true);
-        await executeAttackHits(skillId, source!, target, resolved, skillCost!, isGradientSkill!, actualHitCount);
+        await executeAttackHits(skillId, source!, target, resolved, skillCost!, isGradientSkill!, actualHitCount, skillType);
       } else {
         const skillMetadata = SkillEffectsRegistry[skillId];
         await handleUtilitySkill({
@@ -140,7 +176,8 @@ export function useSkillExecution({
           isGradientSkill: isGradientSkill!,
           diceBoardRef,
           timeoutDiceBoardRef,
-          showToast: showToastRef.current
+          showToast: showToastRef.current,
+          skillType
         });
       }
 
@@ -169,9 +206,23 @@ export function useSkillExecution({
     resolved: any,
     skillCost: number,
     isGradientSkill: boolean,
-    actualHitCount: number
+    actualHitCount: number,
+    skillType?: string
   ) {
     let hitIndex = 0;
+
+    // Randomize hit count for variable-hit skills (Thunderfall: 2-6 hits)
+    let totalHits = actualHitCount;
+    if (resolved.metadata.minHits !== undefined && resolved.metadata.maxHits !== undefined) {
+      totalHits = resolved.metadata.minHits + Math.floor(Math.random() * (resolved.metadata.maxHits - resolved.metadata.minHits + 1));
+      showToastRef.current(t("playerPage.skills.randomHitCount", { hits: totalHits }));
+    }
+
+    // === VERSO: Plays a second time (Blitz) ===
+    if (resolved.metadata.playsSecondTime) {
+      totalHits *= 2;
+      showToastRef.current(t("playerPage.skills.playsSecondTime"));
+    }
 
     // Determine element
     const weaponElement = weaponInfo?.details?.attributes?.element;
@@ -180,16 +231,35 @@ export function useSkillExecution({
 
     // === LUNE: Consume stains before attack ===
     let stainsConsumed = 0;
-    let stainEffects = { damageMultiplier: 1, shouldGrantSecondTurn: false, shouldDoublesDamage: false, shouldGrantRegeneration: false, dotDuration: null as number | null, determinedElement: null as Element | null, canBreak: false };
+    let consumedStainTypes: StainType[] = [];
+    let currentStainSlots: StainSlots | undefined;
+    let stainEffects = { damageBonus: 0, shouldGrantSecondTurn: false, shouldDoublesDamage: false, shouldGrantRegeneration: false, dotDuration: null as number | null, determinedElement: null as Element | null, canBreak: false };
     if (resolved.metadata.consumesStains) {
-      const result = await consumeStains(source, resolved.metadata.consumesStains, showToastRef.current);
+      const noDamageBonus = resolved.metadata.noStainDamageBonus || resolved.metadata.consumeStainsForFreeCast;
+      const result = await consumeStains(source, resolved.metadata.consumesStains, showToastRef.current, noDamageBonus);
       stainsConsumed = result.consumed;
+      consumedStainTypes = result.consumedTypes;
+      currentStainSlots = result.slots;
       stainEffects = processStainEffects(source, resolved.metadata, stainsConsumed);
+    } else if (resolved.metadata.stainDeterminedElement) {
+      stainEffects = processStainEffects(source, resolved.metadata, 0);
+    }
 
-      // Override element if stain-determined
-      if (stainEffects.determinedElement) {
-        skillElement = stainEffects.determinedElement;
-      }
+    // Override element if stain-determined (Sky Break)
+    if (stainEffects.determinedElement) {
+      skillElement = stainEffects.determinedElement;
+    }
+
+    // === LUNE: Dynamic hit count from consumed stains (Mayhem) ===
+    if (resolved.metadata.hitsMatchConsumedStains && consumedStainTypes.length > 0) {
+      totalHits = consumedStainTypes.length;
+      showToastRef.current(t("playerPage.skills.randomHitCount", { hits: totalHits }));
+    }
+
+    // === LUNE: Transform Fire stain to Light (Electrify) ===
+    if (resolved.metadata.transformsStainToLight) {
+      const transformResult = await transformFireToLight(source, showToastRef.current, currentStainSlots);
+      currentStainSlots = transformResult;
     }
 
     // === VERSO: Deduct HP cost before attack (Defiant Strike, Poignee Forte) ===
@@ -202,6 +272,30 @@ export function useSkillExecution({
 
     // === MONOCO: Calculate mask bonuses ===
     const maskBonuses = calculateMaskBonuses(source, resolved.metadata);
+
+    // === MONOCO: Damage escalation bonus (Lampmaster Light) ===
+    let escalationBonus = 0;
+    if (resolved.metadata.damageEscalatesPerUse) {
+      const stacks = getDamageEscalationStacks(source);
+      escalationBonus = calculateEscalationBonus(stacks);
+      if (escalationBonus > 0) {
+        showToastRef.current(t("playerPage.skills.damageEscalationActive", { bonus: escalationBonus }));
+      }
+    }
+
+    // === MONOCO: Calculate bestial wheel advance ===
+    let wheelAdvance = resolved.metadata.bestialWheelAdvance;
+    if (resolved.metadata.forceAlmightyMask) {
+      // For gradient skills with forceAlmightyMask, send any positive value - backend sets to 0 for gradient
+      wheelAdvance = 1;
+    } else if (resolved.metadata.switchToAlmightyIfMarked) {
+      const targetHasMarked = target.status?.some(s => s.effectName === "Marked") ?? false;
+      if (targetHasMarked) {
+        // Calculate advance to reach position 0 (Almighty)
+        const currentPos = source.bestialWheelPosition ?? 0;
+        wheelAdvance = currentPos === 0 ? 9 : (9 - currentPos);
+      }
+    }
 
     // === MONOCO: Sacrifice HP (Cultist Blood) ===
     let sacrificeBonus = 0;
@@ -223,6 +317,25 @@ export function useSkillExecution({
         source.isEnemy,
         showToastRef.current
       );
+      // Grant +1 MP per Foretell consumed
+      await grantMpFromForetell(source, allEnemiesForetellBonus, showToastRef.current);
+      // Track total Foretell consumed in battle (for End Slice)
+      await APIBattle.incrementForetellConsumed(source.battleID, allEnemiesForetellBonus);
+    }
+
+    // === SCIEL: Consume Foretell from target before attack (Twilight Slash, etc.) ===
+    let foretellConsumedBonus = 0;
+    let foretellConsumedCount = 0;
+    if (resolved.metadata.consumesForetell) {
+      foretellConsumedCount = await consumeForetell(target, showToastRef.current);
+      foretellConsumedBonus = calculateForetellDamageBonus(foretellConsumedCount, resolved.metadata.foretellDamageBonus);
+      if (foretellConsumedBonus > 0) {
+        showToastRef.current(t("playerPage.skills.foretellDamageBonus", { bonus: foretellConsumedBonus }));
+      }
+      // Grant +1 MP per Foretell consumed
+      await grantMpFromForetell(source, foretellConsumedCount, showToastRef.current);
+      // Track total Foretell consumed in battle (for End Slice)
+      await APIBattle.incrementForetellConsumed(source.battleID, foretellConsumedCount);
     }
 
     // Calculate charge bonus (Overcharge: +1 damage per charge)
@@ -232,6 +345,39 @@ export function useSkillExecution({
       chargeBonus = source.chargePoints ?? 0;
       if (chargeBonus > 0) {
         showToastRef.current(`Cargas: ${chargeBonus} (Dano +${chargeBonus})`);
+      }
+    }
+
+    // === SCIEL: Foretell consumed total bonus (End Slice: +1 per Foretell consumed since battle start) ===
+    let foretellConsumedTotalBonus = 0;
+    if (resolved.metadata.usesForetellConsumedTotal) {
+      foretellConsumedTotalBonus = source.foretellConsumedTotal ?? 0;
+      if (foretellConsumedTotalBonus > 0) {
+        showToastRef.current(t("playerPage.skills.foretellConsumedTotalBonus", { bonus: foretellConsumedTotalBonus }));
+      }
+    }
+
+    // Calculate Sun/Moon charge bonus (+1 damage per matching charge)
+    let sunMoonChargeBonus = 0;
+    if (skillType === "sun") {
+      sunMoonChargeBonus = source.sunCharges ?? 0;
+      if (sunMoonChargeBonus > 0) {
+        showToastRef.current(t("playerPage.skills.sunMoonChargeBonus", { charges: sunMoonChargeBonus, bonus: sunMoonChargeBonus }));
+      }
+    } else if (skillType === "moon") {
+      sunMoonChargeBonus = source.moonCharges ?? 0;
+      if (sunMoonChargeBonus > 0) {
+        showToastRef.current(t("playerPage.skills.sunMoonChargeBonus", { charges: sunMoonChargeBonus, bonus: sunMoonChargeBonus }));
+      }
+    }
+
+    // Calculate Twilight damage bonus (+2 per Twilight ammount)
+    let twilightBonus = 0;
+    const twilightStatus = source.status?.find(s => s.effectName === "Twilight");
+    if (twilightStatus && twilightStatus.ammount) {
+      twilightBonus = twilightStatus.ammount * 2;
+      if (twilightBonus > 0) {
+        showToastRef.current(t("playerPage.skills.twilightDamageBonus", { bonus: twilightBonus, charges: twilightStatus.ammount }));
       }
     }
 
@@ -249,11 +395,36 @@ export function useSkillExecution({
     }
 
     // Execute hits
-    while (hitIndex < actualHitCount) {
+    let totalDamageDealt = 0;
+    let foretellPerHitConsumedTotal = 0;
+    const damageDealtPerTarget: Record<number, number> = {};
+    while (hitIndex < totalHits) {
       await new Promise<void>((resolvePromise) => {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, "basic"), async (result) => {
           let { baseDamage, hasCritical } = calculateHitDamage(result, player, weaponInfo, resolved);
           const chargeIncrease = calculateChargeIncrease(resolved, hasCritical);
+
+          // === LUNE: Per-hit element (Elemental Genesis = random, Elemental Trick = cycle, Mayhem = consumed stain) ===
+          let hitElement = skillElement;
+          if (resolved.metadata.hitsMatchConsumedStains && hitIndex < consumedStainTypes.length) {
+            const stainType = consumedStainTypes[hitIndex];
+            if (stainType === "Light") {
+              hitElement = getRandomElement(["Lightning", "Earth", "Fire", "Ice"] as Element[]);
+            } else {
+              hitElement = stainType as Element;
+            }
+          } else if (resolved.metadata.randomElementPerHit && resolved.metadata.randomElements) {
+            hitElement = getRandomElement(resolved.metadata.randomElements as Element[]);
+          } else if (resolved.metadata.gainsStainOnCrit) {
+            const stainCycle: Element[] = ["Lightning", "Earth", "Fire", "Ice"];
+            hitElement = stainCycle[hitIndex % stainCycle.length];
+          }
+
+          // === LUNE: Critical hit triggers extra hit (Electrify, Thunderfall, Lightning Dance) ===
+          if (hasCritical && resolved.metadata.critTriggersExtraHit) {
+            totalHits++;
+            showToastRef.current(t("playerPage.skills.critExtraHit"));
+          }
 
           // Increased critical damage (Sword Ballet: +4 per crit)
           if (hasCritical && resolved.metadata.increasedCritDamage) {
@@ -261,17 +432,42 @@ export function useSkillExecution({
             showToastRef.current(t("playerPage.skills.increasedCritDamage", { bonus: resolved.metadata.increasedCritDamage }));
           }
 
-          // Add charge bonus and hits received bonus to damage
-          const totalDamage = baseDamage + chargeBonus + hitsReceivedBonus;
+          // === SCIEL: Fortune's Fury bonus (+8 per hit) ===
+          const fortunesFuryBonus = hasStatus(source, "FortunesFury") ? 8 : 0;
 
-          const parts = [String(baseDamage)];
-          if (chargeBonus > 0) parts.push(`+${chargeBonus} carga`);
-          if (hitsReceivedBonus > 0) parts.push(`+${hitsReceivedBonus} vingança`);
-          showToastRef.current(`Total: ${totalDamage}${parts.length > 1 ? ` (${parts.join(", ")})` : ""}`);
+          // Add charge bonus, hits received bonus, foretell bonus, sun/moon bonus, twilight bonus and fortune's fury to damage
+          const totalDamage = baseDamage + chargeBonus + hitsReceivedBonus + foretellConsumedBonus + sunMoonChargeBonus + foretellConsumedTotalBonus + twilightBonus + fortunesFuryBonus;
+
+          // Log all bonuses applied to damage
+          console.log("=== Skill Damage Bonuses ===");
+          console.log("Base Damage (from dice):", baseDamage);
+          if (chargeBonus > 0) console.log("Charge Bonus:", `+${chargeBonus}`);
+          if (hitsReceivedBonus > 0) console.log("Hits Received Bonus:", `+${hitsReceivedBonus}`);
+          if (foretellConsumedBonus > 0) console.log("Foretell Bonus:", `+${foretellConsumedBonus} (${foretellConsumedCount} stacks x ${resolved.metadata.foretellDamageBonus ?? 2})`);
+          if (sunMoonChargeBonus > 0) console.log(`${skillType === "sun" ? "Sun" : "Moon"} Charge Bonus:`, `+${sunMoonChargeBonus}`);
+          if (foretellConsumedTotalBonus > 0) console.log("Foretell Consumed Total Bonus:", `+${foretellConsumedTotalBonus}`);
+          if (twilightBonus > 0) console.log("Twilight Bonus:", `+${twilightBonus} (${twilightStatus?.ammount} charges x 2)`);
+          if (fortunesFuryBonus > 0) console.log("Fortune's Fury:", `+${fortunesFuryBonus}`);
+          console.log("Total Damage (before target bonuses):", totalDamage);
 
           // Process each target
-          for (let targetIndex = 0; targetIndex < resolved.targetIds.length; targetIndex++) {
-            const targetId = resolved.targetIds[targetIndex];
+          // For random targetScope, pick a random alive enemy each hit (accounting for damage dealt this execution)
+          let hitTargetIds = resolved.targetIds;
+          if (resolved.metadata.targetScope === "random") {
+            const allChars = player?.fightInfo?.characters ?? [];
+            const aliveEnemies = allChars.filter(c => {
+              if (c.isEnemy === source.isEnemy) return false;
+              const remainingHp = c.healthPoints - (damageDealtPerTarget[c.battleID] ?? 0);
+              return remainingHp > 0;
+            });
+            if (aliveEnemies.length > 0) {
+              const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+              hitTargetIds = [randomEnemy.battleID];
+            }
+          }
+
+          for (let targetIndex = 0; targetIndex < hitTargetIds.length; targetIndex++) {
+            const targetId = hitTargetIds[targetIndex];
             const targetChar = (player?.fightInfo?.characters ?? []).find((c: BattleCharacterInfo) => c.battleID === targetId);
             const isNpcTarget = targetChar?.type === "npc";
 
@@ -311,10 +507,11 @@ export function useSkillExecution({
             }
 
             // === SCIEL: Per-hit Foretell consumption (Sealed Fate) ===
-            let foretellPerHitMultiplier = 1;
+            let foretellPerHitBonus = 0;
             if (resolved.metadata.consumesForetellPerHit && targetChar) {
               const hadForetell = await consumeForetellPerHit(targetChar);
-              foretellPerHitMultiplier = getForetellPerHitMultiplier(hadForetell, resolved.metadata.foretellPerHitMultiplier);
+              foretellPerHitBonus = getForetellPerHitBonus(hadForetell, resolved.metadata.foretellPerHitBonus);
+              if (hadForetell) foretellPerHitConsumedTotal++;
             }
 
             // === MONOCO: Shield stack bonus (Chevaliere Piercing) ===
@@ -324,27 +521,27 @@ export function useSkillExecution({
             }
 
             // === MONOCO: Low HP damage scaling (Cultist Slashes) ===
-            let lowHpMultiplier = 1;
+            let lowHpBonus = 0;
             if (resolved.metadata.damageScalesWithLowHp) {
-              lowHpMultiplier = 1 + calculateLowHpDamageBonus(source);
+              lowHpBonus = calculateLowHpDamageBonus(source);
             }
 
             // === MONOCO: Bonus vs burning (Danseuse Waltz) ===
             let burningTargetBonus = 0;
             if (resolved.metadata.bonusDamageVsBurning && targetChar && hasBurningBonus(targetChar)) {
-              burningTargetBonus = Math.floor(totalDamage * 0.5); // +50% vs burning
+              burningTargetBonus = 4; // +4 flat vs burning
             }
 
             // === MONOCO: Double damage vs stunned (Mighty Strike) ===
-            let stunnedMultiplier = 1;
+            let stunnedBonus = 0;
             if (targetChar && shouldDoubleDamageVsStunned(targetChar, resolved.metadata)) {
-              stunnedMultiplier = 2;
+              stunnedBonus = totalDamage; // +100% as flat bonus
             }
 
             // === MONOCO: Bonus vs powerless (Obscur Sword) ===
             let powerlessBonus = 0;
             if (resolved.metadata.bonusDamageVsPowerless && targetChar && hasPowerlessBonus(targetChar)) {
-              powerlessBonus = Math.floor(totalDamage * 0.5); // +50% vs powerless
+              powerlessBonus = 4; // +4 flat vs powerless
             }
 
             // === VERSO: Speed difference bonus (Escrime Rapide) ===
@@ -353,24 +550,42 @@ export function useSkillExecution({
               speedBonus = calculateSpeedDifferenceBonus(player!, targetChar);
             }
 
-            // Calculate final damage with all bonuses and multipliers
-            let damageWithBonus = totalDamage + markedBonus + burnBonus + burnScalingBonus +
+            // Calculate final damage with all flat bonuses
+            const damageWithBonus = totalDamage + markedBonus + burnBonus + burnScalingBonus +
               shieldStackBonus + burningTargetBonus + powerlessBonus + speedBonus +
-              sacrificeBonus + drainedHpBonus + allEnemiesForetellBonus;
+              sacrificeBonus + drainedHpBonus + allEnemiesForetellBonus +
+              stainEffects.damageBonus + rankBonuses.damageBonus + maskBonuses.damageBonus +
+              foretellPerHitBonus + lowHpBonus + stunnedBonus + escalationBonus;
 
-            // Apply multipliers
-            damageWithBonus = Math.floor(damageWithBonus * stainEffects.damageMultiplier);
-            damageWithBonus = Math.floor(damageWithBonus * rankBonuses.damageMultiplier);
-            damageWithBonus = Math.floor(damageWithBonus * maskBonuses.damageMultiplier);
-            damageWithBonus = Math.floor(damageWithBonus * foretellPerHitMultiplier);
-            damageWithBonus = Math.floor(damageWithBonus * lowHpMultiplier);
-            damageWithBonus = Math.floor(damageWithBonus * stunnedMultiplier);
+            // Log all bonuses applied
+            const allBonuses: [string, number][] = [
+              ["Marked", markedBonus], ["Burn Consumption", burnBonus], ["Burn Scaling", burnScalingBonus],
+              ["Shield Stack", shieldStackBonus], ["Burning Target", burningTargetBonus],
+              ["Powerless", powerlessBonus], ["Speed Diff", speedBonus],
+              ["Sacrifice", sacrificeBonus], ["Drained HP", drainedHpBonus],
+              ["All Enemies Foretell", allEnemiesForetellBonus],
+              ["Stain", stainEffects.damageBonus], ["Rank", rankBonuses.damageBonus],
+              ["Mask", maskBonuses.damageBonus], ["Foretell Per-Hit", foretellPerHitBonus],
+              ["Low HP", lowHpBonus], ["Stunned", stunnedBonus], ["Escalation", escalationBonus],
+            ];
+            const activeBonuses = allBonuses.filter(([, v]) => v !== 0);
+            if (activeBonuses.length > 0) {
+              console.log("=== Additional Damage Bonuses ===");
+              console.log("Target:", targetChar?.name ?? targetId);
+              for (const [label, value] of activeBonuses) {
+                console.log(`${label} Bonus:`, `+${value}`);
+              }
+              console.log("Final Damage (before element/defense):", damageWithBonus);
+            }
 
             if (isNpcTarget && targetChar) {
-              const { damageWithElement, elementMod } = applyElementModifier(damageWithBonus, targetChar, skillElement);
-              logElementVsNpc(targetChar, skillElement, elementMod, damageWithBonus, damageWithElement);
+              const { damageWithElement, elementMod } = applyElementModifier(damageWithBonus, targetChar, hitElement);
+              logElementVsNpc(targetChar, hitElement, elementMod, damageWithBonus, damageWithElement);
+              if (targetIndex === 0) showToastRef.current(`Total: ${damageWithElement}`);
 
               const finalDamage = calculateFinalDamage(targetChar, damageWithElement);
+              totalDamageDealt += finalDamage;
+              damageDealtPerTarget[targetId] = (damageDealtPerTarget[targetId] ?? 0) + finalDamage;
 
               const attackRequest = buildNpcAttackRequest({
                 source,
@@ -382,15 +597,21 @@ export function useSkillExecution({
                 skillCost,
                 isGradientSkill,
                 hitIndex,
-                totalHits: actualHitCount,
+                totalHits: totalHits,
                 chargeIncrease,
                 consumesCharge: shouldConsumeCharge,
                 consumesBurn: burnToConsume > 0 ? burnToConsume : undefined,
-                targetIndex
+                targetIndex,
+                skillType,
+                bestialWheelAdvance: wheelAdvance,
+                ignoresShields: resolved.metadata.ignoresShields
               });
 
               await APIBattle.attack(attackRequest);
             } else {
+              if (targetIndex === 0) showToastRef.current(`Total: ${damageWithBonus}`);
+              totalDamageDealt += damageWithBonus;
+              damageDealtPerTarget[targetId] = (damageDealtPerTarget[targetId] ?? 0) + damageWithBonus;
               const attackRequest = buildPlayerAttackRequest({
                 source,
                 targetId,
@@ -401,14 +622,22 @@ export function useSkillExecution({
                 skillCost,
                 isGradientSkill,
                 hitIndex,
-                totalHits: actualHitCount,
+                totalHits: totalHits,
                 chargeIncrease,
                 consumesCharge: shouldConsumeCharge,
                 consumesBurn: burnToConsume > 0 ? burnToConsume : undefined,
-                targetIndex
+                targetIndex,
+                skillType,
+                bestialWheelAdvance: wheelAdvance,
+                ignoresShields: resolved.metadata.ignoresShields
               });
 
               await APIBattle.attack(attackRequest);
+            }
+
+            // === SCIEL: Apply Foretell on critical hit (Spectral Sweep) ===
+            if (hasCritical && resolved.metadata.appliesForetellOnCrit && targetChar) {
+              await applyForetellOnCrit(targetChar, source, resolved.metadata.appliesForetellOnCrit, showToastRef.current);
             }
 
             // Visual feedback
@@ -422,10 +651,22 @@ export function useSkillExecution({
             }, 600);
           }
 
+          // === LUNE: Gain stain on critical hit (Elemental Trick) ===
+          if (hasCritical && resolved.metadata.gainsStainOnCrit && hitElement) {
+            await gainStainOnCrit(source, hitElement, showToastRef.current);
+          }
+
           hitIndex++;
           resolvePromise();
         }, { theme: "dice-of-rolling" });
       });
+    }
+
+    // === SCIEL: Grant MP for per-hit Foretell consumed (Sealed Fate) ===
+    if (foretellPerHitConsumedTotal > 0) {
+      await grantMpFromForetell(source, foretellPerHitConsumedTotal, showToastRef.current);
+      // Track total Foretell consumed in battle (for End Slice)
+      await APIBattle.incrementForetellConsumed(source.battleID, foretellPerHitConsumedTotal);
     }
 
     // Handle canBreak: Convert Fragile → Broken for skills that can break
@@ -507,6 +748,17 @@ export function useSkillExecution({
           const newMp = Math.min(currentMp + mpGain, maxMp);
           await APIBattle.updateCharacterMp(source.battleID, newMp);
           showToastRef.current(t("playerPage.skills.mpFromShields", { mp: mpGain }));
+        }
+      }
+    }
+
+    // === SCIEL: Increment Sun/Moon charge for attack skills ===
+    if (skillType) {
+      const hasTwilight = source.status?.some(s => s.effectName === "Twilight") ?? false;
+      if (!hasTwilight) {
+        const result = await APIBattle.incrementSunMoonCharge(source.battleID, skillType);
+        if (result.twilightActivated) {
+          showToastRef.current(t("playerPage.skills.twilightActivated", { charges: result.twilightCharges }));
         }
       }
     }
@@ -597,6 +849,23 @@ export function useSkillExecution({
       });
     }
 
+    // === LUNE: Grant MP if target is Burning (Thermal Transfer) ===
+    if (resolved.metadata.grantsMpIfTargetBurning) {
+      const isBurning = hasStatus(target, "Burning");
+      console.log("=== Thermal Transfer Burning Check ===");
+      console.log("Target:", target.name, "Status:", target.status?.map(s => s.effectName));
+      console.log("Is Burning:", isBurning);
+      console.log("grantsMpIfTargetBurning:", resolved.metadata.grantsMpIfTargetBurning);
+      if (isBurning) {
+        const mpGain = resolved.metadata.grantsMpIfTargetBurning;
+        const currentMp = (source.magicPoints ?? 0) - skillCost;
+        const maxMp = source.maxMagicPoints ?? 99;
+        const newMp = Math.min(currentMp + mpGain, maxMp);
+        await APIBattle.updateCharacterMp(source.battleID, newMp);
+        showToastRef.current(t("playerPage.skills.mpGainedFromBurning", { amount: mpGain }));
+      }
+    }
+
     // Handle stance change after attack with special conditions
     // Rule: If skill doesn't say "changes to stance X" or "maintains stance", stance is lost
     if (!resolved.metadata.maintainsStance) {
@@ -634,7 +903,7 @@ export function useSkillExecution({
 
     // === LUNE: Gain stains after attack ===
     if (resolved.metadata.gainsStains) {
-      await gainStains(source, resolved.metadata.gainsStains, showToastRef.current);
+      await gainStains(source, resolved.metadata.gainsStains, showToastRef.current, currentStainSlots);
     }
 
     // === LUNE: Grant regeneration when stains consumed (Revitalization) ===
@@ -654,12 +923,48 @@ export function useSkillExecution({
       notifyExtraTurn(source, showToastRef.current);
     }
 
-    // === SCIEL: Consume Foretell from target (Twilight Slash, etc.) ===
+    // === SCIEL: Post-attack Foretell effects (Harvest heal, Plentiful Harvest MP) ===
     if (resolved.metadata.consumesForetell) {
-      const consumed = await consumeForetell(target, showToastRef.current);
-      const damageBonus = calculateForetellDamageBonus(consumed, resolved.metadata.foretellDamageBonus);
-      if (damageBonus > 0) {
-        showToastRef.current(t("playerPage.skills.foretellDamageBonus", { bonus: damageBonus }));
+      // Apply heal with dice roll (Harvest, Grim Harvest)
+      if (resolved.metadata.healWithRoll) {
+        const foretellBonus = resolved.metadata.foretellHealBonus
+          ? calculateForetellHealBonus(foretellConsumedCount, resolved.metadata.foretellHealBonus)
+          : 0;
+        const healTarget = resolved.metadata.healWithRoll.healTarget ?? "self";
+
+        await new Promise<void>((resolveHeal) => {
+          rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, resolved.metadata.healWithRoll!.dice, async (healResult) => {
+            const healDiceTotal = diceTotal(healResult);
+
+            let baseStat = 0;
+            if (resolved.metadata.healWithRoll!.baseStat === "resistance") {
+              baseStat = player?.playerSheet?.resistance ?? 0;
+            } else if (resolved.metadata.healWithRoll!.baseStat === "power") {
+              baseStat = player?.playerSheet?.power ?? 0;
+            }
+
+            const totalHeal = baseStat + healDiceTotal + foretellBonus;
+
+            if (foretellBonus > 0) {
+              showToastRef.current(t("playerPage.skills.foretellHealBonus", { bonus: foretellBonus }));
+            }
+
+            if (healTarget === "all-allies") {
+              const allies = (player?.fightInfo?.characters ?? []).filter(
+                c => c.isEnemy === source.isEnemy && c.healthPoints > 0
+              );
+              for (const ally of allies) {
+                await APIBattle.heal(ally.battleID, totalHeal);
+              }
+              showToastRef.current(t("playerPage.skills.allAlliesHealedFor", { amount: totalHeal }));
+            } else {
+              await APIBattle.heal(source.battleID, totalHeal);
+              showToastRef.current(t("playerPage.skills.healedFor", { amount: totalHeal }));
+            }
+
+            resolveHeal();
+          }, { theme: "blue-green-metal" });
+        });
       }
 
       // Grant MP per foretell consumed (Plentiful Harvest)
@@ -667,7 +972,7 @@ export function useSkillExecution({
         await grantMpPerForetell(
           source,
           player?.fightInfo?.characters ?? [],
-          consumed,
+          foretellConsumedCount,
           resolved.metadata.grantsMpPerForetell,
           showToastRef.current
         );
@@ -676,12 +981,16 @@ export function useSkillExecution({
 
     // === SCIEL: Propagate burn damage (Searing Bond) ===
     if (resolved.metadata.propagatesBurnDamage) {
+      // Get Foretell amount from primaryEffects to propagate the same amount
+      const foretellEffect = resolved.metadata.primaryEffects.find((e: SkillEffect) => e.effectType === "Foretell");
+      const foretellAmount = foretellEffect?.amount ?? 1;
       await propagateBurnDamage(
         target,
         player?.fightInfo?.characters ?? [],
         source,
-        actualHitCount * 10, // Approximate total damage dealt
+        totalDamageDealt,
         50, // 50% propagation
+        foretellAmount,
         showToastRef.current
       );
     }
@@ -731,7 +1040,7 @@ export function useSkillExecution({
     if (resolved.metadata.gainsPerfectionPerHit) {
       await grantPerfectionPerHit(
         source,
-        actualHitCount,
+        totalHits,
         resolved.metadata.gainsPerfectionPerHit,
         false, // hasCritical
         resolved.metadata.criticalGivesPerfectionBonus,
@@ -787,6 +1096,36 @@ export function useSkillExecution({
       );
     }
 
+    // === VERSO: Grant MP from rank bonus (Light Holder at A Rank) ===
+    if (rankBonuses.grantsMp > 0) {
+      const currentMp = (source.magicPoints ?? 0) - (isGradientSkill ? 0 : skillCost);
+      const maxMp = source.maxMagicPoints ?? 99;
+      const newMp = Math.min(currentMp + rankBonuses.grantsMp, maxMp);
+      await APIBattle.updateCharacterMp(source.battleID, newMp);
+      showToastRef.current(t("playerPage.skills.rankGrantedMp", { mp: rankBonuses.grantsMp }));
+    }
+
+    // === VERSO: Reapply Stun (End Bringer at A Rank) ===
+    if (rankBonuses.canReapplyStun) {
+      for (const targetId of resolved.targetIds) {
+        const targetChar = (player?.fightInfo?.characters ?? []).find(
+          (c: BattleCharacterInfo) => c.battleID === targetId
+        );
+        const hasStun = targetChar?.status?.some(s => s.effectName === "Stunned") ?? false;
+        if (hasStun) {
+          await APIBattle.removeStatus(targetId, "Stunned");
+          await APIBattle.addStatus({
+            battleCharacterId: targetId,
+            effectType: "Stunned",
+            ammount: 0,
+            remainingTurns: 1,
+            sourceCharacterId: source.battleID
+          });
+          showToastRef.current(t("playerPage.skills.stunReapplied", { name: targetChar?.name ?? "" }));
+        }
+      }
+    }
+
     // === VERSO: Transfer all status to self (Burden) ===
     if (resolved.metadata.transfersAllStatusToSelf) {
       await transferAllStatusToSelf(source, player?.fightInfo?.characters ?? [], showToastRef.current);
@@ -794,7 +1133,12 @@ export function useSkillExecution({
 
     // === MONOCO: Heal per hit (Sapling Absorption) ===
     if (resolved.metadata.healsHpPercentPerHit) {
-      await applyHealPerHit(source, resolved.metadata.healsHpPercentPerHit, actualHitCount, showToastRef.current);
+      await applyHealPerHit(source, resolved.metadata.healsHpPercentPerHit, totalHits, showToastRef.current);
+    }
+
+    // === MONOCO: Heal all allies per hit (Contorsionniste Blast) ===
+    if (resolved.metadata.healsAlliesHpPercentPerHit) {
+      await healAlliesPerHit(source, player?.fightInfo?.characters ?? [], resolved.metadata.healsAlliesHpPercentPerHit, totalHits, showToastRef.current);
     }
 
     // === MONOCO: Random buffs with mask bonus (Troubadour Trumpet) ===
@@ -811,6 +1155,21 @@ export function useSkillExecution({
         resolved.metadata.grantsMpToAllAllies.max,
         showToastRef.current
       );
+    }
+
+    // === MONOCO: Force Almighty Mask (Mighty Strike gradient) ===
+    if (resolved.metadata.forceAlmightyMask) {
+      await forceAlmightyMask(source, showToastRef.current);
+    }
+
+    // === MONOCO: Switch to Almighty if target is Marked (Benisseur Mortar) ===
+    if (resolved.metadata.switchToAlmightyIfMarked) {
+      await switchToAlmightyIfMarked(source, target, showToastRef.current);
+    }
+
+    // === MONOCO: Track damage escalation (Lampmaster Light) ===
+    if (resolved.metadata.damageEscalatesPerUse) {
+      await incrementDamageEscalation(source, 5, showToastRef.current);
     }
   }
 
@@ -837,7 +1196,7 @@ export function useSkillExecution({
     }
 
     // Auto-execute all-enemies skills (no target selection needed)
-    if (skillMetadata.targetScope === "all" && skillMetadata.damageLevel !== "none") {
+    if (skillMetadata.targetScope === "all") {
       const allCharacters = player?.fightInfo?.characters ?? [];
       const anyEnemy = allCharacters.find(c => c.isEnemy !== currentCharacter?.isEnemy && c.healthPoints > 0);
       if (anyEnemy) {
@@ -849,11 +1208,27 @@ export function useSkillExecution({
       return;
     }
 
-    // Auto-execute skills that target all enemies and/or revive dead allies (Phoenix Flame)
-    if (skillMetadata.targetScope === "all-enemies" || skillMetadata.revivesDeadAllies) {
+    // Auto-execute random-target skills (no target selection needed)
+    if (skillMetadata.targetScope === "random") {
+      const allCharacters = player?.fightInfo?.characters ?? [];
+      const anyEnemy = allCharacters.find(c => c.isEnemy !== currentCharacter?.isEnemy && c.healthPoints > 0);
+      if (anyEnemy) {
+        setPendingSkillId(skillId);
+        setTab("combate");
+        setIsUsingSkillMode(false);
+        handleExecuteSkill(skillId, anyEnemy);
+      }
+      return;
+    }
+
+    // Auto-execute skills that target all enemies, all allies, and/or revive dead allies (Phoenix Flame, All Set)
+    if (skillMetadata.targetScope === "all-enemies" || skillMetadata.targetScope === "all-allies" || skillMetadata.revivesDeadAllies) {
       setPendingSkillId(skillId);
       setTab("combate");
       setIsUsingSkillMode(false);
+      if (skillMetadata.targetScope === "all-allies") {
+        setCombatTab(currentCharacter?.isEnemy ? "enemies" : "team");
+      }
       // Use currentCharacter as dummy target - actual targets resolved in handleExecuteSkill
       if (currentCharacter) {
         handleExecuteSkill(skillId, currentCharacter);

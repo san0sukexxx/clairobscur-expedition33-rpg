@@ -41,7 +41,7 @@ export function isAtRankOrHigher(source: BattleCharacterInfo, minRank: string): 
 }
 
 export interface RankConditionalBonuses {
-  damageMultiplier: number;
+  damageBonus: number;
   bonusMpReturn: number;
   grantsMp: number;
   bonusMpToAllies: number;
@@ -57,7 +57,7 @@ export function calculateRankBonuses(
   metadata: SkillMetadata
 ): RankConditionalBonuses {
   const bonuses: RankConditionalBonuses = {
-    damageMultiplier: 1,
+    damageBonus: 0,
     bonusMpReturn: 0,
     grantsMp: 0,
     bonusMpToAllies: 0,
@@ -72,8 +72,8 @@ export function calculateRankBonuses(
   if (metadata.rankConditionalBonus && metadata.rankConditionalBonus.rank === currentRank) {
     const rcb = metadata.rankConditionalBonus;
 
-    if (rcb.damageMultiplier) {
-      bonuses.damageMultiplier += rcb.damageMultiplier;
+    if (rcb.damageBonus) {
+      bonuses.damageBonus += rcb.damageBonus;
     }
     if (rcb.bonusMpReturn) {
       bonuses.bonusMpReturn = rcb.bonusMpReturn;

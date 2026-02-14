@@ -207,6 +207,30 @@ class BattleStatusController(
                     }
                 }
             }
+        } else if (body.effectType == "Typhoon") {
+            val baseDamage = body.totalValue
+
+            if (baseDamage > 0) {
+                // Apply Ice element resistance/weakness modifiers
+                val damage = elementResistanceService.calculateElementalDamage(
+                    body.battleCharacterId,
+                    baseDamage,
+                    "Ice"
+                )
+
+                val newHp = damageService.applyDamage(battleCharacter, damage)
+
+                if (newHp > 0) {
+                    effects.forEach { eff ->
+                        val remaining = (eff.remainingTurns ?: 0) - 1
+                        if (remaining <= 0) {
+                            battleStatusEffectRepository.delete(eff)
+                        } else {
+                            battleStatusEffectRepository.save(eff.copy(remainingTurns = remaining))
+                        }
+                    }
+                }
+            }
         } else if (body.effectType == "Regeneration") {
             val baseHeal = body.totalValue.coerceAtLeast(0)
 
@@ -491,7 +515,7 @@ class BattleStatusController(
                 "Fragile", "Inverted", "Flying", "Plagued", "Broken" -> true
 
                 "Burning", "Frozen", "Regeneration", "Cursed",
-                "Confused", "Bleeding", "Poisoned", "Fleeing", "IntenseFlames", "Earthquake", "StormCaller" -> false
+                "Confused", "Bleeding", "Poisoned", "Fleeing", "IntenseFlames", "Earthquake", "StormCaller", "Typhoon" -> false
 
                 else -> false
             }

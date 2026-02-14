@@ -3,6 +3,7 @@ import type { SkillMetadata } from "../../../data/SkillEffectsRegistry";
 import { APIBattle } from "../../../api/APIBattle";
 import { t } from "../../../i18n";
 import { hasStatus } from "../../../utils/NpcCalculator";
+import { isMonoco } from "../../../constants/player/characterIds";
 
 export type MaskType = "Almighty" | "Agile" | "Balanced" | "Heavy" | "Caster";
 
@@ -61,7 +62,7 @@ export function isAtHeavyOrAlmighty(source: BattleCharacterInfo): boolean {
 }
 
 export interface MaskBonuses {
-  damageMultiplier: number;
+  damageBonus: number;
   healingMultiplier: number;
   mpBonusGranted: number;
   shieldBonus: number;
@@ -70,24 +71,29 @@ export interface MaskBonuses {
 }
 
 /**
- * Gets mask-based damage multiplier
+ * Gets mask-based flat damage bonus (only for characters with Bestial Wheel)
  */
-export function getMaskDamageMultiplier(source: BattleCharacterInfo): number {
+export function getMaskDamageBonus(source: BattleCharacterInfo): number {
+  // Only apply to characters that actually have the Bestial Wheel (Monoco)
+  if (source.bestialWheelPosition === null || source.bestialWheelPosition === undefined) {
+    return 0;
+  }
+
   const mask = getCurrentMask(source.bestialWheelPosition);
 
   switch (mask) {
     case "Almighty":
-      return 1.25; // +25%
-    case "Agile":
-      return 1.15; // +15%
-    case "Balanced":
-      return 1.10; // +10%
-    case "Heavy":
-      return 1.15; // +15%
+      return 3;
     case "Caster":
-      return 1.20; // +20%
+      return 2;
+    case "Agile":
+      return 2;
+    case "Heavy":
+      return 2;
+    case "Balanced":
+      return 1;
     default:
-      return 1.0;
+      return 0;
   }
 }
 
@@ -99,7 +105,7 @@ export function calculateMaskBonuses(
   metadata: SkillMetadata
 ): MaskBonuses {
   const bonuses: MaskBonuses = {
-    damageMultiplier: getMaskDamageMultiplier(source),
+    damageBonus: isMonoco(source.id) ? getMaskDamageBonus(source) : 0,
     healingMultiplier: 1.0,
     mpBonusGranted: 0,
     shieldBonus: 0,
@@ -141,6 +147,7 @@ export function calculateMaskBonuses(
 
 /**
  * Advances the Bestial Wheel position
+ * For utility skills (no attack request), updates directly via API
  */
 export async function advanceBestialWheel(
   source: BattleCharacterInfo,
@@ -150,8 +157,8 @@ export async function advanceBestialWheel(
   const currentPosition = source.bestialWheelPosition ?? 0;
   const newPosition = (currentPosition + advance) % 9;
 
-  // This is typically handled by the attack endpoint, but we can update directly if needed
-  // For now, we just return the new position for calculation purposes
+  await APIBattle.updateBestialWheelPosition(source.battleID, newPosition);
+
   const newMask = getCurrentMask(newPosition);
   showToast(t("playerPage.skills.wheelAdvanced", { mask: newMask }));
 
@@ -165,8 +172,7 @@ export async function forceAlmightyMask(
   source: BattleCharacterInfo,
   showToast: (message: string) => void
 ): Promise<void> {
-  // This should be done via backend, but the attack endpoint handles bestialWheelAdvance
-  // For now, just show toast - the backend will set position to 0
+  await APIBattle.updateBestialWheelPosition(source.battleID, 0);
   showToast(t("playerPage.skills.forcedToAlmighty"));
 }
 
@@ -244,15 +250,10 @@ export async function applySacrifice(
 export function calculateLowHpDamageBonus(source: BattleCharacterInfo): number {
   const currentHp = source.healthPoints;
   const maxHp = source.maxHealthPoints;
-  const hpPercent = (currentHp / maxHp) * 100;
+  const missingHpPercent = ((maxHp - currentHp) / maxHp) * 100;
 
-  // Inverse scaling: more damage at lower HP
-  // At 100% HP: no bonus
-  // At 50% HP: +50% bonus
-  // At 10% HP: +90% bonus
-  const bonus = (100 - hpPercent) / 100;
-
-  return bonus;
+  // Flat bonus: +1 per 20% HP missing (max +5)
+  return Math.floor(missingHpPercent / 20);
 }
 
 /**
@@ -264,23 +265,47 @@ export function hasBurningBonus(target: BattleCharacterInfo): boolean {
 
 /**
  * Tracks damage escalation per use (Lampmaster Light)
- * Returns the current stack count
+ * Returns the current stack count from character status
  */
 export function getDamageEscalationStacks(
-  source: BattleCharacterInfo,
-  skillId: string
+  source: BattleCharacterInfo
 ): number {
-  // This would need to be tracked in backend or state
-  // For now, we return 0 and let the backend handle tracking
-  return 0;
+  const escalation = source.status?.find(s => s.effectName === "DamageEscalation");
+  return escalation?.ammount ?? 0;
+}
+
+/**
+ * Increments damage escalation stacks after skill use (Lampmaster Light)
+ */
+export async function incrementDamageEscalation(
+  source: BattleCharacterInfo,
+  maxStacks: number,
+  showToast: (message: string) => void
+): Promise<void> {
+  const currentStacks = getDamageEscalationStacks(source);
+  const newStacks = Math.min(currentStacks + 1, maxStacks);
+
+  if (currentStacks > 0) {
+    await APIBattle.removeStatus(source.battleID, "DamageEscalation");
+  }
+  await APIBattle.addStatus({
+    battleCharacterId: source.battleID,
+    effectType: "DamageEscalation",
+    ammount: newStacks,
+    remainingTurns: 99,
+    sourceCharacterId: source.battleID
+  });
+
+  showToast(t("playerPage.skills.damageEscalation", { stacks: newStacks, bonus: newStacks * 20 }));
 }
 
 /**
  * Calculates damage escalation multiplier (Lampmaster Light: +20% per use, max 5)
  */
-export function calculateEscalationMultiplier(stacks: number, maxStacks: number = 5): number {
+export function calculateEscalationBonus(stacks: number, maxStacks: number = 5): number {
   const actualStacks = Math.min(stacks, maxStacks);
-  return 1 + (actualStacks * 0.20);
+  // +2 damage per stack (max +10)
+  return actualStacks * 2;
 }
 
 /**
@@ -456,4 +481,50 @@ export async function applyHealPerHit(
   await APIBattle.updateCharacterHp(source.battleID, newHp);
 
   showToast(t("playerPage.skills.healedPerHit", { amount: totalHeal }));
+}
+
+/**
+ * Heals all allies per hit (Contorsionniste Blast: 10% per enemy hit)
+ */
+export async function healAlliesPerHit(
+  source: BattleCharacterInfo,
+  allCharacters: BattleCharacterInfo[],
+  healPercent: number,
+  hitCount: number,
+  showToast: (message: string) => void
+): Promise<void> {
+  const allies = allCharacters.filter(
+    c => c.isEnemy === source.isEnemy && c.healthPoints > 0
+  );
+
+  for (const ally of allies) {
+    const healAmount = Math.floor(ally.maxHealthPoints * (healPercent / 100) * hitCount);
+    const newHp = Math.min(ally.healthPoints + healAmount, ally.maxHealthPoints);
+    await APIBattle.updateCharacterHp(ally.battleID, newHp);
+  }
+
+  const totalPercent = healPercent * hitCount;
+  showToast(t("playerPage.skills.alliesHealedPerHit", { percent: totalPercent }));
+}
+
+/**
+ * Grants MP at Heavy/Almighty mask (Cruler Barrier)
+ */
+export async function grantMpAtHeavyMask(
+  source: BattleCharacterInfo,
+  targets: BattleCharacterInfo[],
+  mpAmount: number,
+  showToast: (message: string) => void
+): Promise<void> {
+  if (!isAtHeavyOrAlmighty(source)) return;
+
+  for (const target of targets) {
+    const currentMp = target.magicPoints ?? 0;
+    const maxMp = target.maxMagicPoints ?? 99;
+    const newMp = Math.min(currentMp + mpAmount, maxMp);
+
+    await APIBattle.updateCharacterMp(target.battleID, newMp);
+  }
+
+  showToast(t("playerPage.skills.mpGrantedAtHeavy", { amount: mpAmount }));
 }

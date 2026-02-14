@@ -1954,6 +1954,7 @@
         "errorClaimingReward": "Erro ao reivindicar recompensa",
         "gradientChargesUpdated": "Cargas de gradiente atualizadas para {charges}/3",
         "gustaveChargesUpdated": "Cargas de Gustave atualizadas para {charges}",
+        "scielChargesUpdated": "Cargas de Sol/Lua de Sciel atualizadas",
         "stanceChanged": "Postura de Maelle alterada para {stance}"
       },
       "labels": {
@@ -1990,6 +1991,22 @@
         "npcs": "NPCs",
         "combatStatus": "Status do combate",
         "gustaveCharges": "Cargas de Gustave",
+        "scielCharges": "Cargas de Sol/Lua",
+        "editScielCharges": "Editar Cargas de Sciel",
+        "sunCharges": "Cargas de Sol",
+        "moonCharges": "Cargas de Lua",
+        "twilightEclipse": "Eclipse (Twilight)",
+        "twilightTurns": "Duração (turnos)",
+        "twilightActive": "Eclipse",
+        "luneStains": "Manchas da Lune",
+        "editLuneStains": "Editar Manchas",
+        "stainSlot": "Slot {{number}}",
+        "stainEmpty": "Vazio",
+        "stainLightning": "Raio",
+        "stainEarth": "Terra",
+        "stainFire": "Fogo",
+        "stainIce": "Gelo",
+        "stainLight": "Luz",
         "maelleStance": "Postura de Maelle",
         "charges": "Cargas",
         "teamA": "Time A",
@@ -2094,19 +2111,19 @@
       },
       "lune-electrify": {
         "name": "Eletrificar",
-        "description": "Causa dano baixo de Raio a um único alvo. 3 ataques. Consome Fogo para gerar uma Mancha de Luz. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 2 Manchas de Raio."
+        "description": "Causa dano baixo de Raio a um único alvo. 3 ataques. Consome Mancha de Fogo para gerar uma Mancha de Luz. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 2 Manchas de Raio."
       },
       "lune-immolation": {
         "name": "Imolação",
-        "description": "Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 ataque. Consome Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 ataque. Consome Mancha de Gelo para causar +4 de dano. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-ice-lance": {
         "name": "Lança de Gelo",
-        "description": "Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 ataque. Consome Terra para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 ataque. Consome Mancha de Terra para causar +4 de dano. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-earth-rising": {
         "name": "Ascensão Terrestre",
-        "description": "Causa dano baixo de Terra a todos os inimigos. 1 ataque. Consome Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Terra a todos os inimigos. 1 ataque. Consome Mancha de Raio para causar +4 de dano. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-thermal-transfer": {
         "name": "Transferência Térmica",
@@ -2114,11 +2131,11 @@
       },
       "lune-thunderfall": {
         "name": "Queda do Trovão",
-        "description": "Causa dano médio de Raio em inimigos aleatórios. 2-6 ataques. Consome Fogo para causar dano aumentado. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano médio de Raio em inimigos aleatórios. 4 ataques. Consome Mancha de Fogo para causar +4 de dano. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-wildfire": {
         "name": "Fogo Selvagem",
-        "description": "Causa dano médio de Fogo a todos os inimigos. 1 ataque. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Fogo a todos os inimigos. 1 ataque. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para causar +8 de dano. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-mayhem": {
         "name": "Caos",
@@ -2130,19 +2147,19 @@
       },
       "lune-elemental-genesis": {
         "name": "Gênese Elemental",
-        "description": "Causa dano extremo a todos os inimigos. 8 ataques. Cada ataque causa dano em um elemento aleatório. Requer Raio, Terra, Fogo e Gelo para lançar."
+        "description": "Causa dano extremo a todos os inimigos. 8 ataques. Cada ataque causa dano em um elemento aleatório. Requer Mancha de Raio, Mancha de Terra, Mancha de Fogo e Mancha de Gelo para lançar."
       },
       "lune-crippling-tsunami": {
         "name": "Tsunami Paralisante",
-        "description": "Causa dano médio de Gelo a todos os inimigos. 1 ataque. Aplica Desaceleração por 3 turnos. Consome mancha de Terra, mancha de Fogo e mancha de Raio para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Gelo a todos os inimigos. 1 ataque. Aplica Desaceleração por 3 turnos. Consome Mancha de Terra, Mancha de Fogo e Mancha de Raio para causar +12 de dano. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-rockslide": {
         "name": "Deslizamento de Rochas",
-        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Pode causar quebra. Consome mancha de Raio, mancha de Gelo e mancha de Fogo para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Pode causar quebra. Consome Mancha de Raio, Mancha de Gelo e Mancha de Fogo para causar +12 de dano. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-crustal-crush": {
         "name": "Esmagamento da Crosta",
-        "description": "Causa dano alto de Terra e dano de Quebra a um único alvo. 5 ataques. Consome 2 Manchas de Raio para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano alto de Terra e dano de Quebra a um único alvo. 5 ataques. Consome 2 Manchas de Raio para causar +8 de dano. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-healing-light": {
         "name": "Luz Curativa",
@@ -2150,7 +2167,7 @@
       },
       "lune-lightning-dance": {
         "name": "Dança do Relâmpago",
-        "description": "Causa dano muito alto de Raio a um único alvo. 6 ataques. Consome mancha de Terra, mancha de Gelo e mancha de Fogo para causar dano muito aumentado. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano muito alto de Raio a um único alvo. 6 ataques. Consome Mancha de Terra, Mancha de Gelo e Mancha de Fogo para causar +12 de dano. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-storm-caller": {
         "name": "Invocador da Tempestade",
@@ -2170,15 +2187,15 @@
       },
       "lune-revitalization": {
         "name": "Revitalização",
-        "description": "Role 1d6: 1-2 = cura 1 aliado em Resistência +2d6, 3-6 = cura todos os aliados em Resistência +3d6. Consome 3 Manchas de Fogo para também aplicar Regeneração 2 por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Teste de Habilidade CD 7: Sucesso = cura todos os aliados em Resistência +3d6, Falha = cura 1 aliado em Resistência +2d6. Consome 3 Manchas de Fogo para também aplicar Regeneração 2 por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-fire-rage": {
         "name": "Fúria Flamejante",
-        "description": "Causa dano alto de Fogo crescente a todos os inimigos a cada turno até Lune receber dano. Consome 2 Manchas de Gelo para causar dano aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano alto de Fogo crescente a todos os inimigos a cada turno até Lune receber dano. Consome 2 Manchas de Gelo para causar +8 de dano. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-hell": {
         "name": "Inferno",
-        "description": "Causa dano muito alto de Fogo aplicando 5 Queimaduras por ataque a todos os inimigos. 2 ataques. Consome mancha de Gelo, mancha de Terra e mancha de Raio para causar dano muito aumentado. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano muito alto de Fogo aplicando 5 Queimaduras por ataque a todos os inimigos. 2 ataques. Consome Mancha de Gelo, Mancha de Terra e Mancha de Raio para causar +12 de dano. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-sky-break": {
         "name": "Quebra do Céu",
@@ -2186,7 +2203,7 @@
       },
       "lune-tree-of-life": {
         "name": "Árvore da Vida",
-        "description": "Não consome turno. Remove todos os Efeitos de Status e cura todos os aliados. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Não consome turno. Remove todos os efeitos negativos e cura completamente todos os aliados. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-tremor": {
         "name": "Tremor",
@@ -2198,7 +2215,7 @@
       },
       "maelle-mezzo-forte": {
         "name": "Mezzo Forte",
-        "description": "Reaplica a postura atual e faz teste de Habilidade CD 6: sucesso +4 PM, falha +2 PM."
+        "description": "Reaplica a postura atual e faz teste de Habilidade CD 7: sucesso +4 PM, falha +2 PM."
       },
       "maelle-percee": {
         "name": "Investida",
@@ -2210,11 +2227,11 @@
       },
       "maelle-guard-up": {
         "name": "Aumentar Guarda",
-        "description": "Escolha um aliado e faça um Teste de Habilidade CD 6. Sucesso: Aplica Escudo em toda a equipe por 3 turnos. Falha: Aplica Escudo apenas no alvo escolhido por 3 turnos. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Escolha um aliado e faça um Teste de Habilidade CD 7. Sucesso: Aplica Escudo em toda a equipe por 3 turnos. Falha: Aplica Escudo apenas no alvo escolhido por 3 turnos. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-swift-stride": {
         "name": "Passo Veloz",
-        "description": "Causa dano Físico baixo em alvo único. 1 ataque. Faz teste de Habilidade CD 6: sucesso +2 PM, falha 0 PM. Se o alvo estiver Queimando, muda para Postura Virtuosa."
+        "description": "Causa dano Físico baixo em alvo único. 1 ataque. Faz teste de Habilidade CD 7: sucesso +2 PM, falha 0 PM. Se o alvo estiver Queimando, muda para Postura Virtuosa."
       },
       "maelle-guard-down": {
         "name": "Diminuir Guarda",
@@ -2298,11 +2315,11 @@
       },
       "maelle-phoenix-flame": {
         "name": "Chama da Fênix",
-        "description": "Não consome turno. Aplica 10 Queimaduras em todos os inimigos. Revive todos os aliados. Faça um teste de habilidade CD 6. Se tiver sucesso, revive com Vida cheia. Se falhar, revive com metade da Vida. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Não consome turno. Aplica 10 Queimaduras em todos os inimigos. Revive todos os aliados. Faça um teste de habilidade CD 7. Se tiver sucesso, revive com Vida cheia. Se falhar, revive com metade da Vida. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "sciel-twilight-slash": {
         "name": "Corte Crepuscular",
-        "description": "Causa dano das Trevas baixo em alvo único. 1 ataque. Consome todas as Predições para aumentar o dano. Habilidade inicial de Sciel."
+        "description": "Causa dano das Trevas baixo em alvo único. 1 ataque. Consome todas as Predições do alvo e adiciona +2 de dano por Predição consumida."
       },
       "sciel-focused-foretell": {
         "name": "Presságio Focado",
@@ -2318,7 +2335,7 @@
       },
       "sciel-delaying-slash": {
         "name": "Corte Retardante",
-        "description": "Causa dano médio em alvo único. 2 ataques. Usa elemento da arma. Consome Predições para aumentar o dano e atrasar o turno do alvo."
+        "description": "Causa dano médio em alvo único. 2 ataques. Usa elemento da arma. Consome todas as Predições (+2 de dano por Predição) e atrasa o turno do alvo."
       },
       "sciel-dark-cleansing": {
         "name": "Purificação Sombria",
@@ -2326,7 +2343,7 @@
       },
       "sciel-dark-wave": {
         "name": "Onda Sombria",
-        "description": "Causa dano das Trevas alto em todos os inimigos. 3 ataques. Consome todas as Predições para aumentar o dano."
+        "description": "Causa dano das Trevas alto em todos os inimigos. 3 ataques. Consome todas as Predições (+2 de dano por Predição)."
       },
       "sciel-grim-harvest": {
         "name": "Colheita Sombria",
@@ -2342,27 +2359,27 @@
       },
       "sciel-phantom-blade": {
         "name": "Lâmina Fantasma",
-        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições para aumentar o dano. Pode causar quebra."
+        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições (+2 de dano por Predição). Pode causar quebra."
       },
       "sciel-sealed-fate": {
         "name": "Destino Selado",
-        "description": "Causa dano alto em alvo único. 5-7 ataques. Usa elemento da arma. Cada ataque pode consumir 1 Predição para causar dano dobrado."
+        "description": "Causa dano alto em alvo único. 6 ataques. Usa elemento da arma. Cada ataque consome 1 Predição (+2 de dano por Predição)."
       },
       "sciel-spectral-sweep": {
         "name": "Varredura Espectral",
-        "description": "Causa dano médio em alvo único. 2-6 ataques. Usa elemento da arma. Aplica 1 Predição por ataque. Acertos críticos aplicam Predição adicional."
+        "description": "Causa dano médio em alvo único. 4 ataques. Usa elemento da arma. Aplica 1 Predição por ataque. Acertos críticos aplicam Predição adicional."
       },
       "sciel-firing-shadow": {
         "name": "Sombra Flamejante",
-        "description": "Causa dano das Trevas baixo em todos os inimigos. 3 ataques. Consome 1 Predição por ataque para aumentar o dano."
+        "description": "Causa dano das Trevas baixo em todos os inimigos. 3 ataques. Cada ataque consome 1 Predição (+2 de dano por Predição)."
       },
       "sciel-fortunes-fury": {
         "name": "Fúria da Fortuna",
-        "description": "Um aliado alvo causa o dobro de dano durante 1 turno."
+        "description": "Aplica Fúria da Fortuna em um aliado alvo, concedendo +8 de dano por ataque durante 1 turno."
       },
       "sciel-our-sacrifice": {
         "name": "Nosso Sacrifício",
-        "description": "Causa dano das Trevas extremo em todos os inimigos. 1 ataque. Absorve Vida dos aliados e Predições dos inimigos para aumentar o dano."
+        "description": "Causa dano das Trevas extremo em todos os inimigos. 1 ataque. Reduz a Vida de todos os aliados (incluindo a si mesmo) para 1 (+1 de dano por HP drenado). Consome todas as Predições de todos os inimigos (+1 de dano por Predição)."
       },
       "sciel-plentiful-harvest": {
         "name": "Colheita Abundante",
@@ -2370,7 +2387,7 @@
       },
       "sciel-rush": {
         "name": "Investida",
-        "description": "Aplica Rapidez, aumentando a Velocidade por 3 turnos. Role 1d6: 1-2 aplica apenas no alvo, 3-6 aplica em todos os aliados."
+        "description": "Aplica Rapidez por 3 turnos. Faça um teste de habilidade CD 7. Se tiver sucesso, aplica em todos os aliados. Se falhar, aplica apenas no alvo."
       },
       "sciel-all-set": {
         "name": "Tudo Pronto",
@@ -2390,7 +2407,7 @@
       },
       "sciel-twilight-dance": {
         "name": "Dança Crepuscular",
-        "description": "Causa dano das Trevas extremo em alvo único. 4 ataques. Durante o Crepúsculo, estende a duração do Crepúsculo em 1 turno. Consome todas as Predições para aumentar o dano."
+        "description": "Causa dano das Trevas extremo em alvo único. 4 ataques. Durante o Crepúsculo, estende a duração do Crepúsculo em 1 turno. Consome todas as Predições (+2 de dano por Predição)."
       },
       "sciel-shadow-bringer": {
         "name": "Arauto das Sombras",
@@ -2398,11 +2415,11 @@
       },
       "sciel-doom": {
         "name": "Perdição",
-        "description": "Não consome turno. Causa dano das Trevas muito alto em alvo único. 3 ataques. Aplica Fraco, Desprotegido e Lento por 3 turnos. Pode causar quebra."
+        "description": "Não consome turno. Causa dano das Trevas muito alto em alvo único. 3 ataques. Aplica Enfraquecido, Desprotegido e Lento por 3 turnos. Pode causar quebra."
       },
       "sciel-end-slice": {
         "name": "Corte Final",
-        "description": "Não consome turno. Causa dano Físico extremo em alvo único. 1 ataque. O dano escala com a quantidade de Predições consumidas."
+        "description": "Não consome turno. Causa dano extremo em alvo único. 1 ataque. O dano aumenta em +1 para cada Predição consumida desde o início da batalha."
       },
       "verso-angels-eyes": {
         "name": "Olhos do Anjo",
@@ -2478,7 +2495,7 @@
       },
       "verso-powerful": {
         "name": "Poderoso",
-        "description": "Aplica Fortalecido (aumenta dano) em 1-3 aliados por 3 turnos. Rola 1d6: (1-3) apenas Verso, (4-6) toda equipe. Se Verso usar esta habilidade no Rank A de Perfeição, a duração aumenta para 5 turnos."
+        "description": "Aplica Fortalecido por 3 turnos. Faça um teste de habilidade CD 7. Se tiver sucesso, aplica em todos os aliados. Se falhar, aplica apenas em Verso. Se Verso usar esta habilidade no Rank A de Perfeição, a duração aumenta para 5 turnos."
       },
       "verso-purification": {
         "name": "Purificação",
@@ -2546,7 +2563,7 @@
       },
       "monoco-chalier-combo": {
         "name": "Combo Chalier",
-        "description": "Ataque combo de múltiplos golpes. Efeito: Causa dano Físico alto em alvo único. 6 ataques. Interrompido se falhar. Dano aumentado quando usado com Máscara Equilibrada ativa.\nPré-requisito: Habilidade inicial de Monoco, não requer pré-requisito."
+        "description": "Ataque combo de múltiplos golpes. Efeito: Causa dano Físico alto em alvo único. 6 ataques. Interrompido se falhar. Dano aumentado quando usado com Máscara Equilibrada ativa."
       },
       "monoco-chapelier-slash": {
         "name": "Corte do Chapeleiro",
@@ -2698,7 +2715,7 @@
       },
       "monoco-stalact-punches": {
         "name": "Socos Stalact",
-        "description": "Ataques de socos como estalactites. Efeito: Causa dano de Gelo médio em alvo único. 4 ataques. Alto dano de Break. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +4 posições.\nPré-requisito: Habilidade inicial de Monoco ao se juntar ao grupo, não requer pré-requisito."
+        "description": "Ataques de socos como estalactites. Efeito: Causa dano de Gelo médio em alvo único. 4 ataques. Alto dano de Break. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +4 posições."
       },
       "monoco-troubadour-trumpet": {
         "name": "Trombeta do Trovador",
@@ -2751,7 +2768,10 @@
       "errorUsing": "Erro ao usar o item",
       "errorCreating": "Erro ao criar item:",
       "errorUpdating": "Erro ao atualizar item:",
-      "errorDeleting": "Erro ao deletar item:"
+      "errorDeleting": "Erro ao deletar item:",
+      "editQuantity": "Editar Quantidade",
+      "editMaxQuantity": "Editar Máximo",
+      "newValue": "Novo valor"
     },
     "weapons": {
       "title": "Arma",
@@ -2865,56 +2885,57 @@
         "giveStatus": "Aplicar status"
       },
       "statusEffects": {
-        "Hastened": "Acelerado",
-        "Empowered": "Fortalecido",
+        "Hastened": "💨 Acelerado",
+        "Empowered": "💪 Fortalecido",
         "Protected": "Protegido",
-        "Regeneration": "Regeneração",
+        "Regeneration": "💚 Regeneração",
         "Unprotected": "Desprotegido",
-        "Slowed": "Lento",
+        "Slowed": "🐌 Lento",
         "Weakened": "Enfraquecido",
-        "Cursed": "Amaldiçoado",
-        "Stunned": "Atordoado",
+        "Cursed": "💀 Amaldiçoado",
+        "Stunned": "😵 Atordoado",
         "Confused": "Confuso",
-        "Frozen": "Congelado",
-        "Entangled": "Acorrentado",
-        "Shielded": "Escudado",
-        "Exhausted": "Exausto",
-        "Frenzy": "Frenesi",
-        "Rage": "Fúria",
-        "Inverted": "Invertido",
-        "Marked": "Marcado",
-        "Plagued": "Pesteado",
-        "Burning": "Queimando",
+        "Frozen": "❄️ Congelado",
+        "Entangled": "⛓️ Acorrentado",
+        "Shielded": "🛡️ Escudado",
+        "Exhausted": "😩 Exausto",
+        "Frenzy": "🗡️ Frenesi",
+        "Rage": "😡 Fúria",
+        "Inverted": "🔄 Invertido",
+        "Marked": "🎯 Marcado",
+        "Plagued": "☣️ Pesteado",
+        "Burning": "🔥 Queimando",
         "StormCaller": "⚡ Tempestade",
-        "Silenced": "Silenciado",
-        "Dizzy": "Tonto",
+        "Typhoon": "🌀 Tufão",
+        "Silenced": "🔇 Silenciado",
+        "Dizzy": "💫 Tonto",
         "Fragile": "Frágil",
         "Broken": "Quebrado",
-        "Fleeing": "Fugindo",
+        "Fleeing": "🏃 Fugindo",
         "FireVulnerability": "Vulnerável a Fogo",
         "Guardian": "Guardião",
-        "Foretell": "Predição",
+        "Foretell": "🔮 Predição",
         "Twilight": "🌕 Crepúsculo",
         "Powerless": "Impotente",
         "Rush": "Pressa",
-        "Burn": "Queimar",
-        "Shield": "Escudo",
-        "Powerful": "Poderoso",
-        "Shell": "Carapaça",
-        "Slow": "Lento",
-        "Freeze": "Congelar",
+        "Burn": "🔥 Queimar",
+        "Shield": "🛡️ Escudo",
+        "Powerful": "💪 Poderoso",
+        "Shell": "🐚 Carapaça",
+        "Slow": "🐌 Lento",
+        "Freeze": "❄️ Congelar",
         "GreaterRush": "Pressa Maior",
         "GreaterSlow": "Lentidão Maior",
         "EnfeeblingMark": "Marca Enfraquecedora",
         "DamageReduction": "Redução de Dano",
-        "SuccessiveParry": "Aparar Sucessivo",
-        "Aureole": "Auréola",
-        "Vulnerable": "Vulnerável",
-        "DoubleDamage": "Dano Dobrado",
-        "Regen": "Regeneração",
-        "Curse": "Maldição",
-        "IntenseFlames": "Chamas Intensas",
-        "Earthquake": "Terremoto",
+        "SuccessiveParry": "⚔️ Aparar Sucessivo",
+        "Aureole": "✨ Auréola",
+        "Vulnerable": "💔 Vulnerável",
+        "FortunesFury": "🃏 Fúria da Fortuna",
+        "Regen": "💚 Regeneração",
+        "Curse": "💀 Maldição",
+        "IntenseFlames": "🔥 Chamas Intensas",
+        "Earthquake": "🌍 Terremoto",
         "freeShot": "Free Shot",
         "jump": "Pular",
         "gradient": "Gradiente",
@@ -2925,6 +2946,7 @@
         "Shielded": "Cada escudo anula um ataque completamente.",
         "Burning": "Causa dano no início do turno. Cada queimadura causa 1d6 de dano.",
         "StormCaller": "Causa dano de Raio no início do turno. Cada stack causa 1d6 de dano de Raio.",
+        "Typhoon": "Causa dano de Gelo no início do turno. Cada stack causa 1d6 de dano de Gelo.",
         "Hastened": "Melhora a esquiva e o pulo.",
         "Slowed": "Dificulta a esquiva e o pulo.",
         "Empowered": "Melhora seu ataque.",
@@ -2950,7 +2972,7 @@
         "FireVulnerability": "O personagem recebe dano aumentado de ataques de Fogo.",
         "Guardian": "Protege aliados recebendo dano no lugar deles quando são atacados.",
         "Foretell": "Cada acúmulo de Predição aumenta o dano causado por Sciel. Consumido por certas habilidades.",
-        "Twilight": "Estado místico de Sciel que concede +150% de dano, dobro de Predição infligida (até 40 máximo) e impede ganho de cargas Sol/Lua. Ativado ao ter pelo menos 1 carga de Sol e 1 de Lua simultaneamente.",
+        "Twilight": "Estado místico de Sciel. Cada ataque causa +2 de dano por carga acumulada. Dobra o máximo de Predição (até 20). Impede ganho de cargas Sol/Lua. Ativado ao ter pelo menos 1 carga de Sol e 1 de Lua.",
         "Powerless": "O personagem não pode usar habilidades ou causar dano.",
         "Rush": "Aumenta a velocidade e a capacidade de ataque do personagem.",
         "Burn": "Causa dano de fogo contínuo ao personagem.",
@@ -2966,7 +2988,7 @@
         "SuccessiveParry": "Melhora a capacidade de aparar ataques consecutivos.",
         "Aureole": "Revive o personagem com 30% de HP quando ele morre. Consumido ao ser usado.",
         "Vulnerable": "O personagem recebe dano aumentado de todas as fontes.",
-        "DoubleDamage": "O próximo ataque causa o dobro de dano.",
+        "FortunesFury": "Cada ataque causa +8 de dano durante 1 turno.",
         "Regen": "Regenera pontos de vida ao longo do tempo.",
         "Curse": "Maldição que causa efeitos negativos contínuos.",
         "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano. Se o personagem estiver frágil, sofre quebra e recebe 150% do dano que causou a quebra.",
@@ -3050,7 +3072,8 @@
         "parriesReducedCost": "{count} Aparada(s) bem sucedida(s)! Custo reduzido de {original} para {new} PM",
         "fireVulnerability": "Alvo vulnerável a Fogo! Dano x2!",
         "foretellConsumed": "{target}: Predição consumida! Dano x{multiplier}",
-        "stainsConsumed": "{count} Mancha(s) consumida(s)! Dano +{percent}%",
+        "stainsConsumed": "{count} Mancha(s) consumida(s)! Dano +{bonus}",
+        "stainsConsumedNoDamage": "{count} Mancha(s) consumida(s)!",
         "aegidExtended": "Duração do Égide estendida! (3 turnos)",
         "criticalExtraHit": "Crítico! +1 acerto extra!",
         "gradientChargesConsumed": "{count} Carga(s) de Gradiente consumida(s)!",
@@ -3058,12 +3081,20 @@
         "allDebuffsRemoved": "Todos os debuffs removidos dos aliados!",
         "allyHealed": "{name} curado em {percent}% ({amount} HP)!",
         "healedFor": "Curou {amount} HP!",
+        "allAlliesHealedFor": "Todos os aliados curaram {amount} HP!",
         "debuffsRemovedFrom": "Debuffs removidos de {name}!",
         "gainedCharges": "ganhou {amount} carga(s)!",
         "shatterFullCharge": "Quebra! Cargas totalmente carregadas!",
         "revivedFullHp": "{name} reviveu com vida cheia! ({hp} HP)",
         "revivedHalfHp": "{name} reviveu com metade da vida! ({hp} HP)",
         "noDeadAlliesToRevive": "Não há aliados mortos para reviver!",
+        "revivedWithRoll": "{name} reviveu com {percent}% de vida! ({hp} HP) [Rolou {roll}]",
+        "grantedMpToRevived": "{name} recebeu +{mp} PM!",
+        "targetNotDead": "O alvo não está morto!",
+        "scopeRollAll": "Rolou {roll}: Cura todos os aliados!",
+        "scopeRollSingle": "Rolou {roll}: Cura 1 aliado!",
+        "healedTarget": "{name} curou {amount} HP!",
+        "regenerationApplied": "Regeneração aplicada por {turns} turnos!",
         "bonusDamageVsMarked": "Alvo Marcado! +{bonus} de dano!",
         "burnConsumptionBonus": "Consumiu {stacks} Queimaduras! +{bonus} de dano!",
         "buffsCopied": "Buffs copiados para outros aliados!",
@@ -3097,6 +3128,13 @@
         "rolledDiceRevivingAlly": "Rolou {value}! Revivendo {name} com {percent}% de HP!",
         "allyRevivedWithMP": "{name} revivido com 2 PM!",
         "twilightExtended": "Duração do Crepúsculo estendida! (+1 turno)",
+        "sunChargeGained": "Carga de Sol obtida!",
+        "moonChargeGained": "Carga de Lua obtida!",
+        "sunMoonChargeBonus": "+{bonus} de dano pelas cargas ({charges})!",
+        "twilightActivated": "Crepúsculo ativado ({charges} cargas)!",
+        "twilightDamageBonus": "+{bonus} de dano pelo Crepúsculo ({charges} cargas)!",
+        "critExtraHit": "Crítico! Hit extra adicionado!",
+        "randomHitCount": "Hits aleatórios: {hits}",
         "turnDelayed": "Turno atrasado em {positions} posições!",
         "stanceBonusApplied": "Bonus de postura! +{count} Queimaduras por acerto",
         "absorptionHeal": "Absorção! Cura de {percent}% HP ({amount})",
@@ -3149,22 +3187,35 @@
         "rankSetToS": "Rank de Perfeição definido como S!",
         "hpCost": "Custo de HP: {amount}",
         "statusTransferred": "{count} efeito(s) de status transferido(s)!",
+        "rankGrantedMp": "+{mp} PM concedido (Bônus de Rank)!",
+        "stunReapplied": "Atordoamento reaplicado em {name}!",
+        "playsSecondTime": "Joga uma segunda vez! (Hits dobrados)",
+        "chargingStarted": "Carregando... O ataque será executado no próximo turno!",
+        "chargingReleased": "Carga liberada! Executando ataque!",
         "mpReturned": "+{amount} PM retornado!",
         "mpGrantedToAllies": "+{amount} PM concedido aos aliados!",
         "wheelAdvanced": "Roda Bestial avançou para {mask}!",
         "forcedToAlmighty": "Forçado para Máscara Onipotente!",
+        "damageEscalation": "Escalação de Dano: {stacks} uso(s) (+{bonus}%)",
+        "damageEscalationActive": "Bônus de Escalação ativo: +{bonus}%",
+        "alliesHealedPerHit": "Aliados curados em {percent}% HP!",
+        "mpGainedFromBurning": "+{amount} PM ganho (alvo Queimando)!",
+        "mpGrantedAtHeavy": "+{amount} PM concedido (Máscara Pesada)!",
         "hpSacrificed": "{amount} HP sacrificado!",
         "mpGrantedAtCaster": "+{amount} PM concedido (Máscara Conjurador)!",
         "healedAtCaster": "+{percent}% HP curado (Máscara Conjurador)!",
         "randomBuffsApplied": "{buffs} buff(s) aplicado(s) a {count} aliado(s)!",
         "healedPerHit": "+{amount} HP curado pelos acertos!",
         "foretellConsumedCount": "{count} Presságio consumido!",
-        "foretellDamageBonus": "+{bonus} dano por Presságio!",
+        "foretellDamageBonus": "+{bonus} de dano pelos Presságios!",
+        "foretellHealBonus": "+{bonus} cura por Presságio!",
+        "foretellMpGained": "+{amount} PM pelos Presságios consumidos!",
+        "foretellConsumedTotalBonus": "+{bonus} de dano ({bonus} Presságios consumidos na batalha)!",
         "foretellConsumedFromAll": "{count} Presságio consumido de todos os inimigos!",
         "foretellRedistributed": "{count} Presságio redistribuído para {enemies} inimigo(s)!",
         "noForetellToRedistribute": "Nenhum Presságio para redistribuir!",
         "noOtherEnemiesToRedistribute": "Nenhum outro inimigo para redistribuir Presságio!",
-        "extraTurnGranted": "{name} terá um turno extra!",
+        "extraTurnGranted": "{name} jogará o próximo turno!",
         "hpDrainedFromAllies": "{amount} HP drenado dos aliados!",
         "mpGrantedToLowest": "+{amount} PM concedido a {name}!",
         "burnDamagePropagated": "{damage} dano propagado para {count} inimigo(s) queimando!",

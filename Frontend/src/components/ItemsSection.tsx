@@ -70,6 +70,8 @@ function ElixirsCard({
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
     const [recoveryPercent, setRecoveryPercent] = useState(30);
     const [inputValue, setInputValue] = useState("30");
+    const [editQtyModal, setEditQtyModal] = useState<{ elixirId: string; field: "quantity" | "max"; currentValue: number } | null>(null);
+    const [editQtyValue, setEditQtyValue] = useState("");
 
     const hasDeadTeammate = useMemo(() => {
         if (!player?.fightInfo?.characters) return false;
@@ -274,6 +276,20 @@ function ElixirsCard({
         }
     }
 
+    function confirmEditQty() {
+        if (!editQtyModal) return;
+        let num = Math.max(0, Number(editQtyValue) || 0);
+        if (editQtyModal.field === "quantity") {
+            const item = player?.items?.find(i => i.itemId === editQtyModal.elixirId);
+            const max = item?.maxQuantity ?? 0;
+            if (max > 0) num = Math.min(num, max);
+            updateElixir(editQtyModal.elixirId, num);
+        } else {
+            updateElixirMaxQuantity(editQtyModal.elixirId, num);
+        }
+        setEditQtyModal(null);
+    }
+
     async function confirmUseItem() {
         if (!selectedItemId) return;
         closeRecoveryModal();
@@ -327,6 +343,37 @@ function ElixirsCard({
                 </div>
             </Modal>
 
+            <Modal
+                open={editQtyModal !== null}
+                onClose={() => setEditQtyModal(null)}
+                title={editQtyModal?.field === "max" ? t("items.editMaxQuantity") : t("items.editQuantity")}
+            >
+                <div className="p-4 flex flex-col gap-4">
+                    <div>
+                        <label className="block text-sm opacity-80 mb-2">
+                            {t("items.newValue")}
+                        </label>
+                        <input
+                            type="number"
+                            min={0}
+                            className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                            value={editQtyValue}
+                            onChange={(e) => setEditQtyValue(e.target.value)}
+                            autoFocus
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") confirmEditQty();
+                            }}
+                        />
+                    </div>
+                    <button
+                        className="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                        onClick={confirmEditQty}
+                    >
+                        {t("common.confirm")}
+                    </button>
+                </div>
+            </Modal>
+
             <div className="rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
                 <div className="px-6 py-3 border-b border-white/10 text-lg tracking-widest text-center opacity-90">
                     {t("items.elixirs").toUpperCase()}
@@ -361,7 +408,10 @@ function ElixirsCard({
                                 >
                                     <FaChevronLeft size={14} />
                                 </button>
-                                <div className="text-lg font-semibold w-10 text-center">{qty}</div>
+                                <div
+                                    className="text-lg font-semibold w-10 text-center cursor-pointer hover:text-blue-400 transition-colors"
+                                    onClick={() => { setEditQtyModal({ elixirId: e.id, field: "quantity", currentValue: qty }); setEditQtyValue(String(qty)); }}
+                                >{qty}</div>
                                 <button
                                     className="p-1 rounded bg-white/10 hover:bg-white/20"
                                     onClick={() => {
@@ -382,7 +432,10 @@ function ElixirsCard({
                                 >
                                     <FaChevronLeft size={12} />
                                 </button>
-                                <div className="w-8 text-center">{max}</div>
+                                <div
+                                    className="w-8 text-center cursor-pointer hover:text-blue-400 transition-colors"
+                                    onClick={() => { setEditQtyModal({ elixirId: e.id, field: "max", currentValue: max }); setEditQtyValue(String(max)); }}
+                                >{max}</div>
                                 <button
                                     className="p-1 rounded bg-white/10 hover:bg-white/20"
                                     onClick={() => updateElixirMaxQuantity(e.id, max + 1)}

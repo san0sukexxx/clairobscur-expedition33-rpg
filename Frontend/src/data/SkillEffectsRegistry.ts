@@ -60,11 +60,12 @@ export interface SkillMetadata {
     increasedCritDamage?: number;        // Flat bonus damage added per critical hit (Sword Ballet: +4)
     consumesForetell?: boolean;          // Consumes all Foretell stacks from target for bonus damage/heal (Twilight Slash, Harvest)
     foretellDamageBonus?: number;        // Damage bonus per Foretell consumed (default 2 = +2 damage per stack)
-    foretellHealBonus?: number;          // Heal bonus per Foretell consumed (e.g., 5 = +5% heal per stack for Harvest)
+    foretellHealBonus?: number;          // Flat heal bonus per Foretell consumed (e.g., 1 = +1 heal per stack for Harvest)
     extendsTwilight?: boolean;           // Extends Twilight status duration by 1 turn if source has Twilight (Twilight Dance)
     delaysTurn?: number;                 // Delays target's turn by this many positions (Delaying Slash: 2)
     consumesForetellPerHit?: boolean;    // Consumes 1 Foretell per hit for damage bonus (Sealed Fate: 200% = 3x total)
-    foretellPerHitMultiplier?: number;   // Damage multiplier when consuming Foretell per hit (default 3.0 = 200% bonus)
+    foretellPerHitBonus?: number;        // Flat damage bonus when consuming Foretell per hit (default 4)
+    usesForetellConsumedTotal?: boolean;  // Damage +1 per Foretell consumed since battle start (End Slice)
     appliesForetellOnCrit?: number;      // Applies additional Foretell stacks on critical hits (Spectral Sweep: +1 per crit)
     propagatesBurnDamage?: boolean;      // Propagates damage to other Burning enemies (Searing Bond: 50% damage + 1 Foretell)
     grantsMpPerForetell?: number;        // Grants MP to ally with lowest MP% per Foretell consumed (Plentiful Harvest: 1 MP per stack)
@@ -99,11 +100,14 @@ export interface SkillMetadata {
     doublesHealAtCasterMask?: boolean;   // Doubles healing amount when at Caster/Almighty Mask (Sapling Absorption)
     appliesRandomBuffs?: boolean;        // Applies random buffs to random allies (Troubadour Trumpet: 1-3 allies get 1 buff, 2 buffs at Caster/Almighty)
     doublesBuffsAtCasterMask?: boolean;  // Applies double the buffs when at Caster/Almighty Mask (Troubadour Trumpet)
+    healsAlliesHpPercentPerHit?: number; // Heals all allies this % of their max HP per enemy hit (Contorsionniste Blast: 10%)
+    grantsMpAtHeavyMask?: number;        // Grants this much MP to target if at Heavy/Almighty Mask (Cruler Barrier: 2)
 
     // Lune's Stain System
     consumesStains?: Array<{ stain: "Lightning" | "Earth" | "Fire" | "Ice"; count: number }>;  // Stains consumed for enhanced effect (each stain = +25% damage)
     noStainDamageBonus?: boolean;        // If true, consuming stains does NOT grant damage bonus (Electrify)
     consumeStainsForFreeCast?: boolean;  // If true, having sufficient stains reduces MP cost to 0 (Healing Light, Rebirth)
+    grantsMpIfTargetBurning?: number;    // Grants this much MP to self if target is Burning (Thermal Transfer: 4)
     stainGrantsSecondTurn?: boolean;     // Grants a second turn when stains consumed (Thermal Transfer)
     stainDoublesDamage?: boolean;        // Doubles damage when stains consumed (Storm Caller)
     stainGrantsRegeneration?: boolean;   // Applies Regeneration when stains consumed (Revitalization)
@@ -112,6 +116,7 @@ export interface SkillMetadata {
     requiresAllStains?: boolean;         // Requires Lightning, Earth, Fire, and Ice to cast (Elemental Genesis)
     stainDeterminedElement?: boolean;    // Element determined by stain composition (Sky Break)
     canBreakWithStains?: boolean;        // Can Break if 4 stains consumed (Mayhem)
+    hitsMatchConsumedStains?: boolean;   // Hit count = stains consumed, each hit uses stain's element (Mayhem)
     randomElementPerHit?: boolean;       // Each hit uses a random element (Elemental Genesis)
     randomElements?: Element[];          // Array of elements to randomly choose from per hit
 
@@ -121,7 +126,7 @@ export interface SkillMetadata {
     bonusPerfectionOnCrit?: number;      // Fixed bonus if ANY critical hit occurs (not multiplied) (Assault Zero: +10 = 1 full rank)
     rankConditionalBonus?: {              // Additional bonuses when used at specific rank
         rank: string;
-        damageMultiplier?: number;        // Additional damage multiplier (Assault Zero at B: +50%)
+        damageBonus?: number;             // Additional flat damage bonus at rank
         bonusMpReturn?: number;           // Extra MP returned (Fleuret Fury at C: +1)
         grantsMp?: number;                // MP granted (Poignée Forte at A: +2)
         bonusMpToAllies?: number;         // Extra MP to allies (Fleuret Eperdu at C: +1)
@@ -158,10 +163,11 @@ export interface SkillMetadata {
         dice: string;                     // Dice to roll (e.g., "1d6")
     };
 
-    // Unconditional heal with dice roll (Recovery)
+    // Unconditional heal with dice roll (Recovery, Harvest, Grim Harvest)
     healWithRoll?: {
         baseStat: "resistance" | "power"; // Base stat for heal calculation
         dice: string;                     // Dice to roll (e.g., "2d6")
+        healTarget?: "self" | "all-allies"; // Who to heal (default: "self")
     };
 
     // Grant charges unconditionally (Recovery: 2)
@@ -190,6 +196,20 @@ export interface SkillMetadata {
         dc: number;                        // DC for ability test
         onSuccess: { hpPercent: number };  // % of max HP on success
         onFailure: { hpPercent: number };  // % of max HP on failure
+    };
+
+    // Revival with dice roll tiers (Rebirth)
+    reviveWithDiceRoll?: {
+        tiers: Array<{ minRoll: number; maxRoll: number; hpPercent: number }>;
+        grantsMp?: number;                 // MP to grant to revived ally
+    };
+
+    // Heal with hability test for scope (Revitalization)
+    healWithHabilityTest?: {
+        dc: number;                        // DC for hability test
+        successHealDice: string;           // Dice on success - heals all allies (e.g., "3d6")
+        failureHealDice: string;           // Dice on failure - heals single target (e.g., "2d6")
+        baseStat: "resistance" | "power";
     };
 }
 
@@ -505,7 +525,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         canTargetSelf: true,                 // Can also target self
         changesStanceTo: "Offensive",        // Changes stance to Offensive when used
-        habilityTestForScope: { dc: 6 },     // Hability test DC 6: success = all allies, failure = single target
+        habilityTestForScope: { dc: 7 },     // Hability test DC 7: success = all allies, failure = single target
         primaryEffects: [
             {
                 effectType: "Protected",  // Shell - reduces damage taken, extends Egide duration
@@ -592,7 +612,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         forcedElement: "Physical",
         switchesToVirtuoseIfBurning: true,  // Switches to Virtuose if target is burning
-        grantsMPWithTest: { dc: 6, onSuccess: 2, onFailure: 0 },  // Hability test DC 6
+        grantsMPWithTest: { dc: 7, onSuccess: 2, onFailure: 0 },  // Hability test DC 7
         primaryEffects: [],
         conditionalEffects: []
     },
@@ -674,8 +694,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "self",
         usesWeaponElement: false,
         reappliesStance: true,           // Reapplies current stance
-        grantsMPWithTest: {              // Hability test DC 6: success = 4 MP, failure = 2 MP
-            dc: 6,
+        grantsMPWithTest: {              // Hability test DC 7: success = 4 MP, failure = 2 MP
+            dc: 7,
             onSuccess: 4,
             onFailure: 2
         },
@@ -742,7 +762,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         ],
         conditionalEffects: [],
         revivesDeadAllies: {
-            dc: 6,                           // DC 6 ability test
+            dc: 7,                           // DC 7 ability test
             onSuccess: { hpPercent: 100 },   // Full HP on success
             onFailure: { hpPercent: 50 }     // Half HP on failure
         }
@@ -864,16 +884,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [],
         consumesStains: [{ stain: "Earth", count: 2 }],  // Consumes 2 Earth for second turn
         stainGrantsSecondTurn: true,  // Grants second turn when 2 Earth consumed
-        gainsStains: ["Ice", "Light"]
-        // Gains 4 MP if target is Burning (implemented in battle logic)
+        gainsStains: ["Ice", "Light"],
+        grantsMpIfTargetBurning: 4
     },
 
     "lune-thunderfall": {
         skillId: "lune-thunderfall",
         damageLevel: "medium",
-        hitCount: 4,  // Average of 2-6 hits
-        minHits: 2,
-        maxHits: 6,
+        hitCount: 4,
         targetScope: "random",
         usesWeaponElement: false,
         forcedElement: "Lightning",
@@ -918,13 +936,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
     "lune-mayhem": {
         skillId: "lune-mayhem",
         damageLevel: "high",
-        hitCount: 1,
+        hitCount: 0,  // Dynamic: determined by stains consumed
         targetScope: "single",
         usesWeaponElement: false,
-        stainDeterminedElement: true,  // Element determined by dominant stain type
         primaryEffects: [],
         conditionalEffects: [],
+        noStainDamageBonus: true,  // Stains determine hits, not damage bonus
         canBreakWithStains: true,  // Can Break if 4+ stains consumed
+        hitsMatchConsumedStains: true,  // Each hit uses the element of the consumed stain
         consumesStains: [
             { stain: "Lightning", count: 99 },
             { stain: "Earth", count: 99 },
@@ -1010,7 +1029,16 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Light",
         primaryEffects: [],
         conditionalEffects: [],
-        consumesStains: [{ stain: "Lightning", count: 3 }],  // Consumes 3 Lightning for 0 MP cost
+        consumesStains: [{ stain: "Lightning", count: 3 }],
+        consumeStainsForFreeCast: true,  // Having 3 Lightning stains reduces cost to 0 MP
+        reviveWithDiceRoll: {
+            tiers: [
+                { minRoll: 1, maxRoll: 2, hpPercent: 25 },   // 1-2: pouca vida
+                { minRoll: 3, maxRoll: 4, hpPercent: 50 },   // 3-4: metade da vida
+                { minRoll: 5, maxRoll: 6, hpPercent: 100 }   // 5-6: vida cheia
+            ],
+            grantsMp: 2  // +2 PM ao aliado revivido
+        },
         gainsStains: ["Light"]
     },
 
@@ -1018,17 +1046,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "lune-revitalization",
         damageLevel: "none",
         hitCount: 0,
-        targetScope: "ally",  // Can target single ally or use without target to heal all
-        canTargetSelf: true,  // Allow healing self
+        targetScope: "ally",
+        canTargetSelf: true,
         usesWeaponElement: false,
         forcedElement: "Light",
-        primaryEffects: [
-            {
-                effectType: "Heal",
-                amount: 0,  // 40-60% Health (determined by dice roll)
-                targetType: "ally"
-            }
-        ],
+        primaryEffects: [],
         conditionalEffects: [
             {
                 effectType: "Regeneration",
@@ -1039,7 +1061,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         consumesStains: [{ stain: "Fire", count: 3 }],  // Consumes 3 Fire to apply Regeneration
-        randomAllyCount: { min: 1, max: 1 },  // Flag for Revitalization special handling
+        healWithHabilityTest: {
+            dc: 7,
+            successHealDice: "3d6",    // Success: Resistance + 3d6 (all allies)
+            failureHealDice: "2d6",    // Failure: Resistance + 2d6 (single target)
+            baseStat: "resistance"
+        },
         gainsStains: ["Light"]
     },
 
@@ -1108,12 +1135,17 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
     "lune-typhoon": {
         skillId: "lune-typhoon",
         damageLevel: "high",
-        hitCount: 0,  // Duration-based (3-5 turns)
+        hitCount: 0,  // Utility: applies status effects, no direct hits
         targetScope: "all",
         usesWeaponElement: false,
         forcedElement: "Ice",
-        primaryEffects: [],
+        primaryEffects: [
+            { effectType: "Typhoon", amount: 4, remainingTurns: 3, targetType: "all-enemies" },
+            { effectType: "Regeneration", amount: 2, remainingTurns: 3, targetType: "all-allies" }
+        ],
         conditionalEffects: [],
+        stainExtendsDoT: { baseDuration: 3, extendedDuration: 5 },
+        noStainDamageBonus: true,
         consumesStains: [{ stain: "Earth", count: 2 }],
         gainsStains: ["Ice", "Light"]
     },
@@ -1266,7 +1298,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [],
         gainsPerfectionPerHit: 2,  // +2 per hit (total: 10), +3 if critical
         criticalGivesPerfectionBonus: true,  // Critical hits give +1 extra Perfection
-        rankConditionalBonus: { rank: "B", damageMultiplier: 1.5 }  // At Rank B: +50% damage bonus
+        rankConditionalBonus: { rank: "B", damageBonus: 4 }  // At Rank B: +50% damage bonus
         // Starting skill for Verso
     },
 
@@ -1285,7 +1317,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 condition: "target-burning"  // Only heals if target has Burning status
             }
         ],
-        rankConditionalBonus: { rank: "B", damageMultiplier: 1.5 }  // At Rank B: additional +50% damage
+        rankConditionalBonus: { rank: "B", damageBonus: 4 }  // At Rank B: additional +50% damage
         // Perfection: B Rank = Increased damage (+50% additional, stacks with B's base +40% = +90% total)
         // Heals 20% HP if target Burns
     },
@@ -1359,7 +1391,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        rollsForTargetScope: true,  // Rolls 1d6: 1-3 = self only, 4-6 = all allies
+        habilityTestForScope: { dc: 7 },  // Hability test DC 7: success = all allies, failure = self only
         rankConditionalDuration: { rank: "A", duration: 5 }  // At A Rank: 5 turns instead of 3
         // Perfection: A Rank = Duration extends to 5 turns
         // Gives 0-2 Perfection
@@ -1380,7 +1412,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        rankConditionalBonus: { rank: "B", damageMultiplier: 1.25 }  // At B Rank: +25% damage
+        rankConditionalBonus: { rank: "B", damageBonus: 3 }  // At B Rank: +25% damage
     },
 
     "verso-blitz": {
@@ -1455,7 +1487,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         canBreak: true,
-        rankConditionalBonus: { rank: "C", damageMultiplier: 1.25 }  // At C Rank: +25% damage
+        rankConditionalBonus: { rank: "C", damageBonus: 3 }  // At C Rank: +25% damage
     },
 
     "verso-perfect-break": {
@@ -1539,7 +1571,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         scalesWithSpeedDifference: true,  // Damage increased by Speed difference with target
-        rankConditionalBonus: { rank: "C", damageMultiplier: 1.25 }  // At C Rank: +25% damage
+        rankConditionalBonus: { rank: "C", damageBonus: 3 }  // At C Rank: +25% damage
     },
 
     "verso-light-holder": {
@@ -1597,7 +1629,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         conditionalEffects: [],
         requiresOneTurnDelay: true,  // After 1 turn, deals damage
         interruptedIfDamaged: true,  // Interrupted if any damage taken during charge
-        rankConditionalBonus: { rank: "S", damageMultiplier: 1.25 }  // At S Rank: +25% damage
+        rankConditionalBonus: { rank: "S", damageBonus: 3 }  // At S Rank: +25% damage
     },
 
     // Gradient Skills
@@ -1947,7 +1979,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        bestialWheelAdvance: 2
+        bestialWheelAdvance: 2,
+        healsAlliesHpPercentPerHit: 10
         // Bestial Wheel: +2 positions
         // Heals all allies by 10% HP per enemy hit
         // Bonus damage at Balanced or Almighty Mask
@@ -2153,7 +2186,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
                 targetType: "enemy"
             }
         ],
-        conditionalEffects: []
+        conditionalEffects: [],
+        bestialWheelAdvance: 4
         // Bestial Wheel: +4 positions
         // Bonus damage at Heavy or Almighty Mask
     },
@@ -2434,7 +2468,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        bestialWheelAdvance: 4
+        bestialWheelAdvance: 4,
+        grantsMpAtHeavyMask: 2
         // Bestial Wheel: +4 positions
         // Grants 2 MP to target at Heavy/Almighty Mask
     },
@@ -2668,15 +2703,13 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
     "sciel-sealed-fate": {
         skillId: "sciel-sealed-fate",
         damageLevel: "high",  // 150% weapon damage per hit
-        hitCount: 6,  // Average of 5-7 hits
-        minHits: 5,
-        maxHits: 7,
+        hitCount: 6,
         targetScope: "single",
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
         consumesForetellPerHit: true,    // Each hit consumes 1 Foretell
-        foretellPerHitMultiplier: 3.0    // 200% bonus = 3x damage when consuming
+        foretellPerHitBonus: 2    // +2 flat damage when consuming Foretell per hit
     },
 
     "sciel-shadow-bringer": {
@@ -2745,6 +2778,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "sciel-dark-cleansing",
         damageLevel: "none",  // 0% damage
         hitCount: 0,
+        canTargetSelf: true,
         targetScope: "ally",  // Aliado alvo
         usesWeaponElement: false,
         primaryEffects: [],
@@ -2772,16 +2806,15 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: false,
         forcedElement: "Dark",
-        primaryEffects: [
-            {
-                effectType: "Heal",
-                amount: 30,  // 30% max HP base
-                targetType: "all-allies"
-            }
-        ],
+        primaryEffects: [],
         conditionalEffects: [],
         consumesForetell: true,        // Consome todas as Predições do alvo
-        foretellHealBonus: 5           // +5% de cura por Predição consumida (cura todos aliados)
+        foretellHealBonus: 1,          // +1 de cura por Predição consumida (cura todos aliados)
+        healWithRoll: {
+            baseStat: "resistance",
+            dice: "1d6",
+            healTarget: "all-allies"
+        }
     },
 
     "sciel-harvest": {
@@ -2790,16 +2823,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 1,
         targetScope: "single",
         usesWeaponElement: true,
-        primaryEffects: [
-            {
-                effectType: "Heal",
-                amount: 40,  // 40% max HP base
-                targetType: "self"
-            }
-        ],
+        primaryEffects: [],
         conditionalEffects: [],
         consumesForetell: true,        // Consome todas as Predições do alvo
-        foretellHealBonus: 5           // +5% de cura por Predição consumida
+        foretellHealBonus: 1,          // +1 de cura por Predição consumida
+        healWithRoll: {
+            baseStat: "resistance",
+            dice: "2d6"
+        }
     },
 
     "sciel-searing-bond": {
@@ -2818,7 +2849,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        propagatesBurnDamage: true  // ✅ Propaga 50% dano + 1 Predição para outros inimigos queimando
+        propagatesBurnDamage: true  // ✅ Propaga 50% dano + mesma quantidade de Predição para outros inimigos queimando
     },
 
     "sciel-phantom-blade": {
@@ -2837,10 +2868,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
 
     "sciel-spectral-sweep": {
         skillId: "sciel-spectral-sweep",
-        damageLevel: "medium",  // 100% weapon damage (2-6 hits variable)
-        hitCount: 4,  // Average of 2-6 hits
-        minHits: 2,
-        maxHits: 6,
+        damageLevel: "medium",  // 100% weapon damage
+        hitCount: 4,
         targetScope: "single",
         usesWeaponElement: true,
         primaryEffects: [
@@ -2865,7 +2894,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         consumesForetellPerHit: true,    // ✅ Cada hit consome 1 Predição
-        foretellPerHitMultiplier: 2.0    // ✅ 100% bonus = 2x dano total quando consome
+        foretellPerHitBonus: 2    // +2 flat damage when consuming Foretell per hit
     },
 
     "sciel-fortunes-fury": {
@@ -2876,7 +2905,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "DoubleDamage",  // Double (2x) damage for 1 turn
+                effectType: "FortunesFury",  // +8 flat damage per hit for 1 turn
                 amount: 0,
                 remainingTurns: 1,
                 targetType: "ally"
@@ -2915,8 +2944,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         skillId: "sciel-rush",
         damageLevel: "none",  // No damage, buff only
         hitCount: 0,
-        targetScope: "ally",  // Can be single or all allies based on dice roll
-        rollsForTargetScope: true,  // Roll 1d6 to determine if single ally or all allies
+        targetScope: "ally",
+        canTargetSelf: true,
+        habilityTestForScope: { dc: 7 },  // Hability test DC 7: success = all allies, failure = single target
         usesWeaponElement: false,
         primaryEffects: [
             {
@@ -3019,12 +3049,11 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
 
     "sciel-end-slice": {
         skillId: "sciel-end-slice",
-        damageLevel: "extreme",  // 250% weapon damage (Gradiente)
+        damageLevel: "extreme",
         hitCount: 1,
         targetScope: "single",
         usesWeaponElement: true,
-        consumesForetell: true,          // Consumes all Foretell from target
-        foretellDamageBonus: 10,         // +10 damage per Foretell consumed
+        usesForetellConsumedTotal: true,  // +1 damage per Foretell consumed since battle start
         primaryEffects: [],
         conditionalEffects: []
     }

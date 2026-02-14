@@ -642,6 +642,122 @@ class BattleCharacterService(
                 )
         }
 
+        @Transactional
+        fun updateBestialWheelPosition(id: Int, newPosition: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                entity.bestialWheelPosition = newPosition.coerceIn(0, 8)
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "BESTIAL_WHEEL_CHANGED", eventJson = """{"characterId":${entity.id},"position":${entity.bestialWheelPosition}}""")
+                )
+        }
+
+        @Transactional
+        fun updateCharacterSunMoonCharges(id: Int, sunCharges: Int?, moonCharges: Int?) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                if (sunCharges != null) {
+                        entity.sunCharges = sunCharges.coerceIn(0, 20)
+                }
+                if (moonCharges != null) {
+                        entity.moonCharges = moonCharges.coerceIn(0, 20)
+                }
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "CHARGE_POINTS_CHANGED", eventJson = null)
+                )
+        }
+
+        /**
+         * Increments Sun or Moon charge for a character (Sciel's charge system).
+         * Also checks for Twilight activation (needs at least 1 Sun AND 1 Moon charge).
+         * Returns true if Twilight was activated.
+         */
+        @Transactional
+        fun incrementForetellConsumed(id: Int, amount: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+                val entity = opt.get()
+                entity.foretellConsumedTotal += amount
+                repository.save(entity)
+        }
+
+        data class TwilightResult(val activated: Boolean, val charges: Int = 0)
+
+        @Transactional
+        fun incrementSunMoonCharge(id: Int, skillType: String): TwilightResult {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return TwilightResult(false)
+
+                val entity = opt.get()
+
+                // Check if character has Twilight status - if so, don't gain charges
+                val hasTwilight = battleStatusEffectRepository
+                        .findByBattleCharacterIdAndEffectType(entity.id!!, "Twilight")
+                        .isNotEmpty()
+
+                if (hasTwilight) return TwilightResult(false)
+
+                when (skillType.lowercase()) {
+                        "sun" -> {
+                                val current = entity.sunCharges ?: 0
+                                entity.sunCharges = (current + 1).coerceAtMost(20)
+                        }
+                        "moon" -> {
+                                val current = entity.moonCharges ?: 0
+                                entity.moonCharges = (current + 1).coerceAtMost(20)
+                        }
+                        else -> return TwilightResult(false)
+                }
+
+                // Check for Twilight activation (needs at least 1 Sun AND 1 Moon charge)
+                val sunCharges = entity.sunCharges ?: 0
+                val moonCharges = entity.moonCharges ?: 0
+                var twilightActivated = false
+                var totalCharges = 0
+
+                if (sunCharges >= 1 && moonCharges >= 1) {
+                        totalCharges = sunCharges + moonCharges
+                        battleStatusEffectRepository.save(
+                                com.example.demo.model.BattleStatusEffect(
+                                        battleCharacterId = entity.id!!,
+                                        effectType = "Twilight",
+                                        ammount = totalCharges,
+                                        remainingTurns = 2,
+                                        isResolved = true,
+                                        sourceCharacterId = entity.id
+                                )
+                        )
+                        entity.sunCharges = 0
+                        entity.moonCharges = 0
+                        twilightActivated = true
+                }
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "CHARGE_POINTS_CHANGED", eventJson = null)
+                )
+
+                return TwilightResult(twilightActivated, totalCharges)
+        }
+
         /**
          * Checks if character has Solo Fighter picto and adds the damage modifier.
          * Solo Fighter: "Deal 50% more damage if fighting alone."

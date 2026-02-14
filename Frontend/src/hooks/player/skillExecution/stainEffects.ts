@@ -48,6 +48,7 @@ export function getTotalStainCount(source: BattleCharacterInfo): number {
 
 /**
  * Checks if character has the required stains for a skill
+ * Light stains act as wildcards and can substitute for any elemental stain
  */
 export function hasRequiredStains(
   source: BattleCharacterInfo,
@@ -55,10 +56,17 @@ export function hasRequiredStains(
 ): boolean {
   if (!requirements || requirements.length === 0) return true;
 
+  let lightAvailable = countStainType(source, "Light" as StainType);
+
   for (const req of requirements) {
     const available = countStainType(source, req.stain as StainType);
-    if (available < req.count) {
-      return false;
+    const missing = req.count - available;
+    if (missing > 0) {
+      if (lightAvailable >= missing) {
+        lightAvailable -= missing;
+      } else {
+        return false;
+      }
     }
   }
   return true;
@@ -66,35 +74,46 @@ export function hasRequiredStains(
 
 /**
  * Checks if character has all 4 stain types (for Elemental Genesis)
+ * Light stains act as wildcards and can substitute for any missing elemental stain
  */
 export function hasAllStainTypes(source: BattleCharacterInfo): boolean {
   const stains = getCharacterStains(source);
-  const hasLightning = stains.includes("Lightning");
-  const hasEarth = stains.includes("Earth");
-  const hasFire = stains.includes("Fire");
-  const hasIce = stains.includes("Ice");
-  return hasLightning && hasEarth && hasFire && hasIce;
+  const lightCount = stains.filter(s => s === "Light").length;
+  const requiredElements = ["Lightning", "Earth", "Fire", "Ice"] as const;
+  const missingCount = requiredElements.filter(e => !stains.includes(e)).length;
+  return missingCount <= lightCount;
 }
 
 /**
  * Consumes stains from character and returns consumed count for damage bonus calculation
- * Returns the total number of stains consumed (each stain = +25% damage bonus)
+ * Returns the total number of stains consumed (each stain = +4 flat damage bonus)
  */
 export async function consumeStains(
   source: BattleCharacterInfo,
   requirements: Array<{ stain: "Lightning" | "Earth" | "Fire" | "Ice"; count: number }> | undefined,
-  showToast: (message: string) => void
-): Promise<{ consumed: number; slots: StainSlots }> {
+  showToast: (message: string) => void,
+  noDamageBonus?: boolean
+): Promise<{ consumed: number; slots: StainSlots; consumedTypes: StainType[] }> {
+  const emptyResult = {
+    consumed: 0,
+    slots: {
+      stainSlot1: source.stainSlot1 ?? null,
+      stainSlot2: source.stainSlot2 ?? null,
+      stainSlot3: source.stainSlot3 ?? null,
+      stainSlot4: source.stainSlot4 ?? null,
+    },
+    consumedTypes: [] as StainType[]
+  };
+
   if (!requirements || requirements.length === 0) {
-    return {
-      consumed: 0,
-      slots: {
-        stainSlot1: source.stainSlot1 ?? null,
-        stainSlot2: source.stainSlot2 ?? null,
-        stainSlot3: source.stainSlot3 ?? null,
-        stainSlot4: source.stainSlot4 ?? null,
-      }
-    };
+    return emptyResult;
+  }
+
+  // Check if ALL requirements can be met before consuming anything
+  // Skip check for "consume all available" skills (count >= 99, e.g. Mayhem)
+  const isConsumeAll = requirements.some(r => r.count >= 99);
+  if (!isConsumeAll && !hasRequiredStains(source, requirements)) {
+    return emptyResult;
   }
 
   // Create working copy of stains
@@ -106,12 +125,24 @@ export async function consumeStains(
   ];
 
   let totalConsumed = 0;
+  const consumedTypes: StainType[] = [];
 
-  // Consume required stains
+  // Consume required stains (Light acts as wildcard substitute)
   for (const req of requirements) {
     let toConsume = req.count;
+    // First pass: consume exact matches
     for (let i = 0; i < 4 && toConsume > 0; i++) {
       if (slots[i] === req.stain) {
+        consumedTypes.push(slots[i]!);
+        slots[i] = null;
+        toConsume--;
+        totalConsumed++;
+      }
+    }
+    // Second pass: consume Light stains as wildcard for remaining
+    for (let i = 0; i < 4 && toConsume > 0; i++) {
+      if (slots[i] === "Light") {
+        consumedTypes.push("Light");
         slots[i] = null;
         toConsume--;
         totalConsumed++;
@@ -130,10 +161,15 @@ export async function consumeStains(
   await APIBattle.updateStains(source.battleID, newSlots);
 
   if (totalConsumed > 0) {
-    showToast(t("playerPage.skills.stainsConsumed", { count: totalConsumed }));
+    if (noDamageBonus) {
+      showToast(t("playerPage.skills.stainsConsumedNoDamage", { count: totalConsumed }));
+    } else {
+      const bonus = totalConsumed * 4;
+      showToast(t("playerPage.skills.stainsConsumed", { count: totalConsumed, bonus }));
+    }
   }
 
-  return { consumed: totalConsumed, slots: newSlots };
+  return { consumed: totalConsumed, slots: newSlots, consumedTypes };
 }
 
 /**
@@ -155,7 +191,8 @@ export async function consumeAllStains(
   await APIBattle.updateStains(source.battleID, emptySlots);
 
   if (consumed > 0) {
-    showToast(t("playerPage.skills.stainsConsumed", { count: consumed }));
+    const bonus = consumed * 4;
+    showToast(t("playerPage.skills.stainsConsumed", { count: consumed, bonus }));
   }
 
   return { consumed, slots: emptySlots };
@@ -167,10 +204,11 @@ export async function consumeAllStains(
 export async function gainStains(
   source: BattleCharacterInfo,
   stainsToGain: Array<"Lightning" | "Earth" | "Fire" | "Ice" | "Light"> | undefined,
-  showToast: (message: string) => void
+  showToast: (message: string) => void,
+  currentSlots?: StainSlots
 ): Promise<StainSlots> {
   if (!stainsToGain || stainsToGain.length === 0) {
-    return {
+    return currentSlots ?? {
       stainSlot1: source.stainSlot1 ?? null,
       stainSlot2: source.stainSlot2 ?? null,
       stainSlot3: source.stainSlot3 ?? null,
@@ -178,22 +216,29 @@ export async function gainStains(
     };
   }
 
-  // Create working copy of stains
-  const slots: (StainType | null)[] = [
-    source.stainSlot1 ?? null,
-    source.stainSlot2 ?? null,
-    source.stainSlot3 ?? null,
-    source.stainSlot4 ?? null,
-  ];
+  // Use currentSlots if provided (post-consumption state), otherwise read from source
+  const slots: (StainType | null)[] = currentSlots
+    ? [currentSlots.stainSlot1, currentSlots.stainSlot2, currentSlots.stainSlot3, currentSlots.stainSlot4]
+    : [source.stainSlot1 ?? null, source.stainSlot2 ?? null, source.stainSlot3 ?? null, source.stainSlot4 ?? null];
 
-  let gained = 0;
+  const gainedStains: string[] = [];
 
-  // Fill empty slots with new stains
-  for (const stain of stainsToGain) {
+  // Process Light stains first so they get priority placement
+  const sorted = [...stainsToGain].sort((a, b) => (a === "Light" ? -1 : b === "Light" ? 1 : 0));
+
+  for (const stain of sorted) {
     const emptyIndex = slots.findIndex(s => s === null);
     if (emptyIndex !== -1) {
+      // Empty slot available
       slots[emptyIndex] = stain as StainType;
-      gained++;
+      gainedStains.push(stain);
+    } else if (stain === "Light") {
+      // No empty slot, but Light has priority: replace first non-Light stain
+      const replaceIndex = slots.findIndex(s => s !== "Light");
+      if (replaceIndex !== -1) {
+        slots[replaceIndex] = "Light";
+        gainedStains.push(stain);
+      }
     }
   }
 
@@ -206,19 +251,28 @@ export async function gainStains(
 
   await APIBattle.updateStains(source.battleID, newSlots);
 
-  if (gained > 0) {
-    showToast(t("playerPage.skills.stainsGained", { stains: stainsToGain.join(", ") }));
+  if (gainedStains.length > 0) {
+    const stainNameMap: Record<string, string> = {
+      Lightning: t("combatAdmin.labels.stainLightning"),
+      Earth: t("combatAdmin.labels.stainEarth"),
+      Fire: t("combatAdmin.labels.stainFire"),
+      Ice: t("combatAdmin.labels.stainIce"),
+      Light: t("combatAdmin.labels.stainLight"),
+    };
+    const translatedStains = gainedStains.map(s => stainNameMap[s] ?? s).join(", ");
+    showToast(t("playerPage.skills.stainsGained", { stains: translatedStains }));
   }
 
   return newSlots;
 }
 
 /**
- * Calculates damage bonus from consumed stains (25% per stain)
+ * Calculates damage bonus from consumed stains (+4 flat per stain)
  */
 export function calculateStainDamageBonus(consumedStains: number, noStainDamageBonus?: boolean): number {
   if (noStainDamageBonus) return 0;
-  return consumedStains * 0.25; // 25% per stain
+  // +4 damage per stain consumed
+  return consumedStains * 4;
 }
 
 /**
@@ -279,14 +333,12 @@ export function shouldHaveFreeCast(
  */
 export async function transformFireToLight(
   source: BattleCharacterInfo,
-  showToast: (message: string) => void
+  showToast: (message: string) => void,
+  currentSlots?: StainSlots
 ): Promise<StainSlots> {
-  const slots: (StainType | null)[] = [
-    source.stainSlot1 ?? null,
-    source.stainSlot2 ?? null,
-    source.stainSlot3 ?? null,
-    source.stainSlot4 ?? null,
-  ];
+  const slots: (StainType | null)[] = currentSlots
+    ? [currentSlots.stainSlot1, currentSlots.stainSlot2, currentSlots.stainSlot3, currentSlots.stainSlot4]
+    : [source.stainSlot1 ?? null, source.stainSlot2 ?? null, source.stainSlot3 ?? null, source.stainSlot4 ?? null];
 
   let transformed = false;
   for (let i = 0; i < 4; i++) {
@@ -306,14 +358,14 @@ export async function transformFireToLight(
 
   if (transformed) {
     await APIBattle.updateStains(source.battleID, newSlots);
-    showToast(t("playerPage.skills.stainTransformed", { from: "Fire", to: "Light" }));
+    showToast(t("playerPage.skills.stainTransformed", { from: t("combatAdmin.labels.stainFire"), to: t("combatAdmin.labels.stainLight") }));
   }
 
   return newSlots;
 }
 
 export interface StainEffectResults {
-  damageMultiplier: number;
+  damageBonus: number;
   shouldGrantSecondTurn: boolean;
   shouldDoublesDamage: boolean;
   shouldGrantRegeneration: boolean;
@@ -331,7 +383,7 @@ export function processStainEffects(
   consumedStains: number
 ): StainEffectResults {
   const results: StainEffectResults = {
-    damageMultiplier: 1 + calculateStainDamageBonus(consumedStains, metadata.noStainDamageBonus),
+    damageBonus: calculateStainDamageBonus(consumedStains, metadata.noStainDamageBonus),
     shouldGrantSecondTurn: false,
     shouldDoublesDamage: false,
     shouldGrantRegeneration: false,
@@ -345,10 +397,10 @@ export function processStainEffects(
     results.shouldGrantSecondTurn = true;
   }
 
-  // stainDoublesDamage - doubles damage when stains consumed
+  // stainDoublesDamage - doubles damage when stains consumed (+8 flat)
   if (metadata.stainDoublesDamage && consumedStains > 0) {
     results.shouldDoublesDamage = true;
-    results.damageMultiplier *= 2;
+    results.damageBonus += 8;
   }
 
   // stainGrantsRegeneration - applies Regeneration when stains consumed

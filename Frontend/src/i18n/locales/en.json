@@ -1954,6 +1954,7 @@
         "errorClaimingReward": "Error claiming reward",
         "gradientChargesUpdated": "Gradient charges updated to {charges}/3",
         "gustaveChargesUpdated": "Gustave charges updated to {charges}",
+        "scielChargesUpdated": "Sciel Sun/Moon charges updated",
         "stanceChanged": "Maelle stance changed to {stance}"
       },
       "labels": {
@@ -1990,6 +1991,22 @@
         "npcs": "NPCs",
         "combatStatus": "Combat status",
         "gustaveCharges": "Gustave Charges",
+        "scielCharges": "Sun/Moon Charges",
+        "editScielCharges": "Edit Sciel Charges",
+        "sunCharges": "Sun Charges",
+        "moonCharges": "Moon Charges",
+        "twilightEclipse": "Eclipse (Twilight)",
+        "twilightTurns": "Duration (turns)",
+        "twilightActive": "Eclipse",
+        "luneStains": "Lune Stains",
+        "editLuneStains": "Edit Stains",
+        "stainSlot": "Slot {{number}}",
+        "stainEmpty": "Empty",
+        "stainLightning": "Lightning",
+        "stainEarth": "Earth",
+        "stainFire": "Fire",
+        "stainIce": "Ice",
+        "stainLight": "Light",
         "maelleStance": "Maelle Stance",
         "charges": "Charges",
         "teamA": "Team A",
@@ -2094,19 +2111,19 @@
       },
       "lune-electrify": {
         "name": "Electrify",
-        "description": "Deals low Lightning damage to a single target. 3 hits. Consumes Fire to generate a Light stain. Critical hits add an extra hit. Using this skill grants 2 Lightning stains."
+        "description": "Deals low Lightning damage to a single target. 3 hits. Consumes a Fire stain to generate a Light stain. Critical hits add an extra hit. Using this skill grants 2 Lightning stains."
       },
       "lune-immolation": {
         "name": "Immolation",
-        "description": "Deals low Fire damage to a single target and 3 Burns. 1 hit. Consumes Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals low Fire damage to a single target and 3 Burns. 1 hit. Consumes an Ice stain for +4 damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-ice-lance": {
         "name": "Ice Lance",
-        "description": "Deals medium Ice damage to a single target and Slows the target. 1 hit. Consumes Earth to deal increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals medium Ice damage to a single target and Slows the target. 1 hit. Consumes an Earth stain for +4 damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-earth-rising": {
         "name": "Earth Rising",
-        "description": "Deals low Earth damage to all enemies. 1 hit. Consumes Lightning to deal increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals low Earth damage to all enemies. 1 hit. Consumes a Lightning stain for +4 damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-thermal-transfer": {
         "name": "Thermal Transfer",
@@ -2114,11 +2131,11 @@
       },
       "lune-thunderfall": {
         "name": "Thunderfall",
-        "description": "Deals medium Lightning damage to random enemies. 2-6 hits. Consumes Fire to deal increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals medium Lightning damage to random enemies. 4 hits. Consumes a Fire stain for +4 damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-wildfire": {
         "name": "Wildfire",
-        "description": "Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burns. Consumes 2 stains of Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burns. Consumes 2 stains of Ice for +8 damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-mayhem": {
         "name": "Mayhem",
@@ -2130,19 +2147,19 @@
       },
       "lune-elemental-genesis": {
         "name": "Elemental Genesis",
-        "description": "Deals extreme damage to all enemies. 8 hits. Each hit deals damage in a random element. Requires Lightning, Earth, Fire and Ice to cast."
+        "description": "Deals extreme damage to all enemies. 8 hits. Each hit deals damage in a random element. Requires Lightning stain, Earth stain, Fire stain and Ice stain to cast."
       },
       "lune-crippling-tsunami": {
         "name": "Crippling Tsunami",
-        "description": "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes Earth stain, Fire stain and Lightning stain to deal greatly increased damage. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes Earth stain, Fire stain and Lightning stain for +12 damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-rockslide": {
         "name": "Rockslide",
-        "description": "Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes Lightning stain, Ice stain and Fire stain to deal greatly increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes Lightning stain, Ice stain and Fire stain for +12 damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-crustal-crush": {
         "name": "Crustal Crush",
-        "description": "Deals high Earth damage and Break damage to a single target. 5 hits. Consumes 2 stains of Lightning to deal increased damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals high Earth damage and Break damage to a single target. 5 hits. Consumes 2 stains of Lightning for +8 damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-healing-light": {
         "name": "Healing Light",
@@ -2150,7 +2167,7 @@
       },
       "lune-lightning-dance": {
         "name": "Lightning Dance",
-        "description": "Deals very high Lightning damage to a single target. 6 hits. Consumes Earth stain, Ice stain and Fire stain to deal greatly increased damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals very high Lightning damage to a single target. 6 hits. Consumes Earth stain, Ice stain and Fire stain for +12 damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-storm-caller": {
         "name": "Storm Caller",
@@ -2170,15 +2187,15 @@
       },
       "lune-revitalization": {
         "name": "Revitalization",
-        "description": "Roll 1d6: 1-2 = heals 1 ally for Resistance +2d6, 3-6 = heals all allies for Resistance +3d6. Consumes 3 stains of Fire to also apply Regeneration 2 for 3 turns. Using this skill grants 1 Light stain."
+        "description": "Hability Test DC 7: Success = heals all allies for Resistance +3d6, Failure = heals 1 ally for Resistance +2d6. Consumes 3 Fire stains to also apply Regeneration 2 for 3 turns. Using this skill grants 1 Light stain."
       },
       "lune-fire-rage": {
         "name": "Fire Rage",
-        "description": "Deals high increasing Fire damage to all enemies each turn until Lune receives damage. Consumes 2 stains of Ice to deal increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals high increasing Fire damage to all enemies each turn until Lune receives damage. Consumes 2 stains of Ice for +8 damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-hell": {
         "name": "Hell",
-        "description": "Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes Ice stain, Earth stain and Lightning stain to deal greatly increased damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes Ice stain, Earth stain and Lightning stain for +12 damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-sky-break": {
         "name": "Sky Break",
@@ -2186,7 +2203,7 @@
       },
       "lune-tree-of-life": {
         "name": "Tree of Life",
-        "description": "Does not consume turn. Removes all Status Effects and heals all allies. Using this skill grants 1 Light stain."
+        "description": "Does not consume turn. Removes all negative status effects and fully heals all allies. Using this skill grants 1 Light stain."
       },
       "lune-tremor": {
         "name": "Tremor",
@@ -2210,11 +2227,11 @@
       },
       "maelle-guard-up": {
         "name": "Guard Up",
-        "description": "Choose an ally and perform a Hability Test DC 6. Success: Applies Shell to entire team for 3 turns. Failure: Applies Shell only to chosen target for 3 turns. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Choose an ally and perform a Hability Test DC 7. Success: Applies Shell to entire team for 3 turns. Failure: Applies Shell only to chosen target for 3 turns. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-swift-stride": {
         "name": "Swift Stride",
-        "description": "Deals low Physical damage to a single target. 1 hit. Hability test DC 6: success +2 MP, failure 0 MP. If target is Burning, switches to Virtuose Stance."
+        "description": "Deals low Physical damage to a single target. 1 hit. Hability test DC 7: success +2 MP, failure 0 MP. If target is Burning, switches to Virtuose Stance."
       },
       "maelle-guard-down": {
         "name": "Guard Down",
@@ -2298,11 +2315,11 @@
       },
       "maelle-phoenix-flame": {
         "name": "Phoenix Flame",
-        "description": "Does not consume turn. Applies 10 Burn to all enemies. Revives all allies. Make an ability test DC 6. On success, revive with full HP. On failure, revive with half HP. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Does not consume turn. Applies 10 Burn to all enemies. Revives all allies. Make an ability test DC 7. On success, revive with full HP. On failure, revive with half HP. Using this skill changes Maelle's Stance to Offensive."
       },
       "sciel-twilight-slash": {
         "name": "Twilight Slash",
-        "description": "Deals low Dark damage to a single target. 1 hit. Consumes all Foretell to increase damage. Sciel's starting skill."
+        "description": "Deals low Dark damage to a single target. 1 hit. Consumes all Foretell from target and adds +2 damage per Foretell consumed."
       },
       "sciel-focused-foretell": {
         "name": "Focused Foretell",
@@ -2318,7 +2335,7 @@
       },
       "sciel-delaying-slash": {
         "name": "Delaying Slash",
-        "description": "Deals medium damage to a single target. 2 hits. Uses weapon element. Consumes Foretell to increase damage and delay the target's turn."
+        "description": "Deals medium damage to a single target. 2 hits. Uses weapon element. Consumes all Foretell (+2 damage per Foretell) and delays the target's turn."
       },
       "sciel-dark-cleansing": {
         "name": "Dark Cleansing",
@@ -2326,7 +2343,7 @@
       },
       "sciel-dark-wave": {
         "name": "Dark Wave",
-        "description": "Deals high Dark damage to all enemies. 3 hits. Consumes all Foretell to increase damage."
+        "description": "Deals high Dark damage to all enemies. 3 hits. Consumes all Foretell (+2 damage per Foretell)."
       },
       "sciel-grim-harvest": {
         "name": "Grim Harvest",
@@ -2342,27 +2359,27 @@
       },
       "sciel-phantom-blade": {
         "name": "Phantom Blade",
-        "description": "Deals high Dark damage to a single target. 1 hit. Consumes all Foretell to increase damage. Can cause Break."
+        "description": "Deals high Dark damage to a single target. 1 hit. Consumes all Foretell (+2 damage per Foretell). Can cause Break."
       },
       "sciel-sealed-fate": {
         "name": "Sealed Fate",
-        "description": "Deals high damage to a single target. 5-7 hits. Uses weapon element. Each hit can consume 1 Foretell to deal double damage."
+        "description": "Deals high damage to a single target. 6 hits. Uses weapon element. Each hit consumes 1 Foretell (+2 damage per Foretell)."
       },
       "sciel-spectral-sweep": {
         "name": "Spectral Sweep",
-        "description": "Deals medium damage to a single target. 2-6 hits. Uses weapon element. Applies 1 Foretell per hit. Critical hits apply additional Foretell."
+        "description": "Deals medium damage to a single target. 4 hits. Uses weapon element. Applies 1 Foretell per hit. Critical hits apply additional Foretell."
       },
       "sciel-firing-shadow": {
         "name": "Firing Shadow",
-        "description": "Deals low Dark damage to all enemies. 3 hits. Consumes 1 Foretell per hit to increase damage."
+        "description": "Deals low Dark damage to all enemies. 3 hits. Each hit consumes 1 Foretell (+2 damage per Foretell)."
       },
       "sciel-fortunes-fury": {
         "name": "Fortune's Fury",
-        "description": "An ally of the target deals double damage for 1 turn."
+        "description": "Applies Fortune's Fury to a target ally, granting +8 damage per hit for 1 turn."
       },
       "sciel-our-sacrifice": {
         "name": "Our Sacrifice",
-        "description": "Deals extreme Dark damage to all enemies. 1 hit. Absorbs HP from allies and Foretell from enemies to increase damage."
+        "description": "Deals extreme Dark damage to all enemies. 1 hit. Drains all allies (including self) HP to 1 (+1 damage per HP drained). Consumes all Foretell from all enemies (+1 damage per Foretell)."
       },
       "sciel-plentiful-harvest": {
         "name": "Plentiful Harvest",
@@ -2370,7 +2387,7 @@
       },
       "sciel-rush": {
         "name": "Rush",
-        "description": "Applies Haste, increasing Speed for 3 turns. Roll 1d6: 1-2 applies to target only, 3-6 applies to all allies."
+        "description": "Applies Haste for 3 turns. Perform a hability test DC 7. On success, applies to all allies. On failure, applies to target only."
       },
       "sciel-all-set": {
         "name": "All Set",
@@ -2390,7 +2407,7 @@
       },
       "sciel-twilight-dance": {
         "name": "Twilight Dance",
-        "description": "Deals extreme Dark damage to a single target. 4 hits. During Twilight, extends the duration of Twilight by 1 turn. Consumes all Foretell to increase damage."
+        "description": "Deals extreme Dark damage to a single target. 4 hits. During Twilight, extends the duration of Twilight by 1 turn. Consumes all Foretell (+2 damage per Foretell)."
       },
       "sciel-shadow-bringer": {
         "name": "Shadow Bringer",
@@ -2402,7 +2419,7 @@
       },
       "sciel-end-slice": {
         "name": "End Slice",
-        "description": "Does not consume turn. Deals extreme Physical damage to a single target. 1 hit. Damage scales with the amount of Foretell consumed."
+        "description": "Does not consume turn. Deals extreme damage to a single target. 1 hit. Damage is increased by +1 for each Foretell consumed since the beginning of the battle."
       },
       "verso-angels-eyes": {
         "name": "Angel's Eyes",
@@ -2478,7 +2495,7 @@
       },
       "verso-powerful": {
         "name": "Powerful",
-        "description": "Applies Empowered (increases damage) to 1-3 allies for 3 turns. Rolls 1d6: (1-3) only Verso, (4-6) whole team. If Verso uses this skill at Perfection Rank A, the duration increases to 5 turns."
+        "description": "Applies Empowered for 3 turns. Perform a hability test DC 7. On success, applies to all allies. On failure, applies to Verso only. If Verso uses this skill at Perfection Rank A, the duration increases to 5 turns."
       },
       "verso-purification": {
         "name": "Purification",
@@ -2546,7 +2563,7 @@
       },
       "monoco-chalier-combo": {
         "name": "Chalier Combo",
-        "description": "Multi-hit combo attack. Effect: Deals high Physical damage to a single target. 6 hits. Interrupted if missed. Increased damage when used with Balanced Mask active.\nPrerequisite: Monoco's starting skill, no prerequisite required."
+        "description": "Multi-hit combo attack. Effect: Deals high Physical damage to a single target. 6 hits. Interrupted if missed. Increased damage when used with Balanced Mask active."
       },
       "monoco-chapelier-slash": {
         "name": "Chapelier Slash",
@@ -2698,7 +2715,7 @@
       },
       "monoco-stalact-punches": {
         "name": "Stalact Punches",
-        "description": "Stalactite-like punching attacks. Effect: Deals medium Ice damage to a single target. 4 hits. High Break damage. Heavy Mask or Omnipotent: Increased damage. Bestial Wheel: +4 positions.\nPrerequisite: Monoco's starting skill upon joining the group, no prerequisite required."
+        "description": "Stalactite-like punching attacks. Effect: Deals medium Ice damage to a single target. 4 hits. High Break damage. Heavy Mask or Omnipotent: Increased damage. Bestial Wheel: +4 positions."
       },
       "monoco-troubadour-trumpet": {
         "name": "Troubadour Trumpet",
@@ -2751,7 +2768,10 @@
       "errorUsing": "Error using item",
       "errorCreating": "Error creating item:",
       "errorUpdating": "Error updating item:",
-      "errorDeleting": "Error deleting item:"
+      "errorDeleting": "Error deleting item:",
+      "editQuantity": "Edit Quantity",
+      "editMaxQuantity": "Edit Max Quantity",
+      "newValue": "New value"
     },
     "weapons": {
       "title": "Weapon",
@@ -2865,55 +2885,56 @@
         "giveStatus": "Apply status"
       },
       "statusEffects": {
-        "Hastened": "Hastened",
-        "Empowered": "Empowered",
+        "Hastened": "💨 Hastened",
+        "Empowered": "💪 Empowered",
         "Protected": "Protected",
-        "Regeneration": "Regeneration",
+        "Regeneration": "💚 Regeneration",
         "Unprotected": "Unprotected",
-        "Slowed": "Slowed",
+        "Slowed": "🐌 Slowed",
         "Weakened": "Weakened",
-        "Cursed": "Cursed",
-        "Stunned": "Stunned",
+        "Cursed": "💀 Cursed",
+        "Stunned": "😵 Stunned",
         "Confused": "Confused",
-        "Frozen": "Frozen",
-        "Entangled": "Entangled",
-        "Shielded": "Shielded",
-        "Exhausted": "Exhausted",
-        "Frenzy": "Frenzy",
-        "Rage": "Rage",
-        "Inverted": "Inverted",
-        "Marked": "Marked",
-        "Plagued": "Plagued",
-        "Burning": "Burning",
+        "Frozen": "❄️ Frozen",
+        "Entangled": "⛓️ Entangled",
+        "Shielded": "🛡️ Shielded",
+        "Exhausted": "😩 Exhausted",
+        "Frenzy": "🗡️ Frenzy",
+        "Rage": "😡 Rage",
+        "Inverted": "🔄 Inverted",
+        "Marked": "🎯 Marked",
+        "Plagued": "☣️ Plagued",
+        "Burning": "🔥 Burning",
         "StormCaller": "⚡ Storm Caller",
-        "Silenced": "Silenced",
-        "Dizzy": "Dizzy",
+        "Typhoon": "🌀 Typhoon",
+        "Silenced": "🔇 Silenced",
+        "Dizzy": "💫 Dizzy",
         "Fragile": "Fragile",
         "Broken": "Broken",
-        "Fleeing": "Fleeing",
+        "Fleeing": "🏃 Fleeing",
         "FireVulnerability": "Fire Vulnerability",
         "Guardian": "Guardian",
-        "Foretell": "Foretell",
+        "Foretell": "🔮 Foretell",
         "Twilight": "🌕 Twilight",
         "Powerless": "Powerless",
         "Rush": "Rush",
-        "Burn": "Burn",
-        "Shield": "Shield",
-        "Powerful": "Powerful",
-        "Shell": "Shell",
-        "Slow": "Slow",
-        "Freeze": "Freeze",
+        "Burn": "🔥 Burn",
+        "Shield": "🛡️ Shield",
+        "Powerful": "💪 Powerful",
+        "Shell": "🐚 Shell",
+        "Slow": "🐌 Slow",
+        "Freeze": "❄️ Freeze",
         "GreaterRush": "Greater Rush",
         "GreaterSlow": "Greater Slow",
         "EnfeeblingMark": "Enfeebling Mark",
         "DamageReduction": "Damage Reduction",
-        "SuccessiveParry": "Successive Parry",
-        "Aureole": "Aureole",
-        "Vulnerable": "Vulnerable",
-        "DoubleDamage": "Double Damage",
-        "Regen": "Regeneration",
-        "Curse": "Curse",
-        "Earthquake": "Earthquake",
+        "SuccessiveParry": "⚔️ Successive Parry",
+        "Aureole": "✨ Aureole",
+        "Vulnerable": "💔 Vulnerable",
+        "FortunesFury": "🃏 Fortune's Fury",
+        "Regen": "💚 Regeneration",
+        "Curse": "💀 Curse",
+        "Earthquake": "🌍 Earthquake",
         "freeShot": "Free Shot",
         "jump": "Jump",
         "gradient": "Gradient",
@@ -2924,6 +2945,7 @@
         "Shielded": "Each shield completely negates one attack.",
         "Burning": "Deals damage at the start of turn. Each burn deals 1d6 damage.",
         "StormCaller": "Deals Lightning damage at the start of turn. Each stack deals 1d6 Lightning damage.",
+        "Typhoon": "Deals Ice damage at the start of turn. Each stack deals 1d6 Ice damage.",
         "Hastened": "Improves dodge and jump.",
         "Slowed": "Hinders dodge and jump.",
         "Empowered": "Improves your attack.",
@@ -2949,7 +2971,7 @@
         "FireVulnerability": "The character takes increased damage from Fire attacks.",
         "Guardian": "Protects allies by taking damage in their place when they are attacked.",
         "Foretell": "Each Foretell stack increases damage dealt by Sciel. Consumed by certain skills.",
-        "Twilight": "Mystical state of Sciel that grants +150% damage, double Foretell inflicted (up to 40 maximum) and prevents Sun/Moon charge gain. Activated when having at least 1 Sun charge and 1 Moon charge simultaneously.",
+        "Twilight": "Mystical state of Sciel. Each attack deals +2 damage per accumulated charge. Doubles Foretell cap (up to 20). Prevents Sun/Moon charge gain. Activated when having at least 1 Sun and 1 Moon charge.",
         "Powerless": "The character cannot use skills or deal damage.",
         "Rush": "Increases the character's speed and attack capability.",
         "Burn": "Deals continuous fire damage to the character.",
@@ -2965,7 +2987,7 @@
         "SuccessiveParry": "Improves ability to parry consecutive attacks.",
         "Aureole": "Revives the character with 30% HP when they die. Consumed on use.",
         "Vulnerable": "The character takes increased damage from all sources.",
-        "DoubleDamage": "The next attack deals double damage.",
+        "FortunesFury": "Each attack deals +8 damage for 1 turn.",
         "Regen": "Regenerates health points over time.",
         "Curse": "Curse that causes continuous negative effects.",
         "Earthquake": "Deals damage at the start of turn. Each stack deals 1d6 damage. If the character is fragile, suffers Break and takes 150% of the damage that caused the Break.",
@@ -3048,7 +3070,8 @@
         "parriesReducedCost": "{count} successful parry(s)! Cost reduced from {original} to {new} MP",
         "fireVulnerability": "Target vulnerable to Fire! Damage x2!",
         "foretellConsumed": "{target}: Foretell consumed! Damage x{multiplier}",
-        "stainsConsumed": "{count} Stain(s) consumed! Damage +{percent}%",
+        "stainsConsumed": "{count} Stain(s) consumed! Damage +{bonus}",
+        "stainsConsumedNoDamage": "{count} Stain(s) consumed!",
         "aegidExtended": "Aegis duration extended! (3 turns)",
         "criticalExtraHit": "Critical! +1 extra hit!",
         "gradientChargesConsumed": "{count} Gradient Charge(s) consumed!",
@@ -3056,12 +3079,20 @@
         "allDebuffsRemoved": "All debuffs removed from allies!",
         "allyHealed": "{name} healed by {percent}% ({amount} HP)!",
         "healedFor": "Healed {amount} HP!",
+        "allAlliesHealedFor": "All allies healed {amount} HP!",
         "debuffsRemovedFrom": "Debuffs removed from {name}!",
         "gainedCharges": "gained {amount} charge(s)!",
         "shatterFullCharge": "Break! Charges fully loaded!",
         "revivedFullHp": "{name} revived with full HP! ({hp} HP)",
         "revivedHalfHp": "{name} revived with half HP! ({hp} HP)",
         "noDeadAlliesToRevive": "No dead allies to revive!",
+        "revivedWithRoll": "{name} revived with {percent}% HP! ({hp} HP) [Rolled {roll}]",
+        "grantedMpToRevived": "{name} received +{mp} MP!",
+        "targetNotDead": "Target is not dead!",
+        "scopeRollAll": "Rolled {roll}: Heals all allies!",
+        "scopeRollSingle": "Rolled {roll}: Heals 1 ally!",
+        "healedTarget": "{name} healed {amount} HP!",
+        "regenerationApplied": "Regeneration applied for {turns} turns!",
         "bonusDamageVsMarked": "Target Marked! +{bonus} damage!",
         "burnConsumptionBonus": "Consumed {stacks} Burns! +{bonus} damage!",
         "buffsCopied": "Buffs copied to other allies!",
@@ -3095,6 +3126,13 @@
         "rolledDiceRevivingAlly": "Rolled {value}! Reviving {name} with {percent}% HP!",
         "allyRevivedWithMP": "{name} revived with 2 MP!",
         "twilightExtended": "Twilight duration extended! (+1 turn)",
+        "sunChargeGained": "Sun charge gained!",
+        "moonChargeGained": "Moon charge gained!",
+        "sunMoonChargeBonus": "+{bonus} damage from charges ({charges})!",
+        "twilightActivated": "Twilight activated ({charges} charges)!",
+        "twilightDamageBonus": "+{bonus} damage from Twilight ({charges} charges)!",
+        "critExtraHit": "Critical! Extra hit added!",
+        "randomHitCount": "Random hits: {hits}",
         "turnDelayed": "Turn delayed by {positions} positions!",
         "stanceBonusApplied": "Stance bonus! +{count} Burns per hit",
         "absorptionHeal": "Absorption! Heal of {percent}% HP ({amount})",
@@ -3145,10 +3183,20 @@
         "rankSetToS": "Perfection Rank set to S!",
         "hpCost": "HP cost: {amount}",
         "statusTransferred": "{count} status effect(s) transferred!",
+        "rankGrantedMp": "+{mp} MP granted (Rank Bonus)!",
+        "stunReapplied": "Stun reapplied to {name}!",
+        "playsSecondTime": "Plays a second time! (Hits doubled)",
+        "chargingStarted": "Charging... Attack will execute next turn!",
+        "chargingReleased": "Charge released! Executing attack!",
         "mpReturned": "+{amount} MP returned!",
         "mpGrantedToAllies": "+{amount} MP granted to allies!",
         "wheelAdvanced": "Bestial Wheel advanced to {mask}!",
         "forcedToAlmighty": "Forced to Almighty Mask!",
+        "damageEscalation": "Damage Escalation: {stacks} use(s) (+{bonus}%)",
+        "damageEscalationActive": "Escalation bonus active: +{bonus}%",
+        "alliesHealedPerHit": "Allies healed by {percent}% HP!",
+        "mpGainedFromBurning": "+{amount} MP gained (target Burning)!",
+        "mpGrantedAtHeavy": "+{amount} MP granted (Heavy Mask)!",
         "hpSacrificed": "{amount} HP sacrificed!",
         "mpGrantedAtCaster": "+{amount} MP granted (Caster Mask)!",
         "healedAtCaster": "+{percent}% HP healed (Caster Mask)!",
@@ -3156,11 +3204,14 @@
         "healedPerHit": "+{amount} HP healed from hits!",
         "foretellConsumedCount": "{count} Foretell consumed!",
         "foretellDamageBonus": "+{bonus} damage from Foretell!",
+        "foretellHealBonus": "+{bonus} heal from Foretell!",
+        "foretellMpGained": "+{amount} MP from consumed Foretell!",
+        "foretellConsumedTotalBonus": "+{bonus} damage ({bonus} Foretell consumed in battle)!",
         "foretellConsumedFromAll": "{count} Foretell consumed from all enemies!",
         "foretellRedistributed": "{count} Foretell redistributed to {enemies} enemy(s)!",
         "noForetellToRedistribute": "No Foretell to redistribute!",
         "noOtherEnemiesToRedistribute": "No other enemies to redistribute Foretell to!",
-        "extraTurnGranted": "{name} will get an extra turn!",
+        "extraTurnGranted": "{name} will play the next turn!",
         "hpDrainedFromAllies": "{amount} HP drained from allies!",
         "mpGrantedToLowest": "+{amount} MP granted to {name}!",
         "burnDamagePropagated": "{damage} damage propagated to {count} burning enemy(s)!",

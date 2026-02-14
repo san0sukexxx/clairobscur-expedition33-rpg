@@ -96,6 +96,7 @@ export function getStatusLabel(status: StatusType): string {
         case "Burning": return t("battle.statusEffects.Burning");
         case "IntenseFlames": return t("battle.statusEffects.IntenseFlames");
         case "StormCaller": return t("battle.statusEffects.StormCaller");
+        case "Typhoon": return t("battle.statusEffects.Typhoon");
         case "Silenced": return t("battle.statusEffects.Silenced");
         case "Dizzy": return t("battle.statusEffects.Dizzy");
         case "Fragile": return t("battle.statusEffects.Fragile");
@@ -120,7 +121,7 @@ export function getStatusLabel(status: StatusType): string {
         case "SuccessiveParry": return t("battle.statusEffects.SuccessiveParry");
         case "Aureole": return t("battle.statusEffects.Aureole");
         case "Vulnerable": return t("battle.statusEffects.Vulnerable");
-        case "DoubleDamage": return t("battle.statusEffects.DoubleDamage");
+        case "FortunesFury": return t("battle.statusEffects.FortunesFury");
         case "Regen": return t("battle.statusEffects.Regen");
         case "Curse": return t("battle.statusEffects.Curse");
         case "Earthquake": return t("battle.statusEffects.Earthquake");
@@ -151,10 +152,10 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Fragile",
         "Broken",
         "Fleeing",
-        "Twilight",
         "FireVulnerability",
         "Guardian",
-        "Vulnerable"
+        "Vulnerable",
+        "FortunesFury"
     ];
 
     return !skillsWithoutAmmount.includes(type);
@@ -167,6 +168,7 @@ export function getStatusDescription(status: StatusType): string {
         case "Burning": return t("battle.statusDescriptions.Burning");
         case "IntenseFlames": return t("battle.statusDescriptions.IntenseFlames");
         case "StormCaller": return t("battle.statusDescriptions.StormCaller");
+        case "Typhoon": return t("battle.statusDescriptions.Typhoon");
         case "Hastened": return t("battle.statusDescriptions.Hastened");
         case "Slowed": return t("battle.statusDescriptions.Slowed");
         case "Empowered": return t("battle.statusDescriptions.Empowered");
@@ -208,7 +210,7 @@ export function getStatusDescription(status: StatusType): string {
         case "SuccessiveParry": return t("battle.statusDescriptions.SuccessiveParry");
         case "Aureole": return t("battle.statusDescriptions.Aureole");
         case "Vulnerable": return t("battle.statusDescriptions.Vulnerable");
-        case "DoubleDamage": return t("battle.statusDescriptions.DoubleDamage");
+        case "FortunesFury": return t("battle.statusDescriptions.FortunesFury");
         case "Regen": return t("battle.statusDescriptions.Regen");
         case "Curse": return t("battle.statusDescriptions.Curse");
         case "Earthquake": return t("battle.statusDescriptions.Earthquake");
@@ -227,6 +229,7 @@ export function getResolveButtonLabel(status: StatusType): string {
         case "IntenseFlames":
         case "Earthquake":
         case "StormCaller":
+        case "Typhoon":
         case "Confused":
             return t("battle.resolveButton.resolve");
         default:
@@ -241,6 +244,7 @@ export function statusNeedsResolveRoll(status: StatusResponse): boolean {
         case "IntenseFlames":
         case "Earthquake":
         case "StormCaller":
+        case "Typhoon":
         case "Confused":
             return true;
         default:

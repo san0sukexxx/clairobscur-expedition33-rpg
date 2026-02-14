@@ -9,7 +9,7 @@ export type StatusType =
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Guardian" | "Foretell" | "Twilight" | "Powerless" |
     "Rush" | "Burn" | "Shield" | "Powerful" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
-    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "DoubleDamage" | "Regen" | "Curse" | "IntenseFlames" | "Earthquake" | "StormCaller";
+    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "FortunesFury" | "Regen" | "Curse" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation";
 
 export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
@@ -75,6 +75,7 @@ export interface BattleCharacterInfo {
     canRollInitiative?: boolean;
     parriesThisTurn?: number;
     hitsTakenThisTurn?: number;
+    foretellConsumedTotal?: number;
 }
 
 export type RewardType = "weapon" | "picto";

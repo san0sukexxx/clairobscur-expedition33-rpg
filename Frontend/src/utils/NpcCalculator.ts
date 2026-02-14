@@ -92,7 +92,7 @@ export function calculateNpcAttackReceivedDamage(target: BattleCharacterInfo, da
 
     let totalDefense = randomizeNpcDefenseTotal(npcInfo, target);
     const markedPenalty = hasMarked(target) ? 4 : 0;
-    totalDefense = totalDefense - markedPenalty;
+    totalDefense = Math.max(0, totalDefense - markedPenalty);
     const finalDamage = Math.max(1, damage - totalDefense);
 
     console.log("=== NPC Damage Calculation ===");

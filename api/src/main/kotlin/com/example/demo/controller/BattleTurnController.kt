@@ -73,7 +73,7 @@ class BattleTurnController(
                         attackRepository.deleteAll(attacks)
                 }
 
-                val ignoreRemainingTurns = listOf("Burning", "Frozen", "Regeneration", "Cursed", "Fleeing", "Foretell", "IntenseFlames")
+                val ignoreRemainingTurns = listOf("Burning", "Frozen", "Regeneration", "Cursed", "Fleeing", "Foretell", "IntenseFlames", "Typhoon")
 
                 val statusList = battleStatusEffectRepository.findByBattleCharacterId(bc.id!!)
                 statusList.forEach { eff ->
@@ -190,6 +190,25 @@ class BattleTurnController(
 
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "TURN_DELAYED", eventJson = null)
+                )
+
+                return ResponseEntity.noContent().build()
+        }
+
+        @PostMapping("/{battleCharacterId}/grant-extra")
+        @Transactional
+        fun grantExtraTurn(
+                @PathVariable battleCharacterId: Int
+        ): ResponseEntity<Void> {
+                val bc = battleCharacterRepository.findById(battleCharacterId).orElse(null)
+                        ?: return ResponseEntity.badRequest().build()
+
+                val battleId = bc.battleId
+
+                battleTurnService.grantExtraTurn(battleId, battleCharacterId)
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "EXTRA_TURN_GRANTED", eventJson = null)
                 )
 
                 return ResponseEntity.noContent().build()

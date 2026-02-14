@@ -33,5 +33,7 @@ data class BattleCharacter(
         @Column(name = "parries_this_turn", nullable = false)
         var parriesThisTurn: Int = 0,  // Tracks successful parries since last turn (for Payback skill)
         @Column(name = "hits_taken_this_turn", nullable = false)
-        var hitsTakenThisTurn: Int = 0  // Tracks attacks that dealt damage since last turn (for Revenge skill)
+        var hitsTakenThisTurn: Int = 0,  // Tracks attacks that dealt damage since last turn (for Revenge skill)
+        @Column(name = "foretell_consumed_total", nullable = false)
+        var foretellConsumedTotal: Int = 0  // Total Foretell consumed since battle start (for End Slice)
 )

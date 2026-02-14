@@ -42,7 +42,7 @@ export async function consumeForetell(
   if (stacks > 0) {
     // Remove all Foretell status
     await APIBattle.removeStatus(target.battleID, "Foretell");
-    showToast(t("playerPage.skills.foretellConsumed", { count: stacks }));
+    showToast(t("playerPage.skills.foretellConsumedCount", { count: stacks }));
   }
 
   return stacks;
@@ -69,24 +69,24 @@ export function calculateForetellDamageBonus(
 }
 
 /**
- * Calculates heal bonus from consumed Foretell
+ * Calculates flat heal bonus from consumed Foretell
  */
 export function calculateForetellHealBonus(
   consumedStacks: number,
-  healBonusPerStack: number = 5
+  healBonusPerStack: number = 1
 ): number {
-  // Returns percentage bonus (e.g., 5% per stack)
+  // Returns flat bonus (e.g., +1 heal per stack)
   return consumedStacks * healBonusPerStack;
 }
 
 /**
- * Calculates damage multiplier for per-hit Foretell consumption
+ * Calculates flat damage bonus for per-hit Foretell consumption
  */
-export function getForetellPerHitMultiplier(
+export function getForetellPerHitBonus(
   hadForetell: boolean,
-  multiplier: number = 3.0
+  bonus: number = 4
 ): number {
-  return hadForetell ? multiplier : 1.0;
+  return hadForetell ? bonus : 0;
 }
 
 /**
@@ -117,7 +117,9 @@ export async function consumeForetellFromAllEnemies(
 }
 
 /**
- * Redistributes Foretell from target to all other enemies (Card Weaver)
+ * Propagates Foretell from target to all other enemies (Card Weaver)
+ * Reads target's Foretell count and grants the same amount to each other enemy, respecting the cap.
+ * Does NOT remove Foretell from the target.
  */
 export async function redistributeForetell(
   target: BattleCharacterInfo,
@@ -132,9 +134,6 @@ export async function redistributeForetell(
     return;
   }
 
-  // Remove Foretell from target
-  await APIBattle.removeStatus(target.battleID, "Foretell");
-
   // Find other enemies (same team as target, not the target itself)
   const otherEnemies = allCharacters.filter(
     c => c.isEnemy === target.isEnemy &&
@@ -147,23 +146,18 @@ export async function redistributeForetell(
     return;
   }
 
-  // Distribute evenly, with remainder going to first enemies
-  const stacksPerEnemy = Math.floor(foretellStacks / otherEnemies.length);
-  let remainder = foretellStacks % otherEnemies.length;
+  const cap = getTwilightForetellCap(source);
 
   for (const enemy of otherEnemies) {
-    let stacksToAdd = stacksPerEnemy;
-    if (remainder > 0) {
-      stacksToAdd++;
-      remainder--;
-    }
+    const currentStacks = getForetellStacks(enemy);
+    const stacksToAdd = Math.min(foretellStacks, cap - currentStacks);
 
     if (stacksToAdd > 0) {
       await APIBattle.addStatus({
         battleCharacterId: enemy.battleID,
         effectType: "Foretell",
         ammount: stacksToAdd,
-        remainingTurns: 0, // Foretell typically doesn't expire
+        remainingTurns: 0,
         sourceCharacterId: source.battleID,
       });
     }
@@ -262,6 +256,7 @@ export async function propagateBurnDamage(
   source: BattleCharacterInfo,
   damage: number,
   damagePercent: number = 50,
+  foretellAmount: number = 1,
   showToast: (message: string) => void
 ): Promise<void> {
   // Find other burning enemies (same team as target, not the target itself)
@@ -275,20 +270,25 @@ export async function propagateBurnDamage(
   if (otherBurningEnemies.length === 0) return;
 
   const propagatedDamage = Math.floor(damage * (damagePercent / 100));
+  const cap = getTwilightForetellCap(source);
 
   for (const enemy of otherBurningEnemies) {
     // Deal propagated damage
     const newHp = Math.max(0, enemy.healthPoints - propagatedDamage);
     await APIBattle.updateCharacterHp(enemy.battleID, newHp);
 
-    // Apply 1 Foretell
-    await APIBattle.addStatus({
-      battleCharacterId: enemy.battleID,
-      effectType: "Foretell",
-      ammount: 1,
-      remainingTurns: 0,
-      sourceCharacterId: source.battleID,
-    });
+    // Apply Foretell (same amount as primary target, respecting cap)
+    const currentStacks = getForetellStacks(enemy);
+    const stacksToAdd = Math.min(foretellAmount, cap - currentStacks);
+    if (stacksToAdd > 0) {
+      await APIBattle.addStatus({
+        battleCharacterId: enemy.battleID,
+        effectType: "Foretell",
+        ammount: stacksToAdd,
+        remainingTurns: 0,
+        sourceCharacterId: source.battleID,
+      });
+    }
   }
 
   showToast(t("playerPage.skills.burnDamagePropagated", {
@@ -389,7 +389,7 @@ export async function delayTargetTurn(
   showToast: (message: string) => void
 ): Promise<void> {
   await APIBattle.delayTurn(target.battleID, delayAmount);
-  showToast(t("playerPage.skills.turnDelayed", { name: target.name, amount: delayAmount }));
+  showToast(t("playerPage.skills.turnDelayedAmount", { name: target.name, amount: delayAmount }));
 }
 
 /**
@@ -418,12 +418,29 @@ export function calculateForetellScalingBonus(
 }
 
 /**
- * Applies Twilight status effects and returns Foretell cap modifier
- * Twilight doubles the Foretell cap from 20 to 40
+ * Grants +1 MP per Foretell consumed (universal Sciel mechanic)
+ */
+export async function grantMpFromForetell(
+  source: BattleCharacterInfo,
+  consumedCount: number,
+  showToast: (message: string) => void
+): Promise<void> {
+  if (consumedCount <= 0) return;
+
+  const currentMp = source.magicPoints ?? 0;
+  const maxMp = source.maxMagicPoints ?? 99;
+  const newMp = Math.min(currentMp + consumedCount, maxMp);
+
+  await APIBattle.updateCharacterMp(source.battleID, newMp);
+  showToast(t("playerPage.skills.foretellMpGained", { amount: consumedCount }));
+}
+
+/**
+ * Returns the Foretell cap: 10 normally, 20 during Twilight
  */
 export function getTwilightForetellCap(source: BattleCharacterInfo): number {
   if (hasStatus(source, "Twilight")) {
-    return 40;
+    return 20;
   }
-  return 20;
+  return 10;
 }

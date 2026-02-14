@@ -1,13 +1,17 @@
 import type { RefObject } from "react";
 import { t } from "../../../i18n";
 import { APIBattle } from "../../../api/APIBattle";
-import type { BattleCharacterInfo } from "../../../api/ResponseModel";
+import type { BattleCharacterInfo, StatusType, Stance } from "../../../api/ResponseModel";
 import type { GetPlayerResponse } from "../../../api/APIPlayer";
 import type { DiceBoardRef } from "../../../components/DiceBoard";
 import type { ResolvedSkill } from "../../../utils/BattleSkillUtils";
 import type { SkillMetadata } from "../../../data/SkillEffectsRegistry";
 import { evaluateCondition, getStatusEffectsForTarget } from "../../../utils/BattleSkillUtils";
 import { hasStatus } from "../../../utils/NpcCalculator";
+import { consumeStains, processStainEffects, gainStains } from "./stainEffects";
+import { calculateRankBonuses } from "./perfectionEffects";
+import { healHpPercentAtCasterMask, grantMpAtCasterMask, grantMpAtHeavyMask, advanceBestialWheel } from "./bestialWheelEffects";
+import { cleansesAndCopiesBuffs, grantMpToAlly } from "./foretellEffects";
 import { rollWithTimeout } from "../../../utils/RollUtils";
 import { diceTotal } from "../../../utils/DiceCalculator";
 import { handleAttributeTests } from "../../../utils/SkillSpecialMechanics";
@@ -90,13 +94,14 @@ export interface UtilitySkillContext {
   diceBoardRef: RefObject<DiceBoardRef | null>;
   timeoutDiceBoardRef: RefObject<ReturnType<typeof setTimeout> | null>;
   showToast: (message: string) => void;
+  skillType?: string;
 }
 
 /**
  * Handles utility skills (no damage, just effects)
  */
 export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void> {
-  const { source, target, player, allCharacters, resolved, metadata, skillCost, isGradientSkill, diceBoardRef, timeoutDiceBoardRef, showToast } = ctx;
+  const { source, target, player, allCharacters, resolved, metadata, skillCost, isGradientSkill, diceBoardRef, timeoutDiceBoardRef, showToast, skillType } = ctx;
 
   // Handle attribute tests if defined
   if (metadata.attributeTests) {
@@ -125,6 +130,34 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
     const currentMp = source.magicPoints ?? 0;
     await APIBattle.updateCharacterMp(source.battleID, currentMp - skillCost);
   }
+
+  // Handle Sun/Moon charge increment for utility skills (Sciel)
+  if (skillType) {
+    const hasTwilight = source.status?.some(s => s.effectName === "Twilight") ?? false;
+    if (!hasTwilight) {
+      const result = await APIBattle.incrementSunMoonCharge(source.battleID, skillType);
+      if (result.twilightActivated) {
+        showToast(t("playerPage.skills.twilightActivated", { charges: result.twilightCharges }));
+      }
+    }
+  }
+
+  // === LUNE: Consume stains for utility skills ===
+  let stainsConsumed = 0;
+  let stainDotDuration: number | null = null;
+  let currentStainSlots: import("./stainEffects").StainSlots | undefined;
+  if (metadata.consumesStains) {
+    const noDamageBonus = metadata.noStainDamageBonus || metadata.consumeStainsForFreeCast;
+    const result = await consumeStains(source, metadata.consumesStains, showToast, noDamageBonus);
+    stainsConsumed = result.consumed;
+    currentStainSlots = result.slots;
+    const stainResults = processStainEffects(source, metadata, stainsConsumed);
+    stainDotDuration = stainResults.dotDuration;
+  }
+
+  // === VERSO: Calculate rank bonuses for effect duration override ===
+  const rankBonuses = calculateRankBonuses(source, metadata);
+  const effectDurationOverride = rankBonuses.effectDuration;
 
   // Handle rollsForTargetScope: Roll 1d6 to determine target scope
   let finalTargetIds = [...resolved.targetIds];
@@ -181,30 +214,99 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
     });
   }
 
+  // Handle randomAllyCount: randomly select allies as targets
+  if (metadata.randomAllyCount) {
+    const { min, max } = metadata.randomAllyCount;
+    const count = min + Math.floor(Math.random() * (max - min + 1));
+    const allies = allCharacters
+      .filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0);
+    const shuffled = [...allies].sort(() => Math.random() - 0.5);
+    finalTargetIds = shuffled.slice(0, count).map(c => c.battleID);
+  }
+
+  // Build effective effects list (handle stains-consumed conditional overrides)
+  let effectsToApply = [...metadata.primaryEffects];
+  if (stainsConsumed > 0 && metadata.conditionalEffects.length > 0) {
+    const stainConditionals = metadata.conditionalEffects.filter(e => e.condition === "stains-consumed");
+    for (const conditional of stainConditionals) {
+      const existingIdx = effectsToApply.findIndex(e => e.effectType === conditional.effectType);
+      if (existingIdx >= 0) {
+        effectsToApply[existingIdx] = conditional; // Replace (e.g., StormCaller 3→6)
+      } else {
+        effectsToApply.push(conditional); // Add new (e.g., Regeneration)
+      }
+    }
+  }
+
   // Apply status effects
   if (useExpandedTargets) {
-    // When rollsForTargetScope expanded to all allies, apply primary effects to all targets
+    // When rollsForTargetScope expanded to all allies, apply effects to all targets
     for (const targetId of finalTargetIds) {
-      for (const effect of metadata.primaryEffects) {
+      for (const effect of effectsToApply) {
         await APIBattle.addStatus({
           battleCharacterId: targetId,
-          effectType: effect.effectType as string,
+          effectType: effect.effectType as StatusType,
           ammount: effect.amount ?? 0,
-          remainingTurns: effect.remainingTurns ?? 0,
+          remainingTurns: effectDurationOverride ?? stainDotDuration ?? effect.remainingTurns ?? 0,
           sourceCharacterId: source.battleID
         });
       }
     }
   } else {
-    // Normal case: apply resolved effects to their specific targets
+    // Normal case: apply resolved effects with stains-consumed overrides
     for (const targetId of finalTargetIds) {
-      const effects = getStatusEffectsForTarget(resolved.effects, targetId);
-      for (const effect of effects) {
+      const resolvedEffects = getStatusEffectsForTarget(resolved.effects, targetId);
+      for (const effect of resolvedEffects) {
+        // Check for stains-consumed override on this effectType
+        let effectAmount = effect.ammount ?? 0;
+        if (stainsConsumed > 0) {
+          const override = metadata.conditionalEffects.find(
+            e => e.condition === "stains-consumed" && e.effectType === effect.effectType
+          );
+          if (override) {
+            effectAmount = override.amount ?? effectAmount;
+          }
+        }
+        await APIBattle.addStatus({
+          battleCharacterId: targetId,
+          effectType: effect.effectType,
+          ammount: effectAmount,
+          remainingTurns: effectDurationOverride ?? stainDotDuration ?? effect.remainingTurns ?? 0,
+          sourceCharacterId: source.battleID
+        });
+      }
+      // Apply additional stains-consumed effects not in primary (e.g., Regeneration)
+      if (stainsConsumed > 0) {
+        const additionalEffects = metadata.conditionalEffects.filter(
+          e => e.condition === "stains-consumed" &&
+            !metadata.primaryEffects.some(p => p.effectType === e.effectType)
+        );
+        for (const effect of additionalEffects) {
+          await APIBattle.addStatus({
+            battleCharacterId: targetId,
+            effectType: effect.effectType as StatusType,
+            ammount: effect.amount ?? 0,
+            remainingTurns: effectDurationOverride ?? stainDotDuration ?? effect.remainingTurns ?? 0,
+            sourceCharacterId: source.battleID
+          });
+        }
+      }
+    }
+
+    // Apply effects targeting allies (e.g., Typhoon → Regeneration on all-allies)
+    const allyTargetIds = [...new Set(
+      resolved.effects
+        .map(e => e.targetBattleId)
+        .filter(id => !finalTargetIds.includes(id))
+    )];
+    for (const targetId of allyTargetIds) {
+      const resolvedEffects = getStatusEffectsForTarget(resolved.effects, targetId);
+      for (const effect of resolvedEffects) {
         await APIBattle.addStatus({
           battleCharacterId: targetId,
           effectType: effect.effectType,
           ammount: effect.ammount ?? 0,
-          remainingTurns: effect.remainingTurns ?? 0,
+          remainingTurns: effectDurationOverride ?? stainDotDuration ?? effect.remainingTurns ?? 0,
           sourceCharacterId: source.battleID
         });
       }
@@ -343,6 +445,116 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
     }
   }
 
+  // Handle revival with dice roll tiers (Rebirth)
+  if (metadata.reviveWithDiceRoll) {
+    const reviveConfig = metadata.reviveWithDiceRoll;
+
+    // Find the selected target (should be a dead ally)
+    const targetChar = allCharacters.find(c => c.battleID === target.battleID);
+
+    if (targetChar && targetChar.healthPoints <= 0) {
+      await new Promise<void>((resolveRevive) => {
+        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", async (result) => {
+          const roll = diceTotal(result);
+          const tier = reviveConfig.tiers.find(t => roll >= t.minRoll && roll <= t.maxRoll);
+          const hpPercent = tier?.hpPercent ?? 25;
+
+          const maxHp = targetChar.maxHealthPoints;
+          const reviveHp = Math.floor(maxHp * (hpPercent / 100));
+
+          await APIBattle.updateCharacterHp(targetChar.battleID, reviveHp);
+          showToast(t("playerPage.skills.revivedWithRoll", { name: targetChar.name, hp: reviveHp, percent: hpPercent, roll }));
+
+          // Grant MP to revived ally
+          if (reviveConfig.grantsMp) {
+            const currentMp = targetChar.magicPoints ?? 0;
+            const maxMp = targetChar.maxMagicPoints ?? 99;
+            const newMp = Math.min(currentMp + reviveConfig.grantsMp, maxMp);
+            await APIBattle.updateCharacterMp(targetChar.battleID, newMp);
+            showToast(t("playerPage.skills.grantedMpToRevived", { name: targetChar.name, mp: reviveConfig.grantsMp }));
+          }
+
+          resolveRevive();
+        }, { theme: "blue-green-metal" });
+      });
+    } else {
+      showToast(t("playerPage.skills.targetNotDead"));
+    }
+  }
+
+  // Handle heal with hability test for scope (Revitalization)
+  if (metadata.healWithHabilityTest) {
+    const healConfig = metadata.healWithHabilityTest;
+
+    await new Promise<void>((resolveTest) => {
+      performAttributeTest(
+        diceBoardRef as React.RefObject<any>,
+        timeoutDiceBoardRef as React.MutableRefObject<ReturnType<typeof setTimeout> | null>,
+        player,
+        "hability",
+        healConfig.dc,
+        async (result) => {
+          const healsAll = result.success;
+          const healDice = healsAll ? healConfig.successHealDice : healConfig.failureHealDice;
+
+          if (healsAll) {
+            showToast(t("playerPage.skills.habilityTestSuccessAllAllies"));
+          } else {
+            showToast(t("playerPage.skills.habilityTestFailureSingleTarget"));
+          }
+
+          // Determine heal targets
+          const healTargets = healsAll
+            ? allCharacters.filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0)
+            : [allCharacters.find(c => c.battleID === target.battleID)].filter((c): c is BattleCharacterInfo => c !== undefined && c.healthPoints > 0);
+
+          // Roll heal dice
+          await new Promise<void>((resolveHeal) => {
+            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, healDice, async (healResult) => {
+              const healDiceTotal = diceTotal(healResult);
+
+              let baseStat = 0;
+              if (healConfig.baseStat === "resistance") {
+                baseStat = player?.playerSheet?.resistance ?? 0;
+              } else if (healConfig.baseStat === "power") {
+                baseStat = player?.playerSheet?.power ?? 0;
+              }
+
+              const totalHeal = baseStat + healDiceTotal;
+
+              for (const healTarget of healTargets) {
+                await APIBattle.heal(healTarget.battleID, totalHeal);
+                showToast(t("playerPage.skills.healedTarget", { name: healTarget.name, amount: totalHeal }));
+              }
+
+              // Apply conditional effects (Regeneration) if stains consumed
+              if (stainsConsumed > 0 && metadata.conditionalEffects.length > 0) {
+                const stainConditionals = metadata.conditionalEffects.filter(e => e.condition === "stains-consumed");
+                for (const effect of stainConditionals) {
+                  for (const healTarget of healTargets) {
+                    await APIBattle.addStatus({
+                      battleCharacterId: healTarget.battleID,
+                      effectType: effect.effectType as StatusType,
+                      ammount: effect.amount ?? 0,
+                      remainingTurns: effect.remainingTurns ?? 0,
+                      sourceCharacterId: source.battleID
+                    });
+                  }
+                  showToast(t("playerPage.skills.regenerationApplied", { turns: effect.remainingTurns }));
+                }
+              }
+
+              resolveHeal();
+            }, { theme: "blue-green-metal" });
+          });
+
+          resolveTest();
+        },
+        { theme: "blue-green-metal" }
+      );
+    });
+  }
+
   // Handle MP grant with dice roll (Swift Stride)
   if (metadata.grantsMPDiceRoll) {
     await new Promise<void>((resolveMp) => {
@@ -402,7 +614,7 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
   // Rule: If skill doesn't say "changes to stance X" or "maintains stance", stance is lost
   if (!metadata.maintainsStance) {
     // Determine target stance (default to null = lose stance)
-    let targetStance: string | null = metadata.changesStanceTo ?? null;
+    let targetStance: Stance | null = metadata.changesStanceTo ?? null;
 
     // Preserve Virtuous stance if configured and currently in Virtuous
     if (metadata.preservesVirtuoseStance && source.stance === "Virtuous") {
@@ -431,5 +643,65 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
         showToast(t("playerPage.skills.stanceChangeMpBonus"));
       }
     }
+  }
+
+  // === MONOCO: Heal HP% at Caster/Almighty Mask (Pelerin Heal) ===
+  if (metadata.healsHpPercentAtCasterMask) {
+    const allies = allCharacters.filter(c => c.isEnemy === source.isEnemy && c.healthPoints > 0);
+    await healHpPercentAtCasterMask(source, allies, metadata.healsHpPercentAtCasterMask, showToast);
+  }
+
+  // === MONOCO: Grant MP at Caster/Almighty Mask (Orphelin Cheers) ===
+  if (metadata.grantsMpAtCasterMask) {
+    const targetChars = finalTargetIds
+      .map(id => allCharacters.find(c => c.battleID === id))
+      .filter((c): c is BattleCharacterInfo => c !== undefined);
+    await grantMpAtCasterMask(source, targetChars, metadata.grantsMpAtCasterMask, showToast);
+  }
+
+  // === MONOCO: Grant MP at Heavy/Almighty Mask (Cruler Barrier) ===
+  if (metadata.grantsMpAtHeavyMask) {
+    const targetChars = finalTargetIds
+      .map(id => allCharacters.find(c => c.battleID === id))
+      .filter((c): c is BattleCharacterInfo => c !== undefined);
+    await grantMpAtHeavyMask(source, targetChars, metadata.grantsMpAtHeavyMask, showToast);
+  }
+
+  // === MONOCO: Advance Bestial Wheel for utility skills ===
+  if (metadata.bestialWheelAdvance) {
+    await advanceBestialWheel(source, metadata.bestialWheelAdvance, showToast);
+  }
+
+  // === SCIEL: Cleanse and copy buffs (Dark Cleansing) ===
+  if (metadata.cleansesAndCopiesBuffs) {
+    await cleansesAndCopiesBuffs(target, allCharacters, source, showToast);
+  }
+
+  // === SCIEL: Grant MP to ally (Intervention) ===
+  if (metadata.grantsMP) {
+    await grantMpToAlly(target, metadata.grantsMP, showToast);
+  }
+
+  // === SCIEL: Grant immediate turn to ally (Intervention) ===
+  if (metadata.grantsImmediateTurn) {
+    await APIBattle.grantExtraTurn(target.battleID);
+    showToast(t("playerPage.skills.extraTurnGranted", { name: target.name }));
+  }
+
+  // === Handle Heal effects (Tree of Life, Healing Light) ===
+  const healEffects = resolved.effects.filter(e => e.effectType === "Heal");
+  for (const effect of healEffects) {
+    const targetChar = allCharacters.find(c => c.battleID === effect.targetBattleId);
+    if (targetChar) {
+      const maxHp = targetChar.maxHealthPoints;
+      const healAmount = Math.floor(maxHp * (effect.amount / 100));
+      await APIBattle.heal(effect.targetBattleId, healAmount);
+      showToast(t("playerPage.skills.healedFor", { amount: healAmount }));
+    }
+  }
+
+  // === LUNE: Gain stains after utility skill ===
+  if (metadata.gainsStains) {
+    await gainStains(source, metadata.gainsStains, showToast, currentStainSlots);
   }
 }

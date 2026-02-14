@@ -37,7 +37,7 @@ export function translateElementName(elementName: string): string {
 }
 
 /**
- * Substitui texto "Mancha de X" e nomes de elementos completamente por imagens
+ * Substitui referências a manchas ("Mancha de X", "X stain", "stain of X") por imagens
  * @param text Texto da descrição da habilidade
  * @returns Array de React nodes com texto e imagens
  */
@@ -45,12 +45,10 @@ export function renderStainText(text: string): React.ReactNode[] {
     const parts: React.ReactNode[] = [];
 
     // Regex para capturar padrões como:
-    // - "Mancha de Raio" ou "Mancha de Lightning"
-    // - "1 Mancha de Gelo"
-    // - "2 Manchas de Fogo"
-    // - Palavras isoladas: "Gelo", "Fogo", "Raio", "Terra", "Luz" (word boundary)
-    // - EXCETO quando precedido por "de " (para evitar "dano de Fogo")
-    const stainPattern = /(\d+\s+)?Manchas?\s+de\s+(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)|(?<!de )\b(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)\b/gi;
+    // - PT "Mancha de Raio" / "2 Manchas de Fogo"  → match[1]=count, match[2]=element
+    // - EN "1 Fire stain" / "Lightning stains"      → match[3]=count, match[4]=element
+    // - EN "2 stains of Earth"                      → match[5]=count, match[6]=element
+    const stainPattern = /(\d+\s+)?Manchas?\s+de\s+(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)|(\d+\s+)?\b(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)\b\s+stains?|(\d+\s+)?stains?\s+of\s+(Raio|Lightning|Terra|Earth|Fogo|Fire|Gelo|Ice|Luz|Light)\b/gi;
 
     let lastIndex = 0;
     let match: RegExpExecArray | null = null;
@@ -64,14 +62,12 @@ export function renderStainText(text: string): React.ReactNode[] {
         }
 
         const fullMatch = match[0];
-        const count = match[1]?.trim(); // "1 " ou "2 " ou undefined
-        const stainNameWithPrefix = match[2]; // "Raio" quando tem "Mancha de"
-        const stainNameAlone = match[3]; // "Raio" quando está sozinho
-        const stainName = stainNameWithPrefix || stainNameAlone;
+        const count = (match[1] || match[3] || match[5])?.trim();
+        const stainName = match[2] || match[4] || match[6];
         const imagePath = STAIN_IMAGES[stainName];
 
         if (imagePath) {
-            // Se houver número (ex: "2 Manchas de Fogo"), renderiza apenas as imagens repetidas (sem número)
+            // Se houver número (ex: "2 Manchas de Fogo"), renderiza as imagens repetidas (sem o número no texto)
             if (count) {
                 const numericCount = parseInt(count);
                 parts.push(
@@ -88,7 +84,7 @@ export function renderStainText(text: string): React.ReactNode[] {
                     </span>
                 );
             } else {
-                // Apenas uma imagem (para "Mancha de X" ou "X" sozinho)
+                // Apenas uma imagem (para "Mancha de X", "X stain" ou "stain of X")
                 parts.push(
                     <img
                         key={matchIndex}

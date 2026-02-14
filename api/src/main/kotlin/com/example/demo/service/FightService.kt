@@ -105,7 +105,8 @@ class FightService(
                                         isEnemy = bc.isEnemy,
                                         canRollInitiative = bc.canRollInitiative,
                                         parriesThisTurn = bc.parriesThisTurn,
-                                        hitsTakenThisTurn = bc.hitsTakenThisTurn
+                                        hitsTakenThisTurn = bc.hitsTakenThisTurn,
+                                        foretellConsumedTotal = bc.foretellConsumedTotal
                                 )
                         }
 

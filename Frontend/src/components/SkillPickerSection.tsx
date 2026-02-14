@@ -260,7 +260,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         const q = query.trim().toLowerCase();
         if (!q) return pool;
         return pool.filter(
-            (s) => s.name.toLowerCase().includes(q) || (s.description ?? "").toLowerCase().includes(q)
+            (s) => s.name.toLowerCase().includes(q)
         );
     }, [characterSkills, query, slotAssignments, player]);
 
@@ -417,15 +417,21 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             if (currentMP < effectiveCost) return false;
         }
 
-        // Check stain requirements (for skills like Elemental Genesis)
+        // Check stain requirements
         const skillMetadata = SkillEffectsRegistry[skill.id];
+        const source = player?.fightInfo?.characters?.find(
+            c => c.battleID === player.fightInfo?.playerBattleID
+        );
+        // Elemental Genesis: requires all 4 stain types
         if (skillMetadata?.requiresAllStains) {
-            const source = player?.fightInfo?.characters?.find(
-                c => c.battleID === player.fightInfo?.playerBattleID
-            );
             if (source && !hasRequiredStains(source, skillMetadata)) {
                 return false;
             }
+        }
+        // Mayhem: requires at least one stain
+        if (skillMetadata?.hitsMatchConsumedStains && source) {
+            const hasAnyStain = source.stainSlot1 || source.stainSlot2 || source.stainSlot3 || source.stainSlot4;
+            if (!hasAnyStain) return false;
         }
 
         return true;

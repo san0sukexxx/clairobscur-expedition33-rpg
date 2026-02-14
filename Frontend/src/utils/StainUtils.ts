@@ -154,7 +154,8 @@ export function consumeStains(
  * Returns the new stain slots
  *
  * Rules when all 4 slots are full:
- * - Both Light and non-Light stains will replace non-Light stains
+ * - Light stains have priority: replace first non-Light stain
+ * - Non-Light stains are lost if no empty slot is available
  * - Light stains are NEVER replaced automatically
  * - If all 4 slots are Light, new stains are lost
  * - Light stains are processed FIRST to ensure they get priority
@@ -177,19 +178,17 @@ export function addStains(
         const emptyIndex = stains.findIndex(s => s === null);
         if (emptyIndex !== -1) {
             stains[emptyIndex] = stain;
-            continue; // Move to next stain to add
+            continue;
         }
 
-        // No empty slots - need to replace
-        // Both Light and non-Light stains will replace non-Light stains
-        // Find first non-Light stain to replace
-        const replaceableIndex = stains.findIndex(s => s !== null && s !== "Light");
-
-        if (replaceableIndex !== -1) {
-            // Replace the non-Light stain
-            stains[replaceableIndex] = stain;
+        // No empty slot: only Light has priority to replace non-Light stains
+        if (stain === "Light") {
+            const replaceableIndex = stains.findIndex(s => s !== null && s !== "Light");
+            if (replaceableIndex !== -1) {
+                stains[replaceableIndex] = stain;
+            }
         }
-        // If all 4 slots are Light, do nothing (stain is lost)
+        // Non-Light stains are lost if all slots are full
     }
 
     return [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null] as [StainType | null, StainType | null, StainType | null, StainType | null];

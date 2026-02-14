@@ -215,6 +215,11 @@ export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, 
         damage = damage + versoPerfectionBonus;
     }
 
+    // Sciel: Fortune's Fury bonus (+8 per hit)
+    if (playerChar && hasStatus(playerChar, "FortunesFury")) {
+        damage = damage + 8;
+    }
+
     return Math.max(0, damage);
 }
 
@@ -250,6 +255,11 @@ export function calculateBasicAttackDamage(player: GetPlayerResponse | null, wea
     if (isVerso) {
         const versoPerfectionBonus = getVersoPerfectionDamageBonus(playerChar?.perfectionRank);
         attackDamage = attackDamage + versoPerfectionBonus;
+    }
+
+    // Sciel: Fortune's Fury bonus (+8 per hit)
+    if (playerChar && hasStatus(playerChar, "FortunesFury")) {
+        attackDamage = attackDamage + 8;
     }
 
     return Math.max(0, attackDamage);

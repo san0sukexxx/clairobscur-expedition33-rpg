@@ -497,11 +497,11 @@ class AttackController(
                                 false
                         }
 
-                        // Normal shield consumption (only 1) - unless ignoring shields (Piercing Shot) or destroying all shields (Breaking Rules)
-                        if (body.destroysShields != true && !shouldIgnoreShields) {
+                        // Normal shield consumption (only 1) - unless ignoring shields (Piercing Shot / Chevaliere Piercing) or destroying all shields (Breaking Rules)
+                        if (body.destroysShields != true && !shouldIgnoreShields && body.ignoresShields != true) {
                                 battleService.consumeShield(targetBC.id!!)
                         }
-                        // If shouldIgnoreShields is true, shield is NOT consumed (Piercing Shot effect)
+                        // If shouldIgnoreShields or body.ignoresShields is true, shield is NOT consumed
 
                         // Combustion: Consume Burn stacks from target
                         body.consumesBurn?.let { consumeAmount ->

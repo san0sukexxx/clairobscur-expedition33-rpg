@@ -300,6 +300,32 @@ export class APIBattle {
         )
     }
 
+    static async updateBestialWheelPosition(id: number, newPosition: number): Promise<void> {
+        await api.put<{ newPosition: number }, void>(
+            `battles/characters/${id}/bestial-wheel-position`,
+            { newPosition }
+        )
+    }
+
+    static async updateSunMoonCharges(id: number, sunCharges: number, moonCharges: number): Promise<void> {
+        await api.put<{ sunCharges: number; moonCharges: number }, void>(
+            `battles/characters/${id}/sun-moon-charges`,
+            { sunCharges, moonCharges }
+        )
+    }
+
+    static async incrementSunMoonCharge(id: number, skillType: string): Promise<{ twilightActivated: boolean; twilightCharges: number }> {
+        const response = await api.post<{ skillType: string }, { twilightActivated: boolean; twilightCharges: number }>(
+            `battles/characters/${id}/increment-sun-moon`,
+            { skillType }
+        );
+        return response;
+    }
+
+    static async incrementForetellConsumed(battleCharacterId: number, amount: number): Promise<void> {
+        await api.post(`battles/characters/${battleCharacterId}/increment-foretell-consumed`, { amount });
+    }
+
     static async rankUpCharacter(battleCharacterId: number): Promise<boolean> {
         const response = await api.post<{}, { success: boolean }>(
             `battles/characters/${battleCharacterId}/rank-up`,
