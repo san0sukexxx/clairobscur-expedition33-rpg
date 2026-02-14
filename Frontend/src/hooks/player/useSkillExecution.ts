@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 import { t } from "../../i18n";
 import { APIBattle } from "../../api/APIBattle";
-import type { BattleCharacterInfo } from "../../api/ResponseModel";
+import type { BattleCharacterInfo, Element, Stance } from "../../api/ResponseModel";
 import { SkillEffectsRegistry } from "../../data/SkillEffectsRegistry";
 import { rollWithTimeout } from "../../utils/RollUtils";
 import { rollCommandForAttack } from "../../utils/PlayerCalculator";
@@ -180,7 +180,7 @@ export function useSkillExecution({
 
     // === LUNE: Consume stains before attack ===
     let stainsConsumed = 0;
-    let stainEffects = { damageMultiplier: 1, shouldGrantSecondTurn: false, shouldDoublesDamage: false, shouldGrantRegeneration: false, dotDuration: null as number | null, determinedElement: null as string | null, canBreak: false };
+    let stainEffects = { damageMultiplier: 1, shouldGrantSecondTurn: false, shouldDoublesDamage: false, shouldGrantRegeneration: false, dotDuration: null as number | null, determinedElement: null as Element | null, canBreak: false };
     if (resolved.metadata.consumesStains) {
       const result = await consumeStains(source, resolved.metadata.consumesStains, showToastRef.current);
       stainsConsumed = result.consumed;
@@ -238,8 +238,11 @@ export function useSkillExecution({
     // Calculate hits received bonus (Revenge, Payback: +2 damage per hit received)
     let hitsReceivedBonus = 0;
     if (resolved.metadata.damageScalesWithHitsReceived) {
-      const hitsReceived = source.hitsReceivedThisTurn ?? 0;
+      const hitsReceived = source.hitsTakenThisTurn ?? 0;
       hitsReceivedBonus = hitsReceived * 2;  // +2 damage per hit taken
+      console.log("=== Hits Received Bonus ===");
+      console.log("Hits taken this turn:", hitsReceived);
+      console.log("Damage bonus:", hitsReceivedBonus);
       if (hitsReceivedBonus > 0) {
         showToastRef.current(t("playerPage.skills.hitsReceivedBonus", { hits: hitsReceived, bonus: hitsReceivedBonus }));
       }
@@ -261,7 +264,10 @@ export function useSkillExecution({
           // Add charge bonus and hits received bonus to damage
           const totalDamage = baseDamage + chargeBonus + hitsReceivedBonus;
 
-          showToastRef.current(`Total: ${totalDamage}${chargeBonus > 0 ? ` (${baseDamage}+${chargeBonus})` : ""}${hitsReceivedBonus > 0 ? ` (+${hitsReceivedBonus} vingança)` : ""}`);
+          const parts = [String(baseDamage)];
+          if (chargeBonus > 0) parts.push(`+${chargeBonus} carga`);
+          if (hitsReceivedBonus > 0) parts.push(`+${hitsReceivedBonus} vingança`);
+          showToastRef.current(`Total: ${totalDamage}${parts.length > 1 ? ` (${parts.join(", ")})` : ""}`);
 
           // Process each target
           for (let targetIndex = 0; targetIndex < resolved.targetIds.length; targetIndex++) {
@@ -595,7 +601,7 @@ export function useSkillExecution({
     // Rule: If skill doesn't say "changes to stance X" or "maintains stance", stance is lost
     if (!resolved.metadata.maintainsStance) {
       // Determine target stance (default to null = lose stance)
-      let targetStance: string | null = resolved.metadata.changesStanceTo ?? null;
+      let targetStance: Stance | null = resolved.metadata.changesStanceTo ?? null;
 
       // Preserve Virtuous stance if configured and currently in Virtuous (Fleuret Fury)
       if (resolved.metadata.preservesVirtuoseStance && source.stance === "Virtuous") {
@@ -615,8 +621,9 @@ export function useSkillExecution({
         showToastRef.current(t("playerPage.skills.stanceChanged", { stance: t(`combatAdmin.stances.${stanceKey}`) }));
 
         // Maelle: Grant +1 MP when changing to a new stance (not null)
-        if (targetStance !== source.stance) {
-          const currentMp = source.magicPoints ?? 0;
+        // Skip if skill already refills MP (Last Chance) to avoid overwriting with stale value
+        if (targetStance !== source.stance && !resolved.metadata.refillsMP) {
+          const currentMp = (source.magicPoints ?? 0) - (isGradientSkill ? 0 : skillCost);
           const maxMp = source.maxMagicPoints ?? 99;
           const newMp = Math.min(currentMp + 1, maxMp);
           await APIBattle.updateCharacterMp(source.battleID, newMp);

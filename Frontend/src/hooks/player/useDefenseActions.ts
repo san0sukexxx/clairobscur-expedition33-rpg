@@ -143,13 +143,6 @@ export function useDefenseActions({
 
           if (result != null) {
             defenseValue = calculateDefense(attack.totalPower, player, weaponInfo, result, defense, playerChar?.stance);
-          } else {
-            // When taking damage without rolling, still apply stance modifiers
-            if (playerChar?.stance === "Defensive") {
-              defenseValue = Math.floor(defenseValue * 0.5);
-            } else if (playerChar?.stance === "Offensive") {
-              defenseValue = Math.floor(defenseValue * 1.5);
-            }
           }
 
           let description = t("playerPage.defense.tookFullDamage");

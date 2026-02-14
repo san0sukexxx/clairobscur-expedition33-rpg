@@ -3069,7 +3069,7 @@
         "buffsCopied": "Buffs copiados para outros aliados!",
         "stanceChanged": "Postura alterada para {stance}!",
         "healthReduced": "Vida reduzida para {amount}!",
-        "mpRefilled": "PA recarregado para {amount}!",
+        "mpRefilled": "PM recarregado para {amount}!",
         "stanceReapplied": "Postura {stance} reaplicada!",
         "mpGranted": "+{amount} PM concedidos! ({before} → {after})",
         "allyReceivedMP": "{name} recebeu {amount} PM! ({before} → {after})",

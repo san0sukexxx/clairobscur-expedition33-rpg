@@ -422,8 +422,9 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
       showToast(t("playerPage.skills.stanceChanged", { stance: t(`combatAdmin.stances.${stanceKey}`) }));
 
       // Maelle: Grant +1 MP when changing to a new stance (not null)
-      if (targetStance !== source.stance) {
-        const currentMp = source.magicPoints ?? 0;
+      // Skip if skill already refills MP (Last Chance) to avoid overwriting with stale value
+      if (targetStance !== source.stance && !metadata.refillsMP) {
+        const currentMp = (source.magicPoints ?? 0) - (isGradientSkill ? 0 : skillCost);
         const maxMp = source.maxMagicPoints ?? 99;
         const newMp = Math.min(currentMp + 1, maxMp);
         await APIBattle.updateCharacterMp(source.battleID, newMp);
