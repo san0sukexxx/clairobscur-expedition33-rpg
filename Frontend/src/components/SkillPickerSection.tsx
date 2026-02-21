@@ -373,6 +373,13 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             }
         }
 
+        // Rank-based cost reduction (Ascending Assault at S: 2 MP)
+        if (skillMetadata?.rankConditionalCost && !skill.isGradient) {
+            if (source?.perfectionRank === skillMetadata.rankConditionalCost.rank) {
+                baseCost = skillMetadata.rankConditionalCost.reducedCost;
+            }
+        }
+
         // Payback: Cost reduction per parry (using parriesThisTurn counter)
         if (skillMetadata?.costReductionPerParry && !skill.isGradient) {
             const parriesCount = source?.parriesThisTurn ?? 0;
@@ -400,6 +407,14 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             }
 
             if (canConsumeStains) {
+                baseCost = 0;
+            }
+        }
+
+        // Charging skills: free on second use when player has Charging status
+        if (skillMetadata?.requiresOneTurnDelay && !skill.isGradient && source) {
+            const hasCharging = source.status?.some(s => s.effectName === "Charging") ?? false;
+            if (hasCharging) {
                 baseCost = 0;
             }
         }

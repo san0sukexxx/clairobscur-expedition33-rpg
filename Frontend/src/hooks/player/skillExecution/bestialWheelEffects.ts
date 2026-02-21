@@ -248,12 +248,8 @@ export async function applySacrifice(
  * More damage when HP is lower
  */
 export function calculateLowHpDamageBonus(source: BattleCharacterInfo): number {
-  const currentHp = source.healthPoints;
-  const maxHp = source.maxHealthPoints;
-  const missingHpPercent = ((maxHp - currentHp) / maxHp) * 100;
-
-  // Flat bonus: +1 per 20% HP missing (max +5)
-  return Math.floor(missingHpPercent / 20);
+  const missingHp = source.maxHealthPoints - source.healthPoints;
+  return Math.min(Math.floor(missingHp / 2), 6);
 }
 
 /**
@@ -292,7 +288,6 @@ export async function incrementDamageEscalation(
     battleCharacterId: source.battleID,
     effectType: "DamageEscalation",
     ammount: newStacks,
-    remainingTurns: 99,
     sourceCharacterId: source.battleID
   });
 
@@ -309,13 +304,13 @@ export function calculateEscalationBonus(stacks: number, maxStacks: number = 5):
 }
 
 /**
- * Checks for double damage vs stunned (Mighty Strike)
+ * Returns flat bonus damage vs stunned targets (Arauto do Fim / Mighty Strike)
  */
 export function shouldDoubleDamageVsStunned(
   target: BattleCharacterInfo,
   metadata: SkillMetadata
 ): boolean {
-  if (!metadata.doubleDamageVsStunned) return false;
+  if (!metadata.plusDamageVsStunned) return false;
   return hasStatus(target, "Stunned");
 }
 

@@ -1,4 +1,4 @@
-import type { BattleCharacterInfo, StatusType } from "../../../api/ResponseModel";
+import type { BattleCharacterInfo, StatusType, WeaponInfo } from "../../../api/ResponseModel";
 import type { GetPlayerResponse } from "../../../api/APIPlayer";
 import type { SkillMetadata } from "../../../data/SkillEffectsRegistry";
 import { APIBattle } from "../../../api/APIBattle";
@@ -363,20 +363,6 @@ export async function grantMpToAllAllies(
   }
 
   showToast(t("playerPage.skills.mpGrantedToAllies", { amount: totalMpGrant }));
-}
-
-/**
- * Calculates speed difference bonus for Escrime Rapide
- */
-export function calculateSpeedDifferenceBonus(
-  player: GetPlayerResponse,
-  target: BattleCharacterInfo
-): number {
-  const playerHability = player.playerSheet?.hability ?? 0;
-  const targetHability = target.power ?? 0; // Using power as a proxy for speed/hability
-
-  const difference = playerHability - targetHability;
-  return Math.max(0, difference); // Only positive bonus
 }
 
 /**

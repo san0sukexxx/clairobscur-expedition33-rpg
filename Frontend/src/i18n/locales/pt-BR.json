@@ -2008,6 +2008,7 @@
         "stainIce": "Gelo",
         "stainLight": "Luz",
         "maelleStance": "Postura de Maelle",
+        "versoPerfectionRank": "Rank de Perfeição do Verso",
         "charges": "Cargas",
         "teamA": "Time A",
         "teamB": "Time B",
@@ -2435,11 +2436,11 @@
       },
       "verso-berserk-slash": {
         "name": "Corte Berserk",
-        "description": "Causa dano Físico médio em alvo único. 3 golpes. Dano aumenta para cada vida que Verso está faltando. Se Verso usar esta habilidade no Rank C de Perfeição, o dano é aumentado."
+        "description": "Causa dano Físico médio em alvo único. 3 golpes. Bônus de dano igual à metade da vida faltante, no máximo +6 por golpe. Se Verso usar esta habilidade no Rank C de Perfeição, o dano é aumentado."
       },
       "verso-blitz": {
         "name": "Blitz",
-        "description": "Causa dano Físico baixo em alvo único. 1 golpe. Joga uma segunda vez. Mata inimigos não-chefes com Vida muito baixa. Se Verso usar esta habilidade no Rank B de Perfeição, o dano é aumentado."
+        "description": "Causa dano Físico baixo em alvo único. 1 golpe. Joga uma segunda vez. Executa inimigos com menos de 10% de Vida. Se Verso usar esta habilidade no Rank B de Perfeição, o dano é aumentado."
       },
       "verso-burden": {
         "name": "Burden",
@@ -2462,15 +2463,15 @@
         "description": "Causa dano médio em alvo único. 3 golpes. Usa elemento da arma. Se o alvo estiver Queimando, cura Verso em Resistência +1d6. Se Verso usar esta habilidade no Rank B de Perfeição, o dano é aumentado."
       },
       "verso-leadership": {
-        "name": "Leadership",
-        "description": "Reduz o Rank atual. Dá 2-4 PM para outros aliados. Se Verso usar esta habilidade no Rank C de Perfeição, dá +1 PM adicional para outros aliados."
+        "name": "Liderança",
+        "description": "Reduz o Rank atual. Dá 3 PM para outros aliados. Se Verso usar esta habilidade no Rank C de Perfeição, dá +1 PM adicional para outros aliados."
       },
       "verso-light-holder": {
         "name": "Portador da Luz",
         "description": "Causa dano de Luz médio em alvo único. 5 golpes. Ao completar, ganha 1 Rank. Se Verso usar esta habilidade no Rank A de Perfeição, concede 2 PM adicionais para Verso."
       },
       "verso-marking-shot": {
-        "name": "Tiro Marcante (Verso)",
+        "name": "Tiro Marcante",
         "description": "Causa dano de Raio baixo em alvo único. 1 golpe. Aplica Marca."
       },
       "verso-overload": {
@@ -2479,7 +2480,7 @@
       },
       "verso-paradigm-shift": {
         "name": "Mudança de Paradigma",
-        "description": "Causa dano Físico baixo em alvo único e devolve 1-3 PM. 3 golpes. Se Verso usar esta habilidade no Rank C de Perfeição, concede 1 PM adicional para Verso."
+        "description": "Causa dano Físico baixo em alvo único e devolve 2 PM. 3 golpes. Se Verso usar esta habilidade no Rank C de Perfeição, concede 1 PM adicional para Verso."
       },
       "verso-perfect-break": {
         "name": "Quebra Perfeita",
@@ -2487,7 +2488,7 @@
       },
       "verso-perfect-recovery": {
         "name": "Recuperação Perfeita",
-        "description": "Recupera Resistência +2d6 de Vida e dissipa Efeitos de Status. Dá 0-2 Perfeição. Se Verso usar esta habilidade no Rank C de Perfeição, o efeito de cura é dobrado."
+        "description": "Recupera Resistência +2d6 de Vida e dissipa Efeitos de Status. Dá +2 Perfeição. Se Verso usar esta habilidade no Rank C de Perfeição, o efeito de cura é dobrado."
       },
       "verso-phantom-stars": {
         "name": "Estrelas Fantasmas",
@@ -2503,7 +2504,7 @@
       },
       "verso-quick-strike": {
         "name": "Golpe Rápido",
-        "description": "Causa dano Físico baixo em alvo único. 1 golpe. Se Verso usar esta habilidade no Rank D de Perfeição: Dá mais Perfeição."
+        "description": "Causa dano Físico baixo em alvo único. 1 golpe. Usar esta habilidade no Rank D de Perfeição: Dá +2 Perfeição."
       },
       "verso-radiant-slash": {
         "name": "Corte Radiante",
@@ -2515,7 +2516,7 @@
       },
       "verso-speedburst": {
         "name": "Explosão de Velocidade",
-        "description": "Causa dano de Luz alto em alvo único. 5 golpes. Dano aumentado pela diferença de Velocidade com o alvo. Se Verso usar esta habilidade no Rank C de Perfeição, o dano é aumentado."
+        "description": "Causa dano de Luz alto em alvo único. 5 golpes. Adiciona sua habilidade e seu bônus de agilidade em cada ataque. Se Verso usar esta habilidade no Rank C de Perfeição, o dano é aumentado."
       },
       "verso-steeled-strike": {
         "name": "Golpe de Aço",
@@ -2527,7 +2528,7 @@
       },
       "verso-strike-storm": {
         "name": "Tempestade de Golpes",
-        "description": "Causa dano muito alto em alvo único. 6 golpes. Usa elemento da arma. Acertos Críticos geram 2 Cargas adicionais."
+        "description": "Causa dano muito alto em alvo único. 6 golpes. Usa elemento da arma. Acertos Críticos geram 2 Perfeições adicionais."
       },
       "monoco-abbest-wind": {
         "name": "Vento Abbest",
@@ -2936,10 +2937,12 @@
         "Curse": "💀 Maldição",
         "IntenseFlames": "🔥 Chamas Intensas",
         "Earthquake": "🌍 Terremoto",
-        "freeShot": "Free Shot",
+        "freeShot": "Tiro Livre",
         "jump": "Pular",
         "gradient": "Gradiente",
-        "invisibleBarrier": "Barreira Invisível"
+        "invisibleBarrier": "Barreira Invisível",
+        "DamageEscalation": "Escalada de Dano",
+        "Charging": "Carregando"
       },
       "statusDescriptions": {
         "Frozen": "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.",
@@ -2993,10 +2996,12 @@
         "Curse": "Maldição que causa efeitos negativos contínuos.",
         "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano. Se o personagem estiver frágil, sofre quebra e recebe 150% do dano que causou a quebra.",
         "IntenseFlames": "Rola Xd6 de dano quando resolvido (X = acúmulos atuais). Aumenta em 2 acúmulos no fim do turno. Não expira. Removido de todos os inimigos quando o conjurador recebe dano.",
-        "freeShot": "Acumula bônus para ataques básicos.",
+        "freeShot": "Tiros livres realizados neste turno. Aumenta o dano de Sequência (até 10 stacks).",
         "jump": "Ignora terreno ou obstáculos temporariamente.",
         "gradient": "Efeito especial de uso interno.",
         "invisibleBarrier": "Barreira mágica invisível que protege o personagem. Visível apenas para o mestre.",
+        "DamageEscalation": "Dano base aumentado a cada uso consecutivo. Acumula +1 por uso adicional.",
+        "Charging": "Você está carregando alguma habilidade",
         "default": "Efeito ativo."
       },
       "resolveButton": {
@@ -3170,6 +3175,7 @@
         "habilityTestSuccessMP": "Sucesso! +{mp} PM ganho!",
         "habilityTestFailureMP": "Falha! +{mp} PM ganho.",
         "hitsReceivedBonus": "{hits} ataques recebidos! Dano +{bonus}!",
+        "freeAimBonus": "{stacks} tiros livres! Dano +{stacks}!",
         "burnScalingBonus": "{stacks} Queimaduras no alvo! Dano +{bonus}!",
         "hpSetTo": "HP reduzido para {amount}!",
         "shieldsConsumed": "{count} Escudo(s) consumido(s)!",
@@ -3186,18 +3192,21 @@
         "rankDown": "Rank diminuído!",
         "rankSetToS": "Rank de Perfeição definido como S!",
         "hpCost": "Custo de HP: {amount}",
+        "hpCostDeducted": "Custou {amount} de Vida",
         "statusTransferred": "{count} efeito(s) de status transferido(s)!",
         "rankGrantedMp": "+{mp} PM concedido (Bônus de Rank)!",
         "stunReapplied": "Atordoamento reaplicado em {name}!",
         "playsSecondTime": "Joga uma segunda vez! (Hits dobrados)",
         "chargingStarted": "Carregando... O ataque será executado no próximo turno!",
         "chargingReleased": "Carga liberada! Executando ataque!",
+        "chargingInterrupted": "Carga interrompida! O carregamento foi cancelado.",
         "mpReturned": "+{amount} PM retornado!",
         "mpGrantedToAllies": "+{amount} PM concedido aos aliados!",
         "wheelAdvanced": "Roda Bestial avançou para {mask}!",
         "forcedToAlmighty": "Forçado para Máscara Onipotente!",
         "damageEscalation": "Escalação de Dano: {stacks} uso(s) (+{bonus}%)",
         "damageEscalationActive": "Bônus de Escalação ativo: +{bonus}%",
+        "damageEscalationLinear": "Assalto Ascendente: +{bonus} de dano",
         "alliesHealedPerHit": "Aliados curados em {percent}% HP!",
         "mpGainedFromBurning": "+{amount} PM ganho (alvo Queimando)!",
         "mpGrantedAtHeavy": "+{amount} PM concedido (Máscara Pesada)!",

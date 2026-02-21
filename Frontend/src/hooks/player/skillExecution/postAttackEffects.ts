@@ -9,7 +9,15 @@ import type { SkillMetadata } from "../../../data/SkillEffectsRegistry";
 import { evaluateCondition, getStatusEffectsForTarget } from "../../../utils/BattleSkillUtils";
 import { hasStatus } from "../../../utils/NpcCalculator";
 import { consumeStains, processStainEffects, gainStains } from "./stainEffects";
-import { calculateRankBonuses } from "./perfectionEffects";
+import {
+  calculateRankBonuses,
+  grantPerfectionPoints,
+  gainPerfectionRank,
+  reducePerfectionRank,
+  setRankToS,
+  transferAllStatusToSelf,
+  grantMpToAllAllies
+} from "./perfectionEffects";
 import { healHpPercentAtCasterMask, grantMpAtCasterMask, grantMpAtHeavyMask, advanceBestialWheel } from "./bestialWheelEffects";
 import { cleansesAndCopiesBuffs, grantMpToAlly } from "./foretellEffects";
 import { rollWithTimeout } from "../../../utils/RollUtils";
@@ -703,5 +711,42 @@ export async function handleUtilitySkill(ctx: UtilitySkillContext): Promise<void
   // === LUNE: Gain stains after utility skill ===
   if (metadata.gainsStains) {
     await gainStains(source, metadata.gainsStains, showToast, currentStainSlots);
+  }
+
+  // === VERSO: Grant perfection points for utility skills (silent - no toast) ===
+  if (metadata.grantsPerfectionPoints) {
+    await grantPerfectionPoints(source, metadata.grantsPerfectionPoints, false, undefined, () => {});
+  }
+
+  // === VERSO: Set rank to S (Overload utility) ===
+  if (metadata.setsRankToS) {
+    await setRankToS(source, showToast);
+  }
+
+  // === VERSO: Gain perfection rank (Burden utility) ===
+  if (metadata.gainsPerfectionRank) {
+    await gainPerfectionRank(source, metadata.gainsPerfectionRank, showToast);
+  }
+
+  // === VERSO: Transfer all status to self (Burden utility) ===
+  if (metadata.transfersAllStatusToSelf) {
+    await transferAllStatusToSelf(source, allCharacters, showToast);
+  }
+
+  // === VERSO: Reduce rank (Leadership utility) ===
+  if (metadata.reducesRank) {
+    await reducePerfectionRank(source, metadata.reducesRank, showToast);
+  }
+
+  // === VERSO: Grant MP to allies (Leadership utility) ===
+  if (metadata.grantsMpToAllies) {
+    await grantMpToAllAllies(
+      source,
+      allCharacters,
+      metadata.grantsMpToAllies.min,
+      metadata.grantsMpToAllies.max,
+      rankBonuses.bonusMpToAllies,
+      showToast
+    );
   }
 }

@@ -198,6 +198,15 @@ export function useDefenseActions({
 
           await callDefend(payload);
 
+          // Remove Charging status if player took damage (interrupted charge)
+          if (defenseValue > 0) {
+            const hasCharging = playerChar?.status?.some(s => s.effectName === "Charging") ?? false;
+            if (hasCharging) {
+              await APIBattle.removeStatus(playerChar!.battleID, "Charging");
+              showToast(t("playerPage.skills.chargingInterrupted"));
+            }
+          }
+
           showToast(description);
           setIsExecutingSkill(false);
         } catch (e) {

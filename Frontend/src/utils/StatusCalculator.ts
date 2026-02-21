@@ -40,7 +40,7 @@ export function calculateNpcStatusResolvedTotalValue(battleCharacterInfo: Battle
 }
 
 export function getCurrentPlayerPendingStatus(player: GetPlayerResponse | null): StatusResponse[] {
-    return getCurrentPlayerStatus(player).filter(st => !st.isResolved && st.effectName !== "invisible-barrier") ?? [];
+    return getCurrentPlayerStatus(player).filter(st => !st.isResolved && st.effectName !== "invisible-barrier" && st.effectName !== "free-shot") ?? [];
 }
 
 export function getCurrentPlayerStatus(player: GetPlayerResponse | null): StatusResponse[] {

@@ -326,6 +326,13 @@ export class APIBattle {
         await api.post(`battles/characters/${battleCharacterId}/increment-foretell-consumed`, { amount });
     }
 
+    static async updateCharacterRank(id: number, perfectionRank: string, rankProgress: number): Promise<void> {
+        await api.put<{ perfectionRank: string; rankProgress: number }, void>(
+            `battles/characters/${id}/rank`,
+            { perfectionRank, rankProgress }
+        )
+    }
+
     static async rankUpCharacter(battleCharacterId: number): Promise<boolean> {
         const response = await api.post<{}, { success: boolean }>(
             `battles/characters/${battleCharacterId}/rank-up`,

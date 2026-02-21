@@ -52,6 +52,7 @@ export interface SkillMetadata {
     grantsMPDiceRoll?: { low: number; high: number };  // Rolls 1d6: 1-3 grants 'low' MP, 4-6 grants 'high' MP
     grantsMPWithTest?: { dc: number; onSuccess: number; onFailure: number };  // Hability test: success grants onSuccess MP, failure grants onFailure MP (Mezzo Forte)
     costReductionFromStance?: { stance: Stance; reducedCost: number };  // Cost reduction when used from specific stance (Percee, Momentum Strike)
+    rankConditionalCost?: { rank: string; reducedCost: number };  // Cost reduction when at specific Perfection Rank (Ascending Assault at S: 2)
     damageScalesWithHitsReceived?: boolean;  // Damage increases per hit taken since last turn (Revenge, Payback)
     costReductionPerParry?: number;      // MP cost reduced per successful parry (Payback)
     switchesToVirtuoseIfBurning?: boolean;  // Switches to Virtuose if target is burning (Swift Stride)
@@ -86,7 +87,8 @@ export interface SkillMetadata {
     damageScalesWithLowHp?: boolean;     // Damage increases inversely with remaining HP (Cultist Slashes)
     bonusDamageVsBurning?: boolean;      // Bonus damage against Burning targets (Danseuse Waltz)
     damageEscalatesPerUse?: boolean;     // Damage increases with each consecutive use (Lampmaster Light: +20% per cast, max 5 stacks)
-    doubleDamageVsStunned?: boolean;     // Double damage if target is Stunned (Mighty Strike)
+    damageEscalatesLinear?: boolean;     // Damage increases linearly per use: 2nd use +2, 3rd +3, 4th +4, etc. (Ascending Assault)
+    plusDamageVsStunned?: number;        // Flat bonus damage if target is Stunned (Arauto do Fim / Mighty Strike)
     forceAlmightyMask?: boolean;         // Forces Bestial Wheel to Almighty Mask position (0) (Mighty Strike)
     bonusDamageVsPowerless?: boolean;    // Bonus damage against Powerless targets (Obscur Sword)
     bonusDamageVsMarked?: number;        // Flat bonus damage against Marked targets (Percée/Investida: +4)
@@ -140,14 +142,17 @@ export interface SkillMetadata {
     gainsPerfection?: { min: number; max: number };  // Gives random Perfection progress (Verso Puissant)
     gainsPerfectionPerHit?: number;      // +X Perfection per hit (Fleuret Fury: +1 per hit, 8 total)
     criticalGivesPerfectionBonus?: boolean;  // Critical hits add +1 extra Perfection per hit (Assault Zero only)
+    perfectionOnCritPerHit?: number;     // +X Perfection per critical hit (Strike Storm: +2 per crit)
     gainsPerfectionRank?: number;        // Gains +X Perfection Rank (Fléau: +1, Poignée Forte: +1)
     playsSecondTime?: boolean;           // Plays a second time (Deux Moulinet: total 2 hits)
     upgradesRankToSOnBreak?: boolean;    // When enemy breaks, auto-upgrade Perfection to S Rank (Le Tremblement)
     costsHpPercent?: number;             // Costs X% of current HP to use (Poignée Forte: 30%)
+    costsHpDice?: string;               // Costs X dice HP to use (Defiant Strike: "2d6")
+    scalesWithFreeAimShots?: boolean;   // Damage increased per free-aim shot this turn (Follow Up)
     transfersAllStatusToSelf?: boolean;  // Removes all status from allies and applies to Verso (Fléau)
     returnsMp?: { min: number; max: number };  // Returns X-Y MP back (Fleuret Fury: 1-3)
     grantsMpToAllies?: { min: number; max: number };  // Grants X-Y MP to other allies (Fleuret Eperdu: 2-4)
-    scalesWithSpeedDifference?: boolean; // Damage increased by Speed difference with target (Escrime Rapide)
+    addsAgilityBonus?: boolean;          // Adds weapon agility bonus to damage (Explosão de Velocidade)
     interruptedIfDamaged?: boolean;      // Interrupted if any damage taken during charge (Plongeant Espadon)
     setsRankToS?: boolean;               // Sets Perfection Rank to S (Ultimate skills)
     requiresOneTurnDelay?: boolean;      // Requires one turn delay before executing (charging skills like Plongeant Espadon)
@@ -1309,17 +1314,14 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: [
-            {
-                effectType: "Heal",
-                amount: 20,  // 20% HP
-                targetType: "self",
-                condition: "target-burning"  // Only heals if target has Burning status
-            }
-        ],
+        conditionalEffects: [],
+        conditionalHealWithRoll: {
+            condition: "target-burning",
+            baseStat: "resistance",
+            dice: "1d6"
+        },
         rankConditionalBonus: { rank: "B", damageBonus: 4 }  // At Rank B: additional +50% damage
-        // Perfection: B Rank = Increased damage (+50% additional, stacks with B's base +40% = +90% total)
-        // Heals 20% HP if target Burns
+        // Heals Resistance + 1d6 if target Burns
     },
 
     "verso-marking-shot": {
@@ -1349,7 +1351,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
-        gainsPerfection: { min: 2, max: 3 }  // At D Rank: Gives more Perfection (2-3 instead of 0-2)
+        gainsPerfection: { min: 2, max: 2 }  // At D Rank: Gives more Perfection (2-3 instead of 0-2)
     },
 
     // Support Skills
@@ -1361,19 +1363,18 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [
             {
-                effectType: "Heal",
-                amount: 50,  // 50% HP (100% at C Rank)
-                targetType: "self"
-            },
-            {
                 effectType: "Cleanse",
                 amount: 0,
                 targetType: "self"
             }
         ],
         conditionalEffects: [],
-        gainsPerfection: { min: 0, max: 2 }  // Gives 0-2 Perfection progress
-        // Perfection: C Rank = Recovers 100% HP instead of 50%
+        healWithRoll: {
+            baseStat: "resistance",
+            dice: "2d6"
+        },
+        grantsPerfectionPoints: 2  // Gives +2 Perfection
+        // Perfection: C Rank = Recovers double HP
     },
 
     "verso-powerful": {
@@ -1421,11 +1422,12 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         hitCount: 1,
         targetScope: "single",
         usesWeaponElement: false,
+        forcedElement: "Physical",
         primaryEffects: [],
         conditionalEffects: [],
-        playsSecondTime: true,  // Plays a second time (total 2 hits)
-        executionThreshold: 10  // Kills non-boss enemies < 10% HP
-        // Perfection: B Rank = Increased damage
+        grantsExtraTurn: true,           // Grants a second turn
+        executionThreshold: 10,          // Executes enemies below 10% HP
+        rankConditionalBonus: { rank: "B", damageBonus: 4 }  // At B Rank: increased damage
     },
 
     "verso-paradigm-shift": {
@@ -1436,21 +1438,21 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: false,
         primaryEffects: [],
         conditionalEffects: [],
-        returnsMp: { min: 1, max: 3 },  // Returns 1-3 MP back
+        returnsMp: { min: 2, max: 2 },  // Returns 2 MP back
         rankConditionalBonus: { rank: "C", bonusMpReturn: 1 }  // At C Rank: +1 MP (2-4 total)
     },
 
-    "verso-follow-up": {
-        skillId: "verso-follow-up",
+    "verso-followup": {
+        skillId: "verso-followup",
         damageLevel: "medium",
         hitCount: 1,
         targetScope: "single",
         usesWeaponElement: false,
         forcedElement: "Light",
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: S Rank = MP cost reduces to 2 (from 5)
-        // Damage increases per Free Aim shot this turn (up to 10 stacks)
+        conditionalEffects: [],
+        scalesWithFreeAimShots: true,
+        rankConditionalCost: { rank: "S", reducedCost: 2 }
     },
 
     "verso-berserk-slash": {
@@ -1460,9 +1462,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: false,
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: C Rank = Increased damage
-        // Damage increases based on missing HP
+        conditionalEffects: [],
+        damageScalesWithLowHp: true,
+        rankConditionalBonus: { rank: "C", damageBonus: 3 }  // At C Rank: +25% damage
     },
 
     "verso-ascending-assault": {
@@ -1472,9 +1474,9 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         targetScope: "single",
         usesWeaponElement: true,
         primaryEffects: [],
-        conditionalEffects: []
-        // Perfection: S Rank = MP cost reduces to 2 (from 5)
-        // Damage +30% per use (max 150% after 5 uses)
+        conditionalEffects: [],
+        damageEscalatesLinear: true,
+        rankConditionalCost: { rank: "S", reducedCost: 2 }
     },
 
     "verso-radiant-slash": {
@@ -1500,8 +1502,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         canBreak: true,
-        upgradesRankToSOnBreak: true  // When enemy breaks, auto-upgrade Perfection to S Rank
-        // Perfection: B Rank = MP cost reduces to 5 (from 7)
+        upgradesRankToSOnBreak: true,  // When enemy breaks, auto-upgrade Perfection to S Rank
+        rankConditionalCost: { rank: "B", reducedCost: 5 }  // At B Rank: MP cost reduces to 5 (from 7)
     },
 
     "verso-defiant-strike": {
@@ -1519,8 +1521,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
-        costsHpPercent: 30  // Costs 30% of current HP
-        // Perfection: B Rank = Increased damage
+        costsHpDice: "2d6",  // Costs 2d6 HP before attack
+        rankConditionalBonus: { rank: "B", damageBonus: 4 }  // At B Rank: +25% damage
     },
 
     "verso-burden": {
@@ -1544,7 +1546,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         reducesRank: 1,  // Reduces Verso's Perfection Rank by 1
-        grantsMpToAllies: { min: 2, max: 4 },  // Gives 2-4 MP to other allies
+        grantsMpToAllies: { min: 3, max: 3 },  // Gives 3 MP to other allies
         rankConditionalBonus: { rank: "C", bonusMpToAllies: 1 }  // At C Rank: +1 MP (3-5 total)
     },
 
@@ -1561,8 +1563,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         setsHpTo: 1  // Sets HP to 1 (high risk/reward)
     },
 
-    "verso-speed-burst": {
-        skillId: "verso-speed-burst",
+    "verso-speedburst": {
+        skillId: "verso-speedburst",
         damageLevel: "high",
         hitCount: 5,
         targetScope: "single",
@@ -1570,7 +1572,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         forcedElement: "Light",
         primaryEffects: [],
         conditionalEffects: [],
-        scalesWithSpeedDifference: true,  // Damage increased by Speed difference with target
+        addsAgilityBonus: true,  // Adds weapon agility bonus to damage
         rankConditionalBonus: { rank: "C", damageBonus: 3 }  // At C Rank: +25% damage
     },
 
@@ -1600,8 +1602,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         // Perfection: S Rank = MP cost reduces to 5 (from 9)
     },
 
-    "verso-end-bringer": {
-        skillId: "verso-end-bringer",
+    "verso-endbringer": {
+        skillId: "verso-endbringer",
         damageLevel: "extreme",
         hitCount: 6,
         targetScope: "single",
@@ -1615,8 +1617,8 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
             }
         ],
         conditionalEffects: [],
+        plusDamageVsStunned: 4,
         rankConditionalBonus: { rank: "A", canReapplyStun: true }  // At Rank A: Can reapply Stun
-        // Increased damage if target is Stunned
     },
 
     "verso-steeled-strike": {
@@ -1630,6 +1632,17 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         requiresOneTurnDelay: true,  // After 1 turn, deals damage
         interruptedIfDamaged: true,  // Interrupted if any damage taken during charge
         rankConditionalBonus: { rank: "S", damageBonus: 3 }  // At S Rank: +25% damage
+    },
+
+    "verso-strike-storm": {
+        skillId: "verso-strike-storm",
+        damageLevel: "very-high",
+        hitCount: 6,
+        targetScope: "single",
+        usesWeaponElement: true,
+        primaryEffects: [],
+        conditionalEffects: [],
+        perfectionOnCritPerHit: 2  // +2 Perfection per critical hit
     },
 
     // Gradient Skills
@@ -2377,7 +2390,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         primaryEffects: [],
         conditionalEffects: [],
         bestialWheelAdvance: 3,
-        doubleDamageVsStunned: true
+        plusDamageVsStunned: 4
         // Bestial Wheel: +3 positions
         // Enhanced damage vs Stunned targets (2x)
         // Bonus damage at Balanced or Almighty Mask
@@ -2560,7 +2573,7 @@ export const SkillEffectsRegistry: Record<string, SkillMetadata> = {
         usesWeaponElement: true,
         primaryEffects: [],
         conditionalEffects: [],
-        doubleDamageVsStunned: true,
+        plusDamageVsStunned: 4,
         forceAlmightyMask: true
         // Gradient Skill: 1 Gradient Charge (defined in SkillList.ts)
         // Double damage vs Stunned targets

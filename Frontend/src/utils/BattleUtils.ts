@@ -129,6 +129,8 @@ export function getStatusLabel(status: StatusType): string {
         case "jump": return t("battle.statusEffects.jump");
         case "gradient": return t("battle.statusEffects.gradient");
         case "invisible-barrier": return t("battle.statusEffects.invisibleBarrier");
+        case "DamageEscalation": return t("battle.statusEffects.DamageEscalation");
+        case "Charging": return t("battle.statusEffects.Charging");
         default: return status;
     }
 }
@@ -155,7 +157,8 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "FireVulnerability",
         "Guardian",
         "Vulnerable",
-        "FortunesFury"
+        "FortunesFury",
+        "Charging"
     ];
 
     return !skillsWithoutAmmount.includes(type);
@@ -218,6 +221,8 @@ export function getStatusDescription(status: StatusType): string {
         case "jump": return t("battle.statusDescriptions.jump");
         case "gradient": return t("battle.statusDescriptions.gradient");
         case "invisible-barrier": return t("battle.statusDescriptions.invisibleBarrier");
+        case "DamageEscalation": return t("battle.statusDescriptions.DamageEscalation");
+        case "Charging": return t("battle.statusDescriptions.Charging");
         default: return t("battle.statusDescriptions.default");
     }
 }

@@ -3,7 +3,7 @@ import { t } from "../../i18n";
 import { FaCheckCircle, FaSkull, FaDivide } from "react-icons/fa";
 import { APIBattle } from "../../api/APIBattle";
 import { APIPlayer, type GetPlayerResponse } from "../../api/APIPlayer";
-import type { WeaponInfo, AttackType, BattleCharacterInfo } from "../../api/ResponseModel";
+import type { WeaponInfo, AttackType, BattleCharacterInfo, StatusType } from "../../api/ResponseModel";
 import type { DiceBoardRef } from "../../components/DiceBoard";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../../utils/CombatMenuActions";
 import { rollWithTimeout } from "../../utils/RollUtils";
@@ -223,7 +223,16 @@ export function useCombatActions({
 
     const endTurnCall = async () => {
       try {
-        await APIBattle.endTurn(player.fightInfo?.playerBattleID ?? 0);
+        const playerBattleID = player.fightInfo?.playerBattleID ?? 0;
+
+        // Remove free-shot stacks from source before ending turn (Sequência tracking)
+        const sourceChar = player.fightInfo?.characters?.find(c => c.battleID === playerBattleID);
+        const hasFreeShot = sourceChar?.status?.some(s => s.effectName === "free-shot") ?? false;
+        if (hasFreeShot) {
+          await APIBattle.removeStatus(playerBattleID, "free-shot");
+        }
+
+        await APIBattle.endTurn(playerBattleID);
       } catch (e) {
         showToast(t("playerPage.errors.errorEndingTurn"));
       }
@@ -447,6 +456,10 @@ export function useCombatActions({
                 }
 
                 await APIBattle.attack(attackInfo);
+                // Grant +1 perfection per hit on enemy
+                if (finalDmg > 0 && player.fightInfo?.playerBattleID) {
+                  await APIBattle.addPerfectionPoints(player.fightInfo.playerBattleID, 1);
+                }
               } else {
                 const attackInfo: any = {
                   totalPower: finalDmg,
@@ -468,7 +481,7 @@ export function useCombatActions({
                 });
               }, 600);
 
-              // Check if enemy was killed
+              // Check if enemy was killed + track free-shot stacks for Sequência
               if (player.fightInfo?.battleId) {
                 const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
                 if (sourceChar) {
@@ -488,15 +501,18 @@ export function useCombatActions({
                       );
                     }
                   }
-                }
-              }
 
-              // Trigger picto effects for free aim
-              if (attackType === "free-shot" && player.fightInfo) {
-                const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
-                const allChars = player.fightInfo.characters ?? [];
-                if (sourceChar && player.fightInfo.battleId) {
-                  await triggerOnFreeAim(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
+                  // Track free-shot stacks on source character (for Sequência / verso-followup)
+                  // Always pass ammount: 1 — the backend accumulates it on the existing status
+                  if (attackType === "free-shot") {
+                    await APIBattle.addStatus({
+                      battleCharacterId: sourceChar.battleID,
+                      effectType: "free-shot",
+                      ammount: 1,
+                      remainingTurns: 1,
+                    });
+                    await triggerOnFreeAim(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
+                  }
                 }
               }
 

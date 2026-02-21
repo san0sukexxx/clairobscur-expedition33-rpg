@@ -49,6 +49,14 @@ export function validateSkillExecution(
     }
   }
 
+  // Check for rank-based cost reduction (Ascending Assault at S: 2 MP)
+  if (skillMetadata.rankConditionalCost) {
+    const { rank, reducedCost } = skillMetadata.rankConditionalCost;
+    if (source.perfectionRank === rank) {
+      skillCost = reducedCost;
+    }
+  }
+
   // Check for parry-based cost reduction (Payback)
   if (skillMetadata.costReductionPerParry) {
     const parriesCount = source.parriesThisTurn ?? 0;

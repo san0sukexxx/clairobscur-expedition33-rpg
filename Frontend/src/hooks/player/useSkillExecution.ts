@@ -49,9 +49,9 @@ import {
   transferAllStatusToSelf,
   returnMp,
   grantMpToAllAllies,
-  calculateSpeedDifferenceBonus,
   gainRandomPerfection
 } from "./skillExecution/perfectionEffects";
+import { calculateWeaponAgilityBonus } from "../../utils/WeaponCalculator";
 import {
   calculateMaskBonuses,
   isAtCasterOrAlmighty,
@@ -147,7 +147,7 @@ export function useSkillExecution({
             battleCharacterId: source!.battleID,
             effectType: "Charging",
             ammount: 0,
-            remainingTurns: 99,
+            remainingTurns: 1,
             sourceCharacterId: source!.battleID
           });
           showToastRef.current(t("playerPage.skills.chargingStarted"));
@@ -267,8 +267,26 @@ export function useSkillExecution({
       await deductHpCost(source, resolved.metadata.costsHpPercent, showToastRef.current);
     }
 
+    // === VERSO: Deduct dice HP cost before attack (Defiant Strike) ===
+    if (resolved.metadata.costsHpDice) {
+      await new Promise<void>((resolve) => {
+        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, resolved.metadata.costsHpDice!, async (result) => {
+          const hpCost = diceTotal(result);
+          const currentHp = source.healthPoints ?? 1;
+          const newHp = Math.max(1, currentHp - hpCost);
+          await APIBattle.updateCharacterHp(source.battleID, newHp);
+          showToastRef.current(t("playerPage.skills.hpCostDeducted", { amount: hpCost }));
+          resolve();
+        });
+      });
+    }
+
     // === VERSO: Calculate rank bonuses ===
     const rankBonuses = calculateRankBonuses(source, resolved.metadata);
+    if (rankBonuses.damageBonus > 0) {
+      console.log("=== Rank Damage Bonus ===");
+      console.log("Rank:", source.perfectionRank, "| Bonus:", `+${rankBonuses.damageBonus}`);
+    }
 
     // === MONOCO: Calculate mask bonuses ===
     const maskBonuses = calculateMaskBonuses(source, resolved.metadata);
@@ -280,6 +298,16 @@ export function useSkillExecution({
       escalationBonus = calculateEscalationBonus(stacks);
       if (escalationBonus > 0) {
         showToastRef.current(t("playerPage.skills.damageEscalationActive", { bonus: escalationBonus }));
+      }
+    }
+
+    // === VERSO: Linear damage escalation (Ascending Assault) ===
+    // 1st use: no bonus | 2nd: +2 | 3rd: +3 | 4th: +4 | etc.
+    if (resolved.metadata.damageEscalatesLinear) {
+      const stacks = getDamageEscalationStacks(source);
+      escalationBonus = stacks >= 1 ? stacks + 1 : 0;
+      if (escalationBonus > 0) {
+        showToastRef.current(t("playerPage.skills.damageEscalationLinear", { bonus: escalationBonus }));
       }
     }
 
@@ -394,9 +422,22 @@ export function useSkillExecution({
       }
     }
 
+    // === VERSO: Free Aim shot bonus (Sequência) — fetches fresh data to avoid stale state ===
+    let freeAimBonus = 0;
+    if (resolved.metadata.scalesWithFreeAimShots && player?.fightInfo?.battleId) {
+      const freshBattle = await APIBattle.getById(player.fightInfo.battleId);
+      const freshSource = freshBattle.characters?.find(c => c.battleID === source.battleID);
+      const stacks = freshSource?.status?.find(s => s.effectName === "free-shot")?.ammount ?? 0;
+      freeAimBonus = Math.min(stacks, 10);
+      if (freeAimBonus > 0) {
+        showToastRef.current(t("playerPage.skills.freeAimBonus", { stacks: freeAimBonus }));
+      }
+    }
+
     // Execute hits
     let totalDamageDealt = 0;
     let foretellPerHitConsumedTotal = 0;
+    let totalCritHits = 0;
     const damageDealtPerTarget: Record<number, number> = {};
     while (hitIndex < totalHits) {
       await new Promise<void>((resolvePromise) => {
@@ -532,10 +573,10 @@ export function useSkillExecution({
               burningTargetBonus = 4; // +4 flat vs burning
             }
 
-            // === MONOCO: Double damage vs stunned (Mighty Strike) ===
+            // === Flat bonus damage vs stunned (Arauto do Fim / Mighty Strike) ===
             let stunnedBonus = 0;
             if (targetChar && shouldDoubleDamageVsStunned(targetChar, resolved.metadata)) {
-              stunnedBonus = totalDamage; // +100% as flat bonus
+              stunnedBonus = resolved.metadata.plusDamageVsStunned!;
             }
 
             // === MONOCO: Bonus vs powerless (Obscur Sword) ===
@@ -544,10 +585,10 @@ export function useSkillExecution({
               powerlessBonus = 4; // +4 flat vs powerless
             }
 
-            // === VERSO: Speed difference bonus (Escrime Rapide) ===
+            // === VERSO: Hability + Agility bonus per hit (Explosão de Velocidade) ===
             let speedBonus = 0;
-            if (resolved.metadata.scalesWithSpeedDifference && targetChar) {
-              speedBonus = calculateSpeedDifferenceBonus(player!, targetChar);
+            if (resolved.metadata.addsAgilityBonus) {
+              speedBonus = (player!.playerSheet?.hability ?? 0) + calculateWeaponAgilityBonus(weaponInfo);
             }
 
             // Calculate final damage with all flat bonuses
@@ -555,13 +596,13 @@ export function useSkillExecution({
               shieldStackBonus + burningTargetBonus + powerlessBonus + speedBonus +
               sacrificeBonus + drainedHpBonus + allEnemiesForetellBonus +
               stainEffects.damageBonus + rankBonuses.damageBonus + maskBonuses.damageBonus +
-              foretellPerHitBonus + lowHpBonus + stunnedBonus + escalationBonus;
+              foretellPerHitBonus + lowHpBonus + stunnedBonus + escalationBonus + freeAimBonus;
 
             // Log all bonuses applied
             const allBonuses: [string, number][] = [
               ["Marked", markedBonus], ["Burn Consumption", burnBonus], ["Burn Scaling", burnScalingBonus],
               ["Shield Stack", shieldStackBonus], ["Burning Target", burningTargetBonus],
-              ["Powerless", powerlessBonus], ["Speed Diff", speedBonus],
+              ["Powerless", powerlessBonus], ["Agility", speedBonus], ["Free Aim", freeAimBonus],
               ["Sacrifice", sacrificeBonus], ["Drained HP", drainedHpBonus],
               ["All Enemies Foretell", allEnemiesForetellBonus],
               ["Stain", stainEffects.damageBonus], ["Rank", rankBonuses.damageBonus],
@@ -608,6 +649,10 @@ export function useSkillExecution({
               });
 
               await APIBattle.attack(attackRequest);
+              // Grant +1 perfection per hit on enemy
+              if (finalDamage > 0) {
+                await APIBattle.addPerfectionPoints(source.battleID, 1);
+              }
             } else {
               if (targetIndex === 0) showToastRef.current(`Total: ${damageWithBonus}`);
               totalDamageDealt += damageWithBonus;
@@ -656,6 +701,7 @@ export function useSkillExecution({
             await gainStainOnCrit(source, hitElement, showToastRef.current);
           }
 
+          if (hasCritical) totalCritHits++;
           hitIndex++;
           resolvePromise();
         }, { theme: "dice-of-rolling" });
@@ -1025,6 +1071,12 @@ export function useSkillExecution({
       await grantMpToAlly(target, resolved.metadata.grantsMP, showToastRef.current);
     }
 
+    // === VERSO: Grant perfection per critical hit (Strike Storm) ===
+    if (resolved.metadata.perfectionOnCritPerHit && totalCritHits > 0) {
+      const critPoints = totalCritHits * resolved.metadata.perfectionOnCritPerHit;
+      await grantPerfectionPoints(source, critPoints, false, undefined, () => {});
+    }
+
     // === VERSO: Grant perfection points ===
     if (resolved.metadata.grantsPerfectionPoints) {
       await grantPerfectionPoints(
@@ -1106,19 +1158,21 @@ export function useSkillExecution({
     }
 
     // === VERSO: Reapply Stun (End Bringer at A Rank) ===
+    // Uses stale player state (pre-execution) to preserve original turns and add +1
     if (rankBonuses.canReapplyStun) {
       for (const targetId of resolved.targetIds) {
         const targetChar = (player?.fightInfo?.characters ?? []).find(
           (c: BattleCharacterInfo) => c.battleID === targetId
         );
-        const hasStun = targetChar?.status?.some(s => s.effectName === "Stunned") ?? false;
-        if (hasStun) {
+        const existingStun = targetChar?.status?.find(s => s.effectName === "Stunned");
+        if (existingStun) {
+          const newTurns = (existingStun.remainingTurns ?? 1) + 1;
           await APIBattle.removeStatus(targetId, "Stunned");
           await APIBattle.addStatus({
             battleCharacterId: targetId,
             effectType: "Stunned",
             ammount: 0,
-            remainingTurns: 1,
+            remainingTurns: newTurns,
             sourceCharacterId: source.battleID
           });
           showToastRef.current(t("playerPage.skills.stunReapplied", { name: targetChar?.name ?? "" }));
@@ -1170,6 +1224,11 @@ export function useSkillExecution({
     // === MONOCO: Track damage escalation (Lampmaster Light) ===
     if (resolved.metadata.damageEscalatesPerUse) {
       await incrementDamageEscalation(source, 5, showToastRef.current);
+    }
+
+    // === VERSO: Track linear damage escalation (Ascending Assault) ===
+    if (resolved.metadata.damageEscalatesLinear) {
+      await incrementDamageEscalation(source, 99, () => {});
     }
   }
 
