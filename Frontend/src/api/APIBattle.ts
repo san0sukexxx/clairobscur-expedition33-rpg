@@ -164,14 +164,6 @@ export class APIBattle {
         await api.delete<void>(`battles/characters/${id}`)
     }
 
-    static async useBattle(battleId: number, campaignId: number): Promise<void> {
-        await api.put<{ campaignId: number }, void>(`battles/${battleId}/use`, { campaignId })
-    }
-
-    static async clearBattle(campaignId: number): Promise<void> {
-        await api.put<{ campaignId: number }, void>("battles/clear", { campaignId })
-    }
-
     static async addInitiative(input: CreateBattleInitiativeRequest): Promise<InitiativeResponse> {
         return api.post<CreateBattleInitiativeRequest, InitiativeResponse>("battle-initiatives", input)
     }

@@ -14,7 +14,6 @@ import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.repository.CampaignPlayerRepository
-import com.example.demo.repository.CampaignRepository
 import com.example.demo.repository.InitiativeRepository
 import com.example.demo.repository.PlayerRepository
 import org.springframework.stereotype.Service
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service
 class FightService(
         private val battleRepository: BattleRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
-        private val campaignRepository: CampaignRepository,
         private val campaignPlayerRepository: CampaignPlayerRepository,
         private val playerRepository: PlayerRepository,
         private val initiativeRepository: InitiativeRepository,
@@ -33,19 +31,14 @@ class FightService(
         private val battleStatusEffectRepository: BattleStatusEffectRepository
 ) {
         fun buildFightInfoForPlayer(playerId: Int): FightInfoResponse? {
-                val campaignPlayer =
-                        campaignPlayerRepository.findByPlayerId(playerId)
-                                ?: throw IllegalArgumentException(
-                                        "Player not linked to any campaign"
-                                )
+                campaignPlayerRepository.findByPlayerId(playerId)
+                        ?: throw IllegalArgumentException("Player not linked to any campaign")
 
-                val campaignId = campaignPlayer.campaignId
-                val campaign =
-                        campaignRepository.findById(campaignId).orElseThrow {
-                                IllegalArgumentException("Campaign not found with id: $campaignId")
-                        }
+                val playerBattleChar = battleCharacterRepository
+                        .findByExternalIdAndCharacterType(playerId.toString(), "player")
+                        .firstOrNull() ?: return null
 
-                val battleId = campaign.battleId ?: return null
+                val battleId = playerBattleChar.battleId ?: return null
                 val battle = battleRepository.findById(battleId).orElse(null) ?: return null
 
                 val characterEntities = battleCharacterRepository.findByBattleId(battleId)

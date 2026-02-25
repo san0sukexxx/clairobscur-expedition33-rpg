@@ -40,7 +40,6 @@ class CampaignController(private val repository: CampaignRepository) {
                     ListCampaignResponse(
                             id = campaign.id,
                             name = campaign.name,
-                            battleId = campaign.battleId,
                             characters = campaign.characters.map { it.character }
                     )
                 }
@@ -56,7 +55,6 @@ class CampaignController(private val repository: CampaignRepository) {
                     GetCampaignResponse(
                             id = c.id,
                             name = c.name,
-                            battleId = c.battleId,
                             characters = c.characters.map { it.character }
                     )
             )

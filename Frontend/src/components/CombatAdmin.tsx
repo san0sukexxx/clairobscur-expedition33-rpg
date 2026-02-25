@@ -116,6 +116,7 @@ export interface CombatEntity {
 
 export interface CombatAdminProps {
     campaignInfo: Campaign
+    battleId: number
     initialStatus: string
     players: GetPlayerResponse[]
     onStatusChanged?: (newStatus: string) => void
@@ -176,6 +177,7 @@ function calculateNPCDifficulty(npcId: string): number {
 
 export default function CombatAdmin({
     campaignInfo,
+    battleId,
     initialStatus,
     players,
     onStatusChanged
@@ -313,7 +315,7 @@ export default function CombatAdmin({
     }
 
     const reloadBattleDetails = useCallback(async (force?: boolean) => {
-        if (!campaignInfo.battleId) return
+        if (!battleId) return
 
         // Throttle: só permite uma chamada a cada 2 segundos
         const now = Date.now()
@@ -324,7 +326,7 @@ export default function CombatAdmin({
         lastReloadTimeRef.current = now
 
         try {
-            const battleDetailsInfo = await APIBattle.getById(campaignInfo.battleId, lastBattleLog)
+            const battleDetailsInfo = await APIBattle.getById(battleId, lastBattleLog)
             if (battleDetails == null) {
                 setBattleDetails(battleDetailsInfo)
                 const lastBattleLog = getLastBattleLogFromBattle(battleDetailsInfo);
@@ -342,7 +344,7 @@ export default function CombatAdmin({
         } finally {
             isReloadingRef.current = false
         }
-    }, [campaignInfo.battleId, battleStatus, lastBattleLog, processUnresolvedStatuses])
+    }, [battleId, battleStatus, lastBattleLog, processUnresolvedStatuses])
 
     const handleOpenGradientModal = useCallback((isEnemy: boolean) => {
         const currentGradient = isEnemy
@@ -495,7 +497,7 @@ export default function CombatAdmin({
     }, [reloadBattleDetails]);
 
     useEffect(() => {
-        if (campaignInfo.battleId == undefined
+        if (battleId == undefined
             || battleDetails == undefined
             || battleDetails == null) return
 
@@ -546,22 +548,22 @@ export default function CombatAdmin({
     }, [battleDetails])
 
     async function handleStatusChange(newStatus: string) {
-        if (campaignInfo.battleId == undefined || campaignInfo.battleId == null) return
+        if (battleId == undefined || battleId == null) return
 
         setBattleStatus(newStatus)
         setUpdatingStatus(true)
         try {
             if (newStatus === "started") {
-                await APIBattle.start(campaignInfo.battleId, newStatus)
+                await APIBattle.start(battleId, newStatus)
             } else {
-                await APIBattle.update(campaignInfo.battleId, { battleStatus: newStatus })
+                await APIBattle.update(battleId, { battleStatus: newStatus })
             }
             onStatusChanged?.(newStatus)
             await reloadBattleDetails()
 
             // Se a batalha foi finalizada, buscar os dados atualizados e coletar recompensas
             if (newStatus === "finished") {
-                const updatedBattle = await APIBattle.getById(campaignInfo.battleId);
+                const updatedBattle = await APIBattle.getById(battleId);
                 if (updatedBattle?.characters) {
                     const rewards = collectBattleRewards(updatedBattle.characters);
                     setBattleRewards(rewards);
@@ -614,7 +616,7 @@ export default function CombatAdmin({
     }
 
     async function handleAddToTeam(entity: CombatEntity) {
-        if (campaignInfo.battleId == undefined) return
+        if (battleId == undefined) return
         let initiative: AddBattleCharacterInitiativeData | undefined
         if (entity.type == "npc") {
             const npcInfo = getNpcById(String(entity.externalId))
@@ -655,7 +657,7 @@ export default function CombatAdmin({
         const randomBestialPosition = isMonoco ? Math.floor(Math.random() * 9) : undefined
 
         await APIBattle.addCharacter({
-            battleId: campaignInfo.battleId,
+            battleId: battleId,
             externalId: String(entity.externalId),
             characterName: entity.name,
             characterType: entity.type,
@@ -690,10 +692,10 @@ export default function CombatAdmin({
     }
 
     async function handleAddAllPlayers(entities: CombatEntity[]) {
-        if (campaignInfo.battleId == undefined) return
+        if (battleId == undefined) return
         for (const ent of entities) {
             await APIBattle.addCharacter({
-                battleId: campaignInfo.battleId,
+                battleId: battleId,
                 externalId: String(ent.externalId),
                 characterName: ent.name,
                 characterType: ent.type,
@@ -1863,7 +1865,7 @@ export default function CombatAdmin({
             <div className="card bg-base-100 shadow">
                 <div className="card-body gap-6">
                     <div className="flex flex-col items-start gap-2">
-                        <div className="text-lg font-semibold">Combate #{campaignInfo.battleId}</div>
+                        <div className="text-lg font-semibold">Combate #{battleId}</div>
 
                         <div className="form-control w-full max-w-xs">
                             <label className="label">
@@ -2764,7 +2766,7 @@ export default function CombatAdmin({
             }
             showToast("Efeitos atualizados");
             setEditingEffectsEntity(null);
-            const freshData = await APIBattle.getById(campaignInfo.battleId!);
+            const freshData = await APIBattle.getById(battleId!);
             setBattleDetails(freshData);
         } catch (e) {
             console.error(e);

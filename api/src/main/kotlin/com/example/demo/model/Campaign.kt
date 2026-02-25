@@ -8,7 +8,6 @@ import jakarta.persistence.*
 data class Campaign(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int = 0,
         @Column(nullable = false) var name: String,
-        @Column(name = "battle_id") var battleId: Int? = null,
         @OneToMany(
                 mappedBy = "campaign",
                 cascade = [CascadeType.ALL],

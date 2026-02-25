@@ -206,10 +206,9 @@ export default function CampaignAdmin() {
                     />
                 )}
 
-                {activeTab === "combats" && campaignId !== null && campaignInfo !== null && setCampaignInfo !== null && (
+                {activeTab === "combats" && campaignId !== null && campaignInfo !== null && (
                     <CampaignAdminCombatsTab
                         campaignInfo={campaignInfo}
-                        setCampaignInfo={setCampaignInfo}
                         players={items}
                     />
                 )}

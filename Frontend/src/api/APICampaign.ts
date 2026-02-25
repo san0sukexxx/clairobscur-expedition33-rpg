@@ -3,7 +3,6 @@ import { api } from "./api";
 export interface Campaign {
   id: number;
   name: string;
-  battleId?: number | null;
   characters: string[];
 }
 

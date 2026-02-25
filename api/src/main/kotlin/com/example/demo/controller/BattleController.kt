@@ -6,7 +6,6 @@ import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.BattleWithDetailsResponse
 import com.example.demo.dto.InitiativeResponse
 import com.example.demo.dto.UpdateBattleStatusRequest
-import com.example.demo.dto.UseBattleRequest
 import com.example.demo.model.Battle
 import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleTurn
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/battles")
 class BattleController(
         private val battleRepository: BattleRepository,
-        private val campaignRepository: CampaignRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val playerRepository: PlayerRepository,
         private val battleInitiativeRepository: BattleInitiativeRepository,
@@ -152,15 +150,6 @@ class BattleController(
     @PostMapping
     fun create(@RequestBody battle: Battle): ResponseEntity<Int> {
         val saved = battleRepository.save(battle)
-
-        val campaign =
-                campaignRepository.findById(battle.campaignId).orElseThrow {
-                    IllegalArgumentException("Campaign not found with id: ${battle.campaignId}")
-                }
-
-        campaign.battleId = battle.id
-        campaignRepository.save(campaign)
-
         return ResponseEntity.ok(saved.id!!)
     }
 
@@ -235,39 +224,6 @@ class BattleController(
         battleRepository.deleteById(id)
 
         return ResponseEntity.noContent().build()
-    }
-
-    @PutMapping("/{battleId}/use")
-    fun useBattle(
-            @PathVariable battleId: Int,
-            @RequestBody body: UseBattleRequest
-    ): ResponseEntity<Void> {
-        val campaignId = body.campaignId
-
-        val campaign =
-                campaignRepository.findById(campaignId).orElseThrow {
-                    IllegalArgumentException("Campaign not found with id: $campaignId")
-                }
-
-        campaign.battleId = battleId
-        campaignRepository.save(campaign)
-
-        return ResponseEntity.ok().build()
-    }
-
-    @PutMapping("/clear")
-    fun clearBattle(@RequestBody body: UseBattleRequest): ResponseEntity<Void> {
-        val campaignId = body.campaignId
-
-        val campaign =
-                campaignRepository.findById(campaignId).orElseThrow {
-                    IllegalArgumentException("Campaign not found with id: $campaignId")
-                }
-
-        campaign.battleId = null
-        campaignRepository.save(campaign)
-
-        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/{battleId}/start")
