@@ -39,7 +39,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     }) ?? false;
 
     return (
-        <div className="fixed bottom-20 left-4 z-40">
+        <div className="fixed bottom-4 left-4 z-40">
             <div
                 className="
                     rounded-xl bg-base-100/95 shadow-lg border border-base-300
@@ -108,14 +108,14 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     ch.maxChargePoints > 0 && (
                         <div className="mt-2">
                             <div className="flex items-center justify-between text-[10px] uppercase">
-                                <span className="opacity-70">Carga</span>
+                                <span className="opacity-70">{t("combat.charge")}</span>
                                 <span className="font-mono text-xs">
                                     {ch.chargePoints ?? 0}/{ch.maxChargePoints}
                                 </span>
                             </div>
                             <AnimatedStatBar
                                 value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
-                                label="Carga"
+                                label={t("combat.charge")}
                                 fillClass="bg-warning"
                                 ghostClass="bg-warning/30"
                             />
@@ -131,14 +131,14 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     return (
                         <div className="mt-2">
                             <div className="flex items-center justify-between text-[10px] uppercase">
-                                <span className="opacity-70">Gradiente</span>
+                                <span className="opacity-70">{t("combat.gradient")}</span>
                                 <span className="font-mono text-xs">
                                     {charges}/3
                                 </span>
                             </div>
                             <AnimatedStatBar
                                 value={progressValue}
-                                label="Gradiente"
+                                label={t("combat.gradient")}
                                 fillClass="bg-purple-500"
                                 ghostClass="bg-purple-500/30"
                             />
@@ -178,18 +178,18 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                  ch.id.toLowerCase().includes("maelle") && (
                     <div className="mt-2">
                         <div className="flex items-center gap-2 text-[10px]">
-                            <span className="opacity-70">Postura</span>
+                            <span className="opacity-70">{t("combat.stance")}</span>
                             {ch.stance === "Defensive" && (
-                                <div className="badge badge-info badge-sm">Defensiva</div>
+                                <div className="badge badge-info badge-sm">{t("combat.defensive")}</div>
                             )}
                             {ch.stance === "Offensive" && (
-                                <div className="badge badge-error badge-sm">Ofensiva</div>
+                                <div className="badge badge-error badge-sm">{t("combat.offensive")}</div>
                             )}
                             {ch.stance === "Virtuous" && (
-                                <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">Virtuosa</div>
+                                <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">{t("combat.virtuous")}</div>
                             )}
                             {!ch.stance && (
-                                <div className="badge badge-ghost badge-sm">Sem postura</div>
+                                <div className="badge badge-ghost badge-sm">{t("combat.noStance")}</div>
                             )}
                         </div>
                     </div>
@@ -237,16 +237,16 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     return (
                         <div className="mt-2">
                             <div className="flex items-center justify-between mb-1">
-                                <span className="text-[10px] opacity-70 uppercase">Perfeição</span>
+                                <span className="text-[10px] opacity-70 uppercase">{t("combat.perfection")}</span>
                                 <div className={`
                                     px-2 py-0.5 rounded border-2 font-bold text-sm
                                     ${getRankColor(currentRank)}
                                 `}>
-                                    Rank {currentRank}
+                                    {t("combat.rank")} {currentRank}
                                 </div>
                             </div>
                             <div className="flex items-center justify-between text-[10px] mb-0.5">
-                                <span className="opacity-50">Progresso</span>
+                                <span className="opacity-50">{t("combat.progress")}</span>
                                 <span className="font-mono text-xs">
                                     {currentRank === "S" ? t("playerPage.skills.perfectionMax") : `${rankProgress}/${rankMax}`}
                                 </span>
@@ -268,9 +268,9 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
 
                     return (
                         <div className="mt-2 flex items-center gap-2 text-xs">
-                            <span className="opacity-70 uppercase">Manchas</span>
+                            <span className="opacity-70 uppercase">{t("combat.stains")}</span>
                             {!hasAnyStain ? (
-                                <div className="badge badge-ghost badge-sm opacity-60">Nenhuma</div>
+                                <div className="badge badge-ghost badge-sm opacity-60">{t("combat.noStains")}</div>
                             ) : (
                                 <div className="flex items-center gap-1.5">
                                     {stains.map((stain, idx) => {

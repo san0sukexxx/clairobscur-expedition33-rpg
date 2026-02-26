@@ -280,22 +280,22 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           : t("pictos.selectPicto")
 
   return (
-    <div className="text-white">
+    <div className="text-base-content">
       <div className="flex items-center justify-between pb-3">
         <div className="text-center flex-1 text-lg tracking-widest opacity-90">PICTOS</div>
         {isAdmin && (
           <div className="flex gap-2">
             <button
-              className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-white/20"
+              className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-base-300"
               onClick={openAdminAdd}
             >
-              Adicionar
+              {t("common.add")}
             </button>
             <button
-              className="px-3 py-1 text-sm rounded-md bg-red-600/70 hover:bg-red-600 transition border border-white/20"
+              className="px-3 py-1 text-sm rounded-md bg-red-600/70 hover:bg-red-600 transition border border-base-300"
               onClick={openAdminRemove}
             >
-              Remover
+              {t("common.remove")}
             </button>
           </div>
         )}
@@ -312,7 +312,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           return (
             <div
               key={idx}
-              className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden"
+              className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden"
             >
               <div
                 className="pointer-events-none absolute inset-x-3 top-4 bottom-4 rounded-xl"
@@ -329,8 +329,8 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                 onKeyDown={(e) => onKeyActivate(e, idx)}
                 onClick={() => handleSlotActivate(idx)}
                 className={`w-full text-left p-6 pl-28 rounded-2xl transition-colors ${selected
-                  ? "hover:bg-white/5 cursor-default"
-                  : "h-48 grid place-items-center hover:bg-white/5"
+                  ? "hover:bg-base-300/30 cursor-default"
+                  : "h-48 grid place-items-center hover:bg-base-300/30"
                   }`}
               >
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
@@ -350,7 +350,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                         {name}
                       </div>
                       <button
-                        className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                        className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                         onClick={async (e) => {
                           e.stopPropagation()
 
@@ -390,10 +390,10 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                     </div>
 
                     <div className="flex items-center gap-1 text-sm">
-                      <span className="opacity-70 mr-2">Nível</span>
+                      <span className="opacity-70 mr-2">{t("common.level")}</span>
                       <div className="flex items-center gap-2">
                         <button
-                          className="w-7 h-7 grid place-items-center rounded-md border border-white/15 bg-white/5 hover:bg-white/10"
+                          className="w-7 h-7 grid place-items-center rounded-md border border-base-300 bg-base-300/30 hover:bg-base-300"
                           onClick={(e) => {
                             e.stopPropagation()
                             bumpLevel(idx, -1)
@@ -405,7 +405,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                           {getLevel(selected)}
                         </span>
                         <button
-                          className="w-7 h-7 grid place-items-center rounded-md border border-white/15 bg-white/5 hover:bg-white/10"
+                          className="w-7 h-7 grid place-items-center rounded-md border border-base-300 bg-base-300/30 hover:bg-base-300"
                           onClick={(e) => {
                             e.stopPropagation()
                             bumpLevel(idx, +1)
@@ -416,13 +416,13 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                       </div>
                     </div>
 
-                    <div className="h-px w-full bg-white/10 my-1" />
+                    <div className="h-px w-full bg-base-300 my-1" />
 
                     <div className="opacity-85">{pictoInfo?.description}</div>
                   </div>
                 ) : (
                   <div className="text-center w-full opacity-60 tracking-wide text-lg">
-                    Selecione um Picto
+                    {t("pictos.selectPicto")}
                   </div>
                 )}
               </div>
@@ -447,7 +447,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                 />
               ))}
               {slotFiltered.length === 0 && (
-                <div className="opacity-70 p-8 text-center">Nenhum Picto encontrado.</div>
+                <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
               )}
             </>
           )}
@@ -458,7 +458,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                 <PictoInfoCard key={p.name} info={p} onPick={handleAdminAddPick} />
               ))}
               {addFiltered.length === 0 && (
-                <div className="opacity-70 p-8 text-center">Nenhum Picto encontrado.</div>
+                <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
               )}
             </>
           )}
@@ -466,32 +466,31 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           {modalType === "admin-add-level" && pendingAddPicto && (
             <div className="col-span-full flex flex-col items-center gap-4 py-6">
               <div className="text-lg">
-                Definir nível para{" "}
-                <span className="font-semibold">{pendingAddPicto.name}</span>
+                {t("pictos.setLevelFor", { name: pendingAddPicto.name })}
               </div>
               <div className="flex items-center gap-3">
-                <span className="opacity-80">Nível</span>
+                <span className="opacity-80">{t("common.level")}</span>
                 <input
                   type="number"
                   min={1}
                   max={33}
                   value={pendingLevel}
                   onChange={(e) => setPendingLevel(e.target.value)}
-                  className="w-24 text-center rounded-md bg-black/40 border border-white/20 px-2 py-1 outline-none focus:border-white/40"
+                  className="w-24 text-center rounded-md bg-base-200 border border-base-300 px-2 py-1 outline-none focus:border-base-content/30"
                 />
               </div>
               <div className="flex gap-3 mt-2">
                 <button
-                  className="px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/20"
+                  className="px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                   onClick={confirmAdminAddLevel}
                 >
-                  Confirmar
+                  {t("common.confirm")}
                 </button>
                 <button
-                  className="px-4 py-2 rounded-md bg-black/40 hover:bg-black/60 border border-white/20"
+                  className="px-4 py-2 rounded-md bg-base-200 hover:bg-base-300 border border-base-300"
                   onClick={closeModal}
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
               </div>
             </div>
@@ -507,7 +506,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                 />
               ))}
               {removeFiltered.length === 0 && (
-                <div className="opacity-70 p-8 text-center">Nenhum Picto encontrado.</div>
+                <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
               )}
             </>
           )}
@@ -537,8 +536,8 @@ function PlusDiamond({
 
   return (
     <div
-      className={`relative ${wrapperSize} rotate-45 border border-white/20 rounded-sm grid place-items-center bg-black/30 ml-2`}
-      aria-label={name || "Adicionar picto"}
+      className={`relative ${wrapperSize} rotate-45 border border-base-300 rounded-sm grid place-items-center bg-base-300 ml-2`}
+      aria-label={name || t("pictos.addPicto")}
     >
       {maskBase ? (
         <div
@@ -579,8 +578,8 @@ function Modal({
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-[#121212] border border-white/10 shadow-2xl">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+        <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
             <div className="text-lg tracking-wide">{title}</div>
             <button onClick={onClose} className="text-2xl leading-none px-2">
               ×
@@ -597,8 +596,8 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
   return (
     <div className="p-4">
       <input
-        className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
-        placeholder="Buscar..."
+        className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+        placeholder={t("common.search")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
@@ -704,7 +703,7 @@ function PictoCard({
   return (
     <button
       onClick={() => onPick && onPick(picto)}
-      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg:white/5 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
+      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
     >
       <div className="flex flex-col items-center gap-3">
         <PlusDiamond icon="" picto={picto} isBig={true} />
@@ -719,7 +718,7 @@ function PictoCard({
         </div>
         <div className="grid grid-cols-1 gap-2">
           <StatusTexts pictoResponse={picto} level={level} />
-          <Stat label="Nível" value={picto.level ?? 1} />
+          <Stat label={t("common.level")} value={picto.level ?? 1} />
         </div>
         <div className="opacity-80">{pictoInfo?.description}</div>
       </div>
@@ -740,7 +739,7 @@ function PictoInfoCard({
   return (
     <button
       onClick={() => onPick && onPick(info)}
-      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
+      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
     >
       <PlusDiamond icon="" picto={{ pictoId: info.id } as unknown as PictoResponse} isBig={true} />
       <div className="flex flex-col gap-2">

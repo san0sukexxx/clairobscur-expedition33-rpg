@@ -1,13 +1,17 @@
-import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction, RefObject, MutableRefObject } from "react";
 import type { GetPlayerResponse } from "../../api/APIPlayer";
 import type { Campaign } from "../../api/APICampaign";
 import type { BattleCharacterInfo, WeaponInfo } from "../../api/ResponseModel";
 import type { WeaponDTO } from "../../types/WeaponDTO";
+import type { DiceBoardRef } from "../DiceBoard";
 import type { CombatMenuAction } from "../../utils/CombatMenuActions";
 import type { PlayerTab, CombatTabType, SkillsTabType } from "../../pages/PlayerPage/PlayerPage.types";
 
 import WeaponSection from "../WeaponSection";
 import PlayerSheet from "../PlayerSheet";
+import { AbilityScoresSection } from "../AbilityScoresSection";
+import { SavingThrowsSection } from "../SavingThrowsSection";
+import { CombatStatsSection } from "../CombatStatsSection";
 import PictosTab from "../PictosTab";
 import LuminasSection from "../LuminasSection";
 import SkillsSection from "../SkillsSection";
@@ -46,6 +50,10 @@ interface PlayerContentProps {
   skillsInitialTab: SkillsTabType;
   isUsingSkillMode: boolean;
   onUseSkill: (skillId: string) => void;
+
+  // Dice refs
+  diceBoardRef: RefObject<DiceBoardRef | null>;
+  timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
 /**
@@ -76,7 +84,9 @@ export function PlayerContent({
   onPotionUsed,
   skillsInitialTab,
   isUsingSkillMode,
-  onUseSkill
+  onUseSkill,
+  diceBoardRef,
+  timeoutDiceBoardRef,
 }: PlayerContentProps) {
   if (loading || error) {
     return null;
@@ -85,12 +95,30 @@ export function PlayerContent({
   return (
     <section className="space-y-4">
       {tab === "ficha" && (
-        <PlayerSheet
-          player={player}
-          setPlayer={setPlayer}
-          campaignInfo={campaignInfo}
-          weaponInfo={weaponInfo}
-        />
+        <>
+          <PlayerSheet
+            player={player}
+            setPlayer={setPlayer}
+            campaignInfo={campaignInfo}
+          />
+          <CombatStatsSection
+            player={player}
+            setPlayer={setPlayer}
+            diceBoardRef={diceBoardRef}
+            timeoutDiceBoardRef={timeoutDiceBoardRef}
+          />
+          <AbilityScoresSection
+            player={player}
+            setPlayer={setPlayer}
+            diceBoardRef={diceBoardRef}
+            timeoutDiceBoardRef={timeoutDiceBoardRef}
+          />
+          <SavingThrowsSection
+            player={player}
+            diceBoardRef={diceBoardRef}
+            timeoutDiceBoardRef={timeoutDiceBoardRef}
+          />
+        </>
       )}
 
       {tab === "arma" && (

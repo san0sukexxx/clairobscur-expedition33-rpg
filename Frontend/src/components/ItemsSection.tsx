@@ -24,8 +24,8 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/70" onClick={onClose} />
             <div className="absolute inset-0 flex items-center justify-center p-4">
-                <div className="w-full max-w-md max-h-[85vh] overflow-hidden rounded-2xl bg-[#121212] border border-white/10 shadow-2xl">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <div className="w-full max-w-md max-h-[85vh] overflow-hidden rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
                         <div className="text-lg tracking-wide">{title}</div>
                         <button onClick={onClose} className="text-2xl leading-none px-2">×</button>
                     </div>
@@ -270,7 +270,7 @@ function ElixirsCard({
             }
         } catch (e) {
             console.error("Erro ao usar item:", e);
-            alert("Erro ao usar o item");
+            alert(t("items.errorUsing"));
         } finally {
             setUsingItem(null);
         }
@@ -315,7 +315,7 @@ function ElixirsCard({
                             type="number"
                             min={1}
                             max={100}
-                            className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                            className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                             value={inputValue}
                             onChange={(e) => {
                                 setInputValue(e.target.value);
@@ -335,7 +335,7 @@ function ElixirsCard({
                         />
                     </div>
                     <button
-                        className="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                        className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                         onClick={confirmUseItem}
                     >
                         {t("common.confirm")}
@@ -356,7 +356,7 @@ function ElixirsCard({
                         <input
                             type="number"
                             min={0}
-                            className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                            className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                             value={editQtyValue}
                             onChange={(e) => setEditQtyValue(e.target.value)}
                             autoFocus
@@ -366,7 +366,7 @@ function ElixirsCard({
                         />
                     </div>
                     <button
-                        className="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                        className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                         onClick={confirmEditQty}
                     >
                         {t("common.confirm")}
@@ -374,8 +374,8 @@ function ElixirsCard({
                 </div>
             </Modal>
 
-            <div className="rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
-                <div className="px-6 py-3 border-b border-white/10 text-lg tracking-widest text-center opacity-90">
+            <div className="rounded-2xl bg-base-100 border border-base-300 overflow-hidden">
+                <div className="px-6 py-3 border-b border-base-300 text-lg tracking-widest text-center opacity-90">
                     {t("items.elixirs").toUpperCase()}
                 </div>
 
@@ -388,7 +388,7 @@ function ElixirsCard({
                     return (
                         <div
                             key={e.id}
-                            className="flex flex-col items-center gap-2 rounded-xl bg-black/20 border border-white/10 p-3"
+                            className="flex flex-col items-center gap-2 rounded-xl bg-base-200 border border-base-300 p-3"
                         >
                             <div className="w-20 h-20 rounded-full bg-black flex items-center justify-center overflow-hidden">
                                 <img
@@ -403,7 +403,7 @@ function ElixirsCard({
 
                             <div className="flex items-center gap-2">
                                 <button
-                                    className="p-1 rounded bg-white/10 hover:bg-white/20"
+                                    className="p-1 rounded bg-base-300 hover:bg-base-300/70"
                                     onClick={() => updateElixir(e.id, Math.max(0, qty - 1))}
                                 >
                                     <FaChevronLeft size={14} />
@@ -413,7 +413,7 @@ function ElixirsCard({
                                     onClick={() => { setEditQtyModal({ elixirId: e.id, field: "quantity", currentValue: qty }); setEditQtyValue(String(qty)); }}
                                 >{qty}</div>
                                 <button
-                                    className="p-1 rounded bg-white/10 hover:bg-white/20"
+                                    className="p-1 rounded bg-base-300 hover:bg-base-300/70"
                                     onClick={() => {
                                         // Se item não existe (max=0), criar com qty=1
                                         const newQty = max === 0 ? 1 : Math.min(max, qty + 1);
@@ -425,9 +425,9 @@ function ElixirsCard({
                             </div>
 
                             <div className="flex items-center gap-2 text-sm opacity-80">
-                                <span>Max:</span>
+                                <span>{t("common.max")}:</span>
                                 <button
-                                    className="p-1 rounded bg-white/10 hover:bg-white/20"
+                                    className="p-1 rounded bg-base-300 hover:bg-base-300/70"
                                     onClick={() => updateElixirMaxQuantity(e.id, Math.max(0, max - 1))}
                                 >
                                     <FaChevronLeft size={12} />
@@ -437,7 +437,7 @@ function ElixirsCard({
                                     onClick={() => { setEditQtyModal({ elixirId: e.id, field: "max", currentValue: max }); setEditQtyValue(String(max)); }}
                                 >{max}</div>
                                 <button
-                                    className="p-1 rounded bg-white/10 hover:bg-white/20"
+                                    className="p-1 rounded bg-base-300 hover:bg-base-300/70"
                                     onClick={() => updateElixirMaxQuantity(e.id, max + 1)}
                                 >
                                     <FaChevronRight size={12} />
@@ -446,7 +446,7 @@ function ElixirsCard({
 
                             {(e.id === "chroma-elixir" || inCombat) && (
                                 <button
-                                    className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15 disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                                    className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300 disabled:opacity-50 disabled:cursor-not-allowed w-full"
                                     disabled={
                                         usingItem === e.id ||
                                         (e.id === "chroma-elixir"
@@ -467,7 +467,7 @@ function ElixirsCard({
                                         }
                                     }}
                                 >
-                                    {usingItem === e.id ? "Usando..." : "Usar"}
+                                    {usingItem === e.id ? t("common.using") : t("common.use")}
                                 </button>
                             )}
                         </div>
@@ -528,7 +528,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
 
         const itemExists = player.items?.some(item => item.itemId === itemId.trim());
         if (itemExists) {
-            alert("Já existe um item com este nome.");
+            alert(t("items.itemExists"));
             return;
         }
 
@@ -566,7 +566,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
             item => item.itemId === itemId.trim() && item.id !== editingItem.id
         );
         if (itemExists) {
-            alert("Já existe um item com este nome.");
+            alert(t("items.itemExists"));
             return;
         }
 
@@ -630,8 +630,8 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
     }
 
     return (
-        <div className="text-white">
-            <div className="text-center text-lg tracking-widest pb-3 opacity-90">ITENS</div>
+        <div className="text-base-content">
+            <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("items.title").toUpperCase()}</div>
 
             <div className="mb-4">
                 <ElixirsCard player={player} setPlayer={setPlayer} inCombat={inCombat} canUsePotion={canUsePotion} weaponInfo={weaponInfo} onReviveRequested={onReviveRequested} onPotionUsed={onPotionUsed} />
@@ -644,15 +644,15 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                     return (
                         <div
                             key={selected ? `${selected.itemId}-${idx}` : `empty-${idx}`}
-                            className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden"
+                            className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden"
                         >
                             <div
                                 role="button"
                                 onClick={() => !selected && setOpenSlot(idx)}
                                 className={`w-full text-left py-4 px-6 rounded-2xl transition-colors ${
                                     isAddSlot
-                                        ? "h-28 grid place-items-center hover:bg-white/5 cursor-pointer"
-                                        : "hover:bg-white/5"
+                                        ? "h-28 grid place-items-center hover:bg-base-300/30 cursor-pointer"
+                                        : "hover:bg-base-300/30"
                                 }`}
                             >
                                 {selected ? (
@@ -663,17 +663,17 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                                             </div>
                                             <div className="flex gap-2">
                                                 <button
-                                                    className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                                                    className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         openEditModal(selected);
                                                     }}
-                                                    aria-label={`Editar ${selected.itemId}`}
+                                                    aria-label={`${t("common.edit")} ${selected.itemId}`}
                                                 >
-                                                    Editar
+                                                    {t("common.edit")}
                                                 </button>
                                                 <button
-                                                    className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                                                    className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         deleteItem(selected);
@@ -690,7 +690,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                                     </div>
                                 ) : (
                                     <div className="text-center w-full opacity-60 tracking-wide text-lg">
-                                        Adicionar Item
+                                        {t("items.addItem")}
                                     </div>
                                 )}
                             </div>
@@ -706,7 +706,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
             >
                 <div className="p-4 flex flex-col gap-4">
                     <input
-                        className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                        className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                         placeholder={t("items.itemId")}
                         value={itemId}
                         onChange={(e) => setItemId(e.target.value)}
@@ -717,7 +717,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                             <input
                                 type="number"
                                 min={0}
-                                className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                                 value={quantity}
                                 onChange={(e) => setQuantity(Number(e.target.value))}
                             />
@@ -727,14 +727,14 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                             <input
                                 type="number"
                                 min={1}
-                                className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                                 value={maxQuantity}
                                 onChange={(e) => setMaxQuantity(Number(e.target.value))}
                             />
                         </div>
                     </div>
                     <button
-                        className="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/15 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={!itemId.trim()}
                         onClick={editingItem ? updateItem : createItem}
                     >

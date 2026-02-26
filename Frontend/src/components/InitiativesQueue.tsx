@@ -114,9 +114,9 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
     if (sortedQueue.length === 0) return null
 
     return (
-        <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4">
+        <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4">
             {isAdmin && (
-                <div className="text-xs text-neutral-400 mb-2 text-center">
+                <div className="text-xs text-base-content/50 mb-2 text-center">
                     Arraste para reordenar
                 </div>
             )}
@@ -151,20 +151,20 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                             onDragEnd={handleDragEnd}
                         >
                             <div
-                                className={`relative flex-shrink-0 overflow-hidden rounded-md border-2 transition-all ${
+                                className={`relative flex-shrink-0 overflow-hidden rounded-md border-2 transition-all bg-base-300 ${
                                     isActive
                                         ? showBattleId
-                                            ? "w-20 h-20 border-yellow-400 shadow-lg"
-                                            : "w-16 h-16 border-yellow-400 shadow-lg"
+                                            ? "w-20 h-20 border-warning shadow-lg"
+                                            : "w-16 h-16 border-warning shadow-lg"
                                         : showBattleId
-                                            ? "w-16 h-16 border-neutral-700"
-                                            : "w-12 h-12 border-neutral-700"
+                                            ? "w-16 h-16 border-base-300"
+                                            : "w-12 h-12 border-base-300"
                                 } ${
-                                    isAdmin ? 'cursor-move hover:border-blue-400' : ''
+                                    isAdmin ? 'cursor-move hover:border-primary' : ''
                                 } ${
                                     isDragging ? 'opacity-50 scale-95' : ''
                                 } ${
-                                    isDragOver ? 'border-blue-500 scale-105' : ''
+                                    isDragOver ? 'border-primary scale-105' : ''
                                 }`}
                                 title={ch.name}
                             >
@@ -176,7 +176,7 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                             </div>
 
                             {showBattleId && (
-                                <span className="text-xs text-neutral-400 mt-1">
+                                <span className="text-xs text-base-content/50 mt-1">
                                     #{battleId}
                                 </span>
                             )}

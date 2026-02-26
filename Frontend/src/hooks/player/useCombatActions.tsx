@@ -108,7 +108,7 @@ export function useCombatActions({
             </h3>
           )}
           <p>
-            {t("playerPage.initiative.ability")}: <b>{player.playerSheet?.hability ?? 0}</b>
+            {t("playerPage.initiative.ability")}: <b>{0}</b>
             {criticalRolls > 0 && <b> (+{criticalBonus})</b>}
             {failures > 0 && (
               <span className="inline-flex items-center gap-1 font-bold ml-2">
@@ -129,7 +129,7 @@ export function useCombatActions({
           const savedInitiative = await APIBattle.addInitiative({
             battleCharacterId: player.fightInfo?.playerBattleID ?? 0,
             value: total,
-            hability: player.playerSheet?.hability ?? 0,
+            hability: 0,
             playFirst: criticalRolls > 0,
           });
 

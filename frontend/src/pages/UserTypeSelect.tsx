@@ -1,5 +1,6 @@
 import { AiOutlineBook } from "react-icons/ai";
 import { FaUser } from "react-icons/fa";
+import { MdSettings } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { t } from "../i18n";
 
@@ -20,6 +21,12 @@ export default function UserTypeSelect() {
         <Link to="/campaign-list" className="btn btn-secondary btn-lg w-full flex items-center justify-center gap-3">
           <FaUser size={22} />
           {t("userTypeSelect.player")}
+          <span className="opacity-0 w-1">.</span>
+        </Link>
+
+        <Link to="/settings" className="btn btn-ghost btn-lg w-full flex items-center justify-center gap-3">
+          <MdSettings size={24} />
+          {t("settings.title")}
           <span className="opacity-0 w-1">.</span>
         </Link>
       </div>

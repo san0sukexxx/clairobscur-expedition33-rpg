@@ -94,7 +94,7 @@ export default function SkillSection({ player, setPlayer, isAdmin, initialTab = 
                 </motion.div>
             </div>
 
-            <div className="fixed bottom-20 right-4">
+            <div className="fixed bottom-9 right-4">
                 <button
                     className="btn btn-primary btn-circle shadow-lg"
                     onClick={handleMenuAction}

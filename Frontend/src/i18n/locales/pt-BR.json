@@ -1812,7 +1812,7 @@
     "characterSheet": {
       "title": "Ficha",
       "selectCharacter": "Selecione seu personagem",
-      "characterLevel": "Nível do personagem",
+      "characterLevel": "Nível",
       "levelPlaceholder": "Nível",
       "skillPoints": "Ptos. de habilidade",
       "power": "Poder",
@@ -1823,7 +1823,25 @@
       "hp": "PV",
       "mp": "PM",
       "initial": "Inicial",
-      "noCharacterSheets": "Nenhuma ficha de personagem disponível."
+      "noCharacterSheets": "Nenhuma ficha de personagem disponível.",
+      "attributesTitle": "Atributos",
+      "strength": "FORÇA",
+      "dexterity": "DESTREZA",
+      "constitution": "CONSTITUIÇÃO",
+      "intelligence": "INTELIGÊNCIA",
+      "wisdom": "SABEDORIA",
+      "charisma": "CARISMA",
+      "proficiencyBonus": "Bônus de Proficiência",
+      "armorClassTop": "Classe",
+      "armorClassBottom": "Armadura",
+      "armorClass": "Classe de Armadura",
+      "initiative": "Iniciativa",
+      "hitPoints": "Pontos de Vida",
+      "savingThrows": "Testes de Resistência",
+      "senses": "Sentidos",
+      "passivePerception": "Percepção Passiva",
+      "passiveInvestigation": "Investigação Passiva",
+      "passiveInsight": "Intuição Passiva"
     },
     "tabs": {
       "sheet": "Ficha",
@@ -2794,7 +2812,18 @@
       "luck": "Sorte",
       "agility": "Agilidade",
       "dices": "Dados",
-      "rollD6": "Rolar D6"
+      "rollD6": "Rolar D6",
+      "level": "Level",
+      "modal": {
+        "titleAdd": "Selecione a arma para adicionar",
+        "titleChange": "Selecione a arma para equipar",
+        "titleRemove": "Selecione a arma para remover",
+        "searchPlaceholder": "Buscar arma pelo nome...",
+        "equipped": "equipada",
+        "chooseLevel": "Escolher nível inicial",
+        "chooseLevelDescription": "Selecione o nível desta arma (1 a 4).",
+        "confirm": "Confirmar"
+      }
     },
     "pictos": {
       "title": "Pictos",
@@ -2806,7 +2835,8 @@
       "defense": "Defesa",
       "speed": "Velocidade",
       "critical": "Crítico",
-      "equipped": "Equipado"
+      "equipped": "Equipado",
+      "setLevelFor": "Definir nível para {name}"
     },
     "luminas": {
       "title": "Luminas",
@@ -2817,7 +2847,9 @@
       "cost": "Custo",
       "limitExceeded": "Custo máximo de luminas excedido! Atual:",
       "tryingToAdd": "Tentando adicionar:",
-      "maximum": "Máximo:"
+      "maximum": "Máximo:",
+      "limitExceededAlert": "Custo máximo de luminas excedido! Atual: {current}, Tentando adicionar: {adding}, Máximo: {max}",
+      "limitExceededDetail": "Limite excedido ({current} + {adding} > {max})"
     },
     "modals": {
       "close": "Fechar"
@@ -3272,9 +3304,17 @@
           "luminas": "Luminas",
           "inventory": "Inventário",
           "skills": "Habilidades",
-          "combat": "Combate"
+          "combat": "Combate",
+          "settings": "Configurações"
         }
       }
+    },
+    "settings": {
+      "title": "Configurações",
+      "language": "Idioma",
+      "languagePtBR": "Português (Brasil)",
+      "languageEn": "Inglês",
+      "theme": "Tema"
     }
   }
 }

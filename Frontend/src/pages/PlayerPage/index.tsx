@@ -6,7 +6,7 @@ import { t } from "../../i18n";
 import DiceBoard from "../../components/DiceBoard";
 import PanelModal from "../../components/PanelModal";
 import MasterEditingOverlay from "../../components/MasterEditingOverlay";
-import { PlayerNavbar, PlayerTabBar, PlayerContent } from "../../components/player";
+import { PlayerNavbar, PlayerContent } from "../../components/player";
 
 // Hooks
 import { useToast } from "../../components/Toast";
@@ -162,6 +162,8 @@ export default function PlayerPage() {
       <PlayerNavbar
         onNavigateBack={handleNavigateBackToAdmin}
         isExecutingSkill={isExecutingSkill}
+        tab={tab}
+        setTab={setTab}
       />
 
       <main className="p-4 max-w-md mx-auto pb-24">
@@ -201,14 +203,11 @@ export default function PlayerPage() {
           skillsInitialTab={skillsInitialTab}
           isUsingSkillMode={isUsingSkillMode}
           onUseSkill={() => {}}
+          diceBoardRef={diceBoardRef}
+          timeoutDiceBoardRef={timeoutDiceBoardRef}
         />
       </main>
 
-      <PlayerTabBar
-        tab={tab}
-        setTab={setTab}
-        isExecutingSkill={isExecutingSkill}
-      />
     </div>
   );
 }

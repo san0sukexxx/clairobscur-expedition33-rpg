@@ -326,10 +326,10 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
   const modalTitle =
     modalMode === "add"
-      ? "Selecione a arma para adicionar"
+      ? t("weapons.modal.titleAdd")
       : modalMode === "change"
-        ? "Selecione a arma para equipar"
-        : "Selecione a arma para remover";
+        ? t("weapons.modal.titleChange")
+        : t("weapons.modal.titleRemove");
 
   return (
     <div className="card bg-base-100 shadow-lg">
@@ -354,7 +354,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
       {!hasWeapons && (
         <div className={`card-body ${isAdmin ? "pt-0" : ""}`}>
-          <p className="text-sm text-neutral-300">
+          <p className="text-sm text-base-content/70">
             {t("weapons.noWeapon")}
           </p>
         </div>
@@ -364,14 +364,14 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
         <>
           {activeWeapon == null ? (
             <div className="card-body">
-              <p className="text-sm text-neutral-300">
+              <p className="text-sm text-base-content/70">
                 {t("weapons.noWeapon")}
               </p>
 
               <button
                 type="button"
                 onClick={() => openSelector("change")}
-                className="mt-4 inline-flex items-center gap-2 rounded-xl border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-semibold text-neutral-100 hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-500"
+                className="mt-4 inline-flex items-center gap-2 rounded-xl border border-base-300 bg-base-200 px-4 py-2 text-sm font-semibold text-base-content hover:bg-base-300 focus:outline-none focus:ring-2 focus:ring-base-content/30"
               >
                 <FaList aria-hidden="true" />
                 <span>{t("weapons.selectWeapon")}</span>
@@ -440,9 +440,9 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                       <FaChevronRight />
                     </button>
                   </div>
-                  <div className="mt-1 text-center text-xs uppercase opacity-70">Level</div>
+                  <div className="mt-1 text-center text-xs uppercase opacity-70">{t("weapons.level")}</div>
 
-                  <div className="flex items-center justify-center gap-1 text-sm font-medium text-neutral-400">
+                  <div className="flex items-center justify-center gap-1 text-sm font-medium text-base-content/60">
                     ( {activeWeapon.power} <FaChartLine aria-hidden="true" />)
                   </div>
                 </div>
@@ -519,8 +519,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
       )}
 
       <dialog ref={dialogRef} className="modal items-start pt-7">
-        <div className="modal-box max-w-4xl w-[92vw] bg-neutral-900 text-neutral-100 max-h-[92dvh] flex flex-col p-0 mobile-dialog">
-          <div className="sticky top-0 z-10 flex flex-col gap-4 px-6 py-4 border-b border-neutral-800 bg-neutral-900">
+        <div className="modal-box max-w-4xl w-[92vw] bg-base-100 text-base-content max-h-[92dvh] flex flex-col p-0 mobile-dialog">
+          <div className="sticky top-0 z-10 flex flex-col gap-4 px-6 py-4 border-b border-base-300 bg-base-100">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-xl">{modalTitle}</h3>
               <form method="dialog">
@@ -530,8 +530,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
             <input
               type="text"
-              className="input input-bordered w-full bg-neutral-800 text-neutral-100 border-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-500 placeholder-neutral-500 text-sm"
-              placeholder="Buscar arma pelo nome..."
+              className="input input-bordered w-full bg-base-200 text-base-content border-base-300 focus:outline-none focus:ring-2 focus:ring-base-content/30 text-sm"
+              placeholder={t("weapons.modal.searchPlaceholder")}
               value={weaponFilter}
               onChange={e => setWeaponFilter(e.target.value)}
             />
@@ -547,28 +547,28 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                   <button
                     key={weaponDetails.name}
                     onClick={() => handlePick(weaponDetails, w.level)}
-                    className="group rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 text-left hover:border-neutral-700 hover:shadow-lg focus:outline-none"
+                    className="group rounded-2xl border border-base-300 bg-base-100 p-4 text-left hover:border-base-content/30 hover:shadow-lg focus:outline-none"
                   >
                     <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] gap-4">
                       <div className="text-2xl font-extrabold w-full col-span-full md:col-span-2">
                         {weaponDetails.name}
                         <span className="ml-2 text-base font-semibold text-green-400/80">
-                          level {w.level}
+                          {t("weapons.level")} {w.level}
                         </span>
                         {player?.playerSheet?.weaponId === w.id && modalMode !== "remove" ? (
                           <span className="ml-2 text-xs font-semibold text-primary">
-                            (equipada)
+                            ({t("weapons.modal.equipped")})
                           </span>
                         ) : null}
 
-                        <span className="ml-2 inline-flex items-center gap-1 text-sm font-medium text-neutral-400">
+                        <span className="ml-2 inline-flex items-center gap-1 text-sm font-medium text-base-content/60">
                           ( {weaponDetails.attributes.power}
-                          <FaChartLine aria-hidden="true" className="text-neutral-400" />)
+                          <FaChartLine aria-hidden="true" className="text-base-content/60" />)
                         </span>
 
                       </div>
 
-                      <div className="shrink-0 flex items-center justify-center rounded-lg bg-black/40 p-2 ring-1 ring-neutral-500 max-h-30 md:col-start-1">
+                      <div className="shrink-0 flex items-center justify-center rounded-lg bg-base-200 p-2 ring-1 ring-base-content/30 max-h-30 md:col-start-1">
                         <img
                           src={`/weapons/${weaponDetails.name}.webp`}
                           alt={weaponDetails.name}
@@ -580,7 +580,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                       <div className="md:col-start-1">
                         <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                           <div>
-                            <div className="uppercase tracking-wide text-sm opacity-70 mb-1">PODER</div>
+                            <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{t("weapons.power")}</div>
                             <div className="space-y-1">
                               {displayWeaponPlusPower(weaponDetails.attributes.power, w.level) !== null && (
                                 <div className="flex items-center justify-center gap-1 text-2xl font-bold">
@@ -591,7 +591,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                           </div>
 
                           <div>
-                            <div className="uppercase tracking-wide text-sm opacity-70 mb-1">ELEMENTO</div>
+                            <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{t("weapons.element")}</div>
                             <div className="text-3xl font-semibold mt-2">
                               {ELEMENT_EMOTE[weaponDetails?.attributes?.element ?? "Unknown"]}
                             </div>
@@ -599,31 +599,31 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
                           {(
                             [
-                              ["Vitalidade", weaponDetails.attributes.scaling.vitality],
-                              ["Defesa", weaponDetails.attributes.scaling.defense],
-                              ["Sorte", weaponDetails.attributes.scaling.luck],
-                              ["Agilidade", weaponDetails.attributes.scaling.agility],
+                              ["vitality",  t("weapons.vitality"), weaponDetails.attributes.scaling.vitality],
+                              ["defense",   t("weapons.defense"),  weaponDetails.attributes.scaling.defense],
+                              ["luck",      t("weapons.luck"),     weaponDetails.attributes.scaling.luck],
+                              ["agility",   t("weapons.agility"),  weaponDetails.attributes.scaling.agility],
                             ] as const
-                          ).map(([label, value]) =>
+                          ).map(([key, label, value]) =>
                             value ? (
-                              <div key={label}>
+                              <div key={key}>
                                 <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{label}</div>
-                                {label == "Vitalidade" && (
+                                {key === "vitality" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponVitalityBonus(value, w.level)}
                                   </span>
                                 )}
-                                {label == "Defesa" && (
+                                {key === "defense" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponDefenseBonus(value, w.level)}
                                   </span>
                                 )}
-                                {label == "Sorte" && (
+                                {key === "luck" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponLuckBonus(value, w.level)}
                                   </span>
                                 )}
-                                {label == "Agilidade" && (
+                                {key === "agility" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponAgilityBonus(value, w.level)}
                                   </span>
@@ -641,7 +641,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                           const effectText = translatedEffect || p.effect;
                           return (
                             <li key={p.level} className="flex w-full gap-2">
-                              <span className={`font-semibold ${levelColor(p.level)}`}>Level {p.level}</span>
+                              <span className={`font-semibold ${levelColor(p.level)}`}>{t("weapons.level")} {p.level}</span>
                               <span className="flex-1 opacity-90">: {effectText}</span>
                             </li>
                           );
@@ -661,17 +661,17 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
       </dialog>
 
       <dialog ref={levelDialogRef} className="modal items-start pt-7">
-        <div className="modal-box max-w-md w-[92vw] bg-neutral-900 text-neutral-100 flex flex-col p-0">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800 bg-neutral-900">
-            <h3 className="font-bold text-xl">Escolher nível inicial</h3>
+        <div className="modal-box max-w-md w-[92vw] bg-base-100 text-base-content flex flex-col p-0">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-base-300 bg-base-100">
+            <h3 className="font-bold text-xl">{t("weapons.modal.chooseLevel")}</h3>
             <form method="dialog">
               <button className="btn btn-sm" onClick={closeLevelDialog}>X</button>
             </form>
           </div>
 
           <div className="px-6 py-4 space-y-4">
-            <p className="text-sm text-neutral-300">
-              Selecione o nível desta arma (1 a 4).
+            <p className="text-sm text-base-content/70">
+              {t("weapons.modal.chooseLevelDescription")}
             </p>
 
             <div className="flex items-center gap-4 justify-center">
@@ -700,7 +700,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
               className="btn btn-primary w-full"
               onClick={confirmAddWeapon}
             >
-              Confirmar
+              {t("weapons.modal.confirm")}
             </button>
           </div>
         </div>

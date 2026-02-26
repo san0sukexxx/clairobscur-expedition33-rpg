@@ -24,11 +24,13 @@ export default function CharacterSelect({ selected, onSelect, allowedCharacters 
             <summary className="btn btn-xl w-full justify-start gap-5 text-xl h-20">
                 {current ? (
                     <>
-                        <img
-                            src={`/characters/${current.id}.webp`}
-                            alt={current.label}
-                            className="w-14 h-14 rounded-full"
-                        />
+                        <div className="w-14 h-14 rounded-full bg-base-300 overflow-hidden shrink-0">
+                            <img
+                                src={`/characters/${current.id}.webp`}
+                                alt={current.label}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
                         {current.label}
                     </>
                 ) : (
@@ -47,11 +49,13 @@ export default function CharacterSelect({ selected, onSelect, allowedCharacters 
                             className="flex items-center gap-5 py-4 text-xl w-full text-left"
                             onClick={() => handleSelect(c.id)}
                         >
-                            <img
-                                src={`/characters/${c.id}.webp`}
-                                alt={c.label}
-                                className="w-14 h-14 rounded-full"
-                            />
+                            <div className="w-14 h-14 rounded-full bg-base-300 overflow-hidden shrink-0">
+                                <img
+                                    src={`/characters/${c.id}.webp`}
+                                    alt={c.label}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
                             {c.label}
                         </button>
                     </li>

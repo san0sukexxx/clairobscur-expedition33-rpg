@@ -1047,7 +1047,7 @@ export default function CombatAdmin({
                                                     <td>
                                                         <div className={m.currentHp === 0 ? "inline-flex items-center gap-1" : ""}>
                                                             <span
-                                                                className={`font-semibold ${m.currentHp === 0 ? "text-neutral-500 line-through" : ""
+                                                                className={`font-semibold ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""
                                                                     }`}
                                                             >
                                                                 {m.name}
@@ -1629,11 +1629,11 @@ export default function CombatAdmin({
 
                     {[0, 1, 2, 3].map((idx) => (
                         <div key={idx} className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg border border-neutral-600 flex items-center justify-center bg-neutral-800">
+                            <div className="w-10 h-10 rounded-lg border border-base-300 flex items-center justify-center bg-base-200">
                                 {luneStains[idx] ? (
                                     <img src={stainImageMap[luneStains[idx]!]} alt={luneStains[idx]!} className="w-7 h-7" />
                                 ) : (
-                                    <span className="text-neutral-600">—</span>
+                                    <span className="text-base-content/40">—</span>
                                 )}
                             </div>
                             <select
@@ -1888,7 +1888,7 @@ export default function CombatAdmin({
                                             className="flex items-center gap-4 bg-base-300 p-4 rounded-lg"
                                         >
                                             <div className="avatar">
-                                                <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-black/30">
+                                                <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-base-200">
                                                     {isWeapon ? (
                                                         <img
                                                             src={imagePath}
@@ -2058,7 +2058,7 @@ export default function CombatAdmin({
                                 };
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-3">
                                                 <span>{t("combatAdmin.labels.versoPerfectionRank")}</span>
@@ -2094,7 +2094,7 @@ export default function CombatAdmin({
                                 const pct = Math.max(0, Math.min(100, Math.round((chargePoints / maxChargePoints) * 100)));
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-2">
                                                 <span>{t("combatAdmin.labels.gustaveCharges")}</span>
@@ -2134,7 +2134,7 @@ export default function CombatAdmin({
                                 const twilightStatus = activeChar.status?.find(s => s.effectName === "Twilight");
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-2">
                                                 <span>{t("combatAdmin.labels.scielCharges")}</span>
@@ -2196,7 +2196,7 @@ export default function CombatAdmin({
                                 };
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
                                         <div className="flex items-center justify-between text-sm mb-2">
                                             <span>{t("combatAdmin.labels.luneStains")}</span>
                                             <button
@@ -2211,7 +2211,7 @@ export default function CombatAdmin({
                                             {stainSlots.map((stain, idx) => (
                                                 <div
                                                     key={idx}
-                                                    className="w-12 h-12 rounded-lg border border-neutral-600 flex items-center justify-center bg-neutral-800"
+                                                    className="w-12 h-12 rounded-lg border border-base-300 flex items-center justify-center bg-base-200"
                                                 >
                                                     {stain ? (
                                                         <img
@@ -2220,7 +2220,7 @@ export default function CombatAdmin({
                                                             className="w-8 h-8"
                                                         />
                                                     ) : (
-                                                        <span className="text-neutral-600 text-xs">—</span>
+                                                        <span className="text-base-content/40 text-xs">—</span>
                                                     )}
                                                 </div>
                                             ))}
@@ -2259,7 +2259,7 @@ export default function CombatAdmin({
                                 };
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-3">
                                                 <span>{t("combatAdmin.labels.maelleStance")}</span>

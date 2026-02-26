@@ -99,11 +99,8 @@ export function getAttributeValue(
 
     switch (testType) {
         case "hability":
-            return player.playerSheet.hability ?? 0;
         case "power":
-            return player.playerSheet.power ?? 0;
         case "resistance":
-            return player.playerSheet.resistance ?? 0;
         default:
             return 0;
     }

@@ -104,7 +104,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
   }
 
   return (
-    <div className="fixed bottom-20 right-4 z-41">
+    <div className="fixed bottom-9 right-4 z-41">
       {/* Botão principal */}
       <button
         className={`btn btn-primary btn-circle shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -126,31 +126,31 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
           {/* Quando selecionando alvo de habilidade, mostrar apenas Cancelar */}
           {isSelectingSkillTarget ? (
             <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
-              Cancelar
+              {t("common.cancel")}
             </button>
           ) : (
             <>
               {tab == opositeTeamTab && !isAttacking && (
                 <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
-                  Equipe
+                  {t("combat.team")}
                 </button>
               )}
 
               {tab == currentTeamTab && !isAttacking && (
                 <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
-                  Inimigos
+                  {t("combat.enemies")}
                 </button>
               )}
 
               {player?.fightInfo?.battleStatus == "starting" && !isAttacking && player?.fightInfo?.canRollInitiative && (
                 <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Initiative)}>
-                  Rolar Iniciativa
+                  {t("combat.rollInitiative")}
                 </button>
               )}
 
               {player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
                 <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
-                  Entrar na batalha
+                  {t("combat.joinBattle")}
                 </button>
               )}
 
@@ -158,37 +158,37 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
                 <>
                   {isFleeing ? (
                     <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
-                      Encerrar o turno
+                      {t("combat.endTurn")}
                     </button>
                   ) : (
                     <>
                       {canUseItems && (
                         <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
-                          Itens
+                          {t("combat.items")}
                         </button>
                       )}
                       {canUseHabilities && (
                         <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
-                          Habilidades
+                          {t("combat.skills")}
                         </button>
                       )}
                       {canUseFlee && (
                         <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Flee)}>
-                          Tentar fugir
+                          {t("combat.flee")}
                         </button>
                       )}
                       {canUseFreeShot && (
                         <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
-                          Tiro livre
+                          {t("combat.freeShot")}
                         </button>
                       )}
                       {canAttack && (
                         <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
-                          Atacar
+                          {t("combat.attack")}
                         </button>
                       )}
                       <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
-                        Encerrar o turno
+                        {t("combat.endTurn")}
                       </button>
                     </>
                   )}
@@ -197,7 +197,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
 
               {isAttacking && (
                 <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
               )}
             </>

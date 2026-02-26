@@ -127,7 +127,7 @@ export default function LuminasSection({
 
         // Verificar se equipar essa lumina excederia o limite de custo
         if (currentLuminaCost + luminaCost > maxCostLuminas) {
-            alert(`Custo máximo de luminas excedido! Atual: ${currentLuminaCost}, Tentando adicionar: ${luminaCost}, Máximo: ${maxCostLuminas}`)
+            alert(t("luminas.limitExceededAlert", { current: currentLuminaCost, adding: luminaCost, max: maxCostLuminas }))
             return
         }
 
@@ -265,7 +265,7 @@ export default function LuminasSection({
                 : t("luminas.selectLumina")
 
     return (
-        <div className="text-white">
+        <div className="text-base-content">
             <div className="flex items-center justify-between pb-3">
                 <div className="flex items-center gap-4 flex-1">
                     <div className="text-lg tracking-widest opacity-90">
@@ -278,22 +278,22 @@ export default function LuminasSection({
                                 ? "bg-amber-700/10 text-amber-700 border border-amber-700/20"
                                 : "bg-green-600/10 text-green-400 border border-green-600/20"
                     }`}>
-                        Custo: {currentLuminaCost}/{maxCostLuminas}
+                        {t("luminas.cost")}: {currentLuminaCost}/{maxCostLuminas}
                     </div>
                 </div>
                 {isAdmin && (
                     <div className="flex gap-2">
                         <button
-                            className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-white/20"
+                            className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-base-300"
                             onClick={openAdminAdd}
                         >
-                            Adicionar
+                            {t("common.add")}
                         </button>
                         <button
-                            className="px-3 py-1 text-sm rounded-md bg-red-600/70 hover:bg-red-600 transition border border-white/20"
+                            className="px-3 py-1 text-sm rounded-md bg-red-600/70 hover:bg-red-600 transition border border-base-300"
                             onClick={openAdminRemove}
                         >
-                            Remover
+                            {t("common.remove")}
                         </button>
                     </div>
                 )}
@@ -311,7 +311,7 @@ export default function LuminasSection({
                     return (
                         <div
                             key={selected ? `lumina-${selected.id}` : "empty-slot"}
-                            className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden"
+                            className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden"
                         >
                             <div
                                 className="pointer-events-none absolute inset-x-3 top-1 bottom-1 rounded-xl"
@@ -329,8 +329,8 @@ export default function LuminasSection({
                                 onClick={() => handleSlotActivate(idx)}
                                 className={`w-full text-left p-6 pl-28 rounded-2xl transition-colors ${
                                     selected
-                                        ? "hover:bg.white/5 cursor-pointer"
-                                        : "h-30 grid place-items-center hover:bg-white/5"
+                                        ? "hover:bg-base-300/30 cursor-pointer"
+                                        : "h-30 grid place-items-center hover:bg-base-300/30"
                                 }`}
                             >
                                 <div className="absolute left-5 top-1/2 -translate-y-1/2">
@@ -348,7 +348,7 @@ export default function LuminasSection({
                                                 {name}
                                             </div>
                                             <button
-                                                className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                                                className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     unequipLumina(selected)
@@ -362,7 +362,7 @@ export default function LuminasSection({
                                     </div>
                                 ) : (
                                     <div className="text-center w-full opacity-60 tracking-wide text-lg">
-                                        Selecione uma Lumina
+                                        {t("luminas.selectLumina")}
                                     </div>
                                 )}
                             </div>
@@ -400,7 +400,7 @@ export default function LuminasSection({
                             })}
                             {slotFiltered.length === 0 && (
                                 <div className="opacity-70 p-8 text-center">
-                                    Nenhuma Lumina encontrada.
+                                    {t("luminas.noLuminas")}
                                 </div>
                             )}
                         </>
@@ -417,7 +417,7 @@ export default function LuminasSection({
                             ))}
                             {addFiltered.length === 0 && (
                                 <div className="opacity-70 p-8 text-center">
-                                    Nenhum Picto encontrado.
+                                    {t("pictos.noPictos")}
                                 </div>
                             )}
                         </>
@@ -434,7 +434,7 @@ export default function LuminasSection({
                             ))}
                             {removeFiltered.length === 0 && (
                                 <div className="opacity-70 p-8 text-center">
-                                    Nenhuma Lumina encontrada.
+                                    {t("luminas.noLuminas")}
                                 </div>
                             )}
                         </>
@@ -467,8 +467,8 @@ function PlusDiamond({
 
     return (
         <div
-            className={`relative ${wrapperSize} rotate-45 border border-white/20 rounded-sm grid place-items-center bg-black/30 ml-2`}
-            aria-label={name || "Adicionar lumina"}
+            className={`relative ${wrapperSize} rotate-45 border border-base-300 rounded-sm grid place-items-center bg-base-300 ml-2`}
+            aria-label={name || t("luminas.addLumina")}
         >
             {maskBase ? (
                 <div
@@ -511,8 +511,8 @@ function Modal({
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/70" onClick={onClose} />
             <div className="absolute inset-0 flex items-center justify-center p-4">
-                <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-[#121212] border border-white/10 shadow-2xl">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
                         <div className="text-lg tracking-wide">{title}</div>
                         <button className="text-2xl leading-none px-2" onClick={onClose}>
                             ×
@@ -535,8 +535,8 @@ function SearchBox({
     return (
         <div className="p-4">
             <input
-                className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
-                placeholder="Buscar..."
+                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+                placeholder={t("common.search")}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
             />
@@ -612,8 +612,8 @@ function LuminaCard({
             disabled={disabled}
             className={`w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 transition-colors border rounded-xl ${
                 disabled
-                    ? "bg-black/40 opacity-50 cursor-not-allowed border-red-500/30"
-                    : "bg-black/25 hover:bg-white/5 border-white/10"
+                    ? "bg-base-200 opacity-50 cursor-not-allowed border-red-500/30"
+                    : "bg-base-200 hover:bg-base-300 border-base-300"
             }`}
         >
             <PlusDiamond icon="" pictoName={name} isBig={true} />
@@ -626,14 +626,14 @@ function LuminaCard({
                                 ? "bg-red-600/20 text-red-400 border border-red-600/30"
                                 : "bg-amber-700/10 text-amber-700 border border-amber-700/20"
                         }`}>
-                            Custo: {luminaCost}
+                            {t("luminas.cost")}: {luminaCost}
                         </div>
                     )}
                 </div>
                 <div className="opacity-80">{pictoInfo?.description}</div>
                 {disabled && currentCost !== undefined && maxCost !== undefined && (
                     <div className="text-xs text-red-400 mt-1">
-                        Limite excedido ({currentCost} + {luminaCost} {'>'} {maxCost})
+                        {t("luminas.limitExceededDetail", { current: currentCost, adding: luminaCost, max: maxCost })}
                     </div>
                 )}
             </div>
@@ -651,7 +651,7 @@ function PictoInfoCard({
     return (
         <button
             onClick={() => onPick && onPick(info)}
-            className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
+            className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
         >
             <PlusDiamond icon="" pictoName={info.name} isBig={true} />
             <div className="flex flex-col gap-2">

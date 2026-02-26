@@ -12,9 +12,9 @@ export default function FloatingButton({ onClick }: FloatingButtonProps) {
       className="
         btn btn-primary 
         btn-circle 
-        fixed 
-        bottom-6 
-        right-6 
+        fixed
+        bottom-6
+        right-6
         shadow-lg 
         flex 
         items-center 

@@ -44,15 +44,25 @@ const translations: Record<Locale, Translations> = {
   "pt-BR": ptBRTranslations as Translations,
 };
 
-// Default locale (can be changed based on user preference)
-let currentLocale: Locale = "pt-BR";
+// Default locale — restored from localStorage if previously saved
+const LOCALE_KEY = "app-locale";
+const savedLocale = localStorage.getItem(LOCALE_KEY) as Locale | null;
+let currentLocale: Locale = (savedLocale === "en" || savedLocale === "pt-BR") ? savedLocale : "pt-BR";
 
 /**
- * Set the current locale for translations
+ * Check if the user has already selected a language (app-locale is set in localStorage)
+ */
+export function isLanguageSelected(): boolean {
+  return localStorage.getItem(LOCALE_KEY) !== null;
+}
+
+/**
+ * Set the current locale for translations and persist to localStorage
  * @param locale The locale to use ("en" or "pt-BR")
  */
 export function setLocale(locale: Locale): void {
   currentLocale = locale;
+  localStorage.setItem(LOCALE_KEY, locale);
 }
 
 /**

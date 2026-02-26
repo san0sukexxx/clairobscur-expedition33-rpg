@@ -197,7 +197,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                 <span className="mt-2 block text-sm opacity-70 text-left">{t("skillsList.itemCount", { count: list.length })}</span>
             </header>
 
-            <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-[#141414] px-4 py-2">
+            <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-base-300 bg-base-100 px-4 py-2">
                 <span className="text-sm opacity-80">{t("skillsList.skillPoints")}</span>
                 <span className={`text-lg font-bold ${remainingPoints < 0 ? 'text-red-400' : 'text-green-400'}`}>
                     {usedPoints} / {totalPoints}
@@ -219,12 +219,12 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                         return (
                             <article
                                 key={skill.id}
-                                className="group relative flex h-full items-center justify-center rounded-2xl border border-white/10 bg-neutral-900/80 p-10 shadow-sm backdrop-blur-sm"
+                                className="group relative flex h-full items-center justify-center rounded-2xl border border-base-300 bg-base-100 p-10 shadow-sm"
                                 aria-label={t("skills.skillBlocked")}
                             >
-                                <div className="flex flex-col items-center gap-2 text-neutral-300">
+                                <div className="flex flex-col items-center gap-2 text-base-content/60">
                                     <div className="relative h-12 w-12">
-                                        <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-white/20 bg-black/50" />
+                                        <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-base-300 bg-base-200/50" />
                                         <div className="absolute inset-0 -rotate-45 flex items-center justify-center">
                                             <FaLock className="h-7 w-7 opacity-80" aria-hidden />
                                         </div>
@@ -241,7 +241,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                         <article
                             key={skill.id}
                             className={[
-                                "group relative flex h-full flex-col rounded-2xl border border-white/10 bg-neutral-900/80 p-5 shadow-sm backdrop-blur-sm transition-all hover:shadow-md focus-within:ring-1 focus-within:ring-white/20",
+                                "group relative flex h-full flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm transition-all hover:shadow-md focus-within:ring-1 focus-within:ring-base-content/20",
                             ].join(" ")}
                         >
                             <button
@@ -259,7 +259,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="relative h-12 w-12 shrink-0">
-                                        <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-white/20 bg-black/50">
+                                        <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-base-300 bg-base-200/50">
                                             {skillInfo.image ? (
                                                 <img
                                                     src={`/skills/${skillInfo.image}`}
@@ -276,7 +276,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
 
                                     <div className="min-w-0 flex-1">
                                         <div className="flex flex-wrap items-center gap-2 min-w-0">
-                                            <h3 className="truncate text-lg font-semibold tracking-wide text-neutral-100 min-w-0">
+                                            <h3 className="truncate text-lg font-semibold tracking-wide text-base-content min-w-0">
                                                 <span className={`${disabled ? "opacity-70 grayscale" : ""} block truncate`}>{skillInfo.name}</span>
                                             </h3>
 
@@ -296,13 +296,13 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                                 </span>
                                             )}
 
-                                            <span className={`ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${skillInfo.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                                            <span className={`ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md ${skillInfo.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
                                                 {skillInfo.isGradient ? `${skillInfo.cost} ${skillInfo.cost === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : skillInfo.cost}
                                             </span>
                                         </div>
 
                                         {disabled && (
-                                            <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] text-amber-200">
+                                            <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-amber-700">
                                                 <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
                                                 <span>{t("skillsList.notUnlocked")}</span>
                                             </div>
@@ -371,20 +371,20 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                         animate={{ opacity: 1, height: "auto" }}
                                         exit={{ opacity: 0, height: 0 }}
                                         transition={{ duration: 0.2 }}
-                                        className="mt-3 border-t border-white/10 pt-3"
+                                        className="mt-3 border-t border-base-300 pt-3"
                                     >
                                         {/* Descrição (apagada se disabled) */}
                                         <div className={disabled ? "opacity-70 grayscale" : ""}>
-                                            <div className="whitespace-pre-line text-[15px] leading-snug text-neutral-200 break-words">
+                                            <div className="whitespace-pre-line text-[15px] leading-snug text-base-content/90 break-words">
                                                 {highlight(skillInfo.description, skillInfo.id)}
                                             </div>
                                         </div>
 
                                         {/* Pré-requisitos — SEM apagado/grayscale */}
                                         {disabled && (skillInfo.preRequisite && skillInfo.preRequisite.length > 0) && (
-                                            <div className="mt-2 rounded-md border border-amber-400/30 bg-amber-400/10 p-2 text-xs text-amber-200">
+                                            <div className="mt-2 rounded-md border border-warning/40 bg-warning/25 p-2 text-xs text-amber-700">
                                                 <div className="flex flex-wrap gap-3">
-                                                    <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[11px] text-amber-200">
+                                                    <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-amber-700">
                                                         <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
                                                         <span>{t("skillsList.unlockPrerequisite")}</span>
                                                     </div>
@@ -397,7 +397,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                                         return (
                                                             <div key={index} className="flex items-center gap-3 my-2 mx-2">
                                                                 <div className="relative h-12 w-12 shrink-0">
-                                                                    <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-white/20 bg-black/50">
+                                                                    <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-base-300 bg-base-200/50">
                                                                         {preRequisiteInfo.image && (
                                                                             <img
                                                                                 src={`/skills/${preRequisiteInfo.image}`}
@@ -408,7 +408,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                                                     </div>
                                                                 </div>
 
-                                                                <h3 className="text-sm font-semibold text-neutral-100">
+                                                                <h3 className="text-sm font-semibold text-base-content">
                                                                     {preRequisiteInfo.name}
                                                                 </h3>
                                                             </div>

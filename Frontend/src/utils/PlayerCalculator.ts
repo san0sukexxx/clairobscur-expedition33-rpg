@@ -89,7 +89,7 @@ export function calculatePlayerCriticalBonus(diceResult: any, player: GetPlayerR
 
 export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {
     const vitalityValue = calculateWeaponVitalityBonus(weaponInfo);
-    const resistanceHealth = (player?.playerSheet?.resistance ?? 0) * 5;
+    const resistanceHealth = 0;
     const pictosHealthBonus = playerPictosTotalHealth(player);
 
     return resistanceHealth + vitalityValue + pictosHealthBonus;
@@ -133,14 +133,14 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     var playerDefense = 0;
 
     if (defenseOption == "block" || defenseOption == "dodge") {
-        var resistance = (player?.playerSheet?.resistance ?? 0) + calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + protectedBonus;
+        var resistance = calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + protectedBonus;
         if (failures > 0) {
             resistance = resistance - (failures * 4);
         }
 
         playerDefense = Math.max(0, resistance) + diceTotalSum;
     } else if (defenseOption == "gradient-block") {
-        var power = (player?.playerSheet?.power ?? 0) + calculatePlayerCriticalBonus(diceResult, player, weaponInfo);
+        var power = calculatePlayerCriticalBonus(diceResult, player, weaponInfo);
 
         if (failures > 0) {
             power = power - (failures * 2);
@@ -150,7 +150,7 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 
         playerDefense = Math.max(0, power) + diceTotalSum;
     } else if (defenseOption == "jump") {
-        var hability = (player?.playerSheet?.hability ?? 0) + calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + hastenedBonus;
+        var hability = calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + hastenedBonus;
         if (failures > 0) {
             hability = hability - (failures * 2);
         }
@@ -160,7 +160,7 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 
     if (defenseOption == "dodge") {
         // Reduced bonus for better PvP balance
-        playerDefense += Math.floor((player?.playerSheet?.hability ?? 0) / 2) + hastenedBonus;
+        playerDefense += hastenedBonus;
     }
 
     if (defenseOption == "dodge" || defenseOption == "jump") {
@@ -199,7 +199,7 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
 }
 
 export function calculateMaxCounterDamage(player: GetPlayerResponse | null, weaponList: WeaponDTO[]): number {
-    const playerPower = (player?.playerSheet?.power ?? 0)
+    const playerPower = 0;
     if (player?.playerSheet?.weaponId == null) {
         return playerPower;
     }
@@ -211,11 +211,11 @@ export function calculateMaxCounterDamage(player: GetPlayerResponse | null, weap
 }
 
 export function calculateMaxMP(player: GetPlayerResponse | null): number {
-    return (player?.playerSheet?.hability ?? 0) * 3;
+    return 0;
 }
 
 export function calculateMaxLuminas(player: GetPlayerResponse | null): number {
-    return (player?.playerSheet?.power ?? 0) * 10;
+    return 0;
 }
 
 export function calculateSkillPoints(player: GetPlayerResponse | null): number {
@@ -223,11 +223,11 @@ export function calculateSkillPoints(player: GetPlayerResponse | null): number {
 }
 
 export function calculateInitialMP(player: GetPlayerResponse | null): number {
-    return (player?.playerSheet?.hability ?? 0);
+    return 0;
 }
 
 export function calculateMaxPA(player: GetPlayerResponse | null): number {
-    return (player?.playerSheet?.power ?? 0);
+    return 0;
 }
 
 export function rollCommandForInitiative(weaponInfo: WeaponInfo | null) {
@@ -241,7 +241,7 @@ export function rollCommandForDefense(player: GetPlayerResponse, weaponInfo: Wea
 export function initiativeTotal(player: GetPlayerResponse, diceResult: any, weaponInfo?: WeaponInfo | null) {
     const total = diceTotal(diceResult);
     const failures = calculateFailureDiv(diceResult);
-    var playerInitiative = (player?.playerSheet?.hability ?? 0) + calculateCriticalBonus(diceResult);
+    var playerInitiative = calculateCriticalBonus(diceResult);
 
     if (failures > 0) {
         playerInitiative = playerInitiative - (failures * 4);

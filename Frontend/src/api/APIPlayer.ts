@@ -1,19 +1,28 @@
 import { api } from "./api";
 import { type WeaponResponse, type FightInfoResponse, type BattleLogResponse, type PictoResponse, type LuminaResponse, type PlayerItemResponse, type PlayerSkillResponse } from "./ResponseModel";
 
+export interface AbilityScores {
+    strength?: number;
+    dexterity?: number;
+    constitution?: number;
+    intelligence?: number;
+    wisdom?: number;
+    charisma?: number;
+}
+
 export interface PlayerSheetResponse {
     name?: string;
     characterId?: string;
     totalPoints?: number;
     xp?: number;
-    power?: number;
-    hability?: number;
-    resistance?: number;
     apCurrent?: number;
     mpCurrent?: number;
     hpCurrent?: number;
-    notes?: string;
+    hpMax?: number;
+    armorClass?: number;
+    conditions?: string[];
     weaponId?: string;
+    abilityScores?: AbilityScores;
 }
 
 export interface CreatePlayerInput {

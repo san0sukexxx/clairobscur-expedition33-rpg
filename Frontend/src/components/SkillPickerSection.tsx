@@ -20,7 +20,7 @@ export interface SkillPickerProps {
 function DiamondThumb({ image, alt }: { image?: string; alt: string }) {
     return (
         <div className="relative h-12 w-12 shrink-0">
-            <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-white/20 bg-black/50">
+            <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-base-300 bg-base-200/50">
                 {image ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={`/skills/${image}`} alt={alt} className="h-full w-full -rotate-45 object-cover" />
@@ -36,7 +36,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
     return (
         <div className="p-4">
             <input
-                className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                 placeholder={t("skillPicker.searchPlaceholder")}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
@@ -51,7 +51,7 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
             onClick={() => onPick && onPick(skill)}
             className={[
                 "w-full text-left grid grid-cols-[56px_1fr] items-center gap-3 p-3",
-                "bg-black/25 hover:bg-white/5 transition-colors border border-white/10 rounded-xl py-4 pl-4",
+                "bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl py-4 pl-4",
             ].join(" ")}
             aria-label={skill.name}
         >
@@ -59,7 +59,7 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
             <div className="flex flex-col gap-1 min-w-0">
                 <div className="flex items-start gap-2 justify-between flex-wrap">
                     <div className="text-base font-semibold leading-tight">{skill.name}</div>
-                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md flex-shrink-0 ${skill.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md flex-shrink-0 ${skill.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
                         {skill.isGradient ? `${skill.cost} ${skill.cost === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : skill.cost}
                     </span>
                 </div>
@@ -360,17 +360,17 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }
 
     return (
-        <div className="text-white">
+        <div className="text-base-content">
             <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("skillPicker.title")}</div>
 
             {inBattle && !isUsingSkillMode && (
-                <div className="mb-4 rounded-lg border border-amber-400/30 bg-amber-400/10 p-3 text-center text-sm text-amber-200">
+                <div className="mb-4 rounded-lg border border-warning/40 bg-warning/25 p-3 text-center text-sm text-amber-700">
                     {t("skillPicker.cannotEquipInBattle")}
                 </div>
             )}
 
             {isUsingSkillMode && inBattle && (
-                <div className="mb-4 rounded-lg border border-blue-400/30 bg-blue-400/10 p-3 text-center text-sm text-blue-200">
+                <div className="mb-4 rounded-lg border border-info/30 bg-info/10 p-3 text-center text-sm text-info">
                     {t("skillPicker.selectEquippedToCombat")}
                 </div>
             )}
@@ -382,7 +382,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                     const isOpen = !!expanded[idx];
 
                     return (
-                        <div key={idx} className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
+                        <div key={idx} className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden">
                             <div
                                 role="button"
                                 tabIndex={0}
@@ -407,12 +407,12 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                 aria-controls={selected ? `skill-desc-${idx}` : undefined}
                                 className={`w-full text-left pl-24 rounded-2xl transition-colors flex items-center relative pr-12 ${
                                     selected
-                                        ? "py-8 hover:bg-white/5 cursor-pointer"
+                                        ? "py-8 hover:bg-base-300/30 cursor-pointer"
                                         : (isUsingSkillMode && inBattle)
                                             ? "py-4 cursor-not-allowed opacity-70"
                                             : (inBattle && !isUsingSkillMode)
                                                 ? "py-4 cursor-not-allowed opacity-70"
-                                                : "py-4 hover:bg-white/5 cursor-pointer"
+                                                : "py-4 hover:bg-base-300/30 cursor-pointer"
                                 }`}
                             >
                                 {/* Losango lateral */}
@@ -438,14 +438,14 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                                     {t("skillPicker.gradient")}
                                                 </span>
                                             )}
-                                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-white shadow-md ${selected.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md ${selected.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
                                                 {selected.isGradient ? `${getEffectiveCost(selected)} ${getEffectiveCost(selected) === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : getEffectiveCost(selected)}
                                             </span>
                                         </div>
 
                                         {isUsingSkillMode && inBattle ? (
                                             <button
-                                                className={`absolute right-6 top-1/2 -translate-y-1/2 px-4 py-1.5 text-sm rounded-md border border-white/15 ${
+                                                className={`absolute right-6 top-1/2 -translate-y-1/2 px-4 py-1.5 text-sm rounded-md border border-base-300 ${
                                                     canUseSkill(selected)
                                                         ? 'bg-emerald-600 hover:bg-emerald-500'
                                                         : 'bg-gray-600 opacity-50 cursor-not-allowed'
@@ -463,10 +463,10 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                             </button>
                                         ) : (
                                             <button
-                                                className={`absolute right-6 top-1/2 -translate-y-1/2 px-3 py-1 text-sm rounded-md border border-white/15 ${
+                                                className={`absolute right-6 top-1/2 -translate-y-1/2 px-3 py-1 text-sm rounded-md border border-base-300 ${
                                                     inBattle
-                                                        ? 'bg-white/5 opacity-50 cursor-not-allowed'
-                                                        : 'bg-white/10 hover:bg-white/20'
+                                                        ? 'bg-base-300/30 opacity-50 cursor-not-allowed'
+                                                        : 'bg-base-300 hover:bg-base-300/70'
                                                 }`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -495,10 +495,10 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                             animate={{ opacity: 1, height: "auto" }}
                                             exit={{ opacity: 0, height: 0 }}
                                             transition={{ duration: 0.2 }}
-                                            className="border-t border-white/10"
+                                            className="border-t border-base-300"
                                         >
                                             <div className="px-6 py-4">
-                                                <div className="whitespace-pre-line text-[15px] leading-snug text-neutral-200 break-words">
+                                                <div className="whitespace-pre-line text-[15px] leading-snug text-base-content/90 break-words">
                                                     {highlight(selected.description, selected.id)}
                                                 </div>
                                             </div>
