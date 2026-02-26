@@ -1,26 +1,17 @@
 import { useCallback, type Dispatch, type SetStateAction, type RefObject, type MutableRefObject } from "react";
 import { t } from "../../i18n";
-import { FaCheckCircle, FaSkull, FaDivide } from "react-icons/fa";
+import { FaCheckCircle, FaSkull } from "react-icons/fa";
 import { APIBattle } from "../../api/APIBattle";
 import { APIPlayer, type GetPlayerResponse } from "../../api/APIPlayer";
-import type { WeaponInfo, AttackType, BattleCharacterInfo, StatusType } from "../../api/ResponseModel";
+import type { WeaponInfo } from "../../api/ResponseModel";
 import type { DiceBoardRef } from "../../components/DiceBoard";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../../utils/CombatMenuActions";
 import { rollWithTimeout } from "../../utils/RollUtils";
 import {
   rollCommandForInitiative,
-  rollCommandForAttack,
   initiativeTotal,
-  calculateAttackDamage,
-  calculateFreeShotPlus,
-  playerHasShield,
-  playerHasEmpowered,
-  playerHasWeakened,
-  getPlayerFrenzy,
-  playerHasDizzy,
   playerPictosTotalSpeed,
   calculatePlayerCriticalBonus,
-  calculateRawWeaponPower
 } from "../../utils/PlayerCalculator";
 import { calculateWeaponAgilityBonus } from "../../utils/WeaponCalculator";
 import {
@@ -29,10 +20,7 @@ import {
   countCriticalRolls,
   countFailuresRolls
 } from "../../utils/DiceCalculator";
-import { calculateNpcAttackReceivedDamage, checkForFragile, getWeaponElementModifier, hasShield, hasStatus, npcIsFlying } from "../../utils/NpcCalculator";
-import { getVersoPerfectionDamageBonus } from "../../utils/BattleUtils";
-import { triggerOnBattleStart, triggerOnFreeAim, triggerOnKill } from "../../utils/PictoEffectsIntegration";
-import { getElementModifierText } from "../../utils/ElementUtils";
+import { triggerOnBattleStart } from "../../utils/PictoEffectsIntegration";
 import type { PlayerTab, CombatTabType, SkillsTabType } from "../../pages/PlayerPage/PlayerPage.types";
 
 interface UseCombatActionsParams {
@@ -50,12 +38,6 @@ interface UseCombatActionsParams {
   setSkillsInitialTab: Dispatch<SetStateAction<SkillsTabType>>;
   setIsUsingSkillMode: Dispatch<SetStateAction<boolean>>;
   setIsInventoryActiveInCombat: Dispatch<SetStateAction<boolean>>;
-  attackType: AttackType;
-  setAttackType: Dispatch<SetStateAction<AttackType>>;
-  setPendingSkillId: Dispatch<SetStateAction<string | null>>;
-  setIsSelectingSkillTarget: Dispatch<SetStateAction<boolean>>;
-  setExcludeSelfFromTargeting: Dispatch<SetStateAction<boolean>>;
-  setHitCharacters: Dispatch<SetStateAction<Set<number>>>;
   checkPlayerLoop: () => Promise<void>;
 }
 
@@ -66,7 +48,6 @@ interface UseCombatActionsReturn {
   attemptFlee: () => void;
   confirmFlee: () => Promise<void>;
   handleCombatMenuAction: (action: CombatMenuAction) => void;
-  handleSelectAttackTarget: (target: BattleCharacterInfo) => void;
 }
 
 export function useCombatActions({
@@ -84,12 +65,6 @@ export function useCombatActions({
   setSkillsInitialTab,
   setIsUsingSkillMode,
   setIsInventoryActiveInCombat,
-  attackType,
-  setAttackType,
-  setPendingSkillId,
-  setIsSelectingSkillTarget,
-  setExcludeSelfFromTargeting,
-  setHitCharacters,
   checkPlayerLoop
 }: UseCombatActionsParams): UseCombatActionsReturn {
 
@@ -224,14 +199,6 @@ export function useCombatActions({
     const endTurnCall = async () => {
       try {
         const playerBattleID = player.fightInfo?.playerBattleID ?? 0;
-
-        // Remove free-shot stacks from source before ending turn (Sequência tracking)
-        const sourceChar = player.fightInfo?.characters?.find(c => c.battleID === playerBattleID);
-        const hasFreeShot = sourceChar?.status?.some(s => s.effectName === "free-shot") ?? false;
-        if (hasFreeShot) {
-          await APIBattle.removeStatus(playerBattleID, "free-shot");
-        }
-
         await APIBattle.endTurn(playerBattleID);
       } catch (e) {
         showToast(t("playerPage.errors.errorEndingTurn"));
@@ -297,248 +264,19 @@ export function useCombatActions({
       case COMBAT_MENU_ACTIONS.EndTurn:
         endTurn();
         break;
-      case COMBAT_MENU_ACTIONS.Attack:
-        setAttackType("basic");
-        break;
-      case COMBAT_MENU_ACTIONS.FreeShot:
-        setAttackType("free-shot");
-        break;
       case COMBAT_MENU_ACTIONS.Flee:
         attemptFlee();
         break;
       case COMBAT_MENU_ACTIONS.Cancel:
-        setPendingSkillId(null);
-        setIsSelectingSkillTarget(false);
         setIsUsingSkillMode(false);
-        setExcludeSelfFromTargeting(false);
         break;
       default:
         break;
     }
   }, [
     setTab, setIsInventoryActiveInCombat, setSkillsInitialTab, setIsUsingSkillMode,
-    rollInitiative, joinBattle, endTurn, setAttackType, attemptFlee,
-    setPendingSkillId, setIsSelectingSkillTarget, setExcludeSelfFromTargeting
+    rollInitiative, joinBattle, endTurn, attemptFlee
   ]);
-
-  const handleSelectAttackTarget = useCallback((target: BattleCharacterInfo) => {
-    if (player == null) return;
-
-    if (npcIsFlying(target) && attackType != "free-shot") {
-      showToast(t("playerPage.battle.flyingEnemyWarning"), { duration: 3000 });
-      return;
-    }
-
-    setIsExecutingSkill(true);
-
-    const executeAttackWithHitCount = async () => {
-      let totalHits = 1;
-
-      // Only check for combo modifiers on basic attacks
-      if (attackType === "basic" && player?.fightInfo?.playerBattleID) {
-        try {
-          const modifiers = await APIBattle.getModifiers(player.fightInfo!.playerBattleID);
-          const comboModifiers = modifiers.filter(
-            m => m.modifierType === "base-attack" && m.isActive && m.flatBonus > 0
-          );
-          const extraHits = comboModifiers.reduce((sum, m) => sum + m.flatBonus, 0);
-          totalHits = 1 + extraHits;
-
-          if (totalHits > 1) {
-            showToast(t("playerPage.battle.comboAttack", { count: totalHits }));
-          }
-        } catch (error) {
-          console.error("Error getting combo modifiers:", error);
-        }
-      }
-
-      // Track shield consumption locally to handle stale state
-      const initialShields = target.status?.find(s => s.effectName === "Shielded")?.ammount ?? 0;
-      let shieldsRemaining = initialShields;
-
-      // Execute each hit sequentially
-      for (let hitIndex = 0; hitIndex < totalHits; hitIndex++) {
-        await new Promise<void>((resolve) => {
-          rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForAttack(weaponInfo, attackType), async (result) => {
-            const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
-            const criticalRolls = countCriticalRolls(result);
-            const rollTotal = diceTotal(result);
-            const weaponPower = calculateRawWeaponPower(weaponInfo, attackType);
-
-            // Use target without shield status if shields have been consumed by previous hits
-            const effectiveTarget = shieldsRemaining <= 0 && initialShields > 0
-              ? { ...target, status: target.status?.filter(s => s.effectName !== "Shielded") ?? [] }
-              : target;
-
-            const total = calculateAttackDamage(player, weaponInfo, effectiveTarget, result, attackType, playerChar?.stance, playerChar);
-
-            // === Detailed logging for basic/free-shot attack ===
-            const failures = calculateFailureDiv(result);
-            const critBonus = calculatePlayerCriticalBonus(result, player, weaponInfo);
-            const empBonus = playerHasEmpowered(player) ? 4 : (playerHasWeakened(player) ? -4 : 0);
-            const frenzyBonus = getPlayerFrenzy(player)?.ammount ?? 0;
-            const stanceBonus = playerChar?.stance === "Offensive" ? 4 : (playerChar?.stance === "Virtuous" ? 8 : 0);
-            const isVerso = playerChar?.id?.toLowerCase().includes("verso");
-            const versoBonus = isVerso ? getVersoPerfectionDamageBonus(playerChar?.perfectionRank) : 0;
-
-            // Element
-            const weaponElement = weaponInfo?.details?.attributes?.element;
-            let elementBonus = 0;
-            if (attackType === "basic") {
-              const elemMod = getWeaponElementModifier(effectiveTarget.id, weaponInfo);
-              if (elemMod) {
-                elementBonus = elemMod.flatBonus;
-              } else if (weaponElement === "Fire" && hasStatus(effectiveTarget, "FireVulnerability")) {
-                elementBonus = 4;
-              }
-            }
-
-            // Free-shot weak point
-            const freeShotBonus = calculateFreeShotPlus(player, effectiveTarget, attackType);
-
-            // Twilight bonus
-            const twilightStatus = playerChar?.status?.find(s => s.effectName === "Twilight");
-            const twilightBonus = twilightStatus?.ammount ? twilightStatus.ammount * 2 : 0;
-
-            // Fortune's Fury bonus
-            const fortunesFuryBonus = (playerChar && hasStatus(playerChar, "FortunesFury")) ? 8 : 0;
-
-            const finalDmg = total + twilightBonus;
-
-            console.log("=== Basic/Free-Shot Attack Breakdown ===");
-            console.log("Attack Type:", attackType);
-            console.log("Dice Total:", rollTotal);
-            console.log("Player Power:", player?.playerSheet?.power ?? 0);
-            console.log("Weapon Power:", weaponPower);
-            if (critBonus > 0) console.log("Critical Bonus:", `+${critBonus}`);
-            if (empBonus !== 0) console.log(empBonus > 0 ? "Empowered:" : "Weakened:", empBonus);
-            if (failures > 0) console.log("Failures:", failures, `(-${failures * 4})`);
-            if (frenzyBonus > 0) console.log("Frenzy:", `+${frenzyBonus}`);
-            if (elementBonus !== 0) console.log("Element Bonus:", elementBonus, `(${weaponElement})`);
-            if (freeShotBonus > 0) console.log("Weak Point:", `+${freeShotBonus}`);
-            if (stanceBonus > 0) console.log("Stance Bonus:", `+${stanceBonus}`, `(${playerChar?.stance})`);
-            if (versoBonus > 0) console.log("Verso Perfection:", `+${versoBonus}`, `(${playerChar?.perfectionRank})`);
-            if (twilightBonus > 0) console.log("Twilight Bonus:", `+${twilightBonus}`, `(${twilightStatus?.ammount} charges x 2)`);
-            if (fortunesFuryBonus > 0) console.log("Fortune's Fury:", `+${fortunesFuryBonus}`);
-            console.log("Total Power (before defense):", finalDmg);
-
-            showToast(`Total: ${finalDmg}`);
-
-            if (freeShotBonus > 0 && total > 0) {
-              showToast(t("playerPage.battle.weakPointHit", { bonus: freeShotBonus }));
-            }
-
-            // Consume shield locally after calculations
-            if (shieldsRemaining > 0) {
-              shieldsRemaining--;
-            }
-
-            try {
-              if (target.type == "npc") {
-                const npcDamage = calculateNpcAttackReceivedDamage(effectiveTarget, finalDmg);
-                const willGetFragile = checkForFragile(effectiveTarget, finalDmg);
-
-                let effects: any[] = [];
-                const attackInfo: any = {
-                  totalDamage: npcDamage,
-                  targetBattleId: target.battleID,
-                  sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
-                  attackType: attackType,
-                  effects: effects
-                };
-
-                if (willGetFragile) {
-                  effects.push({
-                    effectType: "Fragile",
-                    ammount: 1,
-                    remainingTurns: 2
-                  });
-                }
-
-                await APIBattle.attack(attackInfo);
-                // Grant +1 perfection per hit on enemy
-                if (finalDmg > 0 && player.fightInfo?.playerBattleID) {
-                  await APIBattle.addPerfectionPoints(player.fightInfo.playerBattleID, 1);
-                }
-              } else {
-                const attackInfo: any = {
-                  totalPower: finalDmg,
-                  targetBattleId: target.battleID,
-                  sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
-                  attackType: attackType
-                };
-
-                await APIBattle.attack(attackInfo);
-              }
-
-              // Visual feedback
-              setHitCharacters(prev => new Set(prev).add(target.battleID));
-              setTimeout(() => {
-                setHitCharacters(prev => {
-                  const next = new Set(prev);
-                  next.delete(target.battleID);
-                  return next;
-                });
-              }, 600);
-
-              // Check if enemy was killed + track free-shot stacks for Sequência
-              if (player.fightInfo?.battleId) {
-                const sourceChar = player.fightInfo.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
-                if (sourceChar) {
-                  const updatedBattle = await APIBattle.getById(player.fightInfo.battleId);
-                  const allChars = updatedBattle.characters ?? [];
-                  const targetAfterAttack = allChars.find(c => c.battleID === target.battleID);
-
-                  if (!targetAfterAttack || targetAfterAttack.healthPoints <= 0) {
-                    if (target.isEnemy) {
-                      await triggerOnKill(
-                        sourceChar,
-                        target,
-                        allChars,
-                        player.fightInfo.battleId,
-                        player.pictos,
-                        player.luminas
-                      );
-                    }
-                  }
-
-                  // Track free-shot stacks on source character (for Sequência / verso-followup)
-                  // Always pass ammount: 1 — the backend accumulates it on the existing status
-                  if (attackType === "free-shot") {
-                    await APIBattle.addStatus({
-                      battleCharacterId: sourceChar.battleID,
-                      effectType: "free-shot",
-                      ammount: 1,
-                      remainingTurns: 1,
-                    });
-                    await triggerOnFreeAim(sourceChar, allChars, player.fightInfo.battleId, player.pictos, player.luminas);
-                  }
-                }
-              }
-
-            } catch (e) {
-              showToast(t("playerPage.errors.errorAttacking"));
-            }
-
-            resolve();
-          });
-        });
-      }
-
-      // Maelle: Lose stance after basic attack
-      if (attackType === "basic") {
-        const playerChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
-        if (playerChar?.stance) {
-          await APIBattle.updateCharacterStance(playerChar.battleID, null);
-          showToast(t("playerPage.skills.stanceLostBasicAttack"));
-        }
-      }
-
-      setIsExecutingSkill(false);
-    };
-
-    executeAttackWithHitCount();
-  }, [player, attackType, weaponInfo, diceBoardRef, timeoutDiceBoardRef, showToast, setIsExecutingSkill, setHitCharacters]);
 
   return {
     rollInitiative,
@@ -547,6 +285,5 @@ export function useCombatActions({
     attemptFlee,
     confirmFlee,
     handleCombatMenuAction,
-    handleSelectAttackTarget
   };
 }

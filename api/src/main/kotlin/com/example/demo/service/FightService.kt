@@ -1,14 +1,10 @@
 package com.example.demo.service
 
-import com.example.demo.dto.AttackResponse
-import com.example.demo.dto.AttackStatusEffectResponse
 import com.example.demo.dto.BattleCharacterInfo
 import com.example.demo.dto.BattleStatusResponse
 import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.FightInfoResponse
 import com.example.demo.dto.InitiativeResponse
-import com.example.demo.repository.AttackRepository
-import com.example.demo.repository.AttackStatusEffectRepository
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.BattleStatusEffectRepository
@@ -26,8 +22,6 @@ class FightService(
         private val playerRepository: PlayerRepository,
         private val initiativeRepository: InitiativeRepository,
         private val battleTurnRepository: BattleTurnRepository,
-        private val attackRepository: AttackRepository,
-        private val attackStatusEffectRepository: AttackStatusEffectRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository
 ) {
         fun buildFightInfoForPlayer(playerId: Int): FightInfoResponse? {
@@ -133,41 +127,6 @@ class FightService(
 
                 val canRollInitiative = playerBattleEntity?.canRollInitiative ?: false
 
-                val pendingAttacks =
-                        if (playerBattleID != null) {
-                                attackRepository.findPendingOrCounter(battleId, playerBattleID)
-                                        .map { a ->
-                                                val effects =
-                                                        attackStatusEffectRepository.findByAttackId(
-                                                                        a.id!!
-                                                                )
-                                                                .map { e ->
-                                                                        AttackStatusEffectResponse(
-                                                                                id = e.id!!,
-                                                                                effectType =
-                                                                                        e.effectType,
-                                                                                ammount = e.ammount,
-                                                                                remainingTurns = e.remainingTurns
-                                                                        )
-                                                                }
-
-                                                AttackResponse(
-                                                        id = a.id!!,
-                                                        battleId = a.battleId,
-                                                        totalPower = a.totalPower,
-                                                        targetBattleId = a.targetBattleId,
-                                                        sourceBattleId = a.sourceBattleId,
-                                                        totalDefended = a.totalDefended,
-                                                        allowCounter = a.allowCounter,
-                                                        isResolved = a.isResolved,
-                                                        isCounterResolved = a.isCounterResolved,
-                                                        effects = effects
-                                                )
-                                        }
-                        } else {
-                                emptyList()
-                        }
-
                 return FightInfoResponse(
                         battleId = battleId,
                         playerBattleID = playerBattleID,
@@ -175,8 +134,7 @@ class FightService(
                         characters = characters,
                         battleStatus = battle.battleStatus,
                         canRollInitiative = canRollInitiative,
-                        turns = turns,
-                        pendingAttacks = pendingAttacks
+                        turns = turns
                 )
         }
 }

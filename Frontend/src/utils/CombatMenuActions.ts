@@ -1,15 +1,15 @@
 export const COMBAT_MENU_ACTIONS = {
-  Team: "Team",
-  Enemies: "Enemies",
-  Inventory: "Inventory",
-  Skills: "Skills",
-  FreeShot: "FreeShot",
-  Attack: "Attack",
-  Initiative: "Initiative",
-  JoinBattle: "JoinBattle",
-  Cancel: "Cancel",
-  EndTurn: "EndTurn",
-  Flee: "Flee"
+    Attack: "Attack",
+    FreeShot: "FreeShot",
+    Skills: "Skills",
+    Inventory: "Inventory",
+    Initiative: "Initiative",
+    JoinBattle: "JoinBattle",
+    EndTurn: "EndTurn",
+    Flee: "Flee",
+    Cancel: "Cancel",
+    Team: "Team",
+    Enemies: "Enemies"
 } as const;
 
-export type CombatMenuAction = typeof COMBAT_MENU_ACTIONS[keyof typeof COMBAT_MENU_ACTIONS];
+export type CombatMenuAction = (typeof COMBAT_MENU_ACTIONS)[keyof typeof COMBAT_MENU_ACTIONS];

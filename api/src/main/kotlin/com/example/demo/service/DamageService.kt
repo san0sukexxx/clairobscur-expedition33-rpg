@@ -7,8 +7,6 @@ import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.repository.PlayerRepository
-import com.example.demo.repository.AttackRepository
-import com.example.demo.repository.AttackStatusEffectRepository
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,8 +17,6 @@ class DamageService(
         private val battleTurnRepository: BattleTurnRepository,
         private val playerRepository: PlayerRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
-        private val attackRepository: AttackRepository,
-        private val attackStatusEffectRepository: AttackStatusEffectRepository,
         private val battleLogRepository: com.example.demo.repository.BattleLogRepository,
         private val objectMapper: ObjectMapper
 ) {
@@ -191,38 +187,6 @@ class DamageService(
             val allEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
             if (allEffects.isNotEmpty()) {
                 battleStatusEffectRepository.deleteAll(allEffects)
-            }
-
-            // Remove all pending attacks where this character is target or source
-            if (battleId != null) {
-                // Remove attacks targeting this character
-                val attacksAsTarget = attackRepository.findByTargetBattleId(targetBC.id!!)
-                if (attacksAsTarget.isNotEmpty()) {
-                    // Delete attack status effects first (foreign key constraint)
-                    val attackIds = attacksAsTarget.mapNotNull { it.id }
-                    if (attackIds.isNotEmpty()) {
-                        val attackEffects = attackStatusEffectRepository.findByAttackIdIn(attackIds)
-                        if (attackEffects.isNotEmpty()) {
-                            attackStatusEffectRepository.deleteAll(attackEffects)
-                        }
-                    }
-                    attackRepository.deleteAll(attacksAsTarget)
-                }
-
-                // Remove attacks from this character (as source)
-                val attacksAsSource = attackRepository.findByBattleId(battleId)
-                    .filter { it.sourceBattleId == targetBC.id!! }
-                if (attacksAsSource.isNotEmpty()) {
-                    // Delete attack status effects first (foreign key constraint)
-                    val attackIds = attacksAsSource.mapNotNull { it.id }
-                    if (attackIds.isNotEmpty()) {
-                        val attackEffects = attackStatusEffectRepository.findByAttackIdIn(attackIds)
-                        if (attackEffects.isNotEmpty()) {
-                            attackStatusEffectRepository.deleteAll(attackEffects)
-                        }
-                    }
-                    attackRepository.deleteAll(attacksAsSource)
-                }
             }
 
             // REVIVAL: After cleanup, check if character had Aureole and should revive

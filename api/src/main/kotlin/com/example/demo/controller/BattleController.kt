@@ -24,7 +24,6 @@ class BattleController(
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
-        private val attackRepository: AttackRepository,
         private val playerPictoRepository: PlayerPictoRepository,
         private val playerLuminaRepository: PlayerLuminaRepository
 ) {
@@ -124,8 +123,6 @@ class BattleController(
                     if (last != null) listOf(last) else emptyList()
                 }
 
-        val attacks = attackRepository.findByBattleId(battleId)
-
         val response =
                 BattleWithDetailsResponse(
                         id = battle.id!!,
@@ -134,8 +131,7 @@ class BattleController(
                         characters = characters,
                         initiatives = initiatives,
                         turns = turns,
-                        battleLogs = battleLogs,
-                        attacks = attacks
+                        battleLogs = battleLogs
                 )
 
         return ResponseEntity.ok(response)

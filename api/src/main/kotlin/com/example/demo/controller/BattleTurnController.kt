@@ -4,7 +4,6 @@ import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.CreateBattleTurnRequest
 import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleTurn
-import com.example.demo.repository.AttackRepository
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
 import com.example.demo.repository.BattleStatusEffectRepository
@@ -22,7 +21,6 @@ class BattleTurnController(
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnService: BattleTurnService,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
-        private val attackRepository: AttackRepository,
         private val damageService: com.example.demo.service.DamageService,
         private val playerRepository: com.example.demo.repository.PlayerRepository,
         private val battleCharacterService: com.example.demo.service.BattleCharacterService
@@ -67,11 +65,6 @@ class BattleTurnController(
                                 ?: return ResponseEntity.badRequest().build()
 
                 val battleId = bc.battleId
-
-                val attacks = attackRepository.findByBattleId(battleId)
-                if (attacks.isNotEmpty()) {
-                        attackRepository.deleteAll(attacks)
-                }
 
                 val ignoreRemainingTurns = listOf("Burning", "Frozen", "Regeneration", "Cursed", "Fleeing", "Foretell", "IntenseFlames", "Typhoon")
 

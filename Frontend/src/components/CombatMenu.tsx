@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import { getCurrentPlayerStatus } from "../utils/StatusCalculator";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
 import { t } from "../i18n";
 
@@ -25,7 +24,8 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
   }, [player?.fightInfo?.characters])
 
   const playerStatus = useMemo(() => {
-    return getCurrentPlayerStatus(player)
+    const currentChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
+    return currentChar?.status ?? [];
   }, [player?.fightInfo?.characters])
 
   const isFrozen = useMemo(() => {

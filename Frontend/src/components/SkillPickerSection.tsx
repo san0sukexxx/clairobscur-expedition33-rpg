@@ -6,8 +6,6 @@ import SkillModal from "./SkillModal";
 import { getEnrichedCharacterSkills, getPlayerHasSkill, getSkillIsBlocked } from "../utils/SkillUtils";
 import { APISkill } from "../api/APISkill";
 import { renderStainText } from "../utils/StainTextUtils";
-import { SkillEffectsRegistry } from "../data/SkillEffectsRegistry";
-import { hasRequiredStains } from "../utils/StainUtils";
 import { t } from "../i18n";
 
 export interface SkillPickerProps {
@@ -346,107 +344,16 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
     }
 
     function getEffectiveCost(skill: SkillResponse): number {
-        // Get character state
-        const source = player?.fightInfo?.characters?.find(
-            c => c.battleID === player.fightInfo?.playerBattleID
-        );
-
-        // Monoco's Bestial Wheel position
-        const bestialWheelPosition = source?.bestialWheelPosition ?? -1;
-        const wheelPattern = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
-        const currentMask = wheelPattern[bestialWheelPosition] ?? "";
-        const isMonoco = source?.id.toLowerCase().includes("monoco") ?? false;
-
-        // Abbest Wind: Cost 0 MP on Máscara Ágil (purple) or Máscara Onipotente (gold)
-        if (isMonoco && skill.id === "monoco-abbest-wind" && !skill.isGradient && (currentMask === "purple" || currentMask === "gold")) {
-            return 0;
-        }
-
-        // Maelle's stance-based cost reduction (Percee, Momentum Strike)
-        const skillMetadata = SkillEffectsRegistry[skill.id];
-        let baseCost = skill.cost;
-
-        if (skillMetadata?.costReductionFromStance && !skill.isGradient) {
-            const currentStance = source?.stance;
-            if (currentStance === skillMetadata.costReductionFromStance.stance) {
-                baseCost = skillMetadata.costReductionFromStance.reducedCost;
-            }
-        }
-
-        // Rank-based cost reduction (Ascending Assault at S: 2 MP)
-        if (skillMetadata?.rankConditionalCost && !skill.isGradient) {
-            if (source?.perfectionRank === skillMetadata.rankConditionalCost.rank) {
-                baseCost = skillMetadata.rankConditionalCost.reducedCost;
-            }
-        }
-
-        // Payback: Cost reduction per parry (using parriesThisTurn counter)
-        if (skillMetadata?.costReductionPerParry && !skill.isGradient) {
-            const parriesCount = source?.parriesThisTurn ?? 0;
-            if (parriesCount > 0) {
-                const reductionPerParry = skillMetadata.costReductionPerParry;
-                const totalReduction = parriesCount * reductionPerParry;
-                baseCost = Math.max(0, baseCost - totalReduction);
-            }
-        }
-
-        // Stain consumption for free cast: Cost 0 MP if sufficient stains available (only if consumeStainsForFreeCast is true)
-        if (skillMetadata?.consumeStainsForFreeCast && skillMetadata?.consumesStains && !skill.isGradient && source) {
-            let canConsumeStains = true;
-
-            for (const { stain, count } of skillMetadata.consumesStains) {
-                const stains = [source.stainSlot1, source.stainSlot2, source.stainSlot3, source.stainSlot4];
-                const specificCount = stains.filter(s => s === stain).length;
-                const lightCount = stains.filter(s => s === "Light").length;
-                const totalAvailable = specificCount + lightCount;
-
-                if (totalAvailable < count) {
-                    canConsumeStains = false;
-                    break;
-                }
-            }
-
-            if (canConsumeStains) {
-                baseCost = 0;
-            }
-        }
-
-        // Charging skills: free on second use when player has Charging status
-        if (skillMetadata?.requiresOneTurnDelay && !skill.isGradient && source) {
-            const hasCharging = source.status?.some(s => s.effectName === "Charging") ?? false;
-            if (hasCharging) {
-                baseCost = 0;
-            }
-        }
-
-        return baseCost;
+        return skill.cost;
     }
 
     function canUseSkill(skill: SkillResponse): boolean {
         const effectiveCost = getEffectiveCost(skill);
 
-        // Check MP/Gradient cost
         if (skill.isGradient) {
             if (currentGradientCharges < effectiveCost) return false;
         } else {
             if (currentMP < effectiveCost) return false;
-        }
-
-        // Check stain requirements
-        const skillMetadata = SkillEffectsRegistry[skill.id];
-        const source = player?.fightInfo?.characters?.find(
-            c => c.battleID === player.fightInfo?.playerBattleID
-        );
-        // Elemental Genesis: requires all 4 stain types
-        if (skillMetadata?.requiresAllStains) {
-            if (source && !hasRequiredStains(source, skillMetadata)) {
-                return false;
-            }
-        }
-        // Mayhem: requires at least one stain
-        if (skillMetadata?.hitsMatchConsumedStains && source) {
-            const hasAnyStain = source.stainSlot1 || source.stainSlot2 || source.stainSlot3 || source.stainSlot4;
-            if (!hasAnyStain) return false;
         }
 
         return true;

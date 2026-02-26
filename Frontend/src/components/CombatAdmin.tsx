@@ -5,22 +5,20 @@ import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
 import { FaArrowsDownToLine } from "react-icons/fa6";
-import { getCharacterLabelById, getActiveTurnCharacterFromBattle } from "../utils/CharacterUtils"
-import { getNPCMaxHealth, randomizeNpcInitiativeTotal, calculateNpcAttackPower, rollCommandForNpcInitiative, calculateNpcAttackReceivedDamage, rollCommandForNpcAttack, npcIsFlying, npcIsFlyingById } from "../utils/NpcCalculator"
+import { getCharacterLabelById } from "../utils/CharacterUtils"
+import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils"
 import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SkillType, type NPCSkill, type StainType, type StatusType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
-import { type BattleWithDetailsResponse, type CreateAttackRequest, type AttackStatusEffectRequest } from "../api/APIBattle"
+import { type BattleWithDetailsResponse } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
 import GradientBar from "./GradientBar"
 import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { useToast } from "../components/Toast";
-import { rollWithTimeout } from "../utils/RollUtils";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
 import { getAttackTypeLabel, getSkillLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
-import { calculateNpcStatusResolvedTotalValue } from "../utils/StatusCalculator";
 import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName } from "../i18n";
 import type { BattleReward } from "../api/ResponseModel";
 import { APIRewards } from "../api/APIRewards";
@@ -233,8 +231,6 @@ export default function CombatAdmin({
     const [newEffectUnlimited, setNewEffectUnlimited] = useState<boolean>(false);
     const [newEffectFilter, setNewEffectFilter] = useState<string>("");
 
-    const processedEffectsRef = useRef<Set<string>>(new Set())
-    const lastActiveCharacterIdRef = useRef<number | undefined>(undefined)
     const lastReloadTimeRef = useRef<number>(0)
     const isReloadingRef = useRef<boolean>(false)
 
@@ -274,46 +270,6 @@ export default function CombatAdmin({
         }
     }, [battleStatus, battleDetails?.characters, battleRewards.length, collectBattleRewards]);
 
-    const processUnresolvedStatuses = (battleDetailsInfo: BattleWithDetailsResponse) => {
-        const active = getActiveTurnCharacterFromBattle(battleDetailsInfo)
-        if (!active || active.type == "player") return
-
-        const statuses = active.status ?? []
-
-        const unresolved = statuses.filter(
-            s => s.isResolved === false && !!s.effectName
-        )
-
-        const notProcessed = unresolved.filter(
-            s => !processedEffectsRef.current.has(s.effectName)
-        )
-
-        if (notProcessed.length === 0) return
-
-        for (const status of notProcessed) {
-            processedEffectsRef.current.add(status.effectName)
-            void callStatusApiUntilSuccess(status, battleDetailsInfo)
-        }
-    }
-
-    function checkNewTurnStarted() {
-        if (!battleDetails) return
-
-        const activeCharacter = getActiveTurnCharacter()
-        const currentId = activeCharacter?.battleID
-
-        if (currentId == null) return
-
-        if (
-            lastActiveCharacterIdRef.current !== undefined &&
-            lastActiveCharacterIdRef.current !== currentId
-        ) {
-            processedEffectsRef.current.clear()
-        }
-
-        lastActiveCharacterIdRef.current = currentId
-    }
-
     const reloadBattleDetails = useCallback(async (force?: boolean) => {
         if (!battleId) return
 
@@ -334,17 +290,12 @@ export default function CombatAdmin({
             } else {
                 checkBattleLog(battleDetailsInfo)
             }
-
-            checkNewTurnStarted()
-            if (isCurrentTurnNPC()) {
-                await processUnresolvedStatuses(battleDetailsInfo)
-            }
         } catch (error) {
             console.error("Erro ao carregar detalhes da batalha:", error)
         } finally {
             isReloadingRef.current = false
         }
-    }, [battleId, battleStatus, lastBattleLog, processUnresolvedStatuses])
+    }, [battleId, battleStatus, lastBattleLog])
 
     const handleOpenGradientModal = useCallback((isEnemy: boolean) => {
         const currentGradient = isEnemy
@@ -2518,146 +2469,21 @@ export default function CombatAdmin({
         }
     }
 
-    async function handleMultipleAttack() {
-        const character = getActiveTurnCharacter()
-        const npcId = character?.id ?? ""
-
-        // Get quantity from npcAttack, default to 1
-        const attackQuantity = npcAttack?.quantity ?? 1;
-
-        // Execute attack multiple times based on quantity
-        for (let i = 0; i < attackQuantity; i++) {
-            await new Promise<void>((resolve) => {
-                const rollCommand = rollCommandForNpcAttack(npcId, npcAttack);
-                rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommand, async (result) => {
-                    const enemies = battleDetails?.characters.filter(c => c.isEnemy != character?.isEnemy)
-
-                    if (enemies) {
-                        for (const enemy of enemies) {
-                            if (character) {
-                                await doTheAttack(character, enemy.battleID, enemy.type, result, i + 1, attackQuantity)
-                            }
-                        }
-                    }
-                    resolve();
-                });
-            });
-        }
+    function handleMultipleAttack() {
+        setIsSelectingTarget(false);
     }
 
     function handleTargetSelected(targetEntity: CombatEntity) {
-        if (npcSkill) {
-            handleSkillTargetSelected(targetEntity);
-            return;
-        }
-
-        if (!isSelectingTarget) return
-        setIsSelectingTarget(false)
-
-        const character = getActiveTurnCharacter()
-        const npcId = character?.id ?? ""
-
-        // Get quantity from npcAttack, default to 1
-        const attackQuantity = npcAttack?.quantity ?? 1;
-
-        // Execute attack multiple times based on quantity
-        const executeAttacks = async () => {
-            for (let i = 0; i < attackQuantity; i++) {
-                await new Promise<void>((resolve) => {
-                    const rollCommand = rollCommandForNpcAttack(npcId, npcAttack);
-                    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommand, async (result) => {
-                        if (character) {
-                            await doTheAttack(character, targetEntity.rowId ?? 0, targetEntity.type, result, i + 1, attackQuantity)
-                        }
-                        resolve();
-                    });
-                });
-            }
-        };
-
-        executeAttacks();
+        setIsSelectingTarget(false);
+        setNPCAttack(null);
+        setAttackType(null);
+        setNpcAttackIndex(null);
+        setNPCSkill(null);
+        setNpcSkillIndex(null);
     }
 
     function handleSkillTargetSelected(targetEntity: CombatEntity) {
-        const callAddStatus = async () => {
-            try {
-                for (const status of npcSkill?.statusList ?? []) {
-                    if (status.type) {
-                        processedEffectsRef.current.add(status.type)
-                    }
-
-                    await APIBattle.addStatus({
-                        battleCharacterId: targetEntity.rowId ?? 0,
-                        ammount: status.ammount,
-                        effectType: status.type,
-                        remainingTurns: status.remainingTurns
-                    })
-                }
-                showToast(t("combatAdmin.toasts.skillsExecuted"));
-            } catch (e) {
-                showToast(t("combatAdmin.toasts.errorExecutingSkill"));
-            }
-        };
-
         setIsSelectingTarget(false);
-        callAddStatus();
-    }
-
-    async function doTheAttack(sourceInfo: BattleCharacterInfo, targetID: number, targetType: BattleCharacterType, result: any, attackNumber?: number, totalAttacks?: number) {
-        var effects: AttackStatusEffectRequest[] = [];
-
-        if (attackType == "jump" || attackType == "jump-all") {
-            effects.push({
-                effectType: "jump"
-            })
-        }
-        if (attackType == "gradient") {
-            effects.push({
-                effectType: "gradient"
-            })
-        }
-        if (npcAttack) {
-            npcAttack.statusList?.forEach(s => {
-                effects.push({
-                    effectType: s.type,
-                    ammount: s.ammount,
-                    remainingTurns: s.remainingTurns
-                });
-            });
-        }
-
-        var attackInfo: CreateAttackRequest = {
-            targetBattleId: targetID,
-            sourceBattleId: sourceInfo?.battleID ?? 0,
-            effects: effects
-        }
-
-        let totalPower = calculateNpcAttackPower(sourceInfo, result);
-
-        // Apply additional damage from npcAttack
-        if (npcAttack?.additionalDamage) {
-            totalPower += npcAttack.additionalDamage;
-        }
-
-        if (targetType == "npc") {
-            attackInfo.totalDamage = calculateNpcAttackReceivedDamage(sourceInfo, totalPower);
-            const attackLabel = totalAttacks && totalAttacks > 1
-                ? `Ataque ${attackNumber}/${totalAttacks}: Causou ${attackInfo.totalDamage} de dano`
-                : `Causou ${attackInfo.totalDamage} de dano`;
-            showToast(attackLabel);
-        } else {
-            attackInfo.totalPower = totalPower;
-            const attackLabel = totalAttacks && totalAttacks > 1
-                ? `Ataque ${attackNumber}/${totalAttacks}: Atacou com ${attackInfo.totalPower} de dano`
-                : `Atacou com ${attackInfo.totalPower} de dano`;
-            showToast(attackLabel);
-        }
-
-        try {
-            await APIBattle.attack(attackInfo)
-        } catch (e) {
-            showToast(t("combatAdmin.toasts.errorEndingAttack"));
-        }
     }
 
     function npcPassTurnTapped() {
@@ -2688,31 +2514,6 @@ export default function CombatAdmin({
         };
 
         allowCounterCall();
-    }
-
-    async function callStatusApiUntilSuccess(
-        status: StatusResponse,
-        battleDetailsInfo: BattleWithDetailsResponse,
-        delay = 1000
-    ) {
-        while (true) {
-            try {
-                const currentNpc = getActiveTurnCharacterFromBattle(battleDetailsInfo)
-                const total = calculateNpcStatusResolvedTotalValue(currentNpc, status)
-
-                await APIBattle.resolveStatus({
-                    battleCharacterId: currentNpc?.battleID ?? 0,
-                    effectType: status.effectName,
-                    totalValue: total
-                })
-
-                return true
-            } catch (error) {
-                showToast(`Erro ao sincronizar status ${status.effectName}, tentando novamente...`)
-
-                await new Promise(resolve => setTimeout(resolve, delay))
-            }
-        }
     }
 
     function openEditEffectsModal(entity: CombatEntity) {

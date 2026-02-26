@@ -11,10 +11,8 @@ export type StatusType =
     "Rush" | "Burn" | "Shield" | "Powerful" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
     "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "FortunesFury" | "Regen" | "Curse" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation";
 
-export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent" | "absorb";
-export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
 export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot" | "skill";
 export type SkillType = "give-status";
 export type PictoColor = "green" | "red" | "blue" | "yellow";
@@ -217,21 +215,6 @@ export interface FightInfoResponse {
     turns?: BattleTurnResponse[];
     battleStatus: BattleStatus;
     canRollInitiative: boolean;
-    pendingAttacks?: AttackResponse[];
-}
-
-export interface AttackResponse {
-    id: number;
-    battleId: number;
-    totalPower: number;
-    targetBattleId: number;
-    sourceBattleId: number;
-    totalDefended?: number;
-    isResolved: boolean;
-    allowCounter?: boolean;
-    isCounterResolved?: boolean;
-    defenseType?: string;
-    effects?: AttackStatusEffectResponse[];
 }
 
 export interface BattleLogResponse {

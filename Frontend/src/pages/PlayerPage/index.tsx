@@ -6,8 +6,6 @@ import { t } from "../../i18n";
 import DiceBoard from "../../components/DiceBoard";
 import PanelModal from "../../components/PanelModal";
 import MasterEditingOverlay from "../../components/MasterEditingOverlay";
-import PendingAttacksModal from "../../components/PendingAttacksModal";
-import PendingStatusModal from "../../components/PendingStatusModal";
 import { PlayerNavbar, PlayerTabBar, PlayerContent } from "../../components/player";
 
 // Hooks
@@ -19,15 +17,13 @@ import {
   useWeaponInfo,
   usePlayerData,
   usePlayerPolling,
-  useDefenseActions,
   useCombatActions,
   useNavigationActions,
   useReviveActions,
-  useSkillExecution
 } from "../../hooks/player";
 
 // Utils
-import type { AttackType, BattleCharacterInfo } from "../../api/ResponseModel";
+import type { BattleCharacterInfo } from "../../api/ResponseModel";
 
 export default function PlayerPage() {
   const { pathname } = useLocation();
@@ -76,32 +72,8 @@ export default function PlayerPage() {
     showToast
   });
 
-  // Combat state
-  const [attackType, setAttackType] = useState<AttackType>("basic");
-  const [hitCharacters, setHitCharacters] = useState<Set<number>>(new Set());
-  const [lampmasterStacks, setLampmasterStacks] = useState(0);
-
   // Skill execution state
   const [isExecutingSkill, setIsExecutingSkill] = useState(false);
-  const [isExecutingMezzoForte, setIsExecutingMezzoForte] = useState(false);
-  const [pendingSkillId, setPendingSkillId] = useState<string | null>(null);
-  const [isSelectingSkillTarget, setIsSelectingSkillTarget] = useState(false);
-  const [excludeSelfFromTargeting, setExcludeSelfFromTargeting] = useState(false);
-
-  // Defense actions
-  const { handleSelectDefense, onResolveStatus } = useDefenseActions({
-    player,
-    setPlayer,
-    weaponInfo,
-    weaponList,
-    diceBoardRef,
-    timeoutDiceBoardRef,
-    showToast,
-    lastBattleLog,
-    setLastBattleLog,
-    setIsExecutingSkill,
-    setHitCharacters
-  });
 
   // Combat actions
   const {
@@ -110,7 +82,6 @@ export default function PlayerPage() {
     endTurn,
     attemptFlee,
     handleCombatMenuAction,
-    handleSelectAttackTarget
   } = useCombatActions({
     player,
     setPlayer,
@@ -126,12 +97,6 @@ export default function PlayerPage() {
     setSkillsInitialTab,
     setIsUsingSkillMode,
     setIsInventoryActiveInCombat,
-    attackType,
-    setAttackType,
-    setPendingSkillId,
-    setIsSelectingSkillTarget,
-    setExcludeSelfFromTargeting,
-    setHitCharacters,
     checkPlayerLoop
   });
 
@@ -156,24 +121,6 @@ export default function PlayerPage() {
     showToast
   });
 
-  // Skill execution
-  const { handleUseSkill, handleExecuteSkill } = useSkillExecution({
-    player,
-    weaponInfo,
-    diceBoardRef,
-    timeoutDiceBoardRef,
-    showToast,
-    setTab,
-    setCombatTab,
-    setIsUsingSkillMode,
-    setPendingSkillId,
-    setIsSelectingSkillTarget,
-    setExcludeSelfFromTargeting,
-    setIsExecutingSkill,
-    setHitCharacters,
-    checkPlayerLoop
-  });
-
   const handlePotionUsed = useCallback(() => {
     setTab("combate");
   }, [setTab]);
@@ -186,15 +133,7 @@ export default function PlayerPage() {
       handleReviveTarget(target);
       return;
     }
-
-    if (pendingSkillId) {
-      setIsExecutingSkill(true);
-      handleExecuteSkill(pendingSkillId, target);
-      return;
-    }
-
-    handleSelectAttackTarget(target);
-  }, [player, isReviveMode, pendingSkillId, handleReviveTarget, handleExecuteSkill, handleSelectAttackTarget]);
+  }, [player, isReviveMode, handleReviveTarget]);
 
   // Modal close handler
   const handleModalClose = useCallback(() => {
@@ -209,17 +148,6 @@ export default function PlayerPage() {
       {!isAdmin && player?.isMasterEditing && (
         <MasterEditingOverlay />
       )}
-
-      <PendingStatusModal
-        player={player}
-        onTapResolve={onResolveStatus}
-      />
-
-      <PendingAttacksModal
-        player={player}
-        weaponList={weaponList}
-        onSelectDefense={handleSelectDefense}
-      />
 
       <PanelModal
         open={modalOpen}
@@ -260,19 +188,19 @@ export default function PlayerPage() {
           onMenuAction={handleCombatMenuAction}
           onSelectTarget={handleSelectTarget}
           isReviveMode={isReviveMode}
-          isSelectingSkillTarget={isSelectingSkillTarget}
-          pendingSkillId={pendingSkillId}
+          isSelectingSkillTarget={false}
+          pendingSkillId={null}
           combatTab={combatTab}
           setCombatTab={setCombatTab}
           isExecutingSkill={isExecutingSkill}
-          excludeSelfFromTargeting={excludeSelfFromTargeting}
-          hitCharacters={hitCharacters}
+          excludeSelfFromTargeting={false}
+          hitCharacters={new Set()}
           isInventoryActiveInCombat={isInventoryActiveInCombat}
           onReviveRequested={handleReviveRequested}
           onPotionUsed={handlePotionUsed}
           skillsInitialTab={skillsInitialTab}
           isUsingSkillMode={isUsingSkillMode}
-          onUseSkill={handleUseSkill}
+          onUseSkill={() => {}}
         />
       </main>
 

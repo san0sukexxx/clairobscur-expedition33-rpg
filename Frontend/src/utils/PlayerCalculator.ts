@@ -1,20 +1,18 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { calculateWeaponPlusPower, calculateWeaponCounterMaxPower, calculateWeaponLuckBonus } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
-import { type AttackType, type BattleCharacterInfo, type DefenseOption, type StatusResponse, type StatusType, type WeaponInfo, type Stance } from "../api/ResponseModel";
+import { type BattleCharacterInfo, type DefenseOption, type StatusResponse, type StatusType, type WeaponInfo, type Stance } from "../api/ResponseModel";
 import {
     calculateCriticalBonus,
     calculateFailureDiv,
     diceTotal,
     countCriticalRolls
 } from "./DiceCalculator";
-import { getNpcById } from "../utils/NpcUtils"
-import { getWeaponElementModifier, hasHastened, hasProtected, hasShield, hasSlowed, hasStatus, hasUnprotected } from "./NpcCalculator";
+import { hasHastened, hasProtected, hasSlowed, hasStatus, hasUnprotected } from "./NpcCalculator";
 import { calculateWeaponVitalityBonus, calculateWeaponAgilityBonus, calculateWeaponDefenseBonus } from "./WeaponCalculator";
 import { getPlayerCharacter } from "./CharacterUtils";
 import { PictosList } from "../data/PictosList";
 import { calculatePictoHealth, calculatePictoSpeed, calculatePictoDefense, calculatePictoCritical } from "./PictoUtils";
-import { getVersoPerfectionDamageBonus } from "./BattleUtils";
 
 export function playerPictosTotalHealth(player: GetPlayerResponse | null): number {
     let total = 0;
@@ -97,172 +95,12 @@ export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: Wea
     return resistanceHealth + vitalityValue + pictosHealthBonus;
 }
 
-export function calculateStatusResolvedTotalValue(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, status: StatusResponse): number {
-    switch (status.effectName) {
-        case "Regeneration":
-            return Math.floor(calculateMaxHP(player, weaponInfo) * status.ammount / 10);
-        default:
-            return 0;
-    }
-}
-
-export function calculateResolveStatusWithDiceTotal(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, status: StatusResponse, diceResult: any): number {
-    const total = diceTotal(diceResult)
-
-    switch (status.effectName) {
-        case "Confused":
-            return total + (player?.playerSheet?.resistance ?? 0);
-        default:
-            return total;
-    }
-}
-
-export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackType: AttackType): number {
+export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackType: string): number {
     if (weaponInfo == null || attackType == "free-shot") {
         return 0;
     }
 
     return (calculateWeaponPlusPower(weaponInfo.details?.attributes.power ?? 0, weaponInfo.weapon?.level ?? 0) ?? 0);
-}
-
-/**
- * Calculates base power for attacks (used by both basic attacks and skills)
- * Includes: player power, critical bonus, empowered/weakened, failures, weapon power, dice total, frenzy
- * Does NOT include: element modifiers, Verso perfection bonus (those are applied separately)
- */
-export function calculateBasePower(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any): number {
-    const total = diceTotal(diceResult);
-    const failures = calculateFailureDiv(diceResult);
-
-    let empoweredBonus = playerHasEmpowered(player) ? 4 : 0;
-    empoweredBonus = playerHasWeakened(player) ? -4 : empoweredBonus;
-
-    let playerPower = (player?.playerSheet?.power ?? 0) + calculatePlayerCriticalBonus(diceResult, player, weaponInfo) + empoweredBonus;
-
-    if (failures > 0) {
-        playerPower = playerPower - (failures * 4);
-    }
-
-    let basePower = Math.max(0, playerPower) + calculateRawWeaponPower(weaponInfo, "basic") + total;
-
-    // Add frenzy bonus
-    basePower += (getPlayerFrenzy(player)?.ammount ?? 0);
-
-    return basePower;
-}
-
-export function calculateAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, stance?: Stance | null, playerChar?: BattleCharacterInfo): number {
-    if (hasShield(npcBattleCharacterInfo)) {
-        return 0;
-    }
-
-    let damage = 0;
-    if (attackType == "basic") {
-        damage = calculateBasicAttackDamage(player, weaponInfo, npcBattleCharacterInfo, diceResult, playerChar);
-    } else if (attackType == "free-shot") {
-        damage = calculateFreeShotAttackDamage(player, npcBattleCharacterInfo, diceResult, attackType, weaponInfo, playerChar);
-    } else {
-        damage = 1;
-    }
-
-    // Apply stance modifiers to damage dealt
-    if (stance === "Offensive") {
-        damage = damage + 4;  // +4 damage dealt
-    } else if (stance === "Virtuous") {
-        damage = damage + 8;  // +8 damage dealt
-    }
-    // Note: Defensive stance does NOT reduce damage dealt
-
-    return Math.max(0, damage);
-}
-
-export function calculateFreeShotPlus(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, attackType: AttackType): number {
-    if (attackType != "free-shot") { return 0; }
-    const npcInfo = getNpcById(npcBattleCharacterInfo.id)
-
-    if (npcInfo?.freeShotWeakPoints != undefined) {
-        const statusFreeShot = npcBattleCharacterInfo.status?.find(s => s.effectName == "free-shot")
-
-        if (!statusFreeShot || statusFreeShot.ammount < npcInfo.freeShotWeakPoints) {
-            return (player?.playerSheet?.power ?? 0)
-        }
-    }
-
-    return 0
-}
-
-export function calculateFreeShotAttackDamage(player: GetPlayerResponse | null, npcBattleCharacterInfo: BattleCharacterInfo, diceResult: any, attackType: AttackType, weaponInfo: WeaponInfo | null, playerChar?: BattleCharacterInfo): number {
-    const total = diceTotal(diceResult);
-    const failures = calculateFailureDiv(diceResult)
-    var criticalBonus = calculatePlayerCriticalBonus(diceResult, player, weaponInfo);
-
-    var playerPower = (player?.playerSheet?.power ?? 0) + criticalBonus;
-    if (failures > 0) {
-        playerPower = playerPower - (failures * 4);
-    }
-    playerPower += calculateFreeShotPlus(player, npcBattleCharacterInfo, attackType)
-
-    const playerDizzy = getPlayerDizzy(player)
-    let damage = Math.max(0, playerPower) + total
-    if (playerDizzy) {
-        damage = damage - 4;
-    }
-
-    // Verso's Perfection Rank: Damage bonus for free-shot attacks
-    const isVerso = playerChar?.id?.toLowerCase().includes("verso");
-    if (isVerso) {
-        const versoPerfectionBonus = getVersoPerfectionDamageBonus(playerChar?.perfectionRank);
-        damage = damage + versoPerfectionBonus;
-    }
-
-    // Sciel: Fortune's Fury bonus (+8 per hit)
-    if (playerChar && hasStatus(playerChar, "FortunesFury")) {
-        damage = damage + 8;
-    }
-
-    return Math.max(0, damage);
-}
-
-export function calculateBasicAttackDamage(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, npcTarget: BattleCharacterInfo, diceResult: any, playerChar?: BattleCharacterInfo): number {
-    const npcInfo = getNpcById(npcTarget.id)
-
-    // Use calculateBasePower for common calculations
-    let attackDamage = calculateBasePower(player, weaponInfo, diceResult);
-
-    // Apply element modifier (specific to basic attacks)
-    const weaponElement = weaponInfo?.details?.attributes?.element;
-    let elementModifier = npcInfo ? getWeaponElementModifier(npcTarget.id, weaponInfo) : undefined;
-
-    // Check for FireVulnerability status (works like weakTo Fire: +4 damage)
-    if (!elementModifier && weaponElement === "Fire" && hasStatus(npcTarget, "FireVulnerability")) {
-        elementModifier = { flatBonus: 4, type: "weak" };
-    }
-
-    const elementBonus = elementModifier?.flatBonus ?? 0;
-    attackDamage = attackDamage + elementBonus;
-
-    console.log("=== Basic Attack Element ===");
-    console.log("Weapon Element:", weaponElement ?? "None");
-    if (elementModifier) {
-        console.log("Element Modifier Type:", elementModifier.type);
-        console.log("Element Bonus:", elementBonus);
-    } else {
-        console.log("No element modifier (neutral)");
-    }
-
-    // Verso's Perfection Rank: Damage bonus for basic attacks
-    const isVerso = playerChar?.id?.toLowerCase().includes("verso");
-    if (isVerso) {
-        const versoPerfectionBonus = getVersoPerfectionDamageBonus(playerChar?.perfectionRank);
-        attackDamage = attackDamage + versoPerfectionBonus;
-    }
-
-    // Sciel: Fortune's Fury bonus (+8 per hit)
-    if (playerChar && hasStatus(playerChar, "FortunesFury")) {
-        attackDamage = attackDamage + 8;
-    }
-
-    return Math.max(0, attackDamage);
 }
 
 export function calculateDefense(totalDamage: number, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, diceResult: any, defenseOption: DefenseOption, stance?: Stance | null): number {
@@ -333,7 +171,7 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     if (defenseOption == "block") {
         playerDefense += playerPictosTotalDefense(player);
     }
-    
+
     switch (defenseOption) {
         case "dodge":
         case "jump":
@@ -394,14 +232,6 @@ export function calculateMaxPA(player: GetPlayerResponse | null): number {
 
 export function rollCommandForInitiative(weaponInfo: WeaponInfo | null) {
     return "1d6";
-}
-
-export function rollCommandForBasicAttack(weaponInfo: WeaponInfo | null) {
-    return `1d6`;
-}
-
-export function rollCommandForAttack(weaponInfo: WeaponInfo | null, attackType: AttackType) {
-    return `1d6`;
 }
 
 export function rollCommandForDefense(player: GetPlayerResponse, weaponInfo: WeaponInfo | null, defenseOption: DefenseOption) {
