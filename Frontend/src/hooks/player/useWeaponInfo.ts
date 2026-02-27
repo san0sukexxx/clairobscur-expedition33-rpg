@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import type { WeaponInfo } from "../../api/ResponseModel";
 import type { GetPlayerResponse } from "../../api/APIPlayer";
-import { WeaponsDataLoader } from "../../lib/WeaponsDataLoader";
+import { WeaponsDataLoader } from "../../utils/WeaponsDataLoader";
 import type { UseWeaponInfoReturn } from "../../pages/PlayerPage/PlayerPage.types";
 
 /**

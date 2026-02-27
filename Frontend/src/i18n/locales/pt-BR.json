@@ -1771,7 +1771,27 @@
       "search": "Buscar...",
       "notes": "Anotações",
       "level": "Nível",
-      "using": "Usando..."
+      "using": "Usando...",
+      "errorSaving": "Erro ao salvar"
+    },
+    "setup": {
+      "abilityScoresTitle": "Atributos",
+      "chooseMethod": "-- Escolha um método de geração --",
+      "standardArray": "Array Padrão",
+      "manualRolled": "Manual / Rolado",
+      "pointBuy": "Compra de Pontos",
+      "total": "Total",
+      "roll": "Rolar",
+      "resetGroup": "Resetar Grupo",
+      "applyAbilityScores": "Aplicar Atributos",
+      "confirmAbilityScores": "Confirmar atributos",
+      "pointsRemaining": "Pontos Restantes",
+      "point": "Ponto",
+      "points": "Pontos",
+      "savingThrowProficiencyTitle": "Proficiências em Testes de Resistência",
+      "savingThrowProficiencyDesc": "Escolha 2 atributos nos quais seu personagem terá proficiência em Testes de Resistência.",
+      "savingThrowProficiencyConfirm": "Confirmar Proficiências",
+      "savingThrowProficiencySelected": "selecionados"
     },
     "navigation": {
       "home": "Início",
@@ -1839,6 +1859,28 @@
       "hitPoints": "Pontos de Vida",
       "restoreHp": "Restaurar HP total",
       "savingThrows": "Testes de Resistência",
+      "race": "Raça",
+      "class": "Classe",
+      "mainAttribute": "Atributo Principal",
+      "races": {
+        "human": "Humano",
+        "gestral": "Gestral"
+      },
+      "classes": {
+        "fighter": "Lutador",
+        "rogue": "Ladino",
+        "warlock": "Bruxo",
+        "druid": "Druida",
+        "wizard": "Mago"
+      },
+      "attributes": {
+        "strength": "Força",
+        "dexterity": "Destreza",
+        "constitution": "Constituição",
+        "intelligence": "Inteligência",
+        "wisdom": "Sabedoria",
+        "charisma": "Carisma"
+      },
       "senses": "Sentidos",
       "passivePerception": "Percepção Passiva",
       "passiveInvestigation": "Investigação Passiva",
@@ -2755,7 +2797,8 @@
       "selectSpecialAttackAlt": "Selecionar ataque especial",
       "removeFromSlot": "Remover ataque especial do slot",
       "selectASpecialAttack": "Selecione um Especial",
-      "noSpecialAttacksFound": "Nenhum ataque especial encontrado."
+      "noSpecialAttacksFound": "Nenhum ataque especial encontrado.",
+      "gradientSection": "Habilidades Gradiente"
     },
     "specialAttacksList": {
       "title": "Especiais",
@@ -2802,6 +2845,16 @@
       "removeWeapon": "Remover arma",
       "noWeapons": "Nenhuma arma encontrada",
       "element": "Elemento",
+      "elements": {
+        "Physical": "Físico",
+        "Void": "Vazio",
+        "Light": "Luz",
+        "Lightning": "Relâmpago",
+        "Fire": "Fogo",
+        "Ice": "Gelo",
+        "Dark": "Trevas",
+        "Earth": "Terra"
+      },
       "power": "Poder",
       "scaling": "Escala",
       "passives": "Passivas",
@@ -3306,7 +3359,9 @@
           "specialAttacks": "Especiais",
           "combat": "Combate",
           "settings": "Configurações",
-          "skills": "Perícias"
+          "skills": "Perícias",
+          "notes": "Anotações",
+          "gamelog": "Log"
         }
       }
     },
@@ -3347,7 +3402,22 @@
       "sleightOfHand": "Prestidigitação",
       "stealth": "Furtividade",
       "survival": "Sobrevivência",
-      "profBonus": "Bônus de Proficiência"
+      "profBonus": "Bônus de Proficiência",
+      "proficiencySetupTitle": "Escolha suas 5 Perícias",
+      "proficiencySetupDesc": "Escolha 5 perícias nas quais seu personagem terá proficiência.",
+      "proficiencySetupConfirm": "Confirmar Perícias",
+      "proficiencySetupSelected": "selecionadas",
+      "saveError": "Erro ao salvar dados de perícias."
+    },
+    "gameLog": {
+      "title": "Game Log",
+      "refresh": "Atualizar",
+      "empty": "Nenhuma rolagem ainda.",
+      "save": "TESTE DE RESISTÊNCIA",
+      "justNow": "agora",
+      "minutesAgo": "min atrás",
+      "hoursAgo": "h atrás",
+      "daysAgo": "d atrás"
     }
   }
 }

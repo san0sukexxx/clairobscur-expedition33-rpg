@@ -1,4 +1,4 @@
-// src/lib/WeaponsDataLoader.ts
+// src/utils/WeaponsDataLoader.ts
 import type { WeaponDTO } from "../types/WeaponDTO";
 
 // Carrega todos os JSONs em build time, sem fetch.

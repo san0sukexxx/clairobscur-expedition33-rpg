@@ -1771,7 +1771,27 @@
       "search": "Search...",
       "notes": "Notes",
       "level": "Level",
-      "using": "Using..."
+      "using": "Using...",
+      "errorSaving": "Error saving"
+    },
+    "setup": {
+      "abilityScoresTitle": "Ability Scores",
+      "chooseMethod": "-- Choose a generation method --",
+      "standardArray": "Standard Array",
+      "manualRolled": "Manual / Rolled",
+      "pointBuy": "Point Buy",
+      "total": "Total",
+      "roll": "Roll",
+      "resetGroup": "Reset Group",
+      "applyAbilityScores": "Apply Ability Scores",
+      "confirmAbilityScores": "Confirm attributes",
+      "pointsRemaining": "Points Remaining",
+      "point": "Point",
+      "points": "Points",
+      "savingThrowProficiencyTitle": "Saving Throw Proficiencies",
+      "savingThrowProficiencyDesc": "Choose 2 ability scores your character will be proficient in for Saving Throws.",
+      "savingThrowProficiencyConfirm": "Confirm Proficiencies",
+      "savingThrowProficiencySelected": "selected"
     },
     "navigation": {
       "home": "Home",
@@ -1839,6 +1859,28 @@
       "hitPoints": "Hit Points",
       "restoreHp": "Restore full HP",
       "savingThrows": "Saving Throws",
+      "race": "Race",
+      "class": "Class",
+      "mainAttribute": "Main Attribute",
+      "races": {
+        "human": "Human",
+        "gestral": "Gestral"
+      },
+      "classes": {
+        "fighter": "Fighter",
+        "rogue": "Rogue",
+        "warlock": "Warlock",
+        "druid": "Druid",
+        "wizard": "Wizard"
+      },
+      "attributes": {
+        "strength": "Strength",
+        "dexterity": "Dexterity",
+        "constitution": "Constitution",
+        "intelligence": "Intelligence",
+        "wisdom": "Wisdom",
+        "charisma": "Charisma"
+      },
       "senses": "Senses",
       "passivePerception": "Passive Perception",
       "passiveInvestigation": "Passive Investigation",
@@ -2755,7 +2797,8 @@
       "selectSpecialAttackAlt": "Select special",
       "removeFromSlot": "Remove special from slot",
       "selectASpecialAttack": "Select a Special",
-      "noSpecialAttacksFound": "No specials found."
+      "noSpecialAttacksFound": "No specials found.",
+      "gradientSection": "Gradient Skills"
     },
     "specialAttacksList": {
       "title": "Specials",
@@ -2802,6 +2845,16 @@
       "removeWeapon": "Remove weapon",
       "noWeapons": "No weapons found",
       "element": "Element",
+      "elements": {
+        "Physical": "Physical",
+        "Void": "Void",
+        "Light": "Light",
+        "Lightning": "Lightning",
+        "Fire": "Fire",
+        "Ice": "Ice",
+        "Dark": "Dark",
+        "Earth": "Earth"
+      },
       "power": "Power",
       "scaling": "Scaling",
       "passives": "Passives",
@@ -3302,7 +3355,9 @@
           "specialAttacks": "Specials",
           "combat": "Combat",
           "settings": "Settings",
-          "skills": "Skills"
+          "skills": "Skills",
+          "notes": "Notes",
+          "gamelog": "Log"
         }
       }
     },
@@ -3343,7 +3398,22 @@
       "sleightOfHand": "Sleight of Hand",
       "stealth": "Stealth",
       "survival": "Survival",
-      "profBonus": "Proficiency Bonus"
+      "profBonus": "Proficiency Bonus",
+      "proficiencySetupTitle": "Choose your 5 Skills",
+      "proficiencySetupDesc": "Choose 5 skills your character will be proficient in.",
+      "proficiencySetupConfirm": "Confirm Skills",
+      "proficiencySetupSelected": "selected",
+      "saveError": "Error saving skill data."
+    },
+    "gameLog": {
+      "title": "Game Log",
+      "refresh": "Refresh",
+      "empty": "No rolls yet.",
+      "save": "SAVE",
+      "justNow": "just now",
+      "minutesAgo": "min ago",
+      "hoursAgo": "h ago",
+      "daysAgo": "d ago"
     }
   }
 }

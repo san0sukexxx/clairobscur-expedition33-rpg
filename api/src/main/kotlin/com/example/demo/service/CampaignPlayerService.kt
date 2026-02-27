@@ -47,7 +47,8 @@ class CampaignPlayerService(
                                 pictos = pictos,
                                 luminas = null,
                                 items = null,
-                                specialAttacks = null
+                                specialAttacks = null,
+                                setupProgress = null
                         )
                 }
         }

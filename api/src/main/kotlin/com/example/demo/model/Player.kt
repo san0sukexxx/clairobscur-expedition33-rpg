@@ -9,9 +9,6 @@ data class Player(
         var characterId: String? = null,
         var totalPoints: Int = 0,
         var xp: Int = 0,
-        var power: Int = 0,
-        var hability: Int = 0,
-        var resistance: Int = 0,
         var apCurrent: Int = 0,
         var mpCurrent: Int = 0,
         var hpCurrent: Int = 0,
@@ -19,5 +16,12 @@ data class Player(
         var weaponId: String? = null,
         @Column(name = "master_editing") var isMasterEditing: Boolean = false,
         @Column(name = "skills_data") var skillsData: String? = null,
-        @Column(name = "ability_scores_data") var abilityScoresData: String? = null
+        @Column(name = "hp_max") var hpMax: Int = 0,
+        @Column(name = "saving_throw_proficiencies") var savingThrowProficiencies: String? = null,
+        var strength: Int = 10,
+        var dexterity: Int = 10,
+        var constitution: Int = 10,
+        var intelligence: Int = 10,
+        var wisdom: Int = 10,
+        var charisma: Int = 10
 )

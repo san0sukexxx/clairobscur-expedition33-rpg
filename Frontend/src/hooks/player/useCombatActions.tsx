@@ -7,9 +7,8 @@ import type { WeaponInfo } from "../../api/ResponseModel";
 import type { DiceBoardRef } from "../../components/DiceBoard";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../../utils/CombatMenuActions";
 import { rollWithTimeout } from "../../utils/RollUtils";
+import { dispatchRoll } from "../../utils/rollDispatcher";
 import {
-  rollCommandForInitiative,
-  initiativeTotal,
   playerPictosTotalSpeed,
   calculatePlayerCriticalBonus,
 } from "../../utils/PlayerCalculator";
@@ -82,11 +81,15 @@ export function useCombatActions({
     }
 
     setIsExecutingSkill(true);
-    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, rollCommandForInitiative(weaponInfo), result => {
+    const dexMod = Math.floor(((player.playerSheet?.abilityScores?.dexterity ?? 10) - 10) / 2);
+    const diceCommand = dexMod === 0 ? "1d20" : dexMod > 0 ? `1d20+${dexMod}` : `1d20${dexMod}`;
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, diceCommand, result => {
       const criticalRolls = countCriticalRolls(result);
       const criticalBonus = calculatePlayerCriticalBonus(result, player, weaponInfo);
       const rollTotal = diceTotal(result);
-      const total = initiativeTotal(player, result, weaponInfo);
+      const total = rollTotal + dexMod;
+
+      dispatchRoll({ label: t("characterSheet.initiative"), diceRolled: rollTotal, modifier: dexMod, total, diceCommand });
       const failures = countFailuresRolls(result);
       const failuresDiv = calculateFailureDiv(result);
       const weaponAgilityBonus = calculateWeaponAgilityBonus(weaponInfo);

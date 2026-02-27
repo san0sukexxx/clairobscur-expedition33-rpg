@@ -3,6 +3,22 @@ import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
 import { t } from "../i18n";
 
+interface CharacterClassInfo {
+    raceKey: string;
+    classKey: string;
+    attributeKey: string;
+}
+
+const CHARACTER_INFO: Record<string, CharacterClassInfo> = {
+    verso:   { raceKey: "characterSheet.races.human",   classKey: "characterSheet.classes.fighter",  attributeKey: "characterSheet.attributes.strength"     },
+    gustave: { raceKey: "characterSheet.races.human",   classKey: "characterSheet.classes.fighter",  attributeKey: "characterSheet.attributes.strength"     },
+    maelle:  { raceKey: "characterSheet.races.human",   classKey: "characterSheet.classes.rogue",    attributeKey: "characterSheet.attributes.dexterity"    },
+    sciel:   { raceKey: "characterSheet.races.human",   classKey: "characterSheet.classes.warlock",  attributeKey: "characterSheet.attributes.charisma"     },
+    monoco:  { raceKey: "characterSheet.races.gestral", classKey: "characterSheet.classes.druid",    attributeKey: "characterSheet.attributes.wisdom"       },
+    lune:    { raceKey: "characterSheet.races.human",   classKey: "characterSheet.classes.wizard",   attributeKey: "characterSheet.attributes.intelligence" },
+};
+
+
 interface PlayerSheetProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
@@ -41,25 +57,26 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
 
                         <label className="form-control w-20">
                             <span className="label-text text-center">{t("characterSheet.characterLevel")}</span>
-                            <input
-                                className="input input-bordered text-center font-bold"
-                                placeholder="—"
-                                type="number"
-                                value={player?.playerSheet?.totalPoints ?? ""}
+                            <select
+                                className="select select-bordered text-center font-bold"
+                                value={player?.playerSheet?.totalPoints ?? 1}
                                 onChange={async (e) => {
                                     if (!player) return;
-                                    const raw = e.target.value;
                                     const next = {
                                         ...player,
                                         playerSheet: {
                                             ...player.playerSheet,
-                                            totalPoints: raw === "" ? undefined : Number(raw),
+                                            totalPoints: Number(e.target.value),
                                         },
                                     };
                                     setPlayer(next);
                                     await sync(next);
                                 }}
-                            />
+                            >
+                                {Array.from({ length: 20 }, (_, i) => i + 1).map(lvl => (
+                                    <option key={lvl} value={lvl}>{lvl}</option>
+                                ))}
+                            </select>
                         </label>
                     </div>
 
@@ -82,6 +99,24 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                         }}
                         allowedCharacters={campaignInfo?.characters ?? []}
                     />
+
+                    {(() => {
+                        const info = CHARACTER_INFO[player?.playerSheet?.characterId?.toLowerCase() ?? ""];
+                        if (!info) return null;
+                        return (
+                            <div className="flex flex-wrap gap-2 pt-1">
+                                <span className="rounded-full border border-base-300 bg-base-200 px-3 py-0.5 text-xs font-semibold text-base-content/70">
+                                    {t(info.raceKey)}
+                                </span>
+                                <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary">
+                                    {t(info.classKey)}
+                                </span>
+                                <span className="rounded-full border border-secondary/40 bg-secondary/10 px-3 py-0.5 text-xs font-semibold text-secondary">
+                                    {t(info.attributeKey)}
+                                </span>
+                            </div>
+                        );
+                    })()}
                 </div>
             </div>
         </div>

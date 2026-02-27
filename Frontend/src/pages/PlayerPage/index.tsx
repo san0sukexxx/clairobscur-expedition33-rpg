@@ -7,6 +7,7 @@ import DiceBoard from "../../components/DiceBoard";
 import PanelModal from "../../components/PanelModal";
 import MasterEditingOverlay from "../../components/MasterEditingOverlay";
 import { PlayerNavbar, PlayerContent } from "../../components/player";
+import { RollHistoryToast } from "../../components/RollHistoryToast";
 
 // Hooks
 import { useToast } from "../../components/Toast";
@@ -144,6 +145,7 @@ export default function PlayerPage() {
   return (
     <div className="min-h-dvh bg-base-200">
       <DiceBoard ref={diceBoardRef} />
+      <RollHistoryToast />
 
       {!isAdmin && player?.isMasterEditing && (
         <MasterEditingOverlay />

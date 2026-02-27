@@ -7,14 +7,13 @@ data class PlayerSheetUpdateRequest(
         val characterId: String?,
         val totalPoints: Int?,
         val xp: Int?,
-        val power: Int?,
-        val hability: Int?,
-        val resistance: Int?,
         val apCurrent: Int?,
         val mpCurrent: Int?,
         val hpCurrent: Int?,
         val notes: String?,
         val weaponId: String?,
         val skillsData: String? = null,
-        val abilityScoresData: String? = null
+        val hpMax: Int? = null,
+        val savingThrowProficiencies: List<String>? = null,
+        val abilityScores: AbilityScoresDto? = null
 )

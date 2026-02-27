@@ -5,6 +5,7 @@ export type DiceTheme = "dice-of-rolling" | "blue-green-metal";
 
 export interface DiceBoardRef {
     roll: (command: string, onRollComplete: (result: any) => void, theme?: DiceTheme) => void;
+    add: (command: string) => void;
     hideBoard: () => void;
 }
 
@@ -49,6 +50,11 @@ export default function DiceBoard({ ref }: DiceBoardProps) {
                     await boxRef.current.updateConfig({ theme: "dice-of-rolling" });
                 }
                 boxRef.current.roll(command);
+            }
+        },
+        add: (command: string) => {
+            if (boxRef.current) {
+                boxRef.current.add(command);
             }
         },
         hideBoard: () => {

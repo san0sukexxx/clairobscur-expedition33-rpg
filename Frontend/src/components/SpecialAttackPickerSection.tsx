@@ -87,6 +87,8 @@ export default function SpecialAttackPickerSection({ player, setPlayer, inBattle
     const [query, setQuery] = useState("");
     const [slotAssignments, setSlotAssignments] = useState<Record<number, string>>({});
     const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+    const [gradientSectionOpen, setGradientSectionOpen] = useState(false);
+    const [expandedGradient, setExpandedGradient] = useState<Record<string, boolean>>({});
 
     const characterSpecialAttacks = useMemo(() =>
         getEnrichedCharacterSpecialAttacks(player),
@@ -244,6 +246,11 @@ export default function SpecialAttackPickerSection({ player, setPlayer, inBattle
         });
     };
 
+    const gradientAttacks = useMemo(() =>
+        characterSpecialAttacks.filter((s) => s.isGradient && getPlayerHasSpecialAttack(s.id, player)),
+        [characterSpecialAttacks, player]
+    );
+
     const filtered = useMemo(() => {
         if (!player) return [];
 
@@ -251,6 +258,7 @@ export default function SpecialAttackPickerSection({ player, setPlayer, inBattle
 
         const pool = characterSpecialAttacks.filter((s) =>
             !assignedIds.has(s.id) &&
+            !s.isGradient &&
             getPlayerHasSpecialAttack(s.id, player) &&
             !getSpecialAttackIsBlocked(s.id, player)
         );
@@ -372,6 +380,106 @@ export default function SpecialAttackPickerSection({ player, setPlayer, inBattle
             {isUsingSpecialAttackMode && inBattle && (
                 <div className="mb-4 rounded-lg border border-info/30 bg-info/10 p-3 text-center text-sm text-info">
                     {t("specialAttackPicker.selectEquippedToCombat")}
+                </div>
+            )}
+
+            {/* Seção de habilidades gradiente */}
+            {gradientAttacks.length > 0 && (
+                <div className="mb-4 rounded-2xl bg-base-100 border border-fuchsia-500/30 overflow-hidden">
+                    <button
+                        className="w-full flex items-center justify-between px-5 py-4 hover:bg-base-300/30 transition-colors"
+                        onClick={() => setGradientSectionOpen(v => !v)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <span className="rounded-full bg-purple-700 px-2 py-0.5 text-[11px] font-bold text-base-100">
+                                {gradientAttacks.length}
+                            </span>
+                            <span className="font-semibold text-fuchsia-300">{t("specialAttackPicker.gradientSection")}</span>
+                        </div>
+                        <span className={`transition-transform duration-200 text-fuchsia-400 ${gradientSectionOpen ? "rotate-180" : ""}`}>▼</span>
+                    </button>
+
+                    <AnimatePresence initial={false}>
+                        {gradientSectionOpen && (
+                            <motion.div
+                                key="gradient-content"
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.2 }}
+                                className="border-t border-fuchsia-500/20"
+                            >
+                                <div className="flex flex-col divide-y divide-base-300">
+                                    {gradientAttacks.map((sa) => {
+                                        const isExpanded = !!expandedGradient[sa.id];
+                                        const canUse = canUseSpecialAttack(sa);
+                                        return (
+                                            <div key={sa.id}>
+                                                <div
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    onClick={() => setExpandedGradient(prev => ({ ...prev, [sa.id]: !prev[sa.id] }))}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter" || e.key === " ") {
+                                                            e.preventDefault();
+                                                            setExpandedGradient(prev => ({ ...prev, [sa.id]: !prev[sa.id] }));
+                                                        }
+                                                    }}
+                                                    className="grid grid-cols-[56px_1fr] items-center gap-3 pl-4 pr-4 py-4 hover:bg-base-300/30 cursor-pointer transition-colors"
+                                                >
+                                                    <DiamondThumb image={sa.image} alt={sa.name} />
+                                                    <div className="flex items-center justify-between gap-2 min-w-0">
+                                                        <div className="flex flex-col gap-1 min-w-0">
+                                                            <span className="font-semibold leading-tight">{sa.name}</span>
+                                                            <div className="flex items-center gap-2 text-xs">
+                                                                <span className="rounded-full bg-purple-700 px-2 py-0.5 text-[11px] font-bold text-base-100">
+                                                                    {sa.cost} {sa.cost === 1 ? t("specialAttackPicker.charge") : t("specialAttackPicker.charges")}
+                                                                </span>
+                                                                <span className="rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-fuchsia-200">{t("specialAttackPicker.gradient")}</span>
+                                                            </div>
+                                                        </div>
+                                                        {isUsingSpecialAttackMode && inBattle && (
+                                                            <button
+                                                                className={`shrink-0 px-4 py-1.5 text-sm rounded-md border border-base-300 ${
+                                                                    canUse
+                                                                        ? "bg-emerald-600 hover:bg-emerald-500"
+                                                                        : "bg-gray-600 opacity-50 cursor-not-allowed"
+                                                                }`}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    if (canUse) handleUseSpecialAttack(sa.id);
+                                                                }}
+                                                                disabled={!canUse}
+                                                            >
+                                                                {t("common.use")}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <AnimatePresence initial={false}>
+                                                    {isExpanded && (
+                                                        <motion.div
+                                                            key="grad-desc"
+                                                            initial={{ opacity: 0, height: 0 }}
+                                                            animate={{ opacity: 1, height: "auto" }}
+                                                            exit={{ opacity: 0, height: 0 }}
+                                                            transition={{ duration: 0.2 }}
+                                                        >
+                                                            <div className="px-6 py-4 border-t border-base-300">
+                                                                <div className="whitespace-pre-line text-[15px] leading-snug text-base-content/90 break-words">
+                                                                    {highlight(sa.description, sa.id)}
+                                                                </div>
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             )}
 

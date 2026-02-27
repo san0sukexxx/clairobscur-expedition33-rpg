@@ -87,12 +87,34 @@ export function calculatePlayerCriticalBonus(diceResult: any, player: GetPlayerR
     return baseCriticalBonus;
 }
 
+const HIT_DIE_BY_CHARACTER: Record<string, number> = {
+    verso:   10,
+    gustave: 10,
+    maelle:  8,
+    sciel:   8,
+    monoco:  8,
+    lune:    8,
+};
+
+export function getCharacterHitDie(characterId: string | undefined): number {
+    return HIT_DIE_BY_CHARACTER[characterId?.toLowerCase() ?? ""] ?? 8;
+}
+
 export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {
+    const characterId = player?.playerSheet?.characterId;
+    const hitDie = getCharacterHitDie(characterId);
+    const level = player?.playerSheet?.totalPoints ?? 1;
+    const con = player?.playerSheet?.abilityScores?.constitution ?? 10;
+    const conMod = Math.floor((con - 10) / 2);
+
+    // D&D 5e formula: max die at level 1 + avg die per subsequent level, + CON mod each level
+    const avgPerLevel = Math.floor(hitDie / 2) + 1;
+    const baseHp = hitDie + conMod + (level - 1) * (avgPerLevel + conMod);
+
     const vitalityValue = calculateWeaponVitalityBonus(weaponInfo);
-    const resistanceHealth = 0;
     const pictosHealthBonus = playerPictosTotalHealth(player);
 
-    return resistanceHealth + vitalityValue + pictosHealthBonus;
+    return Math.max(1, baseHp + vitalityValue + pictosHealthBonus);
 }
 
 export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackType: string): number {
@@ -211,7 +233,7 @@ export function calculateMaxCounterDamage(player: GetPlayerResponse | null, weap
 }
 
 export function calculateMaxMP(player: GetPlayerResponse | null): number {
-    return 0;
+    return 9;
 }
 
 export function calculateMaxLuminas(player: GetPlayerResponse | null): number {
@@ -223,7 +245,9 @@ export function calculateSpecialAttackPoints(player: GetPlayerResponse | null): 
 }
 
 export function calculateInitialMP(player: GetPlayerResponse | null): number {
-    return 0;
+    const intelligence = player?.playerSheet?.abilityScores?.intelligence ?? 10;
+    const intMod = Math.floor((intelligence - 10) / 2);
+    return 2 + intMod;
 }
 
 export function calculateMaxPA(player: GetPlayerResponse | null): number {

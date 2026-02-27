@@ -1,23 +1,28 @@
-import type { Dispatch, SetStateAction, RefObject, MutableRefObject } from "react";
+import { useEffect, useRef, type Dispatch, type SetStateAction, type RefObject, type MutableRefObject } from "react";
 import type { GetPlayerResponse } from "../../api/APIPlayer";
 import type { Campaign } from "../../api/APICampaign";
 import type { BattleCharacterInfo, WeaponInfo } from "../../api/ResponseModel";
 import type { WeaponDTO } from "../../types/WeaponDTO";
 import type { DiceBoardRef } from "../DiceBoard";
-import type { CombatMenuAction } from "../../utils/CombatMenuActions";
+import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../../utils/CombatMenuActions";
 import type { PlayerTab, CombatTabType, SpecialAttacksTabType } from "../../pages/PlayerPage/PlayerPage.types";
 
 import WeaponSection from "../WeaponSection";
 import PlayerSheet from "../PlayerSheet";
 import { AbilityScoresSection } from "../AbilityScoresSection";
+import { AbilityScoreSetup } from "../AbilityScoreSetup";
 import { SavingThrowsSection } from "../SavingThrowsSection";
+import { SensesSection } from "../SensesSection";
 import { CombatStatsSection } from "../CombatStatsSection";
 import PictosTab from "../PictosTab";
 import LuminasSection from "../LuminasSection";
 import SpecialAttacksSection from "../SpecialAttacksSection";
 import SkillsSection from "../SkillsSection";
+import { SkillProficiencySetup } from "../setup/SkillProficiencySetup";
 import ItemsSection from "../ItemsSection";
 import CombatSection from "../CombatSection";
+import { NotesSection } from "../NotesSection";
+import { GameLogSection } from "../GameLogSection";
 
 interface PlayerContentProps {
   tab: PlayerTab;
@@ -89,6 +94,26 @@ export function PlayerContent({
   diceBoardRef,
   timeoutDiceBoardRef,
 }: PlayerContentProps) {
+  const abilityScoresRef = useRef<HTMLDivElement>(null);
+
+  const hasName = !!player?.playerSheet?.name?.trim();
+  const hasCharacter = !!player?.playerSheet?.characterId;
+  const sheetReady = hasName && hasCharacter;
+
+  const abilityScoresDone = player?.setupProgress?.find(s => s.section === "abilityScores")?.done ?? false;
+  const savingThrowProficiencyDone = true;
+  const skillProficiencyDone = player?.setupProgress?.find(s => s.section === "skillProficiency")?.done ?? false;
+  const prevSheetReady = useRef(sheetReady);
+
+  useEffect(() => {
+    if (sheetReady && !prevSheetReady.current) {
+      setTimeout(() => {
+        abilityScoresRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+    prevSheetReady.current = sheetReady;
+  }, [sheetReady]);
+
   if (loading || error) {
     return null;
   }
@@ -102,23 +127,49 @@ export function PlayerContent({
             setPlayer={setPlayer}
             campaignInfo={campaignInfo}
           />
-          <CombatStatsSection
-            player={player}
-            setPlayer={setPlayer}
-            diceBoardRef={diceBoardRef}
-            timeoutDiceBoardRef={timeoutDiceBoardRef}
-          />
-          <AbilityScoresSection
-            player={player}
-            setPlayer={setPlayer}
-            diceBoardRef={diceBoardRef}
-            timeoutDiceBoardRef={timeoutDiceBoardRef}
-          />
-          <SavingThrowsSection
-            player={player}
-            diceBoardRef={diceBoardRef}
-            timeoutDiceBoardRef={timeoutDiceBoardRef}
-          />
+          {sheetReady && (
+            <>
+              {abilityScoresDone && savingThrowProficiencyDone && (
+                <CombatStatsSection
+                  player={player}
+                  setPlayer={setPlayer}
+                  diceBoardRef={diceBoardRef}
+                  timeoutDiceBoardRef={timeoutDiceBoardRef}
+                  onBattleInitiative={() => onMenuAction(COMBAT_MENU_ACTIONS.Initiative)}
+                />
+              )}
+
+              <div ref={abilityScoresRef}>
+                {!abilityScoresDone && (
+                  <AbilityScoreSetup
+                    player={player}
+                    setPlayer={setPlayer}
+                    diceBoardRef={diceBoardRef}
+                    timeoutDiceBoardRef={timeoutDiceBoardRef}
+                  />
+                )}
+                {abilityScoresDone && (
+                  <AbilityScoresSection
+                    player={player}
+                    setPlayer={setPlayer}
+                    diceBoardRef={diceBoardRef}
+                    timeoutDiceBoardRef={timeoutDiceBoardRef}
+                  />
+                )}
+              </div>
+
+              {abilityScoresDone && savingThrowProficiencyDone && (
+                <>
+                  <SavingThrowsSection
+                    player={player}
+                    diceBoardRef={diceBoardRef}
+                    timeoutDiceBoardRef={timeoutDiceBoardRef}
+                  />
+                  <SensesSection player={player} />
+                </>
+              )}
+            </>
+          )}
         </>
       )}
 
@@ -186,12 +237,31 @@ export function PlayerContent({
       )}
 
       {tab === "pericias" && (
-        <SkillsSection
+        skillProficiencyDone ? (
+          <SkillsSection
+            player={player}
+            setPlayer={setPlayer}
+            isAdmin={isAdmin}
+            diceBoardRef={diceBoardRef}
+            timeoutDiceBoardRef={timeoutDiceBoardRef}
+          />
+        ) : (
+          <SkillProficiencySetup
+            player={player}
+            setPlayer={setPlayer}
+          />
+        )
+      )}
+
+      {tab === "notas" && (
+        <NotesSection
           player={player}
           setPlayer={setPlayer}
-          diceBoardRef={diceBoardRef}
-          timeoutDiceBoardRef={timeoutDiceBoardRef}
         />
+      )}
+
+      {tab === "gamelog" && (
+        <GameLogSection player={player} />
       )}
     </section>
   );

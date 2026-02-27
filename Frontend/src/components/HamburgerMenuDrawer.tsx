@@ -2,7 +2,8 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { MdMenu, MdClose, MdSettings } from "react-icons/md";
-import { FaUser, FaClipboardList } from "react-icons/fa";
+import { PiNoteFill } from "react-icons/pi";
+import { FaUser, FaClipboardList, FaHistory } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
 import { t } from "../i18n";
@@ -29,6 +30,8 @@ const TABS: TabConfig[] = [
   { id: "inventario", icon: <GiBackpack className="text-xl" />,      labelKey: "playerPage.navigation.tabs.inventory"      },
   { id: "habilidades",icon: <GiMagicSwirl className="text-xl" />,    labelKey: "playerPage.navigation.tabs.specialAttacks" },
   { id: "combate",    icon: <LuSwords className="text-xl" />,        labelKey: "playerPage.navigation.tabs.combat"         },
+  { id: "notas",      icon: <PiNoteFill className="text-xl" />,      labelKey: "playerPage.navigation.tabs.notes"          },
+  { id: "gamelog",    icon: <FaHistory className="text-xl" />,       labelKey: "playerPage.navigation.tabs.gamelog"        },
 ];
 
 export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill }: HamburgerMenuDrawerProps) {

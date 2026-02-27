@@ -101,36 +101,6 @@ class DamageService(
         val newHp = (targetBC.healthPoints - damage).coerceAtLeast(0)
         targetBC.healthPoints = newHp
 
-        // Check if damage is greater than twice the resistance to apply Fragile status
-        if (damage > 0 && newHp > 0 && targetBC.characterType == "player") {
-            val playerId = targetBC.externalId.toIntOrNull()
-            if (playerId != null) {
-                val player = playerRepository.findById(playerId).orElse(null)
-                if (player != null) {
-                    val doubleResistance = player.resistance * 2
-
-                    // If damage exceeds double resistance, apply Fragile status
-                    if (damage > doubleResistance) {
-                        val allTargetEffects = battleStatusEffectRepository.findByBattleCharacterId(targetBC.id!!)
-                        val hasBroken = allTargetEffects.any { it.effectType == "Broken" }
-                        val hasFragile = allTargetEffects.any { it.effectType == "Fragile" }
-
-                        // Only apply Fragile if not already Broken or Fragile
-                        if (!hasBroken && !hasFragile) {
-                            val fragileEffect = com.example.demo.model.BattleStatusEffect(
-                                battleCharacterId = targetBC.id!!,
-                                effectType = "Fragile",
-                                ammount = 1,
-                                remainingTurns = 3,  // Lasts 3 turns
-                                isResolved = true
-                            )
-                            battleStatusEffectRepository.save(fragileEffect)
-                        }
-                    }
-                }
-            }
-        }
-
         val battleId = targetBC.battleId
 
         if (damage > 0) {

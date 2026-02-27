@@ -16,5 +16,6 @@ data class GetPlayerResponse(
         val pictos: List<PlayerPicto>?,
         val luminas: List<PlayerLumina>?,
         val items: List<PlayerItem>?,
-        val specialAttacks: List<PlayerSpecialAttack>?
+        val specialAttacks: List<PlayerSpecialAttack>?,
+        val setupProgress: List<PlayerSetupProgressDto>?
 )

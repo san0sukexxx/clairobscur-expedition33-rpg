@@ -1,11 +1,12 @@
 import { useState, useEffect, type RefObject, type MutableRefObject } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
-import { useToast } from "./Toast";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import type { DiceBoardRef } from "./DiceBoard";
 import { t } from "../i18n";
+import { APIGameLog } from "../api/APIGameLog";
+import { dispatchRoll } from "../utils/rollDispatcher";
 
 /* ── Armor Class (escudo) ── */
 function ArmorClassCard({ value, onRoll }: { value: number; onRoll: () => void }) {
@@ -115,11 +116,10 @@ interface CombatStatsSectionProps {
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    onBattleInitiative?: () => void;
 }
 
-export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef }: CombatStatsSectionProps) {
-    const { showToast } = useToast();
-
+export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef, onBattleInitiative }: CombatStatsSectionProps) {
     async function sync(p: GetPlayerResponse) {
         await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
     }
@@ -143,7 +143,18 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
     function rollAC() {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
             const roll = diceTotal(result);
-            showToast(`${t("characterSheet.armorClass")}: ${roll}`);
+            const label = t("characterSheet.armorClass");
+            dispatchRoll({ label, diceRolled: roll, modifier: 0, total: roll, diceCommand: "1d20" });
+            if (player?.id) {
+                APIGameLog.create(player.id, {
+                    rollType: "abilityCheck",
+                    abilityKey: "armorClass",
+                    diceRolled: roll,
+                    modifier: 0,
+                    total: roll,
+                    diceCommand: "1d20",
+                }).catch(() => {});
+            }
         });
     }
 
@@ -152,7 +163,19 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
             const roll = diceTotal(result);
             const total = roll + dexMod;
-            showToast(`${t("characterSheet.initiative")}: ${roll} ${modStr} = ${total}`);
+            const label = t("characterSheet.initiative");
+            const diceCommand = dexMod === 0 ? "1d20" : dexMod > 0 ? `1d20+${dexMod}` : `1d20${dexMod}`;
+            dispatchRoll({ label, diceRolled: roll, modifier: dexMod, total, diceCommand });
+            if (player?.id) {
+                APIGameLog.create(player.id, {
+                    rollType: "abilityCheck",
+                    abilityKey: "initiative",
+                    diceRolled: roll,
+                    modifier: dexMod,
+                    total,
+                    diceCommand,
+                }).catch(() => {});
+            }
         });
     }
 
@@ -161,7 +184,10 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
             {/* Esquerda: CA + Iniciativa */}
             <div className="flex gap-3 items-start shrink-0">
                 <div className="mt-2"><ArmorClassCard value={ac} onRoll={rollAC} /></div>
-                <InitiativeCard dexterity={dex} onRoll={rollInitiative} />
+                <InitiativeCard
+                    dexterity={dex}
+                    onRoll={onBattleInitiative && player?.fightInfo?.canRollInitiative ? onBattleInitiative : rollInitiative}
+                />
             </div>
 
             {/* Direita: HP */}

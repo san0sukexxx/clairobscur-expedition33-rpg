@@ -24,6 +24,7 @@ class PlayerController(
         private val playerLuminaRepository: PlayerLuminaRepository,
         private val playerItemRepository: PlayerItemRepository,
         private val playerSpecialAttackRepository: PlayerSpecialAttackRepository,
+        private val playerSetupProgressRepository: PlayerSetupProgressRepository,
         private val fightService: FightService
 ) {
 
@@ -36,9 +37,6 @@ class PlayerController(
                                         characterId = null,
                                         totalPoints = 1,
                                         xp = 0,
-                                        power = 0,
-                                        hability = 0,
-                                        resistance = 0,
                                         apCurrent = 0,
                                         mpCurrent = 0,
                                         hpCurrent = 0,
@@ -92,7 +90,8 @@ class PlayerController(
                                         pictos = null,
                                         luminas = null,
                                         items = null,
-                                        specialAttacks = null
+                                        specialAttacks = null,
+                                        setupProgress = null
                                 )
                         }
 
@@ -139,6 +138,8 @@ class PlayerController(
                 val luminas: List<PlayerLumina> = playerLuminaRepository.findByPlayerId(id)
                 val items = playerItemRepository.findByPlayerId(id)
                 val specialAttacks = playerSpecialAttackRepository.findByPlayerId(id)
+                val setupProgress = playerSetupProgressRepository.findByPlayerId(id)
+                        .map { PlayerSetupProgressDto(section = it.section, done = it.done) }
 
                 val response =
                         GetPlayerResponse(
@@ -151,7 +152,8 @@ class PlayerController(
                                 pictos = pictos,
                                 luminas = luminas,
                                 items = items,
-                                specialAttacks = specialAttacks
+                                specialAttacks = specialAttacks,
+                                setupProgress = setupProgress
                         )
 
                 return ResponseEntity.ok(response)
@@ -176,6 +178,20 @@ class PlayerController(
 
                 // If changing character, reset skills and unequip weapon
                 if (isChangingCharacter) {
+                        // Auto-set saving throw proficiencies based on character class
+                        val savingThrowsByCharacter = mapOf(
+                                "verso"   to listOf("strength", "constitution"),
+                                "gustave" to listOf("strength", "constitution"),
+                                "maelle"  to listOf("dexterity", "intelligence"),
+                                "sciel"   to listOf("wisdom", "charisma"),
+                                "monoco"  to listOf("intelligence", "wisdom"),
+                                "lune"    to listOf("intelligence", "wisdom")
+                        )
+                        val profs = savingThrowsByCharacter[newCharacterId?.lowercase()]
+                        if (profs != null) {
+                                p.savingThrowProficiencies = profs.joinToString(",")
+                        }
+
                         // Delete all skills (this clears the purchased/unlocked skills list)
                         val specialAttacks = playerSpecialAttackRepository.findByPlayerId(id)
                         playerSpecialAttackRepository.deleteAll(specialAttacks)
@@ -235,15 +251,21 @@ class PlayerController(
                 p.characterId = sheet.characterId
                 p.totalPoints = sheet.totalPoints ?: 0
                 p.xp = sheet.xp ?: 0
-                p.power = sheet.power ?: 0
-                p.hability = sheet.hability ?: 0
-                p.resistance = sheet.resistance ?: 0
                 p.apCurrent = sheet.apCurrent ?: 0
                 p.mpCurrent = sheet.mpCurrent ?: 0
                 p.hpCurrent = sheet.hpCurrent ?: 0
                 p.notes = sheet.notes
                 if (sheet.skillsData != null) p.skillsData = sheet.skillsData
-                if (sheet.abilityScoresData != null) p.abilityScoresData = sheet.abilityScoresData
+                if (sheet.hpMax != null) p.hpMax = sheet.hpMax
+                sheet.savingThrowProficiencies?.let { p.savingThrowProficiencies = it.joinToString(",") }
+                sheet.abilityScores?.let { scores ->
+                        scores.strength?.let { p.strength = it }
+                        scores.dexterity?.let { p.dexterity = it }
+                        scores.constitution?.let { p.constitution = it }
+                        scores.intelligence?.let { p.intelligence = it }
+                        scores.wisdom?.let { p.wisdom = it }
+                        scores.charisma?.let { p.charisma = it }
+                }
 
                 // Only update weaponId if not changing character (already set to null above)
                 if (!isChangingCharacter) {
@@ -266,6 +288,30 @@ class PlayerController(
                 val player = opt.get()
                 player.isMasterEditing = body.isMasterEditing
                 playerRepository.save(player)
+
+                return ResponseEntity.ok().build()
+        }
+
+        @PutMapping("/{id}/setup-progress")
+        fun updateSetupProgress(
+                @PathVariable id: Int,
+                @RequestBody body: UpdateSetupProgressRequest
+        ): ResponseEntity<Void> {
+                if (playerRepository.findById(id).isEmpty) return ResponseEntity.notFound().build()
+
+                val existing = playerSetupProgressRepository.findByPlayerIdAndSection(id, body.section)
+                if (existing != null) {
+                        existing.done = body.done
+                        playerSetupProgressRepository.save(existing)
+                } else {
+                        playerSetupProgressRepository.save(
+                                com.example.demo.model.PlayerSetupProgress(
+                                        playerId = id,
+                                        section = body.section,
+                                        done = body.done
+                                )
+                        )
+                }
 
                 return ResponseEntity.ok().build()
         }

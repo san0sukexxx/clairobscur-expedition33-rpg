@@ -12,11 +12,12 @@ export function randomizeNpcInitiativeTotal(npc: NPCInfo) {
     const failurePenalty = diceResult == 1 ? 2 : 0;
     const initiativeBonus = npc.initiativeBonus ?? 0;
 
-    return diceResult + npc.hability + criticalBonus - failurePenalty + initiativeBonus;
+    const dexMod = Math.floor((npc.dexterity - 10) / 2);
+    return diceResult + dexMod + criticalBonus - failurePenalty + initiativeBonus;
 }
 
 export function getNPCMaxHealth(npc: NPCInfo) {
-    const baseHealth = npc.resistance * 5;
+    const baseHealth = npc.constitution;
     const maxLifeBonus = npc.maxLifeBonus ?? 0;
     return Math.max(1, baseHealth + maxLifeBonus);
 }

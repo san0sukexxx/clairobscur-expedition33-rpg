@@ -1,10 +1,11 @@
-import { useState, useEffect, type RefObject, type MutableRefObject } from "react";
-import { APIPlayer, type GetPlayerResponse, type AbilityScores } from "../api/APIPlayer";
+import { type RefObject, type MutableRefObject } from "react";
+import { type GetPlayerResponse, type AbilityScores } from "../api/APIPlayer";
 import { t } from "../i18n";
-import { useToast } from "./Toast";
 import { rollWithTimeout } from "../utils/RollUtils";
 import type { DiceBoardRef } from "./DiceBoard";
 import { diceTotal } from "../utils/DiceCalculator";
+import { APIGameLog } from "../api/APIGameLog";
+import { dispatchRoll } from "../utils/rollDispatcher";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -25,17 +26,10 @@ function calcMod(score: number): string {
 interface StatCardProps {
     label: string;
     score: number;
-    onChange: (v: number) => void;
     onRoll: () => void;
 }
 
-function StatCard({ label, score, onChange, onRoll }: StatCardProps) {
-    const [inputValue, setInputValue] = useState(String(score));
-
-    useEffect(() => {
-        setInputValue(String(score));
-    }, [score]);
-
+function StatCard({ label, score, onRoll }: StatCardProps) {
     return (
         <div
             className="relative flex flex-col items-center gap-1 pt-2 pb-3 px-1 text-base-content bg-base-200"
@@ -77,27 +71,7 @@ function StatCard({ label, score, onChange, onRoll }: StatCardProps) {
                 className="relative z-10 flex items-center justify-center rounded-full border-2 border-base-content/40 w-10 h-7"
                 style={{ background: "color-mix(in oklch, oklch(var(--b3)) 70%, oklch(var(--p)) 30%)" }}
             >
-                <input
-                    type="number"
-                    min={1}
-                    max={20}
-                    value={inputValue}
-                    onChange={(e) => {
-                        setInputValue(e.target.value);
-                        const v = parseInt(e.target.value);
-                        if (!isNaN(v) && v >= 1 && v <= 20) onChange(v);
-                    }}
-                    onBlur={() => {
-                        const v = parseInt(inputValue);
-                        if (isNaN(v) || v < 1) {
-                            setInputValue(String(score));
-                        } else if (v > 20) {
-                            setInputValue("20");
-                            onChange(20);
-                        }
-                    }}
-                    className="w-10 bg-transparent text-center font-bold text-sm focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
+                <span className="font-bold text-sm">{score}</span>
             </div>
         </div>
     );
@@ -110,42 +84,25 @@ interface AbilityScoresSectionProps {
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
-export function AbilityScoresSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef }: AbilityScoresSectionProps) {
-    const { showToast } = useToast();
-
-    async function sync(p: GetPlayerResponse) {
-        const scores = p.playerSheet?.abilityScores ?? {};
-        await APIPlayer.update(p.id, {
-            playerSheet: {
-                ...p.playerSheet,
-                abilityScoresData: JSON.stringify(scores),
-            },
-        });
-    }
-
-    async function handleChange(key: AbilityKey, value: number) {
-        if (!player) return;
-        const next = {
-            ...player,
-            playerSheet: {
-                ...player.playerSheet,
-                abilityScores: {
-                    ...player.playerSheet?.abilityScores,
-                    [key]: value,
-                },
-            },
-        };
-        setPlayer(next);
-        await sync(next);
-    }
-
-    function handleRoll(label: string, score: number) {
+export function AbilityScoresSection({ player, setPlayer: _, diceBoardRef, timeoutDiceBoardRef }: AbilityScoresSectionProps) {
+    function handleRoll(key: AbilityKey, label: string, score: number) {
         const mod = Math.floor((score - 10) / 2);
         const modStr = calcMod(score);
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
             const roll = diceTotal(result);
             const total = roll + mod;
-            showToast(`${label}: ${roll} ${modStr} = ${total}`);
+            const diceCommand = mod === 0 ? "1d20" : mod > 0 ? `1d20+${mod}` : `1d20${mod}`;
+            dispatchRoll({ label, diceRolled: roll, modifier: mod, total, diceCommand });
+            if (player?.id) {
+                APIGameLog.create(player.id, {
+                    rollType: "abilityCheck",
+                    abilityKey: key,
+                    diceRolled: roll,
+                    modifier: mod,
+                    total,
+                    diceCommand,
+                }).catch(() => {});
+            }
         });
     }
 
@@ -162,8 +119,7 @@ export function AbilityScoresSection({ player, setPlayer, diceBoardRef, timeoutD
                             key={key}
                             label={label}
                             score={score}
-                            onChange={(v) => handleChange(key, v)}
-                            onRoll={() => handleRoll(label, score)}
+                            onRoll={() => handleRoll(key, label, score)}
                         />
                     );
                 })}

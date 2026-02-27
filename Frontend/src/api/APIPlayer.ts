@@ -24,7 +24,8 @@ export interface PlayerSheetResponse {
     weaponId?: string;
     abilityScores?: AbilityScores;
     skillsData?: string;
-    abilityScoresData?: string;
+    notes?: string;
+    savingThrowProficiencies?: string[];
 }
 
 export interface CreatePlayerInput {
@@ -33,6 +34,11 @@ export interface CreatePlayerInput {
 
 export interface CreatePlayerResponse {
     id: number;
+}
+
+export interface SetupProgressEntry {
+    section: string;
+    done: boolean;
 }
 
 export interface GetPlayerResponse {
@@ -46,6 +52,7 @@ export interface GetPlayerResponse {
     luminas?: LuminaResponse[];
     items?: PlayerItemResponse[];
     specialAttacks?: PlayerSpecialAttackResponse[];
+    setupProgress?: SetupProgressEntry[];
 }
 
 export interface UpdatePlayerInput {
@@ -75,6 +82,10 @@ export class APIPlayer {
 
     static async update(id: number, input: UpdatePlayerInput): Promise<GetPlayerResponse> {
         return api.put<UpdatePlayerInput, GetPlayerResponse>(`players/${id}`, input);
+    }
+
+    static async updateSetupProgress(playerId: number, section: string, done: boolean): Promise<void> {
+        return api.put(`players/${playerId}/setup-progress`, { section, done });
     }
 
     static async setMasterEditing(playerId: number, isMasterEditing: boolean): Promise<void> {

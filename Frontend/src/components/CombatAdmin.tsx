@@ -17,7 +17,7 @@ import GradientBar from "./GradientBar"
 import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { useToast } from "../components/Toast";
-import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
+import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName } from "../i18n";
 import type { BattleReward } from "../api/ResponseModel";
@@ -154,8 +154,10 @@ function calculateNPCDifficulty(npcId: string): number {
     const npc = getNpcById(npcId);
     if (!npc) return 0;
 
-    // Base: Poder + Habilidade + Resistência
-    let difficulty = npc.power + npc.hability + npc.resistance;
+    const strMod = Math.floor((npc.strength - 10) / 2);
+    const dexMod = Math.floor((npc.dexterity - 10) / 2);
+    const conMod = Math.floor((npc.constitution - 10) / 2);
+    let difficulty = strMod + dexMod + conMod;
 
     // Propriedades extras (+1 cada)
     if (npc.playFirst) difficulty += 1;
@@ -574,7 +576,7 @@ export default function CombatAdmin({
             if (npcInfo != undefined) {
                 initiative = {
                     initiativeValue: randomizeNpcInitiativeTotal(npcInfo),
-                    hability: npcInfo.hability,
+                    hability: Math.floor((npcInfo.dexterity - 10) / 2),
                     playFirst: npcInfo.playFirst ?? false
                 }
             }

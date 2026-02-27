@@ -7,6 +7,8 @@ import { t } from "../i18n";
 import { rollWithTimeout } from "../utils/RollUtils";
 import type { DiceBoardRef } from "./DiceBoard";
 import { diceTotal } from "../utils/DiceCalculator";
+import { APIGameLog } from "../api/APIGameLog";
+import { dispatchRoll } from "../utils/rollDispatcher";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -37,13 +39,13 @@ const SKILLS: SkillDef[] = [
     { id: "survival",      ability: "wisdom",       labelKey: "skills.survival"       },
 ];
 
-const MOD_LABEL: Record<AbilityKey, string> = {
-    strength:     "STR",
-    dexterity:    "DEX",
-    constitution: "CON",
-    intelligence: "INT",
-    wisdom:       "WIS",
-    charisma:     "CHA",
+const ABILITY_I18N_KEY: Record<AbilityKey, string> = {
+    strength:     "characterSheet.strength",
+    dexterity:    "characterSheet.dexterity",
+    constitution: "characterSheet.constitution",
+    intelligence: "characterSheet.intelligence",
+    wisdom:       "characterSheet.wisdom",
+    charisma:     "characterSheet.charisma",
 };
 
 function calcMod(score: number) {
@@ -89,11 +91,12 @@ function parseSkillsMap(raw?: string): SkillsMap {
 interface Props {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
+    isAdmin: boolean;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
-export default function SkillsSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef }: Props) {
+export default function SkillsSection({ player, setPlayer, isAdmin, diceBoardRef, timeoutDiceBoardRef }: Props) {
     const { showToast } = useToast();
     const scores   = player?.playerSheet?.abilityScores ?? {};
     const totalPts = player?.playerSheet?.totalPoints ?? 1;
@@ -128,12 +131,25 @@ export default function SkillsSection({ player, setPlayer, diceBoardRef, timeout
         save({ ...skillsMap, [id]: { ...prev, pinned: !prev.pinned } });
     }
 
-    function handleRoll(labelKey: string, bonus: number) {
+    function handleRoll(skillId: string, ability: AbilityKey, labelKey: string, bonus: number) {
         const label = t(labelKey);
-        const mod = bonus >= 0 ? `+${bonus}` : String(bonus);
+        const modDisplay = bonus >= 0 ? `+${bonus}` : String(bonus);
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
             const roll = diceTotal(result);
-            showToast(`${label}: ${roll} ${mod} = ${roll + bonus}`);
+            const total = roll + bonus;
+            const diceCommand = bonus === 0 ? "1d20" : bonus > 0 ? `1d20+${bonus}` : `1d20${bonus}`;
+            dispatchRoll({ label, diceRolled: roll, modifier: bonus, total, diceCommand });
+            if (player?.id) {
+                APIGameLog.create(player.id, {
+                    rollType: "skill",
+                    skillId,
+                    abilityKey: ability,
+                    diceRolled: roll,
+                    modifier: bonus,
+                    total,
+                    diceCommand,
+                }).catch(() => {});
+            }
         });
     }
 
@@ -195,8 +211,9 @@ export default function SkillsSection({ player, setPlayer, diceBoardRef, timeout
 
                             {/* PROF dot */}
                             <button
-                                onClick={() => toggleProficient(id)}
-                                className="flex items-center justify-center"
+                                onClick={() => isAdmin && toggleProficient(id)}
+                                disabled={!isAdmin}
+                                className={`flex items-center justify-center ${!isAdmin ? "cursor-default" : ""}`}
                                 aria-label={proficient ? t("skills.removeProficiency") : t("skills.addProficiency")}
                             >
                                 <span className={`w-3.5 h-3.5 rounded-full border-2 transition-colors ${
@@ -208,12 +225,12 @@ export default function SkillsSection({ player, setPlayer, diceBoardRef, timeout
 
                             {/* MOD */}
                             <span className="text-[10px] font-bold uppercase text-base-content/50 text-center">
-                                {MOD_LABEL[ability]}
+                                {t(ABILITY_I18N_KEY[ability]).slice(0, 3)}
                             </span>
 
                             {/* SKILL name — click to roll */}
                             <button
-                                onClick={() => handleRoll(labelKey, bonus)}
+                                onClick={() => handleRoll(id, ability, labelKey, bonus)}
                                 className="text-sm text-left hover:text-primary transition-colors cursor-pointer"
                             >
                                 {t(labelKey)}
@@ -221,7 +238,7 @@ export default function SkillsSection({ player, setPlayer, diceBoardRef, timeout
 
                             {/* BONUS — click to roll */}
                             <button
-                                onClick={() => handleRoll(labelKey, bonus)}
+                                onClick={() => handleRoll(id, ability, labelKey, bonus)}
                                 className="ml-auto flex items-center justify-center w-12 h-7 rounded border border-base-content/30 bg-base-200 hover:border-primary hover:text-primary transition-colors cursor-pointer"
                             >
                                 <span className="text-sm font-bold tabular-nums">

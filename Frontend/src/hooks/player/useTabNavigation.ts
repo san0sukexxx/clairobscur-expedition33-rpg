@@ -6,7 +6,7 @@ import type {
   UseTabNavigationReturn
 } from "../../pages/PlayerPage/PlayerPage.types";
 
-const VALID_TABS: PlayerTab[] = ["ficha", "combate", "habilidades", "inventario", "arma", "pictos", "luminas", "pericias"];
+const VALID_TABS: PlayerTab[] = ["ficha", "combate", "habilidades", "inventario", "arma", "pictos", "luminas", "pericias", "notas", "gamelog"];
 const TAB_STORAGE_KEY = "player-active-tab";
 
 function readStoredTab(): PlayerTab {

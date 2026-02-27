@@ -8,7 +8,7 @@ import type { WeaponDTO } from "../../types/WeaponDTO";
 /**
  * Tab types for PlayerPage navigation
  */
-export type PlayerTab = "ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas" | "pericias";
+export type PlayerTab = "ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas" | "pericias" | "notas" | "gamelog";
 
 /**
  * Combat tab types

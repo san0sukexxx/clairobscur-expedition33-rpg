@@ -87,21 +87,25 @@ export interface BattleReward {
 export interface NPCInfo {
     id: string;
     name: string;
-    power: number;
-    hability: number;
-    resistance: number;
+    // D&D 5e ability scores
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    wisdom: number;
+    charisma: number;
+    // Combat options
     playFirst?: boolean;
     weakTo?: Element;
     resistentTo?: Element;
     imuneTo?: Element;
-    absorbElement?: Element;  // Heals instead of taking damage from this element
+    absorbElement?: Element;
     freeShotWeakPoints?: number;
     attackList?: NPCAttack[];
-    specialAttackList?: NPCSpecialAttack[];
     isFlying?: boolean;
-    initiativeBonus?: number;  // Flat bonus added to initiative roll
-    maxLifeBonus?: number;  // Flat bonus added to max HP calculation (resistance * 5 + bonus)
-    reward?: BattleReward;  // Optional reward for defeating this NPC
+    initiativeBonus?: number;
+    maxLifeBonus?: number;
+    reward?: BattleReward;
 }
 
 export interface NPCStatusItem {
@@ -119,10 +123,6 @@ export interface NPCAttack {
     additionalDices?: number;  // Additional dice rolled for this attack (e.g., 2 = roll 3d6 instead of 1d6)
 }
 
-export interface NPCSpecialAttack {
-    type: SpecialAttackType;
-    statusList: NPCStatusItem[];
-}
 
 export interface PictoResponse {
     id: number,

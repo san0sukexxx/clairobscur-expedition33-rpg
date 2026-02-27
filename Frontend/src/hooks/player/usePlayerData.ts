@@ -6,19 +6,6 @@ import { APICampaign, type Campaign } from "../../api/APICampaign";
 import type { UsePlayerDataReturn } from "../../pages/PlayerPage/PlayerPage.types";
 
 /**
- * Hydrate parsed JSON fields back into typed objects
- */
-function hydratePlayer(p: GetPlayerResponse): GetPlayerResponse {
-  const abilityScores = p.playerSheet?.abilityScoresData
-    ? (() => { try { return JSON.parse(p.playerSheet.abilityScoresData!); } catch { return undefined; } })()
-    : p.playerSheet?.abilityScores;
-  return {
-    ...p,
-    playerSheet: abilityScores ? { ...p.playerSheet, abilityScores } : p.playerSheet,
-  };
-}
-
-/**
  * Get the last battle log ID from player info
  */
 function getLastBattleLogFromPlayer(playerInfo: GetPlayerResponse): number | undefined {
@@ -67,7 +54,7 @@ export function usePlayerData({ campaign, character }: UsePlayerDataParams): Use
       const lastLog = getLastBattleLogFromPlayer(playerResponse);
       setLastBattleLog(lastLog);
 
-      setPlayer(hydratePlayer(playerResponse));
+      setPlayer(playerResponse);
       setCampaignInfo(campaignData);
 
       setLoading(false);
