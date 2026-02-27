@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaPlay, FaArchive } from "react-icons/fa";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
@@ -13,6 +14,11 @@ export default function CampaignList() {
   const { items, loading, error, reload } = useApiListRaw<Campaign>(() =>
     APICampaign.list()
   );
+
+  useEffect(() => {
+    const id = setInterval(reload, 2000);
+    return () => clearInterval(id);
+  }, [reload]);
 
   return (
     <div className="min-h-dvh bg-base-200">

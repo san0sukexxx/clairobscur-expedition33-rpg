@@ -1837,6 +1837,7 @@
       "armorClass": "Classe de Armadura",
       "initiative": "Iniciativa",
       "hitPoints": "Pontos de Vida",
+      "restoreHp": "Restaurar HP total",
       "savingThrows": "Testes de Resistência",
       "senses": "Sentidos",
       "passivePerception": "Percepção Passiva",

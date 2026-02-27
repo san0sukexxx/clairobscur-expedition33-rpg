@@ -34,7 +34,7 @@ class PlayerController(
                                 Player(
                                         name = null,
                                         characterId = null,
-                                        totalPoints = 5,  // Start at level 5
+                                        totalPoints = 1,
                                         xp = 0,
                                         power = 0,
                                         hability = 0,

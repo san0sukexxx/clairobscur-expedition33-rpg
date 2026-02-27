@@ -1837,6 +1837,7 @@
       "armorClass": "Armor Class",
       "initiative": "Initiative",
       "hitPoints": "Hit Points",
+      "restoreHp": "Restore full HP",
       "savingThrows": "Saving Throws",
       "senses": "Senses",
       "passivePerception": "Passive Perception",

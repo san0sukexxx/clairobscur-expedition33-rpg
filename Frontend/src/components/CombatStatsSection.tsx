@@ -1,4 +1,5 @@
 import { useState, useEffect, type RefObject, type MutableRefObject } from "react";
+import { FiRefreshCw } from "react-icons/fi";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { useToast } from "./Toast";
 import { rollWithTimeout } from "../utils/RollUtils";
@@ -53,20 +54,37 @@ function InitiativeCard({ dexterity, onRoll }: { dexterity: number; onRoll: () =
 }
 
 /* ── Hit Points ── */
-function HitPointsCard({ hpCurrent, hpMax, onChangeCurrent, onChangeMax }: {
+function HitPointsCard({ hpCurrent, hpMax, onChangeCurrent, onChangeMax, onRefresh }: {
     hpCurrent: number; hpMax: number;
     onChangeCurrent: (v: number) => void; onChangeMax: (v: number) => void;
+    onRefresh: () => void;
 }) {
     const [curInput, setCurInput] = useState(String(hpCurrent));
     const [maxInput, setMaxInput] = useState(String(hpMax));
+    const [spinning, setSpinning] = useState(false);
     useEffect(() => setCurInput(String(hpCurrent)), [hpCurrent]);
     useEffect(() => setMaxInput(String(hpMax)), [hpMax]);
 
     const pct = hpMax > 0 ? Math.min(100, Math.max(0, (hpCurrent / hpMax) * 100)) : 0;
 
+    function handleRefresh() {
+        setSpinning(true);
+        onRefresh();
+        setTimeout(() => setSpinning(false), 600);
+    }
+
     return (
         <div className="rounded-lg bg-base-200 px-3 py-2 flex flex-col items-center gap-1 flex-1">
-            <span className="text-[9px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.hitPoints")}</span>
+            <div className="flex items-center justify-between w-full">
+                <span className="text-[9px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.hitPoints")}</span>
+                <button
+                    onClick={handleRefresh}
+                    title={t("characterSheet.restoreHp")}
+                    className="text-base-content/50 hover:text-success active:scale-90 transition-all"
+                >
+                    <FiRefreshCw className={`text-sm ${spinning ? "animate-spin" : ""}`} />
+                </button>
+            </div>
             <div className="flex items-center gap-0.5 text-2xl font-black">
                 <input
                     type="number"
@@ -153,6 +171,7 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
                     hpMax={hpMax}
                     onChangeCurrent={(v) => update({ hpCurrent: v })}
                     onChangeMax={(v) => update({ hpMax: v })}
+                    onRefresh={() => update({ hpCurrent: hpMax })}
                 />
                 <div className="rounded-lg bg-base-200 px-3 py-2 flex items-center justify-between">
                     <span className="text-[9px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.proficiencyBonus")}</span>
