@@ -47,7 +47,7 @@ class CampaignPlayerService(
                                 pictos = pictos,
                                 luminas = null,
                                 items = null,
-                                skills = null
+                                specialAttacks = null
                         )
                 }
         }

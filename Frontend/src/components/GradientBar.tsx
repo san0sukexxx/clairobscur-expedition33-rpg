@@ -2,7 +2,7 @@ import React from "react";
 import AnimatedStatBar from "./AnimatedStatBar";
 import type { BattleCharacterInfo, BattleTurnResponse } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
+import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils";
 import { t } from "../i18n";
 import { FaEdit } from "react-icons/fa";
 
@@ -75,10 +75,10 @@ export default function GradientBar({ characters, player, turns, forceShowTeamIs
     if (!playerInTurns) return null;
 
     // Check if player has any gradient skills equipped in slots
-    const hasGradientSkills = player?.skills?.some(playerSkill => {
-        if (playerSkill.slot === null || playerSkill.slot === undefined) return false;
-        const skillData = getEnrichedCharacterSkills(player).find(s => s.id === playerSkill.skillId);
-        return skillData?.isGradient ?? false;
+    const hasGradientSkills = player?.specialAttacks?.some(playerSA => {
+        if (playerSA.slot === null || playerSA.slot === undefined) return false;
+        const saData = getEnrichedCharacterSpecialAttacks(player).find(s => s.id === playerSA.specialAttackId);
+        return saData?.isGradient ?? false;
     }) ?? false;
 
     if (!hasGradientSkills) return null;

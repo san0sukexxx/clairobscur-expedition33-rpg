@@ -2,29 +2,29 @@ import React, { useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaInfoCircle, FaLock, FaUnlock, FaTrash } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
-import type { PlayerSkillResponse, SkillResponse } from "../api/ResponseModel";
+import type { PlayerSpecialAttackResponse, SpecialAttackResponse } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import { getPlayerHasSkill, getSkillById, getSkillIsBlocked, getEnrichedCharacterSkills, calculateUsedSkillPoints, hasPrerequisitesFulfilled } from "../utils/SkillUtils";
-import { calculateSkillPoints } from "../utils/PlayerCalculator";
-import { APISkill } from "../api/APISkill";
+import { getPlayerHasSpecialAttack, getSpecialAttackById, getSpecialAttackIsBlocked, getEnrichedCharacterSpecialAttacks, calculateUsedSpecialAttackPoints, hasPrerequisitesFulfilled } from "../utils/SpecialAttackUtils";
+import { calculateSpecialAttackPoints } from "../utils/PlayerCalculator";
+import { APISpecialAttack } from "../api/APISpecialAttack";
 import { renderStainText } from "../utils/StainTextUtils";
 import { t } from "../i18n";
 
-export interface SkillsListTabProps {
+export interface SpecialAttacksListTabProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     isAdmin: boolean;
     inBattle: boolean;
 }
 
-export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle }: SkillsListTabProps) {
+export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, inBattle }: SpecialAttacksListTabProps) {
     if(!player) { return }
 
-    const list: SkillResponse[] = getEnrichedCharacterSkills(player);
+    const list: SpecialAttackResponse[] = getEnrichedCharacterSpecialAttacks(player);
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-    const totalPoints = calculateSkillPoints(player);
-    const usedPoints = calculateUsedSkillPoints(player);
+    const totalPoints = calculateSpecialAttackPoints(player);
+    const usedPoints = calculateUsedSpecialAttackPoints(player);
     const remainingPoints = totalPoints - usedPoints;
 
     const toggle = useCallback((id: string) => {
@@ -34,66 +34,66 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
     if (list.length === 0) {
         return (
             <div className="w-full py-10 text-center opacity-70">
-                <p>{t("skills.noSkills")}</p>
+                <p>{t("specialAttacks.noSpecialAttacks")}</p>
             </div>
         );
     }
 
-    async function handleUnlock(skillId: string) {
+    async function handleUnlock(specialAttackId: string) {
         if (!player) return;
 
-        const alreadyUnlocked = player.skills?.some(s => s.skillId === skillId);
+        const alreadyUnlocked = player.specialAttacks?.some(s => s.specialAttackId === specialAttackId);
         if (alreadyUnlocked) return;
 
         try {
-            const relationId = await APISkill.addPlayerSkill({
+            const relationId = await APISpecialAttack.addPlayerSpecialAttack({
                 playerId: player.id,
-                skillId: skillId
+                specialAttackId: specialAttackId
             });
 
-            const newSkill: PlayerSkillResponse = {
+            const newSpecialAttack: PlayerSpecialAttackResponse = {
                 id: relationId.toString(),
-                skillId: skillId
+                specialAttackId: specialAttackId
             };
 
             setPlayer((prev) => {
                 if (!prev) return prev;
-                return { ...prev, skills: [...(prev.skills ?? []), newSkill] };
+                return { ...prev, specialAttacks: [...(prev.specialAttacks ?? []), newSpecialAttack] };
             });
         } catch (error) {
-            console.error(t("skillsList.unlockError"), error);
+            console.error(t("specialAttacksList.unlockError"), error);
         }
     }
 
-    async function handleRemove(skillId: string) {
+    async function handleRemove(specialAttackId: string) {
         if (!player) return;
 
-        const playerSkill = player.skills?.find(s => s.skillId === skillId);
-        if (!playerSkill) return;
+        const playerSpecialAttack = player.specialAttacks?.find(s => s.specialAttackId === specialAttackId);
+        if (!playerSpecialAttack) return;
 
         try {
-            const relationId = parseInt(playerSkill.id);
-            await APISkill.deletePlayerSkill(relationId);
+            const relationId = parseInt(playerSpecialAttack.id);
+            await APISpecialAttack.deletePlayerSpecialAttack(relationId);
 
             setPlayer((prev) => {
                 if (!prev) return prev;
                 return {
                     ...prev,
-                    skills: prev.skills?.filter(s => s.skillId !== skillId) ?? []
+                    specialAttacks: prev.specialAttacks?.filter(s => s.specialAttackId !== specialAttackId) ?? []
                 };
             });
         } catch (error) {
-            console.error(t("skillsList.removeError"), error);
+            console.error(t("specialAttacksList.removeError"), error);
         }
     }
 
-    const highlight = (text: string, skillId?: string) => {
-        // Only apply stain text rendering (converts "Mancha de X" to images) for Lune's skills
-        const isLuneSkill = skillId?.toLowerCase().includes("lune") ?? false;
-        const stainRendered = isLuneSkill ? renderStainText(text) : [text];
+    const highlight = (text: string, specialAttackId?: string) => {
+        // Only apply stain text rendering (converts "Mancha de X" to images) for Lune's special attacks
+        const isLuneSpecialAttack = specialAttackId?.toLowerCase().includes("lune") ?? false;
+        const stainRendered = isLuneSpecialAttack ? renderStainText(text) : [text];
 
-        // Check if this is a Maelle skill
-        const isMaelleSkill = skillId?.toLowerCase().includes("maelle") ?? false;
+        // Check if this is a Maelle special attack
+        const isMaelleSpecialAttack = specialAttackId?.toLowerCase().includes("maelle") ?? false;
 
         // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
@@ -107,7 +107,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
         // Add Maelle's stance terms with their colors
         const stanceTerms = ["Defensiva", "Ofensiva", "Virtuosa"];
 
-        const allTerms = [...terms, ...rankTerms, ...maskTerms, ...(isMaelleSkill ? stanceTerms : [])];
+        const allTerms = [...terms, ...rankTerms, ...maskTerms, ...(isMaelleSpecialAttack ? stanceTerms : [])];
         const pattern = new RegExp(`\\b(${allTerms.join("|")})\\b`, "g");
 
         // Function to get rank color class
@@ -168,7 +168,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                             {chunk}
                         </span>
                     );
-                } else if (stanceTerms.includes(chunk) && isMaelleSkill) {
+                } else if (stanceTerms.includes(chunk) && isMaelleSpecialAttack) {
                     // Apply stance-specific styling (Maelle only)
                     return (
                         <span key={`${nodeIdx}-${chunkIdx}`} className={getStanceColorClass(chunk)}>
@@ -190,37 +190,37 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
     };
 
     return (
-        <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6" aria-label={t("skillsList.sectionAriaLabel")}>
+        <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6" aria-label={t("specialAttacksList.sectionAriaLabel")}>
             <header className="mb-4">
-                <h2 className="text-xl font-semibold leading-none text-left">{t("skillsList.title")}</h2>
-                <p className="text-sm opacity-70 text-left">{t("skillsList.subtitle")}</p>
-                <span className="mt-2 block text-sm opacity-70 text-left">{t("skillsList.itemCount", { count: list.length })}</span>
+                <h2 className="text-xl font-semibold leading-none text-left">{t("specialAttacksList.title")}</h2>
+                <p className="text-sm opacity-70 text-left">{t("specialAttacksList.subtitle")}</p>
+                <span className="mt-2 block text-sm opacity-70 text-left">{t("specialAttacksList.itemCount", { count: list.length })}</span>
             </header>
 
             <div className="mb-4 flex items-center justify-center gap-2 rounded-lg border border-base-300 bg-base-100 px-4 py-2">
-                <span className="text-sm opacity-80">{t("skillsList.skillPoints")}</span>
+                <span className="text-sm opacity-80">{t("specialAttacksList.specialAttackPoints")}</span>
                 <span className={`text-lg font-bold ${remainingPoints < 0 ? 'text-red-400' : 'text-green-400'}`}>
                     {usedPoints} / {totalPoints}
                 </span>
                 {remainingPoints < 0 && (
-                    <span className="ml-2 text-xs text-red-400">({t("skillsList.excess", { count: Math.abs(remainingPoints) })})</span>
+                    <span className="ml-2 text-xs text-red-400">({t("specialAttacksList.excess", { count: Math.abs(remainingPoints) })})</span>
                 )}
             </div>
 
             {/* grade ajustada para desktop */}
             <div className="grid grid-cols-1 gap-4 md:gap-6">
-                {list.map((skill) => {
-                    const isOpen = !!expanded[skill.id];
-                    const skillInfo = getSkillById(skill.id)
+                {list.map((specialAttack) => {
+                    const isOpen = !!expanded[specialAttack.id];
+                    const specialAttackInfo = getSpecialAttackById(specialAttack.id)
 
-                    if (!skillInfo) { return; }
+                    if (!specialAttackInfo) { return; }
 
-                    if (getSkillIsBlocked(skill.id, player)) {
+                    if (getSpecialAttackIsBlocked(specialAttack.id, player)) {
                         return (
                             <article
-                                key={skill.id}
+                                key={specialAttack.id}
                                 className="group relative flex h-full items-center justify-center rounded-2xl border border-base-300 bg-base-100 p-10 shadow-sm"
-                                aria-label={t("skills.skillBlocked")}
+                                aria-label={t("specialAttacks.specialAttackBlocked")}
                             >
                                 <div className="flex flex-col items-center gap-2 text-base-content/60">
                                     <div className="relative h-12 w-12">
@@ -229,41 +229,41 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                             <FaLock className="h-7 w-7 opacity-80" aria-hidden />
                                         </div>
                                     </div>
-                                    <span className="text-xs opacity-70">{t("skills.locked")}</span>
+                                    <span className="text-xs opacity-70">{t("specialAttacks.locked")}</span>
                                 </div>
                             </article>
                         );
                     }
 
-                    const disabled = !getPlayerHasSkill(skill.id, player);
+                    const disabled = !getPlayerHasSpecialAttack(specialAttack.id, player);
 
                     return (
                         <article
-                            key={skill.id}
+                            key={specialAttack.id}
                             className={[
                                 "group relative flex h-full flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm transition-all hover:shadow-md focus-within:ring-1 focus-within:ring-base-content/20",
                             ].join(" ")}
                         >
                             <button
                                 type="button"
-                                onClick={() => toggle(skill.id)}
+                                onClick={() => toggle(specialAttack.id)}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter" || e.key === " ") {
                                         e.preventDefault();
-                                        toggle(skill.id);
+                                        toggle(specialAttack.id);
                                     }
                                 }}
                                 className="w-full cursor-pointer select-none text-left outline-none"
                                 aria-expanded={isOpen}
-                                aria-controls={`skill-desc-${skill.id}`}
+                                aria-controls={`special-attack-desc-${specialAttack.id}`}
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="relative h-12 w-12 shrink-0">
                                         <div className="absolute inset-0 rotate-45 overflow-hidden rounded-sm border border-base-300 bg-base-200/50">
-                                            {skillInfo.image ? (
+                                            {specialAttackInfo.image ? (
                                                 <img
-                                                    src={`/skills/${skillInfo.image}`}
-                                                    alt={skillInfo.name}
+                                                    src={`/skills/${specialAttackInfo.image}`}
+                                                    alt={specialAttackInfo.name}
                                                     className={`${disabled ? "opacity-70 grayscale" : ""} h-full w-full -rotate-45 object-cover`}
                                                 />
                                             ) : (
@@ -277,68 +277,68 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                     <div className="min-w-0 flex-1">
                                         <div className="flex flex-wrap items-center gap-2 min-w-0">
                                             <h3 className="truncate text-lg font-semibold tracking-wide text-base-content min-w-0">
-                                                <span className={`${disabled ? "opacity-70 grayscale" : ""} block truncate`}>{skillInfo.name}</span>
+                                                <span className={`${disabled ? "opacity-70 grayscale" : ""} block truncate`}>{specialAttackInfo.name}</span>
                                             </h3>
 
-                                            {skillInfo.type && (
+                                            {specialAttackInfo.type && (
                                                 <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs ${
-                                                    skillInfo.type === "sun"
+                                                    specialAttackInfo.type === "sun"
                                                         ? "border-amber-400/30 text-amber-300"
                                                         : "border-purple-400/30 text-purple-300"
                                                 }`}>
-                                                    {skillInfo.type === "sun" ? "☀" : "☾"}
+                                                    {specialAttackInfo.type === "sun" ? "☀" : "☾"}
                                                 </span>
                                             )}
 
-                                            {skillInfo.isGradient && (
+                                            {specialAttackInfo.isGradient && (
                                                 <span className="shrink-0 rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-xs text-fuchsia-200">
-                                                    {t("skillPicker.gradient")}
+                                                    {t("specialAttackPicker.gradient")}
                                                 </span>
                                             )}
 
-                                            <span className={`ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md ${skillInfo.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                                                {skillInfo.isGradient ? `${skillInfo.cost} ${skillInfo.cost === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : skillInfo.cost}
+                                            <span className={`ml-auto shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md ${specialAttackInfo.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                                                {specialAttackInfo.isGradient ? `${specialAttackInfo.cost} ${specialAttackInfo.cost === 1 ? t("specialAttackPicker.charge") : t("specialAttackPicker.charges")}` : specialAttackInfo.cost}
                                             </span>
                                         </div>
 
                                         {disabled && (
-                                            <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-amber-700">
+                                            <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-warning">
                                                 <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
-                                                <span>{t("skillsList.notUnlocked")}</span>
+                                                <span>{t("specialAttacksList.notUnlocked")}</span>
                                             </div>
                                         )}
                                     </div>
                                 </div>
                             </button>
 
-                            {disabled && !getSkillIsBlocked(skill.id, player) && hasPrerequisitesFulfilled(skill.id, player) && !inBattle && (
+                            {disabled && !getSpecialAttackIsBlocked(specialAttack.id, player) && hasPrerequisitesFulfilled(specialAttack.id, player) && !inBattle && (
                                 <div className="mt-4 flex justify-end">
-                                    {skillInfo.unlockCost !== undefined && remainingPoints < skillInfo.unlockCost ? (
+                                    {specialAttackInfo.unlockCost !== undefined && remainingPoints < specialAttackInfo.unlockCost ? (
                                         <div className="text-xs text-red-400">
-                                            {t("skillsList.insufficientPoints", { required: skillInfo.unlockCost, available: remainingPoints })}
+                                            {t("specialAttacksList.insufficientPoints", { required: specialAttackInfo.unlockCost, available: remainingPoints })}
                                         </div>
                                     ) : (
                                         <button
                                             type="button"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                handleUnlock(skill.id);
+                                                handleUnlock(specialAttack.id);
                                             }}
                                             className={`inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-semibold text-white shadow-sm focus:outline-none focus:ring-2 ${
-                                                skillInfo.masterUnlock
+                                                specialAttackInfo.masterUnlock
                                                     ? 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500'
                                                     : 'bg-emerald-600 hover:bg-emerald-500 focus:ring-emerald-400'
                                             }`}
                                         >
                                             <FaUnlock className="h-3.5 w-3.5" aria-hidden />
-                                            {skillInfo.masterUnlock ? (
-                                                skillInfo.unlockCost === undefined || skillInfo.unlockCost === 0
-                                                    ? `${t("skills.unlock")} (${t("skillsList.free")}) - ${t("skills.masterUnlock")}`
-                                                    : `${t("skills.unlock")} (${skillInfo.unlockCost}) - ${t("skills.masterUnlock")}`
+                                            {specialAttackInfo.masterUnlock ? (
+                                                specialAttackInfo.unlockCost === undefined || specialAttackInfo.unlockCost === 0
+                                                    ? `${t("specialAttacks.unlock")} (${t("specialAttacksList.free")}) - ${t("specialAttacks.masterUnlock")}`
+                                                    : `${t("specialAttacks.unlock")} (${specialAttackInfo.unlockCost}) - ${t("specialAttacks.masterUnlock")}`
                                             ) : (
-                                                skillInfo.unlockCost === undefined || skillInfo.unlockCost === 0
-                                                    ? `${t("skills.unlock")} (${t("skillsList.free")})`
-                                                    : `${t("skills.unlock")} (${skillInfo.unlockCost})`
+                                                specialAttackInfo.unlockCost === undefined || specialAttackInfo.unlockCost === 0
+                                                    ? `${t("specialAttacks.unlock")} (${t("specialAttacksList.free")})`
+                                                    : `${t("specialAttacks.unlock")} (${specialAttackInfo.unlockCost})`
                                             )}
                                         </button>
                                     )}
@@ -351,7 +351,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                         type="button"
                                         onClick={(e) => {
                                             e.preventDefault();
-                                            handleRemove(skill.id);
+                                            handleRemove(specialAttack.id);
                                         }}
                                         className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400"
                                     >
@@ -365,7 +365,7 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                             <AnimatePresence initial={false}>
                                 {isOpen && (
                                     <motion.div
-                                        id={`skill-desc-${skill.id}`}
+                                        id={`special-attack-desc-${specialAttack.id}`}
                                         key="content"
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: "auto" }}
@@ -376,24 +376,24 @@ export default function SkillsListSection({ player, setPlayer, isAdmin, inBattle
                                         {/* Descrição (apagada se disabled) */}
                                         <div className={disabled ? "opacity-70 grayscale" : ""}>
                                             <div className="whitespace-pre-line text-[15px] leading-snug text-base-content/90 break-words">
-                                                {highlight(skillInfo.description, skillInfo.id)}
+                                                {highlight(specialAttackInfo.description, specialAttackInfo.id)}
                                             </div>
                                         </div>
 
                                         {/* Pré-requisitos — SEM apagado/grayscale */}
-                                        {disabled && (skillInfo.preRequisite && skillInfo.preRequisite.length > 0) && (
-                                            <div className="mt-2 rounded-md border border-warning/40 bg-warning/25 p-2 text-xs text-amber-700">
+                                        {disabled && (specialAttackInfo.preRequisite && specialAttackInfo.preRequisite.length > 0) && (
+                                            <div className="mt-2 rounded-md border border-warning/40 bg-warning/25 p-2 text-xs text-warning">
                                                 <div className="flex flex-wrap gap-3">
-                                                    <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-amber-700">
+                                                    <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-warning">
                                                         <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
-                                                        <span>{t("skillsList.unlockPrerequisite")}</span>
+                                                        <span>{t("specialAttacksList.unlockPrerequisite")}</span>
                                                     </div>
 
-                                                    {skillInfo.preRequisite?.map((prerequisite, index) => {
-                                                        const preRequisiteInfo = getSkillById(prerequisite)
+                                                    {specialAttackInfo.preRequisite?.map((prerequisite, index) => {
+                                                        const preRequisiteInfo = getSpecialAttackById(prerequisite)
 
                                                         if (!preRequisiteInfo) { return }
-                                                    
+
                                                         return (
                                                             <div key={index} className="flex items-center gap-3 my-2 mx-2">
                                                                 <div className="relative h-12 w-12 shrink-0">

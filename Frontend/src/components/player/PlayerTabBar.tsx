@@ -1,4 +1,4 @@
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaClipboardList } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
 import { t } from "../../i18n";
@@ -22,7 +22,8 @@ const TABS: TabConfig[] = [
   { id: "pictos", icon: <GiStoneTablet className="mx-auto text-2xl" />, labelKey: "playerPage.navigation.tabs.pictos" },
   { id: "luminas", icon: <GiCrystalShine className="mx-auto text-2xl" />, labelKey: "playerPage.navigation.tabs.luminas" },
   { id: "inventario", icon: <GiBackpack className="mx-auto text-2xl" />, labelKey: "playerPage.navigation.tabs.inventory" },
-  { id: "habilidades", icon: <GiMagicSwirl className="mx-auto text-2xl" />, labelKey: "playerPage.navigation.tabs.skills" },
+  { id: "habilidades", icon: <GiMagicSwirl className="mx-auto text-2xl" />, labelKey: "playerPage.navigation.tabs.specialAttacks" },
+  { id: "pericias", icon: <FaClipboardList className="mx-auto text-2xl" />, labelKey: "playerPage.navigation.tabs.skills" },
   { id: "combate", icon: <LuSwords className="mx-auto text-2xl" />, labelKey: "playerPage.navigation.tabs.combat" },
 ];
 
@@ -32,7 +33,7 @@ const TABS: TabConfig[] = [
 export function PlayerTabBar({ tab, setTab, isExecutingSkill }: PlayerTabBarProps) {
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-base-100 border-t shadow-lg">
-      <nav className="grid grid-cols-7">
+      <nav className="grid grid-cols-8">
         {TABS.map(({ id, icon, labelKey }) => (
           <button
             key={id}

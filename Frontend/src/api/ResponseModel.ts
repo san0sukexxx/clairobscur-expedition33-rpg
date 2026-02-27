@@ -14,7 +14,7 @@ export type StatusType =
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent" | "absorb";
 export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot" | "skill";
-export type SkillType = "give-status";
+export type SpecialAttackType = "give-status";
 export type PictoColor = "green" | "red" | "blue" | "yellow";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";
@@ -97,7 +97,7 @@ export interface NPCInfo {
     absorbElement?: Element;  // Heals instead of taking damage from this element
     freeShotWeakPoints?: number;
     attackList?: NPCAttack[];
-    skillList?: NPCSkill[];
+    specialAttackList?: NPCSpecialAttack[];
     isFlying?: boolean;
     initiativeBonus?: number;  // Flat bonus added to initiative roll
     maxLifeBonus?: number;  // Flat bonus added to max HP calculation (resistance * 5 + bonus)
@@ -119,8 +119,8 @@ export interface NPCAttack {
     additionalDices?: number;  // Additional dice rolled for this attack (e.g., 2 = roll 3d6 instead of 1d6)
 }
 
-export interface NPCSkill {
-    type: SkillType;
+export interface NPCSpecialAttack {
+    type: SpecialAttackType;
     statusList: NPCStatusItem[];
 }
 
@@ -181,13 +181,13 @@ export interface PlayerItemResponse {
     maxQuantity: number
 }
 
-export interface PlayerSkillResponse {
+export interface PlayerSpecialAttackResponse {
     id: string;
-    skillId: string;
+    specialAttackId: string;
     slot?: number | null;
 }
 
-export interface SkillResponse {
+export interface SpecialAttackResponse {
     id: string;
     character: string;
     name: string;

@@ -5,7 +5,7 @@ import type { BattleCharacterInfo, WeaponInfo } from "../../api/ResponseModel";
 import type { WeaponDTO } from "../../types/WeaponDTO";
 import type { DiceBoardRef } from "../DiceBoard";
 import type { CombatMenuAction } from "../../utils/CombatMenuActions";
-import type { PlayerTab, CombatTabType, SkillsTabType } from "../../pages/PlayerPage/PlayerPage.types";
+import type { PlayerTab, CombatTabType, SpecialAttacksTabType } from "../../pages/PlayerPage/PlayerPage.types";
 
 import WeaponSection from "../WeaponSection";
 import PlayerSheet from "../PlayerSheet";
@@ -14,6 +14,7 @@ import { SavingThrowsSection } from "../SavingThrowsSection";
 import { CombatStatsSection } from "../CombatStatsSection";
 import PictosTab from "../PictosTab";
 import LuminasSection from "../LuminasSection";
+import SpecialAttacksSection from "../SpecialAttacksSection";
 import SkillsSection from "../SkillsSection";
 import ItemsSection from "../ItemsSection";
 import CombatSection from "../CombatSection";
@@ -33,8 +34,8 @@ interface PlayerContentProps {
   onMenuAction: (action: CombatMenuAction) => void;
   onSelectTarget: (target: BattleCharacterInfo) => void;
   isReviveMode: boolean;
-  isSelectingSkillTarget: boolean;
-  pendingSkillId: string | null;
+  isSelectingSpecialAttackTarget: boolean;
+  pendingSpecialAttackId: string | null;
   combatTab: CombatTabType;
   setCombatTab: Dispatch<SetStateAction<CombatTabType>>;
   isExecutingSkill: boolean;
@@ -47,9 +48,9 @@ interface PlayerContentProps {
   onPotionUsed: () => void;
 
   // Skills props
-  skillsInitialTab: SkillsTabType;
-  isUsingSkillMode: boolean;
-  onUseSkill: (skillId: string) => void;
+  specialAttacksInitialTab: SpecialAttacksTabType;
+  isUsingSpecialAttackMode: boolean;
+  onUseSpecialAttack: (skillId: string) => void;
 
   // Dice refs
   diceBoardRef: RefObject<DiceBoardRef | null>;
@@ -72,8 +73,8 @@ export function PlayerContent({
   onMenuAction,
   onSelectTarget,
   isReviveMode,
-  isSelectingSkillTarget,
-  pendingSkillId,
+  isSelectingSpecialAttackTarget,
+  pendingSpecialAttackId,
   combatTab,
   setCombatTab,
   isExecutingSkill,
@@ -82,9 +83,9 @@ export function PlayerContent({
   isInventoryActiveInCombat,
   onReviveRequested,
   onPotionUsed,
-  skillsInitialTab,
-  isUsingSkillMode,
-  onUseSkill,
+  specialAttacksInitialTab,
+  isUsingSpecialAttackMode,
+  onUseSpecialAttack,
   diceBoardRef,
   timeoutDiceBoardRef,
 }: PlayerContentProps) {
@@ -162,8 +163,8 @@ export function PlayerContent({
           onMenuAction={onMenuAction}
           player={player}
           onSelectTarget={onSelectTarget}
-          isReviveMode={isReviveMode || pendingSkillId === "lune-rebirth"}
-          isSelectingSkillTarget={isSelectingSkillTarget}
+          isReviveMode={isReviveMode || pendingSpecialAttackId === "lune-rebirth"}
+          isSelectingSpecialAttackTarget={isSelectingSpecialAttackTarget}
           forcedTab={combatTab}
           onTabChange={setCombatTab}
           isExecutingSkill={isExecutingSkill}
@@ -174,13 +175,22 @@ export function PlayerContent({
       )}
 
       {tab === "habilidades" && (
-        <SkillsSection
+        <SpecialAttacksSection
           player={player}
           setPlayer={setPlayer}
           isAdmin={isAdmin}
-          initialTab={skillsInitialTab}
-          isUsingSkillMode={isUsingSkillMode}
-          onUseSkill={onUseSkill}
+          initialTab={specialAttacksInitialTab}
+          isUsingSpecialAttackMode={isUsingSpecialAttackMode}
+          onUseSpecialAttack={onUseSpecialAttack}
+        />
+      )}
+
+      {tab === "pericias" && (
+        <SkillsSection
+          player={player}
+          setPlayer={setPlayer}
+          diceBoardRef={diceBoardRef}
+          timeoutDiceBoardRef={timeoutDiceBoardRef}
         />
       )}
     </section>

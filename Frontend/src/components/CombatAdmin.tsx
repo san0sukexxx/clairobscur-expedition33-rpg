@@ -9,7 +9,7 @@ import { getCharacterLabelById } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils"
-import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SkillType, type NPCSkill, type StainType, type StatusType } from "../api/ResponseModel"
+import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType, type StatusType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
@@ -18,7 +18,7 @@ import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../lib/WeaponsDataLoader";
-import { getAttackTypeLabel, getSkillLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
+import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName } from "../i18n";
 import type { BattleReward } from "../api/ResponseModel";
 import { APIRewards } from "../api/APIRewards";
@@ -165,7 +165,7 @@ function calculateNPCDifficulty(npcId: string): number {
     if (npc.absorbElement) difficulty += 1;
     if (npc.freeShotWeakPoints) difficulty -= 1;
     if (npc.attackList && npc.attackList.length > 0) difficulty += 1;
-    if (npc.skillList && npc.skillList.length > 0) difficulty += 1;
+    if (npc.specialAttackList && npc.specialAttackList.length > 0) difficulty += 1;
     if (npc.isFlying) difficulty += 1;
     if (npc.initiativeBonus) difficulty += 1;
     if (npc.maxLifeBonus) difficulty += 1;
@@ -194,8 +194,8 @@ export default function CombatAdmin({
     const [isSelectingTarget, setIsSelectingTarget] = useState(false)
     const [attackType, setAttackType] = useState<AttackType | null>(null)
     const [npcAttack, setNPCAttack] = useState<NPCAttack | null>(null)
-    const [npcSkill, setNPCSkill] = useState<NPCSkill | null>(null)
-    const [npcSkillIndex, setNpcSkillIndex] = useState<number | null>(null)
+    const [npcSpecialAttack, setNPCSpecialAttack] = useState<NPCSpecialAttack | null>(null)
+    const [npcSpecialAttackIndex, setNpcSpecialAttackIndex] = useState<number | null>(null)
     const [npcAttackIndex, setNpcAttackIndex] = useState<number | null>(null)
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -892,29 +892,29 @@ export default function CombatAdmin({
                         })}
                     </div>
 
-                    {(npcInfo?.skillList?.length ?? 0) > 0 && (
+                    {(npcInfo?.specialAttackList?.length ?? 0) > 0 && (
                         <div className="flex flex-col gap-2 mt-2">
-                            <h3 className="text-lg font-semibold">{t("combatAdmin.labels.skills")}</h3>
+                            <h3 className="text-lg font-semibold">{t("combatAdmin.labels.specialAttacks")}</h3>
 
                             <div className="flex flex-row flex-wrap items-center gap-4">
-                                {npcInfo?.skillList?.map((skill, idx) => {
-                                    const isSelected = isSelectingTarget && npcSkillIndex === idx;
+                                {npcInfo?.specialAttackList?.map((skill, idx) => {
+                                    const isSelected = isSelectingTarget && npcSpecialAttackIndex === idx;
                                     return (
                                     <div key={idx} className="flex flex-col items-center gap-2">
                                         <button
                                             className={`btn btn-md ${isSelected ? "btn-error" : "btn-primary"}`}
                                             onClick={() => {
                                                 if (isSelected) {
-                                                    setNPCSkill(null);
-                                                    setNpcSkillIndex(null);
+                                                    setNPCSpecialAttack(null);
+                                                    setNpcSpecialAttackIndex(null);
                                                     setIsSelectingTarget(false);
                                                 } else {
-                                                    npcSkillTapped(skill, idx);
+                                                    npcSpecialAttackTapped(skill, idx);
                                                 }
                                             }}
                                             disabled={isPassingTurn}
                                         >
-                                            {isSelected ? t("combatAdmin.labels.cancel") : getSkillLabel(skill.type)}
+                                            {isSelected ? t("combatAdmin.labels.cancel") : getSpecialAttackLabel(skill.type)}
                                         </button>
 
                                         <div className="flex flex-col items-center text-sm opacity-80">
@@ -944,7 +944,7 @@ export default function CombatAdmin({
 
                         <div className="flex flex-row flex-wrap items-center gap-4">
                             {(["basic", "jump", "gradient"] as AttackType[]).map((type) => {
-                                const isActionSelected = isSelectingTarget && attackType === type && !npcAttack && npcSkillIndex === null && npcAttackIndex === null;
+                                const isActionSelected = isSelectingTarget && attackType === type && !npcAttack && npcSpecialAttackIndex === null && npcAttackIndex === null;
                                 const icon = type === "basic" ? <FaFistRaised className="mr-1" /> : type === "jump" ? <FaArrowUp className="mr-1" /> : <FaFireAlt className="mr-1" />;
                                 const label = type === "basic" ? t("combatAdmin.labels.basicAttack") : type === "jump" ? t("combatAdmin.labels.jumpOnOne") : t("combatAdmin.labels.gradientAttack");
                                 return (
@@ -2434,26 +2434,26 @@ export default function CombatAdmin({
     }
 
     function npcCustomAttackTapped(npcAttack: NPCAttack, index: number) {
-        setNPCSkill(null)
-        setNpcSkillIndex(null)
+        setNPCSpecialAttack(null)
+        setNpcSpecialAttackIndex(null)
         setAttackType(npcAttack.type)
         setNPCAttack(npcAttack)
         setNpcAttackIndex(index)
         startTargeting(npcAttack.type)
     }
 
-    function npcSkillTapped(skill: NPCSkill, index: number) {
+    function npcSpecialAttackTapped(skill: NPCSpecialAttack, index: number) {
         setAttackType(null)
         setNPCAttack(null)
         setNpcAttackIndex(null)
-        setNPCSkill(skill)
-        setNpcSkillIndex(index)
+        setNPCSpecialAttack(skill)
+        setNpcSpecialAttackIndex(index)
         startTargeting(undefined)
     }
 
     function npcAttackTapped(type: AttackType) {
-        setNPCSkill(null)
-        setNpcSkillIndex(null)
+        setNPCSpecialAttack(null)
+        setNpcSpecialAttackIndex(null)
         setNpcAttackIndex(null)
         setAttackType(type)
         setNPCAttack(null)
@@ -2478,11 +2478,11 @@ export default function CombatAdmin({
         setNPCAttack(null);
         setAttackType(null);
         setNpcAttackIndex(null);
-        setNPCSkill(null);
-        setNpcSkillIndex(null);
+        setNPCSpecialAttack(null);
+        setNpcSpecialAttackIndex(null);
     }
 
-    function handleSkillTargetSelected(targetEntity: CombatEntity) {
+    function handleSpecialAttackTargetSelected(targetEntity: CombatEntity) {
         setIsSelectingTarget(false);
     }
 

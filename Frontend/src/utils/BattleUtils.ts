@@ -1,4 +1,4 @@
-import type { StatusType, SkillType } from "../api/ResponseModel";
+import type { StatusType, SpecialAttackType } from "../api/ResponseModel";
 import { t } from "../i18n";
 
 export function getBattleStatusLabel(status: string): string {
@@ -29,12 +29,12 @@ export function getAttackTypeLabel(type: string): string {
     }
 }
 
-export function getSkillLabel(skill: SkillType): string {
-    switch (skill) {
+export function getSpecialAttackLabel(specialAttack: SpecialAttackType): string {
+    switch (specialAttack) {
         case "give-status":
             return t("battle.skillType.giveStatus");
         default:
-            return skill;
+            return specialAttack;
     }
 }
 

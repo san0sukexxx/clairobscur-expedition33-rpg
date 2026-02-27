@@ -45,8 +45,8 @@ export default function PlayerPage() {
   const {
     tab, setTab,
     combatTab, setCombatTab,
-    skillsInitialTab, setSkillsInitialTab,
-    isUsingSkillMode, setIsUsingSkillMode,
+    specialAttacksInitialTab, setSpecialAttacksInitialTab,
+    isUsingSpecialAttackMode, setIsUsingSpecialAttackMode,
     isInventoryActiveInCombat, setIsInventoryActiveInCombat,
     isReviveMode, setIsReviveMode,
     revivePercent, setRevivePercent
@@ -94,8 +94,8 @@ export default function PlayerPage() {
     setIsExecutingSkill,
     setTab,
     setCombatTab,
-    setSkillsInitialTab,
-    setIsUsingSkillMode,
+    setSpecialAttacksInitialTab,
+    setIsUsingSpecialAttackMode,
     setIsInventoryActiveInCombat,
     checkPlayerLoop
   });
@@ -190,8 +190,8 @@ export default function PlayerPage() {
           onMenuAction={handleCombatMenuAction}
           onSelectTarget={handleSelectTarget}
           isReviveMode={isReviveMode}
-          isSelectingSkillTarget={false}
-          pendingSkillId={null}
+          isSelectingSpecialAttackTarget={false}
+          pendingSpecialAttackId={null}
           combatTab={combatTab}
           setCombatTab={setCombatTab}
           isExecutingSkill={isExecutingSkill}
@@ -200,9 +200,9 @@ export default function PlayerPage() {
           isInventoryActiveInCombat={isInventoryActiveInCombat}
           onReviveRequested={handleReviveRequested}
           onPotionUsed={handlePotionUsed}
-          skillsInitialTab={skillsInitialTab}
-          isUsingSkillMode={isUsingSkillMode}
-          onUseSkill={() => {}}
+          specialAttacksInitialTab={specialAttacksInitialTab}
+          isUsingSpecialAttackMode={isUsingSpecialAttackMode}
+          onUseSpecialAttack={() => {}}
           diceBoardRef={diceBoardRef}
           timeoutDiceBoardRef={timeoutDiceBoardRef}
         />

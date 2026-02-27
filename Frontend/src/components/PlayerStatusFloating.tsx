@@ -1,7 +1,7 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { type BattleCharacterInfo } from "../api/ResponseModel";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
-import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
+import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
 import { t } from "../i18n";
@@ -32,10 +32,10 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     ) ?? false;
 
     // Check if player has any gradient skills equipped in slots
-    const hasGradientSkills = player?.skills?.some(playerSkill => {
-        if (playerSkill.slot === null || playerSkill.slot === undefined) return false;
-        const skillData = getEnrichedCharacterSkills(player).find(s => s.id === playerSkill.skillId);
-        return skillData?.isGradient ?? false;
+    const hasGradientSkills = player?.specialAttacks?.some(playerSA => {
+        if (playerSA.slot === null || playerSA.slot === undefined) return false;
+        const saData = getEnrichedCharacterSpecialAttacks(player).find(s => s.id === playerSA.specialAttackId);
+        return saData?.isGradient ?? false;
     }) ?? false;
 
     return (
@@ -248,7 +248,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                             <div className="flex items-center justify-between text-[10px] mb-0.5">
                                 <span className="opacity-50">{t("combat.progress")}</span>
                                 <span className="font-mono text-xs">
-                                    {currentRank === "S" ? t("playerPage.skills.perfectionMax") : `${rankProgress}/${rankMax}`}
+                                    {currentRank === "S" ? t("playerPage.specialAttacks.perfectionMax") : `${rankProgress}/${rankMax}`}
                                 </span>
                             </div>
                             <AnimatedStatBar

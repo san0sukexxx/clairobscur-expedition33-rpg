@@ -21,7 +21,7 @@ import {
   countFailuresRolls
 } from "../../utils/DiceCalculator";
 import { triggerOnBattleStart } from "../../utils/PictoEffectsIntegration";
-import type { PlayerTab, CombatTabType, SkillsTabType } from "../../pages/PlayerPage/PlayerPage.types";
+import type { PlayerTab, CombatTabType, SpecialAttacksTabType } from "../../pages/PlayerPage/PlayerPage.types";
 
 interface UseCombatActionsParams {
   player: GetPlayerResponse | null;
@@ -35,8 +35,8 @@ interface UseCombatActionsParams {
   setIsExecutingSkill: Dispatch<SetStateAction<boolean>>;
   setTab: (tab: PlayerTab) => void;
   setCombatTab: Dispatch<SetStateAction<CombatTabType>>;
-  setSkillsInitialTab: Dispatch<SetStateAction<SkillsTabType>>;
-  setIsUsingSkillMode: Dispatch<SetStateAction<boolean>>;
+  setSpecialAttacksInitialTab: Dispatch<SetStateAction<SpecialAttacksTabType>>;
+  setIsUsingSpecialAttackMode: Dispatch<SetStateAction<boolean>>;
   setIsInventoryActiveInCombat: Dispatch<SetStateAction<boolean>>;
   checkPlayerLoop: () => Promise<void>;
 }
@@ -62,8 +62,8 @@ export function useCombatActions({
   setIsExecutingSkill,
   setTab,
   setCombatTab,
-  setSkillsInitialTab,
-  setIsUsingSkillMode,
+  setSpecialAttacksInitialTab,
+  setIsUsingSpecialAttackMode,
   setIsInventoryActiveInCombat,
   checkPlayerLoop
 }: UseCombatActionsParams): UseCombatActionsReturn {
@@ -251,8 +251,8 @@ export function useCombatActions({
         setIsInventoryActiveInCombat(true);
         break;
       case COMBAT_MENU_ACTIONS.Skills:
-        setSkillsInitialTab("picker");
-        setIsUsingSkillMode(true);
+        setSpecialAttacksInitialTab("picker");
+        setIsUsingSpecialAttackMode(true);
         setTab("habilidades");
         break;
       case COMBAT_MENU_ACTIONS.Initiative:
@@ -268,13 +268,13 @@ export function useCombatActions({
         attemptFlee();
         break;
       case COMBAT_MENU_ACTIONS.Cancel:
-        setIsUsingSkillMode(false);
+        setIsUsingSpecialAttackMode(false);
         break;
       default:
         break;
     }
   }, [
-    setTab, setIsInventoryActiveInCombat, setSkillsInitialTab, setIsUsingSkillMode,
+    setTab, setIsInventoryActiveInCombat, setSpecialAttacksInitialTab, setIsUsingSpecialAttackMode,
     rollInitiative, joinBattle, endTurn, attemptFlee
   ]);
 

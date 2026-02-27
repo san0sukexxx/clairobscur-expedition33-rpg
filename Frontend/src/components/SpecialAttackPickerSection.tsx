@@ -1,19 +1,19 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import type { SkillResponse } from "../api/ResponseModel";
-import SkillModal from "./SkillModal";
-import { getEnrichedCharacterSkills, getPlayerHasSkill, getSkillIsBlocked } from "../utils/SkillUtils";
-import { APISkill } from "../api/APISkill";
+import type { SpecialAttackResponse } from "../api/ResponseModel";
+import SpecialAttackModal from "./SpecialAttackModal";
+import { getEnrichedCharacterSpecialAttacks, getPlayerHasSpecialAttack, getSpecialAttackIsBlocked } from "../utils/SpecialAttackUtils";
+import { APISpecialAttack } from "../api/APISpecialAttack";
 import { renderStainText } from "../utils/StainTextUtils";
 import { t } from "../i18n";
 
-export interface SkillPickerProps {
+export interface SpecialAttackPickerProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     inBattle: boolean;
-    isUsingSkillMode?: boolean;
-    onUseSkill?: (skillId: string) => void;
+    isUsingSpecialAttackMode?: boolean;
+    onUseSpecialAttack?: (specialAttackId: string) => void;
 }
 
 // --- UI Helpers ---
@@ -37,7 +37,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
         <div className="p-4">
             <input
                 className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
-                placeholder={t("skillPicker.searchPlaceholder")}
+                placeholder={t("specialAttackPicker.searchPlaceholder")}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
             />
@@ -45,36 +45,36 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
     );
 }
 
-function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: SkillResponse) => void }) {
+function SpecialAttackCard({ specialAttack, onPick }: { specialAttack: SpecialAttackResponse; onPick?: (s: SpecialAttackResponse) => void }) {
     return (
         <button
-            onClick={() => onPick && onPick(skill)}
+            onClick={() => onPick && onPick(specialAttack)}
             className={[
                 "w-full text-left grid grid-cols-[56px_1fr] items-center gap-3 p-3",
                 "bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl py-4 pl-4",
             ].join(" ")}
-            aria-label={skill.name}
+            aria-label={specialAttack.name}
         >
-            <DiamondThumb image={skill.image} alt={skill.name} />
+            <DiamondThumb image={specialAttack.image} alt={specialAttack.name} />
             <div className="flex flex-col gap-1 min-w-0">
                 <div className="flex items-start gap-2 justify-between flex-wrap">
-                    <div className="text-base font-semibold leading-tight">{skill.name}</div>
-                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md flex-shrink-0 ${skill.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                        {skill.isGradient ? `${skill.cost} ${skill.cost === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : skill.cost}
+                    <div className="text-base font-semibold leading-tight">{specialAttack.name}</div>
+                    <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md flex-shrink-0 ${specialAttack.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
+                        {specialAttack.isGradient ? `${specialAttack.cost} ${specialAttack.cost === 1 ? t("specialAttackPicker.charge") : t("specialAttackPicker.charges")}` : specialAttack.cost}
                     </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                    {skill.type && (
+                    {specialAttack.type && (
                         <span className={`rounded-full border px-2 py-0.5 ${
-                            skill.type === "sun"
+                            specialAttack.type === "sun"
                                 ? "border-amber-400/30 text-amber-300"
                                 : "border-purple-400/30 text-purple-300"
                         }`}>
-                            {skill.type === "sun" ? "☀" : "☾"}
+                            {specialAttack.type === "sun" ? "☀" : "☾"}
                         </span>
                     )}
-                    {skill.isGradient && (
-                        <span className="rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-fuchsia-200">{t("skillPicker.gradient")}</span>
+                    {specialAttack.isGradient && (
+                        <span className="rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-fuchsia-200">{t("specialAttackPicker.gradient")}</span>
                     )}
                 </div>
             </div>
@@ -82,41 +82,41 @@ function SkillCard({ skill, onPick }: { skill: SkillResponse; onPick?: (s: Skill
     );
 }
 
-export default function SkillPickerSection({ player, setPlayer, inBattle, isUsingSkillMode = false, onUseSkill }: SkillPickerProps) {
+export default function SpecialAttackPickerSection({ player, setPlayer, inBattle, isUsingSpecialAttackMode = false, onUseSpecialAttack }: SpecialAttackPickerProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [query, setQuery] = useState("");
     const [slotAssignments, setSlotAssignments] = useState<Record<number, string>>({});
     const [expanded, setExpanded] = useState<Record<number, boolean>>({});
 
-    const characterSkills = useMemo(() =>
-        getEnrichedCharacterSkills(player),
+    const characterSpecialAttacks = useMemo(() =>
+        getEnrichedCharacterSpecialAttacks(player),
         [player]
     );
 
     useEffect(() => {
-        if (!player?.skills) return;
+        if (!player?.specialAttacks) return;
 
         const assignments: Record<number, string> = {};
-        player.skills.forEach(skill => {
-            if (skill.slot !== null && skill.slot !== undefined) {
-                assignments[skill.slot] = skill.skillId;
+        player.specialAttacks.forEach(sa => {
+            if (sa.slot !== null && sa.slot !== undefined) {
+                assignments[sa.slot] = sa.specialAttackId;
             }
         });
         setSlotAssignments(assignments);
-    }, [player?.skills]);
+    }, [player?.specialAttacks]);
 
-    const slots: (SkillResponse | null)[] = useMemo(() => {
-        const arr: (SkillResponse | null)[] = [null, null, null, null, null, null];
+    const slots: (SpecialAttackResponse | null)[] = useMemo(() => {
+        const arr: (SpecialAttackResponse | null)[] = [null, null, null, null, null, null];
 
-        Object.entries(slotAssignments).forEach(([slot, skillId]) => {
-            const skill = characterSkills.find(s => s.id === skillId);
-            if (skill && player && getPlayerHasSkill(skillId, player) && !getSkillIsBlocked(skillId, player)) {
-                arr[Number(slot)] = skill;
+        Object.entries(slotAssignments).forEach(([slot, specialAttackId]) => {
+            const sa = characterSpecialAttacks.find(s => s.id === specialAttackId);
+            if (sa && player && getPlayerHasSpecialAttack(specialAttackId, player) && !getSpecialAttackIsBlocked(specialAttackId, player)) {
+                arr[Number(slot)] = sa;
             }
         });
 
         return arr;
-    }, [characterSkills, slotAssignments, player]);
+    }, [characterSpecialAttacks, slotAssignments, player]);
 
     const currentMP = useMemo(() => {
         if (inBattle && player?.fightInfo) {
@@ -142,13 +142,13 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         setExpanded((prev) => ({ ...prev, [idx]: !prev[idx] }));
     }, []);
 
-    const highlight = (text: string, skillId?: string) => {
-        // Only apply stain text rendering (converts "Mancha de X" to images) for Lune's skills
-        const isLuneSkill = skillId?.toLowerCase().includes("lune") ?? false;
-        const stainRendered = isLuneSkill ? renderStainText(text) : [text];
+    const highlight = (text: string, specialAttackId?: string) => {
+        // Only apply stain text rendering (converts "Mancha de X" to images) for Lune's special attacks
+        const isLuneSpecialAttack = specialAttackId?.toLowerCase().includes("lune") ?? false;
+        const stainRendered = isLuneSpecialAttack ? renderStainText(text) : [text];
 
-        // Check if this is a Maelle skill
-        const isMaelleSkill = skillId?.toLowerCase().includes("maelle") ?? false;
+        // Check if this is a Maelle special attack
+        const isMaelleSpecialAttack = specialAttackId?.toLowerCase().includes("maelle") ?? false;
 
         // Then apply term highlighting on each text chunk
         const terms = ["Físico", "Predição", "Predições", "Mágico", "Sangramento", "Veneno", "Atordoamento"];
@@ -162,7 +162,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         // Add Maelle's stance terms with their colors
         const stanceTerms = ["Defensiva", "Ofensiva", "Virtuosa"];
 
-        const allTerms = [...terms, ...rankTerms, ...maskTerms, ...(isMaelleSkill ? stanceTerms : [])];
+        const allTerms = [...terms, ...rankTerms, ...maskTerms, ...(isMaelleSpecialAttack ? stanceTerms : [])];
         const pattern = new RegExp(`\\b(${allTerms.join("|")})\\b`, "g");
 
         // Function to get rank color class
@@ -223,7 +223,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                             {chunk}
                         </span>
                     );
-                } else if (stanceTerms.includes(chunk) && isMaelleSkill) {
+                } else if (stanceTerms.includes(chunk) && isMaelleSpecialAttack) {
                     // Apply stance-specific styling (Maelle only)
                     return (
                         <span key={`${nodeIdx}-${chunkIdx}`} className={getStanceColorClass(chunk)}>
@@ -249,10 +249,10 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
 
         const assignedIds = new Set(Object.values(slotAssignments));
 
-        const pool = characterSkills.filter((s) =>
+        const pool = characterSpecialAttacks.filter((s) =>
             !assignedIds.has(s.id) &&
-            getPlayerHasSkill(s.id, player) &&
-            !getSkillIsBlocked(s.id, player)
+            getPlayerHasSpecialAttack(s.id, player) &&
+            !getSpecialAttackIsBlocked(s.id, player)
         );
 
         const q = query.trim().toLowerCase();
@@ -260,41 +260,41 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         return pool.filter(
             (s) => s.name.toLowerCase().includes(q)
         );
-    }, [characterSkills, query, slotAssignments, player]);
+    }, [characterSpecialAttacks, query, slotAssignments, player]);
 
-    async function upsertSkillAt(slotIndex: number, skill: SkillResponse) {
+    async function upsertSpecialAttackAt(slotIndex: number, specialAttack: SpecialAttackResponse) {
         if (!player) return;
-        if (getSkillIsBlocked(skill.id, player) || !getPlayerHasSkill(skill.id, player)) return;
+        if (getSpecialAttackIsBlocked(specialAttack.id, player) || !getPlayerHasSpecialAttack(specialAttack.id, player)) return;
 
-        const playerSkill = player.skills?.find(s => s.skillId === skill.id);
-        if (!playerSkill) return;
+        const playerSpecialAttack = player.specialAttacks?.find(s => s.specialAttackId === specialAttack.id);
+        if (!playerSpecialAttack) return;
 
-        if (playerSkill.slot === slotIndex) {
+        if (playerSpecialAttack.slot === slotIndex) {
             setOpenSlot(null);
             return;
         }
 
-        const previousSkillInSlot = slotAssignments[slotIndex];
+        const previousSpecialAttackInSlot = slotAssignments[slotIndex];
 
         try {
-            if (previousSkillInSlot && previousSkillInSlot !== skill.id) {
-                const prevPlayerSkill = player.skills?.find(s => s.skillId === previousSkillInSlot);
-                if (prevPlayerSkill) {
-                    const prevRelationId = parseInt(prevPlayerSkill.id);
-                    await APISkill.updatePlayerSkill(prevRelationId, { slot: null });
+            if (previousSpecialAttackInSlot && previousSpecialAttackInSlot !== specialAttack.id) {
+                const prevPlayerSpecialAttack = player.specialAttacks?.find(s => s.specialAttackId === previousSpecialAttackInSlot);
+                if (prevPlayerSpecialAttack) {
+                    const prevRelationId = parseInt(prevPlayerSpecialAttack.id);
+                    await APISpecialAttack.updatePlayerSpecialAttack(prevRelationId, { slot: null });
                 }
             }
 
-            const relationId = parseInt(playerSkill.id);
-            await APISkill.updatePlayerSkill(relationId, { slot: slotIndex });
+            const relationId = parseInt(playerSpecialAttack.id);
+            await APISpecialAttack.updatePlayerSpecialAttack(relationId, { slot: slotIndex });
 
             setPlayer(prev => {
                 if (!prev) return prev;
                 return {
                     ...prev,
-                    skills: prev.skills?.map(s => {
-                        if (s.skillId === skill.id) return { ...s, slot: slotIndex };
-                        if (s.skillId === previousSkillInSlot && previousSkillInSlot !== skill.id) return { ...s, slot: null };
+                    specialAttacks: prev.specialAttacks?.map(s => {
+                        if (s.specialAttackId === specialAttack.id) return { ...s, slot: slotIndex };
+                        if (s.specialAttackId === previousSpecialAttackInSlot && previousSpecialAttackInSlot !== specialAttack.id) return { ...s, slot: null };
                         return s;
                     }) ?? []
                 };
@@ -302,34 +302,34 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
 
             setOpenSlot(null);
         } catch (error) {
-            console.error(t("skillPicker.equipError"), error);
+            console.error(t("specialAttackPicker.equipError"), error);
         }
     }
 
     async function clearSlot(slotIndex: number) {
         if (!player) return;
 
-        const skillId = slotAssignments[slotIndex];
-        if (!skillId) return;
+        const specialAttackId = slotAssignments[slotIndex];
+        if (!specialAttackId) return;
 
-        const playerSkill = player.skills?.find(s => s.skillId === skillId);
-        if (!playerSkill) return;
+        const playerSpecialAttack = player.specialAttacks?.find(s => s.specialAttackId === specialAttackId);
+        if (!playerSpecialAttack) return;
 
         try {
-            const relationId = parseInt(playerSkill.id);
-            await APISkill.updatePlayerSkill(relationId, { slot: null });
+            const relationId = parseInt(playerSpecialAttack.id);
+            await APISpecialAttack.updatePlayerSpecialAttack(relationId, { slot: null });
 
             setPlayer(prev => {
                 if (!prev) return prev;
                 return {
                     ...prev,
-                    skills: prev.skills?.map(s =>
-                        s.skillId === skillId ? { ...s, slot: null } : s
+                    specialAttacks: prev.specialAttacks?.map(s =>
+                        s.specialAttackId === specialAttackId ? { ...s, slot: null } : s
                     ) ?? []
                 };
             });
         } catch (error) {
-            console.error(t("skillPicker.unequipError"), error);
+            console.error(t("specialAttackPicker.unequipError"), error);
         }
     }
 
@@ -337,20 +337,20 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
         if (!slots[idx] && !inBattle) setOpenSlot(idx);
     }
 
-    function handleUseSkill(skillId: string) {
-        if (onUseSkill) {
-            onUseSkill(skillId);
+    function handleUseSpecialAttack(specialAttackId: string) {
+        if (onUseSpecialAttack) {
+            onUseSpecialAttack(specialAttackId);
         }
     }
 
-    function getEffectiveCost(skill: SkillResponse): number {
-        return skill.cost;
+    function getEffectiveCost(specialAttack: SpecialAttackResponse): number {
+        return specialAttack.cost;
     }
 
-    function canUseSkill(skill: SkillResponse): boolean {
-        const effectiveCost = getEffectiveCost(skill);
+    function canUseSpecialAttack(specialAttack: SpecialAttackResponse): boolean {
+        const effectiveCost = getEffectiveCost(specialAttack);
 
-        if (skill.isGradient) {
+        if (specialAttack.isGradient) {
             if (currentGradientCharges < effectiveCost) return false;
         } else {
             if (currentMP < effectiveCost) return false;
@@ -361,17 +361,17 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
 
     return (
         <div className="text-base-content">
-            <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("skillPicker.title")}</div>
+            <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("specialAttackPicker.title")}</div>
 
-            {inBattle && !isUsingSkillMode && (
+            {inBattle && !isUsingSpecialAttackMode && (
                 <div className="mb-4 rounded-lg border border-warning/40 bg-warning/25 p-3 text-center text-sm text-amber-700">
-                    {t("skillPicker.cannotEquipInBattle")}
+                    {t("specialAttackPicker.cannotEquipInBattle")}
                 </div>
             )}
 
-            {isUsingSkillMode && inBattle && (
+            {isUsingSpecialAttackMode && inBattle && (
                 <div className="mb-4 rounded-lg border border-info/30 bg-info/10 p-3 text-center text-sm text-info">
-                    {t("skillPicker.selectEquippedToCombat")}
+                    {t("specialAttackPicker.selectEquippedToCombat")}
                 </div>
             )}
 
@@ -404,20 +404,20 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                     }
                                 }}
                                 aria-expanded={selected ? isOpen : undefined}
-                                aria-controls={selected ? `skill-desc-${idx}` : undefined}
+                                aria-controls={selected ? `special-attack-desc-${idx}` : undefined}
                                 className={`w-full text-left pl-24 rounded-2xl transition-colors flex items-center relative pr-12 ${
                                     selected
                                         ? "py-8 hover:bg-base-300/30 cursor-pointer"
-                                        : (isUsingSkillMode && inBattle)
+                                        : (isUsingSpecialAttackMode && inBattle)
                                             ? "py-4 cursor-not-allowed opacity-70"
-                                            : (inBattle && !isUsingSkillMode)
+                                            : (inBattle && !isUsingSpecialAttackMode)
                                                 ? "py-4 cursor-not-allowed opacity-70"
                                                 : "py-4 hover:bg-base-300/30 cursor-pointer"
                                 }`}
                             >
                                 {/* Losango lateral */}
                                 <div className="absolute left-5 top-1/2 -translate-y-1/2">
-                                    <DiamondThumb image={selected?.image} alt={selected?.name ?? t("skillPicker.selectSkillAlt")} />
+                                    <DiamondThumb image={selected?.image} alt={selected?.name ?? t("specialAttackPicker.selectSpecialAttackAlt")} />
                                 </div>
 
                                 {selected ? (
@@ -435,28 +435,28 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                             )}
                                             {selected.isGradient && (
                                                 <span className="shrink-0 rounded-full border border-fuchsia-400/30 px-2 py-0.5 text-xs text-fuchsia-200">
-                                                    {t("skillPicker.gradient")}
+                                                    {t("specialAttackPicker.gradient")}
                                                 </span>
                                             )}
                                             <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md ${selected.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                                                {selected.isGradient ? `${getEffectiveCost(selected)} ${getEffectiveCost(selected) === 1 ? t("skillPicker.charge") : t("skillPicker.charges")}` : getEffectiveCost(selected)}
+                                                {selected.isGradient ? `${getEffectiveCost(selected)} ${getEffectiveCost(selected) === 1 ? t("specialAttackPicker.charge") : t("specialAttackPicker.charges")}` : getEffectiveCost(selected)}
                                             </span>
                                         </div>
 
-                                        {isUsingSkillMode && inBattle ? (
+                                        {isUsingSpecialAttackMode && inBattle ? (
                                             <button
                                                 className={`absolute right-6 top-1/2 -translate-y-1/2 px-4 py-1.5 text-sm rounded-md border border-base-300 ${
-                                                    canUseSkill(selected)
+                                                    canUseSpecialAttack(selected)
                                                         ? 'bg-emerald-600 hover:bg-emerald-500'
                                                         : 'bg-gray-600 opacity-50 cursor-not-allowed'
                                                 }`}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    if (canUseSkill(selected)) {
-                                                        handleUseSkill(selected.id);
+                                                    if (canUseSpecialAttack(selected)) {
+                                                        handleUseSpecialAttack(selected.id);
                                                     }
                                                 }}
-                                                disabled={!canUseSkill(selected)}
+                                                disabled={!canUseSpecialAttack(selected)}
                                                 aria-label={`${t("common.use")} ${selected.name}`}
                                             >
                                                 {t("common.use")}
@@ -473,14 +473,14 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                                     if (!inBattle) clearSlot(idx);
                                                 }}
                                                 disabled={inBattle}
-                                                aria-label={t("skillPicker.removeFromSlot")}
+                                                aria-label={t("specialAttackPicker.removeFromSlot")}
                                             >
                                                 ×
                                             </button>
                                         )}
                                     </>
                                 ) : (
-                                    <div className="w-full opacity-60 py-4">{t("skillPicker.selectASkill")}</div>
+                                    <div className="w-full opacity-60 py-4">{t("specialAttackPicker.selectASpecialAttack")}</div>
                                 )}
                             </div>
 
@@ -489,7 +489,7 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
                                 <AnimatePresence initial={false}>
                                     {isOpen && (
                                         <motion.div
-                                            id={`skill-desc-${idx}`}
+                                            id={`special-attack-desc-${idx}`}
                                             key="content"
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{ opacity: 1, height: "auto" }}
@@ -512,17 +512,17 @@ export default function SkillPickerSection({ player, setPlayer, inBattle, isUsin
             </div>
 
             {/* Modal de seleção */}
-            <SkillModal open={openSlot !== null} onClose={() => setOpenSlot(null)}>
+            <SpecialAttackModal open={openSlot !== null} onClose={() => setOpenSlot(null)}>
                 <SearchBox value={query} onChange={setQuery} />
                 <div className="px-4 pb-4 overflow-y-auto max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filtered.map((s) => (
-                        <SkillCard key={s.id} skill={s} onPick={(ss) => upsertSkillAt(openSlot ?? 0, ss)} />
+                        <SpecialAttackCard key={s.id} specialAttack={s} onPick={(ss) => upsertSpecialAttackAt(openSlot ?? 0, ss)} />
                     ))}
                     {filtered.length === 0 && (
-                        <div className="opacity-70 p-8 text-center">{t("skillPicker.noSkillsFound")}</div>
+                        <div className="opacity-70 p-8 text-center">{t("specialAttackPicker.noSpecialAttacksFound")}</div>
                     )}
                 </div>
-            </SkillModal>
+            </SpecialAttackModal>
         </div>
     );
 }

@@ -14,7 +14,9 @@ data class PlayerSheetResponse(
         val mpCurrent: Int,
         val hpCurrent: Int,
         val notes: String?,
-        val weaponId: String?
+        val weaponId: String?,
+        val skillsData: String?,
+        val abilityScoresData: String?
 ) {
         companion object {
                 fun fromEntity(p: Player) =
@@ -30,7 +32,9 @@ data class PlayerSheetResponse(
                                 mpCurrent = p.mpCurrent,
                                 hpCurrent = p.hpCurrent,
                                 notes = p.notes,
-                                weaponId = p.weaponId
+                                weaponId = p.weaponId,
+                                skillsData = p.skillsData,
+                                abilityScoresData = p.abilityScoresData
                         )
         }
 }

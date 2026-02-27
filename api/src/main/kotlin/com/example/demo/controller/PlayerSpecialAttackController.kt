@@ -1,28 +1,28 @@
 package com.example.demo.controller
 
-import com.example.demo.dto.CreatePlayerSkillRequest
-import com.example.demo.dto.UpdatePlayerSkillRequest
-import com.example.demo.model.PlayerSkill
-import com.example.demo.repository.PlayerSkillRepository
+import com.example.demo.dto.CreatePlayerSpecialAttackRequest
+import com.example.demo.dto.UpdatePlayerSpecialAttackRequest
+import com.example.demo.model.PlayerSpecialAttack
+import com.example.demo.repository.PlayerSpecialAttackRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/player-Skills")
-class PlayerSkillController(private val repository: PlayerSkillRepository) {
+@RequestMapping("/api/player-special-attacks")
+class PlayerSpecialAttackController(private val repository: PlayerSpecialAttackRepository) {
 
     @PostMapping
-    fun create(@RequestBody body: CreatePlayerSkillRequest): Int {
-        val existing = repository.findByPlayerIdAndSkillId(body.playerId, body.skillId)
+    fun create(@RequestBody body: CreatePlayerSpecialAttackRequest): Int {
+        val existing = repository.findByPlayerIdAndSpecialAttackId(body.playerId, body.specialAttackId)
 
         if (existing != null) {
             return existing.id ?: 0
         }
 
         val entity =
-                PlayerSkill(
+                PlayerSpecialAttack(
                         playerId = body.playerId,
-                        skillId = body.skillId,
+                        specialAttackId = body.specialAttackId,
                         slot = body.slot
                 )
 
@@ -32,7 +32,7 @@ class PlayerSkillController(private val repository: PlayerSkillRepository) {
     @PutMapping("/{id}")
     fun update(
             @PathVariable id: Int,
-            @RequestBody body: UpdatePlayerSkillRequest
+            @RequestBody body: UpdatePlayerSpecialAttackRequest
     ): ResponseEntity<Void> {
         val existing = repository.findById(id).orElse(null)
                 ?: return ResponseEntity.notFound().build()
@@ -58,8 +58,8 @@ class PlayerSkillController(private val repository: PlayerSkillRepository) {
 
     @DeleteMapping("/player/{playerId}")
     fun deleteAllByPlayerId(@PathVariable playerId: Int): ResponseEntity<Void> {
-        val skills = repository.findByPlayerId(playerId)
-        repository.deleteAll(skills)
+        val specialAttacks = repository.findByPlayerId(playerId)
+        repository.deleteAll(specialAttacks)
         return ResponseEntity.noContent().build()
     }
 }

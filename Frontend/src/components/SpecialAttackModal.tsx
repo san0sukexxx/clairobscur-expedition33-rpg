@@ -30,7 +30,7 @@ function Modal({
             <div className="absolute inset-0 flex items-center justify-center p-4">
                 <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
-                        <div className="text-lg tracking-wide">{t("skills.selectSkill")}</div>
+                        <div className="text-lg tracking-wide">{t("specialAttacks.selectSpecialAttack")}</div>
                         <button onClick={onClose} className="text-2xl leading-none px-2" aria-label={t("common.close")}>
                             ×
                         </button>

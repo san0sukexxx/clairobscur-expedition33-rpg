@@ -1814,7 +1814,7 @@
       "selectCharacter": "Selecione seu personagem",
       "characterLevel": "Nível",
       "levelPlaceholder": "Nível",
-      "skillPoints": "Ptos. de habilidade",
+      "specialAttackPoints": "Ptos. de habilidade",
       "power": "Poder",
       "luminas": "Luminas",
       "maxCost": "Custo Máx.",
@@ -1846,7 +1846,7 @@
     "tabs": {
       "sheet": "Ficha",
       "combat": "Combate",
-      "skills": "Habilidades",
+      "specialAttacks": "Ataques Especiais",
       "inventory": "Inventário",
       "weapon": "Arma",
       "pictos": "Pictos",
@@ -1859,7 +1859,7 @@
       "team": "Equipe",
       "attack": "Atacar",
       "items": "Itens",
-      "skills": "Habilidades",
+      "specialAttacks": "Especiais",
       "flee": "Tentar fugir",
       "freeShot": "Tiro livre",
       "endTurn": "Encerrar o turno",
@@ -1978,7 +1978,7 @@
       "labels": {
         "playerTurn": "Turno do Jogador",
         "npcTurn": "Turno do NPC",
-        "skills": "Habilidades",
+        "specialAttacks": "Ataques Especiais",
         "otherActions": "Outras ações",
         "id": "ID",
         "name": "Nome",
@@ -2088,14 +2088,14 @@
       "details": "Detalhes",
       "editing": "Editando"
     },
-    "skills": {
+    "specialAttacks": {
       "unlock": "Desbloquear",
       "masterUnlock": "Desbloquear Mestre",
-      "selectSkill": "Selecione uma habilidade",
-      "skillBlocked": "Habilidade Bloqueada",
+      "selectSpecialAttack": "Selecione um ataque especial",
+      "specialAttackBlocked": "Especial Bloqueado",
       "locked": "Bloqueado",
       "noDeadAllies": "Não há aliados mortos",
-      "noSkills": "Nenhuma habilidade disponível para este personagem.",
+      "noSpecialAttacks": "Nenhum ataque especial disponível para este personagem.",
       "gustave-lumiere-assault": {
         "name": "Assalto Luimièriano",
         "description": "Causa dano baixo em alvo único. 5 ataques. Usa elemento da arma. Acertos críticos geram 1 Carga adicional."
@@ -2741,34 +2741,34 @@
         "description": "Ataque de som de trombeta. Efeito: Aplica 1 buff aleatório em 1-3 aliados (Empowered, Protected, Shielded, Regeneration ou Hastened). Máscara de Conjurador ou Onipotente: aplica 2 buffs aleatórios por aliado. Roda Bestial: +4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Troubadour enquanto Monoco estiver no grupo ativo."
       }
     },
-    "skillPicker": {
-      "title": "HABILIDADES",
-      "searchPlaceholder": "Buscar habilidade...",
+    "specialAttackPicker": {
+      "title": "ESPECIAIS",
+      "searchPlaceholder": "Buscar ataque especial...",
       "gradient": "Gradiente",
       "charge": "carga",
       "charges": "cargas",
-      "equipError": "Erro ao equipar habilidade:",
-      "unequipError": "Erro ao desequipar habilidade:",
-      "cannotEquipInBattle": "Não é possível equipar ou desequipar habilidades durante a batalha",
-      "selectEquippedToCombat": "Selecione uma habilidade equipada para usar em combate",
-      "selectSkillAlt": "Selecionar habilidade",
-      "removeFromSlot": "Remover habilidade do slot",
-      "selectASkill": "Selecione uma Habilidade",
-      "noSkillsFound": "Nenhuma habilidade encontrada."
+      "equipError": "Erro ao equipar ataque especial:",
+      "unequipError": "Erro ao desequipar ataque especial:",
+      "cannotEquipInBattle": "Não é possível equipar ou desequipar ataques especiais durante a batalha",
+      "selectEquippedToCombat": "Selecione um ataque especial equipado para usar em combate",
+      "selectSpecialAttackAlt": "Selecionar ataque especial",
+      "removeFromSlot": "Remover ataque especial do slot",
+      "selectASpecialAttack": "Selecione um Especial",
+      "noSpecialAttacksFound": "Nenhum ataque especial encontrado."
     },
-    "skillsList": {
-      "title": "Habilidades",
-      "subtitle": "Lista completa das habilidades do personagem",
+    "specialAttacksList": {
+      "title": "Especiais",
+      "subtitle": "Lista completa dos especiais do personagem",
       "itemCount": "{count} item(ns)",
-      "skillPoints": "Pontos de Habilidade:",
+      "specialAttackPoints": "Pontos de Especial:",
       "excess": "Excesso: {count}",
-      "notUnlocked": "Habilidade ainda não desbloqueada",
+      "notUnlocked": "Ataque especial ainda não desbloqueado",
       "insufficientPoints": "Pontos insuficientes (necessário: {required}, disponível: {available})",
       "free": "Grátis",
-      "unlockPrerequisite": "Obtenha uma dessas habilidades para desbloquear",
-      "unlockError": "Erro ao desbloquear habilidade:",
-      "removeError": "Erro ao remover habilidade:",
-      "sectionAriaLabel": "Seção de habilidades"
+      "unlockPrerequisite": "Obtenha um desses ataques especiais para desbloquear",
+      "unlockError": "Erro ao desbloquear ataque especial:",
+      "removeError": "Erro ao remover ataque especial:",
+      "sectionAriaLabel": "Seção de ataques especiais"
     },
     "items": {
       "title": "Itens",
@@ -3100,7 +3100,7 @@
         "errorRegisteringDefense": "Falha ao registrar a defesa",
         "errorResolvingStatus": "Erro resolver o status"
       },
-      "skills": {
+      "specialAttacks": {
         "noDeadAllies": "Não há aliados mortos",
         "noValidEnemies": "Nenhum inimigo válido encontrado!",
         "requiresAllStains": "Requer todas as 4 manchas elementais (Raio, Terra, Fogo, Gelo)!",
@@ -3131,7 +3131,7 @@
         "scopeRollAll": "Rolou {roll}: Cura todos os aliados!",
         "scopeRollSingle": "Rolou {roll}: Cura 1 aliado!",
         "healedTarget": "{name} curou {amount} HP!",
-        "regenerationApplied": "Regeneração aplicada por {turns} turnos!",
+        "regenerationApplied": "Regeneração aplicada!",
         "bonusDamageVsMarked": "Alvo Marcado! +{bonus} de dano!",
         "burnConsumptionBonus": "Consumiu {stacks} Queimaduras! +{bonus} de dano!",
         "buffsCopied": "Buffs copiados para outros aliados!",
@@ -3265,7 +3265,6 @@
         "foretellAppliedOnCrit": "+{count} Presságio aplicado (Crítico)!",
         "mpGrantedToAlly": "+{amount} PM concedido a {name}!",
         "turnDelayedAmount": "Turno de {name} atrasado em {amount} posição(ões)!",
-        "regenerationApplied": "Regeneração aplicada!",
         "stanceChangeMpBonus": "+1 PM por mudança de postura!",
         "stanceLostBasicAttack": "Postura perdida por ataque básico!"
       },
@@ -3303,9 +3302,10 @@
           "pictos": "Pictos",
           "luminas": "Luminas",
           "inventory": "Inventário",
-          "skills": "Habilidades",
+          "specialAttacks": "Especiais",
           "combat": "Combate",
-          "settings": "Configurações"
+          "settings": "Configurações",
+          "skills": "Perícias"
         }
       }
     },
@@ -3315,6 +3315,38 @@
       "languagePtBR": "Português (Brasil)",
       "languageEn": "Inglês",
       "theme": "Tema"
+    },
+    "skills": {
+      "title": "Perícias",
+      "colPin": "Pin",
+      "colProf": "Prof",
+      "colMod": "Mod",
+      "colSkill": "Perícia",
+      "colBonus": "Bônus",
+      "addProficiency": "Adicionar proficiência",
+      "removeProficiency": "Remover proficiência",
+      "pin": "Fixar",
+      "unpin": "Desafixar",
+      "saveError": "Erro ao salvar perícias",
+      "acrobatics": "Acrobacia",
+      "animalHandling": "Adestrar Animais",
+      "arcana": "Arcanismo",
+      "athletics": "Atletismo",
+      "deception": "Enganação",
+      "history": "História",
+      "insight": "Intuição",
+      "intimidation": "Intimidação",
+      "investigation": "Investigação",
+      "medicine": "Medicina",
+      "nature": "Natureza",
+      "perception": "Percepção",
+      "performance": "Atuação",
+      "persuasion": "Persuasão",
+      "religion": "Religião",
+      "sleightOfHand": "Prestidigitação",
+      "stealth": "Furtividade",
+      "survival": "Sobrevivência",
+      "profBonus": "Bônus de Proficiência"
     }
   }
 }

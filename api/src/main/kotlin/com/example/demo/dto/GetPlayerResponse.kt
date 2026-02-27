@@ -4,7 +4,7 @@ import com.example.demo.model.BattleLog
 import com.example.demo.model.PlayerPicto
 import com.example.demo.model.PlayerLumina
 import com.example.demo.model.PlayerItem
-import com.example.demo.model.PlayerSkill
+import com.example.demo.model.PlayerSpecialAttack
 
 data class GetPlayerResponse(
         val id: Int,
@@ -16,5 +16,5 @@ data class GetPlayerResponse(
         val pictos: List<PlayerPicto>?,
         val luminas: List<PlayerLumina>?,
         val items: List<PlayerItem>?,
-        val skills: List<PlayerSkill>?
+        val specialAttacks: List<PlayerSpecialAttack>?
 )

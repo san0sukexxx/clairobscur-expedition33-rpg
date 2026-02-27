@@ -1814,7 +1814,7 @@
       "selectCharacter": "Select your character",
       "characterLevel": "Level",
       "levelPlaceholder": "Level",
-      "skillPoints": "Skill points",
+      "specialAttackPoints": "Skill points",
       "power": "Power",
       "luminas": "Luminas",
       "maxCost": "Max Cost",
@@ -1846,7 +1846,7 @@
     "tabs": {
       "sheet": "Sheet",
       "combat": "Combat",
-      "skills": "Skills",
+      "specialAttacks": "Specials",
       "inventory": "Inventory",
       "weapon": "Weapon",
       "pictos": "Pictos",
@@ -1859,7 +1859,7 @@
       "team": "Team",
       "attack": "Attack",
       "items": "Items",
-      "skills": "Skills",
+      "specialAttacks": "Specials",
       "flee": "Try to flee",
       "freeShot": "Free shot",
       "endTurn": "End turn",
@@ -1978,7 +1978,7 @@
       "labels": {
         "playerTurn": "Player's Turn",
         "npcTurn": "NPC's Turn",
-        "skills": "Skills",
+        "specialAttacks": "Specials",
         "otherActions": "Other actions",
         "id": "ID",
         "name": "Name",
@@ -2088,14 +2088,14 @@
       "details": "Details",
       "editing": "Editing"
     },
-    "skills": {
+    "specialAttacks": {
       "unlock": "Unlock",
       "masterUnlock": "Unlock Master",
-      "selectSkill": "Select a skill",
-      "skillBlocked": "Skill Blocked",
+      "selectSpecialAttack": "Select a special",
+      "specialAttackBlocked": "Special Blocked",
       "locked": "Locked",
       "noDeadAllies": "No dead allies",
-      "noSkills": "No skills available for this character.",
+      "noSpecialAttacks": "No specials available for this character.",
       "gustave-lumiere-assault": {
         "name": "Lumiere Assault",
         "description": "Deals low damage to a single target. 5 hits. Uses weapon element. Critical hits generate 1 additional Charge."
@@ -2741,34 +2741,34 @@
         "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Protected, Shielded, Regeneration or Hastened). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions.\nPrerequisite: Defeat and acquire the foot of a Troubadour enemy while Monoco is in the active group."
       }
     },
-    "skillPicker": {
-      "title": "SKILLS",
-      "searchPlaceholder": "Search skill...",
+    "specialAttackPicker": {
+      "title": "SPECIALS",
+      "searchPlaceholder": "Search special...",
       "gradient": "Gradient",
       "charge": "charge",
       "charges": "charges",
-      "equipError": "Error equipping skill:",
-      "unequipError": "Error unequipping skill:",
-      "cannotEquipInBattle": "Cannot equip or unequip skills during battle",
-      "selectEquippedToCombat": "Select an equipped skill to use in combat",
-      "selectSkillAlt": "Select skill",
-      "removeFromSlot": "Remove skill from slot",
-      "selectASkill": "Select a Skill",
-      "noSkillsFound": "No skills found."
+      "equipError": "Error equipping special:",
+      "unequipError": "Error unequipping special:",
+      "cannotEquipInBattle": "Cannot equip or unequip specials during battle",
+      "selectEquippedToCombat": "Select an equipped special to use in combat",
+      "selectSpecialAttackAlt": "Select special",
+      "removeFromSlot": "Remove special from slot",
+      "selectASpecialAttack": "Select a Special",
+      "noSpecialAttacksFound": "No specials found."
     },
-    "skillsList": {
-      "title": "Skills",
-      "subtitle": "Complete list of character skills",
+    "specialAttacksList": {
+      "title": "Specials",
+      "subtitle": "Complete list of character specials",
       "itemCount": "{count} item(s)",
-      "skillPoints": "Skill Points:",
+      "specialAttackPoints": "Special Points:",
       "excess": "Excess: {count}",
-      "notUnlocked": "Skill not yet unlocked",
+      "notUnlocked": "Special not yet unlocked",
       "insufficientPoints": "Insufficient points (required: {required}, available: {available})",
       "free": "Free",
-      "unlockPrerequisite": "Obtain one of these skills to unlock",
-      "unlockError": "Error unlocking skill:",
-      "removeError": "Error removing skill:",
-      "sectionAriaLabel": "Skills section"
+      "unlockPrerequisite": "Obtain one of these specials to unlock",
+      "unlockError": "Error unlocking special:",
+      "removeError": "Error removing special:",
+      "sectionAriaLabel": "Specials section"
     },
     "items": {
       "title": "Items",
@@ -3098,7 +3098,7 @@
         "errorRegisteringDefense": "Failed to register defense",
         "errorResolvingStatus": "Error resolving status"
       },
-      "skills": {
+      "specialAttacks": {
         "noDeadAllies": "No dead allies",
         "noValidEnemies": "No valid enemies found!",
         "requiresAllStains": "Requires all 4 elemental stains (Lightning, Earth, Fire, Ice)!",
@@ -3129,7 +3129,7 @@
         "scopeRollAll": "Rolled {roll}: Heals all allies!",
         "scopeRollSingle": "Rolled {roll}: Heals 1 ally!",
         "healedTarget": "{name} healed {amount} HP!",
-        "regenerationApplied": "Regeneration applied for {turns} turns!",
+        "regenerationApplied": "Regeneration applied!",
         "bonusDamageVsMarked": "Target Marked! +{bonus} damage!",
         "burnConsumptionBonus": "Consumed {stacks} Burns! +{bonus} damage!",
         "buffsCopied": "Buffs copied to other allies!",
@@ -3261,7 +3261,6 @@
         "foretellAppliedOnCrit": "+{count} Foretell applied (Critical)!",
         "mpGrantedToAlly": "+{amount} MP granted to {name}!",
         "turnDelayedAmount": "{name}'s turn delayed by {amount} position(s)!",
-        "regenerationApplied": "Regeneration applied!",
         "stanceChangeMpBonus": "+1 MP from stance change!",
         "stanceLostBasicAttack": "Stance lost due to basic attack!"
       },
@@ -3299,9 +3298,10 @@
           "pictos": "Pictos",
           "luminas": "Luminas",
           "inventory": "Inventory",
-          "skills": "Skills",
+          "specialAttacks": "Specials",
           "combat": "Combat",
-          "settings": "Settings"
+          "settings": "Settings",
+          "skills": "Skills"
         }
       }
     },
@@ -3311,6 +3311,38 @@
       "languagePtBR": "Portuguese (Brazil)",
       "languageEn": "English",
       "theme": "Theme"
+    },
+    "skills": {
+      "title": "Skills",
+      "colPin": "Pin",
+      "colProf": "Prof",
+      "colMod": "Mod",
+      "colSkill": "Skill",
+      "colBonus": "Bonus",
+      "addProficiency": "Add proficiency",
+      "removeProficiency": "Remove proficiency",
+      "pin": "Pin",
+      "unpin": "Unpin",
+      "saveError": "Error saving skills",
+      "acrobatics": "Acrobatics",
+      "animalHandling": "Animal Handling",
+      "arcana": "Arcana",
+      "athletics": "Athletics",
+      "deception": "Deception",
+      "history": "History",
+      "insight": "Insight",
+      "intimidation": "Intimidation",
+      "investigation": "Investigation",
+      "medicine": "Medicine",
+      "nature": "Nature",
+      "perception": "Perception",
+      "performance": "Performance",
+      "persuasion": "Persuasion",
+      "religion": "Religion",
+      "sleightOfHand": "Sleight of Hand",
+      "stealth": "Stealth",
+      "survival": "Survival",
+      "profBonus": "Proficiency Bonus"
     }
   }
 }

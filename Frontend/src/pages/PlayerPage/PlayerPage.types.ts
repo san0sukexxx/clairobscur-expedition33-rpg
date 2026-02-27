@@ -8,7 +8,7 @@ import type { WeaponDTO } from "../../types/WeaponDTO";
 /**
  * Tab types for PlayerPage navigation
  */
-export type PlayerTab = "ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas";
+export type PlayerTab = "ficha" | "combate" | "habilidades" | "inventario" | "arma" | "pictos" | "luminas" | "pericias";
 
 /**
  * Combat tab types
@@ -16,9 +16,9 @@ export type PlayerTab = "ficha" | "combate" | "habilidades" | "inventario" | "ar
 export type CombatTabType = "enemies" | "team" | null;
 
 /**
- * Skills initial tab types
+ * Special attacks initial tab types
  */
-export type SkillsTabType = "list" | "picker";
+export type SpecialAttacksTabType = "list" | "picker";
 
 /**
  * Props for usePlayerData hook
@@ -55,10 +55,10 @@ export interface UseTabNavigationReturn {
   setTab: (tab: PlayerTab) => void;
   combatTab: CombatTabType;
   setCombatTab: Dispatch<SetStateAction<CombatTabType>>;
-  skillsInitialTab: SkillsTabType;
-  setSkillsInitialTab: Dispatch<SetStateAction<SkillsTabType>>;
-  isUsingSkillMode: boolean;
-  setIsUsingSkillMode: Dispatch<SetStateAction<boolean>>;
+  specialAttacksInitialTab: SpecialAttacksTabType;
+  setSpecialAttacksInitialTab: Dispatch<SetStateAction<SpecialAttacksTabType>>;
+  isUsingSpecialAttackMode: boolean;
+  setIsUsingSpecialAttackMode: Dispatch<SetStateAction<boolean>>;
   isInventoryActiveInCombat: boolean;
   setIsInventoryActiveInCombat: Dispatch<SetStateAction<boolean>>;
   isReviveMode: boolean;
@@ -85,15 +85,15 @@ export interface UseWeaponInfoReturn {
 }
 
 /**
- * Props for skill execution
+ * Props for special attack execution
  */
-export interface SkillExecutionState {
-  isExecutingSkill: boolean;
-  setIsExecutingSkill: Dispatch<SetStateAction<boolean>>;
-  pendingSkillId: string | null;
-  setPendingSkillId: Dispatch<SetStateAction<string | null>>;
-  isSelectingSkillTarget: boolean;
-  setIsSelectingSkillTarget: Dispatch<SetStateAction<boolean>>;
+export interface SpecialAttackExecutionState {
+  isExecutingSpecialAttack: boolean;
+  setIsExecutingSpecialAttack: Dispatch<SetStateAction<boolean>>;
+  pendingSpecialAttackId: string | null;
+  setPendingSpecialAttackId: Dispatch<SetStateAction<string | null>>;
+  isSelectingSpecialAttackTarget: boolean;
+  setIsSelectingSpecialAttackTarget: Dispatch<SetStateAction<boolean>>;
   excludeSelfFromTargeting: boolean;
   setExcludeSelfFromTargeting: Dispatch<SetStateAction<boolean>>;
   isExecutingMezzoForte: boolean;
@@ -133,7 +133,7 @@ export interface PlayerPageContext {
   setTab: (tab: PlayerTab) => void;
 
   // Combat
-  isExecutingSkill: boolean;
+  isExecutingSpecialAttack: boolean;
 
   // Utilities
   showToast: (message: string, options?: { duration?: number }) => void;

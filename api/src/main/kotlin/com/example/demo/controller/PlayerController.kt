@@ -23,7 +23,7 @@ class PlayerController(
         private val playerPictoRepository: PlayerPictoRepository,
         private val playerLuminaRepository: PlayerLuminaRepository,
         private val playerItemRepository: PlayerItemRepository,
-        private val playerSkillRepository: PlayerSkillRepository,
+        private val playerSpecialAttackRepository: PlayerSpecialAttackRepository,
         private val fightService: FightService
 ) {
 
@@ -92,7 +92,7 @@ class PlayerController(
                                         pictos = null,
                                         luminas = null,
                                         items = null,
-                                        skills = null
+                                        specialAttacks = null
                                 )
                         }
 
@@ -138,7 +138,7 @@ class PlayerController(
                 val pictos: List<PlayerPicto> = playerPictoRepository.findByPlayerId(id)
                 val luminas: List<PlayerLumina> = playerLuminaRepository.findByPlayerId(id)
                 val items = playerItemRepository.findByPlayerId(id)
-                val skills = playerSkillRepository.findByPlayerId(id)
+                val specialAttacks = playerSpecialAttackRepository.findByPlayerId(id)
 
                 val response =
                         GetPlayerResponse(
@@ -151,7 +151,7 @@ class PlayerController(
                                 pictos = pictos,
                                 luminas = luminas,
                                 items = items,
-                                skills = skills
+                                specialAttacks = specialAttacks
                         )
 
                 return ResponseEntity.ok(response)
@@ -177,8 +177,8 @@ class PlayerController(
                 // If changing character, reset skills and unequip weapon
                 if (isChangingCharacter) {
                         // Delete all skills (this clears the purchased/unlocked skills list)
-                        val skills = playerSkillRepository.findByPlayerId(id)
-                        playerSkillRepository.deleteAll(skills)
+                        val specialAttacks = playerSpecialAttackRepository.findByPlayerId(id)
+                        playerSpecialAttackRepository.deleteAll(specialAttacks)
 
                         // Grant starting weapon for the new character
                         val startingWeaponId = getStartingWeaponForCharacter(newCharacterId)
@@ -242,6 +242,8 @@ class PlayerController(
                 p.mpCurrent = sheet.mpCurrent ?: 0
                 p.hpCurrent = sheet.hpCurrent ?: 0
                 p.notes = sheet.notes
+                if (sheet.skillsData != null) p.skillsData = sheet.skillsData
+                if (sheet.abilityScoresData != null) p.abilityScoresData = sheet.abilityScoresData
 
                 // Only update weaponId if not changing character (already set to null above)
                 if (!isChangingCharacter) {

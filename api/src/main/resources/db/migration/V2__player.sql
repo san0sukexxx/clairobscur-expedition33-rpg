@@ -13,5 +13,7 @@ CREATE TABLE
         hp_current INTEGER DEFAULT 0,
         notes TEXT,
         weapon_id TEXT,
-        master_editing BOOLEAN DEFAULT 0
+        master_editing BOOLEAN DEFAULT 0,
+        skills_data TEXT,
+        ability_scores_data TEXT
     );

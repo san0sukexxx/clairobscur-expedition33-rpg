@@ -14,5 +14,7 @@ data class PlayerSheetUpdateRequest(
         val mpCurrent: Int?,
         val hpCurrent: Int?,
         val notes: String?,
-        val weaponId: String?
+        val weaponId: String?,
+        val skillsData: String? = null,
+        val abilityScoresData: String? = null
 )

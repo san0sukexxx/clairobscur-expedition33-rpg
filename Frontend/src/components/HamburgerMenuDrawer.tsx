@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { MdMenu, MdClose, MdSettings } from "react-icons/md";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaClipboardList } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
 import { GiBackpack, GiStoneTablet, GiCrystalShine, GiMagicSwirl } from "react-icons/gi";
 import { t } from "../i18n";
@@ -21,13 +21,14 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
-  { id: "ficha",      icon: <FaUser className="text-xl" />,         labelKey: "playerPage.navigation.tabs.sheet"     },
-  { id: "arma",       icon: <LuSword className="text-xl" />,         labelKey: "playerPage.navigation.tabs.weapon"    },
-  { id: "pictos",     icon: <GiStoneTablet className="text-xl" />,   labelKey: "playerPage.navigation.tabs.pictos"    },
-  { id: "luminas",    icon: <GiCrystalShine className="text-xl" />,  labelKey: "playerPage.navigation.tabs.luminas"   },
-  { id: "inventario", icon: <GiBackpack className="text-xl" />,      labelKey: "playerPage.navigation.tabs.inventory" },
-  { id: "habilidades",icon: <GiMagicSwirl className="text-xl" />,    labelKey: "playerPage.navigation.tabs.skills"    },
-  { id: "combate",    icon: <LuSwords className="text-xl" />,        labelKey: "playerPage.navigation.tabs.combat"    },
+  { id: "ficha",      icon: <FaUser className="text-xl" />,          labelKey: "playerPage.navigation.tabs.sheet"          },
+  { id: "pericias",   icon: <FaClipboardList className="text-xl" />, labelKey: "playerPage.navigation.tabs.skills"         },
+  { id: "arma",       icon: <LuSword className="text-xl" />,         labelKey: "playerPage.navigation.tabs.weapon"         },
+  { id: "pictos",     icon: <GiStoneTablet className="text-xl" />,   labelKey: "playerPage.navigation.tabs.pictos"         },
+  { id: "luminas",    icon: <GiCrystalShine className="text-xl" />,  labelKey: "playerPage.navigation.tabs.luminas"        },
+  { id: "inventario", icon: <GiBackpack className="text-xl" />,      labelKey: "playerPage.navigation.tabs.inventory"      },
+  { id: "habilidades",icon: <GiMagicSwirl className="text-xl" />,    labelKey: "playerPage.navigation.tabs.specialAttacks" },
+  { id: "combate",    icon: <LuSwords className="text-xl" />,        labelKey: "playerPage.navigation.tabs.combat"         },
 ];
 
 export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill }: HamburgerMenuDrawerProps) {

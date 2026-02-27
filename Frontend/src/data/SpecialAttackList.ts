@@ -1,10 +1,10 @@
-import type { SkillResponse } from "../api/ResponseModel";
+import type { SpecialAttackResponse } from "../api/ResponseModel";
 import { t } from "../i18n";
 
-// Base skill data without translations
-const SkillsBaseData = [
+// Base special attack data without translations
+const SpecialAttacksBaseData = [
   // ====================
-  // GUSTAVE (8 skills)
+  // GUSTAVE (8 special attacks)
   // ====================
   {
     id: "gustave-lumiere-assault",
@@ -70,7 +70,7 @@ const SkillsBaseData = [
   },
 
   // ====================
-  // LUNE (25 skills)
+  // LUNE (25 special attacks)
   // ====================
   {
     id: "lune-electrify",
@@ -276,7 +276,7 @@ const SkillsBaseData = [
   },
 
   // ====================
-  // MAELLE (27 skills)
+  // MAELLE (27 special attacks)
   // ====================
   {
     id: "maelle-offensive-switch",
@@ -497,7 +497,7 @@ const SkillsBaseData = [
   },
 
   // ====================
-  // SCIEL (26 skills)
+  // SCIEL (26 special attacks)
   // ====================
   {
     id: "sciel-twilight-slash",
@@ -737,7 +737,7 @@ const SkillsBaseData = [
   },
 
   // ====================
-  // VERSO (27 skills)
+  // VERSO (27 special attacks)
   // ====================
   {
     id: "verso-angels-eyes",
@@ -957,7 +957,7 @@ const SkillsBaseData = [
   },
 
   // ====================
-  // MONOCO (48 skills)
+  // MONOCO (48 special attacks)
   // ====================
   {
     id: "monoco-abbest-wind",
@@ -1346,14 +1346,13 @@ const SkillsBaseData = [
   }
 ]
 
-// Function to get skills with translations
-export function getTranslatedSkills(): SkillResponse[] {
-  return SkillsBaseData.map(skill => ({
-    ...skill,
-    name: t(`skills.${skill.id}.name`),
-    description: t(`skills.${skill.id}.description`)
+// Function to get special attacks with translations
+export function getTranslatedSpecialAttacks(): SpecialAttackResponse[] {
+  return SpecialAttacksBaseData.map(specialAttack => ({
+    ...specialAttack,
+    name: t(`specialAttacks.${specialAttack.id}.name`),
+    description: t(`specialAttacks.${specialAttack.id}.description`)
   }));
 }
 
-// For backward compatibility
-export const SkillsList: SkillResponse[] = getTranslatedSkills();
+export const SpecialAttacksList: SpecialAttackResponse[] = getTranslatedSpecialAttacks();

@@ -114,7 +114,13 @@ export function AbilityScoresSection({ player, setPlayer, diceBoardRef, timeoutD
     const { showToast } = useToast();
 
     async function sync(p: GetPlayerResponse) {
-        await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
+        const scores = p.playerSheet?.abilityScores ?? {};
+        await APIPlayer.update(p.id, {
+            playerSheet: {
+                ...p.playerSheet,
+                abilityScoresData: JSON.stringify(scores),
+            },
+        });
     }
 
     async function handleChange(key: AbilityKey, value: number) {

@@ -169,7 +169,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
                       )}
                       {canUseHabilities && (
                         <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
-                          {t("combat.skills")}
+                          {t("combat.specialAttacks")}
                         </button>
                       )}
                       {canUseFlee && (

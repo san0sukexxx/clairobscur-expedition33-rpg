@@ -218,7 +218,7 @@ export function calculateMaxLuminas(player: GetPlayerResponse | null): number {
     return 0;
 }
 
-export function calculateSkillPoints(player: GetPlayerResponse | null): number {
+export function calculateSpecialAttackPoints(player: GetPlayerResponse | null): number {
     return (player?.playerSheet?.totalPoints ?? 0) * 2;
 }
 
