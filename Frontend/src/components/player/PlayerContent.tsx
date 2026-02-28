@@ -58,6 +58,10 @@ interface PlayerContentProps {
   isUsingSpecialAttackMode: boolean;
   onUseSpecialAttack: (skillId: string) => void;
 
+  // Skill info card
+  activeSkillId: string | null;
+  onDismissSkillCard: () => void;
+
   // Dice refs
   diceBoardRef: RefObject<DiceBoardRef | null>;
   timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
@@ -92,6 +96,8 @@ export function PlayerContent({
   specialAttacksInitialTab,
   isUsingSpecialAttackMode,
   onUseSpecialAttack,
+  activeSkillId,
+  onDismissSkillCard,
   diceBoardRef,
   timeoutDiceBoardRef,
 }: PlayerContentProps) {
@@ -154,6 +160,7 @@ export function PlayerContent({
                 <CombatStatsSection
                   player={player}
                   setPlayer={setPlayer}
+                  weaponInfo={weaponInfo}
                   diceBoardRef={diceBoardRef}
                   timeoutDiceBoardRef={timeoutDiceBoardRef}
                   onBattleInitiative={() => onMenuAction(COMBAT_MENU_ACTIONS.Initiative)}
@@ -243,6 +250,10 @@ export function PlayerContent({
           isAdmin={isAdmin}
           excludeSelfFromTargeting={excludeSelfFromTargeting}
           hitCharacters={hitCharacters}
+          activeSkillId={activeSkillId}
+          onDismissSkillCard={onDismissSkillCard}
+          diceBoardRef={diceBoardRef}
+          timeoutDiceBoardRef={timeoutDiceBoardRef}
         />
       )}
 

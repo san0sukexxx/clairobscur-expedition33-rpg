@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from "react";
+import type { RefObject, MutableRefObject } from "react";
 import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
@@ -7,8 +8,10 @@ import GradientBar from "./GradientBar";
 import { CgSandClock } from "react-icons/cg";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo } from "../api/ResponseModel";
+import type { DiceBoardRef } from "./DiceBoard";
 import PlayerStatusFloating from "./PlayerStatusFloating";
 import CombatBottomSheet from "./CombatBottomSheet";
+import SkillInfoCard from "./SkillInfoCard";
 import { t } from "../i18n";
 
 interface CombatsSectionProps {
@@ -23,11 +26,16 @@ interface CombatsSectionProps {
     isAdmin: boolean;
     excludeSelfFromTargeting?: boolean;
     hitCharacters?: Set<number>;
+    activeSkillId?: string | null;
+    onDismissSkillCard?: () => void;
+    diceBoardRef: RefObject<DiceBoardRef | null>;
+    timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
-export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters, activeSkillId, onDismissSkillCard, diceBoardRef, timeoutDiceBoardRef }: CombatsSectionProps) {
     const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
+    const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
 
     const tab = forcedTab ?? internalTab;
     const setTab = (newTab: "enemies" | "team") => {
@@ -100,15 +108,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 break;
 
             case COMBAT_MENU_ACTIONS.FreeShot:
-                setTab(opositeTeamTab);
-                setIsAttacking(true);
-                onMenuAction(COMBAT_MENU_ACTIONS.FreeShot);
-                break;
-
             case COMBAT_MENU_ACTIONS.Attack:
-                setTab(opositeTeamTab);
-                setIsAttacking(true);
-                onMenuAction(COMBAT_MENU_ACTIONS.Attack);
+                setBottomSheetOpen(true);
                 break;
 
             case COMBAT_MENU_ACTIONS.Cancel:
@@ -151,6 +152,12 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             <GradientBar characters={player?.fightInfo?.characters} player={player} turns={player?.fightInfo?.turns} />
 
+            {activeSkillId && onDismissSkillCard && (
+                <div className="mt-4">
+                    <SkillInfoCard skillId={activeSkillId} onDismiss={onDismissSkillCard} />
+                </div>
+            )}
+
             {tab === "enemies" && (
                 <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
             )}
@@ -170,7 +177,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 isSelectingSkillTarget={isSelectingSkillTarget}
             />
 
-            <CombatBottomSheet player={player} />
+            <CombatBottomSheet player={player} open={bottomSheetOpen} onOpen={() => setBottomSheetOpen(true)} onClose={() => setBottomSheetOpen(false)} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
 
             <div className="h-[100px]" />
         </div>

@@ -76,6 +76,9 @@ export default function PlayerPage() {
   // Skill execution state
   const [isExecutingSkill, setIsExecutingSkill] = useState(false);
 
+  // Active skill card (shown in combat after selecting from picker)
+  const [activeSkillId, setActiveSkillId] = useState<string | null>(null);
+
   // Combat actions
   const {
     rollInitiative,
@@ -83,7 +86,6 @@ export default function PlayerPage() {
     endTurn,
     attemptFlee,
     handleCombatMenuAction,
-    performBasicAttack,
   } = useCombatActions({
     player,
     setPlayer,
@@ -127,6 +129,16 @@ export default function PlayerPage() {
     setTab("combate");
   }, [setTab]);
 
+  const handleUseSpecialAttack = useCallback((skillId: string) => {
+    setActiveSkillId(skillId);
+    setTab("combate");
+    setIsUsingSpecialAttackMode(false);
+  }, [setTab, setIsUsingSpecialAttackMode]);
+
+  const handleDismissSkillCard = useCallback(() => {
+    setActiveSkillId(null);
+  }, []);
+
   // Target selection handler
   const handleSelectTarget = useCallback((target: BattleCharacterInfo) => {
     if (player == null) return;
@@ -135,10 +147,7 @@ export default function PlayerPage() {
       handleReviveTarget(target);
       return;
     }
-
-    // Basic attack target selection
-    performBasicAttack(target);
-  }, [player, isReviveMode, handleReviveTarget, performBasicAttack]);
+  }, [player, isReviveMode, handleReviveTarget]);
 
   // Modal close handler
   const handleModalClose = useCallback(() => {
@@ -208,7 +217,9 @@ export default function PlayerPage() {
           onPotionUsed={handlePotionUsed}
           specialAttacksInitialTab={specialAttacksInitialTab}
           isUsingSpecialAttackMode={isUsingSpecialAttackMode}
-          onUseSpecialAttack={() => {}}
+          onUseSpecialAttack={handleUseSpecialAttack}
+          activeSkillId={activeSkillId}
+          onDismissSkillCard={handleDismissSkillCard}
           diceBoardRef={diceBoardRef}
           timeoutDiceBoardRef={timeoutDiceBoardRef}
         />
