@@ -1,11 +1,13 @@
-import React from "react";
-import { FaSkull } from "react-icons/fa";
+import { useState } from "react";
+import { FaSkull, FaEdit } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
-import { type BattleCharacterInfo } from "../api/ResponseModel";
+import { APIBattle } from "../api/APIBattle";
+import { type BattleCharacterInfo, type Stance, type StainType } from "../api/ResponseModel";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
+import StatEditModal from "./StatEditModal";
 import { t } from "../i18n";
 
 interface BattleGroupStatusProps {
@@ -25,6 +27,8 @@ function pct(cur: number, max: number) {
     return Math.max(0, Math.min(100, Math.round((cur / max) * 100)));
 }
 
+type EditField = "hp" | "mp" | "charge" | "gradient" | "bestialWheel" | "sunMoon" | "stance" | "rank" | "stains" | null;
+
 export default function BattleGroupStatus({
     player,
     isEnemies,
@@ -37,9 +41,112 @@ export default function BattleGroupStatus({
     excludeSelf = false,
     hitCharacters
 }: BattleGroupStatusProps) {
+    // Edit state
+    const [editing, setEditing] = useState<EditField>(null);
+    const [editValue, setEditValue] = useState(0);
+    const [editSun, setEditSun] = useState(0);
+    const [editMoon, setEditMoon] = useState(0);
+    const [editStance, setEditStance] = useState<Stance | "">("");
+    const [editRank, setEditRank] = useState("D");
+    const [editRankProgress, setEditRankProgress] = useState(0);
+    const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
+
     if (player?.fightInfo?.characters == undefined) return null;
 
     const characters = player.fightInfo.characters.filter(ch => ch.isEnemy == isEnemies);
+    const playerBattleID = player.fightInfo.playerBattleID;
+
+    // Find the player character for modal rendering
+    const playerCh = characters.find(c => c.battleID === playerBattleID);
+
+    const closeEdit = () => setEditing(null);
+
+    const isPlayerSelf = (ch: BattleCharacterInfo) =>
+        ch.battleID === playerBattleID && !isEnemies;
+
+    async function confirmNumericEdit(field: "hp" | "mp" | "charge" | "gradient" | "bestialWheel", value: number) {
+        if (!playerCh) return;
+        switch (field) {
+            case "hp":
+                await APIBattle.updateCharacterHp(playerCh.battleID, value);
+                break;
+            case "mp":
+                await APIBattle.updateCharacterMp(playerCh.battleID, value);
+                break;
+            case "charge":
+                await APIBattle.updateCharacterChargePoints(playerCh.battleID, value);
+                break;
+            case "gradient":
+                await APIBattle.updateTeamGradient(playerCh.battleID, value);
+                break;
+            case "bestialWheel":
+                await APIBattle.updateBestialWheelPosition(playerCh.battleID, value);
+                break;
+        }
+        closeEdit();
+    }
+
+    async function confirmSunMoon() {
+        if (!playerCh) return;
+        await APIBattle.updateSunMoonCharges(playerCh.battleID, editSun, editMoon);
+        closeEdit();
+    }
+
+    async function confirmStance() {
+        if (!playerCh) return;
+        await APIBattle.updateCharacterStance(playerCh.battleID, editStance === "" ? null : editStance as Stance);
+        closeEdit();
+    }
+
+    async function confirmRank() {
+        if (!playerCh) return;
+        await APIBattle.updateCharacterRank(playerCh.battleID, editRank, editRankProgress);
+        closeEdit();
+    }
+
+    async function confirmStains() {
+        if (!playerCh) return;
+        await APIBattle.updateStains(playerCh.battleID, {
+            stainSlot1: editStains[0] || null,
+            stainSlot2: editStains[1] || null,
+            stainSlot3: editStains[2] || null,
+            stainSlot4: editStains[3] || null,
+        });
+        closeEdit();
+    }
+
+    function openHp(ch: BattleCharacterInfo) { setEditValue(ch.healthPoints); setEditing("hp"); }
+    function openMp(ch: BattleCharacterInfo) { setEditValue(ch.magicPoints ?? 0); setEditing("mp"); }
+    function openCharge(ch: BattleCharacterInfo) { setEditValue(ch.chargePoints ?? 0); setEditing("charge"); }
+    function openSunMoon(ch: BattleCharacterInfo) {
+        setEditSun(ch.sunCharges ?? 0);
+        setEditMoon(ch.moonCharges ?? 0);
+        setEditing("sunMoon");
+    }
+    function openStance(ch: BattleCharacterInfo) {
+        setEditStance(ch.stance ?? "");
+        setEditing("stance");
+    }
+    function openRank(ch: BattleCharacterInfo) {
+        setEditRank(ch.perfectionRank ?? "D");
+        setEditRankProgress(ch.rankProgress ?? 0);
+        setEditing("rank");
+    }
+    function openStainsEdit(ch: BattleCharacterInfo) {
+        setEditStains([
+            ch.stainSlot1 ?? "",
+            ch.stainSlot2 ?? "",
+            ch.stainSlot3 ?? "",
+            ch.stainSlot4 ?? "",
+        ]);
+        setEditing("stains");
+    }
+    function openBestialWheel(ch: BattleCharacterInfo) {
+        setEditValue(ch.bestialWheelPosition ?? 0);
+        setEditing("bestialWheel");
+    }
+
+    const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
 
     return (
         <div className="mt-5">
@@ -64,6 +171,7 @@ export default function BattleGroupStatus({
                                 (!isReviveMode && isAttacking && !isDead)
                             );
                             const isHit = hitCharacters?.has(ch.battleID) && !isDead;
+                            const canEdit = isPlayerSelf(ch);
 
                             return (
                                 <div
@@ -77,7 +185,7 @@ export default function BattleGroupStatus({
                 ${isDead && !isReviveMode ? "pointer-events-none opacity-60" : ""}
                 ${isSelectable
                                             ? "cursor-pointer hover:shadow-lg target-glow"
-                                            : "pointer-events-none"
+                                            : canEdit ? "" : "pointer-events-none"
                                         }
                 ${isExecutingSkill ? "opacity-50" : ""}
                 ${isHit ? "animate-pulse !bg-error/30 !shadow-lg !shadow-error/50" : ""}
@@ -85,7 +193,7 @@ export default function BattleGroupStatus({
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="avatar">
-                                            <div className={`w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200 
+                                            <div className={`w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200
                                                 ${isDead ? "grayscale" : ""}`}>
                                                 <img
                                                     src={ch.type == "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`}
@@ -132,9 +240,12 @@ export default function BattleGroupStatus({
 
                                     <div className="mt-3 space-y-2">
 
-                                        <div>
+                                        <div
+                                            className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
+                                            onClick={canEdit ? () => openHp(ch) : undefined}
+                                        >
                                             <div className="flex items-center justify-between text-xs uppercase">
-                                                <span className="opacity-70">HP</span>
+                                                <span className="opacity-70 flex items-center gap-1">HP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                 <span className="font-mono">{ch.healthPoints}/{ch.maxHealthPoints}</span>
                                             </div>
                                             <AnimatedStatBar
@@ -149,9 +260,12 @@ export default function BattleGroupStatus({
                                             ch.magicPoints !== null &&
                                             ch.maxMagicPoints !== undefined &&
                                             ch.maxMagicPoints !== null && (
-                                                <div>
+                                                <div
+                                                    className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
+                                                    onClick={canEdit ? () => openMp(ch) : undefined}
+                                                >
                                                     <div className="flex items-center justify-between text-xs uppercase">
-                                                        <span className="opacity-70">MP</span>
+                                                        <span className="opacity-70 flex items-center gap-1">MP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                         <span className="font-mono">
                                                             {ch.magicPoints}/{ch.maxMagicPoints}
                                                         </span>
@@ -169,7 +283,15 @@ export default function BattleGroupStatus({
                                         {ch.id.toLowerCase().includes("monoco") &&
                                             ch.bestialWheelPosition !== undefined &&
                                             ch.bestialWheelPosition !== null && (
-                                                <div className="w-full">
+                                                <div
+                                                    className={`w-full ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
+                                                    onClick={canEdit ? () => openBestialWheel(ch) : undefined}
+                                                >
+                                                    {canEdit && (
+                                                        <div className="flex items-center gap-1 mb-1 text-[10px] opacity-70 uppercase">
+                                                            Bestial Wheel <FaEdit size={10} className="opacity-40" />
+                                                        </div>
+                                                    )}
                                                     <BestialWheel position={ch.bestialWheelPosition} />
                                                 </div>
                                             )}
@@ -180,8 +302,11 @@ export default function BattleGroupStatus({
                                             const hasAnyStain = stains.some(s => s !== null && s !== undefined);
 
                                             return (
-                                                <div className="mt-2 flex items-center gap-2 text-xs">
-                                                    <span className="opacity-70 uppercase">{t("combat.stains")}</span>
+                                                <div
+                                                    className={`mt-2 flex items-center gap-2 text-xs ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
+                                                    onClick={canEdit ? () => openStainsEdit(ch) : undefined}
+                                                >
+                                                    <span className="opacity-70 uppercase flex items-center gap-1">{t("combat.stains")} {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                     {!hasAnyStain ? (
                                                         <div className="badge badge-ghost badge-sm opacity-60">{t("combat.noStains")}</div>
                                                     ) : (
@@ -216,9 +341,9 @@ export default function BattleGroupStatus({
 
                                         {/* Verso's Perfection Rank System */}
                                         {ch.id.toLowerCase().includes("verso") && (() => {
-                                            const currentRank = ch.perfectionRank ?? "D"; // D, C, B, A, S (default to D)
-                                            const rankProgress = ch.rankProgress ?? 0; // Current progress
-                                            const rankMax = 10; // Points needed for next rank (always 10)
+                                            const currentRank = ch.perfectionRank ?? "D";
+                                            const rankProgress = ch.rankProgress ?? 0;
+                                            const rankMax = 10;
 
                                             const getRankColor = (rank: string) => {
                                                 switch(rank) {
@@ -254,9 +379,14 @@ export default function BattleGroupStatus({
                                             };
 
                                             return (
-                                                <div className="mt-2">
+                                                <div
+                                                    className={`mt-2 ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
+                                                    onClick={canEdit ? () => openRank(ch) : undefined}
+                                                >
                                                     <div className="flex items-center justify-between mb-1">
-                                                        <span className="text-xs opacity-70 uppercase">{t("combat.perfection")}</span>
+                                                        <span className="text-xs opacity-70 uppercase flex items-center gap-1">
+                                                            {t("combat.perfection")} {canEdit && <FaEdit size={10} className="opacity-40" />}
+                                                        </span>
                                                         <div className={`
                                                             px-2 py-0.5 rounded border-2 font-bold text-sm
                                                             ${getRankColor(currentRank)}
@@ -283,9 +413,12 @@ export default function BattleGroupStatus({
                                         {ch.maxChargePoints !== undefined &&
                                             ch.maxChargePoints !== null &&
                                             ch.maxChargePoints > 0 && (
-                                                <div>
+                                                <div
+                                                    className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
+                                                    onClick={canEdit ? () => openCharge(ch) : undefined}
+                                                >
                                                     <div className="flex items-center justify-between text-xs uppercase">
-                                                        <span className="opacity-70">{t("combat.charge")}</span>
+                                                        <span className="opacity-70 flex items-center gap-1">{t("combat.charge")} {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                         <span className="font-mono">
                                                             {ch.chargePoints ?? 0}/{ch.maxChargePoints}
                                                         </span>
@@ -301,7 +434,10 @@ export default function BattleGroupStatus({
 
                                         {/* Sun/Moon charges for Sciel */}
                                         {ch.id.toLowerCase().includes("sciel") && (
-                                            <div className="mt-2 flex items-center gap-3 text-sm">
+                                            <div
+                                                className={`mt-2 flex items-center gap-3 text-sm ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
+                                                onClick={canEdit ? () => openSunMoon(ch) : undefined}
+                                            >
                                                 <div className="flex items-center gap-1.5">
                                                     <span className="text-amber-400">☀</span>
                                                     <span className="font-mono font-semibold text-amber-300">
@@ -314,15 +450,19 @@ export default function BattleGroupStatus({
                                                         {ch.moonCharges ?? 0}
                                                     </span>
                                                 </div>
+                                                {canEdit && <FaEdit size={10} className="opacity-40" />}
                                             </div>
                                         )}
 
                                         {/* Stance indicator for Maelle only */}
                                         {ch.stance !== undefined &&
                                          ch.id.toLowerCase().includes("maelle") && (
-                                            <div className="mt-2">
+                                            <div
+                                                className={`mt-2 ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
+                                                onClick={canEdit ? () => openStance(ch) : undefined}
+                                            >
                                                 <div className="flex items-center gap-2 text-xs">
-                                                    <span className="opacity-70">{t("combat.stance")}</span>
+                                                    <span className="opacity-70 flex items-center gap-1">{t("combat.stance")} {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                     {ch.stance === "Defensive" && (
                                                         <div className="badge badge-info badge-sm">{t("combat.defensive")}</div>
                                                     )}
@@ -345,6 +485,181 @@ export default function BattleGroupStatus({
                     </div>
                 </div>
             </div>
+
+            {/* ---- Modals (only for player's own card) ---- */}
+            {playerCh && (
+                <>
+                    <StatEditModal
+                        open={editing === "hp"}
+                        title="HP"
+                        currentValue={playerCh.healthPoints}
+                        minValue={0}
+                        maxValue={playerCh.maxHealthPoints}
+                        onConfirm={v => confirmNumericEdit("hp", v)}
+                        onCancel={closeEdit}
+                    />
+
+                    <StatEditModal
+                        open={editing === "mp"}
+                        title="MP"
+                        currentValue={playerCh.magicPoints ?? 0}
+                        minValue={0}
+                        maxValue={playerCh.maxMagicPoints ?? 999}
+                        onConfirm={v => confirmNumericEdit("mp", v)}
+                        onCancel={closeEdit}
+                    />
+
+                    <StatEditModal
+                        open={editing === "charge"}
+                        title={t("combat.charge")}
+                        currentValue={playerCh.chargePoints ?? 0}
+                        minValue={0}
+                        maxValue={playerCh.maxChargePoints ?? 10}
+                        onConfirm={v => confirmNumericEdit("charge", v)}
+                        onCancel={closeEdit}
+                    />
+
+                    <StatEditModal
+                        open={editing === "bestialWheel"}
+                        title="Bestial Wheel"
+                        currentValue={playerCh.bestialWheelPosition ?? 0}
+                        minValue={0}
+                        maxValue={8}
+                        onConfirm={v => confirmNumericEdit("bestialWheel", v)}
+                        onCancel={closeEdit}
+                    />
+
+                    {/* Sun/Moon modal */}
+                    {editing === "sunMoon" && (
+                        <dialog className="modal modal-open">
+                            <div className="modal-box max-w-xs space-y-4">
+                                <h3 className="font-bold text-lg">☀ / ☾</h3>
+                                <div className="flex gap-4">
+                                    <div className="flex-1">
+                                        <label className="label label-text text-xs">☀ Sun</label>
+                                        <input
+                                            type="number"
+                                            className="input input-bordered w-full"
+                                            value={editSun}
+                                            min={0}
+                                            onChange={e => setEditSun(Number(e.target.value))}
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <label className="label label-text text-xs">☾ Moon</label>
+                                        <input
+                                            type="number"
+                                            className="input input-bordered w-full"
+                                            value={editMoon}
+                                            min={0}
+                                            onChange={e => setEditMoon(Number(e.target.value))}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="modal-action">
+                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
+                                    <button className="btn btn-primary btn-sm" onClick={confirmSunMoon}>Confirmar</button>
+                                </div>
+                            </div>
+                            <div className="modal-backdrop" onClick={closeEdit} />
+                        </dialog>
+                    )}
+
+                    {/* Stance modal */}
+                    {editing === "stance" && (
+                        <dialog className="modal modal-open">
+                            <div className="modal-box max-w-xs space-y-4">
+                                <h3 className="font-bold text-lg">{t("combat.stance")}</h3>
+                                <select
+                                    className="select select-bordered w-full"
+                                    value={editStance}
+                                    onChange={e => setEditStance(e.target.value as Stance | "")}
+                                >
+                                    <option value="">{t("combat.noStance")}</option>
+                                    <option value="Defensive">{t("combat.defensive")}</option>
+                                    <option value="Offensive">{t("combat.offensive")}</option>
+                                    <option value="Virtuous">{t("combat.virtuous")}</option>
+                                </select>
+                                <div className="modal-action">
+                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
+                                    <button className="btn btn-primary btn-sm" onClick={confirmStance}>Confirmar</button>
+                                </div>
+                            </div>
+                            <div className="modal-backdrop" onClick={closeEdit} />
+                        </dialog>
+                    )}
+
+                    {/* Rank modal */}
+                    {editing === "rank" && (
+                        <dialog className="modal modal-open">
+                            <div className="modal-box max-w-xs space-y-4">
+                                <h3 className="font-bold text-lg">{t("combat.perfection")}</h3>
+                                <div>
+                                    <label className="label label-text text-xs">{t("combat.rank")}</label>
+                                    <select
+                                        className="select select-bordered w-full"
+                                        value={editRank}
+                                        onChange={e => setEditRank(e.target.value)}
+                                    >
+                                        {["D", "C", "B", "A", "S"].map(r => (
+                                            <option key={r} value={r}>{r}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="label label-text text-xs">{t("combat.progress")}</label>
+                                    <input
+                                        type="number"
+                                        className="input input-bordered w-full"
+                                        value={editRankProgress}
+                                        min={0}
+                                        max={10}
+                                        onChange={e => setEditRankProgress(Number(e.target.value))}
+                                    />
+                                </div>
+                                <div className="modal-action">
+                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
+                                    <button className="btn btn-primary btn-sm" onClick={confirmRank}>Confirmar</button>
+                                </div>
+                            </div>
+                            <div className="modal-backdrop" onClick={closeEdit} />
+                        </dialog>
+                    )}
+
+                    {/* Stains modal */}
+                    {editing === "stains" && (
+                        <dialog className="modal modal-open">
+                            <div className="modal-box max-w-xs space-y-4">
+                                <h3 className="font-bold text-lg">{t("combat.stains")}</h3>
+                                {editStains.map((stain, idx) => (
+                                    <div key={idx}>
+                                        <label className="label label-text text-xs">Slot {idx + 1}</label>
+                                        <select
+                                            className="select select-bordered w-full select-sm"
+                                            value={stain}
+                                            onChange={e => {
+                                                const copy = [...editStains];
+                                                copy[idx] = e.target.value as StainType | "";
+                                                setEditStains(copy);
+                                            }}
+                                        >
+                                            <option value="">— Vazio —</option>
+                                            {stainOptions.map(s => (
+                                                <option key={s} value={s}>{s}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                ))}
+                                <div className="modal-action">
+                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
+                                    <button className="btn btn-primary btn-sm" onClick={confirmStains}>Confirmar</button>
+                                </div>
+                            </div>
+                            <div className="modal-backdrop" onClick={closeEdit} />
+                        </dialog>
+                    )}
+                </>
+            )}
         </div>
     );
 }
