@@ -1857,6 +1857,7 @@
       "armorClass": "Armor Class",
       "initiative": "Initiative",
       "hitPoints": "Hit Points",
+      "hitDie": "Hit Die",
       "restoreHp": "Restore full HP",
       "savingThrows": "Saving Throws",
       "race": "Race",
@@ -3414,6 +3415,20 @@
       "minutesAgo": "min ago",
       "hoursAgo": "h ago",
       "daysAgo": "d ago"
+    },
+    "asi": {
+      "title": "Ability Score Improvement",
+      "levelTitle": "Level {level} — Ability Score Improvement",
+      "description": "Choose how to distribute your attribute points.",
+      "chooseOne": "+2 to one attribute",
+      "chooseTwo": "+1/+1 to two attributes",
+      "confirm": "Confirm",
+      "strength": "Strength",
+      "dexterity": "Dexterity",
+      "constitution": "Constitution",
+      "intelligence": "Intelligence",
+      "wisdom": "Wisdom",
+      "charisma": "Charisma"
     }
   }
 }

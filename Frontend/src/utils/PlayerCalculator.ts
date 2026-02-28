@@ -241,7 +241,7 @@ export function calculateMaxLuminas(player: GetPlayerResponse | null): number {
 }
 
 export function calculateSpecialAttackPoints(player: GetPlayerResponse | null): number {
-    return (player?.playerSheet?.totalPoints ?? 0) * 2;
+    return (player?.playerSheet?.totalPoints ?? 0) * 3;
 }
 
 export function calculateInitialMP(player: GetPlayerResponse | null): number {

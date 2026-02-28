@@ -1,4 +1,5 @@
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
+import { useCallback } from "react";
 import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
 import { t } from "../i18n";
@@ -30,6 +31,18 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
         await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
     }
 
+    const handleLevelChange = useCallback(async (level: number) => {
+        if (!player) return;
+        const next = {
+            ...player,
+            playerSheet: { ...player.playerSheet, totalPoints: level },
+        };
+        setPlayer(next);
+        await sync(next);
+        const updated = await APIPlayer.get(player.id);
+        setPlayer(updated);
+    }, [player]);
+
     return (
         <div className="card bg-base-100 shadow">
             <div className="card-body">
@@ -60,18 +73,7 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                             <select
                                 className="select select-bordered text-center font-bold"
                                 value={player?.playerSheet?.totalPoints ?? 1}
-                                onChange={async (e) => {
-                                    if (!player) return;
-                                    const next = {
-                                        ...player,
-                                        playerSheet: {
-                                            ...player.playerSheet,
-                                            totalPoints: Number(e.target.value),
-                                        },
-                                    };
-                                    setPlayer(next);
-                                    await sync(next);
-                                }}
+                                onChange={(e) => handleLevelChange(Number(e.target.value))}
                             >
                                 {Array.from({ length: 20 }, (_, i) => i + 1).map(lvl => (
                                     <option key={lvl} value={lvl}>{lvl}</option>

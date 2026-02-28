@@ -29,7 +29,8 @@ class SecurityConfig(private val jdbcTemplate: JdbcTemplate) {
                         "http://localhost:*",
                         "http://127.0.0.1:*",
                         "http://192.168.*:*",
-                        "http://10.*.*.*:*"
+                        "http://10.*.*.*:*",
+                        "http://100.*.*.*:*"
                 )
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("Authorization", "Content-Type", "Accept")

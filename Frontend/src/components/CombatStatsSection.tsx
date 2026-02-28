@@ -7,6 +7,7 @@ import type { DiceBoardRef } from "./DiceBoard";
 import { t } from "../i18n";
 import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
+import { getCharacterHitDie } from "../utils/PlayerCalculator";
 
 /* ── Armor Class (escudo) ── */
 function ArmorClassCard({ value, onRoll }: { value: number; onRoll: () => void }) {
@@ -55,8 +56,8 @@ function InitiativeCard({ dexterity, onRoll }: { dexterity: number; onRoll: () =
 }
 
 /* ── Hit Points ── */
-function HitPointsCard({ hpCurrent, hpMax, onChangeCurrent, onChangeMax, onRefresh }: {
-    hpCurrent: number; hpMax: number;
+function HitPointsCard({ hpCurrent, hpMax, hitDie, onChangeCurrent, onChangeMax, onRefresh }: {
+    hpCurrent: number; hpMax: number; hitDie: number;
     onChangeCurrent: (v: number) => void; onChangeMax: (v: number) => void;
     onRefresh: () => void;
 }) {
@@ -75,32 +76,35 @@ function HitPointsCard({ hpCurrent, hpMax, onChangeCurrent, onChangeMax, onRefre
     }
 
     return (
-        <div className="rounded-lg bg-base-200 px-3 py-2 flex flex-col items-center gap-1 flex-1">
+        <div className="rounded-lg bg-base-200 px-2 py-1.5 flex flex-col gap-0.5 flex-1">
             <div className="flex items-center justify-between w-full">
                 <span className="text-[9px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.hitPoints")}</span>
-                <button
-                    onClick={handleRefresh}
-                    title={t("characterSheet.restoreHp")}
-                    className="text-base-content/50 hover:text-success active:scale-90 transition-all"
-                >
-                    <FiRefreshCw className={`text-sm ${spinning ? "animate-spin" : ""}`} />
-                </button>
+                <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] font-extrabold tracking-widest opacity-50 uppercase">1d{hitDie}</span>
+                    <button
+                        onClick={handleRefresh}
+                        title={t("characterSheet.restoreHp")}
+                        className="text-base-content/50 hover:text-success active:scale-90 transition-all"
+                    >
+                        <FiRefreshCw className={`text-sm ${spinning ? "animate-spin" : ""}`} />
+                    </button>
+                </div>
             </div>
-            <div className="flex items-center gap-0.5 text-2xl font-black">
+            <div className="flex items-center justify-center gap-0.5 text-xl font-black">
                 <input
                     type="number"
                     value={curInput}
                     onChange={(e) => { setCurInput(e.target.value); const v = parseInt(e.target.value); if (!isNaN(v) && v >= 0) onChangeCurrent(v); }}
                     onBlur={() => { if (isNaN(parseInt(curInput)) || parseInt(curInput) < 0) setCurInput(String(hpCurrent)); }}
-                    className="w-12 bg-transparent text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-10 bg-transparent text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
-                <span className="opacity-40 text-xl">/</span>
+                <span className="opacity-40 text-base">/</span>
                 <input
                     type="number"
                     value={maxInput}
                     onChange={(e) => { setMaxInput(e.target.value); const v = parseInt(e.target.value); if (!isNaN(v) && v >= 0) onChangeMax(v); }}
                     onBlur={() => { if (isNaN(parseInt(maxInput)) || parseInt(maxInput) < 0) setMaxInput(String(hpMax)); }}
-                    className="w-12 bg-transparent text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-10 bg-transparent text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
             </div>
             <div className="w-full h-1 rounded-full bg-base-300">
@@ -138,6 +142,7 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
     const hpCurrent = sheet?.hpCurrent ?? 0;
     const hpMax = sheet?.hpMax ?? 0;
     const level = sheet?.totalPoints ?? 1;
+    const hitDie = getCharacterHitDie(sheet?.characterId);
     const proficiencyBonus = Math.floor((Math.max(1, level) - 1) / 4) + 2;
 
     function rollAC() {
@@ -195,6 +200,7 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
                 <HitPointsCard
                     hpCurrent={hpCurrent}
                     hpMax={hpMax}
+                    hitDie={hitDie}
                     onChangeCurrent={(v) => update({ hpCurrent: v })}
                     onChangeMax={(v) => update({ hpMax: v })}
                     onRefresh={() => update({ hpCurrent: hpMax })}

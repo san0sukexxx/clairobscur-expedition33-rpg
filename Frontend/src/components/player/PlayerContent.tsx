@@ -19,6 +19,7 @@ import LuminasSection from "../LuminasSection";
 import SpecialAttacksSection from "../SpecialAttacksSection";
 import SkillsSection from "../SkillsSection";
 import { SkillProficiencySetup } from "../setup/SkillProficiencySetup";
+import { ASIPickerSetup } from "../setup/ASIPickerSetup";
 import ItemsSection from "../ItemsSection";
 import CombatSection from "../CombatSection";
 import { NotesSection } from "../NotesSection";
@@ -100,6 +101,12 @@ export function PlayerContent({
   const hasCharacter = !!player?.playerSheet?.characterId;
   const sheetReady = hasName && hasCharacter;
 
+  const ASI_LEVELS = [4, 8, 12, 16, 19];
+  const currentLevel = player?.playerSheet?.totalPoints ?? 0;
+  const pendingAsiLevel = ASI_LEVELS.find(
+    lvl => lvl <= currentLevel && !player?.asiHistory?.some(h => h.level === lvl)
+  ) ?? null;
+
   const abilityScoresDone = player?.setupProgress?.find(s => s.section === "abilityScores")?.done ?? false;
   const savingThrowProficiencyDone = true;
   const skillProficiencyDone = player?.setupProgress?.find(s => s.section === "skillProficiency")?.done ?? false;
@@ -127,6 +134,13 @@ export function PlayerContent({
             setPlayer={setPlayer}
             campaignInfo={campaignInfo}
           />
+          {sheetReady && pendingAsiLevel !== null && (
+            <ASIPickerSetup
+              player={player}
+              setPlayer={setPlayer}
+              asiLevel={pendingAsiLevel}
+            />
+          )}
           {sheetReady && (
             <>
               {abilityScoresDone && savingThrowProficiencyDone && (

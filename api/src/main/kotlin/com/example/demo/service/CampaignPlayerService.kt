@@ -48,7 +48,8 @@ class CampaignPlayerService(
                                 luminas = null,
                                 items = null,
                                 specialAttacks = null,
-                                setupProgress = null
+                                setupProgress = null,
+                                asiHistory = null
                         )
                 }
         }

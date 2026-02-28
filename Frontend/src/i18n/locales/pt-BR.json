@@ -1857,6 +1857,7 @@
       "armorClass": "Classe de Armadura",
       "initiative": "Iniciativa",
       "hitPoints": "Pontos de Vida",
+      "hitDie": "Dado de Vida",
       "restoreHp": "Restaurar HP total",
       "savingThrows": "Testes de Resistência",
       "race": "Raça",
@@ -3418,6 +3419,20 @@
       "minutesAgo": "min atrás",
       "hoursAgo": "h atrás",
       "daysAgo": "d atrás"
+    },
+    "asi": {
+      "title": "Aumento de Atributo",
+      "levelTitle": "Nível {level} — Aumento de Atributo",
+      "description": "Escolha como distribuir seus pontos de atributo.",
+      "chooseOne": "+2 em um atributo",
+      "chooseTwo": "+1/+1 em dois atributos",
+      "confirm": "Confirmar",
+      "strength": "Força",
+      "dexterity": "Destreza",
+      "constitution": "Constituição",
+      "intelligence": "Inteligência",
+      "wisdom": "Sabedoria",
+      "charisma": "Carisma"
     }
   }
 }

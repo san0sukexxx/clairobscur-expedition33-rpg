@@ -41,6 +41,24 @@ export interface SetupProgressEntry {
     done: boolean;
 }
 
+export interface AsiHistoryEntry {
+    id: number;
+    playerId: number;
+    level: number;
+    attribute1: string;
+    amount1: number;
+    attribute2?: string;
+    amount2?: number;
+}
+
+export interface ApplyAsiInput {
+    level: number;
+    attribute1: string;
+    amount1: number;
+    attribute2?: string;
+    amount2?: number;
+}
+
 export interface GetPlayerResponse {
     id: number;
     playerSheet?: PlayerSheetResponse;
@@ -53,6 +71,7 @@ export interface GetPlayerResponse {
     items?: PlayerItemResponse[];
     specialAttacks?: PlayerSpecialAttackResponse[];
     setupProgress?: SetupProgressEntry[];
+    asiHistory?: AsiHistoryEntry[];
 }
 
 export interface UpdatePlayerInput {
@@ -93,6 +112,10 @@ export class APIPlayer {
             isMasterEditing: isMasterEditing
         }
         return api.put<SetMasterEditingInput, void>(`players/${playerId}/master-editing`, input);
+    }
+
+    static async applyAsi(playerId: number, input: ApplyAsiInput): Promise<void> {
+        return api.post(`players/${playerId}/asi`, input);
     }
 
 }
