@@ -3118,6 +3118,12 @@
         "criticals": "Criticals",
         "criticalFailures": "Critical failures"
       },
+      "basicAttack": {
+        "roll": "Roll (d20)",
+        "weaponPower": "Weapon power",
+        "mainAttribute": "Main attribute",
+        "total": "Total"
+      },
       "attack": {
         "power": "Power",
         "weapon": "Weapon",

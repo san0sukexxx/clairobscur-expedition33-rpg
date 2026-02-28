@@ -2,6 +2,7 @@ import { useCallback, type Dispatch, type SetStateAction, type RefObject, type M
 import { t } from "../../i18n";
 import { FaCheckCircle, FaSkull } from "react-icons/fa";
 import { APIBattle } from "../../api/APIBattle";
+import { APIGameLog } from "../../api/APIGameLog";
 import { APIPlayer, type GetPlayerResponse } from "../../api/APIPlayer";
 import type { WeaponInfo } from "../../api/ResponseModel";
 import type { DiceBoardRef } from "../../components/DiceBoard";
@@ -11,8 +12,10 @@ import { dispatchRoll } from "../../utils/rollDispatcher";
 import {
   playerPictosTotalSpeed,
   calculatePlayerCriticalBonus,
+  calculateRawWeaponPower,
 } from "../../utils/PlayerCalculator";
 import { calculateWeaponAgilityBonus } from "../../utils/WeaponCalculator";
+import { getMainAttributeKey } from "../../utils/CharacterUtils";
 import {
   calculateFailureDiv,
   diceTotal,
@@ -247,6 +250,36 @@ export function useCombatActions({
     }
   }, [player, showToast, closeModal]);
 
+  const basicAttack = useCallback(() => {
+    if (!player) return;
+
+    const weaponPowerMod = calculateRawWeaponPower(weaponInfo, "basic");
+    const mainAttrKey = getMainAttributeKey(player.playerSheet?.characterId);
+    const mainAttrScore = player.playerSheet?.abilityScores?.[mainAttrKey] ?? 10;
+    const mainAttrMod = Math.floor((mainAttrScore - 10) / 2);
+    const totalMod = weaponPowerMod + mainAttrMod;
+
+    const diceCommand = totalMod === 0 ? "1d20" : totalMod > 0 ? `1d20+${totalMod}` : `1d20${totalMod}`;
+
+    setIsExecutingSkill(true);
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, diceCommand, result => {
+      const total = diceTotal(result);
+      const diceRolled = total - totalMod;
+
+      dispatchRoll({ label: t("combat.attack"), diceRolled, modifier: totalMod, total, diceCommand });
+
+      APIGameLog.create(player.id, {
+        rollType: "attack",
+        diceRolled,
+        modifier: totalMod,
+        total,
+        diceCommand,
+      }).catch(() => {});
+
+      setIsExecutingSkill(false);
+    });
+  }, [player, weaponInfo, diceBoardRef, timeoutDiceBoardRef, setIsExecutingSkill]);
+
   const handleCombatMenuAction = useCallback((action: CombatMenuAction) => {
     switch (action) {
       case COMBAT_MENU_ACTIONS.Inventory:
@@ -270,6 +303,9 @@ export function useCombatActions({
       case COMBAT_MENU_ACTIONS.Flee:
         attemptFlee();
         break;
+      case COMBAT_MENU_ACTIONS.Attack:
+        basicAttack();
+        break;
       case COMBAT_MENU_ACTIONS.Cancel:
         setIsUsingSpecialAttackMode(false);
         break;
@@ -278,7 +314,7 @@ export function useCombatActions({
     }
   }, [
     setTab, setIsInventoryActiveInCombat, setSpecialAttacksInitialTab, setIsUsingSpecialAttackMode,
-    rollInitiative, joinBattle, endTurn, attemptFlee
+    rollInitiative, joinBattle, endTurn, attemptFlee, basicAttack
   ]);
 
   return {

@@ -3120,6 +3120,12 @@
         "criticals": "Críticos",
         "criticalFailures": "Falhas críticas"
       },
+      "basicAttack": {
+        "roll": "Rolagem (d20)",
+        "weaponPower": "Poder da arma",
+        "mainAttribute": "Atributo principal",
+        "total": "Total"
+      },
       "attack": {
         "power": "Poder",
         "weapon": "Arma",

@@ -111,15 +111,22 @@ export function PlayerContent({
   const savingThrowProficiencyDone = true;
   const skillProficiencyDone = player?.setupProgress?.find(s => s.section === "skillProficiency")?.done ?? false;
   const prevSheetReady = useRef(sheetReady);
+  const hasLoadedOnce = useRef(false);
 
   useEffect(() => {
+    if (loading) return;
+    if (!hasLoadedOnce.current) {
+      hasLoadedOnce.current = true;
+      prevSheetReady.current = sheetReady;
+      return;
+    }
     if (sheetReady && !prevSheetReady.current) {
       setTimeout(() => {
         abilityScoresRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
     }
     prevSheetReady.current = sheetReady;
-  }, [sheetReady]);
+  }, [sheetReady, loading]);
 
   if (loading || error) {
     return null;

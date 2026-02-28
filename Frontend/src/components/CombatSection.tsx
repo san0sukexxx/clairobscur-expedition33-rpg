@@ -105,8 +105,6 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 break;
 
             case COMBAT_MENU_ACTIONS.Attack:
-                setIsAttacking(true);
-                setTab(opositeTeamTab);
                 onMenuAction(COMBAT_MENU_ACTIONS.Attack);
                 break;
 

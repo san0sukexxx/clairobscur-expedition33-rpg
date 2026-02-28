@@ -1,5 +1,5 @@
 import type { BattleWithDetailsResponse } from "../api/APIBattle";
-import type { GetPlayerResponse } from "../api/APIPlayer";
+import type { AbilityScores, GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo } from "../api/ResponseModel";
 
 export const CHARACTERS_LIST = [
@@ -22,6 +22,19 @@ const CHARACTER_HIT_DIE: Record<string, number> = {
     gustave: 10,
     monoco:  8,
 };
+
+const CHARACTER_MAIN_ATTRIBUTE: Record<string, keyof AbilityScores> = {
+    verso:   "strength",
+    gustave: "strength",
+    maelle:  "dexterity",
+    sciel:   "charisma",
+    monoco:  "wisdom",
+    lune:    "intelligence",
+};
+
+export function getMainAttributeKey(characterId?: string | null): keyof AbilityScores {
+    return CHARACTER_MAIN_ATTRIBUTE[characterId ?? ""] ?? "strength";
+}
 
 export function getHitDie(characterId?: string | null): number {
     return CHARACTER_HIT_DIE[characterId ?? ""] ?? 8;

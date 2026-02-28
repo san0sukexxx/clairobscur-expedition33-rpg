@@ -29,6 +29,9 @@ export default function CampaignAdminCombatsTab({ campaignInfo, players }: Campa
         try {
             const data = await APIBattle.listByCampaign(campaignInfo.id);
             setBattles(data);
+            if (data.length === 1) {
+                setSelectedBattleId(data[0].id);
+            }
         } catch {
             setError(t("combatAdmin.errorLoadingCombats"));
         } finally {
