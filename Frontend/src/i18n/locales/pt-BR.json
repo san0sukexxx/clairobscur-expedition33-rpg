@@ -3124,7 +3124,16 @@
         "roll": "Rolagem (d20)",
         "weaponPower": "Poder da arma",
         "mainAttribute": "Atributo principal",
-        "total": "Total"
+        "total": "Total",
+        "attackTitle": "Rolagem de Ataque",
+        "damageTitle": "Rolagem de Dano",
+        "proficiency": "Proficiência",
+        "attackTotal": "Total do Ataque",
+        "totalDamage": "Dano Total",
+        "rollDamage": "Rolar Dano",
+        "confirmDamage": "Confirmar Dano",
+        "miss": "Errou",
+        "damage": "Dano"
       },
       "attack": {
         "power": "Poder",

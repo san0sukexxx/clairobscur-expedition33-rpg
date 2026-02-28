@@ -8,6 +8,7 @@ import { CgSandClock } from "react-icons/cg";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo } from "../api/ResponseModel";
 import PlayerStatusFloating from "./PlayerStatusFloating";
+import CombatBottomSheet from "./CombatBottomSheet";
 import { t } from "../i18n";
 
 interface CombatsSectionProps {
@@ -105,6 +106,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 break;
 
             case COMBAT_MENU_ACTIONS.Attack:
+                setTab(opositeTeamTab);
+                setIsAttacking(true);
                 onMenuAction(COMBAT_MENU_ACTIONS.Attack);
                 break;
 
@@ -166,6 +169,8 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 isExecutingSkill={isExecutingSkill}
                 isSelectingSkillTarget={isSelectingSkillTarget}
             />
+
+            <CombatBottomSheet player={player} />
 
             <div className="h-[100px]" />
         </div>

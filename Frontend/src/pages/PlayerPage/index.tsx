@@ -83,6 +83,7 @@ export default function PlayerPage() {
     endTurn,
     attemptFlee,
     handleCombatMenuAction,
+    performBasicAttack,
   } = useCombatActions({
     player,
     setPlayer,
@@ -134,7 +135,10 @@ export default function PlayerPage() {
       handleReviveTarget(target);
       return;
     }
-  }, [player, isReviveMode, handleReviveTarget]);
+
+    // Basic attack target selection
+    performBasicAttack(target);
+  }, [player, isReviveMode, handleReviveTarget, performBasicAttack]);
 
   // Modal close handler
   const handleModalClose = useCallback(() => {

@@ -3122,7 +3122,16 @@
         "roll": "Roll (d20)",
         "weaponPower": "Weapon power",
         "mainAttribute": "Main attribute",
-        "total": "Total"
+        "total": "Total",
+        "attackTitle": "Attack Roll",
+        "damageTitle": "Damage Roll",
+        "proficiency": "Proficiency",
+        "attackTotal": "Attack Total",
+        "totalDamage": "Total Damage",
+        "rollDamage": "Roll Damage",
+        "confirmDamage": "Confirm Damage",
+        "miss": "Miss",
+        "damage": "Damage"
       },
       "attack": {
         "power": "Power",

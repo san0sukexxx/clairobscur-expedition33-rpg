@@ -8,6 +8,7 @@ import { t } from "../i18n";
 import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import { getCharacterHitDie } from "../utils/PlayerCalculator";
+import { calculateProficiencyBonus } from "../utils/AttackCalculator";
 
 /* ── Armor Class (escudo) ── */
 function ArmorClassCard({ value, onRoll }: { value: number; onRoll: () => void }) {
@@ -143,7 +144,7 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
     const hpMax = sheet?.hpMax ?? 0;
     const level = sheet?.totalPoints ?? 1;
     const hitDie = getCharacterHitDie(sheet?.characterId);
-    const proficiencyBonus = Math.floor((Math.max(1, level) - 1) / 4) + 2;
+    const proficiencyBonus = calculateProficiencyBonus(level);
 
     function rollAC() {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
