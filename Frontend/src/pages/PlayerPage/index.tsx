@@ -26,6 +26,7 @@ import {
 
 // Utils
 import type { BattleCharacterInfo } from "../../api/ResponseModel";
+import type { PlayerTab } from "./PlayerPage.types";
 import type { AbilityTestRequestEvent } from "../../utils/SpecialAttackDisplayUtils";
 import { rollWithTimeout } from "../../utils/RollUtils";
 import { diceTotal } from "../../utils/DiceCalculator";
@@ -130,6 +131,19 @@ export default function PlayerPage() {
     showToast
   });
 
+  // Wrap setTab so "habilidades" auto-enters picker mode when it's the player's turn
+  const setTabWithSkillMode = useCallback((newTab: PlayerTab) => {
+    if (newTab === "habilidades" && player?.fightInfo) {
+      const firstTurn = player.fightInfo.turns?.[0];
+      const isYourTurn = firstTurn?.battleCharacterId === player.fightInfo.playerBattleID;
+      if (isYourTurn) {
+        setSpecialAttacksInitialTab("picker");
+        setIsUsingSpecialAttackMode(true);
+      }
+    }
+    setTab(newTab);
+  }, [setTab, setSpecialAttacksInitialTab, setIsUsingSpecialAttackMode, player]);
+
   const handlePotionUsed = useCallback(() => {
     setTab("combate");
   }, [setTab]);
@@ -208,7 +222,7 @@ export default function PlayerPage() {
         onNavigateBack={handleNavigateBackToAdmin}
         isExecutingSkill={isExecutingSkill}
         tab={tab}
-        setTab={setTab}
+        setTab={setTabWithSkillMode}
       />
 
       <main className="p-4 max-w-md mx-auto pb-24">

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiLogOut, FiShare2 } from "react-icons/fi";
+import { FiLogOut, FiShare2, FiMaximize, FiMinimize } from "react-icons/fi";
 import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll } from "react-icons/fa";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
@@ -21,6 +21,13 @@ export default function CampaignAdmin() {
     const campaignId = campaign ? parseInt(campaign, 10) : null;
     const navigate = useNavigate();
     const { showToast } = useToast();
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    useEffect(() => {
+        const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener("fullscreenchange", onFsChange);
+        return () => document.removeEventListener("fullscreenchange", onFsChange);
+    }, []);
 
     const { items, loading, error, reload } = useApiListRaw<GetPlayerResponse>(
         () => (campaignId !== null ? APICampaignPlayer.list(campaignId) : Promise.resolve([])),
@@ -127,11 +134,23 @@ export default function CampaignAdmin() {
                 <div className="flex-none flex gap-2">
                     <button
                         onClick={handleShareCampaign}
-                        className="btn btn-ghost gap-2"
-                        title="Compartilhar campanha"
+                        className="btn btn-ghost btn-square"
+                        title={t("campaigns.share") || "Compartilhar"}
                     >
                         <FiShare2 />
-                        {t("campaigns.share") || "Compartilhar"}
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (document.fullscreenElement) {
+                                document.exitFullscreen();
+                            } else {
+                                document.documentElement.requestFullscreen();
+                            }
+                        }}
+                        className="btn btn-ghost btn-square"
+                        title={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}
+                    >
+                        {isFullscreen ? <FiMinimize /> : <FiMaximize />}
                     </button>
                     <button
                         onClick={() => navigate("/")}

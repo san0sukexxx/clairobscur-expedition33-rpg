@@ -11,6 +11,7 @@ import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import { getWeaponPassive, toKebabCase, hasWeapon, t } from "../i18n";
+import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import type { WeaponDTO } from "../types/WeaponDTO";
 
 function getWeaponTranslationId(weaponName: string, weaponList: WeaponDTO[]): string {
@@ -119,8 +120,13 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                 />
                             </div>
                             <div>
-                                <span className="font-bold text-base">{weapon.id}</span>
-                                <span className="ml-2 text-sm opacity-60">Lv.{weapon.level}</span>
+                                <div>
+                                    <span className="font-bold text-base">{weapon.id}</span>
+                                    <span className="ml-2 text-sm opacity-60">Lv.{weapon.level}</span>
+                                </div>
+                                <div className="text-sm opacity-70">
+                                    {getElementName(details.attributes.element)} {ELEMENT_EMOTE[details.attributes.element] ?? "❓"}
+                                </div>
                             </div>
                         </div>
 

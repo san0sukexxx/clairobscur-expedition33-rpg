@@ -86,6 +86,7 @@ export function RollHistoryToast() {
             className="fixed bottom-4 left-4 z-[10000] flex flex-col gap-2 w-64 select-none"
             animate={{ opacity: dimmed ? 0.1 : visible ? 1 : 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
+            style={{ pointerEvents: visible && !dimmed ? "auto" : "none" }}
             onPointerDown={() => setDimmed(true)}
             onPointerEnter={() => setDimmed(true)}
             onPointerLeave={() => setDimmed(false)}
