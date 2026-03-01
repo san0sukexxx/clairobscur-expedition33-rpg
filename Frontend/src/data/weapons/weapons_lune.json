@@ -84,7 +84,7 @@
       "element": "Earth",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -136,7 +136,7 @@
       "element": "Earth",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -162,7 +162,7 @@
       "element": "Fire",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
@@ -188,7 +188,7 @@
       "element": "Light",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
@@ -239,7 +239,7 @@
       "power": 1020,
       "element": "Lightning",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
@@ -292,7 +292,7 @@
       "element": "Lightning",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -318,7 +318,7 @@
       "element": "Fire",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -409,7 +409,7 @@
       "element": "Ice",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -435,7 +435,7 @@
       "element": "Ice",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
@@ -487,7 +487,7 @@
       "element": "Dark",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
@@ -513,7 +513,7 @@
       "element": "Ice",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [

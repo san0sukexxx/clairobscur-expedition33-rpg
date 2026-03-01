@@ -4,11 +4,17 @@ import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
+import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponDexterityBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
 import { calculateMaxHP } from "../utils/PlayerCalculator";
 import type { WeaponInfo } from "../api/ResponseModel";
+
+const VERSO_EXCLUSIVE_WEAPONS = new Set([
+  "Abysseram", "Blodam", "Chevalam", "Confuso", "Contorso", "Corpeso",
+  "Cruleram", "Cultam", "Danseso", "Delaram", "Dreameso", "Gaultaram",
+  "Lanceram", "Sakaram", "Seeram", "Simoso", "Tireso",
+]);
 
 // Helper to find the correct weapon ID considering character variations
 function getWeaponTranslationId(weaponName: string, weaponList: WeaponDTO[]): string {
@@ -137,7 +143,12 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
     if (mode === "add") {
       const currentIds = new Set((player.weapons ?? []).map(w => w.id));
-      const available = weaponList.filter(dto => !currentIds.has(dto.name));
+      const characterId = player.playerSheet?.characterId;
+      const available = weaponList.filter(dto => {
+        if (currentIds.has(dto.name)) return false;
+        if (characterId === "gustave" && VERSO_EXCLUSIVE_WEAPONS.has(dto.name)) return false;
+        return true;
+      });
 
       const asResponse: WeaponResponse[] = available.map(dto => ({
         id: dto.name,
@@ -163,9 +174,11 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
   const filteredModalWeapons = useMemo(() => {
     const term = weaponFilter.trim().toLowerCase();
+    const characterId = player?.playerSheet?.characterId;
     return modalWeapons.filter(w => {
       const dto = findWeaponByName(weaponList, w.id);
       if (!dto) return false;
+      if (characterId === "gustave" && VERSO_EXCLUSIVE_WEAPONS.has(dto.name)) return false;
       if (term === "") return true;
       return dto.name.toLowerCase().includes(term);
     });
@@ -521,7 +534,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                     [t("weapons.vitality"), activeWeapon.scaling.vitality],
                     [t("weapons.defense"), activeWeapon.scaling.defense],
                     [t("weapons.luck"), activeWeapon.scaling.luck],
-                    [t("weapons.agility"), activeWeapon.scaling.agility],
+                    [t("weapons.dexterity"), activeWeapon.scaling.dexterity],
                   ] as const
                 ).map(([label, value]) =>
                   value ? (
@@ -542,9 +555,9 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                           {displayWeaponLuckBonus(value, activeWeapon.level)}
                         </span>
                       )}
-                      {label == t("weapons.agility") && (
+                      {label == t("weapons.dexterity") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
-                          {displayWeaponAgilityBonus(value, activeWeapon.level)}
+                          {displayWeaponDexterityBonus(value, activeWeapon.level)}
                         </span>
                       )}
                     </div>
@@ -659,7 +672,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                               ["vitality",  t("weapons.vitality"), weaponDetails.attributes.scaling.vitality],
                               ["defense",   t("weapons.defense"),  weaponDetails.attributes.scaling.defense],
                               ["luck",      t("weapons.luck"),     weaponDetails.attributes.scaling.luck],
-                              ["agility",   t("weapons.agility"),  weaponDetails.attributes.scaling.agility],
+                              ["dexterity",  t("weapons.dexterity"), weaponDetails.attributes.scaling.dexterity],
                             ] as const
                           ).map(([key, label, value]) =>
                             value ? (
@@ -680,9 +693,9 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                                     {displayWeaponLuckBonus(value, w.level)}
                                   </span>
                                 )}
-                                {key === "agility" && (
+                                {key === "dexterity" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
-                                    {displayWeaponAgilityBonus(value, w.level)}
+                                    {displayWeaponDexterityBonus(value, w.level)}
                                   </span>
                                 )}
                               </div>

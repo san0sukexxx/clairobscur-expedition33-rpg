@@ -12,7 +12,7 @@ import {
   playerPictosTotalSpeed,
   calculatePlayerCriticalBonus,
 } from "../../utils/PlayerCalculator";
-import { calculateWeaponAgilityBonus } from "../../utils/WeaponCalculator";
+import { calculateWeaponDexterityBonus } from "../../utils/WeaponCalculator";
 import {
   calculateFailureDiv,
   diceTotal,
@@ -87,8 +87,8 @@ export function useCombatActions({
       const criticalRolls = countCriticalRolls(result);
       const criticalBonus = calculatePlayerCriticalBonus(result, player, weaponInfo);
       const rollTotal = diceTotal(result);
-      const weaponAgilityBonus = calculateWeaponAgilityBonus(weaponInfo);
-      const total = rollTotal + dexMod + weaponAgilityBonus;
+      const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo);
+      const total = rollTotal + dexMod + weaponDexterityBonus;
 
       dispatchRoll({ label: t("characterSheet.initiative"), diceRolled: rollTotal, modifier: dexMod, total, diceCommand });
       const failures = countFailuresRolls(result);
@@ -120,8 +120,8 @@ export function useCombatActions({
             )}
           </p>
           <p>{t("playerPage.initiative.pictoBonus")}: <b>{playerPictosTotalSpeed(player)}</b></p>
-          {weaponAgilityBonus > 0 && (
-            <p>{t("playerPage.initiative.weaponBonus")}: <b>+{weaponAgilityBonus}</b></p>
+          {weaponDexterityBonus > 0 && (
+            <p>{t("playerPage.initiative.weaponBonus")}: <b>+{weaponDexterityBonus}</b></p>
           )}
           <h1 className="text-2xl font-bold">{t("playerPage.initiative.total")}: {total}</h1>
         </div>

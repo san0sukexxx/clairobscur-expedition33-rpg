@@ -31,7 +31,7 @@
       "power": 1200,
       "element": "Dark",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
@@ -84,7 +84,7 @@
       "element": "Light",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -188,7 +188,7 @@
       "element": "Earth",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -240,7 +240,7 @@
       "element": "Fire",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
@@ -265,7 +265,7 @@
       "power": 1164,
       "element": "Lightning",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
@@ -317,7 +317,7 @@
       "power": 1044,
       "element": "Physical",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
@@ -344,7 +344,7 @@
       "element": "Dark",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
@@ -370,7 +370,7 @@
       "element": "Earth",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
@@ -421,7 +421,7 @@
       "power": 1236,
       "element": "Physical",
       "scaling": {
-        "agility": "A",
+        "dexterity": "A",
         "luck": "B"
       }
     },
@@ -474,7 +474,7 @@
       "element": "Dark",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -500,7 +500,7 @@
       "element": "Light",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
@@ -525,7 +525,7 @@
       "power": 1284,
       "element": "Physical",
       "scaling": {
-        "agility": "A",
+        "dexterity": "A",
         "luck": "B"
       }
     },
@@ -539,7 +539,7 @@
       "element": "Lightning",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [

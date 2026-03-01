@@ -1745,6 +1745,8 @@
   },
   "ui": {
     "common": {
+      "readMore": "Read more",
+      "readLess": "Read less",
       "save": "Save",
       "cancel": "Cancel",
       "close": "Close",
@@ -1973,7 +1975,11 @@
       "intensityVeryHigh": "Very High",
       "intensityExtreme": "Extreme",
       "intensityMaximum": "Maximum",
-      "defend": "Defend"
+      "defend": "Defend",
+      "defenseDescDodge": "Standard defense. Roll 1d20 against AC.",
+      "defenseDescBlock": "Declare your intention to block before rolling defense. Failing to block increases attack intensity by +1. A successful block recovers 1 MP (1x per turn). Blocking all attacks in sequence grants a counter-attack (basic attack).",
+      "defenseDescJump": "Only for attacks that allow jumping. Each successful defense grants a counter-attack. Failing increases attack intensity by +1.",
+      "defenseDescGradient": "Gradient attacks cannot be dodged, only blocked. Same block mechanics."
     },
     "combatAdmin": {
       "createCombat": "Create combat",
@@ -2872,16 +2878,16 @@
         "Dark": "Dark",
         "Earth": "Earth"
       },
-      "power": "Power",
+      "power": "Attack Power",
       "scaling": "Scaling",
       "passives": "Passives",
       "noPassives": "No passives",
       "selectLevel": "Select Level",
       "weaponLevel": "Weapon level:",
-      "vitality": "Vitality",
+      "vitality": "Hit Points",
       "defense": "Defense",
       "luck": "Luck",
-      "agility": "Agility",
+      "dexterity": "Dexterity",
       "dices": "Dices",
       "rollD6": "Roll D6",
       "level": "Level",

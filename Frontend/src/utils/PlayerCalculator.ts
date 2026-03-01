@@ -9,7 +9,7 @@ import {
     countCriticalRolls
 } from "./DiceCalculator";
 import { hasHastened, hasProtected, hasSlowed, hasStatus, hasUnprotected } from "./NpcCalculator";
-import { calculateWeaponVitalityBonus, calculateWeaponAgilityBonus, calculateWeaponDefenseBonus } from "./WeaponCalculator";
+import { calculateWeaponVitalityBonus, calculateWeaponDexterityBonus, calculateWeaponDefenseBonus } from "./WeaponCalculator";
 import { getPlayerCharacter } from "./CharacterUtils";
 import { PictosList } from "../data/PictosList";
 import { calculatePictoHealth, calculatePictoSpeed, calculatePictoDefense, calculatePictoCritical } from "./PictoUtils";
@@ -197,7 +197,7 @@ export function calculateDefense(totalDamage: number, player: GetPlayerResponse 
     switch (defenseOption) {
         case "dodge":
         case "jump":
-            playerDefense += calculateWeaponAgilityBonus(weaponInfo)
+            playerDefense += calculateWeaponDexterityBonus(weaponInfo)
             break
         case "block":
             playerDefense += calculateWeaponDefenseBonus(weaponInfo)
@@ -272,9 +272,9 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any, weap
     }
 
     const pictosSpeedBonus = playerPictosTotalSpeed(player);
-    const weaponAgilityBonus = calculateWeaponAgilityBonus(weaponInfo ?? null);
+    const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo ?? null);
 
-    return total + Math.max(0, playerInitiative) + pictosSpeedBonus + weaponAgilityBonus;
+    return total + Math.max(0, playerInitiative) + pictosSpeedBonus + weaponDexterityBonus;
 }
 
 export function playerHasStatus(player: GetPlayerResponse | null, status: StatusType): boolean {

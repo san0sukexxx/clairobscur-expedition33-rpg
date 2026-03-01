@@ -10,14 +10,13 @@ import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { getCharacterHitDie, calculateMaxHP } from "../utils/PlayerCalculator";
 import { calculateProficiencyBonus } from "../utils/AttackCalculator";
-import { calculateWeaponDefenseBonus, calculateWeaponAgilityBonus } from "../utils/WeaponCalculator";
+import { calculateWeaponDefenseBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
 
 /* ── Armor Class (escudo) ── */
-function ArmorClassCard({ value, onRoll }: { value: number; onRoll: () => void }) {
+function ArmorClassCard({ value }: { value: number }) {
     return (
-        <button
-            onClick={onRoll}
-            className="relative flex flex-col items-center justify-start pt-2 bg-base-200 w-20 h-24 text-base-content shrink-0 hover:brightness-110 active:scale-95 transition cursor-pointer"
+        <div
+            className="relative flex flex-col items-center justify-start pt-2 bg-base-200 w-20 h-24 text-base-content shrink-0"
             style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%)" }}
         >
             <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 120" preserveAspectRatio="none" fill="none">
@@ -29,7 +28,7 @@ function ArmorClassCard({ value, onRoll }: { value: number; onRoll: () => void }
             <span className="relative z-10 text-[9px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassTop")}</span>
             <span className="relative z-10 text-3xl font-black leading-tight">{value}</span>
             <span className="relative z-10 text-[9px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassBottom")}</span>
-        </button>
+        </div>
     );
 }
 
@@ -148,26 +147,8 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
     const level = sheet?.totalPoints ?? 1;
     const hitDie = getCharacterHitDie(sheet?.characterId);
     const proficiencyBonus = calculateProficiencyBonus(level);
-    const weaponAgilityBonus = calculateWeaponAgilityBonus(weaponInfo);
-    const initiativeMod = dexMod + weaponAgilityBonus;
-
-    function rollAC() {
-        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
-            const roll = diceTotal(result);
-            const label = t("characterSheet.armorClass");
-            dispatchRoll({ label, diceRolled: roll, modifier: 0, total: roll, diceCommand: "1d20" });
-            if (player?.id) {
-                APIGameLog.create(player.id, {
-                    rollType: "abilityCheck",
-                    abilityKey: "armorClass",
-                    diceRolled: roll,
-                    modifier: 0,
-                    total: roll,
-                    diceCommand: "1d20",
-                }).catch(() => {});
-            }
-        });
-    }
+    const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo);
+    const initiativeMod = dexMod + weaponDexterityBonus;
 
     function rollInitiative() {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
@@ -193,7 +174,7 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
         <div className="rounded-box bg-base-100 shadow p-4 flex gap-4 items-start">
             {/* Esquerda: CA + Iniciativa */}
             <div className="flex gap-3 items-start shrink-0">
-                <div className="mt-2"><ArmorClassCard value={ac} onRoll={rollAC} /></div>
+                <div className="mt-2"><ArmorClassCard value={ac} /></div>
                 <InitiativeCard
                     modifier={initiativeMod}
                     onRoll={onBattleInitiative && player?.fightInfo?.canRollInitiative ? onBattleInitiative : rollInitiative}

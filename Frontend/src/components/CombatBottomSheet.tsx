@@ -69,6 +69,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
     const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
     const INTENSITY_DICE_MULTIPLIER = [1, 1, 2, 3, 4, 5];
     const [intensityIndex, setIntensityIndex] = useState(1); // starts at "Médio"
+    const [defenseExpanded, setDefenseExpanded] = useState(false);
 
     if (!weapon || !details) return null;
     const baseDamageDice = getWeaponDamageDice(weapon.level);
@@ -261,10 +262,11 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                         </button>
 
                         {/* Defense section */}
-                        <div className="border border-base-300 rounded-lg p-3 space-y-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.defend")}</span>
-                            <div className="flex items-center gap-3">
-                                <button
+                        <div className="border border-base-300 rounded-lg p-3">
+                            <div className="flex items-start gap-3">
+                                <div className="flex flex-col items-center gap-1 shrink-0">
+                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.defend")}</span>
+                                    <button
                                     onClick={() => {
                                         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
                                             const roll = diceTotal(result);
@@ -293,8 +295,22 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                     </svg>
                                     <span className="relative z-10 text-[8px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassTop")}</span>
                                     <span className="relative z-10 text-2xl font-black leading-tight">{armorClass}</span>
-                                </button>
-                                <span className="text-xs opacity-50">1d20</span>
+                                    </button>
+                                </div>
+                                <div className="text-xs opacity-70 flex-1">
+                                    <div className={`space-y-1.5 ${defenseExpanded ? "" : "line-clamp-4"}`}>
+                                        <p><span className="font-semibold text-sky-400">{t("combat.dodge")}</span> — {t("combat.defenseDescDodge")}</p>
+                                        <p><span className="font-semibold text-amber-400">{t("combat.block")}</span> — {t("combat.defenseDescBlock")}</p>
+                                        <p><span className="font-semibold text-emerald-400">{t("combat.jump")}</span> — {t("combat.defenseDescJump")}</p>
+                                        <p><span className="font-semibold text-red-400">{t("combat.gradient")}</span> — {t("combat.defenseDescGradient")}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setDefenseExpanded(prev => !prev)}
+                                        className="text-xs text-primary mt-1 cursor-pointer hover:underline"
+                                    >
+                                        {defenseExpanded ? t("common.readLess") : t("common.readMore")}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

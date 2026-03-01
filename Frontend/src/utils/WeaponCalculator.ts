@@ -55,9 +55,9 @@ export function calculateWeaponVitalityBonus(weaponInfo: WeaponInfo | null): num
   const rank = weaponInfo?.details?.attributes.scaling.vitality;
   return calculateWeaponVitality(rank, weaponInfo.weapon?.level ?? 0);
 }
-export function calculateWeaponAgilityBonus(weaponInfo: WeaponInfo | null): number {
-  if (weaponInfo?.details?.attributes.scaling.agility == undefined) { return 0; }
-  const rank = weaponInfo?.details?.attributes.scaling.agility;
+export function calculateWeaponDexterityBonus(weaponInfo: WeaponInfo | null): number {
+  if (weaponInfo?.details?.attributes.scaling.dexterity == undefined) { return 0; }
+  const rank = weaponInfo?.details?.attributes.scaling.dexterity;
   return rankToValue(rank, weaponInfo.weapon?.level ?? 0)
 }
 export function calculateWeaponDefenseBonus(weaponInfo: WeaponInfo | null): number {
@@ -79,7 +79,7 @@ export function displayWeaponDefenseBonus(rank: string, level: number): string {
 export function displayWeaponLuckBonus(rank: string, level: number): string {
   return "+" + rankToValue(rank, level) * 3
 }
-export function displayWeaponAgilityBonus(rank: string, level: number): string {
+export function displayWeaponDexterityBonus(rank: string, level: number): string {
   return "+" + rankToValue(rank, level)
 }
 

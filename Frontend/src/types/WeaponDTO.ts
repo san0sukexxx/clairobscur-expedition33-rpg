@@ -2,7 +2,7 @@ import { type Element } from "../api/ResponseModel"
 
 // Ranks possíveis
 export type Rank = "S" | "A" | "B" | "C" | "D" | "E";
-export type AttributeType = "vitality" | "agility" | "defense" | "luck";
+export type AttributeType = "vitality" | "dexterity" | "defense" | "luck";
 
 // Estrutura de uma passiva
 export interface PassiveDTO {

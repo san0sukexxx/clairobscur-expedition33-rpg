@@ -1745,6 +1745,8 @@
   },
   "ui": {
     "common": {
+      "readMore": "Ler mais",
+      "readLess": "Ler menos",
       "save": "Salvar",
       "cancel": "Cancelar",
       "close": "Fechar",
@@ -1931,7 +1933,7 @@
       "effects": "Efeitos",
       "rollDefense": "Rolar defesa",
       "block": "Aparar",
-      "dodge": "Desviar",
+      "dodge": "Esquivar",
       "jump": "Pular",
       "noPendingAttacks": "Nenhum ataque pendente.",
       "pendingAttacks": "Ataques pendentes",
@@ -1973,7 +1975,11 @@
       "intensityVeryHigh": "Muito Alto",
       "intensityExtreme": "Extremo",
       "intensityMaximum": "Máximo",
-      "defend": "Defender"
+      "defend": "Defender",
+      "defenseDescDodge": "Defesa padrão. Rola 1d20 contra a CA.",
+      "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PM (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque (ataque básico).",
+      "defenseDescJump": "Só para ataques que permitem pular. Cada defesa bem-sucedida concede um contra-ataque. Falhar aumenta a intensidade do ataque em +1.",
+      "defenseDescGradient": "Ataques Gradiente não podem ser esquivados, apenas aparados. Mesma mecânica de aparar."
     },
     "combatAdmin": {
       "createCombat": "Criar combate",
@@ -2872,16 +2878,16 @@
         "Dark": "Trevas",
         "Earth": "Terra"
       },
-      "power": "Poder",
+      "power": "Poder de Ataque",
       "scaling": "Escala",
       "passives": "Passivas",
       "noPassives": "Sem passivas",
       "selectLevel": "Selecione o Nível",
       "weaponLevel": "Nível da arma:",
-      "vitality": "Vitalidade",
+      "vitality": "Pontos de Vida",
       "defense": "Defesa",
       "luck": "Sorte",
-      "agility": "Agilidade",
+      "dexterity": "Destreza",
       "dices": "Dados",
       "rollD6": "Rolar D6",
       "level": "Level",
