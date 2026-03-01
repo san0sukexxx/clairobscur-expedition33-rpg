@@ -1932,7 +1932,7 @@
       "attackType": "Attack type",
       "effects": "Effects",
       "rollDefense": "Roll defense",
-      "block": "Block",
+      "block": "Parry",
       "dodge": "Dodge",
       "jump": "Jump",
       "noPendingAttacks": "No pending attacks.",
@@ -1977,9 +1977,9 @@
       "intensityMaximum": "Maximum",
       "defend": "Defend",
       "defenseDescDodge": "Standard defense. Roll 1d20 against AC.",
-      "defenseDescBlock": "Declare your intention to block before rolling defense. Failing to block increases attack intensity by +1. A successful block recovers 1 MP (1x per turn). Blocking all attacks in sequence grants a counter-attack (basic attack).",
+      "defenseDescBlock": "Declare your intention to parry before defending. Failing to parry increases attack intensity by +1. A successful parry recovers 1 MP (1x per turn). Parrying all attacks in sequence grants a counter-attack (basic attack).",
       "defenseDescJump": "Only for attacks that allow jumping. Each successful defense grants a counter-attack. Failing increases attack intensity by +1.",
-      "defenseDescGradient": "Gradient attacks cannot be dodged, only blocked. Same block mechanics."
+      "defenseDescGradient": "Gradient attacks cannot be dodged, only parried. Same parry mechanics."
     },
     "combatAdmin": {
       "createCombat": "Create combat",
@@ -2002,20 +2002,20 @@
       "errorActivating": "Could not activate the battle.",
       "errorPausing": "Could not pause the battle.",
       "defenseSuccess": {
-        "block": "Blocked",
+        "block": "Parried",
         "dodge": "Dodged",
         "jump": "Jumped",
-        "gradientBlock": "Blocked gradient",
+        "gradientBlock": "Parried gradient",
         "take": "Accepted damage",
         "counter": "Counter-attacked",
         "cancelCounter": "Cancelled counter",
         "default": "Defended"
       },
       "defenseFail": {
-        "block": "Failed to block",
+        "block": "Failed to parry",
         "dodge": "Failed to dodge",
         "jump": "Failed to jump",
-        "gradientBlock": "Failed to block gradient",
+        "gradientBlock": "Failed to parry gradient",
         "take": "Received all damage",
         "counter": "Failed counter",
         "cancelCounter": "Failed to cancel counter",
