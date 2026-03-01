@@ -6,7 +6,8 @@ import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { DiceBoardRef } from "./DiceBoard";
 import { useWeaponInfo } from "../hooks/player/useWeaponInfo";
 import { calculateAttackBonus, calculateDamageBonus, getAbilityModifier } from "../utils/AttackCalculator";
-import { getWeaponDamageDice } from "../utils/WeaponCalculator";
+import { getWeaponDamageDice, calculateWeaponDefenseBonus } from "../utils/WeaponCalculator";
+import { APIGameLog } from "../api/APIGameLog";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
@@ -60,8 +61,13 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
         return getAbilityModifier(dexScore);
     }, [player]);
 
-    const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme"] as const;
-    const INTENSITY_DICE_MULTIPLIER = [1, 1, 2, 3, 4];
+    const armorClass = useMemo(() => {
+        const weaponDefense = calculateWeaponDefenseBonus(weaponInfo);
+        return 10 + dexMod + weaponDefense;
+    }, [dexMod, weaponInfo]);
+
+    const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
+    const INTENSITY_DICE_MULTIPLIER = [1, 1, 2, 3, 4, 5];
     const [intensityIndex, setIntensityIndex] = useState(1); // starts at "Médio"
 
     if (!weapon || !details) return null;
@@ -96,7 +102,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                 className={`fixed bottom-0 left-0 right-0 z-42 transition-transform duration-300 ease-in-out ${
                     open ? "translate-y-0" : "translate-y-full"
                 }`}
-                style={{ height: "60vh" }}
+                style={{ height: "85vh" }}
             >
                 <div className="h-full bg-base-100/95 backdrop-blur-sm border-t border-base-300 shadow-lg flex flex-col">
                     {/* Header with close button */}
@@ -191,7 +197,8 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                         : intensityIndex === 1 ? "text-emerald-400"
                                         : intensityIndex === 2 ? "text-amber-400"
                                         : intensityIndex === 3 ? "text-orange-400"
-                                        : "text-red-400"
+                                        : intensityIndex === 4 ? "text-red-400"
+                                        : "text-fuchsia-400"
                                     }`}>
                                         {t(`combat.${INTENSITY_KEYS[intensityIndex]}`)}
                                     </span>
@@ -212,7 +219,8 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                 : intensityIndex === 1 ? "#34d399"
                                                 : intensityIndex === 2 ? "#fbbf24"
                                                 : intensityIndex === 3 ? "#fb923c"
-                                                : "#f87171"
+                                                : intensityIndex === 4 ? "#f87171"
+                                                : "#e879f9"
                                         }}
                                     />
                                     <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[INTENSITY_KEYS.length - 1]}`)}</span>
@@ -251,6 +259,44 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                             {t("combat.freeShot")} 1d4 {dexMod >= 0 ? "+" : ""}{dexMod}
                             <span className="badge badge-xs badge-warning">1 PM</span>
                         </button>
+
+                        {/* Defense section */}
+                        <div className="border border-base-300 rounded-lg p-3 space-y-2">
+                            <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.defend")}</span>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => {
+                                        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
+                                            const roll = diceTotal(result);
+                                            const label = t("characterSheet.armorClass");
+                                            dispatchRoll({ label, diceRolled: roll, modifier: 0, total: roll, diceCommand: "1d20" });
+                                            if (player?.id) {
+                                                APIGameLog.create(player.id, {
+                                                    rollType: "abilityCheck",
+                                                    abilityKey: "armorClass",
+                                                    diceRolled: roll,
+                                                    modifier: 0,
+                                                    total: roll,
+                                                    diceCommand: "1d20",
+                                                }).catch(() => {});
+                                            }
+                                        });
+                                    }}
+                                    className="relative flex flex-col items-center justify-start pt-1.5 bg-base-200 w-14 h-[4.2rem] text-base-content shrink-0 hover:brightness-110 active:scale-95 transition cursor-pointer"
+                                    style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%)" }}
+                                >
+                                    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 120" preserveAspectRatio="none" fill="none">
+                                        <path d="M1.5 1.5 L98.5 1.5 L98.5 84 L50 118.5 L1.5 84 Z"
+                                            stroke="currentColor" strokeOpacity="0.45" strokeWidth="2" />
+                                        <path d="M5 5 L95 5 L95 81 L50 113 L5 81 Z"
+                                            stroke="currentColor" strokeOpacity="0.2" strokeWidth="0.75" />
+                                    </svg>
+                                    <span className="relative z-10 text-[8px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassTop")}</span>
+                                    <span className="relative z-10 text-2xl font-black leading-tight">{armorClass}</span>
+                                </button>
+                                <span className="text-xs opacity-50">1d20</span>
+                            </div>
+                        </div>
 
                         {/* Unlocked passives */}
                         {unlockedPassives.length > 0 && (

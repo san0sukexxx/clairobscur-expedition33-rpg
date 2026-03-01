@@ -109,6 +109,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             case COMBAT_MENU_ACTIONS.FreeShot:
             case COMBAT_MENU_ACTIONS.Attack:
+            case COMBAT_MENU_ACTIONS.Defend:
                 setBottomSheetOpen(true);
                 break;
 

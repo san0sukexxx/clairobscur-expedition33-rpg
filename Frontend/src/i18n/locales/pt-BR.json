@@ -1971,7 +1971,9 @@
       "intensityMedium": "Médio",
       "intensityHigh": "Alto",
       "intensityVeryHigh": "Muito Alto",
-      "intensityExtreme": "Extremo"
+      "intensityExtreme": "Extremo",
+      "intensityMaximum": "Máximo",
+      "defend": "Defender"
     },
     "combatAdmin": {
       "createCombat": "Criar combate",

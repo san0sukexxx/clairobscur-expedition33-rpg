@@ -9,7 +9,8 @@ export const COMBAT_MENU_ACTIONS = {
     Flee: "Flee",
     Cancel: "Cancel",
     Team: "Team",
-    Enemies: "Enemies"
+    Enemies: "Enemies",
+    Defend: "Defend"
 } as const;
 
 export type CombatMenuAction = (typeof COMBAT_MENU_ACTIONS)[keyof typeof COMBAT_MENU_ACTIONS];

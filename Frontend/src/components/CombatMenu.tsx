@@ -62,14 +62,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
 
   const canUseFreeShot = useMemo(() => {
     if (isFleeing) return false
-
-    const mp = currentCharacter?.magicPoints ?? 0
-
-    if (isExhausted) {
-      return !isFrozen && !isStunned && mp >= 2
-    }
-
-    return !isFrozen && !isStunned && mp > 0
+    return !isFrozen && !isStunned
   }, [player?.fightInfo?.characters])
 
   const canAttack = useMemo(() => {
@@ -187,6 +180,9 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
                           {t("combat.attack")}
                         </button>
                       )}
+                      <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Defend)}>
+                        {t("combat.defend")}
+                      </button>
                       <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
                         {t("combat.endTurn")}
                       </button>
