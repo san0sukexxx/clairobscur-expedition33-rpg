@@ -60,6 +60,7 @@ function ExpandedCard({ entry }: { entry: RollEvent }) {
 export function RollHistoryToast() {
     const [history, setHistory] = useState<RollEvent[]>([]);
     const [visible, setVisible] = useState(false);
+    const [dimmed, setDimmed] = useState(false);
     const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
@@ -67,6 +68,7 @@ export function RollHistoryToast() {
             const roll = (e as CustomEvent<RollEvent>).detail;
             setHistory(prev => [...prev, roll].slice(-3));
             setVisible(true);
+            setDimmed(false);
             if (hideTimer.current) clearTimeout(hideTimer.current);
             hideTimer.current = setTimeout(() => setVisible(false), 7000);
         }
@@ -81,9 +83,12 @@ export function RollHistoryToast() {
 
     return createPortal(
         <motion.div
-            className="fixed bottom-4 left-4 z-[10000] flex flex-col gap-2 w-64 pointer-events-none select-none"
-            animate={{ opacity: visible ? 1 : 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="fixed bottom-4 left-4 z-[10000] flex flex-col gap-2 w-64 select-none"
+            animate={{ opacity: dimmed ? 0.1 : visible ? 1 : 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            onPointerDown={() => setDimmed(true)}
+            onPointerEnter={() => setDimmed(true)}
+            onPointerLeave={() => setDimmed(false)}
         >
             <AnimatePresence initial={false} mode="popLayout">
                 {history.map((entry, i) => {

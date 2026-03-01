@@ -1,19 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiLogOut, FiShare2 } from "react-icons/fi";
-import { FaUserFriends, FaFileAlt, FaShieldAlt } from "react-icons/fa";
+import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll } from "react-icons/fa";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import CampaignAdminSheets from "../components/CampaignAdminSheets";
 import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
+import { GameLogSection } from "../components/GameLogSection";
 import { t } from "../i18n";
 import { useToast } from "../components/Toast";
 
 export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
-    const [activeTab, setActiveTab] = useState<"players" | "combats">("players");
+    const [activeTab, setActiveTab] = useState<"players" | "combats" | "logs">("players");
     const alreadyRan = useRef(false);
 
     const { campaign } = useParams<{ campaign?: string }>();
@@ -176,6 +177,17 @@ export default function CampaignAdmin() {
                             </span>
                         </button>
 
+                        <button
+                            role="tab"
+                            className={`tab text-sm px-4 ${activeTab === "logs" ? "tab-active font-semibold" : ""}`}
+                            onClick={() => setActiveTab("logs")}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FaScroll />
+                                {t("tabs.logs")}
+                            </span>
+                        </button>
+
                         {/* Nova aba de detalhes da campanha */}
                         <button
                             role="tab"
@@ -211,6 +223,10 @@ export default function CampaignAdmin() {
                         campaignInfo={campaignInfo}
                         players={items}
                     />
+                )}
+
+                {activeTab === "logs" && campaignId !== null && (
+                    <GameLogSection campaignId={campaignId} />
                 )}
             </main>
         </div>

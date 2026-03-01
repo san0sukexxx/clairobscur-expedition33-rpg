@@ -179,7 +179,16 @@ export default function PlayerPage() {
     <div className="min-h-dvh bg-base-200">
       <DiceBoard ref={diceBoardRef} />
       <RollHistoryToast />
-      <FloatingDiceRoller diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
+      <FloatingDiceRoller
+        diceBoardRef={diceBoardRef}
+        timeoutDiceBoardRef={timeoutDiceBoardRef}
+        playerId={player?.id}
+        className={
+          tab === "combate" ? "bottom-28 right-4"
+            : tab === "habilidades" ? "bottom-24 right-4"
+            : "bottom-4 right-4"
+        }
+      />
 
       {!isAdmin && player?.isMasterEditing && (
         <MasterEditingOverlay />

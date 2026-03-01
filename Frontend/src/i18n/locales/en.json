@@ -1889,7 +1889,10 @@
       "passivePerception": "Passive Perception",
       "passiveInvestigation": "Passive Investigation",
       "passiveInsight": "Passive Insight",
-      "customRoll": "CUSTOM: ROLL"
+      "customRoll": "CUSTOM: ROLL",
+      "rollButton": "ROLL",
+      "sendToEveryone": "Everyone",
+      "sendToSelf": "Self"
     },
     "tabs": {
       "sheet": "Sheet",
@@ -1900,7 +1903,8 @@
       "pictos": "Pictos",
       "luminas": "Luminas",
       "players": "Players",
-      "combats": "Combats"
+      "combats": "Combats",
+      "logs": "Logs"
     },
     "combat": {
       "enemies": "Enemies",

@@ -1,7 +1,7 @@
 import { api } from "./api";
 
 export interface CreateGameLogInput {
-    rollType: "savingThrow" | "abilityCheck" | "skill" | "sense" | "attack";
+    rollType: "savingThrow" | "abilityCheck" | "skill" | "sense" | "attack" | "customRoll";
     abilityKey?: string;
     skillId?: string;
     senseKey?: string;
@@ -34,5 +34,9 @@ export class APIGameLog {
 
     static async listForPlayer(playerId: number): Promise<GameLogEntry[]> {
         return api.get<GameLogEntry[]>(`game-log/player/${playerId}`);
+    }
+
+    static async listForCampaign(campaignId: number): Promise<GameLogEntry[]> {
+        return api.get<GameLogEntry[]>(`game-log/campaign/${campaignId}`);
     }
 }

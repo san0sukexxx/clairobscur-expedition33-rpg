@@ -107,7 +107,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     <div className="fixed bottom-14 right-4 z-41">
       {/* Botão principal */}
       <button
-        className={`btn btn-primary btn-circle shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+        className={`btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
         onClick={() => !isExecutingSkill && setOpen((prev) => !prev)}
         disabled={isExecutingSkill}
       >

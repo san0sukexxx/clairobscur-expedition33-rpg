@@ -71,6 +71,35 @@ class GameLogController(
         )
     }
 
+    @GetMapping("/campaign/{campaignId}")
+    fun listForCampaign(@PathVariable campaignId: Int): ResponseEntity<List<GameLogResponse>> {
+        val entries = gameLogRepository.findAllByCampaignIdOrderByCreatedAtDesc(campaignId)
+
+        val playerIds = entries.map { it.playerId }.toSet()
+        val players = playerRepository.findAllById(playerIds).associateBy { it.id }
+
+        val responses = entries.map { entry ->
+            val p = players[entry.playerId]
+            GameLogResponse(
+                id = entry.id!!,
+                playerId = entry.playerId,
+                playerName = p?.name,
+                characterId = p?.characterId,
+                rollType = entry.rollType,
+                abilityKey = entry.abilityKey,
+                skillId = entry.skillId,
+                senseKey = entry.senseKey,
+                diceRolled = entry.diceRolled,
+                modifier = entry.modifier,
+                total = entry.total,
+                diceCommand = entry.diceCommand,
+                createdAt = entry.createdAt
+            )
+        }
+
+        return ResponseEntity.ok(responses)
+    }
+
     @GetMapping("/player/{playerId}")
     fun listForPlayer(@PathVariable playerId: Int): ResponseEntity<List<GameLogResponse>> {
         val campaignPlayer = campaignPlayerRepository.findByPlayerId(playerId)

@@ -52,10 +52,17 @@ function getRollLabel(entry: GameLogEntry): string {
     if (entry.rollType === "sense" && entry.senseKey) {
         return t(entry.senseKey);
     }
+    if (entry.rollType === "customRoll") {
+        return t("characterSheet.customRoll");
+    }
     return entry.rollType;
 }
 
 function getResultString(entry: GameLogEntry): string {
+    if (entry.rollType === "customRoll") {
+        const values = entry.abilityKey || String(entry.total);
+        return `${values} = ${entry.total}`;
+    }
     const mod = entry.modifier;
     const sign = mod >= 0 ? "+" : "";
     if (mod === 0) return `${entry.diceRolled} = ${entry.total}`;
@@ -77,25 +84,30 @@ function getRelativeTime(isoString: string): string {
 }
 
 interface Props {
-    player: GetPlayerResponse | null;
+    player?: GetPlayerResponse | null;
+    campaignId?: number | null;
 }
 
-export function GameLogSection({ player }: Props) {
+export function GameLogSection({ player, campaignId }: Props) {
     const [entries, setEntries] = useState<GameLogEntry[]>([]);
     const [loading, setLoading] = useState(false);
 
     const fetchLog = useCallback(async () => {
-        if (!player?.id) return;
         setLoading(true);
         try {
-            const data = await APIGameLog.listForPlayer(player.id);
-            setEntries(data);
+            if (campaignId) {
+                const data = await APIGameLog.listForCampaign(campaignId);
+                setEntries(data);
+            } else if (player?.id) {
+                const data = await APIGameLog.listForPlayer(player.id);
+                setEntries(data);
+            }
         } catch {
             // silently ignore
         } finally {
             setLoading(false);
         }
-    }, [player?.id]);
+    }, [player?.id, campaignId]);
 
     useEffect(() => {
         fetchLog();

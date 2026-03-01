@@ -16,6 +16,8 @@ import InitiativesQueue from "./InitiativesQueue"
 import GradientBar from "./GradientBar"
 import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
+import { RollHistoryToast } from "../components/RollHistoryToast";
+import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
@@ -1814,6 +1816,8 @@ export default function CombatAdmin({
     return (
         <>
             <DiceBoard ref={diceBoardRef} />
+            <RollHistoryToast />
+            <FloatingDiceRoller diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
 
             <div className="card bg-base-100 shadow">
                 <div className="card-body gap-6">

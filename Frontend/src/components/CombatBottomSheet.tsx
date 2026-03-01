@@ -76,9 +76,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
             {!open && (
                 <button
                     onClick={onOpen}
-                    className="fixed bottom-0 left-0 right-0 z-42 flex justify-center py-2 bg-base-200/80 backdrop-blur-sm border-t border-base-300 cursor-pointer hover:bg-base-200 transition-colors"
+                    className="fixed bottom-0 left-0 right-0 z-42 flex justify-center py-2 bg-neutral/50 border-t border-neutral-content/10 cursor-pointer hover:bg-neutral/60 transition-colors"
                 >
-                    <FaChevronUp className="text-base-content/60" size={16} />
+                    <FaChevronUp className="text-neutral-content/60" size={16} />
                 </button>
             )}
 

@@ -96,7 +96,7 @@ export default function SpecialAttacksSection({ player, setPlayer, isAdmin, init
 
             <div className="fixed bottom-9 right-4">
                 <button
-                    className="btn btn-primary btn-circle shadow-lg"
+                    className="btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg"
                     onClick={handleMenuAction}
                     aria-label={tab === "list" ? "Ir para seleção de ataques especiais" : "Voltar para lista de ataques especiais"}
                 >
