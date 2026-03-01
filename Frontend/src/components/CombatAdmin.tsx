@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
-import { APIBattle, type AddBattleCharacterInitiativeData, type AddStatusRequest } from "../api/APIBattle"
+import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
@@ -9,7 +9,7 @@ import { getCharacterLabelById } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils"
-import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType, type StatusType } from "../api/ResponseModel"
+import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
@@ -18,6 +18,7 @@ import AnimatedStatBar from "./AnimatedStatBar"
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { RollHistoryToast } from "../components/RollHistoryToast";
 import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
+import { StatusConditionsModal } from "./StatusConditionsModal";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
@@ -82,22 +83,6 @@ function canCharacterUseWeapon(characterId: string | undefined, weaponId: string
     const charId = characterId.toLowerCase();
     return allowedCharacters.some(char => charId.includes(char));
 }
-
-const SELECTABLE_EFFECTS: StatusType[] = [
-    "Hastened", "Empowered", "Protected", "Regeneration",
-    "Unprotected", "Slowed", "Weakened", "Cursed",
-    "Stunned", "Confused", "Frozen", "Entangled",
-    "Shielded", "Exhausted", "Frenzy", "Rage",
-    "Inverted", "Marked", "Plagued", "Burning",
-    "Silenced", "Dizzy", "Fragile", "Broken", "Fleeing",
-    "FireVulnerability", "Guardian", "Foretell", "Twilight", "Powerless",
-    "Rush", "Burn", "Shield", "Powerful", "Shell", "Slow", "Freeze",
-    "GreaterRush", "GreaterSlow",
-    "EnfeeblingMark", "DamageReduction", "SuccessiveParry", "Aureole",
-    "Vulnerable", "FortunesFury", "Regen", "Curse",
-    "IntenseFlames", "Earthquake", "StormCaller", "Typhoon",
-    "Charging", "DamageEscalation",
-];
 
 export interface CombatEntity {
     rowId?: number
@@ -227,13 +212,9 @@ export default function CombatAdmin({
     const [luneStains, setLuneStains] = useState<(StainType | null)[]>([null, null, null, null]);
     const [editingLuneCharacterId, setEditingLuneCharacterId] = useState<number | null>(null);
     const [isPassingTurn, setIsPassingTurn] = useState(false);
-    const [editingEffectsEntity, setEditingEffectsEntity] = useState<CombatEntity | null>(null);
-    const [editingStatuses, setEditingStatuses] = useState<StatusResponse[]>([]);
-    const [newEffectType, setNewEffectType] = useState<StatusType>("Burning");
-    const [newEffectAmount, setNewEffectAmount] = useState<number>(1);
-    const [newEffectTurns, setNewEffectTurns] = useState<number>(3);
-    const [newEffectUnlimited, setNewEffectUnlimited] = useState<boolean>(false);
-    const [newEffectFilter, setNewEffectFilter] = useState<string>("");
+    const [effectsModalCharId, setEffectsModalCharId] = useState<number | null>(null);
+    const [effectsModalStatuses, setEffectsModalStatuses] = useState<StatusResponse[]>([]);
+    const [expandedAdminStatus, setExpandedAdminStatus] = useState<string | null>(null);
 
     const lastReloadTimeRef = useRef<number>(0)
     const isReloadingRef = useRef<boolean>(false)
@@ -1019,7 +1000,7 @@ export default function CombatAdmin({
                         <div className="text-sm opacity-60">{t("combatAdmin.labels.noTeamMembers")}</div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="table table-zebra w-full">
+                            <table className="table table-zebra table-xs w-full">
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -1128,7 +1109,8 @@ export default function CombatAdmin({
                                                                         return (
                                                                             <span
                                                                                 key={idx}
-                                                                                className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80"
+                                                                                className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80 cursor-pointer hover:opacity-100 transition-opacity"
+                                                                                onClick={() => setExpandedAdminStatus(prev => prev === `${m.battleCharacterId}-${st.effectName}` ? null : `${m.battleCharacterId}-${st.effectName}`)}
                                                                             >
                                                                                 {getStatusLabel(st.effectName)} {showAmount ? st.ammount : ""}
                                                                                 {showTurns ? ` (${st.remainingTurns})` : ""}
@@ -1147,11 +1129,16 @@ export default function CombatAdmin({
                                                             </div>
                                                             <button
                                                                 className="btn btn-xs btn-ghost text-info shrink-0"
-                                                                onClick={() => openEditEffectsModal(m)}
+                                                                onClick={() => { setEffectsModalCharId(m.rowId!); setEffectsModalStatuses(m.status ?? []); }}
                                                             >
                                                                 <FaEdit size={10} />
                                                             </button>
                                                         </div>
+                                                        {expandedAdminStatus?.startsWith(`${m.battleCharacterId}-`) && (
+                                                            <p className="text-[10px] opacity-70 leading-relaxed mt-1">
+                                                                {t(`battle.statusDescriptions.${expandedAdminStatus.split("-").slice(1).join("-")}`) || t("battle.statusDescriptions.default")}
+                                                            </p>
+                                                        )}
                                                     </td>
 
                                                     <td className="text-right">
@@ -1296,149 +1283,6 @@ export default function CombatAdmin({
                         </button>
 
                         <button className="btn btn-primary" onClick={confirmMpEdit}>
-                            {t("combatAdmin.labels.confirm")}
-                        </button>
-                    </div>
-                </div>
-            </dialog>
-        );
-    }
-
-    function renderEditEffectsModal() {
-        if (!editingEffectsEntity) return null;
-
-        return (
-            <dialog className="modal modal-open">
-                <div className="modal-box max-w-lg max-h-[80vh] overflow-y-auto space-y-4">
-                    <h3 className="font-bold text-lg">Efeitos — {editingEffectsEntity.name}</h3>
-
-                    {/* Lista de efeitos ativos */}
-                    <div className="space-y-2">
-                        {editingStatuses.length === 0 && (
-                            <p className="text-sm opacity-60">Nenhum efeito ativo.</p>
-                        )}
-                        {editingStatuses.map((st, idx) => {
-                            const showAmount = shouldShowStatusAmmount(st.effectName);
-                            return (
-                                <div key={idx} className="flex items-center gap-2">
-                                    <span className="text-sm flex-1 min-w-0 truncate">{getStatusLabel(st.effectName)}</span>
-                                    {showAmount && (
-                                        <input
-                                            type="number"
-                                            className="input input-bordered input-xs w-16"
-                                            min={1}
-                                            value={st.ammount}
-                                            onChange={e => updateEditingStatus(idx, { ammount: parseInt(e.target.value) || 1 })}
-                                        />
-                                    )}
-                                    <input
-                                        type="number"
-                                        className="input input-bordered input-xs w-16"
-                                        min={1}
-                                        value={st.remainingTurns ?? ""}
-                                        disabled={st.remainingTurns === null}
-                                        placeholder="∞"
-                                        onChange={e => updateEditingStatus(idx, { remainingTurns: parseInt(e.target.value) || 1 })}
-                                    />
-                                    <label className="flex items-center gap-1 text-xs cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            className="checkbox checkbox-xs"
-                                            checked={st.remainingTurns === null}
-                                            onChange={e => updateEditingStatus(idx, { remainingTurns: e.target.checked ? null : 3 })}
-                                        />
-                                        ∞
-                                    </label>
-                                    <button
-                                        className="btn btn-xs btn-ghost text-error"
-                                        onClick={() => setEditingStatuses(prev => prev.filter((_, i) => i !== idx))}
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    <div className="divider my-1">Adicionar efeito</div>
-
-                    {/* Adicionar novo efeito */}
-                    <div className="flex flex-col gap-2">
-                        <input
-                            type="text"
-                            className="input input-bordered input-sm w-full"
-                            placeholder="Filtrar efeito..."
-                            value={newEffectFilter}
-                            onChange={e => {
-                                const filter = e.target.value;
-                                setNewEffectFilter(filter);
-                                const filtered = SELECTABLE_EFFECTS.filter(eff =>
-                                    getStatusLabel(eff).toLowerCase().includes(filter.toLowerCase())
-                                );
-                                if (filtered.length > 0 && !filtered.includes(newEffectType)) {
-                                    setNewEffectType(filtered[0]);
-                                }
-                            }}
-                        />
-                        <select
-                            className="select select-bordered select-sm w-full"
-                            value={newEffectType}
-                            onChange={e => setNewEffectType(e.target.value as StatusType)}
-                        >
-                            {SELECTABLE_EFFECTS
-                                .filter(eff => getStatusLabel(eff).toLowerCase().includes(newEffectFilter.toLowerCase()))
-                                .map(eff => (
-                                    <option key={eff} value={eff}>{getStatusLabel(eff)}</option>
-                                ))
-                            }
-                        </select>
-                        <div className="flex gap-2 items-center flex-wrap">
-                            {shouldShowStatusAmmount(newEffectType) && (
-                                <div className="flex items-center gap-1">
-                                    <span className="text-xs opacity-70">Qtd</span>
-                                    <input
-                                        type="number"
-                                        className="input input-bordered input-xs w-16"
-                                        min={1}
-                                        value={newEffectAmount}
-                                        onChange={e => setNewEffectAmount(parseInt(e.target.value) || 1)}
-                                    />
-                                </div>
-                            )}
-                            <div className="flex items-center gap-1">
-                                <span className="text-xs opacity-70">Turnos</span>
-                                <input
-                                    type="number"
-                                    className="input input-bordered input-xs w-16"
-                                    min={1}
-                                    value={newEffectTurns}
-                                    disabled={newEffectUnlimited}
-                                    onChange={e => setNewEffectTurns(parseInt(e.target.value) || 1)}
-                                />
-                                <label className="flex items-center gap-1 text-xs cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        className="checkbox checkbox-xs"
-                                        checked={newEffectUnlimited}
-                                        onChange={e => setNewEffectUnlimited(e.target.checked)}
-                                    />
-                                    Sem limite
-                                </label>
-                            </div>
-                            <button
-                                className="btn btn-sm btn-outline ml-auto"
-                                onClick={addNewEffect}
-                            >
-                                + Adicionar
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="modal-action">
-                        <button className="btn" onClick={() => setEditingEffectsEntity(null)}>
-                            {t("combatAdmin.labels.cancel")}
-                        </button>
-                        <button className="btn btn-primary" onClick={confirmEditEffects}>
                             {t("combatAdmin.labels.confirm")}
                         </button>
                     </div>
@@ -1709,7 +1553,7 @@ export default function CombatAdmin({
                         </div>
 
                         <div className="overflow-x-auto max-h-[28vh] overflow-y-auto">
-                            <table className="table table-compact w-full">
+                            <table className="table table-compact table-xs w-full">
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -1752,7 +1596,7 @@ export default function CombatAdmin({
                     <div className="border rounded-lg">
                         <div className="px-4 py-2 border-b font-semibold text-sm">{t("combatAdmin.labels.npcs")}</div>
                         <div className="overflow-x-auto max-h-[50vh] overflow-y-auto">
-                            <table className="table table-compact w-full">
+                            <table className="table table-compact table-xs w-full">
                                 <thead>
                                     <tr>
                                         <th></th>
@@ -2310,7 +2154,18 @@ export default function CombatAdmin({
 
                     {renderEditEntityModal()}
                     {renderEditMpModal()}
-                    {renderEditEffectsModal()}
+                    <StatusConditionsModal
+                        open={effectsModalCharId !== null}
+                        onClose={async () => {
+                            setEffectsModalCharId(null);
+                            if (battleId) {
+                                const freshData = await APIBattle.getById(battleId);
+                                setBattleDetails(freshData);
+                            }
+                        }}
+                        battleCharacterId={effectsModalCharId ?? 0}
+                        statuses={effectsModalStatuses}
+                    />
                     {renderGradientModal()}
                     {renderGustaveChargeModal()}
                     {renderScielChargesModal()}
@@ -2520,65 +2375,6 @@ export default function CombatAdmin({
         };
 
         allowCounterCall();
-    }
-
-    function openEditEffectsModal(entity: CombatEntity) {
-        const filtered = (entity.status ?? []).filter(s => !["jump", "gradient"].includes(s.effectName));
-        setEditingStatuses(filtered.map(s => ({ ...s })));
-        setNewEffectType("Burning");
-        setNewEffectAmount(1);
-        setNewEffectTurns(3);
-        setNewEffectUnlimited(false);
-        setNewEffectFilter("");
-        setEditingEffectsEntity(entity);
-    }
-
-    function updateEditingStatus(index: number, changes: Partial<StatusResponse>) {
-        setEditingStatuses(prev => prev.map((s, i) => i === index ? { ...s, ...changes } : s));
-    }
-
-    function addNewEffect() {
-        if (editingStatuses.some(s => s.effectName === newEffectType)) return;
-        setEditingStatuses(prev => [...prev, {
-            effectName: newEffectType,
-            ammount: newEffectAmount,
-            remainingTurns: newEffectUnlimited ? null : newEffectTurns,
-            isResolved: false,
-        }]);
-    }
-
-    async function confirmEditEffects() {
-        if (!editingEffectsEntity) return;
-        const battleCharId = editingEffectsEntity.rowId!;
-        const originalStatuses = (editingEffectsEntity.status ?? [])
-            .filter(s => !["jump", "gradient"].includes(s.effectName));
-
-        try {
-            for (const original of originalStatuses) {
-                const edited = editingStatuses.find(e => e.effectName === original.effectName);
-                if (!edited || edited.ammount !== original.ammount || edited.remainingTurns !== original.remainingTurns) {
-                    await APIBattle.removeStatus(battleCharId, original.effectName);
-                }
-            }
-            for (const status of editingStatuses) {
-                const original = originalStatuses.find(o => o.effectName === status.effectName);
-                if (!original || original.ammount !== status.ammount || original.remainingTurns !== status.remainingTurns) {
-                    await APIBattle.addStatus({
-                        battleCharacterId: battleCharId,
-                        effectType: status.effectName,
-                        ammount: status.ammount,
-                        remainingTurns: status.remainingTurns ?? null,
-                    } as AddStatusRequest);
-                }
-            }
-            showToast("Efeitos atualizados");
-            setEditingEffectsEntity(null);
-            const freshData = await APIBattle.getById(battleId!);
-            setBattleDetails(freshData);
-        } catch (e) {
-            console.error(e);
-            showToast("Erro ao atualizar efeitos");
-        }
     }
 
     function openHpEditModal(entity: CombatEntity) {

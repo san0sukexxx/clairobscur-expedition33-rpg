@@ -8,6 +8,7 @@ import { BestialWheel } from "./BestialWheel";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
 import StatEditModal from "./StatEditModal";
+import { StatusConditionsModal } from "./StatusConditionsModal";
 import { t } from "../i18n";
 
 interface BattleGroupStatusProps {
@@ -50,6 +51,8 @@ export default function BattleGroupStatus({
     const [editRank, setEditRank] = useState("D");
     const [editRankProgress, setEditRankProgress] = useState("");
     const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
+    const [conditionsOpen, setConditionsOpen] = useState(false);
+    const [expandedStatusBadge, setExpandedStatusBadge] = useState<string | null>(null);
 
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -219,7 +222,11 @@ export default function BattleGroupStatus({
                                                         const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
 
                                                         return (
-                                                            <span key={idx} className="px-1 py-0.5 rounded bg-base-300">
+                                                            <span
+                                                                key={idx}
+                                                                className="px-1 py-0.5 rounded bg-base-300 cursor-pointer hover:opacity-100 transition-opacity pointer-events-auto"
+                                                                onClick={(e) => { e.stopPropagation(); setExpandedStatusBadge(prev => prev === `${ch.battleID}-${st.effectName}` ? null : `${ch.battleID}-${st.effectName}`); }}
+                                                            >
                                                                 {getStatusLabel(st.effectName)}{" "}
                                                                 {showAmmount && st.ammount != null ? st.ammount : ""}{" "}
                                                                 {showTurns ? `(${st.remainingTurns})` : ""}
@@ -232,11 +239,26 @@ export default function BattleGroupStatus({
                                                         {t("combat.flying")}
                                                     </span>
                                                 )}
+
+                                                {canEdit && (
+                                                    <button
+                                                        className="px-1 py-0.5 rounded bg-base-300 hover:bg-base-content/20 transition-colors cursor-pointer flex items-center gap-1 pointer-events-auto"
+                                                        onClick={(e) => { e.stopPropagation(); setConditionsOpen(true); }}
+                                                    >
+                                                        <FaEdit size={8} /> Condições
+                                                    </button>
+                                                )}
                                             </div>
 
                                             {isDead && <FaSkull className="text-error" title={t("combat.dead")} />}
                                         </div>
                                     </div>
+
+                                    {expandedStatusBadge?.startsWith(`${ch.battleID}-`) && (
+                                        <p className="text-[10px] opacity-70 leading-relaxed mt-1 px-1">
+                                            {t(`battle.statusDescriptions.${expandedStatusBadge.split("-").slice(1).join("-")}`) || t("battle.statusDescriptions.default")}
+                                        </p>
+                                    )}
 
                                     <div className="mt-3 space-y-2">
 
@@ -485,6 +507,16 @@ export default function BattleGroupStatus({
                     </div>
                 </div>
             </div>
+
+            {/* Conditions modal */}
+            {playerCh && (
+                <StatusConditionsModal
+                    open={conditionsOpen}
+                    onClose={() => setConditionsOpen(false)}
+                    battleCharacterId={playerCh.battleID}
+                    statuses={playerCh.status ?? []}
+                />
+            )}
 
             {/* ---- Modals (only for player's own card) ---- */}
             {playerCh && (

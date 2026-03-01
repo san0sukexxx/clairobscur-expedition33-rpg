@@ -8,6 +8,7 @@ import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils"
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
 import StatEditModal from "./StatEditModal";
+import { StatusConditionsModal } from "./StatusConditionsModal";
 import { t } from "../i18n";
 
 interface PlayerStatusFloatingProps {
@@ -40,6 +41,10 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     const [editRankProgress, setEditRankProgress] = useState("");
     // Stains
     const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
+    // Conditions modal
+    const [conditionsOpen, setConditionsOpen] = useState(false);
+    // Status description
+    const [expandedStatusBadge, setExpandedStatusBadge] = useState<string | null>(null);
 
     if (!ch) return null;
 
@@ -146,23 +151,33 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     p-3 w-64
                 "
             >
-                {ch.status && ch.status.length > 0 && (
-                    <div className="mb-2 flex flex-row flex-wrap gap-1">
-                        {ch.status.map((st, idx) => {
-                            const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns != null;
+                <div className="mb-2 flex flex-row flex-wrap gap-1">
+                    {ch.status?.map((st, idx) => {
+                        const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns != null;
 
-                            return (
-                                <span
-                                    key={idx}
-                                    className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-90"
-                                >
-                                    {getStatusLabel(st.effectName)}{" "}
-                                    {shouldShowStatusAmmount(st.effectName) && st.ammount}
-                                    {showTurns ? ` (${st.remainingTurns})` : ""}
-                                </span>
-                            );
-                        })}
-                    </div>
+                        return (
+                            <span
+                                key={idx}
+                                className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-90 cursor-pointer hover:opacity-100 transition-opacity"
+                                onClick={() => setExpandedStatusBadge(prev => prev === st.effectName ? null : st.effectName)}
+                            >
+                                {getStatusLabel(st.effectName)}{" "}
+                                {shouldShowStatusAmmount(st.effectName) && st.ammount}
+                                {showTurns ? ` (${st.remainingTurns})` : ""}
+                            </span>
+                        );
+                    })}
+                    <button
+                        className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-70 hover:opacity-100 transition-opacity cursor-pointer flex items-center gap-1"
+                        onClick={() => setConditionsOpen(true)}
+                    >
+                        <FaEdit size={8} /> Condições
+                    </button>
+                </div>
+                {expandedStatusBadge && (
+                    <p className="text-[10px] opacity-70 leading-relaxed mb-1 px-1">
+                        {t(`battle.statusDescriptions.${expandedStatusBadge}`) || t("battle.statusDescriptions.default")}
+                    </p>
                 )}
 
                 <div className="flex flex-row gap-3 items-center justify-between">
@@ -561,6 +576,14 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     <div className="modal-backdrop" onClick={closeEdit} />
                 </dialog>
             )}
+
+            {/* Conditions modal */}
+            <StatusConditionsModal
+                open={conditionsOpen}
+                onClose={() => setConditionsOpen(false)}
+                battleCharacterId={ch.battleID}
+                statuses={ch.status ?? []}
+            />
 
             {/* Stains modal */}
             {editing === "stains" && (
