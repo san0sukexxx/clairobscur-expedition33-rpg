@@ -154,7 +154,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             {activeSkillId && onDismissSkillCard && (
                 <div className="mt-4">
-                    <SkillInfoCard skillId={activeSkillId} onDismiss={onDismissSkillCard} />
+                    <SkillInfoCard skillId={activeSkillId} onDismiss={onDismissSkillCard} player={player} />
                 </div>
             )}
 

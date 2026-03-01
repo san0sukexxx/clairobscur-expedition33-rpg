@@ -1863,6 +1863,9 @@
       "race": "Raça",
       "class": "Classe",
       "mainAttribute": "Atributo Principal",
+      "abilityTest": "Teste de Atributo",
+      "abilityTestSuccess": "Sucesso!",
+      "abilityTestFailure": "Falha!",
       "races": {
         "human": "Humano",
         "gestral": "Gestral"
@@ -1885,7 +1888,8 @@
       "senses": "Sentidos",
       "passivePerception": "Percepção Passiva",
       "passiveInvestigation": "Investigação Passiva",
-      "passiveInsight": "Intuição Passiva"
+      "passiveInsight": "Intuição Passiva",
+      "customRoll": "CUSTOM: ROLAGEM"
     },
     "tabs": {
       "sheet": "Ficha",
@@ -1957,7 +1961,13 @@
       "gradient": "Gradiente",
       "gradientCharges": "Cargas de Gradiente",
       "bestialWheel": "Roda Bestial",
-      "current": "Atual"
+      "current": "Atual",
+      "intensity": "Intensidade",
+      "intensityLow": "Baixo",
+      "intensityMedium": "Médio",
+      "intensityHigh": "Alto",
+      "intensityVeryHigh": "Muito Alto",
+      "intensityExtreme": "Extremo"
     },
     "combatAdmin": {
       "createCombat": "Criar combate",
@@ -2154,7 +2164,7 @@
       },
       "gustave-powerful": {
         "name": "Poderoso",
-        "description": "Aplica Fortalecido em até 3 aliados por 3 turnos, aumentando o dano causado em +4. Faça 3 testes de habilidade CD 5. Concede 1 carga por sucesso."
+        "description": "Aplica Fortalecido em até 3 aliados por 3 turnos, aumentando o dano causado em +4. Faça 3 testes de Força CD 13. Concede 1 carga por sucesso."
       },
       "gustave-recovery": {
         "name": "Recuperação",
@@ -2250,7 +2260,7 @@
       },
       "lune-revitalization": {
         "name": "Revitalização",
-        "description": "Teste de Habilidade CD 7: Sucesso = cura todos os aliados em Resistência +3d6, Falha = cura 1 aliado em Resistência +2d6. Consome 3 Manchas de Fogo para também aplicar Regeneração 2 por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Teste de Inteligência CD 15: Sucesso = cura todos os aliados em Resistência +3d6, Falha = cura 1 aliado em Resistência +2d6. Consome 3 Manchas de Fogo para também aplicar Regeneração 2 por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-fire-rage": {
         "name": "Fúria Flamejante",
@@ -2278,7 +2288,7 @@
       },
       "maelle-mezzo-forte": {
         "name": "Mezzo Forte",
-        "description": "Reaplica a postura atual e faz teste de Habilidade CD 7: sucesso +4 PM, falha +2 PM."
+        "description": "Reaplica a postura atual e faz teste de Destreza CD 15: sucesso +4 PM, falha +2 PM."
       },
       "maelle-percee": {
         "name": "Investida",
@@ -2290,11 +2300,11 @@
       },
       "maelle-guard-up": {
         "name": "Aumentar Guarda",
-        "description": "Escolha um aliado e faça um Teste de Habilidade CD 7. Sucesso: Aplica Escudo em toda a equipe por 3 turnos. Falha: Aplica Escudo apenas no alvo escolhido por 3 turnos. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Escolha um aliado e faça um Teste de Destreza CD 15. Sucesso: Aplica Escudo em toda a equipe por 3 turnos. Falha: Aplica Escudo apenas no alvo escolhido por 3 turnos. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-swift-stride": {
         "name": "Passo Veloz",
-        "description": "Causa dano Físico baixo em alvo único. 1 ataque. Faz teste de Habilidade CD 7: sucesso +2 PM, falha 0 PM. Se o alvo estiver Queimando, muda para Postura Virtuosa."
+        "description": "Causa dano Físico baixo em alvo único. 1 ataque. Faz teste de Destreza CD 15: sucesso +2 PM, falha 0 PM. Se o alvo estiver Queimando, muda para Postura Virtuosa."
       },
       "maelle-guard-down": {
         "name": "Diminuir Guarda",
@@ -2378,7 +2388,7 @@
       },
       "maelle-phoenix-flame": {
         "name": "Chama da Fênix",
-        "description": "Não consome turno. Aplica 10 Queimaduras em todos os inimigos. Revive todos os aliados. Faça um teste de habilidade CD 7. Se tiver sucesso, revive com Vida cheia. Se falhar, revive com metade da Vida. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Não consome turno. Aplica 10 Queimaduras em todos os inimigos. Revive todos os aliados. Faça um teste de Destreza CD 15. Se tiver sucesso, revive com Vida cheia. Se falhar, revive com metade da Vida. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "sciel-twilight-slash": {
         "name": "Corte Crepuscular",
@@ -2450,7 +2460,7 @@
       },
       "sciel-rush": {
         "name": "Investida",
-        "description": "Aplica Rapidez por 3 turnos. Faça um teste de habilidade CD 7. Se tiver sucesso, aplica em todos os aliados. Se falhar, aplica apenas no alvo."
+        "description": "Aplica Rapidez por 3 turnos. Faça um teste de Carisma CD 15. Se tiver sucesso, aplica em todos os aliados. Se falhar, aplica apenas no alvo."
       },
       "sciel-all-set": {
         "name": "Tudo Pronto",
@@ -2558,7 +2568,7 @@
       },
       "verso-powerful": {
         "name": "Poderoso",
-        "description": "Aplica Fortalecido por 3 turnos. Faça um teste de habilidade CD 7. Se tiver sucesso, aplica em todos os aliados. Se falhar, aplica apenas em Verso. Se Verso usar esta habilidade no Rank A de Perfeição, a duração aumenta para 5 turnos."
+        "description": "Aplica Fortalecido por 3 turnos. Faça um teste de Força CD 15. Se tiver sucesso, aplica em todos os aliados. Se falhar, aplica apenas em Verso. Se Verso usar esta habilidade no Rank A de Perfeição, a duração aumenta para 5 turnos."
       },
       "verso-purification": {
         "name": "Purificação",

@@ -82,3 +82,14 @@ export function displayWeaponLuckBonus(rank: string, level: number): string {
 export function displayWeaponAgilityBonus(rank: string, level: number): string {
   return "+" + rankToValue(rank, level)
 }
+
+const DAMAGE_DICE_BY_LEVEL: Record<number, string> = {
+  1: "1d4",
+  2: "1d6",
+  3: "1d8",
+  4: "1d10",
+};
+
+export function getWeaponDamageDice(weaponLevel: number): string {
+  return DAMAGE_DICE_BY_LEVEL[weaponLevel] ?? "1d4";
+}

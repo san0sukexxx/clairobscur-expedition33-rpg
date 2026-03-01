@@ -4,9 +4,11 @@ import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus } from "../utils/WeaponCalculator";
+import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponAgilityBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
+import { calculateMaxHP } from "../utils/PlayerCalculator";
+import type { WeaponInfo } from "../api/ResponseModel";
 
 // Helper to find the correct weapon ID considering character variations
 function getWeaponTranslationId(weaponName: string, weaponList: WeaponDTO[]): string {
@@ -109,6 +111,20 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
     return Math.max(min, Math.min(max, v));
   }
 
+  /** Clamp hpCurrent to new max HP when weapon changes reduce it */
+  function clampHpToMax(p: GetPlayerResponse): GetPlayerResponse {
+    const weaponId = p.playerSheet?.weaponId;
+    const weapon = weaponId ? p.weapons?.find(w => w.id === weaponId) ?? null : null;
+    const details = weaponId ? weaponList.find(w => w.name === weaponId) ?? null : null;
+    const wi: WeaponInfo = { weapon, details };
+    const maxHp = calculateMaxHP(p, wi);
+    const currentHp = p.playerSheet?.hpCurrent ?? 0;
+    if (currentHp > maxHp) {
+      return { ...p, playerSheet: { ...p.playerSheet, hpCurrent: maxHp } };
+    }
+    return p;
+  }
+
   const hasWeapons = useMemo(() => {
     return !!(player?.weapons && player.weapons.length > 0);
   }, [player]);
@@ -197,40 +213,57 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
     const clamped = clamp(newLevel, 1, 4);
     const equippedWeaponId = player.playerSheet.weaponId;
 
-    setPlayer(prev =>
-      prev
-        ? {
-          ...prev,
-          weapons: prev.weapons?.map(w =>
-            w.id === equippedWeaponId ? { ...w, level: clamped } : w
-          ),
-        }
-        : prev
-    );
+    let hpWasClamped = false;
+    let clampedHp = 0;
+
+    setPlayer(prev => {
+      if (!prev) return prev;
+      const updated = clampHpToMax({
+        ...prev,
+        weapons: prev.weapons?.map(w =>
+          w.id === equippedWeaponId ? { ...w, level: clamped } : w
+        ),
+      });
+      if ((updated.playerSheet?.hpCurrent ?? 0) < (prev.playerSheet?.hpCurrent ?? 0)) {
+        hpWasClamped = true;
+        clampedHp = updated.playerSheet?.hpCurrent ?? 0;
+      }
+      return updated;
+    });
 
     await APIPlayerWeapons.update(player.id, equippedWeaponId, {
       level: clamped,
     });
+
+    if (hpWasClamped) {
+      await APIPlayer.update(player.id, {
+        playerSheet: { ...player.playerSheet, hpCurrent: clampedHp },
+      });
+    }
   }
 
   async function handleUnequip() {
     if (!player) return;
 
+    let clampedHp: number | undefined;
+
     setPlayer(prev => {
       if (!prev) return prev;
-      return {
+      const updated = clampHpToMax({
         ...prev,
-        playerSheet: {
-          ...prev.playerSheet,
-          weaponId: undefined,
-        },
-      };
+        playerSheet: { ...prev.playerSheet, weaponId: undefined },
+      });
+      if ((updated.playerSheet?.hpCurrent ?? 0) < (prev.playerSheet?.hpCurrent ?? 0)) {
+        clampedHp = updated.playerSheet?.hpCurrent ?? 0;
+      }
+      return updated;
     });
 
     await APIPlayer.update(player.id, {
       playerSheet: {
         ...player.playerSheet,
         weaponId: undefined,
+        ...(clampedHp != null ? { hpCurrent: clampedHp } : {}),
       },
     });
   }
@@ -256,22 +289,26 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
     if (modalMode === "change") {
       closeSelector();
 
+      let clampedHp: number | undefined;
+
       setPlayer(prev => {
         if (!prev?.weapons?.length) return prev;
         if (!prev.weapons.some(pw => pw.id === pickedWeaponId)) return prev;
-        return {
+        const updated = clampHpToMax({
           ...prev,
-          playerSheet: {
-            ...prev.playerSheet,
-            weaponId: pickedWeaponId,
-          },
-        };
+          playerSheet: { ...prev.playerSheet, weaponId: pickedWeaponId },
+        });
+        if ((updated.playerSheet?.hpCurrent ?? 0) < (prev.playerSheet?.hpCurrent ?? 0)) {
+          clampedHp = updated.playerSheet?.hpCurrent ?? 0;
+        }
+        return updated;
       });
 
       await APIPlayer.update(player.id, {
         playerSheet: {
           ...player.playerSheet,
           weaponId: pickedWeaponId,
+          ...(clampedHp != null ? { hpCurrent: clampedHp } : {}),
         },
       });
 
@@ -282,6 +319,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
       closeSelector();
 
       const equippedId = player.playerSheet?.weaponId ?? null;
+      let clampedHpRemove: number | undefined;
 
       setPlayer(prev => {
         if (!prev) return prev;
@@ -289,14 +327,18 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
         const newWeapons = (prev.weapons ?? []).filter(w => w.id !== pickedWeaponId);
         const shouldClearEquipped = equippedId === pickedWeaponId;
 
-        return {
+        const updated = clampHpToMax({
           ...prev,
           weapons: newWeapons,
           playerSheet: {
             ...prev.playerSheet,
             weaponId: shouldClearEquipped ? undefined : prev.playerSheet?.weaponId,
           },
-        };
+        });
+        if ((updated.playerSheet?.hpCurrent ?? 0) < (prev.playerSheet?.hpCurrent ?? 0)) {
+          clampedHpRemove = updated.playerSheet?.hpCurrent ?? 0;
+        }
+        return updated;
       });
 
       await APIPlayerWeapons.delete(player.id, pickedWeaponId);
@@ -306,7 +348,12 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
           playerSheet: {
             ...player.playerSheet,
             weaponId: undefined,
+            ...(clampedHpRemove != null ? { hpCurrent: clampedHpRemove } : {}),
           },
+        });
+      } else if (clampedHpRemove != null) {
+        await APIPlayer.update(player.id, {
+          playerSheet: { ...player.playerSheet, hpCurrent: clampedHpRemove },
         });
       }
 
@@ -456,6 +503,12 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                       {displayWeaponPlusPower(activeWeapon.power, activeWeapon.level)}
                     </span>
                   )}
+                </div>
+                <div>
+                  <span className="block text-xs uppercase opacity-70">{t("weapons.dices")}</span>
+                  <span className="inline-flex items-center justify-center gap-1 text-2xl font-bold">
+                    {getWeaponDamageDice(activeWeapon.level)}
+                  </span>
                 </div>
                 <div>
                   <span className="block text-xs uppercase opacity-70">{t("weapons.element")}</span>

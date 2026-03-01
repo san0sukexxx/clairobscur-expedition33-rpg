@@ -104,7 +104,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
   }
 
   return (
-    <div className="fixed bottom-9 right-4 z-41">
+    <div className="fixed bottom-14 right-4 z-41">
       {/* Botão principal */}
       <button
         className={`btn btn-primary btn-circle shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}

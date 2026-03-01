@@ -7,8 +7,10 @@ import type { DiceBoardRef } from "./DiceBoard";
 import { t } from "../i18n";
 import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
-import { getCharacterHitDie } from "../utils/PlayerCalculator";
+import type { WeaponInfo } from "../api/ResponseModel";
+import { getCharacterHitDie, calculateMaxHP } from "../utils/PlayerCalculator";
 import { calculateProficiencyBonus } from "../utils/AttackCalculator";
+import { calculateWeaponDefenseBonus, calculateWeaponAgilityBonus } from "../utils/WeaponCalculator";
 
 /* ── Armor Class (escudo) ── */
 function ArmorClassCard({ value, onRoll }: { value: number; onRoll: () => void }) {
@@ -32,9 +34,8 @@ function ArmorClassCard({ value, onRoll }: { value: number; onRoll: () => void }
 }
 
 /* ── Initiative (hexágono) ── */
-function InitiativeCard({ dexterity, onRoll }: { dexterity: number; onRoll: () => void }) {
-    const mod = Math.floor((dexterity - 10) / 2);
-    const modStr = mod >= 0 ? `+${mod}` : String(mod);
+function InitiativeCard({ modifier, onRoll }: { modifier: number; onRoll: () => void }) {
+    const modStr = modifier >= 0 ? `+${modifier}` : String(modifier);
 
     return (
         <div className="flex flex-col items-center gap-1.5 shrink-0 mt-2">
@@ -119,12 +120,13 @@ function HitPointsCard({ hpCurrent, hpMax, hitDie, onChangeCurrent, onChangeMax,
 interface CombatStatsSectionProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
+    weaponInfo: WeaponInfo;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
     onBattleInitiative?: () => void;
 }
 
-export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef, onBattleInitiative }: CombatStatsSectionProps) {
+export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef, timeoutDiceBoardRef, onBattleInitiative }: CombatStatsSectionProps) {
     async function sync(p: GetPlayerResponse) {
         await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
     }
@@ -139,12 +141,15 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
     const sheet = player?.playerSheet;
     const dex = sheet?.abilityScores?.dexterity ?? 10;
     const dexMod = Math.floor((dex - 10) / 2);
-    const ac = 10 + dexMod;
+    const weaponDefense = calculateWeaponDefenseBonus(weaponInfo);
+    const ac = 10 + dexMod + weaponDefense;
     const hpCurrent = sheet?.hpCurrent ?? 0;
-    const hpMax = sheet?.hpMax ?? 0;
+    const hpMax = calculateMaxHP(player, weaponInfo);
     const level = sheet?.totalPoints ?? 1;
     const hitDie = getCharacterHitDie(sheet?.characterId);
     const proficiencyBonus = calculateProficiencyBonus(level);
+    const weaponAgilityBonus = calculateWeaponAgilityBonus(weaponInfo);
+    const initiativeMod = dexMod + weaponAgilityBonus;
 
     function rollAC() {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
@@ -165,19 +170,18 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
     }
 
     function rollInitiative() {
-        const modStr = dexMod >= 0 ? `+${dexMod}` : String(dexMod);
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
             const roll = diceTotal(result);
-            const total = roll + dexMod;
+            const total = roll + initiativeMod;
             const label = t("characterSheet.initiative");
-            const diceCommand = dexMod === 0 ? "1d20" : dexMod > 0 ? `1d20+${dexMod}` : `1d20${dexMod}`;
-            dispatchRoll({ label, diceRolled: roll, modifier: dexMod, total, diceCommand });
+            const diceCommand = initiativeMod === 0 ? "1d20" : initiativeMod > 0 ? `1d20+${initiativeMod}` : `1d20${initiativeMod}`;
+            dispatchRoll({ label, diceRolled: roll, modifier: initiativeMod, total, diceCommand });
             if (player?.id) {
                 APIGameLog.create(player.id, {
                     rollType: "abilityCheck",
                     abilityKey: "initiative",
                     diceRolled: roll,
-                    modifier: dexMod,
+                    modifier: initiativeMod,
                     total,
                     diceCommand,
                 }).catch(() => {});
@@ -191,7 +195,7 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
             <div className="flex gap-3 items-start shrink-0">
                 <div className="mt-2"><ArmorClassCard value={ac} onRoll={rollAC} /></div>
                 <InitiativeCard
-                    dexterity={dex}
+                    modifier={initiativeMod}
                     onRoll={onBattleInitiative && player?.fightInfo?.canRollInitiative ? onBattleInitiative : rollInitiative}
                 />
             </div>
@@ -204,7 +208,7 @@ export function CombatStatsSection({ player, setPlayer, diceBoardRef, timeoutDic
                     hitDie={hitDie}
                     onChangeCurrent={(v) => update({ hpCurrent: v })}
                     onChangeMax={(v) => update({ hpMax: v })}
-                    onRefresh={() => update({ hpCurrent: hpMax })}
+                    onRefresh={() => update({ hpCurrent: hpMax, hpMax })}
                 />
                 <div className="rounded-lg bg-base-200 px-3 py-2 flex items-center justify-between">
                     <span className="text-[9px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.proficiencyBonus")}</span>

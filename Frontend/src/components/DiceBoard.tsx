@@ -4,7 +4,7 @@ import DiceBox from "@3d-dice/dice-box";
 export type DiceTheme = "dice-of-rolling" | "blue-green-metal";
 
 export interface DiceBoardRef {
-    roll: (command: string, onRollComplete: (result: any) => void, theme?: DiceTheme) => void;
+    roll: (command: string | string[], onRollComplete: (result: any) => void, theme?: DiceTheme) => void;
     add: (command: string) => void;
     hideBoard: () => void;
 }
@@ -35,7 +35,7 @@ export default function DiceBoard({ ref }: DiceBoardProps) {
     }, []);
 
     useImperativeHandle(ref, () => ({
-        roll: async (command: string, onRollComplete: (result: any) => void, theme?: DiceTheme) => {
+        roll: async (command: string | string[], onRollComplete: (result: any) => void, theme?: DiceTheme) => {
             boxRef.current.onRollComplete = onRollComplete;
 
             if (containerRef.current) {

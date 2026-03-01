@@ -19,14 +19,16 @@ export function useNavigationActions({
   const navigate = useNavigate();
 
   const handleNavigateBackToAdmin = useCallback(async () => {
-    if (player == undefined || campaignInfo == undefined) return;
-
     if (isAdmin) {
-      try {
-        await APIPlayer.setMasterEditing(player.id, false);
+      if (player != undefined && campaignInfo != undefined) {
+        try {
+          await APIPlayer.setMasterEditing(player.id, false);
+        } catch (error) {
+          console.log(error);
+        }
         navigate(`/campaign-admin/${campaignInfo.id}`);
-      } catch (error) {
-        console.log(error);
+      } else if (campaign) {
+        navigate(`/campaign-admin/${campaign}`);
       }
     } else {
       navigate(`/character-sheet-list/${campaign}`);

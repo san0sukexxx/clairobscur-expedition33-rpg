@@ -31,13 +31,13 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     const [editing, setEditing] = useState<EditField>(null);
     const [editValue, setEditValue] = useState(0);
     // Sun/Moon
-    const [editSun, setEditSun] = useState(0);
-    const [editMoon, setEditMoon] = useState(0);
+    const [editSun, setEditSun] = useState("");
+    const [editMoon, setEditMoon] = useState("");
     // Stance
     const [editStance, setEditStance] = useState<Stance | "">("");
     // Rank
     const [editRank, setEditRank] = useState("D");
-    const [editRankProgress, setEditRankProgress] = useState(0);
+    const [editRankProgress, setEditRankProgress] = useState("");
     // Stains
     const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
 
@@ -82,7 +82,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     }
 
     async function confirmSunMoon() {
-        await APIBattle.updateSunMoonCharges(ch!.battleID, editSun, editMoon);
+        await APIBattle.updateSunMoonCharges(ch!.battleID, Number(editSun) || 0, Number(editMoon) || 0);
         closeEdit();
     }
 
@@ -92,7 +92,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     }
 
     async function confirmRank() {
-        await APIBattle.updateCharacterRank(ch!.battleID, editRank, editRankProgress);
+        await APIBattle.updateCharacterRank(ch!.battleID, editRank, Number(editRankProgress) || 0);
         closeEdit();
     }
 
@@ -113,8 +113,8 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     function openGradient() { setEditValue(ch!.gradientPoints ?? 0); setEditing("gradient"); }
     function openBestialWheel() { setEditValue(ch!.bestialWheelPosition ?? 0); setEditing("bestialWheel"); }
     function openSunMoon() {
-        setEditSun(ch!.sunCharges ?? 0);
-        setEditMoon(ch!.moonCharges ?? 0);
+        setEditSun(String(ch!.sunCharges ?? 0));
+        setEditMoon(String(ch!.moonCharges ?? 0));
         setEditing("sunMoon");
     }
     function openStance() {
@@ -123,7 +123,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     }
     function openRank() {
         setEditRank(ch!.perfectionRank ?? "D");
-        setEditRankProgress(ch!.rankProgress ?? 0);
+        setEditRankProgress(String(ch!.rankProgress ?? 0));
         setEditing("rank");
     }
     function openStainsEdit() {
@@ -139,7 +139,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
 
     return (
-        <div className="fixed bottom-4 left-4 z-40">
+        <div className="fixed bottom-14 left-4 z-40">
             <div
                 className="
                     rounded-xl bg-base-100/95 shadow-lg border border-base-300
@@ -478,7 +478,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                     className="input input-bordered w-full"
                                     value={editSun}
                                     min={0}
-                                    onChange={e => setEditSun(Number(e.target.value))}
+                                    onChange={e => setEditSun(e.target.value)}
                                 />
                             </div>
                             <div className="flex-1">
@@ -488,7 +488,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                     className="input input-bordered w-full"
                                     value={editMoon}
                                     min={0}
-                                    onChange={e => setEditMoon(Number(e.target.value))}
+                                    onChange={e => setEditMoon(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -550,7 +550,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                 value={editRankProgress}
                                 min={0}
                                 max={10}
-                                onChange={e => setEditRankProgress(Number(e.target.value))}
+                                onChange={e => setEditRankProgress(e.target.value)}
                             />
                         </div>
                         <div className="modal-action">

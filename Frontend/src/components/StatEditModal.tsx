@@ -19,11 +19,13 @@ export default function StatEditModal({
     onConfirm,
     onCancel
 }: StatEditModalProps) {
-    const [value, setValue] = useState(currentValue);
+    const [raw, setRaw] = useState(String(currentValue));
 
     useEffect(() => {
-        setValue(currentValue);
+        setRaw(String(currentValue));
     }, [currentValue, open]);
+
+    const numericValue = raw === "" || raw === "-" ? 0 : Number(raw);
 
     if (!open) return null;
 
@@ -34,12 +36,12 @@ export default function StatEditModal({
                 <input
                     type="number"
                     className="input input-bordered w-full"
-                    value={value}
+                    value={raw}
                     min={minValue}
                     max={maxValue}
-                    onChange={e => setValue(Number(e.target.value))}
+                    onChange={e => setRaw(e.target.value)}
                     onKeyDown={e => {
-                        if (e.key === "Enter") onConfirm(value);
+                        if (e.key === "Enter") onConfirm(numericValue);
                         if (e.key === "Escape") onCancel();
                     }}
                     autoFocus
@@ -55,7 +57,7 @@ export default function StatEditModal({
                     </button>
                     <button
                         className="btn btn-primary btn-sm"
-                        onClick={() => onConfirm(value)}
+                        onClick={() => onConfirm(numericValue)}
                     >
                         Confirmar
                     </button>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, useRef, useCallback } from "react"
 import { type BattleCharacterInfo, type InitiativeResponse, type BattleTurnResponse } from "../api/ResponseModel"
 import { APIBattle } from "../api/APIBattle"
 import { useToast } from "./Toast"
@@ -60,25 +60,83 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
         if (!isAdmin || draggedIndex === null) return
         e.preventDefault()
 
-        if (draggedIndex === dropIndex) {
-            setDraggedIndex(null)
-            setDragOverIndex(null)
+        const fromIndex = draggedIndex
+        setDraggedIndex(null)
+        setDragOverIndex(null)
+
+        if (fromIndex !== dropIndex) {
+            await handleDropDirect(fromIndex, dropIndex)
+        }
+    }
+
+    const handleDragEnd = () => {
+        setDraggedIndex(null)
+        setDragOverIndex(null)
+    }
+
+    /* ── Touch support (mobile) ── */
+    const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+    const touchDragIndex = useRef<number | null>(null)
+    const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const getDropIndex = useCallback((touchX: number, touchY: number): number | null => {
+        for (let i = 0; i < itemRefs.current.length; i++) {
+            const el = itemRefs.current[i]
+            if (!el) continue
+            const rect = el.getBoundingClientRect()
+            if (touchX >= rect.left && touchX <= rect.right && touchY >= rect.top && touchY <= rect.bottom) {
+                return i
+            }
+        }
+        return null
+    }, [])
+
+    const handleTouchStart = (index: number) => {
+        if (!isAdmin) return
+        longPressTimer.current = setTimeout(() => {
+            touchDragIndex.current = index
+            setDraggedIndex(index)
+        }, 200)
+    }
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (touchDragIndex.current === null) {
+            // Cancel long press if finger moves before activation
+            if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null }
             return
         }
+        e.preventDefault()
+        const touch = e.touches[0]
+        const overIndex = getDropIndex(touch.clientX, touch.clientY)
+        setDragOverIndex(overIndex)
+    }
 
-        // Create new order
+    const handleTouchEnd = () => {
+        if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null }
+        if (touchDragIndex.current === null) return
+
+        const fromIndex = touchDragIndex.current
+        const toIndex = dragOverIndex
+
+        touchDragIndex.current = null
+        setDraggedIndex(null)
+        setDragOverIndex(null)
+
+        if (toIndex !== null && fromIndex !== toIndex) {
+            handleDropDirect(fromIndex, toIndex)
+        }
+    }
+
+    const handleDropDirect = async (fromIndex: number, toIndex: number) => {
         const newQueue = [...sortedQueue]
-        const [draggedItem] = newQueue.splice(draggedIndex, 1)
-        newQueue.splice(dropIndex, 0, draggedItem)
+        const [draggedItem] = newQueue.splice(fromIndex, 1)
+        newQueue.splice(toIndex, 0, draggedItem)
 
-        // Extract IDs based on type
         if (isStarted) {
-            // Reorder turns
             const turnIds = newQueue.map(item => (item as BattleTurnResponse).id)
             try {
                 await APIBattle.reorderTurns(turnIds)
                 showToast("Ordem dos turnos atualizada")
-                // Wait a bit for backend to process
                 await new Promise(resolve => setTimeout(resolve, 300))
                 if (onReorder) onReorder()
             } catch (error) {
@@ -86,13 +144,10 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                 showToast("Erro ao reordenar turnos")
             }
         } else {
-            // Reorder initiatives
-            // Use battleCharacterId (battleID in InitiativeResponse)
             const initiativeCharacterIds = newQueue.map(item => (item as InitiativeResponse).battleID)
             try {
                 await APIBattle.reorderInitiatives(initiativeCharacterIds)
                 showToast("Ordem de iniciativa atualizada")
-                // Wait a bit for backend to process
                 await new Promise(resolve => setTimeout(resolve, 300))
                 if (onReorder) onReorder()
             } catch (error) {
@@ -100,14 +155,6 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                 showToast("Erro ao reordenar iniciativas")
             }
         }
-
-        setDraggedIndex(null)
-        setDragOverIndex(null)
-    }
-
-    const handleDragEnd = () => {
-        setDraggedIndex(null)
-        setDragOverIndex(null)
     }
 
     if (!characters || characters.length === 0) return null
@@ -142,6 +189,7 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                     return (
                         <div
                             key={key}
+                            ref={(el) => { itemRefs.current[index] = el }}
                             className="flex flex-col items-center"
                             draggable={isAdmin}
                             onDragStart={(e) => handleDragStart(e, index)}
@@ -149,6 +197,9 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                             onDragLeave={handleDragLeave}
                             onDrop={(e) => handleDrop(e, index)}
                             onDragEnd={handleDragEnd}
+                            onTouchStart={() => handleTouchStart(index)}
+                            onTouchMove={handleTouchMove}
+                            onTouchEnd={handleTouchEnd}
                         >
                             <div
                                 className={`relative flex-shrink-0 overflow-hidden rounded-md border-2 transition-all bg-base-300 ${

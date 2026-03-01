@@ -5,6 +5,7 @@ export interface RollEvent {
     modifier: number;
     total: number;
     diceCommand: string;
+    diceValues?: number[];
 }
 
 export function dispatchRoll(roll: Omit<RollEvent, "id">) {

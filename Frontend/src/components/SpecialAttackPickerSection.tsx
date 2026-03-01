@@ -6,7 +6,7 @@ import SpecialAttackModal from "./SpecialAttackModal";
 import { getEnrichedCharacterSpecialAttacks, getPlayerHasSpecialAttack, getSpecialAttackIsBlocked } from "../utils/SpecialAttackUtils";
 import { APISpecialAttack } from "../api/APISpecialAttack";
 import { t } from "../i18n";
-import { DiamondThumb, highlightSkillDescription } from "../utils/SpecialAttackDisplayUtils";
+import { DiamondThumb, highlightSkillDescription, getSkillAbilityModifier } from "../utils/SpecialAttackDisplayUtils";
 
 export interface SpecialAttackPickerProps {
     player: GetPlayerResponse | null;
@@ -346,7 +346,7 @@ export default function SpecialAttackPickerSection({ player, setPlayer, inBattle
                                                         >
                                                             <div className="px-6 py-4 border-t border-base-300">
                                                                 <div className="whitespace-pre-line text-[15px] leading-snug text-base-content/90 break-words">
-                                                                    {highlightSkillDescription(sa.description, sa.id)}
+                                                                    {highlightSkillDescription(sa.description, sa.id, getSkillAbilityModifier(sa.id, player))}
                                                                 </div>
                                                             </div>
                                                         </motion.div>
@@ -486,7 +486,7 @@ export default function SpecialAttackPickerSection({ player, setPlayer, inBattle
                                         >
                                             <div className="px-6 py-4">
                                                 <div className="whitespace-pre-line text-[15px] leading-snug text-base-content/90 break-words">
-                                                    {highlightSkillDescription(selected.description, selected.id)}
+                                                    {highlightSkillDescription(selected.description, selected.id, getSkillAbilityModifier(selected.id, player))}
                                                 </div>
                                             </div>
                                         </motion.div>

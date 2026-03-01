@@ -44,11 +44,11 @@ export default function BattleGroupStatus({
     // Edit state
     const [editing, setEditing] = useState<EditField>(null);
     const [editValue, setEditValue] = useState(0);
-    const [editSun, setEditSun] = useState(0);
-    const [editMoon, setEditMoon] = useState(0);
+    const [editSun, setEditSun] = useState("");
+    const [editMoon, setEditMoon] = useState("");
     const [editStance, setEditStance] = useState<Stance | "">("");
     const [editRank, setEditRank] = useState("D");
-    const [editRankProgress, setEditRankProgress] = useState(0);
+    const [editRankProgress, setEditRankProgress] = useState("");
     const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
 
     if (player?.fightInfo?.characters == undefined) return null;
@@ -88,7 +88,7 @@ export default function BattleGroupStatus({
 
     async function confirmSunMoon() {
         if (!playerCh) return;
-        await APIBattle.updateSunMoonCharges(playerCh.battleID, editSun, editMoon);
+        await APIBattle.updateSunMoonCharges(playerCh.battleID, Number(editSun) || 0, Number(editMoon) || 0);
         closeEdit();
     }
 
@@ -100,7 +100,7 @@ export default function BattleGroupStatus({
 
     async function confirmRank() {
         if (!playerCh) return;
-        await APIBattle.updateCharacterRank(playerCh.battleID, editRank, editRankProgress);
+        await APIBattle.updateCharacterRank(playerCh.battleID, editRank, Number(editRankProgress) || 0);
         closeEdit();
     }
 
@@ -119,8 +119,8 @@ export default function BattleGroupStatus({
     function openMp(ch: BattleCharacterInfo) { setEditValue(ch.magicPoints ?? 0); setEditing("mp"); }
     function openCharge(ch: BattleCharacterInfo) { setEditValue(ch.chargePoints ?? 0); setEditing("charge"); }
     function openSunMoon(ch: BattleCharacterInfo) {
-        setEditSun(ch.sunCharges ?? 0);
-        setEditMoon(ch.moonCharges ?? 0);
+        setEditSun(String(ch.sunCharges ?? 0));
+        setEditMoon(String(ch.moonCharges ?? 0));
         setEditing("sunMoon");
     }
     function openStance(ch: BattleCharacterInfo) {
@@ -129,7 +129,7 @@ export default function BattleGroupStatus({
     }
     function openRank(ch: BattleCharacterInfo) {
         setEditRank(ch.perfectionRank ?? "D");
-        setEditRankProgress(ch.rankProgress ?? 0);
+        setEditRankProgress(String(ch.rankProgress ?? 0));
         setEditing("rank");
     }
     function openStainsEdit(ch: BattleCharacterInfo) {
@@ -542,7 +542,7 @@ export default function BattleGroupStatus({
                                             className="input input-bordered w-full"
                                             value={editSun}
                                             min={0}
-                                            onChange={e => setEditSun(Number(e.target.value))}
+                                            onChange={e => setEditSun(e.target.value)}
                                         />
                                     </div>
                                     <div className="flex-1">
@@ -552,7 +552,7 @@ export default function BattleGroupStatus({
                                             className="input input-bordered w-full"
                                             value={editMoon}
                                             min={0}
-                                            onChange={e => setEditMoon(Number(e.target.value))}
+                                            onChange={e => setEditMoon(e.target.value)}
                                         />
                                     </div>
                                 </div>
@@ -614,7 +614,7 @@ export default function BattleGroupStatus({
                                         value={editRankProgress}
                                         min={0}
                                         max={10}
-                                        onChange={e => setEditRankProgress(Number(e.target.value))}
+                                        onChange={e => setEditRankProgress(e.target.value)}
                                     />
                                 </div>
                                 <div className="modal-action">

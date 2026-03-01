@@ -3,7 +3,7 @@ import { t } from "../../i18n";
 import { FaCheckCircle, FaSkull } from "react-icons/fa";
 import { APIBattle } from "../../api/APIBattle";
 import { APIPlayer, type GetPlayerResponse } from "../../api/APIPlayer";
-import type { WeaponInfo, BattleCharacterInfo } from "../../api/ResponseModel";
+import type { WeaponInfo } from "../../api/ResponseModel";
 import type { DiceBoardRef } from "../../components/DiceBoard";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../../utils/CombatMenuActions";
 import { rollWithTimeout } from "../../utils/RollUtils";
@@ -20,7 +20,6 @@ import {
   countFailuresRolls
 } from "../../utils/DiceCalculator";
 import { triggerOnBattleStart } from "../../utils/PictoEffectsIntegration";
-import { calculateAttackBonus, calculateDamageBonus } from "../../utils/AttackCalculator";
 import type { PlayerTab, CombatTabType, SpecialAttacksTabType } from "../../pages/PlayerPage/PlayerPage.types";
 
 interface UseCombatActionsParams {
@@ -48,7 +47,6 @@ interface UseCombatActionsReturn {
   attemptFlee: () => void;
   confirmFlee: () => Promise<void>;
   handleCombatMenuAction: (action: CombatMenuAction) => void;
-  performBasicAttack: (target: BattleCharacterInfo) => void;
 }
 
 export function useCombatActions({
@@ -89,12 +87,12 @@ export function useCombatActions({
       const criticalRolls = countCriticalRolls(result);
       const criticalBonus = calculatePlayerCriticalBonus(result, player, weaponInfo);
       const rollTotal = diceTotal(result);
-      const total = rollTotal + dexMod;
+      const weaponAgilityBonus = calculateWeaponAgilityBonus(weaponInfo);
+      const total = rollTotal + dexMod + weaponAgilityBonus;
 
       dispatchRoll({ label: t("characterSheet.initiative"), diceRolled: rollTotal, modifier: dexMod, total, diceCommand });
       const failures = countFailuresRolls(result);
       const failuresDiv = calculateFailureDiv(result);
-      const weaponAgilityBonus = calculateWeaponAgilityBonus(weaponInfo);
 
       openModal(
         t("playerPage.modals.rollResult"),
@@ -249,109 +247,6 @@ export function useCombatActions({
     }
   }, [player, showToast, closeModal]);
 
-  const performBasicAttack = useCallback((target: BattleCharacterInfo) => {
-    if (!player) return;
-
-    const attackBonus = calculateAttackBonus(player, weaponInfo);
-    const damageBonus = calculateDamageBonus(player, weaponInfo);
-    const abilityLabel = t(`characterSheet.attributes.${attackBonus.abilityKey}`);
-
-    setIsExecutingSkill(true);
-
-    // Roll d20 for attack
-    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
-      const d20Roll = diceTotal(result);
-      const attackTotal = d20Roll + attackBonus.total;
-
-      dispatchRoll({
-        label: t("combat.attack"),
-        diceRolled: d20Roll,
-        modifier: attackBonus.total,
-        total: attackTotal,
-        diceCommand: "1d20",
-      });
-
-      const showDamageRoll = () => {
-        // Roll 1d6 for damage
-        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d6", (dmgResult) => {
-          const weaponDice = diceTotal(dmgResult);
-          const damageTotal = weaponDice + damageBonus.total;
-
-          dispatchRoll({
-            label: t("playerPage.basicAttack.damage"),
-            diceRolled: weaponDice,
-            modifier: damageBonus.total,
-            total: damageTotal,
-            diceCommand: "1d6",
-          });
-
-          openModal(
-            t("playerPage.basicAttack.damageTitle"),
-            <div className="space-y-3">
-              <div className="bg-base-200 rounded-lg p-3 space-y-1 text-sm">
-                <p>1d6: <b>{weaponDice}</b></p>
-                <p>{abilityLabel}: <b>{damageBonus.abilityMod >= 0 ? "+" : ""}{damageBonus.abilityMod}</b></p>
-                {damageBonus.weaponPower > 0 && (
-                  <p>{t("playerPage.basicAttack.weaponPower")}: <b>+{damageBonus.weaponPower}</b></p>
-                )}
-              </div>
-              <h2 className="text-2xl font-bold text-center">{t("playerPage.basicAttack.totalDamage")}: {damageTotal}</h2>
-              <div className="flex gap-2 justify-end">
-                <button className="btn btn-ghost" onClick={() => { closeModal(); setIsExecutingSkill(false); }}>
-                  {t("common.cancel")}
-                </button>
-                <button className="btn btn-primary" onClick={() => {
-                  const sendAttack = async () => {
-                    try {
-                      await APIBattle.attack({
-                        totalDamage: damageTotal,
-                        targetBattleId: target.battleID,
-                        sourceBattleId: player.fightInfo?.playerBattleID ?? 0,
-                        attackType: "basic",
-                      });
-                      closeModal();
-                    } catch (e) {
-                      showToast(t("playerPage.errors.errorAttacking"));
-                    }
-                    setIsExecutingSkill(false);
-                  };
-                  sendAttack();
-                }}>
-                  {t("playerPage.basicAttack.confirmDamage")}
-                </button>
-              </div>
-            </div>
-          );
-        });
-      };
-
-      // Show attack roll breakdown with option to roll damage
-      openModal(
-        t("playerPage.basicAttack.attackTitle"),
-        <div className="space-y-3">
-          <p className="text-sm opacity-70">{t("combat.target")}: <b>{target.name}</b></p>
-          <div className="bg-base-200 rounded-lg p-3 space-y-1 text-sm">
-            <p>d20: <b>{d20Roll}</b></p>
-            <p>{abilityLabel}: <b>{attackBonus.abilityMod >= 0 ? "+" : ""}{attackBonus.abilityMod}</b></p>
-            <p>{t("playerPage.basicAttack.proficiency")}: <b>+{attackBonus.proficiency}</b></p>
-            {attackBonus.weaponPower > 0 && (
-              <p>{t("playerPage.basicAttack.weaponPower")}: <b>+{attackBonus.weaponPower}</b></p>
-            )}
-          </div>
-          <h2 className="text-2xl font-bold text-center">{t("playerPage.basicAttack.attackTotal")}: {attackTotal}</h2>
-          <div className="flex gap-2 justify-end">
-            <button className="btn btn-ghost" onClick={() => { closeModal(); setIsExecutingSkill(false); }}>
-              {t("playerPage.basicAttack.miss")}
-            </button>
-            <button className="btn btn-primary" onClick={showDamageRoll}>
-              {t("playerPage.basicAttack.rollDamage")}
-            </button>
-          </div>
-        </div>
-      );
-    });
-  }, [player, weaponInfo, diceBoardRef, timeoutDiceBoardRef, showToast, openModal, closeModal, setIsExecutingSkill]);
-
   const handleCombatMenuAction = useCallback((action: CombatMenuAction) => {
     switch (action) {
       case COMBAT_MENU_ACTIONS.Inventory:
@@ -393,6 +288,5 @@ export function useCombatActions({
     attemptFlee,
     confirmFlee,
     handleCombatMenuAction,
-    performBasicAttack,
   };
 }

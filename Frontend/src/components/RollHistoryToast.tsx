@@ -22,12 +22,19 @@ function CompactCard({ entry }: { entry: RollEvent }) {
 }
 
 function ExpandedCard({ entry }: { entry: RollEvent }) {
+    const diceStr = entry.diceValues
+        ? entry.diceValues.join("+")
+        : String(entry.diceRolled);
     const formula =
         entry.modifier === 0
-            ? String(entry.diceRolled)
+            ? diceStr
             : entry.modifier > 0
-            ? `${entry.diceRolled}+${entry.modifier}`
-            : `${entry.diceRolled}${entry.modifier}`;
+            ? `${diceStr}+${entry.modifier}`
+            : `${diceStr}${entry.modifier}`;
+
+    const count = entry.diceValues?.length ?? 1;
+    const formulaSize = count > 6 ? "text-sm" : count > 4 ? "text-base" : count > 2 ? "text-lg" : "text-2xl";
+    const totalSize = count > 4 ? "text-2xl" : count > 2 ? "text-3xl" : "text-4xl";
 
     return (
         <div
@@ -40,10 +47,10 @@ function ExpandedCard({ entry }: { entry: RollEvent }) {
             <p className="text-[11px] font-extrabold text-success tracking-widest uppercase mb-2">
                 {entry.label}
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 min-w-0">
                 <GiDiceTwentyFacesTwenty className="text-3xl opacity-50 shrink-0" />
-                <span className="text-2xl font-black tabular-nums">{formula}</span>
-                <span className="ml-auto text-4xl font-black tabular-nums">= {entry.total}</span>
+                <span className={`${formulaSize} font-black tabular-nums break-all min-w-0`}>{formula}</span>
+                <span className={`shrink-0 ml-auto ${totalSize} font-black tabular-nums`}>= {entry.total}</span>
             </div>
             <p className="text-[10px] opacity-35 mt-1.5 font-mono">{entry.diceCommand}</p>
         </div>
@@ -74,7 +81,7 @@ export function RollHistoryToast() {
 
     return createPortal(
         <motion.div
-            className="fixed bottom-4 left-4 z-[9000] flex flex-col gap-2 w-64 pointer-events-none select-none"
+            className="fixed bottom-4 left-4 z-[10000] flex flex-col gap-2 w-64 pointer-events-none select-none"
             animate={{ opacity: visible ? 1 : 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
         >

@@ -1,5 +1,18 @@
 import React from "react";
 import { renderStainText } from "./StainTextUtils";
+import type { GetPlayerResponse } from "../api/APIPlayer";
+import { getMainAttributeKey } from "./CharacterUtils";
+import { t } from "../i18n";
+
+export interface AbilityTestRequestEvent {
+    dc: number;
+    modifier: number;
+    label: string;
+}
+
+export function dispatchAbilityTestRequest(detail: AbilityTestRequestEvent) {
+    window.dispatchEvent(new CustomEvent("ability-test-request", { detail }));
+}
 
 export function DiamondThumb({ image, alt }: { image?: string; alt: string }) {
     return (
@@ -16,7 +29,15 @@ export function DiamondThumb({ image, alt }: { image?: string; alt: string }) {
     );
 }
 
-export function highlightSkillDescription(text: string, specialAttackId?: string) {
+export function getSkillAbilityModifier(specialAttackId: string | undefined, player: GetPlayerResponse | null): number | null {
+    if (!specialAttackId || !player?.playerSheet?.abilityScores) return null;
+    const characterId = specialAttackId.split("-")[0];
+    const attrKey = getMainAttributeKey(characterId);
+    const score = player.playerSheet.abilityScores[attrKey] ?? 10;
+    return Math.floor((score - 10) / 2);
+}
+
+export function highlightSkillDescription(text: string, specialAttackId?: string, abilityModifier?: number | null) {
     const isLuneSpecialAttack = specialAttackId?.toLowerCase().includes("lune") ?? false;
     const stainRendered = isLuneSpecialAttack ? renderStainText(text) : [text];
 
@@ -96,6 +117,28 @@ export function highlightSkillDescription(text: string, specialAttackId?: string
                         {chunk}
                     </span>
                 );
+            } else if (abilityModifier != null) {
+                const dcPattern = /(CD \d+|DC \d+)/g;
+                const parts = chunk.split(dcPattern);
+                if (parts.length === 1) {
+                    return <React.Fragment key={`${nodeIdx}-${chunkIdx}`}>{chunk}</React.Fragment>;
+                }
+                return parts.map((part, partIdx) => {
+                    if (/^(CD|DC) \d+$/.test(part)) {
+                        const dc = parseInt(part.replace(/\D+/g, ""), 10);
+                        const modStr = abilityModifier >= 0 ? `+${abilityModifier}` : String(abilityModifier);
+                        return (
+                            <React.Fragment key={`${nodeIdx}-${chunkIdx}-${partIdx}`}>
+                                {part}
+                                <span
+                                    className="inline-flex items-center ml-1 px-1.5 py-0.5 rounded bg-base-300 text-xs font-bold text-base-content/80 cursor-pointer hover:bg-base-content/20 active:scale-95 transition-all select-none"
+                                    onClick={() => dispatchAbilityTestRequest({ dc, modifier: abilityModifier, label: t("characterSheet.abilityTest") })}
+                                >{modStr}</span>
+                            </React.Fragment>
+                        );
+                    }
+                    return <React.Fragment key={`${nodeIdx}-${chunkIdx}-${partIdx}`}>{part}</React.Fragment>;
+                });
             } else {
                 return <React.Fragment key={`${nodeIdx}-${chunkIdx}`}>{chunk}</React.Fragment>;
             }

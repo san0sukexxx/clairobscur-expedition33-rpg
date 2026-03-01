@@ -1,13 +1,15 @@
 import { getSpecialAttackById } from "../utils/SpecialAttackUtils";
-import { DiamondThumb, highlightSkillDescription } from "../utils/SpecialAttackDisplayUtils";
+import { DiamondThumb, highlightSkillDescription, getSkillAbilityModifier } from "../utils/SpecialAttackDisplayUtils";
 import { t } from "../i18n";
+import type { GetPlayerResponse } from "../api/APIPlayer";
 
 interface SkillInfoCardProps {
     skillId: string;
     onDismiss: () => void;
+    player?: GetPlayerResponse | null;
 }
 
-export default function SkillInfoCard({ skillId, onDismiss }: SkillInfoCardProps) {
+export default function SkillInfoCard({ skillId, onDismiss, player }: SkillInfoCardProps) {
     const skill = getSpecialAttackById(skillId);
     if (!skill) return null;
 
@@ -55,7 +57,7 @@ export default function SkillInfoCard({ skillId, onDismiss }: SkillInfoCardProps
             {/* Description */}
             <div className="px-6 pb-4">
                 <div className="whitespace-pre-line text-[15px] leading-snug text-base-content/90 break-words">
-                    {highlightSkillDescription(skill.description, skill.id)}
+                    {highlightSkillDescription(skill.description, skill.id, getSkillAbilityModifier(skill.id, player ?? null))}
                 </div>
             </div>
         </div>

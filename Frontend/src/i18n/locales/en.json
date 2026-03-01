@@ -1863,6 +1863,9 @@
       "race": "Race",
       "class": "Class",
       "mainAttribute": "Main Attribute",
+      "abilityTest": "Ability Test",
+      "abilityTestSuccess": "Success!",
+      "abilityTestFailure": "Failure!",
       "races": {
         "human": "Human",
         "gestral": "Gestral"
@@ -1885,7 +1888,8 @@
       "senses": "Senses",
       "passivePerception": "Passive Perception",
       "passiveInvestigation": "Passive Investigation",
-      "passiveInsight": "Passive Insight"
+      "passiveInsight": "Passive Insight",
+      "customRoll": "CUSTOM: ROLL"
     },
     "tabs": {
       "sheet": "Sheet",
@@ -1957,7 +1961,13 @@
       "current": "Current",
       "victoryTitle": "Victory!",
       "noRewards": "No rewards were obtained in this battle.",
-      "rewardsEarned": "You have earned the following rewards:"
+      "rewardsEarned": "You have earned the following rewards:",
+      "intensity": "Intensity",
+      "intensityLow": "Low",
+      "intensityMedium": "Medium",
+      "intensityHigh": "High",
+      "intensityVeryHigh": "Very High",
+      "intensityExtreme": "Extreme"
     },
     "combatAdmin": {
       "createCombat": "Create combat",
@@ -2154,7 +2164,7 @@
       },
       "gustave-powerful": {
         "name": "Powerful",
-        "description": "Applies Empowered to up to 3 allies for 3 turns, increasing damage dealt by +4. Make 3 ability tests DC 5. Grants 1 charge per success."
+        "description": "Applies Empowered to up to 3 allies for 3 turns, increasing damage dealt by +4. Make 3 Strength tests DC 13. Grants 1 charge per success."
       },
       "gustave-recovery": {
         "name": "Recovery",
@@ -2250,7 +2260,7 @@
       },
       "lune-revitalization": {
         "name": "Revitalization",
-        "description": "Hability Test DC 7: Success = heals all allies for Resistance +3d6, Failure = heals 1 ally for Resistance +2d6. Consumes 3 Fire stains to also apply Regeneration 2 for 3 turns. Using this skill grants 1 Light stain."
+        "description": "Intelligence Test DC 15: Success = heals all allies for Resistance +3d6, Failure = heals 1 ally for Resistance +2d6. Consumes 3 Fire stains to also apply Regeneration 2 for 3 turns. Using this skill grants 1 Light stain."
       },
       "lune-fire-rage": {
         "name": "Fire Rage",
@@ -2278,7 +2288,7 @@
       },
       "maelle-mezzo-forte": {
         "name": "Mezzo Forte",
-        "description": "Reapplies current stance and grants 2-4 MP. Deals no damage."
+        "description": "Reapplies current stance and performs a Dexterity test DC 15: success +4 MP, failure +2 MP."
       },
       "maelle-percee": {
         "name": "Percee",
@@ -2290,11 +2300,11 @@
       },
       "maelle-guard-up": {
         "name": "Guard Up",
-        "description": "Choose an ally and perform a Hability Test DC 7. Success: Applies Shell to entire team for 3 turns. Failure: Applies Shell only to chosen target for 3 turns. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Choose an ally and perform a Dexterity Test DC 15. Success: Applies Shell to entire team for 3 turns. Failure: Applies Shell only to chosen target for 3 turns. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-swift-stride": {
         "name": "Swift Stride",
-        "description": "Deals low Physical damage to a single target. 1 hit. Hability test DC 7: success +2 MP, failure 0 MP. If target is Burning, switches to Virtuose Stance."
+        "description": "Deals low Physical damage to a single target. 1 hit. Dexterity test DC 15: success +2 MP, failure 0 MP. If target is Burning, switches to Virtuose Stance."
       },
       "maelle-guard-down": {
         "name": "Guard Down",
@@ -2378,7 +2388,7 @@
       },
       "maelle-phoenix-flame": {
         "name": "Phoenix Flame",
-        "description": "Does not consume turn. Applies 10 Burn to all enemies. Revives all allies. Make an ability test DC 7. On success, revive with full HP. On failure, revive with half HP. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Does not consume turn. Applies 10 Burn to all enemies. Revives all allies. Make a Dexterity test DC 15. On success, revive with full HP. On failure, revive with half HP. Using this skill changes Maelle's Stance to Offensive."
       },
       "sciel-twilight-slash": {
         "name": "Twilight Slash",
@@ -2450,7 +2460,7 @@
       },
       "sciel-rush": {
         "name": "Rush",
-        "description": "Applies Haste for 3 turns. Perform a hability test DC 7. On success, applies to all allies. On failure, applies to target only."
+        "description": "Applies Haste for 3 turns. Perform a Charisma test DC 15. On success, applies to all allies. On failure, applies to target only."
       },
       "sciel-all-set": {
         "name": "All Set",
@@ -2558,7 +2568,7 @@
       },
       "verso-powerful": {
         "name": "Powerful",
-        "description": "Applies Empowered for 3 turns. Perform a hability test DC 7. On success, applies to all allies. On failure, applies to Verso only. If Verso uses this skill at Perfection Rank A, the duration increases to 5 turns."
+        "description": "Applies Empowered for 3 turns. Perform a Strength test DC 15. On success, applies to all allies. On failure, applies to Verso only. If Verso uses this skill at Perfection Rank A, the duration increases to 5 turns."
       },
       "verso-purification": {
         "name": "Purification",

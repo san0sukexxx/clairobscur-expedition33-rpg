@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useLocation, matchPath, useParams } from "react-router-dom";
 import { t } from "../../i18n";
 
@@ -8,6 +8,7 @@ import PanelModal from "../../components/PanelModal";
 import MasterEditingOverlay from "../../components/MasterEditingOverlay";
 import { PlayerNavbar, PlayerContent } from "../../components/player";
 import { RollHistoryToast } from "../../components/RollHistoryToast";
+import { FloatingDiceRoller } from "../../components/FloatingDiceRoller";
 
 // Hooks
 import { useToast } from "../../components/Toast";
@@ -25,6 +26,10 @@ import {
 
 // Utils
 import type { BattleCharacterInfo } from "../../api/ResponseModel";
+import type { AbilityTestRequestEvent } from "../../utils/SpecialAttackDisplayUtils";
+import { rollWithTimeout } from "../../utils/RollUtils";
+import { diceTotal } from "../../utils/DiceCalculator";
+import { dispatchRoll } from "../../utils/rollDispatcher";
 
 export default function PlayerPage() {
   const { pathname } = useLocation();
@@ -155,10 +160,26 @@ export default function PlayerPage() {
     closeModal();
   }, [clearDiceTimeout, closeModal]);
 
+  // Ability test roll listener (triggered from skill description badges)
+  useEffect(() => {
+    function handleAbilityTest(e: Event) {
+      const { dc, modifier, label } = (e as CustomEvent<AbilityTestRequestEvent>).detail;
+      const diceCommand = modifier === 0 ? "1d20" : modifier > 0 ? `1d20+${modifier}` : `1d20${modifier}`;
+      rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
+        const roll = diceTotal(result);
+        const total = roll + modifier;
+        dispatchRoll({ label, diceRolled: roll, modifier, total, diceCommand });
+      });
+    }
+    window.addEventListener("ability-test-request", handleAbilityTest);
+    return () => window.removeEventListener("ability-test-request", handleAbilityTest);
+  }, [diceBoardRef, timeoutDiceBoardRef]);
+
   return (
     <div className="min-h-dvh bg-base-200">
       <DiceBoard ref={diceBoardRef} />
       <RollHistoryToast />
+      <FloatingDiceRoller diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
 
       {!isAdmin && player?.isMasterEditing && (
         <MasterEditingOverlay />
