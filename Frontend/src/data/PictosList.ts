@@ -31,7 +31,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("energising-attack-i"),
         status: {
             speed: 399,
-            criticalRate: 11
+            strength: 154
         },
         description: getPictoDescription("energising-attack-i"),
         color: "green",
@@ -54,7 +54,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("augmented-first-strike"),
         status: {
             speed: 420,
-            criticalRate: 12
+            intelligence: 168
         },
         description: getPictoDescription("augmented-first-strike"),
         color: "red",
@@ -66,7 +66,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("survivor"),
         status: {
             speed: 399,
-            criticalRate: 11
+            wisdom: 154
         },
         description: getPictoDescription("survivor"),
         color: "blue",
@@ -103,7 +103,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("lucky-aim"),
         status: {
             speed: 280,
-            criticalRate: 23
+            charisma: 322
         },
         description: getPictoDescription("lucky-aim"),
         color: "green",
@@ -115,7 +115,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("augmented-counter-i"),
         status: {
             health: 2000,
-            criticalRate: 11
+            strength: 154
         },
         description: getPictoDescription("augmented-counter-i"),
         color: "red",
@@ -127,7 +127,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("second-chance"),
         status: {
             health: 1684,
-            criticalRate: 10
+            intelligence: 140
         },
         description: getPictoDescription("second-chance"),
         color: "blue",
@@ -139,7 +139,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("first-strike"),
         status: {
             speed: 266,
-            criticalRate: 22
+            wisdom: 308
         },
         description: getPictoDescription("first-strike"),
         color: "green",
@@ -175,7 +175,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("sweet-kill"),
         status: {
             speed: 280,
-            criticalRate: 23
+            charisma: 322
         },
         description: getPictoDescription("sweet-kill"),
         color: "blue",
@@ -199,7 +199,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("attack-lifesteal"),
         status: {
             health: 1333,
-            criticalRate: 22
+            strength: 308
         },
         description: getPictoDescription("attack-lifesteal"),
         color: "blue",
@@ -211,7 +211,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("augmented-aim"),
         status: {
             speed: 420,
-            criticalRate: 12
+            intelligence: 168
         },
         description: getPictoDescription("augmented-aim"),
         color: "red",
@@ -223,7 +223,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("combo-attack-i"),
         status: {
             speed: 399,
-            criticalRate: 11
+            wisdom: 154
         },
         description: getPictoDescription("combo-attack-i"),
         color: "red",
@@ -247,7 +247,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("auto-powerful"),
         status: {
             speed: 266,
-            criticalRate: 22
+            charisma: 308
         },
         description: getPictoDescription("auto-powerful"),
         color: "red",
@@ -270,7 +270,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("auto-rush"),
         status: {
             speed: 399,
-            criticalRate: 11
+            strength: 154
         },
         description: getPictoDescription("auto-rush"),
         color: "red",
@@ -437,7 +437,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("dodger"),
         status: {
             speed: 420,
-            criticalRate: 12
+            intelligence: 168
         },
         description: getPictoDescription("dodger"),
         color: "green",
@@ -493,7 +493,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("perilous-parry"),
         status: {
             speed: 280,
-            criticalRate: 23
+            wisdom: 322
         },
         description: getPictoDescription("perilous-parry"),
         color: "green",
@@ -505,7 +505,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("confident"),
         status: {
             speed: 266,
-            criticalRate: 22
+            charisma: 308
         },
         description: getPictoDescription("confident"),
         color: "blue",
@@ -517,7 +517,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("bloody-bullet"),
         status: {
             speed: 280,
-            criticalRate: 23
+            strength: 322
         },
         description: getPictoDescription("bloody-bullet"),
         color: "green",
@@ -574,7 +574,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("powerful-revive"),
         status: {
             speed: 280,
-            criticalRate: 23
+            intelligence: 322
         },
         description: getPictoDescription("powerful-revive"),
         color: "red",
@@ -594,7 +594,7 @@ export const PictosList: PictoInfo[] = [
         imageId: getPictoEnglishName("the-one"),
         name: getPictoName("the-one"),
         status: {
-            criticalRate: 69
+            wisdom: 966
         },
         description: getPictoDescription("the-one"),
         color: "green",
@@ -606,7 +606,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("dead-energy-ii"),
         status: {
             speed: 140,
-            criticalRate: 35
+            charisma: 490
         },
         description: getPictoDescription("dead-energy-ii"),
         color: "green",
@@ -627,7 +627,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("piercing-shot"),
         status: {
             health: 1403,
-            criticalRate: 23
+            strength: 322
         },
         description: getPictoDescription("piercing-shot"),
         color: "red",
@@ -666,7 +666,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("healing-death"),
         status: {
             speed: 280,
-            criticalRate: 23
+            intelligence: 322
         },
         description: getPictoDescription("healing-death"),
         color: "green",
@@ -677,7 +677,7 @@ export const PictosList: PictoInfo[] = [
         imageId: getPictoEnglishName("auto-death"),
         name: getPictoName("auto-death"),
         status: {
-            criticalRate: 60
+            wisdom: 840
         },
         description: getPictoDescription("auto-death"),
         color: "green",
@@ -689,7 +689,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("auto-curse"),
         status: {
             speed: 140,
-            criticalRate: 35
+            charisma: 490
         },
         description: getPictoDescription("auto-curse"),
         color: "green",
@@ -701,7 +701,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("death-bomb"),
         status: {
             speed: 280,
-            criticalRate: 23
+            strength: 322
         },
         description: getPictoDescription("death-bomb"),
         color: "red",
@@ -758,7 +758,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("burn-affinity"),
         status: {
             speed: 399,
-            criticalRate: 11
+            intelligence: 154
         },
         description: getPictoDescription("burn-affinity"),
         color: "red",
@@ -770,7 +770,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("inverted-affinity"),
         status: {
             health: 1403,
-            criticalRate: 23
+            wisdom: 322
         },
         description: getPictoDescription("inverted-affinity"),
         color: "red",
@@ -805,7 +805,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("at-deaths-door"),
         status: {
             defense: 681,
-            criticalRate: 23
+            charisma: 322
         },
         description: getPictoDescription("at-deaths-door"),
         color: "red",
@@ -852,7 +852,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("sos-power"),
         status: {
             speed: 280,
-            criticalRate: 23
+            strength: 322
         },
         description: getPictoDescription("sos-power"),
         color: "red",
@@ -864,7 +864,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("augmented-counter-ii"),
         status: {
             defense: 647,
-            criticalRate: 22
+            intelligence: 308
         },
         description: getPictoDescription("augmented-counter-ii"),
         color: "red",
@@ -876,7 +876,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("augmented-counter-iii"),
         status: {
             defense: 647,
-            criticalRate: 22
+            wisdom: 308
         },
         description: getPictoDescription("augmented-counter-iii"),
         color: "red",
@@ -921,7 +921,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("double-burn"),
         status: {
             speed: 399,
-            criticalRate: 11
+            charisma: 154
         },
         description: getPictoDescription("double-burn"),
         color: "red",
@@ -968,7 +968,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("stun-boost"),
         status: {
             speed: 479,
-            criticalRate: 5
+            strength: 70
         },
         description: getPictoDescription("stun-boost"),
         color: "red",
@@ -980,7 +980,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("sniper"),
         status: {
             speed: 420,
-            criticalRate: 12
+            intelligence: 168
         },
         description: getPictoDescription("sniper"),
         color: "red",
@@ -1027,7 +1027,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("powerful-shield"),
         status: {
             speed: 420,
-            criticalRate: 12
+            wisdom: 168
         },
         description: getPictoDescription("powerful-shield"),
         color: "red",
@@ -1039,7 +1039,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("base-shield"),
         status: {
             speed: 378,
-            criticalRate: 11
+            charisma: 154
         },
         description: getPictoDescription("base-shield"),
         color: "blue",
@@ -1051,7 +1051,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("in-medias-res"),
         status: {
             defense: 971,
-            criticalRate: 11
+            strength: 154
         },
         description: getPictoDescription("in-medias-res"),
         color: "blue",
@@ -1063,7 +1063,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("shield-breaker"),
         status: {
             defense: 971,
-            criticalRate: 11
+            intelligence: 154
         },
         description: getPictoDescription("shield-breaker"),
         color: "red",
@@ -1075,7 +1075,7 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("shield-affinity"),
         status: {
             speed: 266,
-            criticalRate: 22
+            wisdom: 308
         },
         description: getPictoDescription("shield-affinity"),
         color: "red",
@@ -1085,7 +1085,7 @@ export const PictosList: PictoInfo[] = [
         id: "critical-moment",
         imageId: getPictoEnglishName("critical-moment"),
         name: getPictoName("critical-moment"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, charisma: 322 },
         description: getPictoDescription("critical-moment"),
         color: "red",
         luminaCost: 15
@@ -1094,7 +1094,7 @@ export const PictosList: PictoInfo[] = [
         id: "warming-up",
         imageId: getPictoEnglishName("warming-up"),
         name: getPictoName("warming-up"),
-        status: { health: 2000, criticalRate: 11 },
+        status: { health: 2000, strength: 154 },
         description: getPictoDescription("warming-up"),
         color: "red",
         luminaCost: 15
@@ -1121,7 +1121,7 @@ export const PictosList: PictoInfo[] = [
         id: "shortcut",
         imageId: getPictoEnglishName("shortcut"),
         name: getPictoName("shortcut"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, intelligence: 322 },
         description: getPictoDescription("shortcut"),
         color: "green",
         luminaCost: 15
@@ -1139,7 +1139,7 @@ export const PictosList: PictoInfo[] = [
         id: "greater-powerful",
         imageId: getPictoEnglishName("greater-powerful"),
         name: getPictoName("greater-powerful"),
-        status: { speed: 133, criticalRate: 33 },
+        status: { speed: 133, wisdom: 462 },
         description: getPictoDescription("greater-powerful"),
         color: "green",
         luminaCost: 15
@@ -1157,7 +1157,7 @@ export const PictosList: PictoInfo[] = [
         id: "revive-paradox",
         imageId: getPictoEnglishName("revive-paradox"),
         name: getPictoName("revive-paradox"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, charisma: 322 },
         description: getPictoDescription("revive-paradox"),
         color: "green",
         luminaCost: 15
@@ -1166,7 +1166,7 @@ export const PictosList: PictoInfo[] = [
         id: "greater-rush",
         imageId: getPictoEnglishName("greater-rush"),
         name: getPictoName("greater-rush"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, strength: 154 },
         description: getPictoDescription("greater-rush"),
         color: "green",
         luminaCost: 15
@@ -1239,7 +1239,7 @@ export const PictosList: PictoInfo[] = [
         id: "confident-fighter",
         imageId: getPictoEnglishName("confident-fighter"),
         name: getPictoName("confident-fighter"),
-        status: { health: 667, criticalRate: 33 },
+        status: { health: 667, intelligence: 462 },
         description: getPictoDescription("confident-fighter"),
         color: "red",
         luminaCost: 15
@@ -1248,7 +1248,7 @@ export const PictosList: PictoInfo[] = [
         id: "healing-share",
         imageId: getPictoEnglishName("healing-share"),
         name: getPictoName("healing-share"),
-        status: { health: 1403, criticalRate: 23 },
+        status: { health: 1403, wisdom: 322 },
         description: getPictoDescription("healing-share"),
         color: "blue",
         luminaCost: 15
@@ -1257,7 +1257,7 @@ export const PictosList: PictoInfo[] = [
         id: "dead-energy-i",
         imageId: getPictoEnglishName("dead-energy-i"),
         name: getPictoName("dead-energy-i"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, charisma: 322 },
         description: getPictoDescription("dead-energy-i"),
         color: "green",
         luminaCost: 15
@@ -1275,7 +1275,7 @@ export const PictosList: PictoInfo[] = [
         id: "weakness-gain",
         imageId: getPictoEnglishName("weakness-gain"),
         name: getPictoName("weakness-gain"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, strength: 322 },
         description: getPictoDescription("weakness-gain"),
         color: "green",
         luminaCost: 15
@@ -1311,7 +1311,7 @@ export const PictosList: PictoInfo[] = [
         id: "roulette",
         imageId: getPictoEnglishName("roulette"),
         name: getPictoName("roulette"),
-        status: { defense: 681, criticalRate: 23 },
+        status: { defense: 681, intelligence: 322 },
         description: getPictoDescription("roulette"),
         color: "red",
         luminaCost: 15
@@ -1320,7 +1320,7 @@ export const PictosList: PictoInfo[] = [
         id: "soul-eater",
         imageId: getPictoEnglishName("soul-eater"),
         name: getPictoName("soul-eater"),
-        status: { criticalRate: 46 },
+        status: { wisdom: 644 },
         description: getPictoDescription("soul-eater"),
         color: "red",
         luminaCost: 15
@@ -1329,7 +1329,7 @@ export const PictosList: PictoInfo[] = [
         id: "painter",
         imageId: getPictoEnglishName("painter"),
         name: getPictoName("painter"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, charisma: 308 },
         description: getPictoDescription("painter"),
         color: "red",
         luminaCost: 15
@@ -1338,7 +1338,7 @@ export const PictosList: PictoInfo[] = [
         id: "immaculate",
         imageId: getPictoEnglishName("immaculate"),
         name: getPictoName("immaculate"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, strength: 308 },
         description: getPictoDescription("immaculate"),
         color: "red",
         luminaCost: 15
@@ -1347,7 +1347,7 @@ export const PictosList: PictoInfo[] = [
         id: "tainted",
         imageId: getPictoEnglishName("tainted"),
         name: getPictoName("tainted"),
-        status: { defense: 1022, criticalRate: 12 },
+        status: { defense: 1022, intelligence: 168 },
         description: getPictoDescription("tainted"),
         color: "red",
         luminaCost: 15
@@ -1356,7 +1356,7 @@ export const PictosList: PictoInfo[] = [
         id: "first-offensive",
         imageId: getPictoEnglishName("first-offensive"),
         name: getPictoName("first-offensive"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, wisdom: 308 },
         description: getPictoDescription("first-offensive"),
         color: "red",
         luminaCost: 15
@@ -1365,7 +1365,7 @@ export const PictosList: PictoInfo[] = [
         id: "cursed-power",
         imageId: getPictoEnglishName("cursed-power"),
         name: getPictoName("cursed-power"),
-        status: { health: 702, speed: 280, criticalRate: 12 },
+        status: { health: 702, speed: 280, charisma: 168 },
         description: getPictoDescription("cursed-power"),
         color: "red",
         luminaCost: 15
@@ -1401,7 +1401,7 @@ export const PictosList: PictoInfo[] = [
         id: "powerful-mark",
         imageId: getPictoEnglishName("powerful-mark"),
         name: getPictoName("powerful-mark"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, strength: 154 },
         description: getPictoDescription("powerful-mark"),
         color: "green",
         luminaCost: 15
@@ -1419,7 +1419,7 @@ export const PictosList: PictoInfo[] = [
         id: "stay-marked",
         imageId: getPictoEnglishName("stay-marked"),
         name: getPictoName("stay-marked"),
-        status: { speed: 346, criticalRate: 16 },
+        status: { speed: 346, intelligence: 224 },
         description: getPictoDescription("stay-marked"),
         color: "green",
         luminaCost: 15
@@ -1428,7 +1428,7 @@ export const PictosList: PictoInfo[] = [
         id: "burning-shots",
         imageId: getPictoEnglishName("burning-shots"),
         name: getPictoName("burning-shots"),
-        status: { speed: 504, criticalRate: 5 },
+        status: { speed: 504, wisdom: 70 },
         description: getPictoDescription("burning-shots"),
         color: "green",
         luminaCost: 15
@@ -1437,7 +1437,7 @@ export const PictosList: PictoInfo[] = [
         id: "free-aim-inverted-shot",
         imageId: getPictoEnglishName("free-aim-inverted-shot"),
         name: getPictoName("free-aim-inverted-shot"),
-        status: { speed: 504, criticalRate: 5 },
+        status: { speed: 504, charisma: 70 },
         description: getPictoDescription("free-aim-inverted-shot"),
         color: "green",
         luminaCost: 15
@@ -1446,7 +1446,7 @@ export const PictosList: PictoInfo[] = [
         id: "marking-shots",
         imageId: getPictoEnglishName("marking-shots"),
         name: getPictoName("marking-shots"),
-        status: { speed: 504, criticalRate: 5 },
+        status: { speed: 504, strength: 70 },
         description: getPictoDescription("marking-shots"),
         color: "green",
         luminaCost: 15
@@ -1483,7 +1483,7 @@ export const PictosList: PictoInfo[] = [
         id: "energising-shots",
         imageId: getPictoEnglishName("energising-shots"),
         name: getPictoName("energising-shots"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, intelligence: 154 },
         description: getPictoDescription("energising-shots"),
         color: "green",
         luminaCost: 15
@@ -1492,7 +1492,7 @@ export const PictosList: PictoInfo[] = [
         id: "versatile",
         imageId: getPictoEnglishName("versatile"),
         name: getPictoName("versatile"),
-        status: { speed: 420, criticalRate: 12 },
+        status: { speed: 420, wisdom: 168 },
         description: getPictoDescription("versatile"),
         color: "red",
         luminaCost: 15
@@ -1501,7 +1501,7 @@ export const PictosList: PictoInfo[] = [
         id: "empowering-attack",
         imageId: getPictoEnglishName("empowering-attack"),
         name: getPictoName("empowering-attack"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, charisma: 154 },
         description: getPictoDescription("empowering-attack"),
         color: "green",
         luminaCost: 15
@@ -1528,7 +1528,7 @@ export const PictosList: PictoInfo[] = [
         id: "exposing-attack",
         imageId: getPictoEnglishName("exposing-attack"),
         name: getPictoName("exposing-attack"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, strength: 154 },
         description: getPictoDescription("exposing-attack"),
         color: "green",
         luminaCost: 15
@@ -1537,7 +1537,7 @@ export const PictosList: PictoInfo[] = [
         id: "empowering-parry",
         imageId: getPictoEnglishName("empowering-parry"),
         name: getPictoName("empowering-parry"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, intelligence: 322 },
         description: getPictoDescription("empowering-parry"),
         color: "red",
         luminaCost: 15
@@ -1556,7 +1556,7 @@ export const PictosList: PictoInfo[] = [
         id: "empowering-last-stand",
         imageId: getPictoEnglishName("empowering-last-stand"),
         name: getPictoName("empowering-last-stand"),
-        status: { health: 1403, criticalRate: 23 },
+        status: { health: 1403, wisdom: 322 },
         description: getPictoDescription("empowering-last-stand"),
         color: "green",
         luminaCost: 15
@@ -1592,7 +1592,7 @@ export const PictosList: PictoInfo[] = [
         id: "powered-attack",
         imageId: getPictoEnglishName("powered-attack"),
         name: getPictoName("powered-attack"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, charisma: 154 },
         description: getPictoDescription("powered-attack"),
         color: "red",
         luminaCost: 15
@@ -1601,7 +1601,7 @@ export const PictosList: PictoInfo[] = [
         id: "combo-attack-ii",
         imageId: getPictoEnglishName("combo-attack-ii"),
         name: getPictoName("combo-attack-ii"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, strength: 154 },
         description: getPictoDescription("combo-attack-ii"),
         color: "red",
         luminaCost: 15
@@ -1610,7 +1610,7 @@ export const PictosList: PictoInfo[] = [
         id: "combo-attack-iii",
         imageId: getPictoEnglishName("combo-attack-iii"),
         name: getPictoName("combo-attack-iii"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, intelligence: 154 },
         description: getPictoDescription("combo-attack-iii"),
         color: "red",
         luminaCost: 15
@@ -1619,7 +1619,7 @@ export const PictosList: PictoInfo[] = [
         id: "breaker",
         imageId: getPictoEnglishName("breaker"),
         name: getPictoName("breaker"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, wisdom: 322 },
         description: getPictoDescription("breaker"),
         color: "red",
         luminaCost: 15
@@ -1628,7 +1628,7 @@ export const PictosList: PictoInfo[] = [
         id: "staggering-attack",
         imageId: getPictoEnglishName("staggering-attack"),
         name: getPictoName("staggering-attack"),
-        status: { speed: 420, criticalRate: 12 },
+        status: { speed: 420, charisma: 168 },
         description: getPictoDescription("staggering-attack"),
         color: "red",
         luminaCost: 15
@@ -1637,7 +1637,7 @@ export const PictosList: PictoInfo[] = [
         id: "energising-break",
         imageId: getPictoEnglishName("energising-break"),
         name: getPictoName("energising-break"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, strength: 322 },
         description: getPictoDescription("energising-break"),
         color: "green",
         luminaCost: 15
@@ -1646,7 +1646,7 @@ export const PictosList: PictoInfo[] = [
         id: "quick-break",
         imageId: getPictoEnglishName("quick-break"),
         name: getPictoName("quick-break"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, intelligence: 322 },
         description: getPictoDescription("quick-break"),
         color: "green",
         luminaCost: 15
@@ -1655,7 +1655,7 @@ export const PictosList: PictoInfo[] = [
         id: "empowering-break",
         imageId: getPictoEnglishName("empowering-break"),
         name: getPictoName("empowering-break"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, wisdom: 322 },
         description: getPictoDescription("empowering-break"),
         color: "green",
         luminaCost: 15
@@ -1664,7 +1664,7 @@ export const PictosList: PictoInfo[] = [
         id: "breaking-shots",
         imageId: getPictoEnglishName("breaking-shots"),
         name: getPictoName("breaking-shots"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, charisma: 322 },
         description: getPictoDescription("breaking-shots"),
         color: "red",
         luminaCost: 15
@@ -1673,7 +1673,7 @@ export const PictosList: PictoInfo[] = [
         id: "fueling-break",
         imageId: getPictoEnglishName("fueling-break"),
         name: getPictoName("fueling-break"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, strength: 322 },
         description: getPictoDescription("fueling-break"),
         color: "green",
         luminaCost: 15
@@ -1682,7 +1682,7 @@ export const PictosList: PictoInfo[] = [
         id: "gradient-fighter",
         imageId: getPictoEnglishName("gradient-fighter"),
         name: getPictoName("gradient-fighter"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, intelligence: 322 },
         description: getPictoDescription("gradient-fighter"),
         color: "red",
         luminaCost: 15
@@ -1691,7 +1691,7 @@ export const PictosList: PictoInfo[] = [
         id: "gradient-recovery",
         imageId: getPictoEnglishName("gradient-recovery"),
         name: getPictoName("gradient-recovery"),
-        status: { health: 1403, criticalRate: 23 },
+        status: { health: 1403, wisdom: 322 },
         description: getPictoDescription("gradient-recovery"),
         color: "blue",
         luminaCost: 15
@@ -1700,7 +1700,7 @@ export const PictosList: PictoInfo[] = [
         id: "energising-gradient",
         imageId: getPictoEnglishName("energising-gradient"),
         name: getPictoName("energising-gradient"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, charisma: 154 },
         description: getPictoDescription("energising-gradient"),
         color: "green",
         luminaCost: 15
@@ -1709,7 +1709,7 @@ export const PictosList: PictoInfo[] = [
         id: "charging-attack",
         imageId: getPictoEnglishName("charging-attack"),
         name: getPictoName("charging-attack"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, strength: 308 },
         description: getPictoDescription("charging-attack"),
         color: "green",
         luminaCost: 15
@@ -1718,7 +1718,7 @@ export const PictosList: PictoInfo[] = [
         id: "gradient-breaker",
         imageId: getPictoEnglishName("gradient-breaker"),
         name: getPictoName("gradient-breaker"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, intelligence: 322 },
         description: getPictoDescription("gradient-breaker"),
         color: "red",
         luminaCost: 15
@@ -1754,7 +1754,7 @@ export const PictosList: PictoInfo[] = [
         id: "charging-weakness",
         imageId: getPictoEnglishName("charging-weakness"),
         name: getPictoName("charging-weakness"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, wisdom: 322 },
         description: getPictoDescription("charging-weakness"),
         color: "green",
         luminaCost: 15
@@ -1763,7 +1763,7 @@ export const PictosList: PictoInfo[] = [
         id: "charging-mark",
         imageId: getPictoEnglishName("charging-mark"),
         name: getPictoName("charging-mark"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, charisma: 308 },
         description: getPictoDescription("charging-mark"),
         color: "green",
         luminaCost: 15
@@ -1890,7 +1890,7 @@ export const PictosList: PictoInfo[] = [
         id: "breaking-burn",
         imageId: getPictoEnglishName("breaking-burn"),
         name: getPictoName("breaking-burn"),
-        status: { speed: 420, criticalRate: 12 },
+        status: { speed: 420, strength: 168 },
         description: getPictoDescription("breaking-burn"),
         color: "red",
         luminaCost: 15
@@ -1899,7 +1899,7 @@ export const PictosList: PictoInfo[] = [
         id: "critical-burn",
         imageId: getPictoEnglishName("critical-burn"),
         name: getPictoName("critical-burn"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, intelligence: 308 },
         description: getPictoDescription("critical-burn"),
         color: "red",
         luminaCost: 15
@@ -1908,7 +1908,7 @@ export const PictosList: PictoInfo[] = [
         id: "burning-death",
         imageId: getPictoEnglishName("burning-death"),
         name: getPictoName("burning-death"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, wisdom: 322 },
         description: getPictoDescription("burning-death"),
         color: "green",
         luminaCost: 15
@@ -1926,7 +1926,7 @@ export const PictosList: PictoInfo[] = [
         id: "critical-break",
         imageId: getPictoEnglishName("critical-break"),
         name: getPictoName("critical-break"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, charisma: 154 },
         description: getPictoDescription("critical-break"),
         color: "red",
         luminaCost: 15
@@ -1935,7 +1935,7 @@ export const PictosList: PictoInfo[] = [
         id: "critical-weakness",
         imageId: getPictoEnglishName("critical-weakness"),
         name: getPictoName("critical-weakness"),
-        status: { speed: 399, criticalRate: 11 },
+        status: { speed: 399, strength: 154 },
         description: getPictoDescription("critical-weakness"),
         color: "red",
         luminaCost: 15
@@ -1962,7 +1962,7 @@ export const PictosList: PictoInfo[] = [
         id: "empowering-dodge",
         imageId: getPictoEnglishName("empowering-dodge"),
         name: getPictoName("empowering-dodge"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, intelligence: 322 },
         description: getPictoDescription("empowering-dodge"),
         color: "red",
         luminaCost: 15
@@ -1971,7 +1971,7 @@ export const PictosList: PictoInfo[] = [
         id: "marking-break",
         imageId: getPictoEnglishName("marking-break"),
         name: getPictoName("marking-break"),
-        status: { speed: 280, criticalRate: 23 },
+        status: { speed: 280, wisdom: 322 },
         description: getPictoDescription("marking-break"),
         color: "green",
         luminaCost: 15
@@ -1998,7 +1998,7 @@ export const PictosList: PictoInfo[] = [
         id: "powerful-on-shell",
         imageId: getPictoEnglishName("powerful-on-shell"),
         name: getPictoName("powerful-on-shell"),
-        status: { defense: 647, criticalRate: 22 },
+        status: { defense: 647, charisma: 308 },
         description: getPictoDescription("powerful-on-shell"),
         color: "red",
         luminaCost: 15
@@ -2007,7 +2007,7 @@ export const PictosList: PictoInfo[] = [
         id: "rush-on-powerful",
         imageId: getPictoEnglishName("rush-on-powerful"),
         name: getPictoName("rush-on-powerful"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, strength: 308 },
         description: getPictoDescription("rush-on-powerful"),
         color: "green",
         luminaCost: 15
@@ -2079,7 +2079,7 @@ export const PictosList: PictoInfo[] = [
         id: "greater-unprotected",
         imageId: getPictoEnglishName("greater-unprotected"),
         name: getPictoName("greater-unprotected"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, intelligence: 308 },
         description: getPictoDescription("greater-unprotected"),
         color: "green",
         luminaCost: 15
@@ -2124,7 +2124,7 @@ export const PictosList: PictoInfo[] = [
         id: "charging-critical",
         imageId: getPictoEnglishName("charging-critical"),
         name: getPictoName("charging-critical"),
-        status: { defense: 647, criticalRate: 22 },
+        status: { defense: 647, wisdom: 308 },
         description: getPictoDescription("charging-critical"),
         color: "green",
         luminaCost: 15
@@ -2169,7 +2169,7 @@ export const PictosList: PictoInfo[] = [
         id: "passive-defense",
         imageId: getPictoEnglishName("passive-defense"),
         name: getPictoName("passive-defense"),
-        status: { health: 1403, criticalRate: 23 },
+        status: { health: 1403, charisma: 322 },
         description: getPictoDescription("passive-defense"),
         color: "blue",
         luminaCost: 15
@@ -2178,7 +2178,7 @@ export const PictosList: PictoInfo[] = [
         id: "successive-parry",
         imageId: getPictoEnglishName("successive-parry"),
         name: getPictoName("successive-parry"),
-        status: { defense: 681, criticalRate: 23 },
+        status: { defense: 681, strength: 322 },
         description: getPictoDescription("successive-parry"),
         color: "red",
         luminaCost: 15
@@ -2187,7 +2187,7 @@ export const PictosList: PictoInfo[] = [
         id: "breaking-attack",
         imageId: getPictoEnglishName("breaking-attack"),
         name: getPictoName("breaking-attack"),
-        status: { speed: 266, criticalRate: 22 },
+        status: { speed: 266, intelligence: 308 },
         description: getPictoDescription("breaking-attack"),
         color: "red",
         luminaCost: 15

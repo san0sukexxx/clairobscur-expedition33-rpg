@@ -8,7 +8,7 @@ import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
-import { playerPictosTotalSpeed } from "../utils/PlayerCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma } from "../utils/PlayerCalculator";
 import { calculateProficiencyBonus } from "../utils/AttackCalculator";
 
 type AbilityKey = keyof AbilityScores;
@@ -93,6 +93,22 @@ export function SavingThrowsSection({ player, weaponInfo, diceBoardRef, timeoutD
     const level = player?.playerSheet?.totalPoints ?? 1;
     const proficiencyBonus = calculateProficiencyBonus(level) + calculateWeaponProficiencyBonus(weaponInfo);
 
+    const pictoBonus: Record<AbilityKey, number> = {
+        strength: playerPictosTotalStrength(player),
+        dexterity: playerPictosTotalSpeed(player),
+        constitution: playerPictosTotalHealth(player),
+        intelligence: playerPictosTotalIntelligence(player),
+        wisdom: playerPictosTotalWisdom(player),
+        charisma: playerPictosTotalCharisma(player),
+    };
+    const weaponBonus: Record<AbilityKey, number> = {
+        strength: 0, dexterity: calculateWeaponDexterityBonus(weaponInfo),
+        constitution: 0, intelligence: 0, wisdom: 0, charisma: 0,
+    };
+    function getEffectiveScore(key: AbilityKey, base: number) {
+        return Math.min(20, base + (pictoBonus[key] ?? 0) + (weaponBonus[key] ?? 0));
+    }
+
     function roll(key: AbilityKey, label: string, mod: number) {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
             const rolled = diceTotal(result);
@@ -121,7 +137,7 @@ export function SavingThrowsSection({ player, weaponInfo, diceBoardRef, timeoutD
             <div className="grid grid-cols-2 gap-1.5">
                 {SAVING_THROWS.map(({ key, labelKey }) => {
                     const baseScore = scores[key] ?? 10;
-                    const score = key === "dexterity" ? Math.min(20, baseScore + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player)) : baseScore;
+                    const score = getEffectiveScore(key, baseScore);
                     const proficient = proficiencies.includes(key);
                     const mod = calcMod(score) + (proficient ? proficiencyBonus : 0);
                     const label = t(labelKey);

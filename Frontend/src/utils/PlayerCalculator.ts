@@ -9,8 +9,7 @@ import {
 import { hasStatus } from "./NpcCalculator";
 import { calculateWeaponVitalityBonus } from "./WeaponCalculator";
 import { getPlayerCharacter } from "./CharacterUtils";
-import { PictosList } from "../data/PictosList";
-import { calculatePictoHealth, calculatePictoSpeed, calculatePictoCritical } from "./PictoUtils";
+import { calculatePictoHealth, calculatePictoSpeed, calculatePictoDefense, calculatePictoAbility, getPictoByName } from "./PictoUtils";
 
 export function playerPictosTotalHealth(player: GetPlayerResponse | null): number {
     let total = 0;
@@ -18,7 +17,7 @@ export function playerPictosTotalHealth(player: GetPlayerResponse | null): numbe
         const equippedPictos = player.pictos.filter(picto => picto.slot !== null && picto.slot !== undefined);
 
         for (const picto of equippedPictos) {
-            const pictoInfo = PictosList.find(p => p.name === picto.pictoId);
+            const pictoInfo = getPictoByName(picto.pictoId);
             if (pictoInfo?.status?.health) {
                 total += calculatePictoHealth(pictoInfo.status.health, picto.level ?? 1);
             }
@@ -33,7 +32,7 @@ export function playerPictosTotalSpeed(player: GetPlayerResponse | null): number
         const equippedPictos = player.pictos.filter(picto => picto.slot !== null && picto.slot !== undefined);
 
         for (const picto of equippedPictos) {
-            const pictoInfo = PictosList.find(p => p.name === picto.pictoId);
+            const pictoInfo = getPictoByName(picto.pictoId);
             if (pictoInfo?.status?.speed) {
                 total += calculatePictoSpeed(pictoInfo.status.speed, picto.level ?? 1);
             }
@@ -42,15 +41,46 @@ export function playerPictosTotalSpeed(player: GetPlayerResponse | null): number
     return total;
 }
 
-export function playerPictosTotalCritical(player: GetPlayerResponse | null): number {
+export function playerPictosTotalDefense(player: GetPlayerResponse | null): number {
     let total = 0;
     if (player?.pictos && player.pictos.length > 0) {
         const equippedPictos = player.pictos.filter(picto => picto.slot !== null && picto.slot !== undefined);
 
         for (const picto of equippedPictos) {
-            const pictoInfo = PictosList.find(p => p.name === picto.pictoId);
-            if (pictoInfo?.status?.criticalRate) {
-                total += calculatePictoCritical(pictoInfo.status.criticalRate, picto.level ?? 1);
+            const pictoInfo = getPictoByName(picto.pictoId);
+            if (pictoInfo?.status?.defense) {
+                total += calculatePictoDefense(pictoInfo.status.defense, picto.level ?? 1);
+            }
+        }
+    }
+    return total;
+}
+
+export function playerPictosTotalStrength(player: GetPlayerResponse | null): number {
+    return playerPictosTotalAbility(player, 'strength');
+}
+
+export function playerPictosTotalIntelligence(player: GetPlayerResponse | null): number {
+    return playerPictosTotalAbility(player, 'intelligence');
+}
+
+export function playerPictosTotalWisdom(player: GetPlayerResponse | null): number {
+    return playerPictosTotalAbility(player, 'wisdom');
+}
+
+export function playerPictosTotalCharisma(player: GetPlayerResponse | null): number {
+    return playerPictosTotalAbility(player, 'charisma');
+}
+
+function playerPictosTotalAbility(player: GetPlayerResponse | null, ability: 'strength' | 'intelligence' | 'wisdom' | 'charisma'): number {
+    let total = 0;
+    if (player?.pictos && player.pictos.length > 0) {
+        const equippedPictos = player.pictos.filter(picto => picto.slot !== null && picto.slot !== undefined);
+
+        for (const picto of equippedPictos) {
+            const pictoInfo = getPictoByName(picto.pictoId);
+            if (pictoInfo?.status?.[ability]) {
+                total += calculatePictoAbility(pictoInfo.status[ability], picto.level ?? 1);
             }
         }
     }
@@ -58,15 +88,7 @@ export function playerPictosTotalCritical(player: GetPlayerResponse | null): num
 }
 
 export function calculatePlayerCriticalBonus(diceResult: any, player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null, target?: BattleCharacterInfo): number {
-    const baseCriticalBonus = calculateCriticalBonus(diceResult);
-    const criticalRolls = countCriticalRolls(diceResult);
-
-    if (criticalRolls > 0) {
-        const pictoCritical = playerPictosTotalCritical(player);
-        return baseCriticalBonus + pictoCritical;
-    }
-
-    return baseCriticalBonus;
+    return calculateCriticalBonus(diceResult);
 }
 
 const HIT_DIE_BY_CHARACTER: Record<string, number> = {
@@ -112,8 +134,9 @@ export function calculateSpecialAttackPoints(player: GetPlayerResponse | null): 
 }
 
 export function calculateInitialMP(player: GetPlayerResponse | null): number {
-    const intelligence = player?.playerSheet?.abilityScores?.intelligence ?? 10;
-    const intMod = Math.floor((intelligence - 10) / 2);
+    const baseInt = player?.playerSheet?.abilityScores?.intelligence ?? 10;
+    const effectiveInt = Math.min(20, baseInt + playerPictosTotalIntelligence(player));
+    const intMod = Math.floor((effectiveInt - 10) / 2);
     return 2 + intMod;
 }
 

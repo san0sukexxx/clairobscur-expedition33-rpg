@@ -2,14 +2,6 @@ import React, { useMemo, useState } from "react"
 import { type PictoInfo, type LuminaResponse } from "../api/ResponseModel"
 import { t } from "../i18n"
 import {
-    displayPictoAttributeCritical,
-    displayPictoAttributeDefense,
-    displayPictoAttributeHealth,
-    displayPictoAttributeSpeed,
-    displayPictoCritical,
-    displayPictoDefense,
-    displayPictoHealth,
-    displayPictoSpeed,
     getPictoByName,
     getAllPictosSorted,
     pictoColorHex,

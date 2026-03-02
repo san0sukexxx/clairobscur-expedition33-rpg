@@ -3,6 +3,7 @@ import { renderStainText } from "./StainTextUtils";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { getMainAttributeKey } from "./CharacterUtils";
 import { t } from "../i18n";
+import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma } from "./PlayerCalculator";
 
 export interface AbilityTestRequestEvent {
     dc: number;
@@ -33,7 +34,17 @@ export function getSkillAbilityModifier(specialAttackId: string | undefined, pla
     if (!specialAttackId || !player?.playerSheet?.abilityScores) return null;
     const characterId = specialAttackId.split("-")[0];
     const attrKey = getMainAttributeKey(characterId);
-    const score = player.playerSheet.abilityScores[attrKey] ?? 10;
+    const baseScore = player.playerSheet.abilityScores[attrKey] ?? 10;
+    const pictoBonusMap: Record<string, (p: GetPlayerResponse) => number> = {
+        strength: playerPictosTotalStrength,
+        dexterity: playerPictosTotalSpeed,
+        constitution: playerPictosTotalHealth,
+        intelligence: playerPictosTotalIntelligence,
+        wisdom: playerPictosTotalWisdom,
+        charisma: playerPictosTotalCharisma,
+    };
+    const pictoBonus = (pictoBonusMap[attrKey] ?? (() => 0))(player);
+    const score = Math.min(20, baseScore + pictoBonus);
     return Math.floor((score - 10) / 2);
 }
 

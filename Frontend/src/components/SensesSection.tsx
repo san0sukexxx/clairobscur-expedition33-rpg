@@ -1,5 +1,6 @@
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { t } from "../i18n";
+import { playerPictosTotalWisdom, playerPictosTotalIntelligence } from "../utils/PlayerCalculator";
 
 function calcMod(score: number) {
     return Math.floor((score - 10) / 2);
@@ -12,8 +13,8 @@ interface Props {
 export function SensesSection({ player }: Props) {
     const scores = player?.playerSheet?.abilityScores ?? {};
 
-    const wis = scores.wisdom ?? 10;
-    const int_ = scores.intelligence ?? 10;
+    const wis = Math.min(20, (scores.wisdom ?? 10) + playerPictosTotalWisdom(player));
+    const int_ = Math.min(20, (scores.intelligence ?? 10) + playerPictosTotalIntelligence(player));
     const wisMod = calcMod(wis);
     const intMod = calcMod(int_);
 

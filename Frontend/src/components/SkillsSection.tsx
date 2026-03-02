@@ -11,7 +11,7 @@ import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
-import { playerPictosTotalSpeed } from "../utils/PlayerCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma } from "../utils/PlayerCalculator";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -107,6 +107,22 @@ export default function SkillsSection({ player, setPlayer, weaponInfo, isAdmin, 
     const pb       = profBonus(totalPts) + calculateWeaponProficiencyBonus(weaponInfo);
     const skillsMap = parseSkillsMap(player?.playerSheet?.skillsData);
 
+    const pictoBonus: Record<AbilityKey, number> = {
+        strength: playerPictosTotalStrength(player),
+        dexterity: playerPictosTotalSpeed(player),
+        constitution: playerPictosTotalHealth(player),
+        intelligence: playerPictosTotalIntelligence(player),
+        wisdom: playerPictosTotalWisdom(player),
+        charisma: playerPictosTotalCharisma(player),
+    };
+    const weaponBonus: Record<AbilityKey, number> = {
+        strength: 0, dexterity: calculateWeaponDexterityBonus(weaponInfo),
+        constitution: 0, intelligence: 0, wisdom: 0, charisma: 0,
+    };
+    function getEffectiveScore(key: AbilityKey, base: number) {
+        return Math.min(20, base + (pictoBonus[key] ?? 0) + (weaponBonus[key] ?? 0));
+    }
+
     const save = useCallback(async (nextMap: SkillsMap) => {
         if (!player) return;
         const raw = JSON.stringify(nextMap);
@@ -190,7 +206,7 @@ export default function SkillsSection({ player, setPlayer, weaponInfo, isAdmin, 
                     const entry      = skillsMap[id] ?? { proficient: false, pinned: false };
                     const { proficient, pinned } = entry;
                     const baseScore  = scores[ability] ?? 10;
-                    const score      = ability === "dexterity" ? Math.min(20, baseScore + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player)) : baseScore;
+                    const score      = getEffectiveScore(ability, baseScore);
                     const mod        = calcMod(score);
                     const bonus      = mod + (proficient ? pb : 0);
 

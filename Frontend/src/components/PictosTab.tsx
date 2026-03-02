@@ -2,11 +2,11 @@ import React, { useMemo, useState } from "react"
 import { type PictoResponse, type PictoInfo } from "../api/ResponseModel"
 import { t } from "../i18n"
 import {
-  displayPictoAttributeCritical,
+  displayPictoAttributeAbility,
   displayPictoAttributeDefense,
   displayPictoAttributeHealth,
   displayPictoAttributeSpeed,
-  displayPictoCritical,
+  displayPictoAbility,
   displayPictoDefense,
   displayPictoHealth,
   displayPictoSpeed,
@@ -142,7 +142,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
     if (!targetPicto) return
 
     const currentLevel = targetPicto.level ?? 1
-    const newLevel = Math.max(1, Math.min(33, currentLevel + delta))
+    const newLevel = Math.max(1, Math.min(4, currentLevel + delta))
 
     try {
       await APIPicto.updatePlayerPicto(targetPicto.id, { level: newLevel })
@@ -222,7 +222,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
 
     let lvl = parseInt(pendingLevel, 10)
     if (isNaN(lvl)) lvl = 1
-    lvl = Math.max(1, Math.min(33, lvl))
+    lvl = Math.max(1, Math.min(4, lvl))
 
     let newId: number | null = null
 
@@ -473,7 +473,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                 <input
                   type="number"
                   min={1}
-                  max={33}
+                  max={4}
                   value={pendingLevel}
                   onChange={(e) => setPendingLevel(e.target.value)}
                   className="w-24 text-center rounded-md bg-base-200 border border-base-300 px-2 py-1 outline-none focus:border-base-content/30"
@@ -658,19 +658,6 @@ function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse; l
         displayAttributedValue={displayPictoAttributeSpeed(picto.status.speed ?? 0, level)}
       />
       <Stat
-        label={t("pictos.critical")}
-        value={
-          picto.status.criticalRate !== undefined
-            ? `${picto.status.criticalRate}%`
-            : undefined
-        }
-        displayValue={displayPictoCritical(picto.status.criticalRate ?? 0, level)}
-        displayAttributedValue={displayPictoAttributeCritical(
-          picto.status.criticalRate ?? 0,
-          level
-        )}
-      />
-      <Stat
         label={t("pictos.health")}
         value={picto.status.health}
         displayValue={displayPictoHealth(picto.status.health ?? 0, level)}
@@ -680,10 +667,31 @@ function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse; l
         label={t("pictos.defense")}
         value={picto.status.defense}
         displayValue={displayPictoDefense(picto.status.defense ?? 0, level)}
-        displayAttributedValue={displayPictoAttributeDefense(
-          picto.status.defense ?? 0,
-          level
-        )}
+        displayAttributedValue={displayPictoAttributeDefense(picto.status.defense ?? 0, level)}
+      />
+      <Stat
+        label={t("pictos.strength")}
+        value={picto.status.strength}
+        displayValue={displayPictoAbility(picto.status.strength ?? 0, level)}
+        displayAttributedValue={displayPictoAttributeAbility(picto.status.strength ?? 0, level)}
+      />
+      <Stat
+        label={t("pictos.intelligence")}
+        value={picto.status.intelligence}
+        displayValue={displayPictoAbility(picto.status.intelligence ?? 0, level)}
+        displayAttributedValue={displayPictoAttributeAbility(picto.status.intelligence ?? 0, level)}
+      />
+      <Stat
+        label={t("pictos.wisdom")}
+        value={picto.status.wisdom}
+        displayValue={displayPictoAbility(picto.status.wisdom ?? 0, level)}
+        displayAttributedValue={displayPictoAttributeAbility(picto.status.wisdom ?? 0, level)}
+      />
+      <Stat
+        label={t("pictos.charisma")}
+        value={picto.status.charisma}
+        displayValue={displayPictoAbility(picto.status.charisma ?? 0, level)}
+        displayAttributedValue={displayPictoAttributeAbility(picto.status.charisma ?? 0, level)}
       />
     </>
   )

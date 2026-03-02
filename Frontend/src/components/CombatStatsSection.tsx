@@ -11,7 +11,7 @@ import type { WeaponInfo } from "../api/ResponseModel";
 import { getCharacterHitDie, calculateMaxHP } from "../utils/PlayerCalculator";
 import { calculateProficiencyBonus } from "../utils/AttackCalculator";
 import { calculateWeaponDefenseBonus, calculateWeaponDexterityBonus, calculateWeaponProficiencyBonus } from "../utils/WeaponCalculator";
-import { playerPictosTotalSpeed } from "../utils/PlayerCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalDefense } from "../utils/PlayerCalculator";
 
 /* ── Armor Class (escudo) ── */
 function ArmorClassCard({ value }: { value: number }) {
@@ -143,7 +143,8 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
     const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
     const dexMod = Math.floor((effectiveDex - 10) / 2);
     const weaponDefense = calculateWeaponDefenseBonus(weaponInfo);
-    const ac = 10 + dexMod + weaponDefense;
+    const pictoDefense = playerPictosTotalDefense(player);
+    const ac = 10 + dexMod + weaponDefense + pictoDefense;
     const hpCurrent = sheet?.hpCurrent ?? 0;
     const hpMax = calculateMaxHP(player, weaponInfo);
     const level = sheet?.totalPoints ?? 1;

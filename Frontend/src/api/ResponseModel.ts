@@ -161,9 +161,12 @@ export interface PictoInfo {
 
 export interface PictoStatusResponse {
     speed?: number;
-    criticalRate?: number;
     health?: number;
     defense?: number;
+    strength?: number;
+    intelligence?: number;
+    wisdom?: number;
+    charisma?: number;
 }
 
 export interface LuminaResponse {

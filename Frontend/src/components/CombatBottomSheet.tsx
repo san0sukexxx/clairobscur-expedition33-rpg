@@ -6,7 +6,8 @@ import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { DiceBoardRef } from "./DiceBoard";
 import { useWeaponInfo } from "../hooks/player/useWeaponInfo";
 import { calculateAttackBonus, calculateDamageBonus, getAbilityModifier } from "../utils/AttackCalculator";
-import { getWeaponDamageDice, calculateWeaponDefenseBonus } from "../utils/WeaponCalculator";
+import { getWeaponDamageDice, calculateWeaponDefenseBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalDefense } from "../utils/PlayerCalculator";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
@@ -56,14 +57,16 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
     }, [player, weaponInfo]);
 
     const dexMod = useMemo(() => {
-        const dexScore = player?.playerSheet?.abilityScores?.dexterity ?? 10;
-        return getAbilityModifier(dexScore);
-    }, [player]);
+        const baseDex = player?.playerSheet?.abilityScores?.dexterity ?? 10;
+        const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
+        return getAbilityModifier(effectiveDex);
+    }, [player, weaponInfo]);
 
     const armorClass = useMemo(() => {
         const weaponDefense = calculateWeaponDefenseBonus(weaponInfo);
-        return 10 + dexMod + weaponDefense;
-    }, [dexMod, weaponInfo]);
+        const pictoDefense = playerPictosTotalDefense(player);
+        return 10 + dexMod + weaponDefense + pictoDefense;
+    }, [dexMod, weaponInfo, player]);
 
     const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
     const INTENSITY_DICE_MULTIPLIER = [1, 1, 2, 3, 4, 5];

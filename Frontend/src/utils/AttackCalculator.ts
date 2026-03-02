@@ -1,6 +1,7 @@
 import type { AbilityScores, GetPlayerResponse } from "../api/APIPlayer";
 import type { WeaponInfo } from "../api/ResponseModel";
-import { calculateWeaponPlusPower, calculateWeaponProficiencyBonus } from "./WeaponCalculator";
+import { calculateWeaponPlusPower, calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "./WeaponCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma } from "./PlayerCalculator";
 
 /** D&D 5e ability modifier: floor((score - 10) / 2) */
 export function getAbilityModifier(score: number): number {
@@ -28,10 +29,29 @@ export function getAttackAttribute(characterId: string | undefined): AbilityKey 
   return ATTACK_ATTRIBUTE_MAP[characterId?.toLowerCase() ?? ""] ?? "strength";
 }
 
-/** Returns the attack attribute score for a player */
-export function getAttackAttributeScore(player: GetPlayerResponse): number {
+/** Returns the effective attack attribute score for a player (with picto/weapon bonuses) */
+export function getAttackAttributeScore(player: GetPlayerResponse, weaponInfo?: WeaponInfo): number {
   const attrKey = getAttackAttribute(player.playerSheet?.characterId);
-  return player.playerSheet?.abilityScores?.[attrKey] ?? 10;
+  const base = player.playerSheet?.abilityScores?.[attrKey] ?? 10;
+  return Math.min(20, base + getAbilityPictoBonus(player, attrKey) + getAbilityWeaponBonus(attrKey, weaponInfo));
+}
+
+function getAbilityPictoBonus(player: GetPlayerResponse, key: AbilityKey): number {
+  const map: Record<AbilityKey, (p: GetPlayerResponse) => number> = {
+    strength: playerPictosTotalStrength,
+    dexterity: playerPictosTotalSpeed,
+    constitution: playerPictosTotalHealth,
+    intelligence: playerPictosTotalIntelligence,
+    wisdom: playerPictosTotalWisdom,
+    charisma: playerPictosTotalCharisma,
+  };
+  return (map[key] ?? (() => 0))(player);
+}
+
+function getAbilityWeaponBonus(key: AbilityKey, weaponInfo?: WeaponInfo): number {
+  if (!weaponInfo) return 0;
+  if (key === "dexterity") return calculateWeaponDexterityBonus(weaponInfo);
+  return 0;
 }
 
 /** Calculates weapon power modifier (integer part of power * level / 1000) */
@@ -53,7 +73,8 @@ export interface AttackBonusBreakdown {
 /** Calculates the full attack bonus breakdown */
 export function calculateAttackBonus(player: GetPlayerResponse, weaponInfo: WeaponInfo): AttackBonusBreakdown {
   const abilityKey = getAttackAttribute(player.playerSheet?.characterId);
-  const abilityScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
+  const baseScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
+  const abilityScore = Math.min(20, baseScore + getAbilityPictoBonus(player, abilityKey) + getAbilityWeaponBonus(abilityKey, weaponInfo));
   const abilityMod = getAbilityModifier(abilityScore);
   const level = player.playerSheet?.totalPoints ?? 1;
   const baseProficiency = calculateProficiencyBonus(level);
@@ -81,7 +102,8 @@ export interface DamageBonusBreakdown {
 /** Calculates the damage bonus (ability mod + weapon power, no proficiency) */
 export function calculateDamageBonus(player: GetPlayerResponse, weaponInfo: WeaponInfo): DamageBonusBreakdown {
   const abilityKey = getAttackAttribute(player.playerSheet?.characterId);
-  const abilityScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
+  const baseScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
+  const abilityScore = Math.min(20, baseScore + getAbilityPictoBonus(player, abilityKey) + getAbilityWeaponBonus(abilityKey, weaponInfo));
   const abilityMod = getAbilityModifier(abilityScore);
   const weaponPower = getWeaponPowerModifier(weaponInfo);
 

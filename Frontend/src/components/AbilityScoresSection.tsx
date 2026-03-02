@@ -8,7 +8,7 @@ import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponVitalityBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
-import { playerPictosTotalSpeed, playerPictosTotalHealth } from "../utils/PlayerCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma } from "../utils/PlayerCalculator";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -115,10 +115,18 @@ export function AbilityScoresSection({ player, setPlayer: _, weaponInfo, diceBoa
     const weaponDexBonus = calculateWeaponDexterityBonus(weaponInfo);
     const pictoConBonus = playerPictosTotalHealth(player);
     const pictoDexBonus = playerPictosTotalSpeed(player);
+    const pictoStrBonus = playerPictosTotalStrength(player);
+    const pictoIntBonus = playerPictosTotalIntelligence(player);
+    const pictoWisBonus = playerPictosTotalWisdom(player);
+    const pictoChaBonus = playerPictosTotalCharisma(player);
 
     function getEffectiveScore(key: AbilityKey, baseScore: number): number {
         if (key === "constitution") return Math.min(20, baseScore + weaponConBonus + pictoConBonus);
         if (key === "dexterity") return Math.min(20, baseScore + weaponDexBonus + pictoDexBonus);
+        if (key === "strength") return Math.min(20, baseScore + pictoStrBonus);
+        if (key === "intelligence") return Math.min(20, baseScore + pictoIntBonus);
+        if (key === "wisdom") return Math.min(20, baseScore + pictoWisBonus);
+        if (key === "charisma") return Math.min(20, baseScore + pictoChaBonus);
         return baseScore;
     }
 
