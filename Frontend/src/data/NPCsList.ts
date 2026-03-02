@@ -24,14 +24,13 @@ export const NPCsList: NPCInfo[] = [
     {
         id: "mime",
         name: "Mímico",
-        strength:     14,
-        dexterity:    16,
+        strength:     12,
+        dexterity:    14,
         constitution: 12,
         intelligence: 10,
         wisdom:        8,
         charisma:     13,
-        initiativeBonus: 999,
-        maxLifeBonus: 10,
+        playFirst:    true,
         attackList: [
             {
                 type: "skill",

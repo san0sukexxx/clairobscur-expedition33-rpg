@@ -2160,7 +2160,7 @@ export const PictosList: PictoInfo[] = [
         id: "the-best-defense",
         imageId: getPictoEnglishName("the-best-defense"),
         name: getPictoName("the-best-defense"),
-        status: { defense: 1294 },
+        status: { health: 1294 },
         description: getPictoDescription("the-best-defense"),
         color: "red",
         luminaCost: 15

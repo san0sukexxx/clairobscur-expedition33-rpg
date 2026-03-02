@@ -216,6 +216,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, players }: Campa
                     )}
                 </div>
             </div>
+            <div className="h-24" />
         </>
     );
 }

@@ -156,6 +156,14 @@ function getDefenseFailLabel(defenseType: string): string {
     return key ? t(`combatAdmin.defenseFail.${key}`) : t("combatAdmin.defenseFail.default");
 }
 
+/**
+ * Calcula o Challenge Rating (CR) do NPC no estilo D&D 5e.
+ * CR representa o nível que um grupo de 4 jogadores precisa ter para enfrentar a criatura.
+ * CR < 1 (frações): criatura fraca, menos de 4 jogadores nível 1 bastam.
+ *   1/4 = 1 jogador nível 1 sozinho consegue enfrentar
+ *   1/2 = 2 jogadores nível 1
+ * CR >= 1: 4 jogadores do nível indicado.
+ */
 function calculateNPCDifficulty(npcId: string): number {
     const npc = getNpcById(npcId);
     if (!npc) return 0;
@@ -163,22 +171,34 @@ function calculateNPCDifficulty(npcId: string): number {
     const strMod = Math.floor((npc.strength - 10) / 2);
     const dexMod = Math.floor((npc.dexterity - 10) / 2);
     const conMod = Math.floor((npc.constitution - 10) / 2);
-    let difficulty = strMod + dexMod + conMod;
+    let score = strMod + dexMod + conMod;
 
-    // Propriedades extras (+1 cada)
-    if (npc.playFirst) difficulty += 1;
-    if (npc.weakTo) difficulty -= 1;
-    if (npc.resistentTo) difficulty += 1;
-    if (npc.imuneTo) difficulty += 1;
-    if (npc.absorbElement) difficulty += 1;
-    if (npc.freeShotWeakPoints) difficulty -= 1;
-    if (npc.attackList && npc.attackList.length > 0) difficulty += 1;
-    if (npc.specialAttackList && npc.specialAttackList.length > 0) difficulty += 1;
-    if (npc.isFlying) difficulty += 1;
-    if (npc.initiativeBonus) difficulty += 1;
-    if (npc.maxLifeBonus) difficulty += 1;
+    // Propriedades extras (playFirst e initiativeBonus não contam: são mecânicas narrativas)
+    if (npc.weakTo) score -= 1;
+    if (npc.resistentTo) score += 1;
+    if (npc.imuneTo) score += 1;
+    if (npc.absorbElement) score += 1;
+    if (npc.freeShotWeakPoints) score -= 1;
+    if (npc.attackList && npc.attackList.length > 0) score += 1;
+    if (npc.isFlying) score += 1;
+    if (npc.maxLifeBonus) score += 1;
 
-    return difficulty;
+    // Mapear score para Challenge Rating (CR) estilo D&D
+    if (score <= 1) return 0.25;    // CR 1/4
+    if (score <= 3) return 0.5;     // CR 1/2
+    if (score <= 5) return 1;       // CR 1
+    if (score <= 7) return 2;       // CR 2
+    if (score <= 9) return 3;       // CR 3
+    if (score <= 11) return 4;      // CR 4
+    if (score <= 13) return 5;      // CR 5
+    return Math.min(30, 6 + Math.floor((score - 14) / 2));
+}
+
+function formatCR(cr: number): string {
+    if (cr === 0.125) return "1/8";
+    if (cr === 0.25) return "1/4";
+    if (cr === 0.5) return "1/2";
+    return String(cr);
 }
 
 export default function CombatAdmin({
@@ -748,7 +768,7 @@ export default function CombatAdmin({
         if (f) {
             filtered = availableEnemies.filter((e) => {
                 const matchesName = e.name.toLowerCase().includes(f);
-                const difficulty = calculateNPCDifficulty(e.externalId.toString()).toString();
+                const difficulty = formatCR(calculateNPCDifficulty(e.externalId.toString()));
                 const matchesDifficulty = difficulty.includes(f);
                 return matchesName || matchesDifficulty;
             });
@@ -2003,7 +2023,7 @@ export default function CombatAdmin({
         if (!showAddModal) return null
         return (
             <div className="modal modal-open">
-                <div className="modal-box max-w-5xl w-full max-h-[80vh] overflow-y-auto flex flex-col gap-6">
+                <div className="modal-box max-w-5xl w-full max-h-[90vh] sm:max-h-[80vh] overflow-y-auto flex flex-col gap-4 sm:gap-6 p-4 sm:p-6">
                     <div className="flex items-start justify-between">
                         <div>
                             <h3 className="font-bold text-lg">{t("combatAdmin.labels.addToTeam", { team: targetTeam })}</h3>
@@ -2068,59 +2088,45 @@ export default function CombatAdmin({
                     </div>
 
                     <div className="border rounded-lg">
-                        <div className="px-4 py-2 border-b font-semibold text-sm">{t("combatAdmin.labels.npcs")}</div>
-                        <div className="overflow-x-auto max-h-[50vh] overflow-y-auto">
-                            <table className="table table-compact table-xs w-full">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th
-                                            className="cursor-pointer hover:bg-base-200 select-none"
-                                            onClick={() => handleSort("name")}
-                                        >
-                                            {t("combatAdmin.labels.name")} {getSortIcon("name")}
-                                        </th>
-                                        <th
-                                            className="text-center cursor-pointer hover:bg-base-200 select-none"
-                                            onClick={() => handleSort("difficulty")}
-                                        >
-                                            {t("combatAdmin.labels.difficulty")} {getSortIcon("difficulty")}
-                                        </th>
-                                        <th className="w-1/6 text-right">{t("combatAdmin.labels.actions")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredEnemies.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={4} className="text-center text-sm opacity-60 py-6">
-                                                Nenhum inimigo encontrado.
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        filteredEnemies.map((entity, idx) => (
-                                            <tr key={`npc-${entity.externalId}-${idx}`}>
-                                                <td>{renderAvatarCell(entity)}</td>
-                                                <td>{entity.name}</td>
-                                                <td className="text-center">
-                                                    <span className="badge badge-ghost">
-                                                        {calculateNPCDifficulty(entity.externalId.toString())}
-                                                    </span>
-                                                </td>
-                                                <td className="text-right">
-                                                    <div className="flex items-center gap-2 justify-end">
-                                                        <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
-                                                            {t("combatAdmin.labels.add")}
-                                                        </button>
-                                                        {justAddedId === entity.externalId ? (
-                                                            <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span>
-                                                        ) : null}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                        <div className="px-4 py-2 border-b flex items-center justify-between">
+                            <div className="font-semibold text-sm">{t("combatAdmin.labels.npcs")}</div>
+                            <div className="flex items-center gap-2 text-xs opacity-70">
+                                <button className="btn btn-xs btn-ghost gap-1" onClick={() => handleSort("name")}>
+                                    {t("combatAdmin.labels.name")} {getSortIcon("name")}
+                                </button>
+                                <button className="btn btn-xs btn-ghost gap-1" onClick={() => handleSort("difficulty")}>
+                                    {t("combatAdmin.labels.difficulty")} {getSortIcon("difficulty")}
+                                </button>
+                            </div>
+                        </div>
+                        <div className="max-h-[50vh] overflow-y-auto">
+                            {filteredEnemies.length === 0 ? (
+                                <div className="text-center text-sm opacity-60 py-6">
+                                    Nenhum inimigo encontrado.
+                                </div>
+                            ) : (
+                                <div className="flex flex-col divide-y divide-base-300">
+                                    {filteredEnemies.map((entity, idx) => (
+                                        <div key={`npc-${entity.externalId}-${idx}`} className="flex items-center gap-2 px-3 py-2">
+                                            {renderAvatarCell(entity)}
+                                            <div className="flex flex-col min-w-0 flex-1">
+                                                <span className="font-semibold text-sm truncate">{entity.name}</span>
+                                                <span className="text-xs opacity-60">
+                                                    CR {formatCR(calculateNPCDifficulty(entity.externalId.toString()))}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
+                                                    {t("combatAdmin.labels.add")}
+                                                </button>
+                                                {justAddedId === entity.externalId ? (
+                                                    <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span>
+                                                ) : null}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -2135,7 +2141,7 @@ export default function CombatAdmin({
         <>
             <DiceBoard ref={diceBoardRef} />
             <RollHistoryToast />
-            <FloatingDiceRoller diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
+            <FloatingDiceRoller diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} className="bottom-4 right-4" />
 
             <div className="flex flex-col gap-4">
                     <div className="flex flex-col items-start gap-2">
