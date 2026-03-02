@@ -272,9 +272,8 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any, weap
     }
 
     const pictosSpeedBonus = playerPictosTotalSpeed(player);
-    const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo ?? null);
 
-    return total + Math.max(0, playerInitiative) + pictosSpeedBonus + weaponDexterityBonus;
+    return total + Math.max(0, playerInitiative) + pictosSpeedBonus;
 }
 
 export function playerHasStatus(player: GetPlayerResponse | null, status: StatusType): boolean {

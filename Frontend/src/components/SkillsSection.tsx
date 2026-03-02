@@ -10,7 +10,7 @@ import { diceTotal } from "../utils/DiceCalculator";
 import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
-import { calculateWeaponProficiencyBonus } from "../utils/WeaponCalculator";
+import { calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -188,7 +188,8 @@ export default function SkillsSection({ player, setPlayer, weaponInfo, isAdmin, 
                 {sortedSkills.map(({ id, ability, labelKey }) => {
                     const entry      = skillsMap[id] ?? { proficient: false, pinned: false };
                     const { proficient, pinned } = entry;
-                    const score      = scores[ability] ?? 10;
+                    const baseScore  = scores[ability] ?? 10;
+                    const score      = ability === "dexterity" ? Math.min(20, baseScore + calculateWeaponDexterityBonus(weaponInfo)) : baseScore;
                     const mod        = calcMod(score);
                     const bonus      = mod + (proficient ? pb : 0);
 

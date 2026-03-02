@@ -13,6 +13,7 @@ import {
   calculatePlayerCriticalBonus,
 } from "../../utils/PlayerCalculator";
 import { calculateWeaponDexterityBonus } from "../../utils/WeaponCalculator";
+
 import {
   calculateFailureDiv,
   diceTotal,
@@ -81,14 +82,15 @@ export function useCombatActions({
     }
 
     setIsExecutingSkill(true);
-    const dexMod = Math.floor(((player.playerSheet?.abilityScores?.dexterity ?? 10) - 10) / 2);
+    const baseDex = player.playerSheet?.abilityScores?.dexterity ?? 10;
+    const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo));
+    const dexMod = Math.floor((effectiveDex - 10) / 2);
     const diceCommand = dexMod === 0 ? "1d20" : dexMod > 0 ? `1d20+${dexMod}` : `1d20${dexMod}`;
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, diceCommand, result => {
       const criticalRolls = countCriticalRolls(result);
       const criticalBonus = calculatePlayerCriticalBonus(result, player, weaponInfo);
       const rollTotal = diceTotal(result);
-      const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo);
-      const total = rollTotal + dexMod + weaponDexterityBonus;
+      const total = rollTotal + dexMod;
 
       dispatchRoll({ label: t("characterSheet.initiative"), diceRolled: rollTotal, modifier: dexMod, total, diceCommand });
       const failures = countFailuresRolls(result);
@@ -120,9 +122,6 @@ export function useCombatActions({
             )}
           </p>
           <p>{t("playerPage.initiative.pictoBonus")}: <b>{playerPictosTotalSpeed(player)}</b></p>
-          {weaponDexterityBonus > 0 && (
-            <p>{t("playerPage.initiative.weaponBonus")}: <b>+{weaponDexterityBonus}</b></p>
-          )}
           <h1 className="text-2xl font-bold">{t("playerPage.initiative.total")}: {total}</h1>
         </div>
       );

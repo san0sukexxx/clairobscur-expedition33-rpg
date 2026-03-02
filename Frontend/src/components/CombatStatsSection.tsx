@@ -138,8 +138,9 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
     }
 
     const sheet = player?.playerSheet;
-    const dex = sheet?.abilityScores?.dexterity ?? 10;
-    const dexMod = Math.floor((dex - 10) / 2);
+    const baseDex = sheet?.abilityScores?.dexterity ?? 10;
+    const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo));
+    const dexMod = Math.floor((effectiveDex - 10) / 2);
     const weaponDefense = calculateWeaponDefenseBonus(weaponInfo);
     const ac = 10 + dexMod + weaponDefense;
     const hpCurrent = sheet?.hpCurrent ?? 0;
@@ -149,8 +150,7 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
     const baseProficiency = calculateProficiencyBonus(level);
     const weaponProficiencyBonus = calculateWeaponProficiencyBonus(weaponInfo);
     const proficiencyBonus = baseProficiency + weaponProficiencyBonus;
-    const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo);
-    const initiativeMod = dexMod + weaponDexterityBonus;
+    const initiativeMod = dexMod;
 
     function rollInitiative() {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
