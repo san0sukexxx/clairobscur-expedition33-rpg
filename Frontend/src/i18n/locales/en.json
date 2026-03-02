@@ -2898,7 +2898,7 @@
       "removePicto": "Remove Picto",
       "noPictos": "No Pictos found.",
       "health": "Constitution",
-      "defense": "Armor Class",
+      "defense": "AC",
       "speed": "Dexterity",
       "strength": "Strength",
       "intelligence": "Intelligence",
