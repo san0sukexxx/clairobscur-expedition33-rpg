@@ -8,6 +8,7 @@ import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponVitalityBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalHealth } from "../utils/PlayerCalculator";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -112,10 +113,12 @@ export function AbilityScoresSection({ player, setPlayer: _, weaponInfo, diceBoa
     const scores = player?.playerSheet?.abilityScores ?? {};
     const weaponConBonus = calculateWeaponVitalityBonus(weaponInfo);
     const weaponDexBonus = calculateWeaponDexterityBonus(weaponInfo);
+    const pictoConBonus = playerPictosTotalHealth(player);
+    const pictoDexBonus = playerPictosTotalSpeed(player);
 
     function getEffectiveScore(key: AbilityKey, baseScore: number): number {
-        if (key === "constitution") return Math.min(20, baseScore + weaponConBonus);
-        if (key === "dexterity") return Math.min(20, baseScore + weaponDexBonus);
+        if (key === "constitution") return Math.min(20, baseScore + weaponConBonus + pictoConBonus);
+        if (key === "dexterity") return Math.min(20, baseScore + weaponDexBonus + pictoDexBonus);
         return baseScore;
     }
 

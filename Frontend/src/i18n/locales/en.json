@@ -2908,9 +2908,9 @@
       "addPicto": "Add Picto",
       "removePicto": "Remove Picto",
       "noPictos": "No Pictos found.",
-      "health": "Health",
+      "health": "Constitution",
       "defense": "Defense",
-      "speed": "Speed",
+      "speed": "Dexterity",
       "critical": "Critical",
       "equipped": "Equipped",
       "setLevelFor": "Set level for {name}"

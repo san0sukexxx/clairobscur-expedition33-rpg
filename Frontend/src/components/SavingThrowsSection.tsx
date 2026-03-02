@@ -8,6 +8,7 @@ import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
+import { playerPictosTotalSpeed } from "../utils/PlayerCalculator";
 import { calculateProficiencyBonus } from "../utils/AttackCalculator";
 
 type AbilityKey = keyof AbilityScores;
@@ -120,7 +121,7 @@ export function SavingThrowsSection({ player, weaponInfo, diceBoardRef, timeoutD
             <div className="grid grid-cols-2 gap-1.5">
                 {SAVING_THROWS.map(({ key, labelKey }) => {
                     const baseScore = scores[key] ?? 10;
-                    const score = key === "dexterity" ? Math.min(20, baseScore + calculateWeaponDexterityBonus(weaponInfo)) : baseScore;
+                    const score = key === "dexterity" ? Math.min(20, baseScore + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player)) : baseScore;
                     const proficient = proficiencies.includes(key);
                     const mod = calcMod(score) + (proficient ? proficiencyBonus : 0);
                     const label = t(labelKey);

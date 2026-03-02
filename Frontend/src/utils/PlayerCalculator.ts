@@ -105,16 +105,15 @@ export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: Wea
     const level = player?.playerSheet?.totalPoints ?? 1;
     const con = player?.playerSheet?.abilityScores?.constitution ?? 10;
     const weaponConBonus = calculateWeaponVitalityBonus(weaponInfo);
-    const effectiveCon = Math.min(20, con + weaponConBonus);
+    const pictoConBonus = playerPictosTotalHealth(player);
+    const effectiveCon = Math.min(20, con + weaponConBonus + pictoConBonus);
     const conMod = Math.floor((effectiveCon - 10) / 2);
 
     // D&D 5e formula: max die at level 1 + avg die per subsequent level, + CON mod each level
     const avgPerLevel = Math.floor(hitDie / 2) + 1;
     const baseHp = hitDie + conMod + (level - 1) * (avgPerLevel + conMod);
 
-    const pictosHealthBonus = playerPictosTotalHealth(player);
-
-    return Math.max(1, baseHp + pictosHealthBonus);
+    return Math.max(1, baseHp);
 }
 
 export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackType: string): number {
@@ -271,9 +270,7 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any, weap
         playerInitiative = playerInitiative - (failures * 4);
     }
 
-    const pictosSpeedBonus = playerPictosTotalSpeed(player);
-
-    return total + Math.max(0, playerInitiative) + pictosSpeedBonus;
+    return total + Math.max(0, playerInitiative);
 }
 
 export function playerHasStatus(player: GetPlayerResponse | null, status: StatusType): boolean {

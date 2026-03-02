@@ -12,6 +12,7 @@ import {
   playerPictosTotalSpeed,
   calculatePlayerCriticalBonus,
 } from "../../utils/PlayerCalculator";
+
 import { calculateWeaponDexterityBonus } from "../../utils/WeaponCalculator";
 
 import {
@@ -83,7 +84,7 @@ export function useCombatActions({
 
     setIsExecutingSkill(true);
     const baseDex = player.playerSheet?.abilityScores?.dexterity ?? 10;
-    const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo));
+    const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
     const dexMod = Math.floor((effectiveDex - 10) / 2);
     const diceCommand = dexMod === 0 ? "1d20" : dexMod > 0 ? `1d20+${dexMod}` : `1d20${dexMod}`;
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, diceCommand, result => {
@@ -121,7 +122,6 @@ export function useCombatActions({
               </span>
             )}
           </p>
-          <p>{t("playerPage.initiative.pictoBonus")}: <b>{playerPictosTotalSpeed(player)}</b></p>
           <h1 className="text-2xl font-bold">{t("playerPage.initiative.total")}: {total}</h1>
         </div>
       );
