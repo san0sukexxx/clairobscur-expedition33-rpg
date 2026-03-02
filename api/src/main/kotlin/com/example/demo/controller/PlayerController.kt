@@ -334,6 +334,18 @@ class PlayerController(
                 return ResponseEntity.ok().build()
         }
 
+        @PostMapping("/{id}/master-editing-off")
+        fun clearMasterEditing(@PathVariable id: Int): ResponseEntity<Void> {
+                val opt = playerRepository.findById(id)
+                if (opt.isEmpty) return ResponseEntity.notFound().build()
+
+                val player = opt.get()
+                player.isMasterEditing = false
+                playerRepository.save(player)
+
+                return ResponseEntity.ok().build()
+        }
+
         @PutMapping("/{id}/setup-progress")
         fun updateSetupProgress(
                 @PathVariable id: Int,

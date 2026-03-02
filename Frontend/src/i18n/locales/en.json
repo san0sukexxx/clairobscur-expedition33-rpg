@@ -2141,7 +2141,8 @@
       "errorDeleting": "Error deleting player",
       "noPlayers": "No players yet.",
       "details": "Details",
-      "editing": "Editing"
+      "editing": "Editing",
+      "endEditing": "End editing"
     },
     "specialAttacks": {
       "unlock": "Unlock",

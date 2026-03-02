@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { FaUserFriends, FaTrash, FaArrowRight } from "react-icons/fa";
-import { type GetPlayerResponse } from "../api/APIPlayer";
+import { FaUserFriends, FaTrash, FaArrowRight, FaSignOutAlt } from "react-icons/fa";
+import { type GetPlayerResponse, APIPlayer } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { getCharacterLabelById } from "../utils/CharacterUtils";
 import { t } from "../i18n";
@@ -25,6 +25,7 @@ export default function CampaignAdminSheets({
     const [visibleItems, setVisibleItems] = useState<GetPlayerResponse[]>([]);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [confirmingId, setConfirmingId] = useState<number | null>(null);
+    const [endingEditId, setEndingEditId] = useState<number | null>(null);
 
     const confirmDialogRef = useRef<HTMLDialogElement | null>(null);
 
@@ -40,6 +41,18 @@ export default function CampaignAdminSheets({
     function closeConfirmDialog() {
         confirmDialogRef.current?.close();
         setConfirmingId(null);
+    }
+
+    async function forceEndEditing(playerId: number) {
+        setEndingEditId(playerId);
+        try {
+            await APIPlayer.setMasterEditing(playerId, false);
+            await reload();
+        } catch (e) {
+            console.error("Error ending editing", e);
+        } finally {
+            setEndingEditId(null);
+        }
     }
 
     async function deletePlayerFromCampaign(playerId: number) {
@@ -75,58 +88,58 @@ export default function CampaignAdminSheets({
                     )}
 
                     {!loading && (
-                        <div className="overflow-x-auto">
-                            <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>{t("common.name")}</th>
-                                        <th>{t("common.character")}</th>
-                                        <th className="text-right">{t("common.actions")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {visibleItems.map((p) => (
-                                        <tr key={p.id}>
-                                            <td>{p.id}</td>
-                                            <td>{p.playerSheet?.name || "-"}</td>
-                                            <td className="opacity-80">
-                                                {getCharacterLabelById(p.playerSheet?.characterId) || "-"}
-                                            </td>
-                                            <td className="text-right flex justify-end gap-2">
-                                                <button
-                                                    className="btn btn-error btn-xs gap-1"
-                                                    onClick={() => openConfirmDialog(p.id)}
-                                                    disabled={deletingId === p.id}
-                                                >
-                                                    {deletingId === p.id ? t("common.loading") : (
-                                                        <>
-                                                            <FaTrash /> {t("common.remove")}
-                                                        </>
-                                                    )}
-                                                </button>
+                        items.length === 0 ? (
+                            <div className="text-center py-4 text-sm opacity-60">
+                                {t("campaignAdminSheets.noPlayers")}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col divide-y divide-base-300">
+                                {visibleItems.map((p) => (
+                                    <div key={p.id} className="py-2 flex items-center gap-2 flex-wrap min-w-0">
+                                        <span className="badge badge-ghost badge-xs font-mono shrink-0">#{p.id}</span>
+                                        <span className="font-semibold text-sm truncate">
+                                            {p.playerSheet?.name || "-"}
+                                        </span>
+                                        <span className="text-xs opacity-70 truncate">
+                                            {getCharacterLabelById(p.playerSheet?.characterId) || "-"}
+                                        </span>
+                                        <div className="flex-1 basis-0" />
+                                        <div className="flex gap-2 shrink-0">
+                                            <button
+                                                className="btn btn-error btn-xs gap-1"
+                                                onClick={() => openConfirmDialog(p.id)}
+                                                disabled={deletingId === p.id}
+                                            >
+                                                {deletingId === p.id ? t("common.loading") : (
+                                                    <>
+                                                        <FaTrash /> {t("common.remove")}
+                                                    </>
+                                                )}
+                                            </button>
 
-                                                <button
-                                                    className="btn btn-primary btn-xs gap-1"
-                                                    onClick={() => navigateToDetails(p.id)}
-                                                >
-                                                    <FaArrowRight />
-                                                    {p.isMasterEditing ? t("campaignAdminSheets.editing") : t("campaignAdminSheets.details")}
-                                                </button>
+                                            <button
+                                                className="btn btn-primary btn-xs gap-1"
+                                                onClick={() => navigateToDetails(p.id)}
+                                            >
+                                                <FaArrowRight />
+                                                {p.isMasterEditing ? t("campaignAdminSheets.editing") : t("campaignAdminSheets.details")}
+                                            </button>
 
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {items.length === 0 && !loading && (
-                                        <tr>
-                                            <td colSpan={4} className="text-center opacity-60">
-                                                {t("campaignAdminSheets.noPlayers")}
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                                            {p.isMasterEditing && (
+                                                <button
+                                                    className="btn btn-warning btn-xs gap-1"
+                                                    onClick={() => forceEndEditing(p.id)}
+                                                    disabled={endingEditId === p.id}
+                                                >
+                                                    <FaSignOutAlt />
+                                                    {endingEditId === p.id ? t("common.loading") : t("campaignAdminSheets.endEditing")}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )
                     )}
                 </div>
             </div>

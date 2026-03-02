@@ -2141,7 +2141,8 @@
       "errorDeleting": "Erro ao deletar jogador",
       "noPlayers": "Nenhum jogador ainda.",
       "details": "Detalhes",
-      "editing": "Editando"
+      "editing": "Editando",
+      "endEditing": "Finalizar edição"
     },
     "specialAttacks": {
       "unlock": "Desbloquear",
