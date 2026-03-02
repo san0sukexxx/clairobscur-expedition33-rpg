@@ -120,7 +120,7 @@ export function usePlayerPolling({
         return prev;
       });
     } catch (e: any) {
-      showToast(t("playerPage.errors.errorCheckingEditing"));
+      // silently ignore polling errors
     }
   }, [player, lastBattleLog, checkBattleLog, setPlayer, showToast]);
 

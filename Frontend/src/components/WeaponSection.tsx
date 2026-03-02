@@ -4,7 +4,7 @@ import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponLuckBonus, displayWeaponDexterityBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
+import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponInitiativeBonus, displayWeaponDexterityBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
 import { calculateMaxHP } from "../utils/PlayerCalculator";
@@ -533,7 +533,6 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                   [
                     [t("weapons.vitality"), activeWeapon.scaling.vitality],
                     [t("weapons.defense"), activeWeapon.scaling.defense],
-                    [t("weapons.luck"), activeWeapon.scaling.luck],
                     [t("weapons.dexterity"), activeWeapon.scaling.dexterity],
                   ] as const
                 ).map(([label, value]) =>
@@ -550,11 +549,6 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                           {displayWeaponDefenseBonus(value, activeWeapon.level)}
                         </span>
                       )}
-                      {label == t("weapons.luck") && (
-                        <span className="block text-2xl font-bold flex items-center justify-center gap-1">
-                          {displayWeaponLuckBonus(value, activeWeapon.level)}
-                        </span>
-                      )}
                       {label == t("weapons.dexterity") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponDexterityBonus(value, activeWeapon.level)}
@@ -562,6 +556,16 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                       )}
                     </div>
                   ) : null
+                )}
+                {activeWeapon.scaling.luck && (
+                  <>
+                    <div>
+                      <span className="block text-xs uppercase opacity-70">{t("weapons.initiativeBonus")}</span>
+                      <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                        {displayWeaponInitiativeBonus(activeWeapon.scaling.luck, activeWeapon.level)}
+                      </span>
+                    </div>
+                  </>
                 )}
               </div>
 
@@ -671,7 +675,6 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                             [
                               ["vitality",  t("weapons.vitality"), weaponDetails.attributes.scaling.vitality],
                               ["defense",   t("weapons.defense"),  weaponDetails.attributes.scaling.defense],
-                              ["luck",      t("weapons.luck"),     weaponDetails.attributes.scaling.luck],
                               ["dexterity",  t("weapons.dexterity"), weaponDetails.attributes.scaling.dexterity],
                             ] as const
                           ).map(([key, label, value]) =>
@@ -688,11 +691,6 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                                     {displayWeaponDefenseBonus(value, w.level)}
                                   </span>
                                 )}
-                                {key === "luck" && (
-                                  <span className="block text-2xl font-bold flex items-center justify-center gap-1">
-                                    {displayWeaponLuckBonus(value, w.level)}
-                                  </span>
-                                )}
                                 {key === "dexterity" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponDexterityBonus(value, w.level)}
@@ -700,6 +698,16 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                                 )}
                               </div>
                             ) : null
+                          )}
+                          {weaponDetails.attributes.scaling.luck && (
+                            <>
+                              <div>
+                                <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{t("weapons.initiativeBonus")}</div>
+                                <span className="block text-2xl font-bold flex items-center justify-center gap-1">
+                                  {displayWeaponInitiativeBonus(weaponDetails.attributes.scaling.luck, w.level)}
+                                </span>
+                              </div>
+                            </>
                           )}
                         </div>
                       </div>

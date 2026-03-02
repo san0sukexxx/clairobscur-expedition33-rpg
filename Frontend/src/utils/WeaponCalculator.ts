@@ -48,7 +48,7 @@ export function rankToValue(rank: string, level: number): number {
   return (ranks.length - index);
 }
 export function calculateWeaponVitality(rank: string, level: number): number {
-  return rankToValue(rank, level) * 4
+  return rankToValue(rank, level)
 }
 export function calculateWeaponVitalityBonus(weaponInfo: WeaponInfo | null): number {
   if (weaponInfo?.details?.attributes.scaling.vitality == undefined) { return 0; }
@@ -65,10 +65,10 @@ export function calculateWeaponDefenseBonus(weaponInfo: WeaponInfo | null): numb
   const rank = weaponInfo?.details?.attributes.scaling.defense;
   return rankToValue(rank, weaponInfo.weapon?.level ?? 0)
 }
-export function calculateWeaponLuckBonus(weaponInfo: WeaponInfo | null): number {
+export function calculateWeaponInitiativeBonus(weaponInfo: WeaponInfo | null): number {
   if (weaponInfo?.details?.attributes.scaling.luck == undefined) { return 0; }
   const rank = weaponInfo?.details?.attributes.scaling.luck;
-  return rankToValue(rank, weaponInfo.weapon?.level ?? 0) * 3
+  return Math.floor(rankToValue(rank, weaponInfo.weapon?.level ?? 0) * 1.5)
 }
 export function displayWeaponVitalityBonus(rank: string, level: number): string {
   return "+" + calculateWeaponVitality(rank, level)
@@ -76,8 +76,8 @@ export function displayWeaponVitalityBonus(rank: string, level: number): string 
 export function displayWeaponDefenseBonus(rank: string, level: number): string {
   return "+" + rankToValue(rank, level)
 }
-export function displayWeaponLuckBonus(rank: string, level: number): string {
-  return "+" + rankToValue(rank, level) * 3
+export function displayWeaponInitiativeBonus(rank: string, level: number): string {
+  return "+" + Math.floor(rankToValue(rank, level) * 1.5)
 }
 export function displayWeaponDexterityBonus(rank: string, level: number): string {
   return "+" + rankToValue(rank, level)

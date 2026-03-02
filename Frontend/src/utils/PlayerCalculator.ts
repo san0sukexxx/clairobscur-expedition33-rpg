@@ -1,5 +1,5 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
-import { calculateWeaponPlusPower, calculateWeaponCounterMaxPower, calculateWeaponLuckBonus } from "./WeaponCalculator";
+import { calculateWeaponPlusPower, calculateWeaponCounterMaxPower, calculateWeaponInitiativeBonus } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
 import { type BattleCharacterInfo, type DefenseOption, type StatusResponse, type StatusType, type WeaponInfo, type Stance } from "../api/ResponseModel";
 import {
@@ -80,8 +80,7 @@ export function calculatePlayerCriticalBonus(diceResult: any, player: GetPlayerR
 
     if (criticalRolls > 0) {
         const pictoCritical = playerPictosTotalCritical(player);
-        const luckBonus = calculateWeaponLuckBonus(weaponInfo);
-        return baseCriticalBonus + pictoCritical + luckBonus;
+        return baseCriticalBonus + pictoCritical;
     }
 
     return baseCriticalBonus;
@@ -105,16 +104,17 @@ export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: Wea
     const hitDie = getCharacterHitDie(characterId);
     const level = player?.playerSheet?.totalPoints ?? 1;
     const con = player?.playerSheet?.abilityScores?.constitution ?? 10;
-    const conMod = Math.floor((con - 10) / 2);
+    const weaponConBonus = calculateWeaponVitalityBonus(weaponInfo);
+    const effectiveCon = Math.min(20, con + weaponConBonus);
+    const conMod = Math.floor((effectiveCon - 10) / 2);
 
     // D&D 5e formula: max die at level 1 + avg die per subsequent level, + CON mod each level
     const avgPerLevel = Math.floor(hitDie / 2) + 1;
     const baseHp = hitDie + conMod + (level - 1) * (avgPerLevel + conMod);
 
-    const vitalityValue = calculateWeaponVitalityBonus(weaponInfo);
     const pictosHealthBonus = playerPictosTotalHealth(player);
 
-    return Math.max(1, baseHp + vitalityValue + pictosHealthBonus);
+    return Math.max(1, baseHp + pictosHealthBonus);
 }
 
 export function calculateRawWeaponPower(weaponInfo: WeaponInfo | null, attackType: string): number {
@@ -273,8 +273,9 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any, weap
 
     const pictosSpeedBonus = playerPictosTotalSpeed(player);
     const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo ?? null);
+    const weaponInitiativeBonus = calculateWeaponInitiativeBonus(weaponInfo ?? null);
 
-    return total + Math.max(0, playerInitiative) + pictosSpeedBonus + weaponDexterityBonus;
+    return total + Math.max(0, playerInitiative) + pictosSpeedBonus + weaponDexterityBonus + weaponInitiativeBonus;
 }
 
 export function playerHasStatus(player: GetPlayerResponse | null, status: StatusType): boolean {

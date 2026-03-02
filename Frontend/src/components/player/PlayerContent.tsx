@@ -180,6 +180,7 @@ export function PlayerContent({
                   <AbilityScoresSection
                     player={player}
                     setPlayer={setPlayer}
+                    weaponInfo={weaponInfo}
                     diceBoardRef={diceBoardRef}
                     timeoutDiceBoardRef={timeoutDiceBoardRef}
                   />

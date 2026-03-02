@@ -10,7 +10,7 @@ import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { getCharacterHitDie, calculateMaxHP } from "../utils/PlayerCalculator";
 import { calculateProficiencyBonus } from "../utils/AttackCalculator";
-import { calculateWeaponDefenseBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
+import { calculateWeaponDefenseBonus, calculateWeaponDexterityBonus, calculateWeaponInitiativeBonus } from "../utils/WeaponCalculator";
 
 /* ── Armor Class (escudo) ── */
 function ArmorClassCard({ value }: { value: number }) {
@@ -148,7 +148,8 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
     const hitDie = getCharacterHitDie(sheet?.characterId);
     const proficiencyBonus = calculateProficiencyBonus(level);
     const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo);
-    const initiativeMod = dexMod + weaponDexterityBonus;
+    const weaponInitiativeBonus = calculateWeaponInitiativeBonus(weaponInfo);
+    const initiativeMod = dexMod + weaponDexterityBonus + weaponInitiativeBonus;
 
     function rollInitiative() {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {

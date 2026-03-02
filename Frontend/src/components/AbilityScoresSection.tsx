@@ -6,6 +6,8 @@ import type { DiceBoardRef } from "./DiceBoard";
 import { diceTotal } from "../utils/DiceCalculator";
 import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
+import type { WeaponInfo } from "../api/ResponseModel";
+import { calculateWeaponVitalityBonus } from "../utils/WeaponCalculator";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -80,11 +82,12 @@ function StatCard({ label, score, onRoll }: StatCardProps) {
 interface AbilityScoresSectionProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
+    weaponInfo: WeaponInfo;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
-export function AbilityScoresSection({ player, setPlayer: _, diceBoardRef, timeoutDiceBoardRef }: AbilityScoresSectionProps) {
+export function AbilityScoresSection({ player, setPlayer: _, weaponInfo, diceBoardRef, timeoutDiceBoardRef }: AbilityScoresSectionProps) {
     function handleRoll(key: AbilityKey, label: string, score: number) {
         const mod = Math.floor((score - 10) / 2);
         const modStr = calcMod(score);
@@ -107,13 +110,15 @@ export function AbilityScoresSection({ player, setPlayer: _, diceBoardRef, timeo
     }
 
     const scores = player?.playerSheet?.abilityScores ?? {};
+    const weaponConBonus = calculateWeaponVitalityBonus(weaponInfo);
 
     return (
         <div className="rounded-box bg-base-100 shadow p-4 overflow-visible">
             <div className="grid grid-cols-3 gap-4">
                 {ABILITIES.map(({ key, labelKey }) => {
                     const label = t(labelKey);
-                    const score = scores[key] ?? 10;
+                    const baseScore = scores[key] ?? 10;
+                    const score = key === "constitution" ? Math.min(20, baseScore + weaponConBonus) : baseScore;
                     return (
                         <StatCard
                             key={key}
