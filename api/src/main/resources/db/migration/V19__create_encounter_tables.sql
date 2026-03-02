@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS encounter (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    campaign_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    FOREIGN KEY (campaign_id) REFERENCES campaign (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS encounter_npc (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    encounter_id INTEGER NOT NULL,
+    npc_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (encounter_id) REFERENCES encounter (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS encounter_reward (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    encounter_id INTEGER NOT NULL,
+    reward_type TEXT NOT NULL,
+    item_id TEXT NOT NULL,
+    level INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (encounter_id) REFERENCES encounter (id) ON DELETE CASCADE
+);
+
+ALTER TABLE battle ADD COLUMN encounter_id INTEGER REFERENCES encounter(id) ON DELETE SET NULL;

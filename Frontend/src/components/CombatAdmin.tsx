@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
+import { APIEncounter } from "../api/APIEncounter"
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
@@ -259,9 +260,9 @@ export default function CombatAdmin({
     const lastReloadTimeRef = useRef<number>(0)
     const isReloadingRef = useRef<boolean>(false)
 
-    // Função para coletar recompensas de NPCs derrotados
-    const collectBattleRewards = useCallback((characters: BattleCharacterInfo[]) => {
-        const rewards: BattleReward[] = [];
+    // Função para coletar recompensas do encontro associado à batalha
+    const collectBattleRewards = useCallback(async (encounterId?: number, characters?: BattleCharacterInfo[]) => {
+        if (!encounterId || !characters) return [];
 
         // Verificar se há algum jogador vivo
         const hasAlivePlayer = characters.some(
@@ -269,31 +270,31 @@ export default function CombatAdmin({
         );
 
         if (!hasAlivePlayer) {
-            return rewards; // Sem recompensas se todos os jogadores morreram
+            return []; // Sem recompensas se todos os jogadores morreram
         }
 
-        // Coletar recompensas de todos os NPCs mortos
-        characters.forEach(ch => {
-            if (ch.type === "npc" && ch.healthPoints <= 0) {
-                const npc = getNpcById(ch.id);
-                if (npc?.reward) {
-                    rewards.push(npc.reward);
-                }
-            }
-        });
-
-        return rewards;
+        try {
+            const encounter = await APIEncounter.getById(encounterId);
+            return encounter.rewards.map(r => ({
+                type: r.rewardType as BattleReward["type"],
+                itemId: r.itemId,
+                level: r.level,
+            }));
+        } catch {
+            return [];
+        }
     }, []);
 
     // Coletar recompensas quando a batalha estiver finalizada (ao carregar ou recarregar a página)
     useEffect(() => {
         if (battleStatus === 'finished' && battleDetails?.characters && battleRewards.length === 0) {
-            const rewards = collectBattleRewards(battleDetails.characters);
-            if (rewards.length > 0) {
-                setBattleRewards(rewards);
-            }
+            collectBattleRewards(battleDetails.encounterId, battleDetails.characters).then(rewards => {
+                if (rewards.length > 0) {
+                    setBattleRewards(rewards);
+                }
+            });
         }
-    }, [battleStatus, battleDetails?.characters, battleRewards.length, collectBattleRewards]);
+    }, [battleStatus, battleDetails?.characters, battleDetails?.encounterId, battleRewards.length, collectBattleRewards]);
 
     const reloadBattleDetails = useCallback(async (force?: boolean) => {
         if (!battleId) return
@@ -544,7 +545,7 @@ export default function CombatAdmin({
             if (newStatus === "finished") {
                 const updatedBattle = await APIBattle.getById(battleId);
                 if (updatedBattle?.characters) {
-                    const rewards = collectBattleRewards(updatedBattle.characters);
+                    const rewards = await collectBattleRewards(updatedBattle.encounterId, updatedBattle.characters);
                     setBattleRewards(rewards);
                 }
             }
@@ -2445,8 +2446,9 @@ export default function CombatAdmin({
 
             // Coletar recompensas quando a batalha terminar
             if (battleInfo.characters) {
-                const rewards = collectBattleRewards(battleInfo.characters);
-                setBattleRewards(rewards);
+                collectBattleRewards(battleInfo.encounterId, battleInfo.characters).then(rewards => {
+                    setBattleRewards(rewards);
+                });
             }
         }
 

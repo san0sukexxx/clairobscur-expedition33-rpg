@@ -1894,6 +1894,7 @@
       "luminas": "Luminas",
       "players": "Players",
       "combats": "Combats",
+      "encounters": "Encounters",
       "logs": "Logs"
     },
     "combat": {
@@ -3484,6 +3485,36 @@
       "intelligence": "Intelligence",
       "wisdom": "Wisdom",
       "charisma": "Charisma"
+    },
+    "encounters": {
+      "title": "Encounters",
+      "create": "Create Encounter",
+      "creating": "Creating...",
+      "loading": "Loading encounters...",
+      "noEncountersFound": "No encounters found.",
+      "encounterName": "Encounter name",
+      "namePlaceholder": "E.g.: Forest ambush",
+      "npcs": "NPCs",
+      "addNpc": "Add NPC",
+      "searchNpc": "Search NPC...",
+      "noNpcsAdded": "No NPCs added.",
+      "quantity": "Qty",
+      "rewards": "Rewards",
+      "addReward": "Add Reward",
+      "noRewards": "No rewards added.",
+      "rewardType": "Type",
+      "rewardItem": "Item",
+      "rewardLevel": "Level",
+      "save": "Save",
+      "saving": "Saving...",
+      "saved": "Saved!",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Are you sure you want to delete this encounter?",
+      "deleting": "Deleting...",
+      "back": "Back",
+      "npcCount": "NPCs",
+      "rewardCount": "rewards"
     }
   }
 }

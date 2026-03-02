@@ -131,7 +131,8 @@ class BattleController(
                         characters = characters,
                         initiatives = initiatives,
                         turns = turns,
-                        battleLogs = battleLogs
+                        battleLogs = battleLogs,
+                        encounterId = battle.encounterId
                 )
 
         return ResponseEntity.ok(response)

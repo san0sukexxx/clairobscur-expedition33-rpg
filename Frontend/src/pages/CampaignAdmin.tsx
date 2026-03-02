@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiLogOut, FiShare2, FiMaximize, FiMinimize } from "react-icons/fi";
-import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll } from "react-icons/fa";
+import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon } from "react-icons/fa";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import CampaignAdminSheets from "../components/CampaignAdminSheets";
 import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
+import CampaignAdminEncountersTab from "../components/CampaignAdminEncountersTab";
 import { GameLogSection } from "../components/GameLogSection";
 import { t } from "../i18n";
 import { useToast } from "../components/Toast";
@@ -16,9 +17,9 @@ export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
     const { campaign } = useParams<{ campaign?: string }>();
     const storageKey = `campaign-admin-tab-${campaign}`;
-    const [activeTab, setActiveTab] = useState<"players" | "combats" | "logs">(() => {
+    const [activeTab, setActiveTab] = useState<"players" | "combats" | "encounters" | "logs">(() => {
         const saved = localStorage.getItem(storageKey);
-        if (saved === "players" || saved === "combats" || saved === "logs") return saved;
+        if (saved === "players" || saved === "combats" || saved === "encounters" || saved === "logs") return saved;
         return "players";
     });
     const alreadyRan = useRef(false);
@@ -202,6 +203,17 @@ export default function CampaignAdmin() {
 
                         <button
                             role="tab"
+                            className={`tab text-sm px-4 ${activeTab === "encounters" ? "tab-active font-semibold" : ""}`}
+                            onClick={() => { setActiveTab("encounters"); localStorage.setItem(storageKey, "encounters"); }}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FaDragon />
+                                {t("tabs.encounters")}
+                            </span>
+                        </button>
+
+                        <button
+                            role="tab"
                             className={`tab text-sm px-4 ${activeTab === "logs" ? "tab-active font-semibold" : ""}`}
                             onClick={() => { setActiveTab("logs"); localStorage.setItem(storageKey, "logs"); }}
                         >
@@ -246,6 +258,10 @@ export default function CampaignAdmin() {
                         campaignInfo={campaignInfo}
                         players={items}
                     />
+                )}
+
+                {activeTab === "encounters" && campaignId !== null && campaignInfo !== null && (
+                    <CampaignAdminEncountersTab campaignInfo={campaignInfo} />
                 )}
 
                 {activeTab === "logs" && campaignId !== null && (

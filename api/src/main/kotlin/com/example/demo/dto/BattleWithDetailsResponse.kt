@@ -9,5 +9,6 @@ data class BattleWithDetailsResponse(
         val characters: List<BattleCharacterInfo>,
         val initiatives: List<InitiativeResponse>,
         val turns: List<BattleTurnResponse>,
-        val battleLogs: List<BattleLog>?
+        val battleLogs: List<BattleLog>?,
+        val encounterId: Int? = null
 )

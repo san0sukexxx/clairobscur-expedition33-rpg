@@ -105,7 +105,6 @@ export interface NPCInfo {
     isFlying?: boolean;
     initiativeBonus?: number;
     maxLifeBonus?: number;
-    reward?: BattleReward;
     armorClass?: number;
     challengeRating?: string;
     proficiencyBonus?: number;

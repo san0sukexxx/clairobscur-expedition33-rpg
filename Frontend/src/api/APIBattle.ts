@@ -13,11 +13,13 @@ export interface BattleWithDetailsResponse extends Battle {
     turns: BattleTurnResponse[]
     battleLogs?: BattleLogResponse[];
     attacks?: AttackResponse[];
+    encounterId?: number;
 }
 
 export interface CreateBattleInput {
     campaignId: number
     battleStatus: string
+    encounterId?: number
 }
 
 export interface UpdateBattleInput {

@@ -1894,6 +1894,7 @@
       "luminas": "Luminas",
       "players": "Jogadores",
       "combats": "Combates",
+      "encounters": "Encontros",
       "logs": "Logs"
     },
     "combat": {
@@ -3486,6 +3487,36 @@
       "intelligence": "Inteligência",
       "wisdom": "Sabedoria",
       "charisma": "Carisma"
+    },
+    "encounters": {
+      "title": "Encontros",
+      "create": "Criar Encontro",
+      "creating": "Criando...",
+      "loading": "Carregando encontros...",
+      "noEncountersFound": "Nenhum encontro encontrado.",
+      "encounterName": "Nome do encontro",
+      "namePlaceholder": "Ex: Emboscada na floresta",
+      "npcs": "NPCs",
+      "addNpc": "Adicionar NPC",
+      "searchNpc": "Buscar NPC...",
+      "noNpcsAdded": "Nenhum NPC adicionado.",
+      "quantity": "Qtd",
+      "rewards": "Recompensas",
+      "addReward": "Adicionar Recompensa",
+      "noRewards": "Nenhuma recompensa adicionada.",
+      "rewardType": "Tipo",
+      "rewardItem": "Item",
+      "rewardLevel": "Nível",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "saved": "Salvo!",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "deleteConfirm": "Tem certeza que deseja excluir este encontro?",
+      "deleting": "Excluindo...",
+      "back": "Voltar",
+      "npcCount": "NPCs",
+      "rewardCount": "recompensas"
     }
   }
 }
