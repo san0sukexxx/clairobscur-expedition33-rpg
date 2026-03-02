@@ -12,6 +12,7 @@ import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import { getWeaponPassive, toKebabCase, hasWeapon, t, getPictoName, getPictoDescription } from "../i18n";
+import { getPictoByName } from "../utils/PictoUtils";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import type { WeaponDTO } from "../types/WeaponDTO";
 
@@ -336,8 +337,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                             <span className="text-xs font-semibold uppercase tracking-wide opacity-50">Pictos / Luminas</span>
                                             <ul className="space-y-2 text-sm mt-1">
                                                 {equippedPictos.map(picto => {
-                                                    const name = getPictoName(picto.pictoId);
-                                                    const description = getPictoDescription(picto.pictoId);
+                                                    const info = getPictoByName(picto.pictoId);
+                                                    const name = info?.name ?? picto.pictoId;
+                                                    const description = info?.description ?? "";
                                                     return (
                                                         <li key={`picto-${picto.id}`} className="flex flex-col">
                                                             <span className="font-semibold text-primary">
@@ -348,8 +350,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                     );
                                                 })}
                                                 {equippedLuminas.map(lumina => {
-                                                    const name = getPictoName(lumina.pictoId);
-                                                    const description = getPictoDescription(lumina.pictoId);
+                                                    const info = getPictoByName(lumina.pictoId);
+                                                    const name = info?.name ?? lumina.pictoId;
+                                                    const description = info?.description ?? "";
                                                     return (
                                                         <li key={`lumina-${lumina.id}`} className="flex flex-col">
                                                             <span className="font-semibold text-primary">

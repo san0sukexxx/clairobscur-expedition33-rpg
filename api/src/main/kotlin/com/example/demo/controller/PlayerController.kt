@@ -296,6 +296,8 @@ class PlayerController(
                         }
                 }
 
+                sheet.luminaBonusPoints?.let { p.luminaBonusPoints = it }
+
                 // Only update weaponId if not changing character (already set to null above)
                 if (!isChangingCharacter) {
                         p.weaponId = sheet.weaponId

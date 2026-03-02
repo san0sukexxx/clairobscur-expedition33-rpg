@@ -15,7 +15,8 @@ data class PlayerSheetResponse(
         val skillsData: String?,
         val hpMax: Int,
         val savingThrowProficiencies: List<String>?,
-        val abilityScores: AbilityScoresDto
+        val abilityScores: AbilityScoresDto,
+        val luminaBonusPoints: Int
 ) {
         companion object {
                 fun fromEntity(p: Player) =
@@ -40,7 +41,8 @@ data class PlayerSheetResponse(
                                         intelligence = p.intelligence,
                                         wisdom = p.wisdom,
                                         charisma = p.charisma
-                                )
+                                ),
+                                luminaBonusPoints = p.luminaBonusPoints
                         )
         }
 }

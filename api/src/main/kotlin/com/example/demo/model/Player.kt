@@ -23,5 +23,6 @@ data class Player(
         var constitution: Int = 10,
         var intelligence: Int = 10,
         var wisdom: Int = 10,
-        var charisma: Int = 10
+        var charisma: Int = 10,
+        @Column(name = "lumina_bonus_points") var luminaBonusPoints: Int = 0
 )

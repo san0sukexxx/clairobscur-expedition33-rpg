@@ -15,5 +15,6 @@ data class PlayerSheetUpdateRequest(
         val skillsData: String? = null,
         val hpMax: Int? = null,
         val savingThrowProficiencies: List<String>? = null,
-        val abilityScores: AbilityScoresDto? = null
+        val abilityScores: AbilityScoresDto? = null,
+        val luminaBonusPoints: Int? = null
 )

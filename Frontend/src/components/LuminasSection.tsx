@@ -6,7 +6,7 @@ import {
     getAllPictosSorted,
     pictoColorHex,
 } from "../utils/PictoUtils"
-import type { GetPlayerResponse } from "../api/APIPlayer"
+import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer"
 import { APILumina } from "../api/APILumina"
 import { FaChartLine } from "react-icons/fa"
 import { calculateMaxLuminas } from "../utils/PlayerCalculator"
@@ -258,12 +258,12 @@ export default function LuminasSection({
 
     return (
         <div className="text-base-content">
-            <div className="flex items-center justify-between pb-3">
-                <div className="flex items-center gap-4 flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-3">
+                <div className="flex items-center gap-4">
                     <div className="text-lg tracking-widest opacity-90">
                         LUMINAS
                     </div>
-                    <div className={`rounded-lg py-1 px-3 text-sm font-semibold ${
+                    <div className={`rounded-lg py-1 px-3 text-sm font-semibold whitespace-nowrap ${
                         currentLuminaCost > maxCostLuminas
                             ? "bg-red-600/20 text-red-400 border border-red-600/30"
                             : currentLuminaCost === maxCostLuminas
@@ -272,6 +272,32 @@ export default function LuminasSection({
                     }`}>
                         {t("luminas.cost")}: {currentLuminaCost}/{maxCostLuminas}
                     </div>
+                    {isAdmin && (
+                        <div className="flex items-center gap-1 text-sm opacity-70">
+                            <span>Bônus:</span>
+                            <input
+                                type="number"
+                                className="w-16 rounded-md bg-base-200 border border-base-300 px-2 py-1 text-center text-sm outline-none focus:border-base-content/30"
+                                placeholder="0"
+                                value={player?.playerSheet?.luminaBonusPoints || ""}
+                                onChange={(e) => {
+                                    if (!player) return
+                                    const val = e.target.value === "" ? 0 : Number(e.target.value)
+                                    setPlayer({
+                                        ...player,
+                                        playerSheet: { ...player.playerSheet, luminaBonusPoints: val },
+                                    })
+                                }}
+                                onBlur={async () => {
+                                    if (!player) return
+                                    const val = player.playerSheet?.luminaBonusPoints ?? 0
+                                    await APIPlayer.update(player.id, {
+                                        playerSheet: { ...player.playerSheet, luminaBonusPoints: val },
+                                    })
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
                 {isAdmin && (
                     <div className="flex gap-2">
@@ -371,7 +397,7 @@ export default function LuminasSection({
             >
                 <SearchBox value={query} onChange={setQuery} />
 
-                <div className="px-4 pb-4 overflow-y-auto max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="px-2 sm:px-4 pb-8 overflow-y-auto max-h-[75vh] sm:max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {modalType === "slot" && activeSlot !== null && (
                         <>
                             {slotFiltered.map((l) => {
@@ -502,8 +528,8 @@ function Modal({
     return (
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-            <div className="absolute inset-0 flex items-center justify-center p-4">
-                <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
+            <div className="absolute inset-0 flex items-end sm:items-center justify-center sm:p-4">
+                <div className="w-full sm:max-w-5xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden rounded-t-2xl sm:rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
                         <div className="text-lg tracking-wide">{title}</div>
                         <button className="text-2xl leading-none px-2" onClick={onClose}>
@@ -525,7 +551,7 @@ function SearchBox({
     onChange: (v: string) => void
 }) {
     return (
-        <div className="p-4">
+        <div className="px-2 sm:px-4 py-4">
             <input
                 className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                 placeholder={t("common.search")}
@@ -602,7 +628,7 @@ function LuminaCard({
         <button
             onClick={() => !disabled && onPick && onPick(lumina)}
             disabled={disabled}
-            className={`w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 transition-colors border rounded-xl ${
+            className={`w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-6 p-3 sm:p-4 transition-colors border rounded-xl ${
                 disabled
                     ? "bg-base-200 opacity-50 cursor-not-allowed border-red-500/30"
                     : "bg-base-200 hover:bg-base-300 border-base-300"
@@ -643,7 +669,7 @@ function PictoInfoCard({
     return (
         <button
             onClick={() => onPick && onPick(info)}
-            className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
+            className="w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-6 p-3 sm:p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
         >
             <PlusDiamond icon="" pictoName={info.name} isBig={true} />
             <div className="flex flex-col gap-2">

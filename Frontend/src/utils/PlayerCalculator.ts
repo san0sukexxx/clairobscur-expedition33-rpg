@@ -126,7 +126,9 @@ export function calculateMaxMP(player: GetPlayerResponse | null): number {
 }
 
 export function calculateMaxLuminas(player: GetPlayerResponse | null): number {
-    return 0;
+    const level = player?.playerSheet?.totalPoints ?? 1;
+    const bonus = player?.playerSheet?.luminaBonusPoints ?? 0;
+    return (level * 8) + bonus;
 }
 
 export function calculateSpecialAttackPoints(player: GetPlayerResponse | null): number {

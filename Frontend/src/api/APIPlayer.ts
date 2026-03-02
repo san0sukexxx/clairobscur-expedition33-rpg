@@ -26,6 +26,7 @@ export interface PlayerSheetResponse {
     skillsData?: string;
     notes?: string;
     savingThrowProficiencies?: string[];
+    luminaBonusPoints?: number;
 }
 
 export interface CreatePlayerInput {

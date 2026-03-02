@@ -1965,8 +1965,8 @@
       "intensityMaximum": "Máximo",
       "defend": "Defender",
       "defenseDescDodge": "Defesa padrão. Rola 1d20 contra a CA.",
-      "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PM (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque (ataque básico).",
-      "defenseDescJump": "Só para ataques que permitem pular. Cada defesa bem-sucedida concede um contra-ataque. Falhar aumenta a intensidade do ataque em +1.",
+      "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PM (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque de mesma intensidade.",
+      "defenseDescJump": "Só para ataques que permitem pular. Cada defesa bem-sucedida concede um contra-ataque de mesma intensidade. Falhar aumenta a intensidade do ataque em +1.",
       "defenseDescGradient": "Ataques Gradiente não podem ser esquivados, apenas aparados. Mesma mecânica de aparar.",
       "weaponPassives": "Passivas da arma"
     },

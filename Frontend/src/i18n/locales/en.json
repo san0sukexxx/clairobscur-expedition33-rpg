@@ -1965,8 +1965,8 @@
       "intensityMaximum": "Maximum",
       "defend": "Defend",
       "defenseDescDodge": "Standard defense. Roll 1d20 against AC.",
-      "defenseDescBlock": "Declare your intention to parry before defending. Failing to parry increases attack intensity by +1. A successful parry recovers 1 MP (1x per turn). Parrying all attacks in sequence grants a counter-attack (basic attack).",
-      "defenseDescJump": "Only for attacks that allow jumping. Each successful defense grants a counter-attack. Failing increases attack intensity by +1.",
+      "defenseDescBlock": "Declare your intention to parry before defending. Failing to parry increases attack intensity by +1. A successful parry recovers 1 MP (1x per turn). Parrying all attacks in sequence grants a counter-attack of the same intensity.",
+      "defenseDescJump": "Only for attacks that allow jumping. Each successful defense grants a counter-attack of the same intensity. Failing increases attack intensity by +1.",
       "defenseDescGradient": "Gradient attacks cannot be dodged, only parried. Same parry mechanics.",
       "weaponPassives": "Weapon passives"
     },
