@@ -306,8 +306,9 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           const selected = slots[idx]
           const name = getPictoName(selected)
           const pictoInfo = getPictoByName(name)
+          const isLumina = (selected?.battleCount ?? 0) >= 3
           const accent =
-            selected && pictoInfo ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.15)"
+            selected && pictoInfo && isLumina ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.15)"
 
           return (
             <div
@@ -532,7 +533,10 @@ function PlusDiamond({
   const wrapperSize = isBig ? "w-14 h-14" : "w-9 h-9"
   const innerSize = isBig ? "w-11 h-11" : "w-7 h-7"
   const iconSize = isBig ? "text-x2" : "text-lg"
-  const bgColor = pictoInfo ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.3)"
+  const isLumina = (picto?.battleCount ?? 0) >= 3
+  const bgColor = pictoInfo
+    ? isLumina ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.3)"
+    : "rgba(255,255,255,0.3)"
 
   return (
     <div
