@@ -2932,7 +2932,8 @@
       "wisdom": "Sabedoria",
       "charisma": "Carisma",
       "equipped": "Equipado",
-      "setLevelFor": "Definir nível para {name}"
+      "setLevelFor": "Definir nível para {name}",
+      "alreadyEquippedAsLumina": "Equipado como Lumina"
     },
     "luminas": {
       "title": "Luminas",
@@ -2945,7 +2946,8 @@
       "tryingToAdd": "Tentando adicionar:",
       "maximum": "Máximo:",
       "limitExceededAlert": "Custo máximo de luminas excedido! Atual: {current}, Tentando adicionar: {adding}, Máximo: {max}",
-      "limitExceededDetail": "Limite excedido ({current} + {adding} > {max})"
+      "limitExceededDetail": "Limite excedido ({current} + {adding} > {max})",
+      "alreadyEquippedAsPicto": "Equipado como Picto"
     },
     "modals": {
       "close": "Fechar"

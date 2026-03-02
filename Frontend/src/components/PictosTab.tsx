@@ -440,13 +440,24 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
         <div className="px-2 sm:px-4 pb-8 overflow-y-auto max-h-[75vh] sm:max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {modalType === "slot" && activeSlot !== null && (
             <>
-              {slotFiltered.map((p) => (
-                <PictoCard
-                  key={p.id}
-                  picto={p}
-                  onPick={(pp) => upsertPictoAt(activeSlot, pp)}
-                />
-              ))}
+              {slotFiltered.map((p) => {
+                const info = getPictoByName(p.pictoId)
+                const isEquippedAsLumina = info && (player?.luminas ?? []).some(
+                  (l) => {
+                    const lInfo = getPictoByName(l.pictoId)
+                    return lInfo?.id === info.id && l.isEquiped
+                  }
+                )
+                return (
+                  <PictoCard
+                    key={p.id}
+                    picto={p}
+                    onPick={(pp) => upsertPictoAt(activeSlot, pp)}
+                    disabled={!!isEquippedAsLumina}
+                    disabledLabel={isEquippedAsLumina ? t("pictos.alreadyEquippedAsLumina") : undefined}
+                  />
+                )
+              })}
               {slotFiltered.length === 0 && (
                 <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
               )}
@@ -704,9 +715,13 @@ function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse; l
 function PictoCard({
   picto,
   onPick,
+  disabled = false,
+  disabledLabel,
 }: {
   picto: PictoResponse
   onPick?: (p: PictoResponse) => void
+  disabled?: boolean
+  disabledLabel?: string
 }) {
   const level = picto.level ?? 1
   const name = getPictoName(picto)
@@ -714,8 +729,13 @@ function PictoCard({
 
   return (
     <button
-      onClick={() => onPick && onPick(picto)}
-      className="w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-6 p-3 sm:p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
+      onClick={() => !disabled && onPick && onPick(picto)}
+      disabled={disabled}
+      className={`w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-6 p-3 sm:p-4 transition-colors border rounded-xl ${
+        disabled
+          ? "bg-base-200 opacity-50 cursor-not-allowed border-red-500/30"
+          : "bg-base-200 hover:bg-base-300 border-base-300"
+      }`}
     >
       <div className="flex flex-col items-center gap-2 sm:gap-3">
         <PlusDiamond icon="" picto={picto} isBig={true} />
@@ -731,6 +751,9 @@ function PictoCard({
           <Stat label={t("common.level")} value={picto.level ?? 1} />
         </div>
         <div className="opacity-80 text-sm sm:text-base line-clamp-3">{pictoInfo?.description}</div>
+        {disabled && disabledLabel && (
+          <div className="text-xs text-red-400 mt-1">{disabledLabel}</div>
+        )}
       </div>
     </button>
   )

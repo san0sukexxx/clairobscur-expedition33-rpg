@@ -401,16 +401,24 @@ export default function LuminasSection({
                     {modalType === "slot" && activeSlot !== null && (
                         <>
                             {slotFiltered.map((l) => {
-                                const pictoInfo = getPictoByName(l.pictoId)
-                                const luminaCost = pictoInfo?.luminaCost ?? 0
+                                const lInfo = getPictoByName(l.pictoId)
+                                const luminaCost = lInfo?.luminaCost ?? 0
                                 const wouldExceedLimit = currentLuminaCost + luminaCost > maxCostLuminas
+                                const isEquippedAsPicto = lInfo && (player?.pictos ?? []).some(
+                                    (p) => {
+                                        const pInfo = getPictoByName(p.pictoId)
+                                        return pInfo?.id === lInfo.id && p.slot != null
+                                    }
+                                )
+                                const isDisabled = wouldExceedLimit || !!isEquippedAsPicto
 
                                 return (
                                     <LuminaCard
                                         key={l.id}
                                         lumina={l}
                                         onPick={(lum) => equipLumina(lum)}
-                                        disabled={wouldExceedLimit}
+                                        disabled={isDisabled}
+                                        disabledLabel={isEquippedAsPicto ? t("luminas.alreadyEquippedAsPicto") : undefined}
                                         currentCost={currentLuminaCost}
                                         maxCost={maxCostLuminas}
                                     />
@@ -612,12 +620,14 @@ function LuminaCard({
     lumina,
     onPick,
     disabled = false,
+    disabledLabel,
     currentCost,
     maxCost,
 }: {
     lumina: LuminaResponse
     onPick?: (l: LuminaResponse) => void
     disabled?: boolean
+    disabledLabel?: string
     currentCost?: number
     maxCost?: number
 }) {
@@ -650,7 +660,10 @@ function LuminaCard({
                     )}
                 </div>
                 <div className="opacity-80">{pictoInfo?.description}</div>
-                {disabled && currentCost !== undefined && maxCost !== undefined && (
+                {disabled && disabledLabel && (
+                    <div className="text-xs text-red-400 mt-1">{disabledLabel}</div>
+                )}
+                {disabled && !disabledLabel && currentCost !== undefined && maxCost !== undefined && (
                     <div className="text-xs text-red-400 mt-1">
                         {t("luminas.limitExceededDetail", { current: currentCost, adding: luminaCost, max: maxCost })}
                     </div>

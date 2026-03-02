@@ -2932,7 +2932,8 @@
       "wisdom": "Wisdom",
       "charisma": "Charisma",
       "equipped": "Equipped",
-      "setLevelFor": "Set level for {name}"
+      "setLevelFor": "Set level for {name}",
+      "alreadyEquippedAsLumina": "Equipped as Lumina"
     },
     "luminas": {
       "title": "Luminas",
@@ -2945,7 +2946,8 @@
       "tryingToAdd": "Trying to add:",
       "maximum": "Maximum:",
       "limitExceededAlert": "Max lumina cost exceeded! Current: {current}, Trying to add: {adding}, Maximum: {max}",
-      "limitExceededDetail": "Limit exceeded ({current} + {adding} > {max})"
+      "limitExceededDetail": "Limit exceeded ({current} + {adding} > {max})",
+      "alreadyEquippedAsPicto": "Equipped as Picto"
     },
     "modals": {
       "close": "Close"
