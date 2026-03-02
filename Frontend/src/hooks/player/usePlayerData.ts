@@ -4,6 +4,7 @@ import { t } from "../../i18n";
 import { APIPlayer, type CreatePlayerInput, type GetPlayerResponse } from "../../api/APIPlayer";
 import { APICampaign, type Campaign } from "../../api/APICampaign";
 import type { UsePlayerDataReturn } from "../../pages/PlayerPage/PlayerPage.types";
+import { applyNpcNameSuffixes } from "../../utils/CharacterUtils";
 
 /**
  * Get the last battle log ID from player info
@@ -54,6 +55,9 @@ export function usePlayerData({ campaign, character }: UsePlayerDataParams): Use
       const lastLog = getLastBattleLogFromPlayer(playerResponse);
       setLastBattleLog(lastLog);
 
+      if (playerResponse.fightInfo?.characters) {
+        applyNpcNameSuffixes(playerResponse.fightInfo.characters);
+      }
       setPlayer(playerResponse);
       setCampaignInfo(campaignData);
 
@@ -99,6 +103,9 @@ export function usePlayerData({ campaign, character }: UsePlayerDataParams): Use
     if (previousCharacterId.current && currentCharId && previousCharacterId.current !== currentCharId) {
       if (character) {
         APIPlayer.get(parseInt(character)).then(updatedPlayer => {
+          if (updatedPlayer.fightInfo?.characters) {
+            applyNpcNameSuffixes(updatedPlayer.fightInfo.characters);
+          }
           setPlayer(updatedPlayer);
         }).catch(error => {
           console.error("Erro ao recarregar dados do player:", error);

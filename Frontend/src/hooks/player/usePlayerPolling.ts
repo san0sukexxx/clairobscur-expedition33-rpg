@@ -4,6 +4,7 @@ import { t } from "../../i18n";
 import { APIPlayer, type GetPlayerResponse } from "../../api/APIPlayer";
 import { FIGHT_EVENTS, SHEET_EVENTS } from "../../constants/player/battleLogEvents";
 import { getLastBattleLogFromPlayer } from "./usePlayerData";
+import { applyNpcNameSuffixes } from "../../utils/CharacterUtils";
 
 interface UsePlayerPollingParams {
   player: GetPlayerResponse | null;
@@ -32,6 +33,9 @@ export function usePlayerPolling({
 
   // Apply fight info update
   const applyFightInfoUpdate = useCallback((playerInfo: GetPlayerResponse) => {
+    if (playerInfo.fightInfo?.characters) {
+      applyNpcNameSuffixes(playerInfo.fightInfo.characters);
+    }
     setPlayer(prev =>
       prev
         ? {
@@ -97,6 +101,9 @@ export function usePlayerPolling({
       }
 
       // Always update pictos, weapons, luminas and fightInfo
+      if (playerInfo?.fightInfo?.characters) {
+        applyNpcNameSuffixes(playerInfo.fightInfo.characters);
+      }
       setPlayer(prev =>
         prev
           ? {

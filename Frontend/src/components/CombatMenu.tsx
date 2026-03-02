@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaExchangeAlt } from "react-icons/fa";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
@@ -93,6 +93,17 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     return battleStatus === "starting" || battleStatus === "started";
   }, [player?.fightInfo?.battleStatus]);
 
+  const canRollInitiative = !!player?.fightInfo?.canRollInitiative && !isAttacking;
+  const isFlipOnly = !isYourTurn && !isAttacking && !isSelectingSkillTarget && !canRollInitiative && !isExecutingSkill;
+
+  function handleFlipTab() {
+    if (tab == opositeTeamTab) {
+      handleAction(COMBAT_MENU_ACTIONS.Team);
+    } else {
+      handleAction(COMBAT_MENU_ACTIONS.Enemies);
+    }
+  }
+
   if (!hasBattle || hidden) {
     return null;
   }
@@ -100,7 +111,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
   return (
     <div className="fixed bottom-14 right-4 z-[44] flex flex-col items-end gap-2">
       {/* Menu flutuante */}
-      {open && (
+      {open && !isFlipOnly && (
         <div
           className="
             bg-base-100 shadow-lg rounded-xl p-2
@@ -195,10 +206,10 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
       {/* Botão principal */}
       <button
         className={`btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
-        onClick={() => !isExecutingSkill && setOpen((prev) => !prev)}
+        onClick={isFlipOnly ? handleFlipTab : () => setOpen((prev) => !prev)}
         disabled={isExecutingSkill}
       >
-        <FaBars size={20} />
+        {isFlipOnly ? <FaExchangeAlt size={18} /> : <FaBars size={20} />}
       </button>
     </div>
   );

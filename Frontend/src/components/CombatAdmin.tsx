@@ -5,7 +5,7 @@ import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
 import { FaArrowsDownToLine } from "react-icons/fa6";
-import { getCharacterLabelById } from "../utils/CharacterUtils"
+import { getCharacterLabelById, applyNpcNameSuffixes } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
 import { getAbilityModifier } from "../utils/AttackCalculator"
 import { getElementName, ELEMENT_EMOTE } from "../utils/ElementUtils"
@@ -457,6 +457,9 @@ export default function CombatAdmin({
             || battleDetails == undefined
             || battleDetails == null) return
 
+        // Apply alphabetic suffixes to duplicate NPCs (A, B, C...)
+        applyNpcNameSuffixes(battleDetails.characters);
+
         const mapped: CombatEntity[] = battleDetails.characters.map((bc) => {
             if (bc.type === "player") {
                 const charId = bc.id
@@ -847,7 +850,119 @@ export default function CombatAdmin({
                 <div className="p-3 flex flex-col gap-3">
                     <div className="flex flex-col items-start">
                         <div className="text-lg font-semibold">{t("combatAdmin.labels.npcTurn")}</div>
+                        <div className="text-sm opacity-70">
+                            {currentNpc?.name} <span className="font-mono badge badge-ghost badge-xs">#{currentNpc?.battleID}</span>
+                        </div>
                     </div>
+
+                    {/* NPC Stat Block */}
+                    {npcInfo && (() => {
+                        const strMod = getAbilityModifier(npcInfo.strength);
+                        const dexMod = getAbilityModifier(npcInfo.dexterity);
+                        const conMod = getAbilityModifier(npcInfo.constitution);
+                        const intMod = getAbilityModifier(npcInfo.intelligence);
+                        const wisMod = getAbilityModifier(npcInfo.wisdom);
+                        const chaMod = getAbilityModifier(npcInfo.charisma);
+
+                        const abilities = [
+                            { key: "str", label: t("combatAdmin.npcDetails.str"), score: npcInfo.strength, mod: strMod },
+                            { key: "dex", label: t("combatAdmin.npcDetails.dex"), score: npcInfo.dexterity, mod: dexMod },
+                            { key: "con", label: t("combatAdmin.npcDetails.con"), score: npcInfo.constitution, mod: conMod },
+                            { key: "int", label: t("combatAdmin.npcDetails.int"), score: npcInfo.intelligence, mod: intMod },
+                            { key: "wis", label: t("combatAdmin.npcDetails.wis"), score: npcInfo.wisdom, mod: wisMod },
+                            { key: "cha", label: t("combatAdmin.npcDetails.cha"), score: npcInfo.charisma, mod: chaMod },
+                        ];
+
+                        const rollAbility = (abilityLabel: string, mod: number) => {
+                            if (!diceBoardRef.current) return;
+                            if (timeoutDiceBoardRef.current != null) {
+                                clearTimeout(timeoutDiceBoardRef.current);
+                                timeoutDiceBoardRef.current = null;
+                            }
+                            diceBoardRef.current.roll(["1d20"], (result) => {
+                                const rawTotal = diceTotal(result);
+                                const diceValues: number[] = [];
+                                for (const group of result) {
+                                    if (Array.isArray(group.rolls)) {
+                                        for (const roll of group.rolls) diceValues.push(roll.value);
+                                    }
+                                }
+                                dispatchRoll({
+                                    label: `${npcInfo.name} - ${abilityLabel}`,
+                                    diceRolled: rawTotal,
+                                    modifier: mod,
+                                    total: rawTotal + mod,
+                                    diceCommand: `1d20${mod >= 0 ? "+" : ""}${mod}`,
+                                    diceValues,
+                                });
+                                if (timeoutDiceBoardRef.current != null) {
+                                    clearTimeout(timeoutDiceBoardRef.current);
+                                }
+                                timeoutDiceBoardRef.current = window.setTimeout(() => {
+                                    diceBoardRef.current?.hideBoard();
+                                    timeoutDiceBoardRef.current = null;
+                                }, 5000);
+                            });
+                        };
+
+                        const hasElementalInfo = npcInfo.weakTo || npcInfo.resistentTo || npcInfo.imuneTo || npcInfo.absorbElement;
+                        const hasDndExtras = (npcInfo.damageVulnerabilities?.length ?? 0) > 0 || (npcInfo.damageImmunities?.length ?? 0) > 0 || (npcInfo.conditionImmunities?.length ?? 0) > 0;
+                        const hasChallenge = npcInfo.challengeRating || npcInfo.proficiencyBonus;
+                        const hasProperties = npcInfo.isFlying || npcInfo.playFirst || npcInfo.freeShotWeakPoints || npcInfo.initiativeBonus || npcInfo.maxLifeBonus;
+
+                        return (
+                            <div className="bg-base-300/50 rounded-lg p-3 space-y-3 text-sm">
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                    {abilities.map(a => (
+                                        <div key={a.key} className="flex flex-col items-center gap-0.5">
+                                            <span className="font-bold text-xs opacity-70">{a.label}</span>
+                                            <span className="text-sm">{a.score}</span>
+                                            <button
+                                                className="btn btn-sm btn-neutral font-mono px-3 min-h-0 h-7"
+                                                onClick={() => rollAbility(a.label, a.mod)}
+                                            >
+                                                {a.mod >= 0 ? `+${a.mod}` : a.mod}
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {hasElementalInfo && (
+                                    <div className="flex flex-col gap-0.5 text-xs">
+                                        {npcInfo.weakTo && <span>{t("combatAdmin.npcDetails.vulnerability")}: {ELEMENT_EMOTE[npcInfo.weakTo] ?? ""} {getElementName(npcInfo.weakTo)}</span>}
+                                        {npcInfo.resistentTo && <span>{t("combatAdmin.npcDetails.resistance")}: {ELEMENT_EMOTE[npcInfo.resistentTo] ?? ""} {getElementName(npcInfo.resistentTo)}</span>}
+                                        {npcInfo.imuneTo && <span>{t("combatAdmin.npcDetails.immunity")}: {ELEMENT_EMOTE[npcInfo.imuneTo] ?? ""} {getElementName(npcInfo.imuneTo)}</span>}
+                                        {npcInfo.absorbElement && <span>{t("combatAdmin.npcDetails.absorb")}: {ELEMENT_EMOTE[npcInfo.absorbElement] ?? ""} {getElementName(npcInfo.absorbElement)}</span>}
+                                    </div>
+                                )}
+
+                                {hasDndExtras && (
+                                    <div className="flex flex-col gap-0.5 text-xs">
+                                        {(npcInfo.damageVulnerabilities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.damageVulnerabilities")}:</strong> {npcInfo.damageVulnerabilities!.join(", ")}</span>}
+                                        {(npcInfo.damageImmunities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.damageImmunities")}:</strong> {npcInfo.damageImmunities!.join(", ")}</span>}
+                                        {(npcInfo.conditionImmunities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.conditionImmunities")}:</strong> {npcInfo.conditionImmunities!.map(s => getStatusLabel(s)).join(", ")}</span>}
+                                    </div>
+                                )}
+
+                                {hasChallenge && (
+                                    <div className="flex gap-4 text-xs">
+                                        {npcInfo.challengeRating && <span><strong>{t("combatAdmin.npcDetails.challenge")}:</strong> {npcInfo.challengeRating}</span>}
+                                        {npcInfo.proficiencyBonus && <span><strong>{t("combatAdmin.npcDetails.proficiencyBonus")}:</strong> +{npcInfo.proficiencyBonus}</span>}
+                                    </div>
+                                )}
+
+                                {hasProperties && (
+                                    <div className="flex flex-wrap gap-1">
+                                        {npcInfo.isFlying && <span className="badge badge-xs badge-info">{t("combatAdmin.npcDetails.flying")}</span>}
+                                        {npcInfo.playFirst && <span className="badge badge-xs badge-warning">{t("combatAdmin.npcDetails.playFirst")}</span>}
+                                        {npcInfo.freeShotWeakPoints != null && npcInfo.freeShotWeakPoints > 0 && <span className="badge badge-xs badge-success">{t("combatAdmin.npcDetails.weakPoints")}: {npcInfo.freeShotWeakPoints}</span>}
+                                        {npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.initBonus")}: {npcInfo.initiativeBonus >= 0 ? "+" : ""}{npcInfo.initiativeBonus}</span>}
+                                        {npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.maxHpBonus")}: {npcInfo.maxLifeBonus >= 0 ? "+" : ""}{npcInfo.maxLifeBonus}</span>}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })()}
 
                     <div className="flex flex-row flex-wrap gap-6">
                         {npcInfo?.attackList?.map((atk, idx) => {
@@ -944,65 +1059,259 @@ export default function CombatAdmin({
                         </div>
                     )}
 
-                    <div className="flex flex-col gap-2 mt-2">
-                        <h3 className="text-lg font-semibold">{t("combatAdmin.labels.otherActions")}</h3>
+                    <div className="flex flex-row flex-wrap items-center gap-4">
+                        {(() => {
+                            const isBasicSelected = isSelectingTarget && attackType === "basic" && !npcAttack && npcSpecialAttackIndex === null && npcAttackIndex === null;
+                            return (
+                                <button
+                                    className={`btn btn-md ${isBasicSelected ? "btn-error" : "btn-primary"}`}
+                                    onClick={() => {
+                                        if (isBasicSelected) {
+                                            setAttackType(null);
+                                            setIsSelectingTarget(false);
+                                        } else {
+                                            npcAttackTapped("basic");
+                                        }
+                                    }}
+                                    disabled={isPassingTurn}
+                                >
+                                    <FaFistRaised className="mr-1" />
+                                    {isBasicSelected ? t("combatAdmin.labels.cancel") : t("combat.attack")}
+                                </button>
+                            );
+                        })()}
 
-                        <div className="flex flex-row flex-wrap items-center gap-4">
-                            {(["basic", "jump", "gradient"] as AttackType[]).map((type) => {
-                                const isActionSelected = isSelectingTarget && attackType === type && !npcAttack && npcSpecialAttackIndex === null && npcAttackIndex === null;
-                                const icon = type === "basic" ? <FaFistRaised className="mr-1" /> : type === "jump" ? <FaArrowUp className="mr-1" /> : <FaFireAlt className="mr-1" />;
-                                const label = type === "basic" ? t("combatAdmin.labels.basicAttack") : type === "jump" ? t("combatAdmin.labels.jumpOnOne") : t("combatAdmin.labels.gradientAttack");
-                                return (
-                                    <button
-                                        key={type}
-                                        className={`btn btn-md ${isActionSelected ? "btn-error" : "btn-primary"}`}
-                                        onClick={() => {
-                                            if (isActionSelected) {
-                                                setAttackType(null);
-                                                setIsSelectingTarget(false);
-                                            } else {
-                                                npcAttackTapped(type);
-                                            }
-                                        }}
-                                        disabled={isPassingTurn}
-                                    >
-                                        {icon}
-                                        {isActionSelected ? t("combatAdmin.labels.cancel") : label}
-                                    </button>
-                                );
-                            })}
-
-                            <button
-                                className="btn btn-md btn-primary"
-                                onClick={() => npcAttackTapped("jump-all")}
-                                disabled={isPassingTurn}
-                            >
-                                <FaArrowsDownToLine className="mr-1" />
-                                {t("combatAdmin.labels.jumpOnAll")}
-                            </button>
-
-                            <button
-                                className="btn btn-md btn-warning hover:brightness-110"
-                                onClick={() => npcPassTurnTapped()}
-                                disabled={isPassingTurn}
-                            >
-                                <FaHourglassHalf className="mr-1" />
-                                {t("combatAdmin.labels.passTurn")}
-                            </button>
-
-                            <button
-                                className="btn btn-md btn-info"
-                                onClick={() => actionAllowCounter()}
-                                disabled={isPassingTurn}
-                            >
-                                <FaShieldAlt className="mr-1" />
-                                {t("combatAdmin.labels.allowCounter")}
-                            </button>
-                        </div>
+                        <button
+                            className="btn btn-md btn-warning hover:brightness-110"
+                            onClick={() => npcPassTurnTapped()}
+                            disabled={isPassingTurn}
+                        >
+                            <FaHourglassHalf className="mr-1" />
+                            {t("combatAdmin.labels.passTurn")}
+                        </button>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    function renderCharacterPanel(m: CombatEntity) {
+        if (m.type !== "player") return null;
+
+        const char = battleDetails?.characters.find(c => c.battleID === m.rowId);
+        if (!char) return null;
+
+        const charId = m.characterId?.toLowerCase() ?? "";
+
+        // Verso – Perfection Rank
+        if (charId === "verso" || charId.includes("verso")) {
+            const currentRank = char.perfectionRank ?? "D";
+            const rankProgress = char.rankProgress ?? 0;
+            const ranks = ["D", "C", "B", "A", "S"] as const;
+
+            const rankActiveColors: Record<string, string> = {
+                "D": "bg-gray-500 text-white border-gray-500",
+                "C": "bg-amber-400 text-black border-amber-400",
+                "B": "bg-blue-500 text-white border-blue-500",
+                "A": "bg-purple-500 text-white border-purple-500",
+                "S": "bg-red-500 text-white border-red-500"
+            };
+            const rankOutlineColors: Record<string, string> = {
+                "D": "border border-gray-500 text-gray-400 bg-transparent",
+                "C": "border border-amber-400 text-amber-300 bg-transparent",
+                "B": "border border-blue-500 text-blue-400 bg-transparent",
+                "A": "border border-purple-500 text-purple-400 bg-transparent",
+                "S": "border border-red-500 text-red-400 bg-transparent"
+            };
+
+            const handleRankChange = async (newRank: string) => {
+                await APIBattle.updateCharacterRank(char.battleID, newRank, 0);
+                reloadBattleDetails();
+            };
+
+            return (
+                <div className="rounded-lg bg-base-100/50 p-2">
+                    <div className="flex items-center justify-between text-sm mb-2">
+                        <span>{t("combatAdmin.labels.versoPerfectionRank")}</span>
+                        <span className="text-xs opacity-60 font-mono">{rankProgress} pts</span>
+                    </div>
+                    <div className="flex gap-2">
+                        {ranks.map(rank => (
+                            <button
+                                key={rank}
+                                className={`btn btn-xs flex-1 ${currentRank === rank ? rankActiveColors[rank] : rankOutlineColors[rank]}`}
+                                onClick={() => handleRankChange(rank)}
+                            >
+                                {rank}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Gustave – Charge Points
+        if (charId === "gustave" || charId.includes("gustave")) {
+            if (char.maxChargePoints === undefined) return null;
+            const chargePoints = char.chargePoints ?? 0;
+            const maxChargePoints = char.maxChargePoints ?? 10;
+            const pct = Math.max(0, Math.min(100, Math.round((chargePoints / maxChargePoints) * 100)));
+
+            return (
+                <div className="rounded-lg bg-base-100/50 p-2">
+                    <div className="flex items-center justify-between text-sm mb-1">
+                        <span>{t("combatAdmin.labels.gustaveCharges")}</span>
+                        <div className="flex items-center gap-2">
+                            <span className="font-bold">{chargePoints}/{maxChargePoints}</span>
+                            <button
+                                onClick={() => handleOpenGustaveChargeModal(char)}
+                                className="btn btn-xs btn-ghost"
+                                title={t("combatAdmin.labels.editGustaveCharges")}
+                            >
+                                <FaEdit />
+                            </button>
+                        </div>
+                    </div>
+                    <AnimatedStatBar
+                        value={pct}
+                        label={t("combatAdmin.labels.charges")}
+                        fillClass="bg-yellow-500"
+                        ghostClass="bg-yellow-500/30"
+                    />
+                </div>
+            );
+        }
+
+        // Sciel – Sun/Moon Charges
+        if (charId === "sciel" || charId.includes("sciel")) {
+            const sunCharges = char.sunCharges ?? 0;
+            const moonCharges = char.moonCharges ?? 0;
+            const twilightStatus = char.status?.find(s => s.effectName === "Twilight");
+
+            return (
+                <div className="rounded-lg bg-base-100/50 p-2">
+                    <div className="flex items-center justify-between text-sm mb-1">
+                        <span>{t("combatAdmin.labels.scielCharges")}</span>
+                        <button
+                            onClick={() => handleOpenScielChargesModal(char)}
+                            className="btn btn-xs btn-ghost"
+                            title={t("combatAdmin.labels.editScielCharges")}
+                        >
+                            <FaEdit />
+                        </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                        <AnimatedStatBar
+                            value={Math.min(100, sunCharges * 5)}
+                            label={`☀️ ${sunCharges}`}
+                            fillClass="bg-amber-400"
+                            ghostClass="bg-amber-400/30"
+                        />
+                        <AnimatedStatBar
+                            value={Math.min(100, moonCharges * 5)}
+                            label={`🌙 ${moonCharges}`}
+                            fillClass="bg-indigo-400"
+                            ghostClass="bg-indigo-400/30"
+                        />
+                    </div>
+                </div>
+            );
+        }
+
+        // Lune – Stains
+        if (charId === "lune" || charId.includes("lune")) {
+            const stainSlots = [char.stainSlot1, char.stainSlot2, char.stainSlot3, char.stainSlot4];
+            const stainImageMap: Record<string, string> = {
+                Lightning: "/stains/lightning-stain.png",
+                Earth: "/stains/earth-stain.png",
+                Fire: "/stains/fire-stain.png",
+                Ice: "/stains/ice-stain.png",
+                Light: "/stains/light-stain.png"
+            };
+
+            return (
+                <div className="rounded-lg bg-base-100/50 p-2">
+                    <div className="flex items-center justify-between text-sm mb-1">
+                        <span>{t("combatAdmin.labels.luneStains")}</span>
+                        <button
+                            onClick={() => handleOpenLuneStainsModal(char)}
+                            className="btn btn-xs btn-ghost"
+                            title={t("combatAdmin.labels.editLuneStains")}
+                        >
+                            <FaEdit />
+                        </button>
+                    </div>
+                    <div className="flex gap-2 justify-center">
+                        {stainSlots.map((stain, idx) => (
+                            <div
+                                key={idx}
+                                className="w-10 h-10 rounded-lg border border-base-300 flex items-center justify-center bg-base-200"
+                            >
+                                {stain ? (
+                                    <img src={stainImageMap[stain]} alt={stain} className="w-7 h-7" />
+                                ) : (
+                                    <span className="text-base-content/40 text-xs">—</span>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Maelle – Stance
+        if (charId === "maelle" || charId.includes("maelle")) {
+            const currentStance = char.stance;
+            const stanceLabels: Record<string, string> = {
+                "Offensive": t("combatAdmin.stances.offensive"),
+                "Defensive": t("combatAdmin.stances.defensive"),
+                "Virtuous": t("combatAdmin.stances.virtuous")
+            };
+            const stanceColors: Record<string, string> = {
+                "Offensive": "btn-error",
+                "Defensive": "btn-info",
+                "Virtuous": "bg-purple-500 text-white border-purple-500"
+            };
+
+            const handleStanceChange = async (newStance: "Offensive" | "Defensive" | "Virtuous") => {
+                await APIBattle.updateCharacterStance(char.battleID, newStance);
+                showToast(t("combatAdmin.toasts.stanceChanged", { stance: stanceLabels[newStance] }));
+                reloadBattleDetails();
+            };
+
+            return (
+                <div className="rounded-lg bg-base-100/50 p-2">
+                    <div className="flex items-center justify-between text-sm mb-2">
+                        <span>{t("combatAdmin.labels.maelleStance")}</span>
+                        <span className={`badge ${currentStance ? stanceColors[currentStance] : "badge-ghost"}`}>
+                            {currentStance ? stanceLabels[currentStance] : t("combatAdmin.stances.none")}
+                        </span>
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            className={`btn btn-xs flex-1 ${currentStance === "Offensive" ? "btn-error" : "btn-outline btn-error"}`}
+                            onClick={() => handleStanceChange("Offensive")}
+                        >
+                            {t("combatAdmin.stances.offensive")}
+                        </button>
+                        <button
+                            className={`btn btn-xs flex-1 ${currentStance === "Defensive" ? "btn-info" : "btn-outline btn-info"}`}
+                            onClick={() => handleStanceChange("Defensive")}
+                        >
+                            {t("combatAdmin.stances.defensive")}
+                        </button>
+                        <button
+                            className={`btn btn-xs flex-1 ${currentStance === "Virtuous" ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600" : "btn-outline border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"}`}
+                            onClick={() => handleStanceChange("Virtuous")}
+                        >
+                            {t("combatAdmin.stances.virtuous")}
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        return null;
     }
 
     function renderTeamCard(title: string, teamKey: TeamKey, members: CombatEntity[]) {
@@ -1072,62 +1381,58 @@ export default function CombatAdmin({
                                             )}
                                         </div>
 
-                                        {/* Linha 2: HP bar + MP bar + AC (NPC) */}
-                                        <div className="flex gap-3 items-center">
-                                            <div className="flex items-center gap-1 flex-1 min-w-0">
-                                                <span className="text-[10px] font-mono opacity-70 shrink-0">HP {m.currentHp}/{m.maxHp}</span>
-                                                <div className="flex-1 min-w-0">
-                                                    <AnimatedStatBar
-                                                        value={Math.round((m.currentHp / m.maxHp) * 100)}
-                                                        label="HP"
-                                                        fillClass="bg-error"
-                                                        ghostClass="bg-error/30"
-                                                    />
-                                                </div>
-                                                <button
-                                                    className="btn btn-xs btn-ghost text-info p-0"
-                                                    onClick={(e) => { e.stopPropagation(); openHpEditModal(m); }}
-                                                >
-                                                    <FaEdit size={10} />
-                                                </button>
+                                        {/* Linha 2: HP bar + AC */}
+                                        <div className="flex items-center gap-1 min-w-0">
+                                            <span className="text-[10px] font-mono opacity-70 shrink-0">HP {m.currentHp}/{m.maxHp}</span>
+                                            <div className="flex-1 min-w-0">
+                                                <AnimatedStatBar
+                                                    value={Math.round((m.currentHp / m.maxHp) * 100)}
+                                                    label="HP"
+                                                    fillClass="bg-error"
+                                                    ghostClass="bg-error/30"
+                                                />
                                             </div>
-
-                                            {m.currentMp !== undefined && m.maxMp !== undefined ? (
-                                                <div className="flex items-center gap-1 flex-1 min-w-0">
-                                                    <span className="text-[10px] font-mono opacity-70 shrink-0">MP {m.currentMp}/{m.maxMp}</span>
-                                                    <div className="flex-1 min-w-0">
-                                                        <AnimatedStatBar
-                                                            value={Math.round((m.currentMp / m.maxMp) * 100)}
-                                                            label="MP"
-                                                            fillClass="bg-info"
-                                                            ghostClass="bg-info/30"
-                                                        />
-                                                    </div>
-                                                    <button
-                                                        className="btn btn-xs btn-ghost text-info p-0"
-                                                        onClick={(e) => { e.stopPropagation(); openMpEditModal(m); }}
-                                                    >
-                                                        <FaEdit size={10} />
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex-1" />
-                                            )}
-
+                                            <button
+                                                className="btn btn-xs btn-ghost text-info p-0"
+                                                onClick={(e) => { e.stopPropagation(); openHpEditModal(m); }}
+                                            >
+                                                <FaEdit size={10} />
+                                            </button>
                                             {m.type === "npc" && (() => {
                                                 const npcAc = getNpcById(m.characterId ?? "");
                                                 if (!npcAc) return null;
                                                 const dexMod = getAbilityModifier(npcAc.dexterity);
                                                 const ac = npcAc.armorClass ?? (10 + dexMod);
                                                 return (
-                                                    <span className="badge badge-sm badge-outline font-mono shrink-0" title={t("combatAdmin.npcDetails.armorClass")}>
+                                                    <span className="badge badge-sm badge-outline font-mono shrink-0 ml-1" title={t("combatAdmin.npcDetails.armorClass")}>
                                                         {t("combatAdmin.npcDetails.armorClass")} {ac}
                                                     </span>
                                                 );
                                             })()}
                                         </div>
 
-                                        {/* Linha 3: Efeitos/Status */}
+                                        {/* Linha 3: MP bar */}
+                                        {m.currentMp !== undefined && m.maxMp !== undefined && (
+                                            <div className="flex items-center gap-1 min-w-0">
+                                                <span className="text-[10px] font-mono opacity-70 shrink-0">MP {m.currentMp}/{m.maxMp}</span>
+                                                <div className="flex-1 min-w-0">
+                                                    <AnimatedStatBar
+                                                        value={Math.round((m.currentMp / m.maxMp) * 100)}
+                                                        label="MP"
+                                                        fillClass="bg-info"
+                                                        ghostClass="bg-info/30"
+                                                    />
+                                                </div>
+                                                <button
+                                                    className="btn btn-xs btn-ghost text-info p-0"
+                                                    onClick={(e) => { e.stopPropagation(); openMpEditModal(m); }}
+                                                >
+                                                    <FaEdit size={10} />
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* Linha 4: Efeitos/Status */}
                                         {((m.status && m.status.length > 0) || npcIsFlyingById(m.characterId)) && (
                                             <div className="flex items-start gap-1">
                                                 <div className="flex flex-row flex-wrap gap-1 flex-1">
@@ -1167,6 +1472,8 @@ export default function CombatAdmin({
                                                 {t(`battle.statusDescriptions.${expandedAdminStatus.split("-").slice(1).join("-")}`) || t("battle.statusDescriptions.default")}
                                             </p>
                                         )}
+
+                                        {renderCharacterPanel(m)}
 
                                         {/* NPC Stat Block colapsável */}
                                         {expandedNpcRowId === m.rowId && m.type === "npc" && (() => {
@@ -1561,10 +1868,11 @@ export default function CombatAdmin({
                         <input
                             type="number"
                             className="input input-bordered w-full"
-                            value={scielSunCharges}
+                            value={scielSunCharges === 0 ? "" : scielSunCharges}
+                            placeholder="0"
                             min={0}
                             max={20}
-                            onChange={(e) => setScielSunCharges(parseInt(e.target.value) || 0)}
+                            onChange={(e) => setScielSunCharges(e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
                         />
                     </div>
 
@@ -1575,10 +1883,11 @@ export default function CombatAdmin({
                         <input
                             type="number"
                             className="input input-bordered w-full"
-                            value={scielMoonCharges}
+                            value={scielMoonCharges === 0 ? "" : scielMoonCharges}
+                            placeholder="0"
                             min={0}
                             max={20}
-                            onChange={(e) => setScielMoonCharges(parseInt(e.target.value) || 0)}
+                            onChange={(e) => setScielMoonCharges(e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
                         />
                     </div>
 
@@ -1589,10 +1898,11 @@ export default function CombatAdmin({
                         <input
                             type="number"
                             className="input input-bordered w-full"
-                            value={scielTwilight}
+                            value={scielTwilight === 0 ? "" : scielTwilight}
+                            placeholder="0"
                             min={0}
                             max={40}
-                            onChange={(e) => setScielTwilight(parseInt(e.target.value) || 0)}
+                            onChange={(e) => setScielTwilight(e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
                         />
                     </div>
 
@@ -1728,44 +2038,32 @@ export default function CombatAdmin({
                             </div>
                         </div>
 
-                        <div className="overflow-x-auto max-h-[28vh] overflow-y-auto">
-                            <table className="table table-compact table-xs w-full">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>{t("combatAdmin.labels.name")}</th>
-                                        <th>{t("combatAdmin.labels.character")}</th>
-                                        <th className="w-1/6 text-right">{t("combatAdmin.labels.actions")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredPlayers.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={4} className="text-center text-sm opacity-60 py-6">
-                                                {t("combatAdmin.labels.noPlayersFound")}
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        filteredPlayers.map((entity, idx) => (
-                                            <tr key={`player-${entity.externalId}-${idx}`}>
-                                                <td>{renderAvatarCell(entity)}</td>
-                                                <td>{entity.name}</td>
-                                                <td>{renderCharacterCell(entity)}</td>
-                                                <td className="text-right">
-                                                    <div className="flex items-center gap-2 justify-end">
-                                                        <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
-                                                            {t("combatAdmin.labels.add")}
-                                                        </button>
-                                                        {justAddedId === entity.externalId ? (
-                                                            <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span>
-                                                        ) : null}
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                        <div className="max-h-[28vh] overflow-y-auto">
+                            {filteredPlayers.length === 0 ? (
+                                <div className="text-center text-sm opacity-60 py-6">
+                                    {t("combatAdmin.labels.noPlayersFound")}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col divide-y divide-base-300">
+                                    {filteredPlayers.map((entity, idx) => (
+                                        <div key={`player-${entity.externalId}-${idx}`} className="flex items-center gap-2 px-3 py-2">
+                                            {renderAvatarCell(entity)}
+                                            <div className="flex flex-col min-w-0 flex-1">
+                                                <span className="font-semibold text-sm truncate">{entity.name}</span>
+                                                <span className="text-xs opacity-60 truncate">{renderCharacterCell(entity)}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
+                                                    {t("combatAdmin.labels.add")}
+                                                </button>
+                                                {justAddedId === entity.externalId ? (
+                                                    <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span>
+                                                ) : null}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -2049,273 +2347,6 @@ export default function CombatAdmin({
                                 onEditGradient={() => handleOpenGradientModal(getActiveTurnCharacter()?.isEnemy ?? false)}
                             />
 
-                            {/* Rank de Perfeição do Verso - só aparece se for a vez do Verso */}
-                            {(() => {
-                                const activeChar = getActiveTurnCharacter();
-                                const isVerso = activeChar && (
-                                    activeChar.id?.toLowerCase() === "verso" ||
-                                    activeChar.id?.toLowerCase().includes("verso")
-                                );
-                                if (!isVerso) return null;
-
-                                const currentRank = activeChar.perfectionRank ?? "D";
-                                const rankProgress = activeChar.rankProgress ?? 0;
-                                const ranks = ["D", "C", "B", "A", "S"] as const;
-
-                                const rankActiveColors: Record<string, string> = {
-                                    "D": "bg-gray-500 text-white border-gray-500",
-                                    "C": "bg-amber-400 text-black border-amber-400",
-                                    "B": "bg-blue-500 text-white border-blue-500",
-                                    "A": "bg-purple-500 text-white border-purple-500",
-                                    "S": "bg-red-500 text-white border-red-500"
-                                };
-                                const rankOutlineColors: Record<string, string> = {
-                                    "D": "border border-gray-500 text-gray-400 bg-transparent",
-                                    "C": "border border-amber-400 text-amber-300 bg-transparent",
-                                    "B": "border border-blue-500 text-blue-400 bg-transparent",
-                                    "A": "border border-purple-500 text-purple-400 bg-transparent",
-                                    "S": "border border-red-500 text-red-400 bg-transparent"
-                                };
-
-                                const handleRankChange = async (newRank: string) => {
-                                    await APIBattle.updateCharacterRank(activeChar.battleID, newRank, 0);
-                                    reloadBattleDetails();
-                                };
-
-                                return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
-                                        <div>
-                                            <div className="flex items-center justify-between text-sm mb-3">
-                                                <span>{t("combatAdmin.labels.versoPerfectionRank")}</span>
-                                                <span className="text-xs opacity-60 font-mono">{rankProgress} pts</span>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                {ranks.map(rank => (
-                                                    <button
-                                                        key={rank}
-                                                        className={`btn btn-sm flex-1 ${currentRank === rank ? rankActiveColors[rank] : rankOutlineColors[rank]}`}
-                                                        onClick={() => handleRankChange(rank)}
-                                                    >
-                                                        {rank}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })()}
-
-                            {/* Barra de Cargas do Gustave - só aparece se o personagem ativo for Gustave */}
-                            {(() => {
-                                const activeChar = getActiveTurnCharacter();
-                                const isGustave = activeChar && (
-                                    activeChar.id?.toLowerCase() === "gustave" ||
-                                    activeChar.id?.toLowerCase().includes("gustave")
-                                );
-                                if (!isGustave || activeChar.maxChargePoints === undefined) return null;
-
-                                const chargePoints = activeChar.chargePoints ?? 0;
-                                const maxChargePoints = activeChar.maxChargePoints ?? 10;
-                                const pct = Math.max(0, Math.min(100, Math.round((chargePoints / maxChargePoints) * 100)));
-
-                                return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
-                                        <div>
-                                            <div className="flex items-center justify-between text-sm mb-2">
-                                                <span>{t("combatAdmin.labels.gustaveCharges")}</span>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold">{chargePoints}/{maxChargePoints}</span>
-                                                    <button
-                                                        onClick={() => handleOpenGustaveChargeModal(activeChar)}
-                                                        className="btn btn-xs btn-ghost"
-                                                        title={t("combatAdmin.labels.editGustaveCharges")}
-                                                    >
-                                                        <FaEdit />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <AnimatedStatBar
-                                                value={pct}
-                                                label={t("combatAdmin.labels.charges")}
-                                                fillClass="bg-yellow-500"
-                                                ghostClass="bg-yellow-500/30"
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            })()}
-
-                            {/* Cargas de Sol/Lua da Sciel - só aparece se for a vez da Sciel */}
-                            {(() => {
-                                const activeChar = getActiveTurnCharacter();
-                                const isSciel = activeChar && (
-                                    activeChar.id?.toLowerCase() === "sciel" ||
-                                    activeChar.id?.toLowerCase().includes("sciel")
-                                );
-                                if (!isSciel) return null;
-
-                                const sunCharges = activeChar.sunCharges ?? 0;
-                                const moonCharges = activeChar.moonCharges ?? 0;
-                                const twilightStatus = activeChar.status?.find(s => s.effectName === "Twilight");
-
-                                return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
-                                        <div>
-                                            <div className="flex items-center justify-between text-sm mb-2">
-                                                <span>{t("combatAdmin.labels.scielCharges")}</span>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold">☀️ {sunCharges} / 🌙 {moonCharges}</span>
-                                                    {twilightStatus && (
-                                                        <span className="badge bg-purple-600 text-white border-purple-600 badge-sm">{t("combatAdmin.labels.twilightActive")} {twilightStatus.ammount} ({twilightStatus.remainingTurns})</span>
-                                                    )}
-                                                    <button
-                                                        onClick={() => handleOpenScielChargesModal(activeChar)}
-                                                        className="btn btn-xs btn-ghost"
-                                                        title={t("combatAdmin.labels.editScielCharges")}
-                                                    >
-                                                        <FaEdit />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <AnimatedStatBar
-                                                    value={Math.min(100, sunCharges * 5)}
-                                                    label={`☀️ ${sunCharges}`}
-                                                    fillClass="bg-amber-400"
-                                                    ghostClass="bg-amber-400/30"
-                                                />
-                                                <AnimatedStatBar
-                                                    value={Math.min(100, moonCharges * 5)}
-                                                    label={`🌙 ${moonCharges}`}
-                                                    fillClass="bg-indigo-400"
-                                                    ghostClass="bg-indigo-400/30"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })()}
-
-                            {/* Manchas da Lune - só aparece se for a vez da Lune */}
-                            {(() => {
-                                const activeChar = getActiveTurnCharacter();
-                                const isLuneTurn = activeChar && (
-                                    activeChar.id?.toLowerCase() === "lune" ||
-                                    activeChar.id?.toLowerCase().includes("lune")
-                                );
-                                if (!isLuneTurn) return null;
-
-                                const stainSlots = [
-                                    activeChar.stainSlot1,
-                                    activeChar.stainSlot2,
-                                    activeChar.stainSlot3,
-                                    activeChar.stainSlot4
-                                ];
-
-                                const stainImageMap: Record<string, string> = {
-                                    Lightning: "/stains/lightning-stain.png",
-                                    Earth: "/stains/earth-stain.png",
-                                    Fire: "/stains/fire-stain.png",
-                                    Ice: "/stains/ice-stain.png",
-                                    Light: "/stains/light-stain.png"
-                                };
-
-                                return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
-                                        <div className="flex items-center justify-between text-sm mb-2">
-                                            <span>{t("combatAdmin.labels.luneStains")}</span>
-                                            <button
-                                                onClick={() => handleOpenLuneStainsModal(activeChar)}
-                                                className="btn btn-xs btn-ghost"
-                                                title={t("combatAdmin.labels.editLuneStains")}
-                                            >
-                                                <FaEdit />
-                                            </button>
-                                        </div>
-                                        <div className="flex gap-3 justify-center">
-                                            {stainSlots.map((stain, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className="w-12 h-12 rounded-lg border border-base-300 flex items-center justify-center bg-base-200"
-                                                >
-                                                    {stain ? (
-                                                        <img
-                                                            src={stainImageMap[stain]}
-                                                            alt={stain}
-                                                            className="w-8 h-8"
-                                                        />
-                                                    ) : (
-                                                        <span className="text-base-content/40 text-xs">—</span>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                );
-                            })()}
-
-                            {/* Barra de Postura da Maelle - só aparece se for a vez da Maelle */}
-                            {(() => {
-                                const activeChar = getActiveTurnCharacter();
-                                const isMaelleTurn = activeChar && (
-                                    activeChar.id?.toLowerCase() === "maelle" ||
-                                    activeChar.id?.toLowerCase().includes("maelle")
-                                );
-                                if (!isMaelleTurn) return null;
-
-                                const maelleChar = activeChar;
-
-                                const currentStance = maelleChar.stance;
-                                const stanceLabels: Record<string, string> = {
-                                    "Offensive": t("combatAdmin.stances.offensive"),
-                                    "Defensive": t("combatAdmin.stances.defensive"),
-                                    "Virtuous": t("combatAdmin.stances.virtuous")
-                                };
-                                const stanceColors: Record<string, string> = {
-                                    "Offensive": "btn-error",
-                                    "Defensive": "btn-info",
-                                    "Virtuous": "bg-purple-500 text-white border-purple-500"
-                                };
-
-                                const handleStanceChange = async (newStance: "Offensive" | "Defensive" | "Virtuous") => {
-                                    await APIBattle.updateCharacterStance(maelleChar.battleID, newStance);
-                                    showToast(t("combatAdmin.toasts.stanceChanged", { stance: stanceLabels[newStance] }));
-                                    reloadBattleDetails();
-                                };
-
-                                return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
-                                        <div>
-                                            <div className="flex items-center justify-between text-sm mb-3">
-                                                <span>{t("combatAdmin.labels.maelleStance")}</span>
-                                                <span className={`badge ${currentStance ? stanceColors[currentStance] : "badge-ghost"}`}>
-                                                    {currentStance ? stanceLabels[currentStance] : t("combatAdmin.stances.none")}
-                                                </span>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <button
-                                                    className={`btn btn-sm flex-1 ${currentStance === "Offensive" ? "btn-error" : "btn-outline btn-error"}`}
-                                                    onClick={() => handleStanceChange("Offensive")}
-                                                >
-                                                    {t("combatAdmin.stances.offensive")}
-                                                </button>
-                                                <button
-                                                    className={`btn btn-sm flex-1 ${currentStance === "Defensive" ? "btn-info" : "btn-outline btn-info"}`}
-                                                    onClick={() => handleStanceChange("Defensive")}
-                                                >
-                                                    {t("combatAdmin.stances.defensive")}
-                                                </button>
-                                                <button
-                                                    className={`btn btn-sm flex-1 ${currentStance === "Virtuous" ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600" : "btn-outline border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white"}`}
-                                                    onClick={() => handleStanceChange("Virtuous")}
-                                                >
-                                                    {t("combatAdmin.stances.virtuous")}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })()}
                         </>
                     )}
 

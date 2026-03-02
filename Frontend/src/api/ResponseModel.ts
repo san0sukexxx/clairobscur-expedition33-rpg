@@ -106,6 +106,12 @@ export interface NPCInfo {
     initiativeBonus?: number;
     maxLifeBonus?: number;
     reward?: BattleReward;
+    armorClass?: number;
+    challengeRating?: string;
+    proficiencyBonus?: number;
+    conditionImmunities?: StatusType[];
+    damageVulnerabilities?: string[];
+    damageImmunities?: string[];
 }
 
 export interface NPCStatusItem {

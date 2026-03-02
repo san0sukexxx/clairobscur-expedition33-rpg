@@ -71,6 +71,30 @@ export function getPlayerCharacter(player: GetPlayerResponse | null): BattleChar
     return player.fightInfo.characters?.find(c => c.battleID === playerBattleId);
 }
 
+/**
+ * Applies alphabetic suffixes (A, B, C...) to NPC names when there are duplicates.
+ * Mutates the characters array in place.
+ */
+export function applyNpcNameSuffixes(characters: BattleCharacterInfo[]): void {
+    const npcCountById: Record<string, number> = {};
+    for (const ch of characters) {
+        if (ch.type === "npc") {
+            npcCountById[ch.id] = (npcCountById[ch.id] ?? 0) + 1;
+        }
+    }
+
+    const npcLetterIndex: Record<string, number> = {};
+    for (const ch of characters) {
+        if (ch.type === "npc" && npcCountById[ch.id] > 1) {
+            // Strip any existing suffix before reapplying
+            const baseName = ch.name.replace(/\s[A-Z]$/, "");
+            const idx = npcLetterIndex[ch.id] ?? 0;
+            npcLetterIndex[ch.id] = idx + 1;
+            ch.name = `${baseName} ${String.fromCharCode(65 + idx)}`;
+        }
+    }
+}
+
 export function getActiveTurnCharacterFromBattle(battleDetails: BattleWithDetailsResponse): BattleCharacterInfo | undefined {
     if (battleDetails?.turns == undefined || battleDetails?.turns.length == 0) {
         return undefined;

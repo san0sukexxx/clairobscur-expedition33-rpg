@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import type { RefObject, MutableRefObject } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
@@ -128,6 +129,9 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
         }
     }
 
+    const prefersReduced = useReducedMotion();
+    const rotateY = tab === "team" ? 180 : 0;
+
     return (
         <div>
             {player?.fightInfo?.battleStatus == "starting" && (
@@ -164,13 +168,45 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 </div>
             )}
 
-            {tab === "enemies" && (
-                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
-            )}
+            <div className="relative w-full" style={{ perspective: 1200 }}>
+                <motion.div
+                    className="relative w-full"
+                    animate={prefersReduced ? { opacity: 1 } : { rotateY }}
+                    initial={false}
+                    transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+                    style={{
+                        transformStyle: "preserve-3d",
+                        willChange: prefersReduced ? undefined : "transform",
+                    }}
+                >
+                    <div
+                        aria-hidden={tab !== "enemies"}
+                        className={tab === "enemies" ? "relative" : "absolute inset-0"}
+                        style={{
+                            backfaceVisibility: "hidden",
+                            WebkitBackfaceVisibility: "hidden",
+                            pointerEvents: tab === "enemies" ? "auto" : "none",
+                            opacity: prefersReduced && tab !== "enemies" ? 0 : 1,
+                        }}
+                    >
+                        <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
+                    </div>
 
-            {tab === "team" && (
-                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
-            )}
+                    <div
+                        aria-hidden={tab !== "team"}
+                        className={tab === "team" ? "relative" : "absolute inset-0"}
+                        style={{
+                            transform: "rotateY(180deg)",
+                            backfaceVisibility: "hidden",
+                            WebkitBackfaceVisibility: "hidden",
+                            pointerEvents: tab === "team" ? "auto" : "none",
+                            opacity: prefersReduced && tab !== "team" ? 0 : 1,
+                        }}
+                    >
+                        <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
+                    </div>
+                </motion.div>
+            </div>
 
             <CombatMenu
                 player={player}
@@ -186,7 +222,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             <CombatBottomSheet player={player} open={bottomSheetOpen} onOpen={() => setBottomSheetOpen(true)} onClose={() => setBottomSheetOpen(false)} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
 
-            <div className="h-[100px]" />
+            <div className="h-52" />
         </div>
     );
 }

@@ -21,7 +21,10 @@ type Die = (typeof DICE)[number];
 export function FloatingDiceRoller({ diceBoardRef, timeoutDiceBoardRef, playerId, className = "bottom-14 right-4" }: FloatingDiceRollerProps) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Record<string, number>>({});
-  const [sendTo, setSendTo] = useState<SendTo>("everyone");
+  const [sendTo, setSendTo] = useState<SendTo>(() => {
+    const saved = localStorage.getItem("diceRoller_sendTo");
+    return saved === "self" ? "self" : "everyone";
+  });
   const [showSendMenu, setShowSendMenu] = useState(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const didLongPress = useRef(false);
@@ -195,7 +198,7 @@ export function FloatingDiceRoller({ diceBoardRef, timeoutDiceBoardRef, playerId
               </p>
               <button
                 className="flex items-center gap-2 w-full px-2 py-1.5 rounded hover:bg-base-200 transition-colors"
-                onClick={() => { setSendTo("everyone"); setShowSendMenu(false); }}
+                onClick={() => { setSendTo("everyone"); localStorage.setItem("diceRoller_sendTo", "everyone"); setShowSendMenu(false); }}
               >
                 <FaUsers className="text-sm opacity-70" />
                 <span className="text-sm">{t("characterSheet.sendToEveryone")}</span>
@@ -203,7 +206,7 @@ export function FloatingDiceRoller({ diceBoardRef, timeoutDiceBoardRef, playerId
               </button>
               <button
                 className="flex items-center gap-2 w-full px-2 py-1.5 rounded hover:bg-base-200 transition-colors"
-                onClick={() => { setSendTo("self"); setShowSendMenu(false); }}
+                onClick={() => { setSendTo("self"); localStorage.setItem("diceRoller_sendTo", "self"); setShowSendMenu(false); }}
               >
                 <FaUser className="text-sm opacity-70" />
                 <span className="text-sm">{t("characterSheet.sendToSelf")}</span>

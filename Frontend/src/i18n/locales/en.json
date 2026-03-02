@@ -2121,6 +2121,32 @@
         "finished": "Finished",
         "startBattle": "Start battle",
         "endBattle": "End battle"
+      },
+      "npcDetails": {
+        "armorClass": "AC",
+        "hitPoints": "Hit Points",
+        "str": "STR",
+        "dex": "DEX",
+        "con": "CON",
+        "int": "INT",
+        "wis": "WIS",
+        "cha": "CHA",
+        "vulnerability": "Vulnerability",
+        "resistance": "Resistance",
+        "immunity": "Immunity",
+        "absorb": "Absorbs",
+        "actions": "Actions",
+        "playFirst": "Plays First",
+        "flying": "Flying",
+        "weakPoints": "Weak Points",
+        "initBonus": "Init",
+        "maxHpBonus": "Max HP",
+        "damage": "dmg",
+        "damageVulnerabilities": "Damage Vulnerabilities",
+        "damageImmunities": "Damage Immunities",
+        "conditionImmunities": "Condition Immunities",
+        "challenge": "Challenge",
+        "proficiencyBonus": "Proficiency Bonus"
       }
     },
     "rewards": {

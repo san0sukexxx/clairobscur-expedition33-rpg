@@ -1563,7 +1563,7 @@
       "passives": {
         "2": "Tiros de Mira Livre podem consumir 1 Prenúncio para causar +3d6 de dano.",
         "3": "Ataque Base aplica 3 Prenúncios.",
-        "4": "Durante o Crepúsculo, tiros de Mira Livre causam +3d6 de dano."
+        "4": "Durante o Eclipse, tiros de Mira Livre causam +3d6 de dano."
       }
     },
     "baguette-sciel": {
@@ -1586,14 +1586,14 @@
       "name": "Bourgelon",
       "passives": {
         "2": "Consumir Prenúncio aplica 2 Queimaduras no alvo por Carga de Sol.",
-        "3": "+3d6 de dano de Queimadura no estado Crepúsculo.",
+        "3": "+3d6 de dano de Queimadura no estado Eclipse.",
         "4": "Habilidades do Sol dão uma carga a mais."
       }
     },
     "charnon": {
       "name": "Charnon",
       "passives": {
-        "2": "100% de Chance Crítica durante o Crepúsculo.",
+        "2": "100% de Chance Crítica durante o Eclipse.",
         "3": "Aplica 1 Prenúncio em acerto Crítico.",
         "4": "+1d6 de dano para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes."
       }
@@ -1603,15 +1603,15 @@
       "passives": {
         "2": "Habilidades do Sol sempre aplicam 10 Prenúncios, mas +3d6 de dano recebido.",
         "3": "Ataque Base dá 1 carga de Lua e consome todos os Prenúncios para aplicar Queimadura.",
-        "4": "+3d6 de dano de Queimadura no estado Crepúsculo."
+        "4": "+3d6 de dano de Queimadura no estado Eclipse."
       }
     },
     "corderon": {
       "name": "Corderon",
       "passives": {
         "2": "Amaldiçoa a si mesmo no início da batalha. +2d6 de dano enquanto Amaldiçoado.",
-        "3": "Reseta a duração da Maldição ao entrar no estado Crepúsculo.",
-        "4": "Joga novamente ao entrar no estado Crepúsculo."
+        "3": "Reseta a duração da Maldição ao entrar no estado Eclipse.",
+        "4": "Joga novamente ao entrar no estado Eclipse."
       }
     },
     "direton": {
@@ -1619,7 +1619,7 @@
       "passives": {
         "2": "+1 PM por carga de Lua no início do turno.",
         "3": "Ataque Base dá 1 carga de Lua.",
-        "4": "Durante o Crepúsculo, Ataque Base consome todo PA. Ataque Base aplica 1 Prenúncio e causa +2d6 de dano por PM consumido."
+        "4": "Durante o Eclipse, Ataque Base consome todo PA. Ataque Base aplica 1 Prenúncio e causa +2d6 de dano por PM consumido."
       }
     },
     "garganon": {
@@ -1633,7 +1633,7 @@
     "gobluson": {
       "name": "Gobluson",
       "passives": {
-        "2": "Durante o Crepúsculo, toda vez que Prenúncio é aplicado ele também afeta outro inimigo aleatório.",
+        "2": "Durante o Eclipse, toda vez que Prenúncio é aplicado ele também afeta outro inimigo aleatório.",
         "3": "Aplica 1 Queimadura a cada 3 Prenúncios aplicados com Habilidades.",
         "4": "+1d6 de dano de Fogo com Habilidades."
       }
@@ -1641,8 +1641,8 @@
     "guleson": {
       "name": "Guleson",
       "passives": {
-        "2": "No início do Crepúsculo, aplica Marca em todos os inimigos.",
-        "3": "Acertar um inimigo Marcado durante o Crepúsculo não remove a Marca.",
+        "2": "No início do Eclipse, aplica Marca em todos os inimigos.",
+        "3": "Acertar um inimigo Marcado durante o Eclipse não remove a Marca.",
         "4": "Aplica 3 Prenúncios ao aplicar Marca."
       }
     },
@@ -1658,7 +1658,7 @@
       "name": "Litheson",
       "passives": {
         "2": "Durante a Lua, todos os aliados têm Velocidade Superior. Durante o Sol, todos os inimigos têm Lentidão Superior.",
-        "3": "Durante o Crepúsculo, todos os aliados têm Velocidade Superior e todos os inimigos têm Lentidão Superior.",
+        "3": "Durante o Eclipse, todos os aliados têm Velocidade Superior e todos os inimigos têm Lentidão Superior.",
         "4": "+3 PM ao aplicar um Buff ou Debuff. Uma vez por turno."
       }
     },
@@ -1673,8 +1673,8 @@
     "martenon": {
       "name": "Martenon",
       "passives": {
-        "2": "No início do Crepúsculo, causa dano a todos os inimigos baseado na quantidade de cargas.",
-        "3": "No início do Crepúsculo, aplica 2 Prenúncios por carga a todos os inimigos.",
+        "2": "No início do Eclipse, causa dano a todos os inimigos baseado na quantidade de cargas.",
+        "3": "No início do Eclipse, aplica 2 Prenúncios por carga a todos os inimigos.",
         "4": "+1 carga extra de Sol e Lua gerada."
       }
     },
@@ -1689,9 +1689,9 @@
     "moisson": {
       "name": "Moisson",
       "passives": {
-        "2": "Durante o Crepúsculo, todo dano causado é convertido em dano Sombrio.",
+        "2": "Durante o Eclipse, todo dano causado é convertido em dano Sombrio.",
         "3": "+1d6 de dano Sombrio com Habilidades.",
-        "4": "Aplica Protegido durante a Lua, Poderoso durante o Sol, e Velocidade durante o Crepúsculo."
+        "4": "Aplica Protegido durante a Lua, Poderoso durante o Sol, e Velocidade durante o Eclipse."
       }
     },
     "ramasson": {
@@ -1725,9 +1725,9 @@
     "tisseron": {
       "name": "Tisseron",
       "passives": {
-        "2": "Estende o Crepúsculo por um turno ao usar uma Habilidade da Lua. +2d6 de dano de Crepúsculo ao usar uma Habilidade do Sol.",
-        "3": "Duração do Crepúsculo é aumentada em 1.",
-        "4": "Joga novamente ao entrar no estado Crepúsculo."
+        "2": "Estende o Eclipse por um turno ao usar uma Habilidade da Lua. +2d6 de dano de Eclipse ao usar uma Habilidade do Sol.",
+        "3": "Duração do Eclipse é aumentada em 1.",
+        "4": "Joga novamente ao entrar no estado Eclipse."
       }
     }
   },
@@ -2121,6 +2121,32 @@
         "finished": "Terminada",
         "startBattle": "Iniciar batalha",
         "endBattle": "Encerrar batalha"
+      },
+      "npcDetails": {
+        "armorClass": "CA",
+        "hitPoints": "Pontos de Vida",
+        "str": "FOR",
+        "dex": "DES",
+        "con": "CON",
+        "int": "INT",
+        "wis": "SAB",
+        "cha": "CAR",
+        "vulnerability": "Vulnerabilidade",
+        "resistance": "Resistência",
+        "immunity": "Imunidade",
+        "absorb": "Absorve",
+        "actions": "Ações",
+        "playFirst": "Joga Primeiro",
+        "flying": "Voando",
+        "weakPoints": "Pontos Fracos",
+        "initBonus": "Iniciativa",
+        "maxHpBonus": "HP Máx",
+        "damage": "dano",
+        "damageVulnerabilities": "Vulnerabilidades de Dano",
+        "damageImmunities": "Imunidades de Dano",
+        "conditionImmunities": "Imunidades de Condição",
+        "challenge": "Desafio",
+        "proficiencyBonus": "Bônus de Proficiência"
       }
     },
     "rewards": {
@@ -2482,7 +2508,7 @@
       },
       "sciel-twilight-dance": {
         "name": "Dança Crepuscular",
-        "description": "Causa dano das Trevas extremo em alvo único. 4 ataques. Durante o Crepúsculo, estende a duração do Crepúsculo em 1 turno. Consome todas as Predições (+2 de dano por Predição)."
+        "description": "Causa dano das Trevas extremo em alvo único. 4 ataques. Durante o Eclipse, estende a duração do Eclipse em 1 turno. Consome todas as Predições (+2 de dano por Predição)."
       },
       "sciel-shadow-bringer": {
         "name": "Arauto das Sombras",
@@ -3017,7 +3043,7 @@
         "FireVulnerability": "🔥 Vulnerável a Fogo",
         "Guardian": "🛡️ Guardião",
         "Foretell": "🔮 Predição",
-        "Twilight": "🌕 Crepúsculo",
+        "Twilight": "🌕 Eclipse",
         "Powerless": "⬇️ Impotente",
         "Rush": "⚡ Pressa",
         "Burn": "🔥 Queimar",
@@ -3245,12 +3271,12 @@
         "rolledDiceReviving": "Rolou {value}! Revivendo aliados com {percent}% de HP!",
         "rolledDiceRevivingAlly": "Rolou {value}! Revivendo {name} com {percent}% de HP!",
         "allyRevivedWithMP": "{name} revivido com 2 PM!",
-        "twilightExtended": "Duração do Crepúsculo estendida! (+1 turno)",
+        "twilightExtended": "Duração do Eclipse estendida! (+1 turno)",
         "sunChargeGained": "Carga de Sol obtida!",
         "moonChargeGained": "Carga de Lua obtida!",
         "sunMoonChargeBonus": "+{bonus} de dano pelas cargas ({charges})!",
-        "twilightActivated": "Crepúsculo ativado ({charges} cargas)!",
-        "twilightDamageBonus": "+{bonus} de dano pelo Crepúsculo ({charges} cargas)!",
+        "twilightActivated": "Eclipse ativado ({charges} cargas)!",
+        "twilightDamageBonus": "+{bonus} de dano pelo Eclipse ({charges} cargas)!",
         "critExtraHit": "Crítico! Hit extra adicionado!",
         "randomHitCount": "Hits aleatórios: {hits}",
         "turnDelayed": "Turno atrasado em {positions} posições!",

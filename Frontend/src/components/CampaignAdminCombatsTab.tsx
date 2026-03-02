@@ -166,50 +166,39 @@ export default function CampaignAdminCombatsTab({ campaignInfo, players }: Campa
                     )}
 
                     {!loading && !error && battles.length > 0 && (
-                        <div className="mt-6 overflow-x-auto">
-                            <table className="table table-zebra w-full">
-                                <thead>
-                                    <tr>
-                                        <th className="text-left">{t("combatAdmin.combat")}</th>
-                                        <th className="text-left">{t("combatAdmin.status")}</th>
-                                        <th className="text-left w-1/6">{t("common.actions")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {battles.map((battle) => (
-                                        <tr key={battle.id}>
-                                            <td>#{battle.id}</td>
-                                            <td>{getBattleStatusLabel(battle.battleStatus)}</td>
-                                            <td className="flex gap-2">
-                                                {battle.id !== selectedBattleId ? (
-                                                    <button
-                                                        className="btn btn-xs btn-outline"
-                                                        onClick={() => setSelectedBattleId(battle.id)}
-                                                    >
-                                                        {t("combatAdmin.use")}
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        className="btn btn-xs btn-warning"
-                                                        onClick={() => setSelectedBattleId(null)}
-                                                    >
-                                                        {t("combatAdmin.pause")}
-                                                    </button>
-                                                )}
-
-                                                <button
-                                                    className="btn btn-xs btn-error"
-                                                    onClick={() => setConfirmId(battle.id)}
-                                                    disabled={deletingId === battle.id}
-                                                >
-                                                    {t("combatAdmin.delete")}
-                                                </button>
-                                            </td>
-
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <div className="mt-4 flex flex-col divide-y divide-base-300">
+                            {battles.map((battle) => (
+                                <div key={battle.id} className="flex items-center gap-3 py-3 px-1">
+                                    <div className="flex flex-col min-w-0 flex-1">
+                                        <span className="font-semibold text-sm">#{battle.id}</span>
+                                        <span className="text-xs opacity-60">{getBattleStatusLabel(battle.battleStatus)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        {battle.id !== selectedBattleId ? (
+                                            <button
+                                                className="btn btn-xs btn-outline"
+                                                onClick={() => setSelectedBattleId(battle.id)}
+                                            >
+                                                {t("combatAdmin.use")}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="btn btn-xs btn-warning"
+                                                onClick={() => setSelectedBattleId(null)}
+                                            >
+                                                {t("combatAdmin.pause")}
+                                            </button>
+                                        )}
+                                        <button
+                                            className="btn btn-xs btn-error"
+                                            onClick={() => setConfirmId(battle.id)}
+                                            disabled={deletingId === battle.id}
+                                        >
+                                            {t("combatAdmin.delete")}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
 
