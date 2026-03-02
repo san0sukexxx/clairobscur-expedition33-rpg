@@ -2,11 +2,15 @@ import React from "react";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
 import { type GetPlayerResponse } from "../api/APIPlayer"
-import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown } from "react-icons/fa"
+import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
 import { FaArrowsDownToLine } from "react-icons/fa6";
 import { getCharacterLabelById } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
+import { getAbilityModifier } from "../utils/AttackCalculator"
+import { getElementName, ELEMENT_EMOTE } from "../utils/ElementUtils"
+import { dispatchRoll } from "../utils/rollDispatcher"
+import { diceTotal } from "../utils/DiceCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils"
 import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType } from "../api/ResponseModel"
@@ -230,6 +234,7 @@ export default function CombatAdmin({
     const [effectsModalCharId, setEffectsModalCharId] = useState<number | null>(null);
     const [effectsModalStatuses, setEffectsModalStatuses] = useState<StatusResponse[]>([]);
     const [expandedAdminStatus, setExpandedAdminStatus] = useState<string | null>(null);
+    const [expandedNpcRowId, setExpandedNpcRowId] = useState<number | null>(null);
 
     const lastReloadTimeRef = useRef<number>(0)
     const isReloadingRef = useRef<boolean>(false)
@@ -1023,15 +1028,32 @@ export default function CombatAdmin({
                                 return (
                                     <div
                                         key={m.rowId}
-                                        className={`py-2 space-y-1 min-w-0 ${isRowSelectable ? "target-glow cursor-pointer" : ""}`}
+                                        className={`py-3 space-y-1 min-w-0 ${isRowSelectable ? "target-glow cursor-pointer" : ""}`}
                                         onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
                                     >
                                         {/* Linha 1: Avatar + Nome + ID + Ready + Remover */}
                                         <div className="flex items-center gap-2 flex-wrap min-w-0">
                                             {renderAvatarCell(m)}
-                                            <span className={`font-semibold text-sm truncate ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}>
-                                                {m.name}
-                                            </span>
+                                            {m.type === "npc" ? (
+                                                <span
+                                                    className={`font-semibold text-sm truncate cursor-pointer hover:underline flex items-center gap-1 ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}
+                                                    onClick={(e) => {
+                                                        if (!isRowSelectable) {
+                                                            e.stopPropagation();
+                                                            setExpandedNpcRowId(prev => prev === m.rowId! ? null : m.rowId!);
+                                                        }
+                                                    }}
+                                                >
+                                                    {m.name}
+                                                    {expandedNpcRowId === m.rowId
+                                                        ? <FaChevronUp className="w-2.5 h-2.5 shrink-0" />
+                                                        : <FaChevronDown className="w-2.5 h-2.5 shrink-0" />}
+                                                </span>
+                                            ) : (
+                                                <span className={`font-semibold text-sm truncate ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}>
+                                                    {m.name}
+                                                </span>
+                                            )}
                                             {m.currentHp === 0 && (
                                                 <FaSkull className="text-red-600 w-3.5 h-3.5 shrink-0" title={t("combatAdmin.labels.dead")} />
                                             )}
@@ -1050,7 +1072,7 @@ export default function CombatAdmin({
                                             )}
                                         </div>
 
-                                        {/* Linha 2: HP bar + MP bar */}
+                                        {/* Linha 2: HP bar + MP bar + AC (NPC) */}
                                         <div className="flex gap-3 items-center">
                                             <div className="flex items-center gap-1 flex-1 min-w-0">
                                                 <span className="text-[10px] font-mono opacity-70 shrink-0">HP {m.currentHp}/{m.maxHp}</span>
@@ -1091,6 +1113,18 @@ export default function CombatAdmin({
                                             ) : (
                                                 <div className="flex-1" />
                                             )}
+
+                                            {m.type === "npc" && (() => {
+                                                const npcAc = getNpcById(m.characterId ?? "");
+                                                if (!npcAc) return null;
+                                                const dexMod = getAbilityModifier(npcAc.dexterity);
+                                                const ac = npcAc.armorClass ?? (10 + dexMod);
+                                                return (
+                                                    <span className="badge badge-sm badge-outline font-mono shrink-0" title={t("combatAdmin.npcDetails.armorClass")}>
+                                                        {t("combatAdmin.npcDetails.armorClass")} {ac}
+                                                    </span>
+                                                );
+                                            })()}
                                         </div>
 
                                         {/* Linha 3: Efeitos/Status */}
@@ -1133,6 +1167,172 @@ export default function CombatAdmin({
                                                 {t(`battle.statusDescriptions.${expandedAdminStatus.split("-").slice(1).join("-")}`) || t("battle.statusDescriptions.default")}
                                             </p>
                                         )}
+
+                                        {/* NPC Stat Block colapsável */}
+                                        {expandedNpcRowId === m.rowId && m.type === "npc" && (() => {
+                                            const npc = getNpcById(m.characterId ?? "");
+                                            if (!npc) return null;
+                                            const strMod = getAbilityModifier(npc.strength);
+                                            const dexMod = getAbilityModifier(npc.dexterity);
+                                            const conMod = getAbilityModifier(npc.constitution);
+                                            const intMod = getAbilityModifier(npc.intelligence);
+                                            const wisMod = getAbilityModifier(npc.wisdom);
+                                            const chaMod = getAbilityModifier(npc.charisma);
+
+                                            const abilities = [
+                                                { key: "str", label: t("combatAdmin.npcDetails.str"), score: npc.strength, mod: strMod },
+                                                { key: "dex", label: t("combatAdmin.npcDetails.dex"), score: npc.dexterity, mod: dexMod },
+                                                { key: "con", label: t("combatAdmin.npcDetails.con"), score: npc.constitution, mod: conMod },
+                                                { key: "int", label: t("combatAdmin.npcDetails.int"), score: npc.intelligence, mod: intMod },
+                                                { key: "wis", label: t("combatAdmin.npcDetails.wis"), score: npc.wisdom, mod: wisMod },
+                                                { key: "cha", label: t("combatAdmin.npcDetails.cha"), score: npc.charisma, mod: chaMod },
+                                            ];
+
+                                            const rollAbility = (abilityLabel: string, mod: number) => {
+                                                if (!diceBoardRef.current) return;
+                                                if (timeoutDiceBoardRef.current != null) {
+                                                    clearTimeout(timeoutDiceBoardRef.current);
+                                                    timeoutDiceBoardRef.current = null;
+                                                }
+                                                const diceCommand = `1d20`;
+                                                diceBoardRef.current.roll([diceCommand], (result) => {
+                                                    const rawTotal = diceTotal(result);
+                                                    const diceValues: number[] = [];
+                                                    for (const group of result) {
+                                                        if (Array.isArray(group.rolls)) {
+                                                            for (const roll of group.rolls) diceValues.push(roll.value);
+                                                        }
+                                                    }
+                                                    dispatchRoll({
+                                                        label: `${npc.name} - ${abilityLabel}`,
+                                                        diceRolled: rawTotal,
+                                                        modifier: mod,
+                                                        total: rawTotal + mod,
+                                                        diceCommand: `1d20${mod >= 0 ? "+" : ""}${mod}`,
+                                                        diceValues,
+                                                    });
+                                                    if (timeoutDiceBoardRef.current != null) {
+                                                        clearTimeout(timeoutDiceBoardRef.current);
+                                                    }
+                                                    timeoutDiceBoardRef.current = window.setTimeout(() => {
+                                                        diceBoardRef.current?.hideBoard();
+                                                        timeoutDiceBoardRef.current = null;
+                                                    }, 5000);
+                                                });
+                                            };
+
+                                            const hasElementalInfo = npc.weakTo || npc.resistentTo || npc.imuneTo || npc.absorbElement;
+                                            const hasDndExtras = (npc.damageVulnerabilities?.length ?? 0) > 0 || (npc.damageImmunities?.length ?? 0) > 0 || (npc.conditionImmunities?.length ?? 0) > 0;
+                                            const hasChallenge = npc.challengeRating || npc.proficiencyBonus;
+                                            const hasProperties = npc.isFlying || npc.playFirst || npc.freeShotWeakPoints || npc.initiativeBonus || npc.maxLifeBonus;
+
+                                            return (
+                                                <div className="bg-base-300/50 rounded-lg p-3 space-y-3 text-sm" onClick={(e) => e.stopPropagation()}>
+                                                    {/* Ability Scores — 3 colunas, 2 linhas */}
+                                                    <div className="grid grid-cols-3 gap-2 text-center">
+                                                        {abilities.map(a => (
+                                                            <div key={a.key} className="flex flex-col items-center gap-0.5">
+                                                                <span className="font-bold text-xs opacity-70">{a.label}</span>
+                                                                <span className="text-sm">{a.score}</span>
+                                                                <button
+                                                                    className="btn btn-sm btn-neutral font-mono px-3 min-h-0 h-7"
+                                                                    onClick={() => rollAbility(a.label, a.mod)}
+                                                                >
+                                                                    {a.mod >= 0 ? `+${a.mod}` : a.mod}
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Elemental Affinities */}
+                                                    {hasElementalInfo && (
+                                                        <div className="flex flex-col gap-0.5 text-xs">
+                                                            {npc.weakTo && (
+                                                                <span>{t("combatAdmin.npcDetails.vulnerability")}: {ELEMENT_EMOTE[npc.weakTo] ?? ""} {getElementName(npc.weakTo)}</span>
+                                                            )}
+                                                            {npc.resistentTo && (
+                                                                <span>{t("combatAdmin.npcDetails.resistance")}: {ELEMENT_EMOTE[npc.resistentTo] ?? ""} {getElementName(npc.resistentTo)}</span>
+                                                            )}
+                                                            {npc.imuneTo && (
+                                                                <span>{t("combatAdmin.npcDetails.immunity")}: {ELEMENT_EMOTE[npc.imuneTo] ?? ""} {getElementName(npc.imuneTo)}</span>
+                                                            )}
+                                                            {npc.absorbElement && (
+                                                                <span>{t("combatAdmin.npcDetails.absorb")}: {ELEMENT_EMOTE[npc.absorbElement] ?? ""} {getElementName(npc.absorbElement)}</span>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* D&D Extras */}
+                                                    {hasDndExtras && (
+                                                        <div className="flex flex-col gap-0.5 text-xs">
+                                                            {(npc.damageVulnerabilities?.length ?? 0) > 0 && (
+                                                                <span><strong>{t("combatAdmin.npcDetails.damageVulnerabilities")}:</strong> {npc.damageVulnerabilities!.join(", ")}</span>
+                                                            )}
+                                                            {(npc.damageImmunities?.length ?? 0) > 0 && (
+                                                                <span><strong>{t("combatAdmin.npcDetails.damageImmunities")}:</strong> {npc.damageImmunities!.join(", ")}</span>
+                                                            )}
+                                                            {(npc.conditionImmunities?.length ?? 0) > 0 && (
+                                                                <span><strong>{t("combatAdmin.npcDetails.conditionImmunities")}:</strong> {npc.conditionImmunities!.map(s => getStatusLabel(s)).join(", ")}</span>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Challenge / Proficiency */}
+                                                    {hasChallenge && (
+                                                        <div className="flex gap-4 text-xs">
+                                                            {npc.challengeRating && (
+                                                                <span><strong>{t("combatAdmin.npcDetails.challenge")}:</strong> {npc.challengeRating}</span>
+                                                            )}
+                                                            {npc.proficiencyBonus && (
+                                                                <span><strong>{t("combatAdmin.npcDetails.proficiencyBonus")}:</strong> +{npc.proficiencyBonus}</span>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Actions */}
+                                                    {(npc.attackList?.length ?? 0) > 0 && (
+                                                        <div className="flex flex-col gap-1 text-xs">
+                                                            <span className="font-bold text-sm">{t("combatAdmin.npcDetails.actions")}</span>
+                                                            {npc.attackList!.map((atk, idx) => (
+                                                                <div key={idx} className="flex flex-wrap items-center gap-1">
+                                                                    <span className="font-semibold">{atk.name || getAttackTypeLabel(atk.type)}</span>
+                                                                    <span className="opacity-70">({getAttackTypeLabel(atk.type)})</span>
+                                                                    {atk.additionalDamage != null && atk.additionalDamage > 0 && (
+                                                                        <span className="badge badge-xs badge-error">+{atk.additionalDamage} {t("combatAdmin.npcDetails.damage")}</span>
+                                                                    )}
+                                                                    {atk.additionalDices != null && atk.additionalDices > 0 && (
+                                                                        <span className="badge badge-xs badge-info">+{atk.additionalDices}d</span>
+                                                                    )}
+                                                                    {atk.quantity != null && atk.quantity > 1 && (
+                                                                        <span className="badge badge-xs badge-warning">x{atk.quantity}</span>
+                                                                    )}
+                                                                    {atk.statusList?.map((s, si) => (
+                                                                        <span key={si} className="badge badge-xs badge-ghost">{getStatusLabel(s.type)}</span>
+                                                                    ))}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Properties */}
+                                                    {hasProperties && (
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {npc.isFlying && <span className="badge badge-xs badge-info">{t("combatAdmin.npcDetails.flying")}</span>}
+                                                            {npc.playFirst && <span className="badge badge-xs badge-warning">{t("combatAdmin.npcDetails.playFirst")}</span>}
+                                                            {npc.freeShotWeakPoints != null && npc.freeShotWeakPoints > 0 && (
+                                                                <span className="badge badge-xs badge-success">{t("combatAdmin.npcDetails.weakPoints")}: {npc.freeShotWeakPoints}</span>
+                                                            )}
+                                                            {npc.initiativeBonus != null && npc.initiativeBonus !== 0 && (
+                                                                <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.initBonus")}: {npc.initiativeBonus >= 0 ? "+" : ""}{npc.initiativeBonus}</span>
+                                                            )}
+                                                            {npc.maxLifeBonus != null && npc.maxLifeBonus !== 0 && (
+                                                                <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.maxHpBonus")}: {npc.maxLifeBonus >= 0 ? "+" : ""}{npc.maxLifeBonus}</span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })()}
 
                                         {/* Sub-linhas de ataque */}
                                         {entityAttacks.map(a => {

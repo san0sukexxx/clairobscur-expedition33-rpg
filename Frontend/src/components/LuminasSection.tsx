@@ -485,7 +485,8 @@ function PlusDiamond({
 
     return (
         <div
-            className={`relative ${wrapperSize} rotate-45 border border-base-300 rounded-sm grid place-items-center bg-base-300 ml-2`}
+            className={`relative ${wrapperSize} rotate-45 border border-base-300 rounded-sm grid place-items-center ml-2`}
+            style={{ backgroundColor: "#1a1a2e" }}
             aria-label={name || t("luminas.addLumina")}
         >
             {maskBase ? (

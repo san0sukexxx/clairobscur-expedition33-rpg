@@ -14,10 +14,14 @@ import { useToast } from "../components/Toast";
 
 export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
-    const [activeTab, setActiveTab] = useState<"players" | "combats" | "logs">("players");
-    const alreadyRan = useRef(false);
-
     const { campaign } = useParams<{ campaign?: string }>();
+    const storageKey = `campaign-admin-tab-${campaign}`;
+    const [activeTab, setActiveTab] = useState<"players" | "combats" | "logs">(() => {
+        const saved = localStorage.getItem(storageKey);
+        if (saved === "players" || saved === "combats" || saved === "logs") return saved;
+        return "players";
+    });
+    const alreadyRan = useRef(false);
     const campaignId = campaign ? parseInt(campaign, 10) : null;
     const navigate = useNavigate();
     const { showToast } = useToast();
@@ -177,7 +181,7 @@ export default function CampaignAdmin() {
                         <button
                             role="tab"
                             className={`tab text-sm px-4 ${activeTab === "players" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => setActiveTab("players")}
+                            onClick={() => { setActiveTab("players"); localStorage.setItem(storageKey, "players"); }}
                         >
                             <span className="flex items-center gap-2">
                                 <FaUserFriends />
@@ -188,7 +192,7 @@ export default function CampaignAdmin() {
                         <button
                             role="tab"
                             className={`tab text-sm px-4 ${activeTab === "combats" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => setActiveTab("combats")}
+                            onClick={() => { setActiveTab("combats"); localStorage.setItem(storageKey, "combats"); }}
                         >
                             <span className="flex items-center gap-2">
                                 <FaShieldAlt />
@@ -199,7 +203,7 @@ export default function CampaignAdmin() {
                         <button
                             role="tab"
                             className={`tab text-sm px-4 ${activeTab === "logs" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => setActiveTab("logs")}
+                            onClick={() => { setActiveTab("logs"); localStorage.setItem(storageKey, "logs"); }}
                         >
                             <span className="flex items-center gap-2">
                                 <FaScroll />
