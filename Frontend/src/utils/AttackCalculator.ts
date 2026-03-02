@@ -1,6 +1,6 @@
 import type { AbilityScores, GetPlayerResponse } from "../api/APIPlayer";
 import type { WeaponInfo } from "../api/ResponseModel";
-import { calculateWeaponPlusPower } from "./WeaponCalculator";
+import { calculateWeaponPlusPower, calculateWeaponProficiencyBonus } from "./WeaponCalculator";
 
 /** D&D 5e ability modifier: floor((score - 10) / 2) */
 export function getAbilityModifier(score: number): number {
@@ -56,7 +56,9 @@ export function calculateAttackBonus(player: GetPlayerResponse, weaponInfo: Weap
   const abilityScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
   const abilityMod = getAbilityModifier(abilityScore);
   const level = player.playerSheet?.totalPoints ?? 1;
-  const proficiency = calculateProficiencyBonus(level);
+  const baseProficiency = calculateProficiencyBonus(level);
+  const weaponProficiency = calculateWeaponProficiencyBonus(weaponInfo);
+  const proficiency = baseProficiency + weaponProficiency;
   const weaponPower = getWeaponPowerModifier(weaponInfo);
 
   return {

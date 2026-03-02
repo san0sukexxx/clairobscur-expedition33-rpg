@@ -4,7 +4,7 @@ import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { type WeaponResponse } from "../api/ResponseModel";
 import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
-import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponInitiativeBonus, displayWeaponDexterityBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
+import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponProficiencyBonus, displayWeaponDexterityBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
 import { calculateMaxHP } from "../utils/PlayerCalculator";
@@ -560,9 +560,9 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                 {activeWeapon.scaling.luck && (
                   <>
                     <div>
-                      <span className="block text-xs uppercase opacity-70">{t("weapons.initiativeBonus")}</span>
+                      <span className="block text-xs uppercase opacity-70">{t("weapons.proficiencyBonus")}</span>
                       <span className="block text-2xl font-bold flex items-center justify-center gap-1">
-                        {displayWeaponInitiativeBonus(activeWeapon.scaling.luck, activeWeapon.level)}
+                        {displayWeaponProficiencyBonus(activeWeapon.scaling.luck, activeWeapon.level)}
                       </span>
                     </div>
                   </>
@@ -702,9 +702,9 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                           {weaponDetails.attributes.scaling.luck && (
                             <>
                               <div>
-                                <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{t("weapons.initiativeBonus")}</div>
+                                <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{t("weapons.proficiencyBonus")}</div>
                                 <span className="block text-2xl font-bold flex items-center justify-center gap-1">
-                                  {displayWeaponInitiativeBonus(weaponDetails.attributes.scaling.luck, w.level)}
+                                  {displayWeaponProficiencyBonus(weaponDetails.attributes.scaling.luck, w.level)}
                                 </span>
                               </div>
                             </>

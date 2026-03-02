@@ -1,5 +1,5 @@
 import { type GetPlayerResponse } from "../api/APIPlayer";
-import { calculateWeaponPlusPower, calculateWeaponCounterMaxPower, calculateWeaponInitiativeBonus } from "./WeaponCalculator";
+import { calculateWeaponPlusPower, calculateWeaponCounterMaxPower } from "./WeaponCalculator";
 import { type WeaponDTO } from "../types/WeaponDTO";
 import { type BattleCharacterInfo, type DefenseOption, type StatusResponse, type StatusType, type WeaponInfo, type Stance } from "../api/ResponseModel";
 import {
@@ -273,9 +273,8 @@ export function initiativeTotal(player: GetPlayerResponse, diceResult: any, weap
 
     const pictosSpeedBonus = playerPictosTotalSpeed(player);
     const weaponDexterityBonus = calculateWeaponDexterityBonus(weaponInfo ?? null);
-    const weaponInitiativeBonus = calculateWeaponInitiativeBonus(weaponInfo ?? null);
 
-    return total + Math.max(0, playerInitiative) + pictosSpeedBonus + weaponDexterityBonus + weaponInitiativeBonus;
+    return total + Math.max(0, playerInitiative) + pictosSpeedBonus + weaponDexterityBonus;
 }
 
 export function playerHasStatus(player: GetPlayerResponse | null, status: StatusType): boolean {
