@@ -6,6 +6,9 @@ import { diceTotal } from "../utils/DiceCalculator";
 import { t } from "../i18n";
 import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
+import type { WeaponInfo } from "../api/ResponseModel";
+import { calculateWeaponProficiencyBonus } from "../utils/WeaponCalculator";
+import { calculateProficiencyBonus } from "../utils/AttackCalculator";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -25,8 +28,6 @@ function calcMod(score: number) {
 function modStr(mod: number) {
     return mod >= 0 ? `+${mod}` : String(mod);
 }
-
-const PROFICIENCY_BONUS = 2;
 
 /* ── Saving throw row ── */
 function SavingThrowRow({ label, mod, proficient, onRoll }: { label: string; mod: number; proficient: boolean; onRoll: () => void }) {
@@ -80,13 +81,16 @@ function SavingThrowRow({ label, mod, proficient, onRoll }: { label: string; mod
 
 interface Props {
     player: GetPlayerResponse | null;
+    weaponInfo: WeaponInfo;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
-export function SavingThrowsSection({ player, diceBoardRef, timeoutDiceBoardRef }: Props) {
+export function SavingThrowsSection({ player, weaponInfo, diceBoardRef, timeoutDiceBoardRef }: Props) {
     const scores = player?.playerSheet?.abilityScores ?? {};
     const proficiencies = player?.playerSheet?.savingThrowProficiencies ?? [];
+    const level = player?.playerSheet?.totalPoints ?? 1;
+    const proficiencyBonus = calculateProficiencyBonus(level) + calculateWeaponProficiencyBonus(weaponInfo);
 
     function roll(key: AbilityKey, label: string, mod: number) {
         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
@@ -117,7 +121,7 @@ export function SavingThrowsSection({ player, diceBoardRef, timeoutDiceBoardRef 
                 {SAVING_THROWS.map(({ key, labelKey }) => {
                     const score = scores[key] ?? 10;
                     const proficient = proficiencies.includes(key);
-                    const mod = calcMod(score) + (proficient ? PROFICIENCY_BONUS : 0);
+                    const mod = calcMod(score) + (proficient ? proficiencyBonus : 0);
                     const label = t(labelKey);
                     return (
                         <SavingThrowRow

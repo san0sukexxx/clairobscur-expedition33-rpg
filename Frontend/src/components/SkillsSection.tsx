@@ -9,6 +9,8 @@ import type { DiceBoardRef } from "./DiceBoard";
 import { diceTotal } from "../utils/DiceCalculator";
 import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
+import type { WeaponInfo } from "../api/ResponseModel";
+import { calculateWeaponProficiencyBonus } from "../utils/WeaponCalculator";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -91,16 +93,17 @@ function parseSkillsMap(raw?: string): SkillsMap {
 interface Props {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
+    weaponInfo: WeaponInfo;
     isAdmin: boolean;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
-export default function SkillsSection({ player, setPlayer, isAdmin, diceBoardRef, timeoutDiceBoardRef }: Props) {
+export default function SkillsSection({ player, setPlayer, weaponInfo, isAdmin, diceBoardRef, timeoutDiceBoardRef }: Props) {
     const { showToast } = useToast();
     const scores   = player?.playerSheet?.abilityScores ?? {};
     const totalPts = player?.playerSheet?.totalPoints ?? 1;
-    const pb       = profBonus(totalPts);
+    const pb       = profBonus(totalPts) + calculateWeaponProficiencyBonus(weaponInfo);
     const skillsMap = parseSkillsMap(player?.playerSheet?.skillsData);
 
     const save = useCallback(async (nextMap: SkillsMap) => {

@@ -7,7 +7,6 @@ import type { DiceBoardRef } from "./DiceBoard";
 import { useWeaponInfo } from "../hooks/player/useWeaponInfo";
 import { calculateAttackBonus, calculateDamageBonus, getAbilityModifier } from "../utils/AttackCalculator";
 import { getWeaponDamageDice, calculateWeaponDefenseBonus } from "../utils/WeaponCalculator";
-import { APIGameLog } from "../api/APIGameLog";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
@@ -266,36 +265,19 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                             <div className="flex items-start gap-3">
                                 <div className="flex flex-col items-center gap-1 shrink-0">
                                     <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.defend")}</span>
-                                    <button
-                                    onClick={() => {
-                                        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
-                                            const roll = diceTotal(result);
-                                            const label = t("characterSheet.armorClass");
-                                            dispatchRoll({ label, diceRolled: roll, modifier: 0, total: roll, diceCommand: "1d20" });
-                                            if (player?.id) {
-                                                APIGameLog.create(player.id, {
-                                                    rollType: "abilityCheck",
-                                                    abilityKey: "armorClass",
-                                                    diceRolled: roll,
-                                                    modifier: 0,
-                                                    total: roll,
-                                                    diceCommand: "1d20",
-                                                }).catch(() => {});
-                                            }
-                                        });
-                                    }}
-                                    className="relative flex flex-col items-center justify-start pt-1.5 bg-base-200 w-14 h-[4.2rem] text-base-content shrink-0 hover:brightness-110 active:scale-95 transition cursor-pointer"
-                                    style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%)" }}
-                                >
-                                    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 120" preserveAspectRatio="none" fill="none">
-                                        <path d="M1.5 1.5 L98.5 1.5 L98.5 84 L50 118.5 L1.5 84 Z"
-                                            stroke="currentColor" strokeOpacity="0.45" strokeWidth="2" />
-                                        <path d="M5 5 L95 5 L95 81 L50 113 L5 81 Z"
-                                            stroke="currentColor" strokeOpacity="0.2" strokeWidth="0.75" />
-                                    </svg>
-                                    <span className="relative z-10 text-[8px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassTop")}</span>
-                                    <span className="relative z-10 text-2xl font-black leading-tight">{armorClass}</span>
-                                    </button>
+                                    <div
+                                        className="relative flex flex-col items-center justify-start pt-1.5 bg-base-200 w-14 h-[4.2rem] text-base-content shrink-0"
+                                        style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%)" }}
+                                    >
+                                        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 120" preserveAspectRatio="none" fill="none">
+                                            <path d="M1.5 1.5 L98.5 1.5 L98.5 84 L50 118.5 L1.5 84 Z"
+                                                stroke="currentColor" strokeOpacity="0.45" strokeWidth="2" />
+                                            <path d="M5 5 L95 5 L95 81 L50 113 L5 81 Z"
+                                                stroke="currentColor" strokeOpacity="0.2" strokeWidth="0.75" />
+                                        </svg>
+                                        <span className="relative z-10 text-[8px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassTop")}</span>
+                                        <span className="relative z-10 text-2xl font-black leading-tight">{armorClass}</span>
+                                    </div>
                                 </div>
                                 <div className="text-xs opacity-70 flex-1">
                                     <div className={`space-y-1.5 ${defenseExpanded ? "" : "line-clamp-4"}`}>

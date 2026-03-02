@@ -191,6 +191,7 @@ export function PlayerContent({
                 <>
                   <SavingThrowsSection
                     player={player}
+                    weaponInfo={weaponInfo}
                     diceBoardRef={diceBoardRef}
                     timeoutDiceBoardRef={timeoutDiceBoardRef}
                   />
@@ -274,6 +275,7 @@ export function PlayerContent({
           <SkillsSection
             player={player}
             setPlayer={setPlayer}
+            weaponInfo={weaponInfo}
             isAdmin={isAdmin}
             diceBoardRef={diceBoardRef}
             timeoutDiceBoardRef={timeoutDiceBoardRef}

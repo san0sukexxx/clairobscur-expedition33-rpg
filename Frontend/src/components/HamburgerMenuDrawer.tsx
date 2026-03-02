@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { MdMenu, MdClose, MdSettings } from "react-icons/md";
+import { FiLogOut } from "react-icons/fi";
 import { PiNoteFill } from "react-icons/pi";
 import { FaUser, FaClipboardList, FaHistory } from "react-icons/fa";
 import { LuSwords, LuSword } from "react-icons/lu";
@@ -13,6 +14,7 @@ interface HamburgerMenuDrawerProps {
   tab: PlayerTab;
   setTab: (tab: PlayerTab) => void;
   isExecutingSkill: boolean;
+  onExit?: () => void;
 }
 
 interface TabConfig {
@@ -34,7 +36,7 @@ const TABS: TabConfig[] = [
   { id: "gamelog",    icon: <FaHistory className="text-xl" />,       labelKey: "playerPage.navigation.tabs.gamelog"        },
 ];
 
-export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill }: HamburgerMenuDrawerProps) {
+export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill, onExit }: HamburgerMenuDrawerProps) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -108,8 +110,8 @@ export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill }: Hamburger
           ))}
         </nav>
 
-        {/* Settings link — bottom of drawer */}
-        <div className="p-3 border-t border-base-300 shrink-0">
+        {/* Settings & Exit — bottom of drawer */}
+        <div className="p-3 border-t border-base-300 shrink-0 flex flex-col gap-1">
           <button
             onClick={() => { setOpen(false); navigate("/settings"); }}
             className="flex items-center gap-4 px-4 py-3 rounded-lg w-full text-left hover:bg-base-200 text-base-content/80 transition"
@@ -119,6 +121,20 @@ export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill }: Hamburger
               {t("playerPage.navigation.tabs.settings")}
             </span>
           </button>
+          {onExit && (
+            <button
+              onClick={() => { setOpen(false); onExit(); }}
+              disabled={isExecutingSkill}
+              className={`flex items-center gap-4 px-4 py-3 rounded-lg w-full text-left hover:bg-base-200 text-base-content/80 transition ${
+                isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <FiLogOut className="text-xl" />
+              <span className="text-sm font-semibold tracking-wide">
+                {t("navigation.logout")}
+              </span>
+            </button>
+          )}
         </div>
           </div>
         </>,
