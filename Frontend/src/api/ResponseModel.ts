@@ -1,7 +1,7 @@
 import type { WeaponDTO } from "../types/WeaponDTO";
 
 export type StatusType =
-    "Hastened" | "Empowered" | "Protected" | "Regeneration" |
+    "Hastened" | "Empowered" | "Regeneration" |
     "Unprotected" | "Slowed" | "Weakened" | "Cursed" |
     "Stunned" | "Confused" | "Frozen" | "Entangled" |
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
@@ -9,7 +9,7 @@ export type StatusType =
     "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Guardian" | "Foretell" | "Twilight" | "Powerless" |
     "Rush" | "Burn" | "Shield" | "Powerful" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
-    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "FortunesFury" | "Regen" | "Curse" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation";
+    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "FortunesFury" | "Regen" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation";
 
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent" | "absorb";

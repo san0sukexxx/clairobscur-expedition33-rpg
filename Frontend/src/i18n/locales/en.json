@@ -240,10 +240,6 @@
       "name": "Defense Riser Dodge",
       "description": "Successfully Dodging can apply Shell."
     },
-    "hazardous-choice": {
-      "name": "Hazardous Choice",
-      "description": "33% chance to skip own turn, but deal 50% more damage."
-    },
     "healing-death": {
       "name": "Healing Death",
       "description": "On death, the rest of the Expedition recover all Health."
@@ -279,10 +275,6 @@
     "burn-affinity": {
       "name": "Burn Affinity",
       "description": "25% increased damage on Burning targets."
-    },
-    "frozen-affinity": {
-      "name": "Frozen Affinity",
-      "description": "25% increased damage on Frozen targets."
     },
     "inverted-affinity": {
       "name": "Inverted Affinity",
@@ -543,10 +535,6 @@
     "stay-marked": {
       "name": "Stay Marked",
       "description": "50% chance to apply Mark when attacking a Marked target."
-    },
-    "charybde-to-scylla": {
-      "name": "Charybde To Scylla",
-      "description": "Apply Mark on Stun removed."
     },
     "burning-shots": {
       "name": "Burning Shots",
@@ -1854,8 +1842,8 @@
       "wisdom": "WISDOM",
       "charisma": "CHARISMA",
       "proficiencyBonus": "Proficiency Bonus",
-      "armorClassTop": "Class",
-      "armorClassBottom": "Armor",
+      "armorClassTop": "Armor",
+      "armorClassBottom": "Class",
       "armorClass": "Armor Class",
       "initiative": "Initiative",
       "hitPoints": "Hit Points",
@@ -1979,7 +1967,8 @@
       "defenseDescDodge": "Standard defense. Roll 1d20 against AC.",
       "defenseDescBlock": "Declare your intention to parry before defending. Failing to parry increases attack intensity by +1. A successful parry recovers 1 MP (1x per turn). Parrying all attacks in sequence grants a counter-attack (basic attack).",
       "defenseDescJump": "Only for attacks that allow jumping. Each successful defense grants a counter-attack. Failing increases attack intensity by +1.",
-      "defenseDescGradient": "Gradient attacks cannot be dodged, only parried. Same parry mechanics."
+      "defenseDescGradient": "Gradient attacks cannot be dodged, only parried. Same parry mechanics.",
+      "weaponPassives": "Weapon passives"
     },
     "combatAdmin": {
       "createCombat": "Create combat",
@@ -2476,7 +2465,7 @@
       },
       "sciel-all-set": {
         "name": "All Set",
-        "description": "Applies Protected, Empowered and Hastened to all allies."
+        "description": "Applies Shell, Empowered and Hastened to all allies."
       },
       "sciel-intervention": {
         "name": "Intervention",
@@ -2804,7 +2793,7 @@
       },
       "monoco-troubadour-trumpet": {
         "name": "Troubadour Trumpet",
-        "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Protected, Shielded, Regeneration or Hastened). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions.\nPrerequisite: Defeat and acquire the foot of a Troubadour enemy while Monoco is in the active group."
+        "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Shell, Shielded, Regeneration or Hastened). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions.\nPrerequisite: Defeat and acquire the foot of a Troubadour enemy while Monoco is in the active group."
       }
     },
     "specialAttackPicker": {
@@ -2997,14 +2986,13 @@
       "statusEffects": {
         "Hastened": "💨 Hastened",
         "Empowered": "💪 Empowered",
-        "Protected": "Protected",
         "Regeneration": "💚 Regeneration",
-        "Unprotected": "Unprotected",
+        "Unprotected": "🔓 Unprotected",
         "Slowed": "🐌 Slowed",
-        "Weakened": "Weakened",
+        "Weakened": "💧 Weakened",
         "Cursed": "💀 Cursed",
         "Stunned": "😵 Stunned",
-        "Confused": "Confused",
+        "Confused": "😵‍💫 Confused",
         "Frozen": "❄️ Frozen",
         "Entangled": "⛓️ Entangled",
         "Shielded": "🛡️ Shielded",
@@ -3019,38 +3007,38 @@
         "Typhoon": "🌀 Typhoon",
         "Silenced": "🔇 Silenced",
         "Dizzy": "💫 Dizzy",
-        "Fragile": "Fragile",
-        "Broken": "Broken",
+        "Fragile": "🪟 Fragile",
+        "Broken": "💥 Broken",
         "Fleeing": "🏃 Fleeing",
-        "FireVulnerability": "Fire Vulnerability",
-        "Guardian": "Guardian",
+        "FireVulnerability": "🔥 Fire Vulnerability",
+        "Guardian": "🛡️ Guardian",
         "Foretell": "🔮 Foretell",
         "Twilight": "🌕 Twilight",
-        "Powerless": "Powerless",
-        "Rush": "Rush",
+        "Powerless": "⬇️ Powerless",
+        "Rush": "⚡ Rush",
         "Burn": "🔥 Burn",
         "Shield": "🛡️ Shield",
         "Powerful": "💪 Powerful",
         "Shell": "🐚 Shell",
         "Slow": "🐌 Slow",
         "Freeze": "❄️ Freeze",
-        "GreaterRush": "Greater Rush",
-        "GreaterSlow": "Greater Slow",
-        "EnfeeblingMark": "Enfeebling Mark",
-        "DamageReduction": "Damage Reduction",
+        "GreaterRush": "⚡ Greater Rush",
+        "GreaterSlow": "🐌 Greater Slow",
+        "EnfeeblingMark": "🎯 Enfeebling Mark",
+        "DamageReduction": "🧱 Damage Reduction",
         "SuccessiveParry": "⚔️ Successive Parry",
         "Aureole": "✨ Aureole",
         "Vulnerable": "💔 Vulnerable",
         "FortunesFury": "🃏 Fortune's Fury",
         "Regen": "💚 Regeneration",
-        "Curse": "💀 Curse",
         "Earthquake": "🌍 Earthquake",
-        "freeShot": "Free Shot",
-        "jump": "Jump",
-        "gradient": "Gradient",
-        "invisibleBarrier": "Invisible Barrier",
-        "DamageEscalation": "Damage Escalation",
-        "Charging": "Charging"
+        "IntenseFlames": "🔥 Intense Flames",
+        "freeShot": "🎯 Free Shot",
+        "jump": "🦘 Jump",
+        "gradient": "🌈 Gradient",
+        "invisibleBarrier": "🧊 Invisible Barrier",
+        "DamageEscalation": "📈 Damage Escalation",
+        "Charging": "⚡ Charging"
       },
       "statusDescriptions": {
         "Frozen": "Cannot perform actions. Each 1d6 value reduces freezing by 1. Receiving an attack removes all freezing.",
@@ -3062,7 +3050,7 @@
         "Slowed": "Hinders dodge and jump.",
         "Empowered": "Improves your attack.",
         "Weakened": "Weakens your attack.",
-        "Protected": "Improves your defense when parrying.",
+        "Shell": "Improves your defense when parrying.",
         "Unprotected": "Hinders your defense when parrying.",
         "Regeneration": "Restores a percentage of your life each turn.",
         "Cursed": "Dies when the counter reaches zero.",
@@ -3101,8 +3089,8 @@
         "Vulnerable": "The character takes increased damage from all sources.",
         "FortunesFury": "Each attack deals +8 damage for 1 turn.",
         "Regen": "Regenerates health points over time.",
-        "Curse": "Curse that causes continuous negative effects.",
         "Earthquake": "Deals damage at the start of turn. Each stack deals 1d6 damage. If the character is fragile, suffers Break and takes 150% of the damage that caused the Break.",
+        "IntenseFlames": "Rolls Xd6 damage when resolved (X = current stacks). Increases by 2 stacks at end of turn. Does not expire. Removed from all enemies when the caster takes damage.",
         "freeShot": "Free aim shots taken this turn. Increases Follow-Up damage (up to 10 stacks).",
         "jump": "Ignores terrain or obstacles temporarily.",
         "gradient": "Special internal use effect.",

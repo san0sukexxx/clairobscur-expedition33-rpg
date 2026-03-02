@@ -42,7 +42,6 @@ export function getStatusLabel(status: StatusType): string {
     switch (status) {
         case "Hastened": return t("battle.statusEffects.Hastened");
         case "Empowered": return t("battle.statusEffects.Empowered");
-        case "Protected": return t("battle.statusEffects.Protected");
         case "Regeneration": return t("battle.statusEffects.Regeneration");
         case "Unprotected": return t("battle.statusEffects.Unprotected");
         case "Slowed": return t("battle.statusEffects.Slowed");
@@ -89,7 +88,6 @@ export function getStatusLabel(status: StatusType): string {
         case "Vulnerable": return t("battle.statusEffects.Vulnerable");
         case "FortunesFury": return t("battle.statusEffects.FortunesFury");
         case "Regen": return t("battle.statusEffects.Regen");
-        case "Curse": return t("battle.statusEffects.Curse");
         case "Earthquake": return t("battle.statusEffects.Earthquake");
         case "free-shot": return t("battle.statusEffects.freeShot");
         case "jump": return t("battle.statusEffects.jump");
@@ -107,7 +105,7 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Slowed",
         "Empowered",
         "Weakened",
-        "Protected",
+        "Shell",
         "Unprotected",
         "Cursed",
         "Stunned",

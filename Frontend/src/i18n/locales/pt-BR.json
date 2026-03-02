@@ -82,47 +82,47 @@
     },
     "auto-powerful": {
       "name": "Poder Automático",
-      "description": "Aplica Powerful por 3 turnos no início da batalha."
+      "description": "Aplica Poderoso por 3 turnos no início da batalha."
     },
     "auto-shell": {
       "name": "Escudo Automático",
-      "description": "Aplica Shell por 3 turnos no início da batalha."
+      "description": "Aplica Protegido por 3 turnos no início da batalha."
     },
     "auto-rush": {
       "name": "Ímpeto Automático",
-      "description": "Aplica Rush por 3 turnos no início da batalha."
+      "description": "Aplica Ímpeto por 3 turnos no início da batalha."
     },
     "auto-regen": {
       "name": "Regeneração Automática",
-      "description": "Aplica Regen por 3 turnos no início da batalha."
+      "description": "Aplica Regeneração por 3 turnos no início da batalha."
     },
     "anti-burn": {
       "name": "Anti-Queimadura",
-      "description": "Imune a Burn."
+      "description": "Imune a Queimadura."
     },
     "anti-freeze": {
       "name": "Anti-Congelamento",
-      "description": "Imune a Freeze."
+      "description": "Imune a Congelamento."
     },
     "anti-stun": {
       "name": "Anti-Atordoamento",
-      "description": "Imune a Stun."
+      "description": "Imune a Atordoamento."
     },
     "anti-inverted": {
       "name": "Anti-Inversão",
-      "description": "Não pode ser Inverted."
+      "description": "Não pode ser Invertido."
     },
     "anti-curse": {
       "name": "Anti-Maldição",
-      "description": "Não pode ser Cursed."
+      "description": "Não pode ser Amaldiçoado."
     },
     "anti-bound": {
       "name": "Anti-Aprisionamento",
-      "description": "Não pode ser Bound."
+      "description": "Não pode ser Preso."
     },
     "anti-dizzy": {
       "name": "Anti-Tontura",
-      "description": "Não pode ser Dizzy."
+      "description": "Não pode ser Tonto."
     },
     "physical-coat": {
       "name": "Proteção Física",
@@ -194,11 +194,11 @@
     },
     "rejuvenating-revive": {
       "name": "Reviver Rejuvenescedor",
-      "description": "Aplica Regen por 3 turnos ao ser revivido."
+      "description": "Aplica Regeneração por 3 turnos ao ser revivido."
     },
     "revive-with-shell": {
       "name": "Reviver com Escudo",
-      "description": "Aplica Shell por 3 turnos ao reviver."
+      "description": "Aplica Protegido por 3 turnos ao reviver."
     },
     "solidifying": {
       "name": "Solidificação",
@@ -206,11 +206,11 @@
     },
     "powerful-revive": {
       "name": "Reviver Poderoso",
-      "description": "Aplica Powerful por 3 turnos ao ser revivido."
+      "description": "Aplica Poderoso por 3 turnos ao ser revivido."
     },
     "revive-with-rush": {
       "name": "Reviver com Ímpeto",
-      "description": "Aplica Rush por 3 turnos ao reviver."
+      "description": "Aplica Ímpeto por 3 turnos ao reviver."
     },
     "the-one": {
       "name": "O Único",
@@ -222,7 +222,7 @@
     },
     "frozen-shot": {
       "name": "Disparo Congelante",
-      "description": "Disparos de Mira Livre podem aplicar Freeze."
+      "description": "Disparos de Mira Livre podem aplicar Congelamento."
     },
     "piercing-shot": {
       "name": "Disparo Perfurante",
@@ -230,7 +230,7 @@
     },
     "burning-dodge": {
       "name": "Esquiva Ardente",
-      "description": "Esquivas bem-sucedidas podem aplicar Burn no atacante."
+      "description": "Esquivas bem-sucedidas podem aplicar Queimadura no atacante."
     },
     "defense-breaker-dodge": {
       "name": "Esquiva Quebradora de Defesa",
@@ -238,11 +238,7 @@
     },
     "defense-riser-dodge": {
       "name": "Esquiva Elevadora de Defesa",
-      "description": "Esquivar com sucesso pode aplicar Shell."
-    },
-    "hazardous-choice": {
-      "name": "Escolha Perigosa",
-      "description": "33% de chance de pular o próprio turno, mas causa 50% mais dano."
+      "description": "Esquivar com sucesso pode aplicar Protegido."
     },
     "healing-death": {
       "name": "Morte Curativa",
@@ -254,7 +250,7 @@
     },
     "auto-curse": {
       "name": "Maldição Automática",
-      "description": "Aplica Curse em si mesmo no início da batalha."
+      "description": "Aplica Maldição em si mesmo no início da batalha."
     },
     "death-bomb": {
       "name": "Bomba da Morte",
@@ -270,31 +266,27 @@
     },
     "protecting-death": {
       "name": "Morte Defensiva",
-      "description": "Ao morrer, aliados ganham Shell."
+      "description": "Ao morrer, aliados ganham Protegido."
     },
     "empowering-death": {
       "name": "Morte Fortalecedora",
-      "description": "Ao morrer, aliados ganham Powerful."
+      "description": "Ao morrer, aliados ganham Poderoso."
     },
     "burn-affinity": {
       "name": "Afinidade com Queimadura",
-      "description": "25% de dano aumentado em alvos com Burn."
-    },
-    "frozen-affinity": {
-      "name": "Afinidade com Congelamento",
-      "description": "25% de dano aumentado em alvos com Freeze."
+      "description": "25% de dano aumentado em alvos com Queimadura."
     },
     "inverted-affinity": {
       "name": "Afinidade com Inversão",
-      "description": "Aplica Inverted em si mesmo por 3 turnos no início da batalha. 50% de dano aumentado enquanto Inverted."
+      "description": "Aplica Invertido em si mesmo por 3 turnos no início da batalha. 50% de dano aumentado enquanto Invertido."
     },
     "exhausting-power": {
       "name": "Poder Exauridor",
-      "description": "50% de dano aumentado se Exhausted."
+      "description": "50% de dano aumentado se Exausto."
     },
     "auto-burn": {
       "name": "Queimadura Automática",
-      "description": "Aplica Burn em si mesmo no início da batalha."
+      "description": "Aplica Queimadura em si mesmo no início da batalha."
     },
     "at-deaths-door": {
       "name": "À Porta da Morte",
@@ -310,11 +302,11 @@
     },
     "sos-shell": {
       "name": "Escudo SOS",
-      "description": "Aplica Shell ao cair abaixo de 50% de Vida."
+      "description": "Aplica Protegido ao cair abaixo de 50% de Vida."
     },
     "sos-power": {
       "name": "Poder SOS",
-      "description": "Aplica Powerful ao cair abaixo de 50% de Vida."
+      "description": "Aplica Poderoso ao cair abaixo de 50% de Vida."
     },
     "augmented-counter-ii": {
       "name": "Contra-Ataque Aumentado II",
@@ -326,11 +318,11 @@
     },
     "anti-exhaust": {
       "name": "Anti-Exaustão",
-      "description": "Imune a Exhaust."
+      "description": "Imune a Exaustão."
     },
     "sos-rush": {
       "name": "Ímpeto SOS",
-      "description": "Aplica Rush ao cair abaixo de 50% de Vida."
+      "description": "Aplica Ímpeto ao cair abaixo de 50% de Vida."
     },
     "solidifying-meditation": {
       "name": "Meditação Solidificadora",
@@ -338,11 +330,11 @@
     },
     "double-burn": {
       "name": "Queimadura Dupla",
-      "description": "Ao aplicar uma camada de Burn, aplica uma segunda."
+      "description": "Ao aplicar uma camada de Queimadura, aplica uma segunda."
     },
     "healing-fire": {
       "name": "Fogo Curativo",
-      "description": "Recupera 25% de Vida ao atacar um alvo com Burn. Uma vez por turno."
+      "description": "Recupera 25% de Vida ao atacar um alvo com Queimadura. Uma vez por turno."
     },
     "rewarding-mark": {
       "name": "Marca Recompensadora",
@@ -350,11 +342,11 @@
     },
     "double-mark": {
       "name": "Marca Dupla",
-      "description": "Mark requer 1 golpe a mais para ser removida."
+      "description": "Marca requer 1 golpe a mais para ser removida."
     },
     "stun-boost": {
       "name": "Impulso de Atordoamento",
-      "description": "30% de dano aumentado em alvos com Stun."
+      "description": "30% de dano aumentado em alvos com Atordoamento."
     },
     "sniper": {
       "name": "Atirador de Elite",
@@ -418,11 +410,11 @@
     },
     "greater-powerful": {
       "name": "Poder Maior",
-      "description": "+15% ao aumento de dano de Powerful."
+      "description": "+15% ao aumento de dano de Poderoso."
     },
     "greater-shell": {
       "name": "Escudo Maior",
-      "description": "+10% à redução de dano de Shell."
+      "description": "+10% à redução de dano de Protegido."
     },
     "revive-paradox": {
       "name": "Paradoxo do Reviver",
@@ -430,7 +422,7 @@
     },
     "greater-rush": {
       "name": "Ímpeto Maior",
-      "description": "+25% ao aumento de Velocidade de Rush."
+      "description": "+25% ao aumento de Velocidade de Ímpeto."
     },
     "last-stand-critical": {
       "name": "Crítico da Última Resistência",
@@ -446,11 +438,11 @@
     },
     "powerful-heal": {
       "name": "Cura Poderosa",
-      "description": "Curar um aliado também aplica Powerful por 1 turno."
+      "description": "Curar um aliado também aplica Poderoso por 1 turno."
     },
     "accelerating-heal": {
       "name": "Cura Aceleradora",
-      "description": "Curar um aliado também aplica Rush por 1 turno."
+      "description": "Curar um aliado também aplica Ímpeto por 1 turno."
     },
     "energising-heal": {
       "name": "Cura Energizante",
@@ -458,7 +450,7 @@
     },
     "protecting-heal": {
       "name": "Cura Protetora",
-      "description": "Curar um aliado também aplica Shell por 1 turno."
+      "description": "Curar um aliado também aplica Protegido por 1 turno."
     },
     "confident-fighter": {
       "name": "Lutador Confiante",
@@ -518,7 +510,7 @@
     },
     "cursed-power": {
       "name": "Poder Amaldiçoado",
-      "description": "30% de dano aumentado enquanto Cursed."
+      "description": "30% de dano aumentado enquanto Amaldiçoado."
     },
     "pro-retreat": {
       "name": "Retirada Profissional",
@@ -530,11 +522,11 @@
     },
     "burning-mark": {
       "name": "Marca Ardente",
-      "description": "Aplica Burn ao acertar um inimigo Marcado."
+      "description": "Aplica Queimadura ao acertar um inimigo Marcado."
     },
     "powerful-mark": {
       "name": "Marca Poderosa",
-      "description": "Ganha Powerful ao acertar um inimigo Marcado."
+      "description": "Ganha Poderoso ao acertar um inimigo Marcado."
     },
     "healing-mark": {
       "name": "Marca Curativa",
@@ -542,35 +534,31 @@
     },
     "stay-marked": {
       "name": "Permanecer Marcado",
-      "description": "50% de chance de aplicar Mark ao atacar um alvo Marcado."
-    },
-    "charybde-to-scylla": {
-      "name": "De Caribde a Cila",
-      "description": "Aplica Mark ao remover Stun."
+      "description": "50% de chance de aplicar Marca ao atacar um alvo Marcado."
     },
     "burning-shots": {
       "name": "Disparos Ardentes",
-      "description": "20% de chance de aplicar Burn no disparo de Mira Livre."
+      "description": "20% de chance de aplicar Queimadura no disparo de Mira Livre."
     },
     "free-aim-inverted-shot": {
       "name": "Disparo Livre Invertido",
-      "description": "Disparos de Mira Livre podem aplicar Inverted."
+      "description": "Disparos de Mira Livre podem aplicar Invertido."
     },
     "marking-shots": {
       "name": "Disparos Marcadores",
-      "description": "20% de chance de aplicar Mark no disparo de Mira Livre."
+      "description": "20% de chance de aplicar Marca no disparo de Mira Livre."
     },
     "powerful-shots": {
       "name": "Disparos Poderosos",
-      "description": "20% de chance de ganhar Powerful no disparo de Mira Livre."
+      "description": "20% de chance de ganhar Poderoso no disparo de Mira Livre."
     },
     "protecting-shots": {
       "name": "Disparos Protetores",
-      "description": "20% de chance de ganhar Shell no disparo de Mira Livre."
+      "description": "20% de chance de ganhar Protegido no disparo de Mira Livre."
     },
     "accelerating-shots": {
       "name": "Disparos Aceleradores",
-      "description": "20% de chance de ganhar Rush no disparo de Mira Livre."
+      "description": "20% de chance de ganhar Ímpeto no disparo de Mira Livre."
     },
     "energising-shots": {
       "name": "Disparos Energizantes",
@@ -582,15 +570,15 @@
     },
     "empowering-attack": {
       "name": "Ataque Fortalecedor",
-      "description": "Ganha Powerful por 1 turno no Ataque Base."
+      "description": "Ganha Poderoso por 1 turno no Ataque Base."
     },
     "protecting-attack": {
       "name": "Ataque Protetor",
-      "description": "Ganha Shell por 1 turno no Ataque Base."
+      "description": "Ganha Protegido por 1 turno no Ataque Base."
     },
     "enfeebling-attack": {
       "name": "Ataque Enfraquecedor",
-      "description": "Ataque Base aplica Powerless por 1 turno."
+      "description": "Ataque Base aplica Impotente por 1 turno."
     },
     "exposing-attack": {
       "name": "Ataque Expositivo",
@@ -602,15 +590,15 @@
     },
     "accelerating-last-stand": {
       "name": "Última Resistência Aceleradora",
-      "description": "Ganha Rush se estiver lutando sozinho."
+      "description": "Ganha Ímpeto se estiver lutando sozinho."
     },
     "empowering-last-stand": {
       "name": "Última Resistência Fortalecedora",
-      "description": "Ganha Powerful se estiver lutando sozinho."
+      "description": "Ganha Poderoso se estiver lutando sozinho."
     },
     "protecting-last-stand": {
       "name": "Última Resistência Protetora",
-      "description": "Ganha Shell se estiver lutando sozinho."
+      "description": "Ganha Protegido se estiver lutando sozinho."
     },
     "energising-pain": {
       "name": "Dor Energizante",
@@ -650,7 +638,7 @@
     },
     "empowering-break": {
       "name": "Quebra Fortalecedora",
-      "description": "Ganha Powerful ao Quebrar um alvo."
+      "description": "Ganha Poderoso ao Quebrar um alvo."
     },
     "breaking-shots": {
       "name": "Disparos Quebradores",
@@ -658,7 +646,7 @@
     },
     "fueling-break": {
       "name": "Quebra Combustível",
-      "description": "Quebrar um alvo dobra sua quantidade de Burn."
+      "description": "Quebrar um alvo dobra sua quantidade de Queimadura."
     },
     "gradient-fighter": {
       "name": "Lutador de Gradiente",
@@ -710,11 +698,11 @@
     },
     "empowering-tint": {
       "name": "Tintura Fortalecedora",
-      "description": "Tinturas Curativas também aplicam Powerful."
+      "description": "Tinturas Curativas também aplicam Poderoso."
     },
     "protecting-tint": {
       "name": "Tintura Protetora",
-      "description": "Tinturas Curativas também aplicam Shell."
+      "description": "Tinturas Curativas também aplicam Protegido."
     },
     "shielding-tint": {
       "name": "Tintura de Escudo",
@@ -722,7 +710,7 @@
     },
     "accelerating-tint": {
       "name": "Tintura Aceleradora",
-      "description": "Tinturas Curativas também aplicam Rush."
+      "description": "Tinturas Curativas também aplicam Ímpeto."
     },
     "better-healing-tint": {
       "name": "Tintura Curativa Melhor",
@@ -746,15 +734,15 @@
     },
     "time-tint": {
       "name": "Tintura do Tempo",
-      "description": "Tinturas de Energia também aplicam Rush."
+      "description": "Tinturas de Energia também aplicam Ímpeto."
     },
     "energising-burn": {
       "name": "Queimadura Energizante",
-      "description": "+1 PM ao aplicar Burn. Uma vez por turno."
+      "description": "+1 PM ao aplicar Queimadura. Uma vez por turno."
     },
     "breaking-burn": {
       "name": "Queimadura Quebradora",
-      "description": "25% de dano de Quebra aumentado em inimigos com Burn."
+      "description": "25% de dano de Quebra aumentado em inimigos com Queimadura."
     },
     "critical-burn": {
       "name": "Queimadura Crítica",
@@ -762,11 +750,11 @@
     },
     "burning-death": {
       "name": "Morte Ardente",
-      "description": "Aplica 3 de Burn a todos os inimigos ao morrer."
+      "description": "Aplica 3 de Queimadura a todos os inimigos ao morrer."
     },
     "longer-burn": {
       "name": "Queimadura Prolongada",
-      "description": "Duração de Burn é aumentada em 2."
+      "description": "Duração de Queimadura é aumentada em 2."
     },
     "critical-break": {
       "name": "Quebra Crítica",
@@ -790,27 +778,27 @@
     },
     "marking-break": {
       "name": "Quebra Marcadora",
-      "description": "Aplica Mark ao Quebrar."
+      "description": "Aplica Marca ao Quebrar."
     },
     "slowing-break": {
       "name": "Quebra Lenta",
-      "description": "Aplica Slow ao Quebrar."
+      "description": "Aplica Lentidão ao Quebrar."
     },
     "longer-rush": {
       "name": "Ímpeto Prolongado",
-      "description": "Ao aplicar Rush, sua duração é aumentada em 2."
+      "description": "Ao aplicar Ímpeto, sua duração é aumentada em 2."
     },
     "powerful-on-shell": {
       "name": "Poder ao Escudo",
-      "description": "Aplica Powerful ao aplicar Shell."
+      "description": "Aplica Poderoso ao aplicar Protegido."
     },
     "rush-on-powerful": {
       "name": "Ímpeto ao Poder",
-      "description": "Aplica Rush ao aplicar Powerful."
+      "description": "Aplica Ímpeto ao aplicar Poderoso."
     },
     "shell-on-rush": {
       "name": "Escudo ao Ímpeto",
-      "description": "Aplica Shell ao aplicar Rush."
+      "description": "Aplica Protegido ao aplicar Ímpeto."
     },
     "evasive-healer": {
       "name": "Curador Evasivo",
@@ -818,15 +806,15 @@
     },
     "energising-powerful": {
       "name": "Poder Energizante",
-      "description": "Dá 2 PM ao aplicar Powerful."
+      "description": "Dá 2 PM ao aplicar Poderoso."
     },
     "energising-shell": {
       "name": "Escudo Energizante",
-      "description": "Dá 2 PM ao aplicar Shell."
+      "description": "Dá 2 PM ao aplicar Protegido."
     },
     "energising-rush": {
       "name": "Ímpeto Energizante",
-      "description": "Dá 2 PM ao aplicar Rush."
+      "description": "Dá 2 PM ao aplicar Ímpeto."
     },
     "healing-boon": {
       "name": "Bênção Curativa",
@@ -834,7 +822,7 @@
     },
     "greater-powerless": {
       "name": "Impotência Maior",
-      "description": "+15% à redução de dano de Powerless."
+      "description": "+15% à redução de dano de Impotente."
     },
     "greater-unprotected": {
       "name": "Desprotegido Maior",
@@ -842,7 +830,7 @@
     },
     "greater-slow": {
       "name": "Lentidão Maior",
-      "description": "+15% à redução de Velocidade de Slow."
+      "description": "+15% à redução de Velocidade de Lentidão."
     },
     "energising-cleanse": {
       "name": "Purificação Energizante",
@@ -854,7 +842,7 @@
     },
     "anti-blight": {
       "name": "Anti-Praga",
-      "description": "Imune a Blight."
+      "description": "Imune a Praga."
     },
     "charging-critical": {
       "name": "Crítico Carregador",
@@ -862,11 +850,11 @@
     },
     "charging-burn": {
       "name": "Queimadura Carregadora",
-      "description": "+20% de uma Carga de Gradiente ao aplicar Burn. Uma vez por turno."
+      "description": "+20% de uma Carga de Gradiente ao aplicar Queimadura. Uma vez por turno."
     },
     "charging-stun": {
       "name": "Atordoamento Carregador",
-      "description": "+5% de uma Carga de Gradiente ao acertar um inimigo com Stun."
+      "description": "+5% de uma Carga de Gradiente ao acertar um inimigo com Atordoamento."
     },
     "charging-alteration": {
       "name": "Alteração Carregadora",
@@ -1370,7 +1358,7 @@
       "name": "Glaisum",
       "passives": {
         "2": "Aliados recuperam 20% de Vida ao mudar para Postura Virtuosa.",
-        "3": "Ganha Carapaça ao sair da Postura Virtuosa.",
+        "3": "Ganha Protegido ao sair da Postura Virtuosa.",
         "4": "Remove Efeitos de Status de si mesmo ao mudar para Postura Virtuosa."
       }
     },
@@ -1387,7 +1375,7 @@
       "passives": {
         "2": "Na Postura Virtuosa, acertar um inimigo Marcado não remove a Marca.",
         "3": "Muda para Postura Virtuosa no Contra-ataque.",
-        "4": "Ganha Carapaça ao sair da Postura Virtuosa."
+        "4": "Ganha Protegido ao sair da Postura Virtuosa."
       }
     },
     "maellum": {
@@ -1406,7 +1394,7 @@
       "name": "Melarum",
       "passives": {
         "2": "Aliados recuperam 20% de Vida ao mudar para Postura Virtuosa.",
-        "3": "Aplica Carapaça quando a Vida está acima de 80%.",
+        "3": "Aplica Protegido quando a Vida está acima de 80%.",
         "4": "Muda para Postura Virtuosa quando a Vida cai abaixo de 50%."
       }
     },
@@ -1469,7 +1457,7 @@
     "yeverum": {
       "name": "Yeverum",
       "passives": {
-        "2": "Aplicar Carapaça também aplica 1 Escudo.",
+        "2": "Aplicar Protegido também aplica 1 Escudo.",
         "3": "Ao aplicar Escudos, também dá 1 PM.",
         "4": "Ao mudar para Postura Virtuosa, dobra todos os Escudos nos aliados."
       }
@@ -1526,7 +1514,7 @@
       "name": "Grandaro",
       "passives": {
         "2": "Começa a batalha na Máscara Pesada.",
-        "3": "Máscara Pesada aplica Carapaça por 3 turnos.",
+        "3": "Máscara Pesada aplica Protegido por 3 turnos.",
         "4": "+1 PM por ataque recebido."
       }
     },
@@ -1703,7 +1691,7 @@
       "passives": {
         "2": "Durante o Crepúsculo, todo dano causado é convertido em dano Sombrio.",
         "3": "20% de dano Sombrio aumentado com Habilidades.",
-        "4": "Aplica Carapaça durante a Lua, Poderoso durante o Sol, e Velocidade durante o Crepúsculo."
+        "4": "Aplica Protegido durante a Lua, Poderoso durante o Sol, e Velocidade durante o Crepúsculo."
       }
     },
     "ramasson": {
@@ -1854,7 +1842,7 @@
       "wisdom": "SABEDORIA",
       "charisma": "CARISMA",
       "proficiencyBonus": "Bônus de Proficiência",
-      "armorClassTop": "Classe",
+      "armorClassTop": "Classe de",
       "armorClassBottom": "Armadura",
       "armorClass": "Classe de Armadura",
       "initiative": "Iniciativa",
@@ -1979,7 +1967,8 @@
       "defenseDescDodge": "Defesa padrão. Rola 1d20 contra a CA.",
       "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PM (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque (ataque básico).",
       "defenseDescJump": "Só para ataques que permitem pular. Cada defesa bem-sucedida concede um contra-ataque. Falhar aumenta a intensidade do ataque em +1.",
-      "defenseDescGradient": "Ataques Gradiente não podem ser esquivados, apenas aparados. Mesma mecânica de aparar."
+      "defenseDescGradient": "Ataques Gradiente não podem ser esquivados, apenas aparados. Mesma mecânica de aparar.",
+      "weaponPassives": "Passivas da arma"
     },
     "combatAdmin": {
       "createCombat": "Criar combate",
@@ -2632,7 +2621,7 @@
       },
       "monoco-boucheclier-fortify": {
         "name": "Fortificação Boucheclier",
-        "description": "Habilidade de fortificação de escudo. Efeito: Aplica Carapaça em 1-3 aliados por 3 turnos. Máscara Pesada: Também aplica 1 Escudo. Usar esta habilidade move o Ponteiro da Roda Bestial em 5 posições. Quando o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 1 Escudo aos aliados afetados.\nPré-requisito: Derrote e adquira o pé de um inimigo Boucheclier enquanto Monoco estiver no grupo ativo."
+        "description": "Habilidade de fortificação de escudo. Efeito: Aplica Protegido em 1-3 aliados por 3 turnos. Máscara Pesada: Também aplica 1 Escudo. Usar esta habilidade move o Ponteiro da Roda Bestial em 5 posições. Quando o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 1 Escudo aos aliados afetados.\nPré-requisito: Derrote e adquira o pé de um inimigo Boucheclier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-braseleur-smash": {
         "name": "Esmagamento Braseleur",
@@ -2804,7 +2793,7 @@
       },
       "monoco-troubadour-trumpet": {
         "name": "Trombeta do Trovador",
-        "description": "Ataque de som de trombeta. Efeito: Aplica 1 buff aleatório em 1-3 aliados (Empowered, Protected, Shielded, Regeneration ou Hastened). Máscara de Conjurador ou Onipotente: aplica 2 buffs aleatórios por aliado. Roda Bestial: +4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Troubadour enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de som de trombeta. Efeito: Aplica 1 buff aleatório em 1-3 aliados (Empowered, Shell, Shielded, Regeneration ou Hastened). Máscara de Conjurador ou Onipotente: aplica 2 buffs aleatórios por aliado. Roda Bestial: +4 posições.\nPré-requisito: Derrote e adquira o pé de um inimigo Troubadour enquanto Monoco estiver no grupo ativo."
       }
     },
     "specialAttackPicker": {
@@ -2997,14 +2986,13 @@
       "statusEffects": {
         "Hastened": "💨 Acelerado",
         "Empowered": "💪 Fortalecido",
-        "Protected": "Protegido",
         "Regeneration": "💚 Regeneração",
-        "Unprotected": "Desprotegido",
+        "Unprotected": "🔓 Desprotegido",
         "Slowed": "🐌 Lento",
-        "Weakened": "Enfraquecido",
+        "Weakened": "💧 Enfraquecido",
         "Cursed": "💀 Amaldiçoado",
         "Stunned": "😵 Atordoado",
-        "Confused": "Confuso",
+        "Confused": "😵‍💫 Confuso",
         "Frozen": "❄️ Congelado",
         "Entangled": "⛓️ Acorrentado",
         "Shielded": "🛡️ Escudado",
@@ -3019,39 +3007,38 @@
         "Typhoon": "🌀 Tufão",
         "Silenced": "🔇 Silenciado",
         "Dizzy": "💫 Tonto",
-        "Fragile": "Frágil",
-        "Broken": "Quebrado",
+        "Fragile": "🪟 Frágil",
+        "Broken": "💥 Quebrado",
         "Fleeing": "🏃 Fugindo",
-        "FireVulnerability": "Vulnerável a Fogo",
-        "Guardian": "Guardião",
+        "FireVulnerability": "🔥 Vulnerável a Fogo",
+        "Guardian": "🛡️ Guardião",
         "Foretell": "🔮 Predição",
         "Twilight": "🌕 Crepúsculo",
-        "Powerless": "Impotente",
-        "Rush": "Pressa",
+        "Powerless": "⬇️ Impotente",
+        "Rush": "⚡ Pressa",
         "Burn": "🔥 Queimar",
         "Shield": "🛡️ Escudo",
         "Powerful": "💪 Poderoso",
-        "Shell": "🐚 Carapaça",
+        "Shell": "🐚 Protegido",
         "Slow": "🐌 Lento",
         "Freeze": "❄️ Congelar",
-        "GreaterRush": "Pressa Maior",
-        "GreaterSlow": "Lentidão Maior",
-        "EnfeeblingMark": "Marca Enfraquecedora",
-        "DamageReduction": "Redução de Dano",
+        "GreaterRush": "⚡ Pressa Maior",
+        "GreaterSlow": "🐌 Lentidão Maior",
+        "EnfeeblingMark": "🎯 Marca Enfraquecedora",
+        "DamageReduction": "🧱 Redução de Dano",
         "SuccessiveParry": "⚔️ Aparar Sucessivo",
         "Aureole": "✨ Auréola",
         "Vulnerable": "💔 Vulnerável",
         "FortunesFury": "🃏 Fúria da Fortuna",
         "Regen": "💚 Regeneração",
-        "Curse": "💀 Maldição",
         "IntenseFlames": "🔥 Chamas Intensas",
         "Earthquake": "🌍 Terremoto",
-        "freeShot": "Tiro Livre",
-        "jump": "Pular",
-        "gradient": "Gradiente",
-        "invisibleBarrier": "Barreira Invisível",
-        "DamageEscalation": "Escalada de Dano",
-        "Charging": "Carregando"
+        "freeShot": "🎯 Tiro Livre",
+        "jump": "🦘 Pular",
+        "gradient": "🌈 Gradiente",
+        "invisibleBarrier": "🧊 Barreira Invisível",
+        "DamageEscalation": "📈 Escalada de Dano",
+        "Charging": "⚡ Carregando"
       },
       "statusDescriptions": {
         "Frozen": "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.",
@@ -3063,7 +3050,7 @@
         "Slowed": "Dificulta a esquiva e o pulo.",
         "Empowered": "Melhora seu ataque.",
         "Weakened": "Enfraquece seu ataque.",
-        "Protected": "Melhora sua defesa ao aparar.",
+        "Shell": "Melhora sua defesa ao aparar.",
         "Unprotected": "Dificulta sua defesa ao aparar.",
         "Regeneration": "Restaura uma porcentagem da sua vida a cada turno.",
         "Cursed": "Morre quando o contador chegar a zero.",
@@ -3102,7 +3089,6 @@
         "Vulnerable": "O personagem recebe dano aumentado de todas as fontes.",
         "FortunesFury": "Cada ataque causa +8 de dano durante 1 turno.",
         "Regen": "Regenera pontos de vida ao longo do tempo.",
-        "Curse": "Maldição que causa efeitos negativos contínuos.",
         "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano. Se o personagem estiver frágil, sofre quebra e recebe 150% do dano que causou a quebra.",
         "IntenseFlames": "Rola Xd6 de dano quando resolvido (X = acúmulos atuais). Aumenta em 2 acúmulos no fim do turno. Não expira. Removido de todos os inimigos quando o conjurador recebe dano.",
         "freeShot": "Tiros livres realizados neste turno. Aumenta o dano de Sequência (até 10 stacks).",

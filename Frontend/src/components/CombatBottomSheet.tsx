@@ -10,7 +10,7 @@ import { getWeaponDamageDice, calculateWeaponDefenseBonus } from "../utils/Weapo
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
-import { getWeaponPassive, toKebabCase, hasWeapon, t } from "../i18n";
+import { getWeaponPassive, toKebabCase, hasWeapon, t, getPictoName, getPictoDescription } from "../i18n";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import type { WeaponDTO } from "../types/WeaponDTO";
 
@@ -264,7 +264,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                         <div className="border border-base-300 rounded-lg p-3">
                             <div className="flex items-start gap-3">
                                 <div className="flex flex-col items-center gap-1 shrink-0">
-                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.defend")}</span>
+                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("characterSheet.armorClassTop")}</span>
                                     <div
                                         className="relative flex flex-col items-center justify-start pt-1.5 bg-base-200 w-14 h-[4.2rem] text-base-content shrink-0"
                                         style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%)" }}
@@ -275,7 +275,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                             <path d="M5 5 L95 5 L95 81 L50 113 L5 81 Z"
                                                 stroke="currentColor" strokeOpacity="0.2" strokeWidth="0.75" />
                                         </svg>
-                                        <span className="relative z-10 text-[8px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassTop")}</span>
+                                        <span className="relative z-10 text-[6px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassBottom")}</span>
                                         <span className="relative z-10 text-2xl font-black leading-tight">{armorClass}</span>
                                     </div>
                                 </div>
@@ -296,23 +296,72 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                             </div>
                         </div>
 
-                        {/* Unlocked passives */}
-                        {unlockedPassives.length > 0 && (
-                            <ul className="space-y-1 text-sm">
-                                {unlockedPassives.map(p => {
-                                    const translatedEffect = getWeaponPassive(weaponId, p.level);
-                                    const effectText = translatedEffect || p.effect;
-                                    return (
-                                        <li key={p.level} className="flex items-start gap-2">
-                                            <span className={`font-semibold shrink-0 ${levelColor(p.level)}`}>
-                                                Level {p.level}
-                                            </span>
-                                            <span className="flex-1 opacity-90">: {effectText}</span>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        )}
+                        {/* Passives sections */}
+                        {(() => {
+                            const equippedPictos = (player?.pictos ?? []).filter(p => typeof p.slot === "number");
+                            const equippedLuminas = (player?.luminas ?? []).filter(l => l.isEquiped);
+                            const hasPictoLumina = equippedPictos.length > 0 || equippedLuminas.length > 0;
+
+                            return (
+                                <div className="space-y-4">
+                                    {/* Weapon passives */}
+                                    {unlockedPassives.length > 0 && (
+                                        <div>
+                                            {hasPictoLumina && (
+                                                <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.weaponPassives")}</span>
+                                            )}
+                                            <ul className="space-y-2 text-sm mt-1">
+                                                {unlockedPassives.map(p => {
+                                                    const translatedEffect = getWeaponPassive(weaponId, p.level);
+                                                    const effectText = translatedEffect || p.effect;
+                                                    return (
+                                                        <li key={p.level} className="flex flex-col">
+                                                            <span className={`font-semibold ${levelColor(p.level)}`}>
+                                                                Level {p.level}
+                                                            </span>
+                                                            <span className="opacity-90">{effectText}</span>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Pictos & Luminas passives */}
+                                    {hasPictoLumina && (
+                                        <div>
+                                            <span className="text-xs font-semibold uppercase tracking-wide opacity-50">Pictos / Luminas</span>
+                                            <ul className="space-y-2 text-sm mt-1">
+                                                {equippedPictos.map(picto => {
+                                                    const name = getPictoName(picto.pictoId);
+                                                    const description = getPictoDescription(picto.pictoId);
+                                                    return (
+                                                        <li key={`picto-${picto.id}`} className="flex flex-col">
+                                                            <span className="font-semibold text-primary">
+                                                                {name}
+                                                            </span>
+                                                            <span className="opacity-90">{description}</span>
+                                                        </li>
+                                                    );
+                                                })}
+                                                {equippedLuminas.map(lumina => {
+                                                    const name = getPictoName(lumina.pictoId);
+                                                    const description = getPictoDescription(lumina.pictoId);
+                                                    return (
+                                                        <li key={`lumina-${lumina.id}`} className="flex flex-col">
+                                                            <span className="font-semibold text-primary">
+                                                                {name}
+                                                            </span>
+                                                            <span className="opacity-90">{description}</span>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })()}
                     </div>
                 </div>
             </div>

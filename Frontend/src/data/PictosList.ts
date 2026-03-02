@@ -661,15 +661,6 @@ export const PictosList: PictoInfo[] = [
         luminaCost: 15
     },
     {
-        id: "hazardous-choice",
-        imageId: getPictoEnglishName("hazardous-choice"),
-        name: getPictoName("hazardous-choice"),
-        status: {},
-        description: getPictoDescription("hazardous-choice"),
-        color: "red",
-        luminaCost: 15
-    },
-    {
         id: "healing-death",
         imageId: getPictoEnglishName("healing-death"),
         name: getPictoName("healing-death"),
@@ -770,18 +761,6 @@ export const PictosList: PictoInfo[] = [
             criticalRate: 11
         },
         description: getPictoDescription("burn-affinity"),
-        color: "red",
-        luminaCost: 15
-    },
-    {
-        id: "frozen-affinity",
-        imageId: getPictoEnglishName("frozen-affinity"),
-        name: getPictoName("frozen-affinity"),
-        status: {
-            speed: 280,
-            criticalRate: 23
-        },
-        description: getPictoDescription("frozen-affinity"),
         color: "red",
         luminaCost: 15
     },
@@ -1442,15 +1421,6 @@ export const PictosList: PictoInfo[] = [
         name: getPictoName("stay-marked"),
         status: { speed: 346, criticalRate: 16 },
         description: getPictoDescription("stay-marked"),
-        color: "green",
-        luminaCost: 15
-    },
-    {
-        id: "charybde-to-scylla",
-        imageId: getPictoEnglishName("charybde-to-scylla"),
-        name: getPictoName("charybde-to-scylla"),
-        status: { speed: 280, criticalRate: 23 },
-        description: getPictoDescription("charybde-to-scylla"),
         color: "green",
         luminaCost: 15
     },

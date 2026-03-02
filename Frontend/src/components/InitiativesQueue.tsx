@@ -164,7 +164,7 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
         <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4">
             {isAdmin && (
                 <div className="text-xs text-base-content/50 mb-2 text-center">
-                    Arraste para reordenar
+                    {t("combat.dragToReorder")}
                 </div>
             )}
             <div className="w-full min-w-0 flex items-end gap-2 overflow-x-auto">

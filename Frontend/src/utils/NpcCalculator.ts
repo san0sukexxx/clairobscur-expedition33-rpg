@@ -47,7 +47,7 @@ export const hasHastened = (t: BattleCharacterInfo) => hasStatus(t, "Hastened");
 export const hasSlowed = (t: BattleCharacterInfo) => hasStatus(t, "Slowed");
 export const hasWeakened = (t: BattleCharacterInfo) => hasStatus(t, "Weakened");
 export const hasEmpowered = (t: BattleCharacterInfo) => hasStatus(t, "Empowered");
-export const hasProtected = (t: BattleCharacterInfo) => hasStatus(t, "Protected");
+export const hasShell = (t: BattleCharacterInfo) => hasStatus(t, "Shell");
 export const hasUnprotected = (t: BattleCharacterInfo) => hasStatus(t, "Unprotected");
 export const getFrenzyStatus = (t: BattleCharacterInfo) => getStatus(t, "Frenzy");
 export const hasMarked = (t: BattleCharacterInfo) => hasStatus(t, "Marked");

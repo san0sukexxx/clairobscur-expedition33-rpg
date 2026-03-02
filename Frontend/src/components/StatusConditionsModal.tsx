@@ -10,7 +10,7 @@ function stripEmoji(text: string) {
 }
 
 const SELECTABLE_EFFECTS: StatusType[] = [
-    "Hastened", "Empowered", "Protected", "Regeneration",
+    "Hastened", "Empowered", "Regeneration",
     "Unprotected", "Slowed", "Weakened", "Cursed",
     "Stunned", "Confused", "Frozen", "Entangled",
     "Exhausted", "Frenzy", "Rage",
@@ -20,7 +20,7 @@ const SELECTABLE_EFFECTS: StatusType[] = [
     "Rush", "Shield", "Powerful", "Shell",
     "GreaterRush", "GreaterSlow",
     "EnfeeblingMark", "DamageReduction", "SuccessiveParry", "Aureole",
-    "Vulnerable", "FortunesFury", "Curse",
+    "Vulnerable", "FortunesFury",
     "IntenseFlames", "Earthquake", "StormCaller", "Typhoon",
     "Charging", "DamageEscalation",
 ];

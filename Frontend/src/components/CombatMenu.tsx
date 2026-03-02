@@ -97,21 +97,11 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
   }
 
   return (
-    <div className="fixed bottom-14 right-4 z-41">
-      {/* Botão principal */}
-      <button
-        className={`btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
-        onClick={() => !isExecutingSkill && setOpen((prev) => !prev)}
-        disabled={isExecutingSkill}
-      >
-        <FaBars size={20} />
-      </button>
-
+    <div className="fixed bottom-14 right-4 z-41 flex flex-col items-end gap-2">
       {/* Menu flutuante */}
       {open && (
         <div
           className="
-            absolute bottom-16 right-0
             bg-base-100 shadow-lg rounded-xl p-2
             flex flex-col gap-2
           "
@@ -200,6 +190,15 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
           )}
         </div>
       )}
+
+      {/* Botão principal */}
+      <button
+        className={`btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+        onClick={() => !isExecutingSkill && setOpen((prev) => !prev)}
+        disabled={isExecutingSkill}
+      >
+        <FaBars size={20} />
+      </button>
     </div>
   );
 }
