@@ -436,7 +436,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           <SearchBox value={query} onChange={setQuery} />
         )}
 
-        <div className="px-4 pb-4 overflow-y-auto max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="px-2 sm:px-4 pb-4 overflow-y-auto max-h-[75vh] sm:max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {modalType === "slot" && activeSlot !== null && (
             <>
               {slotFiltered.map((p) => (
@@ -577,8 +577,8 @@ function Modal({
   return (
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
+      <div className="absolute inset-0 flex items-end sm:items-center justify-center sm:p-4">
+        <div className="w-full sm:max-w-5xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden rounded-t-2xl sm:rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
           <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
             <div className="text-lg tracking-wide">{title}</div>
             <button onClick={onClose} className="text-2xl leading-none px-2">
@@ -621,24 +621,23 @@ function Stat({
   const hasDisplay = displayValue !== undefined
 
   return (
-    <div className="text-sm flex items-baseline gap-2">
+    <div className="text-xs sm:text-sm flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
       <span className="opacity-70">{label}</span>
 
       {hasDisplay ? (
-        <span className="flex items-baseline gap-2">
-          <span className="text-2xl font-extrabold leading-none">
+        <span className="flex items-baseline gap-1 sm:gap-2">
+          <span className="text-lg sm:text-2xl font-extrabold leading-none">
             {displayAttributedValue}
           </span>
 
-          <span className="text-xs opacity-60 leading-none flex items-center gap-1">
-            ({" "}
-            {displayValue}
-            <FaChartLine className="inline-block text-[10px]" aria-hidden="true" />
+          <span className="text-[10px] sm:text-xs opacity-60 leading-none flex items-center gap-0.5">
+            ({displayValue}
+            <FaChartLine className="inline-block text-[8px] sm:text-[10px]" aria-hidden="true" />
             )
           </span>
         </span>
       ) : (
-        <span className="text-2xl font-extrabold leading-none">{value}</span>
+        <span className="text-lg sm:text-2xl font-extrabold leading-none">{value}</span>
       )}
     </div>
   )
@@ -711,24 +710,22 @@ function PictoCard({
   return (
     <button
       onClick={() => onPick && onPick(picto)}
-      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
+      className="w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
     >
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-2 sm:gap-3">
         <PlusDiamond icon="" picto={picto} isBig={true} />
         <div className="flex items-end justify-center">
-          <span className="text-xl font-extrabold leading-none">{picto.battleCount ?? 0}</span>
+          <span className="text-lg sm:text-xl font-extrabold leading-none">{picto.battleCount ?? 0}</span>
           <span className="text-xs opacity-60 leading-none">/3</span>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-start justify-between">
-          <div className="text-xl font-semibold leading-tight">{name}</div>
-        </div>
-        <div className="grid grid-cols-1 gap-2">
+      <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+        <div className="text-base sm:text-xl font-semibold leading-tight truncate">{name}</div>
+        <div className="grid grid-cols-1 gap-1 sm:gap-2">
           <StatusTexts pictoResponse={picto} level={level} />
           <Stat label={t("common.level")} value={picto.level ?? 1} />
         </div>
-        <div className="opacity-80">{pictoInfo?.description}</div>
+        <div className="opacity-80 text-sm sm:text-base line-clamp-3">{pictoInfo?.description}</div>
       </div>
     </button>
   )
@@ -747,14 +744,12 @@ function PictoInfoCard({
   return (
     <button
       onClick={() => onPick && onPick(info)}
-      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
+      className="w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
     >
       <PlusDiamond icon="" picto={{ pictoId: info.id } as unknown as PictoResponse} isBig={true} />
-      <div className="flex flex-col gap-2">
-        <div className="flex items-start justify-between">
-          <div className="text-xl font-semibold leading-tight">{info.name}</div>
-        </div>
-        <div className="grid grid-cols-1 gap-2">
+      <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+        <div className="text-base sm:text-xl font-semibold leading-tight truncate">{info.name}</div>
+        <div className="grid grid-cols-1 gap-1 sm:gap-2">
           {picto && (
             <StatusTexts
               pictoResponse={{ pictoId: info.id } as unknown as PictoResponse}
@@ -762,7 +757,7 @@ function PictoInfoCard({
             />
           )}
         </div>
-        <div className="opacity-80">{info.description}</div>
+        <div className="opacity-80 text-sm sm:text-base line-clamp-3">{info.description}</div>
       </div>
     </button>
   )
