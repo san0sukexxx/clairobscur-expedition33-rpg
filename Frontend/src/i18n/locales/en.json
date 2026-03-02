@@ -18,7 +18,7 @@
     },
     "augmented-first-strike": {
       "name": "Augmented First Strike",
-      "description": "50% increased damage on the first hit. Once per battle."
+      "description": "+2d6 damage on the first hit. Once per battle."
     },
     "survivor": {
       "name": "Survivor",
@@ -30,15 +30,15 @@
     },
     "recovery": {
       "name": "Recovery",
-      "description": "Recovers 10% Health on turn start."
+      "description": "Recovers 2d6 HP on turn start."
     },
     "lucky-aim": {
       "name": "Lucky Aim",
-      "description": "30% chance to recover 1 MP on hitting a Weak Point."
+      "description": "WIS check DC 13: recover 1 MP on hitting a Weak Point."
     },
     "augmented-counter-i": {
       "name": "Augmented Counter I",
-      "description": "50% increased Counterattack damage."
+      "description": "+2d6 Counterattack damage."
     },
     "second-chance": {
       "name": "Second Chance",
@@ -50,27 +50,27 @@
     },
     "solo-fighter": {
       "name": "Solo Fighter",
-      "description": "Deal 50% more damage if fighting alone."
+      "description": "+2d6 damage if fighting alone."
     },
     "teamwork": {
       "name": "Teamwork",
-      "description": "10% increased damage while all allies are alive."
+      "description": "+1d4 damage while all allies are alive."
     },
     "sweet-kill": {
       "name": "Sweet Kill",
-      "description": "Recover 50% Health on killing an enemy."
+      "description": "Recover 6d6 HP on killing an enemy."
     },
     "augmented-attack": {
       "name": "Augmented Attack",
-      "description": "50% increased Base Attack damage."
+      "description": "+2d6 Base Attack damage."
     },
     "attack-lifesteal": {
       "name": "Attack Lifesteal",
-      "description": "Recover 15% Health on Base Attack."
+      "description": "Recover 3d6 HP on Base Attack."
     },
     "augmented-aim": {
       "name": "Augmented Aim",
-      "description": "50% increased Free Aim damage."
+      "description": "+2d6 Free Aim damage."
     },
     "combo-attack-i": {
       "name": "Combo Attack I",
@@ -78,7 +78,7 @@
     },
     "healing-parry": {
       "name": "Healing Parry",
-      "description": "Recover 3% Health on Parry."
+      "description": "Recover 1d4 HP on Parry."
     },
     "auto-powerful": {
       "name": "Auto Powerful",
@@ -178,11 +178,11 @@
     },
     "perilous-parry": {
       "name": "Perilous Parry",
-      "description": "+1 MP on Parry, but damage received is doubled."
+      "description": "+1 MP on Parry, but +3d6 damage taken."
     },
     "confident": {
       "name": "Confident",
-      "description": "Take 50% less damage, but can't be Healed."
+      "description": "-2d6 damage taken, but can't be Healed."
     },
     "bloody-bullet": {
       "name": "Bloody Bullet",
@@ -202,7 +202,7 @@
     },
     "solidifying": {
       "name": "Solidifying",
-      "description": "+2 Shields when the character's Health falls below 50%. Once per battle."
+      "description": "+2 Shields when the character's Health falls below half max HP. Once per battle."
     },
     "powerful-revive": {
       "name": "Powerful Revive",
@@ -226,7 +226,7 @@
     },
     "piercing-shot": {
       "name": "Piercing Shot",
-      "description": "25% increased Free Aim damage. Free Aim shots ignore Shields."
+      "description": "+1d6 Free Aim damage. Free Aim shots ignore Shields."
     },
     "burning-dodge": {
       "name": "Burning Dodge",
@@ -274,15 +274,15 @@
     },
     "burn-affinity": {
       "name": "Burn Affinity",
-      "description": "25% increased damage on Burning targets."
+      "description": "+1d6 damage on Burning targets."
     },
     "inverted-affinity": {
       "name": "Inverted Affinity",
-      "description": "Apply Inverted on self for 3 turns on battle start. 50% increased damage while Inverted."
+      "description": "Apply Inverted on self for 3 turns on battle start. +2d6 damage while Inverted."
     },
     "exhausting-power": {
       "name": "Exhausting Power",
-      "description": "50% increased damage if Exhausted."
+      "description": "+2d6 damage if Exhausted."
     },
     "auto-burn": {
       "name": "Auto Burn",
@@ -290,11 +290,11 @@
     },
     "at-deaths-door": {
       "name": "At Death's Door",
-      "description": "Deal 50% more damage if Health is below 10%."
+      "description": "+2d6 damage if Health is below 5 HP."
     },
     "full-strength": {
       "name": "Full Strength",
-      "description": "25% increased damage on full Health."
+      "description": "+1d6 damage on full Health."
     },
     "painted-power": {
       "name": "Painted Power",
@@ -302,11 +302,11 @@
     },
     "sos-shell": {
       "name": "SOS Shell",
-      "description": "Apply Shell when falling below 50% Health."
+      "description": "Apply Shell when falling below half max HP."
     },
     "sos-power": {
       "name": "SOS Power",
-      "description": "Apply Powerful when falling below 50% Health."
+      "description": "Apply Powerful when falling below half max HP."
     },
     "augmented-counter-ii": {
       "name": "Augmented Counter II",
@@ -322,7 +322,7 @@
     },
     "sos-rush": {
       "name": "SOS Rush",
-      "description": "Apply Rush when falling below 50% Health."
+      "description": "Apply Rush when falling below half max HP."
     },
     "solidifying-meditation": {
       "name": "Solidifying Meditation",
@@ -334,7 +334,7 @@
     },
     "healing-fire": {
       "name": "Healing Fire",
-      "description": "Recover 25% Health when attacking a Burning target. Once per turn."
+      "description": "Recover 4d6 HP when attacking a Burning target. Once per turn."
     },
     "rewarding-mark": {
       "name": "Rewarding Mark",
@@ -346,11 +346,11 @@
     },
     "stun-boost": {
       "name": "Stun Boost",
-      "description": "30% increased damage on Stunned targets."
+      "description": "+1d8 damage on Stunned targets."
     },
     "sniper": {
       "name": "Sniper",
-      "description": "First Free Aim shot each turn deals 200% increased damage and can Break."
+      "description": "First Free Aim shot each turn deals +5d6 damage and can Break."
     },
     "energising-attack-ii": {
       "name": "Energising Attack II",
@@ -362,11 +362,11 @@
     },
     "healing-counter": {
       "name": "Healing Counter",
-      "description": "Recover 25% Health on Counterattack."
+      "description": "Recover 4d6 HP on Counterattack."
     },
     "powerful-shield": {
       "name": "Powerful Shield",
-      "description": "10% increased damage per Shield Point on self."
+      "description": "+1d4 damage per Shield Point on self."
     },
     "base-shield": {
       "name": "Base Shield",
@@ -382,23 +382,23 @@
     },
     "shield-affinity": {
       "name": "Shield Affinity",
-      "description": "30% increased damage while having Shields, but receiving any damage always removes all Shields."
+      "description": "+1d8 damage while having Shields, but receiving any damage always removes all Shields."
     },
     "critical-moment": {
       "name": "Critical Moment",
-      "description": "50% increased Critical Chance if Health is below 30%."
+      "description": "+2d6 Critical Chance bonus if Health is below half max HP."
     },
     "warming-up": {
       "name": "Warming Up",
-      "description": "5% increased damage per turn. Can stack up to 5 times."
+      "description": "+1 damage per turn. Can stack up to 5 times."
     },
     "glass-canon": {
       "name": "Glass Canon",
-      "description": "Deal 25% more damage, but take 25% more damage."
+      "description": "+1d6 damage dealt, but +1d6 damage taken."
     },
     "faster-than-strong": {
       "name": "Faster Than Strong",
-      "description": "Always play twice in a row, but deal 50% less damage."
+      "description": "Always play twice in a row, but -2d6 damage."
     },
     "shortcut": {
       "name": "Shortcut",
@@ -406,15 +406,15 @@
     },
     "defensive-mode": {
       "name": "Defensive Mode",
-      "description": "On receiving damage, consume 1 MP to take 30% less damage, if possible."
+      "description": "On receiving damage, consume 1 MP to take -1d8 damage, if possible."
     },
     "greater-powerful": {
       "name": "Greater Powerful",
-      "description": "+15% to Powerful damage increase."
+      "description": "+1d4 to Powerful damage bonus."
     },
     "greater-shell": {
       "name": "Greater Shell",
-      "description": "+10% to Shell damage reduction."
+      "description": "+1d4 to Shell damage reduction."
     },
     "revive-paradox": {
       "name": "Revive Paradox",
@@ -422,19 +422,19 @@
     },
     "greater-rush": {
       "name": "Greater Rush",
-      "description": "+25% to Rush Speed increase."
+      "description": "+1d6 to Rush Speed bonus."
     },
     "last-stand-critical": {
       "name": "Last Stand Critical",
-      "description": "100% Critical Chance while fighting alone."
+      "description": "Guaranteed Critical Hit while fighting alone."
     },
     "effective-heal": {
       "name": "Effective Heal",
-      "description": "Double all Heals received."
+      "description": "+3d6 extra HP on all Heals received."
     },
     "shared-care": {
       "name": "Shared Care",
-      "description": "When Healing an ally, also Heal self for 50% of that value."
+      "description": "When Healing an ally, also Heal self for half that value."
     },
     "powerful-heal": {
       "name": "Powerful Heal",
@@ -458,7 +458,7 @@
     },
     "healing-share": {
       "name": "Healing Share",
-      "description": "Receive 15% of all Heals affecting other characters."
+      "description": "Receive 1d4 HP when another character is Healed."
     },
     "dead-energy-i": {
       "name": "Dead Energy I",
@@ -486,11 +486,11 @@
     },
     "roulette": {
       "name": "Roulette",
-      "description": "Every hit has a 50% chance to deal either 50% or 200% of its damage."
+      "description": "CHA check DC 10: success deals +5d6 damage, failure deals -2d6 damage."
     },
     "soul-eater": {
       "name": "Soul Eater",
-      "description": "Deal 30% more damage, but lose 20% Health per turn."
+      "description": "+1d8 damage, but lose 3d6 HP per turn."
     },
     "painter": {
       "name": "Painter",
@@ -498,19 +498,19 @@
     },
     "immaculate": {
       "name": "Immaculate",
-      "description": "30% increased damage until a hit is received."
+      "description": "+1d8 damage until a hit is received."
     },
     "tainted": {
       "name": "Tainted",
-      "description": "15% increased damage for each Status Effect on self."
+      "description": "+1d4 damage for each Status Effect on self."
     },
     "first-offensive": {
       "name": "First Offensive",
-      "description": "First hit dealt and taken deals 50% more damage."
+      "description": "First hit dealt and taken deals +2d6 damage."
     },
     "cursed-power": {
       "name": "Cursed Power",
-      "description": "30% increased damage while Cursed."
+      "description": "+1d8 damage while Cursed."
     },
     "pro-retreat": {
       "name": "Pro Retreat",
@@ -518,7 +518,7 @@
     },
     "enfeebling-mark": {
       "name": "Enfeebling Mark",
-      "description": "Marked targets deal 30% less damage."
+      "description": "Marked targets deal -1d8 damage."
     },
     "burning-mark": {
       "name": "Burning Mark",
@@ -538,7 +538,7 @@
     },
     "burning-shots": {
       "name": "Burning Shots",
-      "description": "20% chance to Burn on Free Aim shot."
+      "description": "INT check DC 15: apply Burn on Free Aim shot."
     },
     "free-aim-inverted-shot": {
       "name": "Free Aim Inverted Shot",
@@ -546,27 +546,27 @@
     },
     "marking-shots": {
       "name": "Marking Shots",
-      "description": "20% chance to apply Mark on Free Aim shot."
+      "description": "WIS check DC 15: apply Mark on Free Aim shot."
     },
     "powerful-shots": {
       "name": "Powerful Shots",
-      "description": "20% chance to gain Powerful on Free Aim shot."
+      "description": "STR check DC 15: gain Powerful on Free Aim shot."
     },
     "protecting-shots": {
       "name": "Protecting Shots",
-      "description": "20% chance to gain Shell on Free Aim shot."
+      "description": "CON check DC 15: gain Shell on Free Aim shot."
     },
     "accelerating-shots": {
       "name": "Accelerating Shots",
-      "description": "20% chance to gain Rush on Free Aim shot."
+      "description": "DEX check DC 15: gain Rush on Free Aim shot."
     },
     "energising-shots": {
       "name": "Energising Shots",
-      "description": "20% chance to gain 1 MP on Free Aim shot."
+      "description": "WIS check DC 15: gain 1 MP on Free Aim shot."
     },
     "versatile": {
       "name": "Versatile",
-      "description": "After a Free Aim hit, Base Attack damage is increased by 50% for 1 turn."
+      "description": "After a Free Aim hit, +2d6 Base Attack damage for 1 turn."
     },
     "empowering-attack": {
       "name": "Empowering Attack",
@@ -586,7 +586,7 @@
     },
     "empowering-parry": {
       "name": "Empowering Parry",
-      "description": "Each successful Parry increases damage by 5% until end of the following turn. Taking any damage removes this buff."
+      "description": "Each successful Parry grants +1 damage until end of the following turn. Taking any damage removes this buff."
     },
     "accelerating-last-stand": {
       "name": "Accelerating Last Stand",
@@ -622,11 +622,11 @@
     },
     "breaker": {
       "name": "Breaker",
-      "description": "25% increased Break damage."
+      "description": "+1d6 Break damage."
     },
     "staggering-attack": {
       "name": "Staggering Attack",
-      "description": "50% increased Break damage on Base Attack."
+      "description": "+2d6 Break damage on Base Attack."
     },
     "energising-break": {
       "name": "Energising Break",
@@ -642,19 +642,19 @@
     },
     "breaking-shots": {
       "name": "Breaking Shots",
-      "description": "50% increased Break damage with Free Aim shots."
+      "description": "+2d6 Break damage with Free Aim shots."
     },
     "fueling-break": {
       "name": "Fueling Break",
-      "description": "Breaking a target doubles its Burn amount."
+      "description": "Breaking a target adds +3 Burn stacks."
     },
     "gradient-fighter": {
       "name": "Gradient Fighter",
-      "description": "25% increased damage with Gradient Attacks."
+      "description": "+1d6 damage with Gradient Attacks."
     },
     "gradient-recovery": {
       "name": "Gradient Recovery",
-      "description": "Recover 10% Health on using a Gradient Charge."
+      "description": "Recover 2d6 HP on using a Gradient Charge."
     },
     "energising-gradient": {
       "name": "Energising Gradient",
@@ -662,7 +662,7 @@
     },
     "charging-attack": {
       "name": "Charging Attack",
-      "description": "+15% of a Gradient Charge on Base Attack."
+      "description": "+1 Gradient point on Base Attack."
     },
     "gradient-breaker": {
       "name": "Gradient Breaker",
@@ -674,19 +674,19 @@
     },
     "charging-recovery": {
       "name": "Charging Recovery",
-      "description": "50% increased Gradient Generation with Healing Skills."
+      "description": "+2 Gradient points with Healing Skills."
     },
     "charging-counter": {
       "name": "Charging Counter",
-      "description": "+10% of a Gradient Charge on Counterattack."
+      "description": "+1 Gradient point on Counterattack."
     },
     "charging-weakness": {
       "name": "Charging Weakness",
-      "description": "+15% of a Gradient Charge on hitting a Weakness. Once per turn."
+      "description": "+1 Gradient point on hitting a Weakness. Once per turn."
     },
     "charging-mark": {
       "name": "Charging Mark",
-      "description": "+20% of a Gradient Charge on hitting a Marked target. Once per turn."
+      "description": "+2 Gradient points on hitting a Marked target. Once per turn."
     },
     "revive-tint-energy": {
       "name": "Revive Tint Energy",
@@ -714,7 +714,7 @@
     },
     "better-healing-tint": {
       "name": "Better Healing Tint",
-      "description": "Healing Tints have double the Healing effect."
+      "description": "Healing Tints heal +3d6 extra HP."
     },
     "cleansing-tint": {
       "name": "Cleansing Tint",
@@ -730,7 +730,7 @@
     },
     "charging-tint": {
       "name": "Charging Tint",
-      "description": "+5% of a Gradient Charge on using an item."
+      "description": "+1 Gradient point on using an item."
     },
     "time-tint": {
       "name": "Time Tint",
@@ -742,7 +742,7 @@
     },
     "breaking-burn": {
       "name": "Breaking Burn",
-      "description": "25% increased Break damage on Burning enemies."
+      "description": "+1d6 Break damage on Burning enemies."
     },
     "critical-burn": {
       "name": "Critical Burn",
@@ -758,11 +758,11 @@
     },
     "critical-break": {
       "name": "Critical Break",
-      "description": "25% increased Break damage on Critical hits."
+      "description": "+1d6 Break damage on Critical hits."
     },
     "critical-weakness": {
       "name": "Critical Weakness",
-      "description": "25% increased Critical Chance on Weakness."
+      "description": "+1d6 Critical Chance bonus on Weakness."
     },
     "critical-stun": {
       "name": "Critical Stun",
@@ -770,11 +770,11 @@
     },
     "critical-vulnerability": {
       "name": "Critical Vulnerability",
-      "description": "25% increased Critical Chance on Unprotected enemies."
+      "description": "+1d6 Critical Chance bonus on Unprotected enemies."
     },
     "empowering-dodge": {
       "name": "Empowering Dodge",
-      "description": "5% increased damage for each consecutive successful Dodge. Can stack up to 10 times."
+      "description": "+1 damage for each consecutive successful Dodge. Can stack up to 10 times."
     },
     "marking-break": {
       "name": "Marking Break",
@@ -822,7 +822,7 @@
     },
     "greater-powerless": {
       "name": "Greater Powerless",
-      "description": "+15% to Powerless damage reduction."
+      "description": "+1d4 to Powerless damage reduction."
     },
     "greater-unprotected": {
       "name": "Greater Unprotected",
@@ -830,7 +830,7 @@
     },
     "greater-slow": {
       "name": "Greater Slow",
-      "description": "+15% to Slow Speed reduction."
+      "description": "+1d4 to Slow Speed reduction."
     },
     "energising-cleanse": {
       "name": "Energising Cleanse",
@@ -846,31 +846,31 @@
     },
     "charging-critical": {
       "name": "Charging Critical",
-      "description": "+20% of a Gradient Charge on Critical Hit. Once per turn."
+      "description": "+2 Gradient points on Critical Hit. Once per turn."
     },
     "charging-burn": {
       "name": "Charging Burn",
-      "description": "+20% of a Gradient Charge on applying Burn. Once per turn."
+      "description": "+2 Gradient points on applying Burn. Once per turn."
     },
     "charging-stun": {
       "name": "Charging Stun",
-      "description": "+5% of a Gradient Charge on hitting a Stunned enemy."
+      "description": "+1 Gradient point on hitting a Stunned enemy."
     },
     "charging-alteration": {
       "name": "Charging Alteration",
-      "description": "+10% of a Gradient Charge on applying a Buff. Once per turn."
+      "description": "+1 Gradient point on applying a Buff. Once per turn."
     },
     "the-best-defense": {
       "name": "The Best Defense",
-      "description": "Deal 50% more damage, but can't Parry or Dodge."
+      "description": "+2d6 damage, but can't Parry or Dodge."
     },
     "passive-defense": {
       "name": "Passive Defense",
-      "description": "Reduce damage taken by 50%, but can't Parry or Dodge."
+      "description": "-2d6 damage taken, but can't Parry or Dodge."
     },
     "successive-parry": {
       "name": "Successive Parry",
-      "description": "Can't Dodge. +5% increased damage per Parry until damage taken."
+      "description": "Can't Dodge. +1 damage per Parry until damage taken."
     },
     "breaking-attack": {
       "name": "Breaking Attack",
@@ -882,16 +882,16 @@
     },
     "cleas-life": {
       "name": "Clea's Life",
-      "description": "On turn start, if no damage taken since last turn, recover 100% Health."
+      "description": "On turn start, if no damage taken since last turn, full heal."
     }
   },
   "weapons": {
     "abysseram": {
       "name": "Abysseram",
       "passives": {
-        "2": "50% increased damage on Rank D. No damage increase on other ranks.",
-        "3": "50% increased Base Attack damage.",
-        "4": "On Rank D, recover 20% Health with Base Attack."
+        "2": "+2d6 damage on Rank D. No damage increase on other ranks.",
+        "3": "+2d6 Base Attack damage.",
+        "4": "On Rank D, recover 3d6 HP with Base Attack."
       }
     },
     "baguette-verso": {
@@ -905,8 +905,8 @@
     "blodam": {
       "name": "Blodam",
       "passives": {
-        "2": "Perfection is now based on current Health. Gain 1 Rank every 20% missing Health.",
-        "3": "20% increased Light damage with Skills.",
+        "2": "Perfection is now based on current Health. Gain 1 Rank every 10 missing HP.",
+        "3": "+1d6 Light damage with Skills.",
         "4": "+1 MP on Rank Up."
       }
     },
@@ -914,7 +914,7 @@
       "name": "Chevalam",
       "passives": {
         "2": "Start battle at Rank S, but can't be Healed or gain Shields.",
-        "3": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times.",
+        "3": "+1d6 damage for each consecutive turn without taking damage. Can stack up to 5 times.",
         "4": "Apply Rush on Rank S."
       }
     },
@@ -923,7 +923,7 @@
       "passives": {
         "2": "Light damage can Burn on Critical hits.",
         "3": "Apply 3 Burn instead of Mark.",
-        "4": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
+        "4": "+2d6 Burn damage per Rank, up to +7d6 on Rank S."
       }
     },
     "contorso": {
@@ -939,7 +939,7 @@
       "passives": {
         "2": "Base Attack applies 2 Burn stack per Rank.",
         "3": "+1 MP on Rank Up.",
-        "4": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
+        "4": "+2d6 Burn damage per Rank, up to +7d6 on Rank S."
       }
     },
     "cruleram": {
@@ -969,17 +969,17 @@
     "delaram": {
       "name": "Delaram",
       "passives": {
-        "2": "Start battle on Rank B, but 50% Health.",
-        "3": "Recover 15% Health on Base Attack.",
+        "2": "Start battle on Rank B, but with half max HP.",
+        "3": "Recover 3d6 HP on Base Attack.",
         "4": "Apply Powerful on Rank B."
       }
     },
     "demonam": {
       "name": "Demonam",
       "passives": {
-        "2": "Casting a Light Skill increases damage of next Physical Skill cast by 50% and vice versa.",
-        "3": "20% increased Physical damage with Skills.",
-        "4": "Dealing Light damage with a Skill recovers 3% Health."
+        "2": "Casting a Light Skill grants +2d6 damage on next Physical Skill and vice versa.",
+        "3": "+1d6 Physical damage with Skills.",
+        "4": "Dealing Light damage with a Skill recovers 1d4 HP."
       }
     },
     "dreameso": {
@@ -994,7 +994,7 @@
       "name": "Dualiso",
       "passives": {
         "2": "Play again after a Base Attack.",
-        "3": "50% increased Base Attack damage.",
+        "3": "+2d6 Base Attack damage.",
         "4": "Base Attack gives 4 Perfection."
       }
     },
@@ -1033,7 +1033,7 @@
     "liteso": {
       "name": "Liteso",
       "passives": {
-        "2": "Base Attack consumes all Shields to deal 100% increased damage per Shield.",
+        "2": "Base Attack consumes all Shields to deal +3d6 damage per Shield.",
         "3": "+1 Shield on Counterattack.",
         "4": "Base Attack gives 4 Perfection."
       }
@@ -1045,16 +1045,16 @@
     "nosaram": {
       "name": "Nosaram",
       "passives": {
-        "2": "Double Perfection gained on Free Aim shots.",
+        "2": "+2 extra Perfection on Free Aim shots.",
         "3": "Free Aim shots break 2 Shields.",
-        "4": "50% increased Free Aim damage."
+        "4": "+2d6 Free Aim damage."
       }
     },
     "sakaram": {
       "name": "Sakaram",
       "passives": {
         "2": "Can't lose Perfection. No damage increase from Rank.",
-        "3": "50% increased Base Attack damage.",
+        "3": "+2d6 Base Attack damage.",
         "4": "Base Attack gives 4 Perfection."
       }
     },
@@ -1063,21 +1063,21 @@
       "passives": {
         "2": "+1 to all Perfection gain but can't reach Rank S.",
         "3": "Base Attack gives 4 Perfection.",
-        "4": "20% increased Light damage with Skills."
+        "4": "+1d6 Light damage with Skills."
       }
     },
     "simoso": {
       "name": "Simoso",
       "passives": {
         "2": "An ethereal Sword deals Light damage on any damage dealt with Skills.",
-        "3": "20% chance to apply Burn on dealing Light damage.",
+        "3": "INT check DC 15: apply Burn on dealing Light damage.",
         "4": "Can't die if at least Rank A."
       }
     },
     "sireso": {
       "name": "Sireso",
       "passives": {
-        "2": "Bonus damage from Perfection applies to all allies at half value. Bonus damage no longer applies to Verso.",
+        "2": "Bonus damage from Perfection applies to all allies reduced by 1d6. Bonus damage no longer applies to Verso.",
         "3": "Perfection gained is increased by 1 while Powerful.",
         "4": "Support Skills cost 1 less MP."
       }
@@ -1099,7 +1099,7 @@
       "passives": {
         "2": "Base Attack applies 2 Burn per Fire Stain.",
         "3": "Generate one Fire Stain at the beginning of each turn.",
-        "4": "30% increased Burn damage per Fire Stain."
+        "4": "+1d8 Burn damage per Fire Stain."
       }
     },
     "baguette-lune": {
@@ -1121,7 +1121,7 @@
     "betelim": {
       "name": "Betelim",
       "passives": {
-        "2": "Using a Skill that consumes Stains increases damage by 20%. Can stack up to 5 times. Resets on using a Skill without consuming Stains.",
+        "2": "Using a Skill that consumes Stains grants +1d6 damage. Can stack up to 5 times. Resets on using a Skill without consuming Stains.",
         "3": "On turn start, if no Stains, 2 random Stains are generated.",
         "4": "+1 MP when Stains are consumed."
       }
@@ -1129,15 +1129,15 @@
     "braselim": {
       "name": "Braselim",
       "passives": {
-        "2": "30% increased Critical Chance per Ice Stain.",
+        "2": "+1d8 Critical Chance bonus per Ice Stain.",
         "3": "+5% of a Gradient Charge on Critical hit.",
-        "4": "20% increased Fire damage with Skills."
+        "4": "+1d6 Fire damage with Skills."
       }
     },
     "chapelim": {
       "name": "Chapelim",
       "passives": {
-        "2": "30% increased Break damage per Earth Stain.",
+        "2": "+1d8 Break damage per Earth Stain.",
         "3": "Gain 9 MP on Breaking an enemy.",
         "4": "Generate one Earth Stain at the beginning of each turn."
       }
@@ -1145,8 +1145,8 @@
     "choralim": {
       "name": "Choralim",
       "passives": {
-        "2": "100% Critical Chance when 4 Stains are simultaneously active.",
-        "3": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times.",
+        "2": "Guaranteed Critical Hit when 4 Stains are simultaneously active.",
+        "3": "+1d6 damage for each consecutive turn without taking damage. Can stack up to 5 times.",
         "4": "Critical hits apply Burn."
       }
     },
@@ -1155,14 +1155,14 @@
       "passives": {
         "2": "50% chance to generate a Light Stain when consuming Stains.",
         "3": "+1 MP on consuming a Light Stain.",
-        "4": "20% increased damage with Skills per active Light Stain."
+        "4": "+1d6 damage with Skills per active Light Stain."
       }
     },
     "coralim": {
       "name": "Coralim",
       "passives": {
         "2": "Ice Skills cost 1 less MP.",
-        "3": "20% increased Ice damage with Skills.",
+        "3": "+1d6 Ice damage with Skills.",
         "4": "Start battle with 1 Earth Stain."
       }
     },
@@ -1170,7 +1170,7 @@
       "name": "Deminerim",
       "passives": {
         "2": "Lightning Skills cost 1 less MP.",
-        "3": "20% increased Lightning damage with Skills.",
+        "3": "+1d6 Lightning damage with Skills.",
         "4": "Start battle with 1 Fire Stain."
       }
     },
@@ -1178,14 +1178,14 @@
       "name": "Elerim",
       "passives": {
         "2": "Consuming an Earth Stain applies 1 Shield to self.",
-        "3": "20% increased Earth damage with Skills.",
+        "3": "+1d6 Earth damage with Skills.",
         "4": "Base Attack generates an Earth Stain."
       }
     },
     "kralim": {
       "name": "Kralim",
       "passives": {
-        "2": "Casting a Skill increases the Skill damage of all other elements by 20%. Resets when casting a Skill of a previous element.",
+        "2": "Casting a Skill grants +1d6 Skill damage of all other elements. Resets when casting a Skill of a previous element.",
         "3": "On turn start, if no Stains, 2 random Stains are generated.",
         "4": "+1 MP when Stains are consumed."
       }
@@ -1194,16 +1194,16 @@
       "name": "Lighterim",
       "passives": {
         "2": "Fire Skills cost 1 less MP.",
-        "3": "20% increased Fire damage with Skills.",
+        "3": "+1d6 Fire damage with Skills.",
         "4": "Start battle with 1 Ice Stain."
       }
     },
     "lithelim": {
       "name": "Lithelim",
       "passives": {
-        "2": "50% chance to generate a Dark or Light Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain.",
+        "2": "INT check DC 10: generate a Dark or Light Stain when consuming Stains. +2d6 damage with Skills per active Dark Stain.",
         "3": "+1 MP on consuming a Light Stain.",
-        "4": "Base Attacks can consume one Dark Stain to deal 200% more damage."
+        "4": "Base Attacks can consume one Dark Stain to deal +5d6 damage."
       }
     },
     "lunerim": {
@@ -1214,7 +1214,7 @@
       "name": "Painerim",
       "passives": {
         "2": "Earth Skills cost 1 less MP.",
-        "3": "20% increased Earth damage with Skills.",
+        "3": "+1d6 Earth damage with Skills.",
         "4": "Start battle with 1 Lightning Stain."
       }
     },
@@ -1239,22 +1239,22 @@
       "passives": {
         "2": "Using a Gradient Attack generates 1 additional Light Stain.",
         "3": "When a Fire Stain is generated, a Lightning Stain is also generated. Once per turn.",
-        "4": "Gradient Attacks and Gradient Counters deal 50% more damage."
+        "4": "Gradient Attacks and Gradient Counters deal +2d6 damage."
       }
     },
     "scaverim": {
       "name": "Scaverim",
       "passives": {
-        "2": "50% chance to generate a Dark Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain.",
-        "3": "Base Attacks can consume one Dark Stain to deal 200% more damage.",
-        "4": "With 4 active Dark Stains, any Skill can consume them to deal 300% more damage."
+        "2": "INT check DC 10: generate a Dark Stain when consuming Stains. +2d6 damage with Skills per active Dark Stain.",
+        "3": "Base Attacks can consume one Dark Stain to deal +5d6 damage.",
+        "4": "With 4 active Dark Stains, any Skill can consume them to deal +7d6 damage."
       }
     },
     "snowim": {
       "name": "Snowim",
       "passives": {
         "2": "Freeze self when falling below 30% health. Prevent the next instance of damage while Frozen.",
-        "3": "On turn start, if Frozen, remove Freeze and recover 60% Health.",
+        "3": "On turn start, if Frozen, remove Freeze and recover 8d6 HP.",
         "4": "Gain 2 Ice Stains and 3 MP when Frozen."
       }
     },
@@ -1270,7 +1270,7 @@
       "name": "Troubadim",
       "passives": {
         "2": "Free Aim Shots deal damage to an additional random target.",
-        "3": "50% increased Free Aim damage.",
+        "3": "+2d6 Free Aim damage.",
         "4": "Generate a random Stain on Free Aim shot."
       }
     },
@@ -1293,9 +1293,9 @@
     "battlum": {
       "name": "Battlum",
       "passives": {
-        "2": "Double Gradient generation while in Defensive Stance.",
+        "2": "+2 Gradient points while in Defensive Stance.",
         "3": "If Stanceless, Base Attack switches to Defensive Stance.",
-        "4": "+5% of a Gradient Charge on Parry."
+        "4": "+1 Gradient point on Parry."
       }
     },
     "brulerum": {
@@ -1310,8 +1310,8 @@
       "name": "Chalium",
       "passives": {
         "2": "On Defensive Stance, gain 1 Shield per Parry. Lose all Shields on turn start.",
-        "3": "20% increased Light damage with Skills.",
-        "4": "50% increased Counter damage per Shield."
+        "3": "+1d6 Light damage with Skills.",
+        "4": "+2d6 Counter damage per Shield."
       }
     },
     "chantenum": {
@@ -1326,15 +1326,15 @@
       "name": "Clierum",
       "passives": {
         "2": "Critical hits with Skills give 2 MP. Once per turn.",
-        "3": "20% increased Lightning damage with Skills.",
-        "4": "+50% Critical Chance while in Offensive Stance."
+        "3": "+1d6 Lightning damage with Skills.",
+        "4": "+2d6 Critical Chance bonus while in Offensive Stance."
       }
     },
     "coldum": {
       "name": "Coldum",
       "passives": {
-        "2": "Self-Heal by 2% Health on dealing a Critical hit.",
-        "3": "+50% Critical Chance while in Defensive Stance.",
+        "2": "Self-Heal by 1d4 HP on dealing a Critical hit.",
+        "3": "+2d6 Critical Chance bonus while in Defensive Stance.",
         "4": "If Stanceless, Base Attack switches to Defensive Stance."
       }
     },
@@ -1349,15 +1349,15 @@
     "facesum": {
       "name": "Facesum",
       "passives": {
-        "2": "In Offensive Stance, double the amount of Burn applied.",
-        "3": "50% increased Burn damage.",
+        "2": "In Offensive Stance, +2 Burn stacks applied.",
+        "3": "+2d6 Burn damage.",
         "4": "Base Attack propagates Burn."
       }
     },
     "glaisum": {
       "name": "Glaisum",
       "passives": {
-        "2": "Allies recover 20% Health on switching to Virtuose Stance.",
+        "2": "Allies recover 3d6 HP on switching to Virtuose Stance.",
         "3": "Gain Shell when switching out of Virtuose Stance.",
         "4": "Cleanse self Status Effects when switching to Virtuose Stance."
       }
@@ -1367,7 +1367,7 @@
       "passives": {
         "2": "Switch to Virtuose Stance on Counterattack.",
         "3": "Apply 5 Burn on Counterattack.",
-        "4": "50% increased Counter damage per Shield."
+        "4": "+2d6 Counter damage per Shield."
       }
     },
     "lithum": {
@@ -1386,14 +1386,14 @@
       "name": "Medalum",
       "passives": {
         "2": "Start in Virtuose Stance.",
-        "3": "In Virtuose Stance, every Burn applied is doubled.",
-        "4": "In Virtuose Stance, Burn deals double damage."
+        "3": "In Virtuose Stance, +2 Burn stacks applied.",
+        "4": "In Virtuose Stance, Burn deals +3d6 damage."
       }
     },
     "melarum": {
       "name": "Melarum",
       "passives": {
-        "2": "Allies recover 20% Health on switching to Virtuose Stance.",
+        "2": "Allies recover 3d6 HP on switching to Virtuose Stance.",
         "3": "Applies Shell when Health is above 80%.",
         "4": "Switch to Virtuose Stance when Health falls below 50%."
       }
@@ -1402,7 +1402,7 @@
       "name": "Plenum",
       "passives": {
         "2": "On turn start, if Stanceless, switch to Defensive Stance.",
-        "3": "In Defensive Stance, double Break damage.",
+        "3": "In Defensive Stance, +3d6 Break damage.",
         "4": "Support Skills cost 1 less MP."
       }
     },
@@ -1411,7 +1411,7 @@
       "passives": {
         "2": "+1 Shield on switching to Offensive Stance.",
         "3": "If Stanceless, Base Attack switches to Offensive Stance.",
-        "4": "+50% Critical Chance while in Offensive Stance."
+        "4": "+2d6 Critical Chance bonus while in Offensive Stance."
       }
     },
     "sekarum": {
@@ -1425,7 +1425,7 @@
     "stalum": {
       "name": "Stalum",
       "passives": {
-        "2": "Apply Burn on self on turn start. 10% increased damage for each self Burn stack.",
+        "2": "Apply Burn on self on turn start. +1d4 damage for each self Burn stack.",
         "3": "Base Attack applies 2 Burn.",
         "4": "While in Defensive Stance, receive Heal instead of Burn damage."
       }
@@ -1433,7 +1433,7 @@
     "tissenum": {
       "name": "Tissenum",
       "passives": {
-        "2": "In Defensive Stance, double Break damage.",
+        "2": "In Defensive Stance, +3d6 Break damage.",
         "3": "Gain 9 MP on Breaking an enemy.",
         "4": "Breaking an enemy deals a high amount of Earth damage."
       }
@@ -1443,7 +1443,7 @@
       "passives": {
         "2": "If Stanceless, Base Attack switches to Offensive Stance.",
         "3": "Counterattacks apply Unprotected.",
-        "4": "+50% Critical Chance while in Offensive Stance."
+        "4": "+2d6 Critical Chance bonus while in Offensive Stance."
       }
     },
     "volesterum": {
@@ -1459,7 +1459,7 @@
       "passives": {
         "2": "Applying Shell also applies 1 Shield.",
         "3": "On applying Shields, also give 1 MP.",
-        "4": "On switching to Virtuose Stance, double all Shields on allies."
+        "4": "On switching to Virtuose Stance, +3 Shields on all allies."
       }
     },
     "baguette-monoco": {
@@ -1506,7 +1506,7 @@
       "name": "Fragaro",
       "passives": {
         "2": "Free Aim shots spin the Bestial Wheel to a random value.",
-        "3": "Free Aim shots deal 100% more damage with all Masks except Almighty.",
+        "3": "Free Aim shots deal +3d6 damage with all Masks except Almighty.",
         "4": "100% Critical Chance while in Almighty Mask."
       }
     },
@@ -1522,8 +1522,8 @@
       "name": "Joyaro",
       "passives": {
         "2": "Start battle in Almighty Mask.",
-        "3": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times.",
-        "4": "Break damage is doubled while in Almighty Mask."
+        "3": "+1d6 damage for each consecutive turn without taking damage. Can stack up to 5 times.",
+        "4": "+3d6 Break damage while in Almighty Mask."
       }
     },
     "monocaro": {
@@ -1531,21 +1531,21 @@
       "passives": {
         "2": "Start battle in Balanced Mask.",
         "3": "Balanced Mask applies Powerful for 3 turns.",
-        "4": "Critical hits deal 30% more damage while in Balanced Mask."
+        "4": "Critical hits deal +1d8 damage while in Balanced Mask."
       }
     },
     "nusaro": {
       "name": "Nusaro",
       "passives": {
         "2": "Parries increase the Bestial Wheel by 1. Taking damage resets the Bestial Wheel.",
-        "3": "Upgraded Skills deal 30% more damage.",
+        "3": "Upgraded Skills deal +1d8 damage.",
         "4": "+1 MP on Mask change."
       }
     },
     "sidaro": {
       "name": "Sidaro",
       "passives": {
-        "2": "30% increased damage per Upgraded Skill used. Resets on using a non-Upgraded Skill.",
+        "2": "+1d8 damage per Upgraded Skill used. Resets on using a non-Upgraded Skill.",
         "3": "Base Attack spins the Bestial Wheel to a random value.",
         "4": "Using an Upgraded Skill gives 1 MP to all other allies."
       }
@@ -1555,15 +1555,15 @@
       "passives": {
         "2": "Switch to Almighty Mask on Breaking an enemy.",
         "3": "Almighty Mask gives 2 MP to all allies.",
-        "4": "50% increased Break damage."
+        "4": "+2d6 Break damage."
       }
     },
     "algueron": {
       "name": "Algueron",
       "passives": {
-        "2": "Free Aim shots can consume 1 Foretell to deal 100% more damage.",
+        "2": "Free Aim shots can consume 1 Foretell to deal +3d6 damage.",
         "3": "Base Attack applies 3 Foretell.",
-        "4": "During Twilight, Free Aim shots deal double damage."
+        "4": "During Twilight, Free Aim shots deal +3d6 damage."
       }
     },
     "baguette-sciel": {
@@ -1578,7 +1578,7 @@
       "name": "Blizzon",
       "passives": {
         "2": "While having at least 1 active Moon charge, Moon Skills are always Critical but damage taken is doubled.",
-        "3": "25% increased damage per Moon charge.",
+        "3": "+1d6 damage per Moon charge.",
         "4": "Base Attack gives 1 Moon charge."
       }
     },
@@ -1586,7 +1586,7 @@
       "name": "Bourgelon",
       "passives": {
         "2": "Consuming Foretell applies 2 Burn on target per Sun Charge.",
-        "3": "100% increased Burn damage in Twilight state.",
+        "3": "+3d6 Burn damage in Twilight state.",
         "4": "Sun Skills give one more charge."
       }
     },
@@ -1595,21 +1595,21 @@
       "passives": {
         "2": "100% Critical Chance during Twilight.",
         "3": "Apply 1 Foretell on Critical hit.",
-        "4": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
+        "4": "+1d6 damage for each consecutive turn without taking damage. Can stack up to 5 times."
       }
     },
     "chation": {
       "name": "Chation",
       "passives": {
-        "2": "Sun Skills always apply 10 Foretell, but all damage taken is doubled.",
+        "2": "Sun Skills always apply 10 Foretell, but +3d6 damage taken.",
         "3": "Base Attack gives 1 Moon charge and consumes all Foretell to apply Burn.",
-        "4": "100% increased Burn damage in Twilight state."
+        "4": "+3d6 Burn damage in Twilight state."
       }
     },
     "corderon": {
       "name": "Corderon",
       "passives": {
-        "2": "Curse self on battle start. Deal 50% more damage while Cursed.",
+        "2": "Curse self on battle start. +2d6 damage while Cursed.",
         "3": "Reset Curse duration when entering Twilight state.",
         "4": "Play again when entering Twilight state."
       }
@@ -1619,7 +1619,7 @@
       "passives": {
         "2": "+1 MP per Moon charge on turn start.",
         "3": "Base Attack gives 1 Moon charge.",
-        "4": "During Twilight, Base Attack consumes all MP. Base Attack applies 1 Foretell and deals 50% increased damage per MP consumed."
+        "4": "During Twilight, Base Attack consumes all MP. Base Attack applies 1 Foretell and deals +2d6 damage per MP consumed."
       }
     },
     "garganon": {
@@ -1635,7 +1635,7 @@
       "passives": {
         "2": "During Twilight, every time Foretell is applied it also affects another random enemy.",
         "3": "Apply 1 Burn every 3 Foretell applied with Skills.",
-        "4": "20% increased Fire damage with Skills."
+        "4": "+1d6 Fire damage with Skills."
       }
     },
     "guleson": {
@@ -1649,7 +1649,7 @@
     "hevason": {
       "name": "Hevason",
       "passives": {
-        "2": "Free Aim shots can consume a Sun charge to apply 5 Foretell and consume a Moon charge to deal 400% more damage.",
+        "2": "Free Aim shots can consume a Sun charge to apply 5 Foretell and consume a Moon charge to deal +8d6 damage.",
         "3": "Consuming a Sun or Moon charge gives 1 MP.",
         "4": "Base Attack gives 1 Moon charge."
       }
@@ -1667,7 +1667,7 @@
       "passives": {
         "2": "Killing an enemy with Foretell applies its Foretell to another random enemy.",
         "3": "Apply Mark on consuming Foretell.",
-        "4": "20% increased Dark damage with Skills."
+        "4": "+1d6 Dark damage with Skills."
       }
     },
     "martenon": {
@@ -1675,7 +1675,7 @@
       "passives": {
         "2": "On Twilight Start, deal damage to all enemies based on the amount of charges.",
         "3": "On Twilight Start, apply 2 Foretell per charge to all enemies.",
-        "4": "Double Sun and Moon charge generation."
+        "4": "+1 extra Sun and Moon charge generated."
       }
     },
     "minason": {
@@ -1690,7 +1690,7 @@
       "name": "Moisson",
       "passives": {
         "2": "During Twilight, all damage dealt is converted to Dark damage.",
-        "3": "20% increased Dark damage with Skills.",
+        "3": "+1d6 Dark damage with Skills.",
         "4": "Apply Shell during Moon, Powerful during Sun, and Rush during Twilight."
       }
     },
@@ -1705,9 +1705,9 @@
     "rangeson": {
       "name": "Rangeson",
       "passives": {
-        "2": "Recover 5% Health per Foretell applied.",
+        "2": "Recover 1d6 HP per Foretell applied.",
         "3": "Healing Skills cost 1 less MP.",
-        "4": "30% increased Heal efficiency per Moon charge. Base Attack gives 1 Moon charge."
+        "4": "+1d8 Heal per Moon charge. Base Attack gives 1 Moon charge."
       }
     },
     "sadon": {
@@ -1725,7 +1725,7 @@
     "tisseron": {
       "name": "Tisseron",
       "passives": {
-        "2": "Extend Twilight by one turn on using a Moon Skill. +50% Twilight damage increase on using a Sun Skill.",
+        "2": "Extend Twilight by one turn on using a Moon Skill. +2d6 Twilight damage on using a Sun Skill.",
         "3": "Twilight duration is increased by 1.",
         "4": "Play again when entering Twilight state."
       }
@@ -3053,7 +3053,7 @@
         "Slowed": "Hinders dodge and jump.",
         "Empowered": "Improves your attack.",
         "Weakened": "Weakens your attack.",
-        "Shell": "Improves your defense when parrying.",
+        "Shell": "Significantly reduces damage taken.",
         "Unprotected": "Hinders your defense when parrying.",
         "Regeneration": "Restores a percentage of your life each turn.",
         "Cursed": "Dies when the counter reaches zero.",
@@ -3080,7 +3080,6 @@
         "Burn": "Deals continuous fire damage to the character.",
         "Shield": "Protects the character from damage.",
         "Powerful": "Significantly increases attack power.",
-        "Shell": "Significantly reduces damage taken.",
         "Slow": "Reduces the character's speed.",
         "Freeze": "Freezes the character, preventing actions.",
         "GreaterRush": "Enhanced version of Rush, with stronger effects.",
@@ -3408,7 +3407,7 @@
       "removeProficiency": "Remove proficiency",
       "pin": "Pin",
       "unpin": "Unpin",
-      "saveError": "Error saving skills",
+      "saveError": "Error saving skill data.",
       "acrobatics": "Acrobatics",
       "animalHandling": "Animal Handling",
       "arcana": "Arcana",
@@ -3431,8 +3430,7 @@
       "proficiencySetupTitle": "Choose your 5 Skills",
       "proficiencySetupDesc": "Choose 5 skills your character will be proficient in.",
       "proficiencySetupConfirm": "Confirm Skills",
-      "proficiencySetupSelected": "selected",
-      "saveError": "Error saving skill data."
+      "proficiencySetupSelected": "selected"
     },
     "gameLog": {
       "title": "Game Log",

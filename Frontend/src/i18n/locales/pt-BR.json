@@ -18,7 +18,7 @@
     },
     "augmented-first-strike": {
       "name": "Primeiro Golpe Aumentado",
-      "description": "50% de dano aumentado no primeiro golpe. Uma vez por batalha."
+      "description": "+2d6 de dano no primeiro golpe. Uma vez por batalha."
     },
     "survivor": {
       "name": "Sobrevivente",
@@ -30,15 +30,15 @@
     },
     "recovery": {
       "name": "Recuperação",
-      "description": "Recupera 10% de Vida no início do turno."
+      "description": "Recupera 2d6 PV no início do turno."
     },
     "lucky-aim": {
       "name": "Mira da Sorte",
-      "description": "30% de chance de recuperar 1 PM ao acertar um Ponto Fraco."
+      "description": "Teste de SAB CD 13: recupera 1 PM ao acertar um Ponto Fraco."
     },
     "augmented-counter-i": {
       "name": "Contra-Ataque Aumentado I",
-      "description": "50% de dano de Contra-Ataque aumentado."
+      "description": "+2d6 de dano de Contra-Ataque."
     },
     "second-chance": {
       "name": "Segunda Chance",
@@ -50,27 +50,27 @@
     },
     "solo-fighter": {
       "name": "Lutador Solitário",
-      "description": "Causa 50% mais dano se estiver lutando sozinho."
+      "description": "+2d6 de dano se estiver lutando sozinho."
     },
     "teamwork": {
       "name": "Trabalho em Equipe",
-      "description": "10% de dano aumentado enquanto todos os aliados estiverem vivos."
+      "description": "+1d4 de dano enquanto todos os aliados estiverem vivos."
     },
     "sweet-kill": {
       "name": "Morte Doce",
-      "description": "Recupera 50% de Vida ao matar um inimigo."
+      "description": "Recupera 6d6 PV ao matar um inimigo."
     },
     "augmented-attack": {
       "name": "Ataque Aumentado",
-      "description": "50% de dano de Ataque Base aumentado."
+      "description": "+2d6 de dano de Ataque Base."
     },
     "attack-lifesteal": {
       "name": "Roubo de Vida no Ataque",
-      "description": "Recupera 15% de Vida no Ataque Base."
+      "description": "Recupera 3d6 PV no Ataque Base."
     },
     "augmented-aim": {
       "name": "Mira Aumentada",
-      "description": "50% de dano de Mira Livre aumentado."
+      "description": "+2d6 de dano de Mira Livre."
     },
     "combo-attack-i": {
       "name": "Ataque em Combo I",
@@ -78,7 +78,7 @@
     },
     "healing-parry": {
       "name": "Aparar Curativo",
-      "description": "Recupera 3% de Vida ao Aparar."
+      "description": "Recupera 1d4 PV ao Aparar."
     },
     "auto-powerful": {
       "name": "Poder Automático",
@@ -178,11 +178,11 @@
     },
     "perilous-parry": {
       "name": "Aparar Perigoso",
-      "description": "+1 PM ao Aparar, mas o dano recebido é dobrado."
+      "description": "+1 PM ao Aparar, mas +3d6 de dano recebido."
     },
     "confident": {
       "name": "Confiante",
-      "description": "Recebe 50% menos dano, mas não pode ser Curado."
+      "description": "-2d6 de dano recebido, mas não pode ser Curado."
     },
     "bloody-bullet": {
       "name": "Bala Sangrenta",
@@ -202,7 +202,7 @@
     },
     "solidifying": {
       "name": "Solidificação",
-      "description": "+2 Escudos quando a Vida do personagem cai abaixo de 50%. Uma vez por batalha."
+      "description": "+2 Escudos quando a Vida do personagem cai abaixo de metade do HP máximo. Uma vez por batalha."
     },
     "powerful-revive": {
       "name": "Reviver Poderoso",
@@ -226,7 +226,7 @@
     },
     "piercing-shot": {
       "name": "Disparo Perfurante",
-      "description": "25% de dano de Mira Livre aumentado. Disparos de Mira Livre ignoram Escudos."
+      "description": "+1d6 de dano de Mira Livre. Disparos de Mira Livre ignoram Escudos."
     },
     "burning-dodge": {
       "name": "Esquiva Ardente",
@@ -274,15 +274,15 @@
     },
     "burn-affinity": {
       "name": "Afinidade com Queimadura",
-      "description": "25% de dano aumentado em alvos com Queimadura."
+      "description": "+1d6 de dano em alvos com Queimadura."
     },
     "inverted-affinity": {
       "name": "Afinidade com Inversão",
-      "description": "Aplica Invertido em si mesmo por 3 turnos no início da batalha. 50% de dano aumentado enquanto Invertido."
+      "description": "Aplica Invertido em si mesmo por 3 turnos no início da batalha. +2d6 de dano enquanto Invertido."
     },
     "exhausting-power": {
       "name": "Poder Exauridor",
-      "description": "50% de dano aumentado se Exausto."
+      "description": "+2d6 de dano se Exausto."
     },
     "auto-burn": {
       "name": "Queimadura Automática",
@@ -290,11 +290,11 @@
     },
     "at-deaths-door": {
       "name": "À Porta da Morte",
-      "description": "Causa 50% mais dano se a Vida estiver abaixo de 10%."
+      "description": "+2d6 de dano se a Vida estiver abaixo de 5 PV."
     },
     "full-strength": {
       "name": "Força Total",
-      "description": "25% de dano aumentado com Vida cheia."
+      "description": "+1d6 de dano com Vida cheia."
     },
     "painted-power": {
       "name": "Poder Pintado",
@@ -302,11 +302,11 @@
     },
     "sos-shell": {
       "name": "Escudo SOS",
-      "description": "Aplica Protegido ao cair abaixo de 50% de Vida."
+      "description": "Aplica Protegido ao cair abaixo de metade do HP máximo."
     },
     "sos-power": {
       "name": "Poder SOS",
-      "description": "Aplica Poderoso ao cair abaixo de 50% de Vida."
+      "description": "Aplica Poderoso ao cair abaixo de metade do HP máximo."
     },
     "augmented-counter-ii": {
       "name": "Contra-Ataque Aumentado II",
@@ -322,7 +322,7 @@
     },
     "sos-rush": {
       "name": "Ímpeto SOS",
-      "description": "Aplica Ímpeto ao cair abaixo de 50% de Vida."
+      "description": "Aplica Ímpeto ao cair abaixo de metade do HP máximo."
     },
     "solidifying-meditation": {
       "name": "Meditação Solidificadora",
@@ -334,7 +334,7 @@
     },
     "healing-fire": {
       "name": "Fogo Curativo",
-      "description": "Recupera 25% de Vida ao atacar um alvo com Queimadura. Uma vez por turno."
+      "description": "Recupera 4d6 PV ao atacar um alvo com Queimadura. Uma vez por turno."
     },
     "rewarding-mark": {
       "name": "Marca Recompensadora",
@@ -346,11 +346,11 @@
     },
     "stun-boost": {
       "name": "Impulso de Atordoamento",
-      "description": "30% de dano aumentado em alvos com Atordoamento."
+      "description": "+1d8 de dano em alvos com Atordoamento."
     },
     "sniper": {
       "name": "Atirador de Elite",
-      "description": "Primeiro disparo de Mira Livre em cada turno causa 200% de dano aumentado e pode Quebrar."
+      "description": "Primeiro disparo de Mira Livre em cada turno causa +5d6 de dano e pode Quebrar."
     },
     "energising-attack-ii": {
       "name": "Ataque Energizante II",
@@ -362,11 +362,11 @@
     },
     "healing-counter": {
       "name": "Contra-Ataque Curativo",
-      "description": "Recupera 25% de Vida no Contra-Ataque."
+      "description": "Recupera 4d6 PV no Contra-Ataque."
     },
     "powerful-shield": {
       "name": "Escudo Poderoso",
-      "description": "10% de dano aumentado por Ponto de Escudo em si mesmo."
+      "description": "+1d4 de dano por Ponto de Escudo em si mesmo."
     },
     "base-shield": {
       "name": "Escudo Base",
@@ -382,23 +382,23 @@
     },
     "shield-affinity": {
       "name": "Afinidade com Escudo",
-      "description": "30% de dano aumentado enquanto tiver Escudos, mas receber qualquer dano sempre remove todos os Escudos."
+      "description": "+1d8 de dano enquanto tiver Escudos, mas receber qualquer dano sempre remove todos os Escudos."
     },
     "critical-moment": {
       "name": "Momento Crítico",
-      "description": "50% de Chance Crítica aumentada se a Vida estiver abaixo de 30%."
+      "description": "+2d6 de bônus em Chance Crítica se a Vida estiver abaixo de metade do HP máximo."
     },
     "warming-up": {
       "name": "Aquecimento",
-      "description": "5% de dano aumentado por turno. Pode acumular até 5 vezes."
+      "description": "+1 de dano por turno. Pode acumular até 5 vezes."
     },
     "glass-canon": {
       "name": "Canhão de Vidro",
-      "description": "Causa 25% mais dano, mas recebe 25% mais dano."
+      "description": "+1d6 de dano causado, mas +1d6 de dano recebido."
     },
     "faster-than-strong": {
       "name": "Rápido ao Invés de Forte",
-      "description": "Sempre joga duas vezes seguidas, mas causa 50% menos dano."
+      "description": "Sempre joga duas vezes seguidas, mas -2d6 de dano."
     },
     "shortcut": {
       "name": "Atalho",
@@ -406,15 +406,15 @@
     },
     "defensive-mode": {
       "name": "Modo Defensivo",
-      "description": "Ao receber dano, consome 1 PM para receber 30% menos dano, se possível."
+      "description": "Ao receber dano, consome 1 PM para receber -1d8 de dano, se possível."
     },
     "greater-powerful": {
       "name": "Poder Maior",
-      "description": "+15% ao aumento de dano de Poderoso."
+      "description": "+1d4 ao bônus de dano de Poderoso."
     },
     "greater-shell": {
       "name": "Escudo Maior",
-      "description": "+10% à redução de dano de Protegido."
+      "description": "+1d4 à redução de dano de Protegido."
     },
     "revive-paradox": {
       "name": "Paradoxo do Reviver",
@@ -422,19 +422,19 @@
     },
     "greater-rush": {
       "name": "Ímpeto Maior",
-      "description": "+25% ao aumento de Velocidade de Ímpeto."
+      "description": "+1d6 ao bônus de Velocidade de Ímpeto."
     },
     "last-stand-critical": {
       "name": "Crítico da Última Resistência",
-      "description": "100% de Chance Crítica enquanto luta sozinho."
+      "description": "Acerto Crítico garantido enquanto luta sozinho."
     },
     "effective-heal": {
       "name": "Cura Eficaz",
-      "description": "Dobra todas as Curas recebidas."
+      "description": "+3d6 PV extra em todas as Curas recebidas."
     },
     "shared-care": {
       "name": "Cuidado Compartilhado",
-      "description": "Ao Curar um aliado, também Cura a si mesmo por 50% desse valor."
+      "description": "Ao Curar um aliado, também Cura a si mesmo por metade desse valor."
     },
     "powerful-heal": {
       "name": "Cura Poderosa",
@@ -458,7 +458,7 @@
     },
     "healing-share": {
       "name": "Compartilhamento Curativo",
-      "description": "Recebe 15% de todas as Curas que afetam outros personagens."
+      "description": "Recebe 1d4 PV quando outro personagem é Curado."
     },
     "dead-energy-i": {
       "name": "Energia Mortal I",
@@ -486,11 +486,11 @@
     },
     "roulette": {
       "name": "Roleta",
-      "description": "Cada golpe tem 50% de chance de causar 50% ou 200% do seu dano."
+      "description": "Teste de CAR CD 10: sucesso causa +5d6 de dano, falha causa -2d6 de dano."
     },
     "soul-eater": {
       "name": "Devorador de Almas",
-      "description": "Causa 30% mais dano, mas perde 20% de Vida por turno."
+      "description": "+1d8 de dano, mas perde 3d6 PV por turno."
     },
     "painter": {
       "name": "Pintor",
@@ -498,19 +498,19 @@
     },
     "immaculate": {
       "name": "Imaculado",
-      "description": "30% de dano aumentado até receber um golpe."
+      "description": "+1d8 de dano até receber um golpe."
     },
     "tainted": {
       "name": "Contaminado",
-      "description": "15% de dano aumentado para cada Efeito de Status em si mesmo."
+      "description": "+1d4 de dano para cada Efeito de Status em si mesmo."
     },
     "first-offensive": {
       "name": "Primeira Ofensiva",
-      "description": "Primeiro golpe causado e recebido causa 50% mais dano."
+      "description": "Primeiro golpe causado e recebido causa +2d6 de dano."
     },
     "cursed-power": {
       "name": "Poder Amaldiçoado",
-      "description": "30% de dano aumentado enquanto Amaldiçoado."
+      "description": "+1d8 de dano enquanto Amaldiçoado."
     },
     "pro-retreat": {
       "name": "Retirada Profissional",
@@ -518,7 +518,7 @@
     },
     "enfeebling-mark": {
       "name": "Marca Enfraquecedora",
-      "description": "Alvos Marcados causam 30% menos dano."
+      "description": "Alvos Marcados causam -1d8 de dano."
     },
     "burning-mark": {
       "name": "Marca Ardente",
@@ -538,7 +538,7 @@
     },
     "burning-shots": {
       "name": "Disparos Ardentes",
-      "description": "20% de chance de aplicar Queimadura no disparo de Mira Livre."
+      "description": "Teste de INT CD 15: aplica Queimadura no disparo de Mira Livre."
     },
     "free-aim-inverted-shot": {
       "name": "Disparo Livre Invertido",
@@ -546,27 +546,27 @@
     },
     "marking-shots": {
       "name": "Disparos Marcadores",
-      "description": "20% de chance de aplicar Marca no disparo de Mira Livre."
+      "description": "Teste de SAB CD 15: aplica Marca no disparo de Mira Livre."
     },
     "powerful-shots": {
       "name": "Disparos Poderosos",
-      "description": "20% de chance de ganhar Poderoso no disparo de Mira Livre."
+      "description": "Teste de FOR CD 15: ganha Poderoso no disparo de Mira Livre."
     },
     "protecting-shots": {
       "name": "Disparos Protetores",
-      "description": "20% de chance de ganhar Protegido no disparo de Mira Livre."
+      "description": "Teste de CON CD 15: ganha Protegido no disparo de Mira Livre."
     },
     "accelerating-shots": {
       "name": "Disparos Aceleradores",
-      "description": "20% de chance de ganhar Ímpeto no disparo de Mira Livre."
+      "description": "Teste de DES CD 15: ganha Ímpeto no disparo de Mira Livre."
     },
     "energising-shots": {
       "name": "Disparos Energizantes",
-      "description": "20% de chance de ganhar 1 PM no disparo de Mira Livre."
+      "description": "Teste de SAB CD 15: ganha 1 PM no disparo de Mira Livre."
     },
     "versatile": {
       "name": "Versátil",
-      "description": "Após um ataque de Mira Livre, dano de Ataque Base é aumentado em 50% por 1 turno."
+      "description": "Após um ataque de Mira Livre, +2d6 de dano de Ataque Base por 1 turno."
     },
     "empowering-attack": {
       "name": "Ataque Fortalecedor",
@@ -586,7 +586,7 @@
     },
     "empowering-parry": {
       "name": "Aparar Fortalecedor",
-      "description": "Cada Aparar bem-sucedido aumenta o dano em 5% até o fim do turno seguinte. Receber qualquer dano remove este bônus."
+      "description": "Cada Aparar bem-sucedido concede +1 de dano até o fim do turno seguinte. Receber qualquer dano remove este bônus."
     },
     "accelerating-last-stand": {
       "name": "Última Resistência Aceleradora",
@@ -622,11 +622,11 @@
     },
     "breaker": {
       "name": "Quebrador",
-      "description": "25% de dano de Quebra aumentado."
+      "description": "+1d6 de dano de Quebra."
     },
     "staggering-attack": {
       "name": "Ataque Cambaleante",
-      "description": "50% de dano de Quebra aumentado no Ataque Base."
+      "description": "+2d6 de dano de Quebra no Ataque Base."
     },
     "energising-break": {
       "name": "Quebra Energizante",
@@ -642,19 +642,19 @@
     },
     "breaking-shots": {
       "name": "Disparos Quebradores",
-      "description": "50% de dano de Quebra aumentado com disparos de Mira Livre."
+      "description": "+2d6 de dano de Quebra com disparos de Mira Livre."
     },
     "fueling-break": {
       "name": "Quebra Combustível",
-      "description": "Quebrar um alvo dobra sua quantidade de Queimadura."
+      "description": "Quebrar um alvo adiciona +3 camadas de Queimadura."
     },
     "gradient-fighter": {
       "name": "Lutador de Gradiente",
-      "description": "25% de dano aumentado com Ataques de Gradiente."
+      "description": "+1d6 de dano com Ataques de Gradiente."
     },
     "gradient-recovery": {
       "name": "Recuperação de Gradiente",
-      "description": "Recupera 10% de Vida ao usar uma Carga de Gradiente."
+      "description": "Recupera 2d6 PV ao usar uma Carga de Gradiente."
     },
     "energising-gradient": {
       "name": "Gradiente Energizante",
@@ -662,7 +662,7 @@
     },
     "charging-attack": {
       "name": "Ataque Carregador",
-      "description": "+15% de uma Carga de Gradiente no Ataque Base."
+      "description": "+1 ponto de Gradiente no Ataque Base."
     },
     "gradient-breaker": {
       "name": "Quebrador de Gradiente",
@@ -674,19 +674,19 @@
     },
     "charging-recovery": {
       "name": "Recuperação Carregadora",
-      "description": "50% de Geração de Gradiente aumentada com Habilidades de Cura."
+      "description": "+2 pontos de Gradiente com Habilidades de Cura."
     },
     "charging-counter": {
       "name": "Contra-Ataque Carregador",
-      "description": "+10% de uma Carga de Gradiente no Contra-Ataque."
+      "description": "+1 ponto de Gradiente no Contra-Ataque."
     },
     "charging-weakness": {
       "name": "Fraqueza Carregadora",
-      "description": "+15% de uma Carga de Gradiente ao acertar uma Fraqueza. Uma vez por turno."
+      "description": "+1 ponto de Gradiente ao acertar uma Fraqueza. Uma vez por turno."
     },
     "charging-mark": {
       "name": "Marca Carregadora",
-      "description": "+20% de uma Carga de Gradiente ao acertar um alvo Marcado. Uma vez por turno."
+      "description": "+2 pontos de Gradiente ao acertar um alvo Marcado. Uma vez por turno."
     },
     "revive-tint-energy": {
       "name": "Energia de Tintura de Reviver",
@@ -714,7 +714,7 @@
     },
     "better-healing-tint": {
       "name": "Tintura Curativa Melhor",
-      "description": "Tinturas Curativas têm o dobro do efeito de Cura."
+      "description": "Tinturas Curativas curam +3d6 PV extra."
     },
     "cleansing-tint": {
       "name": "Tintura Purificadora",
@@ -730,7 +730,7 @@
     },
     "charging-tint": {
       "name": "Tintura Carregadora",
-      "description": "+5% de uma Carga de Gradiente ao usar um item."
+      "description": "+1 ponto de Gradiente ao usar um item."
     },
     "time-tint": {
       "name": "Tintura do Tempo",
@@ -742,7 +742,7 @@
     },
     "breaking-burn": {
       "name": "Queimadura Quebradora",
-      "description": "25% de dano de Quebra aumentado em inimigos com Queimadura."
+      "description": "+1d6 de dano de Quebra em inimigos com Queimadura."
     },
     "critical-burn": {
       "name": "Queimadura Crítica",
@@ -758,11 +758,11 @@
     },
     "critical-break": {
       "name": "Quebra Crítica",
-      "description": "25% de dano de Quebra aumentado em acertos Críticos."
+      "description": "+1d6 de dano de Quebra em acertos Críticos."
     },
     "critical-weakness": {
       "name": "Fraqueza Crítica",
-      "description": "25% de Chance Crítica aumentada ao acertar Fraqueza."
+      "description": "+1d6 de bônus em Chance Crítica ao acertar Fraqueza."
     },
     "critical-stun": {
       "name": "Atordoamento Crítico",
@@ -770,11 +770,11 @@
     },
     "critical-vulnerability": {
       "name": "Vulnerabilidade Crítica",
-      "description": "25% de Chance Crítica aumentada em inimigos Desprotegido."
+      "description": "+1d6 de bônus em Chance Crítica em inimigos Desprotegido."
     },
     "empowering-dodge": {
       "name": "Esquiva Fortalecedora",
-      "description": "5% de dano aumentado para cada Esquiva consecutiva bem-sucedida. Pode acumular até 10 vezes."
+      "description": "+1 de dano para cada Esquiva consecutiva bem-sucedida. Pode acumular até 10 vezes."
     },
     "marking-break": {
       "name": "Quebra Marcadora",
@@ -822,7 +822,7 @@
     },
     "greater-powerless": {
       "name": "Impotência Maior",
-      "description": "+15% à redução de dano de Impotente."
+      "description": "+1d4 à redução de dano de Impotente."
     },
     "greater-unprotected": {
       "name": "Desprotegido Maior",
@@ -830,7 +830,7 @@
     },
     "greater-slow": {
       "name": "Lentidão Maior",
-      "description": "+15% à redução de Velocidade de Lentidão."
+      "description": "+1d4 à redução de Velocidade de Lentidão."
     },
     "energising-cleanse": {
       "name": "Purificação Energizante",
@@ -846,31 +846,31 @@
     },
     "charging-critical": {
       "name": "Crítico Carregador",
-      "description": "+20% de uma Carga de Gradiente em Acerto Crítico. Uma vez por turno."
+      "description": "+2 pontos de Gradiente em Acerto Crítico. Uma vez por turno."
     },
     "charging-burn": {
       "name": "Queimadura Carregadora",
-      "description": "+20% de uma Carga de Gradiente ao aplicar Queimadura. Uma vez por turno."
+      "description": "+2 pontos de Gradiente ao aplicar Queimadura. Uma vez por turno."
     },
     "charging-stun": {
       "name": "Atordoamento Carregador",
-      "description": "+5% de uma Carga de Gradiente ao acertar um inimigo com Atordoamento."
+      "description": "+1 ponto de Gradiente ao acertar um inimigo com Atordoamento."
     },
     "charging-alteration": {
       "name": "Alteração Carregadora",
-      "description": "+10% de uma Carga de Gradiente ao aplicar um Bônus. Uma vez por turno."
+      "description": "+1 ponto de Gradiente ao aplicar um Bônus. Uma vez por turno."
     },
     "the-best-defense": {
       "name": "A Melhor Defesa",
-      "description": "Causa 50% mais dano, mas não pode Aparar ou Esquivar."
+      "description": "+2d6 de dano, mas não pode Aparar ou Esquivar."
     },
     "passive-defense": {
       "name": "Defesa Passiva",
-      "description": "Reduz o dano recebido em 50%, mas não pode Aparar ou Esquivar."
+      "description": "-2d6 de dano recebido, mas não pode Aparar ou Esquivar."
     },
     "successive-parry": {
       "name": "Aparar Sucessivo",
-      "description": "Não pode Esquivar. +5% de dano aumentado por Aparar até receber dano."
+      "description": "Não pode Esquivar. +1 de dano por Aparar até receber dano."
     },
     "breaking-attack": {
       "name": "Ataque Quebrador",
@@ -882,16 +882,16 @@
     },
     "cleas-life": {
       "name": "Vida de Cléa",
-      "description": "No início do turno, se nenhum dano foi recebido desde o último turno, recupera 100% de Vida."
+      "description": "No início do turno, se nenhum dano foi recebido desde o último turno, cura total."
     }
   },
   "weapons": {
     "abysseram": {
       "name": "Abysseram",
       "passives": {
-        "2": "50% de dano aumentado no Rank D. Nenhum aumento de dano em outros ranks.",
-        "3": "50% de dano aumentado no Ataque Base.",
-        "4": "No Rank D, recupera 20% de Vida com Ataque Base."
+        "2": "+2d6 de dano no Rank D. Nenhum aumento de dano em outros ranks.",
+        "3": "+2d6 de dano no Ataque Base.",
+        "4": "No Rank D, recupera 3d6 PV com Ataque Base."
       }
     },
     "baguette-verso": {
@@ -905,8 +905,8 @@
     "blodam": {
       "name": "Blodam",
       "passives": {
-        "2": "Perfeição agora é baseada na Vida atual. Ganha 1 Rank a cada 20% de Vida faltante.",
-        "3": "20% de dano de Luz aumentado com Habilidades.",
+        "2": "Perfeição agora é baseada na Vida atual. Ganha 1 Rank a cada 10 PV faltantes.",
+        "3": "+1d6 de dano de Luz com Habilidades.",
         "4": "+1 PM ao subir de Rank."
       }
     },
@@ -914,7 +914,7 @@
       "name": "Chevalam",
       "passives": {
         "2": "Começa a batalha no Rank S, mas não pode ser Curado ou ganhar Escudos.",
-        "3": "20% de dano aumentado para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
+        "3": "+1d6 de dano para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
         "4": "Aplica Velocidade no Rank S."
       }
     },
@@ -923,7 +923,7 @@
       "passives": {
         "2": "Dano de Luz pode Queimar em acertos Críticos.",
         "3": "Aplica 3 Queimaduras ao invés de Marca.",
-        "4": "Aumenta o dano de Queimadura em 50% por Rank, até 300% no Rank S."
+        "4": "+2d6 de dano de Queimadura por Rank, até +7d6 no Rank S."
       }
     },
     "contorso": {
@@ -939,7 +939,7 @@
       "passives": {
         "2": "Ataque Base aplica 2 acúmulos de Queimadura por Rank.",
         "3": "+1 PM ao subir de Rank.",
-        "4": "Aumenta o dano de Queimadura em 50% por Rank, até 300% no Rank S."
+        "4": "+2d6 de dano de Queimadura por Rank, até +7d6 no Rank S."
       }
     },
     "cruleram": {
@@ -969,17 +969,17 @@
     "delaram": {
       "name": "Delaram",
       "passives": {
-        "2": "Começa a batalha no Rank B, mas com 50% de Vida.",
-        "3": "Recupera 15% de Vida no Ataque Base.",
+        "2": "Começa a batalha no Rank B, mas com metade do HP máximo.",
+        "3": "Recupera 3d6 PV no Ataque Base.",
         "4": "Aplica Poderoso no Rank B."
       }
     },
     "demonam": {
       "name": "Demonam",
       "passives": {
-        "2": "Usar uma Habilidade de Luz aumenta o dano da próxima Habilidade Física em 50% e vice versa.",
-        "3": "20% de dano Físico aumentado com Habilidades.",
-        "4": "Causar dano de Luz com uma Habilidade recupera 3% de Vida."
+        "2": "Usar uma Habilidade de Luz concede +2d6 de dano na próxima Habilidade Física e vice versa.",
+        "3": "+1d6 de dano Físico com Habilidades.",
+        "4": "Causar dano de Luz com uma Habilidade recupera 1d4 PV."
       }
     },
     "dreameso": {
@@ -994,7 +994,7 @@
       "name": "Dualiso",
       "passives": {
         "2": "Joga novamente após um Ataque Base.",
-        "3": "50% de dano aumentado no Ataque Base.",
+        "3": "+2d6 de dano no Ataque Base.",
         "4": "Ataque Base dá 4 Perfeição."
       }
     },
@@ -1033,7 +1033,7 @@
     "liteso": {
       "name": "Liteso",
       "passives": {
-        "2": "Ataque Base consome todos os Escudos para causar 100% de dano aumentado por Escudo.",
+        "2": "Ataque Base consome todos os Escudos para causar +3d6 de dano por Escudo.",
         "3": "+1 Escudo no Contra-ataque.",
         "4": "Ataque Base dá 4 Perfeição."
       }
@@ -1045,16 +1045,16 @@
     "nosaram": {
       "name": "Nosaram",
       "passives": {
-        "2": "Dobra a Perfeição ganha em tiros de Mira Livre.",
+        "2": "+2 de Perfeição extra em tiros de Mira Livre.",
         "3": "Tiros de Mira Livre quebram 2 Escudos.",
-        "4": "50% de dano aumentado em Mira Livre."
+        "4": "+2d6 de dano em Mira Livre."
       }
     },
     "sakaram": {
       "name": "Sakaram",
       "passives": {
         "2": "Não pode perder Perfeição. Sem aumento de dano por Rank.",
-        "3": "50% de dano aumentado no Ataque Base.",
+        "3": "+2d6 de dano no Ataque Base.",
         "4": "Ataque Base dá 4 Perfeição."
       }
     },
@@ -1063,21 +1063,21 @@
       "passives": {
         "2": "+1 para todo ganho de Perfeição mas não pode alcançar Rank S.",
         "3": "Ataque Base dá 4 Perfeição.",
-        "4": "20% de dano de Luz aumentado com Habilidades."
+        "4": "+1d6 de dano de Luz com Habilidades."
       }
     },
     "simoso": {
       "name": "Simoso",
       "passives": {
         "2": "Uma Espada etérea causa dano de Luz em qualquer dano causado com Habilidades.",
-        "3": "20% de chance de aplicar Queimadura ao causar dano de Luz.",
+        "3": "Teste de INT CD 15: aplica Queimadura ao causar dano de Luz.",
         "4": "Não pode morrer se estiver pelo menos no Rank A."
       }
     },
     "sireso": {
       "name": "Sireso",
       "passives": {
-        "2": "Dano bônus da Perfeição se aplica a todos os aliados pela metade. Dano bônus não se aplica mais a Verso.",
+        "2": "Dano bônus da Perfeição se aplica a todos os aliados reduzido em 1d6. Dano bônus não se aplica mais a Verso.",
         "3": "Perfeição ganha é aumentada em 1 enquanto Poderoso.",
         "4": "Habilidades de Suporte custam 1 PM a menos."
       }
@@ -1099,7 +1099,7 @@
       "passives": {
         "2": "Ataque Base aplica 2 Queimaduras por Mancha de Fogo.",
         "3": "Gera uma Mancha de Fogo no início de cada turno.",
-        "4": "30% de dano de Queimadura aumentado por Mancha de Fogo."
+        "4": "+1d8 de dano de Queimadura por Mancha de Fogo."
       }
     },
     "baguette-lune": {
@@ -1121,7 +1121,7 @@
     "betelim": {
       "name": "Betelim",
       "passives": {
-        "2": "Usar uma Habilidade que consome Manchas aumenta o dano em 20%. Pode acumular até 5 vezes. Reseta ao usar uma Habilidade sem consumir Manchas.",
+        "2": "Usar uma Habilidade que consome Manchas concede +1d6 de dano. Pode acumular até 5 vezes. Reseta ao usar uma Habilidade sem consumir Manchas.",
         "3": "No início do turno, se não houver Manchas, 2 Manchas aleatórias são geradas.",
         "4": "+1 PM quando Manchas são consumidas."
       }
@@ -1129,15 +1129,15 @@
     "braselim": {
       "name": "Braselim",
       "passives": {
-        "2": "30% de Chance Crítica aumentada por Mancha de Gelo.",
+        "2": "+1d8 de bônus em Chance Crítica por Mancha de Gelo.",
         "3": "+5% de uma Carga de Gradiente em acerto Crítico.",
-        "4": "20% de dano de Fogo aumentado com Habilidades."
+        "4": "+1d6 de dano de Fogo com Habilidades."
       }
     },
     "chapelim": {
       "name": "Chapelim",
       "passives": {
-        "2": "30% de dano de Quebra aumentado por Mancha de Terra.",
+        "2": "+1d8 de dano de Quebra por Mancha de Terra.",
         "3": "Ganha 9 PM ao Quebrar um inimigo.",
         "4": "Gera uma Mancha de Terra no início de cada turno."
       }
@@ -1145,8 +1145,8 @@
     "choralim": {
       "name": "Choralim",
       "passives": {
-        "2": "100% de Chance Crítica quando 4 Manchas estão simultaneamente ativas.",
-        "3": "20% de dano aumentado para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
+        "2": "Acerto Crítico garantido quando 4 Manchas estão simultaneamente ativas.",
+        "3": "+1d6 de dano para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
         "4": "Acertos Críticos aplicam Queimadura."
       }
     },
@@ -1155,14 +1155,14 @@
       "passives": {
         "2": "50% de chance de gerar uma Mancha de Luz ao consumir Manchas.",
         "3": "+1 PM ao consumir uma Mancha de Luz.",
-        "4": "20% de dano aumentado com Habilidades por Mancha de Luz ativa."
+        "4": "+1d6 de dano com Habilidades por Mancha de Luz ativa."
       }
     },
     "coralim": {
       "name": "Coralim",
       "passives": {
         "2": "Habilidades de Gelo custam 1 PM a menos.",
-        "3": "20% de dano de Gelo aumentado com Habilidades.",
+        "3": "+1d6 de dano de Gelo com Habilidades.",
         "4": "Começa a batalha com 1 Mancha de Terra."
       }
     },
@@ -1170,7 +1170,7 @@
       "name": "Deminerim",
       "passives": {
         "2": "Habilidades de Raio custam 1 PM a menos.",
-        "3": "20% de dano de Raio aumentado com Habilidades.",
+        "3": "+1d6 de dano de Raio com Habilidades.",
         "4": "Começa a batalha com 1 Mancha de Fogo."
       }
     },
@@ -1178,14 +1178,14 @@
       "name": "Elerim",
       "passives": {
         "2": "Consumir uma Mancha de Terra aplica 1 Escudo a si mesmo.",
-        "3": "20% de dano de Terra aumentado com Habilidades.",
+        "3": "+1d6 de dano de Terra com Habilidades.",
         "4": "Ataque Base gera uma Mancha de Terra."
       }
     },
     "kralim": {
       "name": "Kralim",
       "passives": {
-        "2": "Usar uma Habilidade aumenta o dano de Habilidade de todos os outros elementos em 20%. Reseta ao usar uma Habilidade de um elemento anterior.",
+        "2": "Usar uma Habilidade concede +1d6 de dano de Habilidade de todos os outros elementos. Reseta ao usar uma Habilidade de um elemento anterior.",
         "3": "No início do turno, se não houver Manchas, 2 Manchas aleatórias são geradas.",
         "4": "+1 PM quando Manchas são consumidas."
       }
@@ -1194,16 +1194,16 @@
       "name": "Lighterim",
       "passives": {
         "2": "Habilidades de Fogo custam 1 PM a menos.",
-        "3": "20% de dano de Fogo aumentado com Habilidades.",
+        "3": "+1d6 de dano de Fogo com Habilidades.",
         "4": "Começa a batalha com 1 Mancha de Gelo."
       }
     },
     "lithelim": {
       "name": "Lithelim",
       "passives": {
-        "2": "50% de chance de gerar uma Mancha Sombria ou de Luz ao consumir Manchas. Causa 50% mais dano com Habilidades por Mancha Sombria ativa.",
+        "2": "Teste de INT CD 10: gera uma Mancha Sombria ou de Luz ao consumir Manchas. +2d6 de dano com Habilidades por Mancha Sombria ativa.",
         "3": "+1 PM ao consumir uma Mancha de Luz.",
-        "4": "Ataques Base podem consumir uma Mancha Sombria para causar 200% mais dano."
+        "4": "Ataques Base podem consumir uma Mancha Sombria para causar +5d6 de dano."
       }
     },
     "lunerim": {
@@ -1214,7 +1214,7 @@
       "name": "Painerim",
       "passives": {
         "2": "Habilidades de Terra custam 1 PM a menos.",
-        "3": "20% de dano de Terra aumentado com Habilidades.",
+        "3": "+1d6 de dano de Terra com Habilidades.",
         "4": "Começa a batalha com 1 Mancha de Raio."
       }
     },
@@ -1239,22 +1239,22 @@
       "passives": {
         "2": "Usar um Ataque de Gradiente gera 1 Mancha de Luz adicional.",
         "3": "Quando uma Mancha de Fogo é gerada, uma Mancha de Raio também é gerada. Uma vez por turno.",
-        "4": "Ataques de Gradiente e Contra-ataques de Gradiente causam 50% mais dano."
+        "4": "Ataques de Gradiente e Contra-ataques de Gradiente causam +2d6 de dano."
       }
     },
     "scaverim": {
       "name": "Scaverim",
       "passives": {
-        "2": "50% de chance de gerar uma Mancha Sombria ao consumir Manchas. Causa 50% mais dano com Habilidades por Mancha Sombria ativa.",
-        "3": "Ataques Base podem consumir uma Mancha Sombria para causar 200% mais dano.",
-        "4": "Com 4 Manchas Sombrias ativas, qualquer Habilidade pode consumi-las para causar 300% mais dano."
+        "2": "Teste de INT CD 10: gera uma Mancha Sombria ao consumir Manchas. +2d6 de dano com Habilidades por Mancha Sombria ativa.",
+        "3": "Ataques Base podem consumir uma Mancha Sombria para causar +5d6 de dano.",
+        "4": "Com 4 Manchas Sombrias ativas, qualquer Habilidade pode consumi-las para causar +7d6 de dano."
       }
     },
     "snowim": {
       "name": "Snowim",
       "passives": {
         "2": "Congela a si mesmo ao cair abaixo de 30% de vida. Previne a próxima instância de dano enquanto Congelado.",
-        "3": "No início do turno, se Congelado, remove Congelamento e recupera 60% de Vida.",
+        "3": "No início do turno, se Congelado, remove Congelamento e recupera 8d6 PV.",
         "4": "Ganha 2 Manchas de Gelo e 3 PM quando Congelado."
       }
     },
@@ -1270,7 +1270,7 @@
       "name": "Troubadim",
       "passives": {
         "2": "Tiros de Mira Livre causam dano a um alvo aleatório adicional.",
-        "3": "50% de dano aumentado em Mira Livre.",
+        "3": "+2d6 de dano em Mira Livre.",
         "4": "Gera uma Mancha aleatória em tiro de Mira Livre."
       }
     },
@@ -1293,9 +1293,9 @@
     "battlum": {
       "name": "Battlum",
       "passives": {
-        "2": "Dobra a geração de Gradiente enquanto em Postura Defensiva.",
+        "2": "+2 pontos de Gradiente enquanto em Postura Defensiva.",
         "3": "Se Sem Postura, Ataque Base muda para Postura Defensiva.",
-        "4": "+5% de uma Carga de Gradiente ao Aparar."
+        "4": "+1 ponto de Gradiente ao Aparar."
       }
     },
     "brulerum": {
@@ -1310,8 +1310,8 @@
       "name": "Chalium",
       "passives": {
         "2": "Na Postura Defensiva, ganha 1 Escudo por Aparar. Perde todos os Escudos no início do turno.",
-        "3": "20% de dano de Luz aumentado com Habilidades.",
-        "4": "50% de dano de Contra-ataque aumentado por Escudo."
+        "3": "+1d6 de dano de Luz com Habilidades.",
+        "4": "+2d6 de dano de Contra-ataque por Escudo."
       }
     },
     "chantenum": {
@@ -1326,15 +1326,15 @@
       "name": "Clierum",
       "passives": {
         "2": "Acertos Críticos com Habilidades dão 2 PM. Uma vez por turno.",
-        "3": "20% de dano de Raio aumentado com Habilidades.",
-        "4": "+50% de Chance Crítica enquanto em Postura Ofensiva."
+        "3": "+1d6 de dano de Raio com Habilidades.",
+        "4": "+2d6 de bônus em Chance Crítica enquanto em Postura Ofensiva."
       }
     },
     "coldum": {
       "name": "Coldum",
       "passives": {
-        "2": "Auto-cura de 2% de Vida ao dar um acerto Crítico.",
-        "3": "+50% de Chance Crítica enquanto em Postura Defensiva.",
+        "2": "Auto-cura de 1d4 PV ao dar um acerto Crítico.",
+        "3": "+2d6 de bônus em Chance Crítica enquanto em Postura Defensiva.",
         "4": "Se Sem Postura, Ataque Base muda para Postura Defensiva."
       }
     },
@@ -1349,15 +1349,15 @@
     "facesum": {
       "name": "Facesum",
       "passives": {
-        "2": "Na Postura Ofensiva, dobra a quantidade de Queimadura aplicada.",
-        "3": "50% de dano de Queimadura aumentado.",
+        "2": "Na Postura Ofensiva, +2 camadas de Queimadura aplicada.",
+        "3": "+2d6 de dano de Queimadura.",
         "4": "Ataque Base propaga Queimadura."
       }
     },
     "glaisum": {
       "name": "Glaisum",
       "passives": {
-        "2": "Aliados recuperam 20% de Vida ao mudar para Postura Virtuosa.",
+        "2": "Aliados recuperam 3d6 PV ao mudar para Postura Virtuosa.",
         "3": "Ganha Protegido ao sair da Postura Virtuosa.",
         "4": "Remove Efeitos de Status de si mesmo ao mudar para Postura Virtuosa."
       }
@@ -1367,7 +1367,7 @@
       "passives": {
         "2": "Muda para Postura Virtuosa no Contra-ataque.",
         "3": "Aplica 5 Queimaduras no Contra-ataque.",
-        "4": "50% de dano de Contra-ataque aumentado por Escudo."
+        "4": "+2d6 de dano de Contra-ataque por Escudo."
       }
     },
     "lithum": {
@@ -1386,14 +1386,14 @@
       "name": "Medalum",
       "passives": {
         "2": "Começa em Postura Virtuosa.",
-        "3": "Na Postura Virtuosa, toda Queimadura aplicada é dobrada.",
-        "4": "Na Postura Virtuosa, Queimadura causa dano dobrado."
+        "3": "Na Postura Virtuosa, +2 camadas de Queimadura aplicada.",
+        "4": "Na Postura Virtuosa, Queimadura causa +3d6 de dano."
       }
     },
     "melarum": {
       "name": "Melarum",
       "passives": {
-        "2": "Aliados recuperam 20% de Vida ao mudar para Postura Virtuosa.",
+        "2": "Aliados recuperam 3d6 PV ao mudar para Postura Virtuosa.",
         "3": "Aplica Protegido quando a Vida está acima de 80%.",
         "4": "Muda para Postura Virtuosa quando a Vida cai abaixo de 50%."
       }
@@ -1402,7 +1402,7 @@
       "name": "Plenum",
       "passives": {
         "2": "No início do turno, se Sem Postura, muda para Postura Defensiva.",
-        "3": "Na Postura Defensiva, dobra o dano de Quebra.",
+        "3": "Na Postura Defensiva, +3d6 de dano de Quebra.",
         "4": "Habilidades de Suporte custam 1 PM a menos."
       }
     },
@@ -1411,7 +1411,7 @@
       "passives": {
         "2": "+1 Escudo ao mudar para Postura Ofensiva.",
         "3": "Se Sem Postura, Ataque Base muda para Postura Ofensiva.",
-        "4": "+50% de Chance Crítica enquanto em Postura Ofensiva."
+        "4": "+2d6 de bônus em Chance Crítica enquanto em Postura Ofensiva."
       }
     },
     "sekarum": {
@@ -1425,7 +1425,7 @@
     "stalum": {
       "name": "Stalum",
       "passives": {
-        "2": "Aplica Queimadura em si mesmo no início do turno. 10% de dano aumentado para cada acúmulo de Queimadura próprio.",
+        "2": "Aplica Queimadura em si mesmo no início do turno. +1d4 de dano para cada acúmulo de Queimadura próprio.",
         "3": "Ataque Base aplica 2 Queimaduras.",
         "4": "Enquanto em Postura Defensiva, recebe Cura ao invés de dano de Queimadura."
       }
@@ -1433,7 +1433,7 @@
     "tissenum": {
       "name": "Tissenum",
       "passives": {
-        "2": "Na Postura Defensiva, dobra o dano de Quebra.",
+        "2": "Na Postura Defensiva, +3d6 de dano de Quebra.",
         "3": "Ganha 9 PM ao Quebrar um inimigo.",
         "4": "Quebrar um inimigo causa uma grande quantidade de dano de Terra."
       }
@@ -1443,7 +1443,7 @@
       "passives": {
         "2": "Se Sem Postura, Ataque Base muda para Postura Ofensiva.",
         "3": "Contra-ataques aplicam Desprotegido.",
-        "4": "+50% de Chance Crítica enquanto em Postura Ofensiva."
+        "4": "+2d6 de bônus em Chance Crítica enquanto em Postura Ofensiva."
       }
     },
     "volesterum": {
@@ -1459,7 +1459,7 @@
       "passives": {
         "2": "Aplicar Protegido também aplica 1 Escudo.",
         "3": "Ao aplicar Escudos, também dá 1 PM.",
-        "4": "Ao mudar para Postura Virtuosa, dobra todos os Escudos nos aliados."
+        "4": "Ao mudar para Postura Virtuosa, +3 Escudos em todos os aliados."
       }
     },
     "baguette-monoco": {
@@ -1506,7 +1506,7 @@
       "name": "Fragaro",
       "passives": {
         "2": "Tiros de Mira Livre giram a Roda Bestial para um valor aleatório.",
-        "3": "Tiros de Mira Livre causam 100% mais dano com todas as Máscaras exceto Todo-Poderosa.",
+        "3": "Tiros de Mira Livre causam +3d6 de dano com todas as Máscaras exceto Todo-Poderosa.",
         "4": "100% de Chance Crítica enquanto na Máscara Todo-Poderosa."
       }
     },
@@ -1522,8 +1522,8 @@
       "name": "Joyaro",
       "passives": {
         "2": "Começa a batalha na Máscara Todo-Poderosa.",
-        "3": "20% de dano aumentado para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
-        "4": "Dano de Quebra é dobrado enquanto na Máscara Todo-Poderosa."
+        "3": "+1d6 de dano para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes.",
+        "4": "+3d6 de dano de Quebra enquanto na Máscara Todo-Poderosa."
       }
     },
     "monocaro": {
@@ -1531,21 +1531,21 @@
       "passives": {
         "2": "Começa a batalha na Máscara Equilibrada.",
         "3": "Máscara Equilibrada aplica Poderoso por 3 turnos.",
-        "4": "Acertos Críticos causam 30% mais dano enquanto na Máscara Equilibrada."
+        "4": "Acertos Críticos causam +1d8 de dano enquanto na Máscara Equilibrada."
       }
     },
     "nusaro": {
       "name": "Nusaro",
       "passives": {
         "2": "Aparar aumenta a Roda Bestial em 1. Receber dano reseta a Roda Bestial.",
-        "3": "Habilidades Aprimoradas causam 30% mais dano.",
+        "3": "Habilidades Aprimoradas causam +1d8 de dano.",
         "4": "+1 PM ao trocar de Máscara."
       }
     },
     "sidaro": {
       "name": "Sidaro",
       "passives": {
-        "2": "30% de dano aumentado por Habilidade Aprimorada usada. Reseta ao usar uma Habilidade não-Aprimorada.",
+        "2": "+1d8 de dano por Habilidade Aprimorada usada. Reseta ao usar uma Habilidade não-Aprimorada.",
         "3": "Ataque Base gira a Roda Bestial para um valor aleatório.",
         "4": "Usar uma Habilidade Aprimorada dá 1 PM a todos os outros aliados."
       }
@@ -1555,15 +1555,15 @@
       "passives": {
         "2": "Muda para Máscara Todo-Poderosa ao Quebrar um inimigo.",
         "3": "Máscara Todo-Poderosa dá 2 PM a todos os aliados.",
-        "4": "50% de dano de Quebra aumentado."
+        "4": "+2d6 de dano de Quebra."
       }
     },
     "algueron": {
       "name": "Algueron",
       "passives": {
-        "2": "Tiros de Mira Livre podem consumir 1 Prenúncio para causar 100% mais dano.",
+        "2": "Tiros de Mira Livre podem consumir 1 Prenúncio para causar +3d6 de dano.",
         "3": "Ataque Base aplica 3 Prenúncios.",
-        "4": "Durante o Crepúsculo, tiros de Mira Livre causam dano dobrado."
+        "4": "Durante o Crepúsculo, tiros de Mira Livre causam +3d6 de dano."
       }
     },
     "baguette-sciel": {
@@ -1578,7 +1578,7 @@
       "name": "Blizzon",
       "passives": {
         "2": "Enquanto tiver pelo menos 1 carga de Lua ativa, Habilidades da Lua são sempre Críticas mas o dano recebido é dobrado.",
-        "3": "25% de dano aumentado por carga de Lua.",
+        "3": "+1d6 de dano por carga de Lua.",
         "4": "Ataque Base dá 1 carga de Lua."
       }
     },
@@ -1586,7 +1586,7 @@
       "name": "Bourgelon",
       "passives": {
         "2": "Consumir Prenúncio aplica 2 Queimaduras no alvo por Carga de Sol.",
-        "3": "100% de dano de Queimadura aumentado no estado Crepúsculo.",
+        "3": "+3d6 de dano de Queimadura no estado Crepúsculo.",
         "4": "Habilidades do Sol dão uma carga a mais."
       }
     },
@@ -1595,21 +1595,21 @@
       "passives": {
         "2": "100% de Chance Crítica durante o Crepúsculo.",
         "3": "Aplica 1 Prenúncio em acerto Crítico.",
-        "4": "20% de dano aumentado para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes."
+        "4": "+1d6 de dano para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes."
       }
     },
     "chation": {
       "name": "Chation",
       "passives": {
-        "2": "Habilidades do Sol sempre aplicam 10 Prenúncios, mas todo dano recebido é dobrado.",
+        "2": "Habilidades do Sol sempre aplicam 10 Prenúncios, mas +3d6 de dano recebido.",
         "3": "Ataque Base dá 1 carga de Lua e consome todos os Prenúncios para aplicar Queimadura.",
-        "4": "100% de dano de Queimadura aumentado no estado Crepúsculo."
+        "4": "+3d6 de dano de Queimadura no estado Crepúsculo."
       }
     },
     "corderon": {
       "name": "Corderon",
       "passives": {
-        "2": "Amaldiçoa a si mesmo no início da batalha. Causa 50% mais dano enquanto Amaldiçoado.",
+        "2": "Amaldiçoa a si mesmo no início da batalha. +2d6 de dano enquanto Amaldiçoado.",
         "3": "Reseta a duração da Maldição ao entrar no estado Crepúsculo.",
         "4": "Joga novamente ao entrar no estado Crepúsculo."
       }
@@ -1619,7 +1619,7 @@
       "passives": {
         "2": "+1 PM por carga de Lua no início do turno.",
         "3": "Ataque Base dá 1 carga de Lua.",
-        "4": "Durante o Crepúsculo, Ataque Base consome todo PA. Ataque Base aplica 1 Prenúncio e causa 50% de dano aumentado por PM consumido."
+        "4": "Durante o Crepúsculo, Ataque Base consome todo PA. Ataque Base aplica 1 Prenúncio e causa +2d6 de dano por PM consumido."
       }
     },
     "garganon": {
@@ -1635,7 +1635,7 @@
       "passives": {
         "2": "Durante o Crepúsculo, toda vez que Prenúncio é aplicado ele também afeta outro inimigo aleatório.",
         "3": "Aplica 1 Queimadura a cada 3 Prenúncios aplicados com Habilidades.",
-        "4": "20% de dano de Fogo aumentado com Habilidades."
+        "4": "+1d6 de dano de Fogo com Habilidades."
       }
     },
     "guleson": {
@@ -1649,7 +1649,7 @@
     "hevason": {
       "name": "Hevason",
       "passives": {
-        "2": "Tiros de Mira Livre podem consumir uma carga de Sol para aplicar 5 Prenúncios e consumir uma carga de Lua para causar 400% mais dano.",
+        "2": "Tiros de Mira Livre podem consumir uma carga de Sol para aplicar 5 Prenúncios e consumir uma carga de Lua para causar +8d6 de dano.",
         "3": "Consumir uma carga de Sol ou Lua dá 1 PM.",
         "4": "Ataque Base dá 1 carga de Lua."
       }
@@ -1667,7 +1667,7 @@
       "passives": {
         "2": "Matar um inimigo com Prenúncio aplica seu Prenúncio a outro inimigo aleatório.",
         "3": "Aplica Marca ao consumir Prenúncio.",
-        "4": "20% de dano Sombrio aumentado com Habilidades."
+        "4": "+1d6 de dano Sombrio com Habilidades."
       }
     },
     "martenon": {
@@ -1675,7 +1675,7 @@
       "passives": {
         "2": "No início do Crepúsculo, causa dano a todos os inimigos baseado na quantidade de cargas.",
         "3": "No início do Crepúsculo, aplica 2 Prenúncios por carga a todos os inimigos.",
-        "4": "Dobra a geração de cargas de Sol e Lua."
+        "4": "+1 carga extra de Sol e Lua gerada."
       }
     },
     "minason": {
@@ -1690,7 +1690,7 @@
       "name": "Moisson",
       "passives": {
         "2": "Durante o Crepúsculo, todo dano causado é convertido em dano Sombrio.",
-        "3": "20% de dano Sombrio aumentado com Habilidades.",
+        "3": "+1d6 de dano Sombrio com Habilidades.",
         "4": "Aplica Protegido durante a Lua, Poderoso durante o Sol, e Velocidade durante o Crepúsculo."
       }
     },
@@ -1705,9 +1705,9 @@
     "rangeson": {
       "name": "Rangeson",
       "passives": {
-        "2": "Recupera 5% de Vida por Prenúncio aplicado.",
+        "2": "Recupera 1d6 PV por Prenúncio aplicado.",
         "3": "Habilidades de Cura custam 1 PM a menos.",
-        "4": "30% de eficiência de Cura aumentada por carga de Lua. Ataque Base dá 1 carga de Lua."
+        "4": "+1d8 de Cura por carga de Lua. Ataque Base dá 1 carga de Lua."
       }
     },
     "sadon": {
@@ -1725,7 +1725,7 @@
     "tisseron": {
       "name": "Tisseron",
       "passives": {
-        "2": "Estende o Crepúsculo por um turno ao usar uma Habilidade da Lua. +50% de aumento de dano do Crepúsculo ao usar uma Habilidade do Sol.",
+        "2": "Estende o Crepúsculo por um turno ao usar uma Habilidade da Lua. +2d6 de dano de Crepúsculo ao usar uma Habilidade do Sol.",
         "3": "Duração do Crepúsculo é aumentada em 1.",
         "4": "Joga novamente ao entrar no estado Crepúsculo."
       }
@@ -3053,7 +3053,7 @@
         "Slowed": "Dificulta a esquiva e o pulo.",
         "Empowered": "Melhora seu ataque.",
         "Weakened": "Enfraquece seu ataque.",
-        "Shell": "Melhora sua defesa ao aparar.",
+        "Shell": "Reduz o dano recebido significativamente.",
         "Unprotected": "Dificulta sua defesa ao aparar.",
         "Regeneration": "Restaura uma porcentagem da sua vida a cada turno.",
         "Cursed": "Morre quando o contador chegar a zero.",
@@ -3080,7 +3080,6 @@
         "Burn": "Causa dano de fogo contínuo ao personagem.",
         "Shield": "Protege o personagem de dano.",
         "Powerful": "Aumenta significativamente o poder de ataque.",
-        "Shell": "Reduz o dano recebido significativamente.",
         "Slow": "Reduz a velocidade do personagem.",
         "Freeze": "Congela o personagem, impedindo ações.",
         "GreaterRush": "Versão aprimorada de Pressa, com efeitos mais fortes.",
@@ -3410,7 +3409,7 @@
       "removeProficiency": "Remover proficiência",
       "pin": "Fixar",
       "unpin": "Desafixar",
-      "saveError": "Erro ao salvar perícias",
+      "saveError": "Erro ao salvar dados de perícias.",
       "acrobatics": "Acrobacia",
       "animalHandling": "Adestrar Animais",
       "arcana": "Arcanismo",
@@ -3433,8 +3432,7 @@
       "proficiencySetupTitle": "Escolha suas 5 Perícias",
       "proficiencySetupDesc": "Escolha 5 perícias nas quais seu personagem terá proficiência.",
       "proficiencySetupConfirm": "Confirmar Perícias",
-      "proficiencySetupSelected": "selecionadas",
-      "saveError": "Erro ao salvar dados de perícias."
+      "proficiencySetupSelected": "selecionadas"
     },
     "gameLog": {
       "title": "Game Log",
