@@ -30,12 +30,17 @@ interface CombatsSectionProps {
     onDismissSkillCard?: () => void;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    onBottomSheetChange?: (open: boolean) => void;
 }
 
-export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters, activeSkillId, onDismissSkillCard, diceBoardRef, timeoutDiceBoardRef }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters, activeSkillId, onDismissSkillCard, diceBoardRef, timeoutDiceBoardRef, onBottomSheetChange }: CombatsSectionProps) {
     const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
     const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+
+    useEffect(() => {
+        onBottomSheetChange?.(bottomSheetOpen);
+    }, [bottomSheetOpen, onBottomSheetChange]);
 
     const tab = forcedTab ?? internalTab;
     const setTab = (newTab: "enemies" | "team") => {

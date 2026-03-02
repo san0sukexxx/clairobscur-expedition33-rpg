@@ -42,6 +42,9 @@ export default function PlayerPage() {
     pathname
   );
 
+  // Combat bottom sheet state (for floating dice roller positioning)
+  const [combatBottomSheetOpen, setCombatBottomSheetOpen] = useState(false);
+
   // Dice board management
   const { diceBoardRef, timeoutDiceBoardRef, clearDiceTimeout } = useDiceBoard();
 
@@ -198,7 +201,8 @@ export default function PlayerPage() {
         timeoutDiceBoardRef={timeoutDiceBoardRef}
         playerId={player?.id}
         className={
-          tab === "combate" ? "bottom-28 right-4"
+          tab === "combate"
+            ? combatBottomSheetOpen ? "bottom-4 right-4" : "bottom-28 right-4"
             : tab === "habilidades" ? "bottom-24 right-4"
             : "bottom-4 right-4"
         }
@@ -266,6 +270,7 @@ export default function PlayerPage() {
           onDismissSkillCard={handleDismissSkillCard}
           diceBoardRef={diceBoardRef}
           timeoutDiceBoardRef={timeoutDiceBoardRef}
+          onBottomSheetChange={setCombatBottomSheetOpen}
         />
       </main>
 

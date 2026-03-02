@@ -150,7 +150,7 @@ export function FloatingDiceRoller({ diceBoardRef, timeoutDiceBoardRef, playerId
   }, [selected, diceBoardRef, timeoutDiceBoardRef, sendTo, playerId]);
 
   return (
-    <div className={`fixed z-[41] flex flex-col items-end gap-1.5 ${className}`}>
+    <div className={`fixed z-[43] flex flex-col items-end gap-1.5 transition-all duration-300 ${className}`}>
       {/* Expanded panel */}
       <div
         className={`flex flex-col items-end gap-1.5 transition-all duration-300 origin-bottom ${

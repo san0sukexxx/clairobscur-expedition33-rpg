@@ -12,8 +12,9 @@ import type { WeaponInfo } from "../api/ResponseModel";
 
 const VERSO_EXCLUSIVE_WEAPONS = new Set([
   "Abysseram", "Blodam", "Chevalam", "Confuso", "Contorso", "Corpeso",
-  "Cruleram", "Cultam", "Danseso", "Delaram", "Dreameso", "Gaultaram",
-  "Lanceram", "Sakaram", "Seeram", "Simoso", "Tireso",
+  "Cruleram", "Cultam", "Danseso", "Delaram", "Dreameso", "Dualiso",
+  "Gaultaram", "Glaceso", "Lanceram", "Liteso", "Nosaram", "Sakaram",
+  "Seeram", "Simoso", "Sireso", "Tireso",
 ]);
 
 // Helper to find the correct weapon ID considering character variations
@@ -508,23 +509,23 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-4 text-center mt-6">
-                <div>
-                  <span className="block text-xs uppercase opacity-70">{t("weapons.power")}</span>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 text-center mt-6">
+                <div className="min-w-0">
+                  <span className="block text-xs uppercase opacity-70 truncate">{t("weapons.power")}</span>
                   {displayWeaponPlusPower(activeWeapon.power, activeWeapon.level) !== null && (
                     <span className="inline-flex items-center justify-center gap-1 text-2xl font-bold">
                       {displayWeaponPlusPower(activeWeapon.power, activeWeapon.level)}
                     </span>
                   )}
                 </div>
-                <div>
-                  <span className="block text-xs uppercase opacity-70">{t("weapons.dices")}</span>
+                <div className="min-w-0">
+                  <span className="block text-xs uppercase opacity-70 truncate">{t("weapons.dices")}</span>
                   <span className="inline-flex items-center justify-center gap-1 text-2xl font-bold">
                     {getWeaponDamageDice(activeWeapon.level)}
                   </span>
                 </div>
-                <div>
-                  <span className="block text-xs uppercase opacity-70">{t("weapons.element")}</span>
+                <div className="min-w-0">
+                  <span className="block text-xs uppercase opacity-70 truncate">{t("weapons.element")}</span>
                   <span className="block text-2xl">{activeWeapon.element}</span>
                   <span className="block text-s">({getElementName(activeWeapon.elementName)})</span>
                 </div>
@@ -537,8 +538,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                   ] as const
                 ).map(([label, value]) =>
                   value ? (
-                    <div key={label}>
-                      <span className="block text-xs uppercase opacity-70">{label}</span>
+                    <div key={label} className="min-w-0">
+                      <span className="block text-xs uppercase opacity-70 truncate">{label}</span>
                       {label == t("weapons.vitality") && (
                         <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                           {displayWeaponVitalityBonus(value, activeWeapon.level)}
@@ -559,8 +560,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                 )}
                 {activeWeapon.scaling.luck && (
                   <>
-                    <div>
-                      <span className="block text-xs uppercase opacity-70">{t("weapons.proficiencyBonus")}</span>
+                    <div className="min-w-0">
+                      <span className="block text-xs uppercase opacity-70 truncate">{t("weapons.proficiencyBonus")}</span>
                       <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                         {displayWeaponProficiencyBonus(activeWeapon.scaling.luck, activeWeapon.level)}
                       </span>
@@ -653,8 +654,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
 
                       <div className="md:col-start-1">
                         <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                          <div>
-                            <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{t("weapons.power")}</div>
+                          <div className="min-w-0">
+                            <div className="uppercase tracking-wide text-sm opacity-70 mb-1 truncate">{t("weapons.power")}</div>
                             <div className="space-y-1">
                               {displayWeaponPlusPower(weaponDetails.attributes.power, w.level) !== null && (
                                 <div className="flex items-center justify-center gap-1 text-2xl font-bold">
@@ -664,8 +665,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                             </div>
                           </div>
 
-                          <div>
-                            <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{t("weapons.element")}</div>
+                          <div className="min-w-0">
+                            <div className="uppercase tracking-wide text-sm opacity-70 mb-1 truncate">{t("weapons.element")}</div>
                             <div className="text-3xl font-semibold mt-2">
                               {ELEMENT_EMOTE[weaponDetails?.attributes?.element ?? "Unknown"]}
                             </div>
@@ -679,8 +680,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                             ] as const
                           ).map(([key, label, value]) =>
                             value ? (
-                              <div key={key}>
-                                <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{label}</div>
+                              <div key={key} className="min-w-0">
+                                <div className="uppercase tracking-wide text-sm opacity-70 mb-1 truncate">{label}</div>
                                 {key === "vitality" && (
                                   <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                     {displayWeaponVitalityBonus(value, w.level)}
@@ -701,8 +702,8 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                           )}
                           {weaponDetails.attributes.scaling.luck && (
                             <>
-                              <div>
-                                <div className="uppercase tracking-wide text-sm opacity-70 mb-1">{t("weapons.proficiencyBonus")}</div>
+                              <div className="min-w-0">
+                                <div className="uppercase tracking-wide text-sm opacity-70 mb-1 truncate">{t("weapons.proficiencyBonus")}</div>
                                 <span className="block text-2xl font-bold flex items-center justify-center gap-1">
                                   {displayWeaponProficiencyBonus(weaponDetails.attributes.scaling.luck, w.level)}
                                 </span>

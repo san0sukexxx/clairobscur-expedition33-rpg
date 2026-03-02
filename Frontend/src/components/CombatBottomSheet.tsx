@@ -118,7 +118,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                     </button>
 
                     {/* Content */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
                         {/* Weapon header */}
                         <div className="flex items-center gap-3">
                             <div className="relative w-16 h-12 shrink-0">

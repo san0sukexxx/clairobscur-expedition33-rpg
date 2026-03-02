@@ -37,6 +37,14 @@ const WEAPON_CHARACTER_MAP: Record<string, string[]> = {
     "sciel": ["sciel"]
 };
 
+// Swords that Gustave cannot use (they reference Perfection, a Verso-only mechanic)
+const GUSTAVE_EXCLUDED_SWORDS = new Set([
+    "abysseram", "blodam", "chevalam", "confuso", "contorso", "corpeso",
+    "cruleram", "cultam", "danseso", "delaram", "dreameso", "dualiso",
+    "gaultaram", "glaceso", "lanceram", "liteso", "nosaram", "sakaram",
+    "seeram", "simoso", "sireso", "tireso"
+]);
+
 // Determine weapon type from weapon ID
 function getWeaponType(weaponId: string): string | null {
     const id = weaponId.toLowerCase();
@@ -74,13 +82,20 @@ function getWeaponType(weaponId: string): string | null {
 function canCharacterUseWeapon(characterId: string | undefined, weaponId: string): boolean {
     if (!characterId) return false;
 
+    const charId = characterId.toLowerCase();
+    const wId = weaponId.toLowerCase();
+
+    // Gustave can't use swords that reference Perfection (Verso-only mechanic)
+    if (charId.includes("gustave") && GUSTAVE_EXCLUDED_SWORDS.has(wId)) {
+        return false;
+    }
+
     const weaponType = getWeaponType(weaponId);
     if (!weaponType) return true; // Unknown weapon type, allow it
 
     const allowedCharacters = WEAPON_CHARACTER_MAP[weaponType];
     if (!allowedCharacters) return true;
 
-    const charId = characterId.toLowerCase();
     return allowedCharacters.some(char => charId.includes(char));
 }
 

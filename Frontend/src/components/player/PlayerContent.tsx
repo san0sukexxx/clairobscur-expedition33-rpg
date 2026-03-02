@@ -65,6 +65,9 @@ interface PlayerContentProps {
   // Dice refs
   diceBoardRef: RefObject<DiceBoardRef | null>;
   timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+
+  // Bottom sheet
+  onBottomSheetChange?: (open: boolean) => void;
 }
 
 /**
@@ -100,6 +103,7 @@ export function PlayerContent({
   onDismissSkillCard,
   diceBoardRef,
   timeoutDiceBoardRef,
+  onBottomSheetChange,
 }: PlayerContentProps) {
   const abilityScoresRef = useRef<HTMLDivElement>(null);
 
@@ -256,6 +260,7 @@ export function PlayerContent({
           onDismissSkillCard={onDismissSkillCard}
           diceBoardRef={diceBoardRef}
           timeoutDiceBoardRef={timeoutDiceBoardRef}
+          onBottomSheetChange={onBottomSheetChange}
         />
       )}
 
