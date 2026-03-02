@@ -25,8 +25,7 @@ class BattleCharacterService(
         private val objectMapper: ObjectMapper,
         private val playerPictoRepository: com.example.demo.repository.PlayerPictoRepository,
         private val damageModifierService: DamageModifierService,
-        private val playerRepository: com.example.demo.repository.PlayerRepository,
-        private val battleStatusEffectRepository: com.example.demo.repository.BattleStatusEffectRepository
+        private val playerRepository: com.example.demo.repository.PlayerRepository
 ) {
         @Transactional
         fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
@@ -190,7 +189,6 @@ class BattleCharacterService(
 
                 val entity = opt.get()
 
-                val oldHp = entity.healthPoints
                 val finalHp = newHp.coerceAtLeast(0)
 
                 entity.healthPoints = finalHp
@@ -210,48 +208,7 @@ class BattleCharacterService(
                         }
                 }
 
-                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
-
-                // IntenseFlames mechanic: If character takes damage, remove IntenseFlames effects they caused
-                val tookDamage = finalHp < oldHp && finalHp > 0
-                if (tookDamage) {
-                        removeIntenseFlamesFromSource(entity)
-                }
-
-                // Check if character died or revived
-                val wasDead = oldHp == 0
-                val isDead = finalHp == 0
-                val wasAlive = oldHp > 0
-                val isAlive = finalHp > 0
-
-                // Get battle to check if it's started
-                val battle = battleRepository.findById(battleId).orElse(null)
-                val isBattleStarted = battle?.battleStatus.equals("started", ignoreCase = true)
-
-                if (isBattleStarted) {
-                        // Character died: remove from turn queue
-                        if (wasAlive && isDead) {
-                                battleTurnRepository.deleteByBattleCharacterId(id)
-                                battleTurnService.recalculatePlayOrder(battleId)
-                        }
-
-                        // Character revived: add back to turn queue
-                        if (wasDead && isAlive) {
-                                // Set canRollInitiative to false since they're joining the battle automatically
-                                entity.canRollInitiative = false
-                                repository.save(entity)
-
-                                // Add character to the end of the turn queue
-                                val lastTurn = battleTurnRepository.findTopByBattleIdOrderByPlayOrderDesc(battleId)
-                                val nextOrder = (lastTurn?.playOrder ?: 0) + 1
-                                val turn = BattleTurn(
-                                        battleId = battleId,
-                                        battleCharacterId = id,
-                                        playOrder = nextOrder
-                                )
-                                battleTurnRepository.save(turn)
-                        }
-                }
+                val battleId = entity.battleId
 
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)
@@ -324,8 +281,6 @@ class BattleCharacterService(
                 val entity = opt.get()
 
                 entity.stance = newStance
-                // Mark that stance was changed this turn (for Maelle's auto-reset mechanic)
-                entity.stanceChangedThisTurn = true
 
                 repository.save(entity)
 
@@ -706,13 +661,6 @@ class BattleCharacterService(
 
                 val entity = opt.get()
 
-                // Check if character has Twilight status - if so, don't gain charges
-                val hasTwilight = battleStatusEffectRepository
-                        .findByBattleCharacterIdAndEffectType(entity.id!!, "Twilight")
-                        .isNotEmpty()
-
-                if (hasTwilight) return TwilightResult(false)
-
                 when (skillType.lowercase()) {
                         "sun" -> {
                                 val current = entity.sunCharges ?: 0
@@ -725,37 +673,15 @@ class BattleCharacterService(
                         else -> return TwilightResult(false)
                 }
 
-                // Check for Twilight activation (needs at least 1 Sun AND 1 Moon charge)
-                val sunCharges = entity.sunCharges ?: 0
-                val moonCharges = entity.moonCharges ?: 0
-                var twilightActivated = false
-                var totalCharges = 0
-
-                if (sunCharges >= 1 && moonCharges >= 1) {
-                        totalCharges = sunCharges + moonCharges
-                        battleStatusEffectRepository.save(
-                                com.example.demo.model.BattleStatusEffect(
-                                        battleCharacterId = entity.id!!,
-                                        effectType = "Twilight",
-                                        ammount = totalCharges,
-                                        remainingTurns = 2,
-                                        isResolved = true,
-                                        sourceCharacterId = entity.id
-                                )
-                        )
-                        entity.sunCharges = 0
-                        entity.moonCharges = 0
-                        twilightActivated = true
-                }
-
                 repository.save(entity)
 
-                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+                val battleId = entity.battleId
+
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "CHARGE_POINTS_CHANGED", eventJson = null)
                 )
 
-                return TwilightResult(twilightActivated, totalCharges)
+                return TwilightResult(false)
         }
 
         /**
@@ -1102,41 +1028,4 @@ class BattleCharacterService(
                 }
         }
 
-        /**
-         * Removes IntenseFlames status effects caused by a character when they take damage
-         */
-        private fun removeIntenseFlamesFromSource(sourceCharacter: BattleCharacter) {
-                val sourceId = sourceCharacter.id ?: return
-                val battleId = sourceCharacter.battleId ?: return
-
-                // Find all IntenseFlames effects caused by this character
-                val intenseFlamesEffects = battleStatusEffectRepository.findByEffectTypeAndSourceCharacterId(
-                        "IntenseFlames",
-                        sourceId
-                )
-
-                // Remove all IntenseFlames effects caused by this character
-                intenseFlamesEffects.forEach { effect ->
-                        battleStatusEffectRepository.delete(effect)
-
-                        // Log the removal
-                        val eventJson = objectMapper.writeValueAsString(
-                                mapOf(
-                                        "sourceCharacterId" to sourceId,
-                                        "sourceName" to sourceCharacter.characterName,
-                                        "targetCharacterId" to effect.battleCharacterId,
-                                        "effectRemoved" to "IntenseFlames",
-                                        "reason" to "source_took_damage"
-                                )
-                        )
-
-                        battleLogRepository.save(
-                                BattleLog(
-                                        battleId = battleId,
-                                        eventType = "INTENSE_FLAMES_REMOVED",
-                                        eventJson = eventJson
-                                )
-                        )
-                }
-        }
 }

@@ -14,9 +14,10 @@ interface CombatMenuProps {
   isAttacking: Boolean;
   isExecutingSkill?: boolean;
   isSelectingSkillTarget?: boolean;
+  hidden?: boolean;
 }
 
-export default function CombatMenu({ player, onAction, tab, currentTeamTab, opositeTeamTab, isAttacking, isExecutingSkill = false, isSelectingSkillTarget = false }: CombatMenuProps) {
+export default function CombatMenu({ player, onAction, tab, currentTeamTab, opositeTeamTab, isAttacking, isExecutingSkill = false, isSelectingSkillTarget = false, hidden = false }: CombatMenuProps) {
   const [open, setOpen] = useState(false);
 
   const currentCharacter = useMemo(() => {
@@ -92,12 +93,12 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     return battleStatus === "starting" || battleStatus === "started";
   }, [player?.fightInfo?.battleStatus]);
 
-  if (!hasBattle) {
+  if (!hasBattle || hidden) {
     return null;
   }
 
   return (
-    <div className="fixed bottom-14 right-4 z-41 flex flex-col items-end gap-2">
+    <div className="fixed bottom-14 right-4 z-[44] flex flex-col items-end gap-2">
       {/* Menu flutuante */}
       {open && (
         <div

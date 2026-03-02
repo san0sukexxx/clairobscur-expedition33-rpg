@@ -808,7 +808,7 @@ export default function CombatAdmin({
 
         return (
             <div className="card bg-base-200 shadow-inner flex-1">
-                <div className="card-body gap-4">
+                <div className="p-3 flex flex-col gap-3">
                     <div className="flex flex-col items-start">
                         <div className="text-lg font-semibold">{t("combatAdmin.labels.playerTurn")}</div>
                     </div>
@@ -839,7 +839,7 @@ export default function CombatAdmin({
 
         return (
             <div className="card bg-base-200 shadow-inner flex-1">
-                <div className="card-body gap-4">
+                <div className="p-3 flex flex-col gap-3">
                     <div className="flex flex-col items-start">
                         <div className="text-lg font-semibold">{t("combatAdmin.labels.npcTurn")}</div>
                     </div>
@@ -1003,7 +1003,7 @@ export default function CombatAdmin({
     function renderTeamCard(title: string, teamKey: TeamKey, members: CombatEntity[]) {
         return (
             <div className="card bg-base-200 shadow-inner flex-1">
-                <div className="card-body gap-4">
+                <div className="p-3 flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                         <div className="text-lg font-semibold">{title}</div>
                         <button className="btn btn-xs btn-primary" onClick={() => openAddModal(teamKey)}>
@@ -1014,219 +1014,180 @@ export default function CombatAdmin({
                     {members.length === 0 ? (
                         <div className="text-sm opacity-60">{t("combatAdmin.labels.noTeamMembers")}</div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="table table-zebra table-xs w-full">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>{t("combatAdmin.labels.id")}</th>
-                                        <th>{t("combatAdmin.labels.name")}</th>
-                                        <th>{t("combatAdmin.labels.hp")}</th>
-                                        <th>{t("combatAdmin.labels.mp")}</th>
-                                        <th>{t("combatAdmin.labels.readyStatus")}</th>
-                                        <th>{t("combatAdmin.labels.effects")}</th>
-                                        <th className="w-1/6 text-right">{t("combatAdmin.labels.actions")}</th>
-                                    </tr>
-                                </thead>
+                        <div className="flex flex-col divide-y divide-base-300 min-w-0 overflow-hidden">
+                            {members.map((m) => {
+                                const isRowSelectable = isSelectingTarget && m.currentHp > 0
+                                const entityAttacks =
+                                    battleDetails?.attacks?.filter(a => a.targetBattleId === m.rowId) ?? []
 
-                                <tbody>
-                                    {members.map((m) => {
-                                        const isRowSelectable = isSelectingTarget && m.currentHp > 0
-                                        const entityAttacks =
-                                            battleDetails?.attacks?.filter(a => a.targetBattleId === m.rowId) ?? []
-
-                                        return (
-                                            <React.Fragment key={m.rowId}>
-                                                <tr
-                                                    className={isRowSelectable ? "target-glow cursor-pointer" : ""}
-                                                    onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
+                                return (
+                                    <div
+                                        key={m.rowId}
+                                        className={`py-2 space-y-1 min-w-0 ${isRowSelectable ? "target-glow cursor-pointer" : ""}`}
+                                        onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
+                                    >
+                                        {/* Linha 1: Avatar + Nome + ID + Ready + Remover */}
+                                        <div className="flex items-center gap-2 flex-wrap min-w-0">
+                                            {renderAvatarCell(m)}
+                                            <span className={`font-semibold text-sm truncate ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}>
+                                                {m.name}
+                                            </span>
+                                            {m.currentHp === 0 && (
+                                                <FaSkull className="text-red-600 w-3.5 h-3.5 shrink-0" title={t("combatAdmin.labels.dead")} />
+                                            )}
+                                            <span className="badge badge-ghost badge-xs font-mono shrink-0">#{m.rowId}</span>
+                                            <span className={`badge badge-xs shrink-0 ${m.isReadyToStart ? "badge-success" : "badge-warning"}`}>
+                                                {m.isReadyToStart ? t("combatAdmin.labels.ready") : t("combatAdmin.labels.waiting")}
+                                            </span>
+                                            <div className="flex-1 basis-0" />
+                                            {!isRowSelectable && (
+                                                <button
+                                                    className="btn btn-xs btn-error shrink-0"
+                                                    onClick={(e) => { e.stopPropagation(); handleRemove(m.rowId!); }}
                                                 >
-                                                    <td>{renderAvatarCell(m)}</td>
-                                                    <td>{m.rowId}</td>
+                                                    Remover
+                                                </button>
+                                            )}
+                                        </div>
 
-                                                    <td>
-                                                        <div className={m.currentHp === 0 ? "inline-flex items-center gap-1" : ""}>
+                                        {/* Linha 2: HP bar + MP bar */}
+                                        <div className="flex gap-3 items-center">
+                                            <div className="flex items-center gap-1 flex-1 min-w-0">
+                                                <span className="text-[10px] font-mono opacity-70 shrink-0">HP {m.currentHp}/{m.maxHp}</span>
+                                                <div className="flex-1 min-w-0">
+                                                    <AnimatedStatBar
+                                                        value={Math.round((m.currentHp / m.maxHp) * 100)}
+                                                        label="HP"
+                                                        fillClass="bg-error"
+                                                        ghostClass="bg-error/30"
+                                                    />
+                                                </div>
+                                                <button
+                                                    className="btn btn-xs btn-ghost text-info p-0"
+                                                    onClick={(e) => { e.stopPropagation(); openHpEditModal(m); }}
+                                                >
+                                                    <FaEdit size={10} />
+                                                </button>
+                                            </div>
+
+                                            {m.currentMp !== undefined && m.maxMp !== undefined ? (
+                                                <div className="flex items-center gap-1 flex-1 min-w-0">
+                                                    <span className="text-[10px] font-mono opacity-70 shrink-0">MP {m.currentMp}/{m.maxMp}</span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <AnimatedStatBar
+                                                            value={Math.round((m.currentMp / m.maxMp) * 100)}
+                                                            label="MP"
+                                                            fillClass="bg-info"
+                                                            ghostClass="bg-info/30"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        className="btn btn-xs btn-ghost text-info p-0"
+                                                        onClick={(e) => { e.stopPropagation(); openMpEditModal(m); }}
+                                                    >
+                                                        <FaEdit size={10} />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="flex-1" />
+                                            )}
+                                        </div>
+
+                                        {/* Linha 3: Efeitos/Status */}
+                                        {((m.status && m.status.length > 0) || npcIsFlyingById(m.characterId)) && (
+                                            <div className="flex items-start gap-1">
+                                                <div className="flex flex-row flex-wrap gap-1 flex-1">
+                                                    {m.status?.map((st, idx) => {
+                                                        const showAmount = shouldShowStatusAmmount(st.effectName);
+                                                        const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
+
+                                                        return (
                                                             <span
-                                                                className={`font-semibold ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""
-                                                                    }`}
+                                                                key={idx}
+                                                                className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80 cursor-pointer hover:opacity-100 transition-opacity"
+                                                                onClick={(e) => { e.stopPropagation(); setExpandedAdminStatus(prev => prev === `${m.battleCharacterId}-${st.effectName}` ? null : `${m.battleCharacterId}-${st.effectName}`); }}
                                                             >
-                                                                {m.name}
+                                                                {getStatusLabel(st.effectName)} {showAmount ? st.ammount : ""}
+                                                                {showTurns ? ` (${st.remainingTurns})` : ""}
                                                             </span>
+                                                        );
+                                                    })}
 
-                                                            {m.currentHp === 0 && (
-                                                                <FaSkull className="ml-4 text-red-600 w-4 h-4" title={t("combatAdmin.labels.dead")} />
+                                                    {npcIsFlyingById(m.characterId) && (
+                                                        <span className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80">
+                                                            Voando
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <button
+                                                    className="btn btn-xs btn-ghost text-info shrink-0 p-0"
+                                                    onClick={(e) => { e.stopPropagation(); setEffectsModalCharId(m.rowId!); setEffectsModalStatuses(m.status ?? []); }}
+                                                >
+                                                    <FaEdit size={10} />
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {expandedAdminStatus?.startsWith(`${m.battleCharacterId}-`) && (
+                                            <p className="text-[10px] opacity-70 leading-relaxed">
+                                                {t(`battle.statusDescriptions.${expandedAdminStatus.split("-").slice(1).join("-")}`) || t("battle.statusDescriptions.default")}
+                                            </p>
+                                        )}
+
+                                        {/* Sub-linhas de ataque */}
+                                        {entityAttacks.map(a => {
+                                            const defesaFalhou = a.totalDefended == null || a.totalDefended > 0
+
+                                            return (
+                                                <div key={`attack-${a.id}`} className="flex flex-wrap items-center gap-2 bg-base-300/40 rounded px-2 py-1 text-xs">
+                                                    <span className="badge badge-sm badge-error">{t("combatAdmin.labels.attacked")}</span>
+
+                                                    <span className="opacity-70">{t("combatAdmin.labels.totalPower")}:</span>
+                                                    <span className="font-mono">{a.totalPower}</span>
+
+                                                    <span className="opacity-70">{t("combatAdmin.labels.attacker")}:</span>
+                                                    <span className="font-mono">#{a.sourceBattleId}</span>
+
+                                                    {!a.isResolved && (
+                                                        <span className="badge badge-warning badge-sm">{t("combatAdmin.labels.pending")}</span>
+                                                    )}
+
+                                                    {a.isResolved && (
+                                                        <>
+                                                            <span className="opacity-70">{t("combatAdmin.labels.damageReceived")}:</span>
+                                                            <span className="font-mono">{a.totalDefended ?? 0}</span>
+
+                                                            {!defesaFalhou && (
+                                                                <span className="badge badge-success badge-sm">
+                                                                    {a.defenseType ? getDefenseSuccessLabel(a.defenseType) : t("combatAdmin.defenseSuccess.default")}
+                                                                </span>
                                                             )}
-                                                        </div>
-                                                    </td>
 
-                                                    <td className="min-w-[160px]">
-                                                        <div className="text-xs font-mono mb-1">
-                                                            {m.currentHp}/{m.maxHp}
-                                                        </div>
+                                                            {defesaFalhou && (
+                                                                <span className="badge badge-error badge-sm">
+                                                                    {a.defenseType ? getDefenseFailLabel(a.defenseType) : t("combatAdmin.defenseFail.default")}
+                                                                </span>
+                                                            )}
+                                                        </>
+                                                    )}
 
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="flex-1">
-                                                                <AnimatedStatBar
-                                                                    value={Math.round((m.currentHp / m.maxHp) * 100)}
-                                                                    label="HP"
-                                                                    fillClass="bg-error"
-                                                                    ghostClass="bg-error/30"
-                                                                />
-                                                            </div>
+                                                    {a.allowCounter && (
+                                                        <>
+                                                            {!a.isCounterResolved && (
+                                                                <span className="badge badge-info badge-sm">{t("combatAdmin.labels.counterAllowed")}</span>
+                                                            )}
 
-                                                            <button
-                                                                className="btn btn-xs btn-ghost text-info"
-                                                                onClick={() => openHpEditModal(m)}
-                                                            >
-                                                                <FaEdit size={12} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-
-
-                                                    <td className="min-w-[120px]">
-                                                        {m.currentMp !== undefined && m.maxMp !== undefined ? (
-                                                            <>
-                                                                <div className="text-xs font-mono mb-1">
-                                                                    {m.currentMp}/{m.maxMp}
-                                                                </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <div className="flex-1">
-                                                                        <AnimatedStatBar
-                                                                            value={Math.round((m.currentMp / m.maxMp) * 100)}
-                                                                            label="MP"
-                                                                            fillClass="bg-info"
-                                                                            ghostClass="bg-info/30"
-                                                                        />
-                                                                    </div>
-                                                                    <button
-                                                                        className="btn btn-xs btn-ghost text-info"
-                                                                        onClick={() => openMpEditModal(m)}
-                                                                    >
-                                                                        <FaEdit size={12} />
-                                                                    </button>
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            <span className="opacity-60">—</span>
-                                                        )}
-                                                    </td>
-
-                                                    <td>{m.isReadyToStart ? t("combatAdmin.labels.ready") : t("combatAdmin.labels.waiting")}</td>
-                                                    <td>
-                                                        <div className="flex items-start gap-1">
-                                                            <div className="flex flex-row flex-wrap gap-1 flex-1">
-                                                                {m.status
-                                                                    ?.map((st, idx) => {
-                                                                        const showAmount = shouldShowStatusAmmount(st.effectName);
-                                                                        const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
-
-                                                                        return (
-                                                                            <span
-                                                                                key={idx}
-                                                                                className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80 cursor-pointer hover:opacity-100 transition-opacity"
-                                                                                onClick={() => setExpandedAdminStatus(prev => prev === `${m.battleCharacterId}-${st.effectName}` ? null : `${m.battleCharacterId}-${st.effectName}`)}
-                                                                            >
-                                                                                {getStatusLabel(st.effectName)} {showAmount ? st.ammount : ""}
-                                                                                {showTurns ? ` (${st.remainingTurns})` : ""}
-                                                                            </span>
-                                                                        );
-                                                                    })}
-
-                                                                {npcIsFlyingById(m.characterId) && (
-                                                                    <span
-                                                                        key="flying"
-                                                                        className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80"
-                                                                    >
-                                                                        Voando
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                            <button
-                                                                className="btn btn-xs btn-ghost text-info shrink-0"
-                                                                onClick={() => { setEffectsModalCharId(m.rowId!); setEffectsModalStatuses(m.status ?? []); }}
-                                                            >
-                                                                <FaEdit size={10} />
-                                                            </button>
-                                                        </div>
-                                                        {expandedAdminStatus?.startsWith(`${m.battleCharacterId}-`) && (
-                                                            <p className="text-[10px] opacity-70 leading-relaxed mt-1">
-                                                                {t(`battle.statusDescriptions.${expandedAdminStatus.split("-").slice(1).join("-")}`) || t("battle.statusDescriptions.default")}
-                                                            </p>
-                                                        )}
-                                                    </td>
-
-                                                    <td className="text-right">
-                                                        {!isRowSelectable && (
-                                                            <button
-                                                                className="btn btn-xs btn-error"
-                                                                onClick={() => handleRemove(m.rowId!)}
-                                                            >
-                                                                Remover
-                                                            </button>
-                                                        )}
-                                                    </td>
-                                                </tr>
-
-                                                {entityAttacks.map(a => {
-                                                    const defesaFalhou = a.totalDefended == null || a.totalDefended > 0
-
-                                                    return (
-                                                        <tr key={`attack-${a.id}`} className="bg-base-300/40">
-                                                            <td colSpan={6} className="py-2">
-                                                                <div className="flex items-center gap-3">
-                                                                    <span className="badge badge-sm badge-error">{t("combatAdmin.labels.attacked")}</span>
-
-                                                                    <span className="opacity-70">{t("combatAdmin.labels.totalPower")}:</span>
-                                                                    <span className="font-mono">{a.totalPower}</span>
-
-                                                                    <span className="opacity-70">{t("combatAdmin.labels.attacker")}:</span>
-                                                                    <span className="font-mono">#{a.sourceBattleId}</span>
-
-                                                                    {!a.isResolved && (
-                                                                        <span className="badge badge-warning badge-sm">{t("combatAdmin.labels.pending")}</span>
-                                                                    )}
-
-                                                                    {a.isResolved && (
-                                                                        <>
-                                                                            <span className="opacity-70">{t("combatAdmin.labels.damageReceived")}:</span>
-                                                                            <span className="font-mono">{a.totalDefended ?? 0}</span>
-
-                                                                            {!defesaFalhou && (
-                                                                                <span className="badge badge-success badge-sm">
-                                                                                    {a.defenseType ? getDefenseSuccessLabel(a.defenseType) : t("combatAdmin.defenseSuccess.default")}
-                                                                                </span>
-                                                                            )}
-
-                                                                            {defesaFalhou && (
-                                                                                <span className="badge badge-error badge-sm">
-                                                                                    {a.defenseType ? getDefenseFailLabel(a.defenseType) : t("combatAdmin.defenseFail.default")}
-                                                                                </span>
-                                                                            )}
-                                                                        </>
-                                                                    )}
-
-                                                                    {a.allowCounter && (
-                                                                        <>
-                                                                            {!a.isCounterResolved && (
-                                                                                <span className="badge badge-info badge-sm">{t("combatAdmin.labels.counterAllowed")}</span>
-                                                                            )}
-
-                                                                            {a.isCounterResolved && (
-                                                                                <span className="badge badge-success badge-sm">{t("combatAdmin.labels.counterExecuted")}</span>
-                                                                            )}
-                                                                        </>
-                                                                    )}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })}
-                                            </React.Fragment>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
+                                                            {a.isCounterResolved && (
+                                                                <span className="badge badge-success badge-sm">{t("combatAdmin.labels.counterExecuted")}</span>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            })}
                         </div>
                     )}
                 </div>
@@ -1678,8 +1639,7 @@ export default function CombatAdmin({
             <RollHistoryToast />
             <FloatingDiceRoller diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
 
-            <div className="card bg-base-100 shadow">
-                <div className="card-body gap-6">
+            <div className="flex flex-col gap-4">
                     <div className="flex flex-col items-start gap-2">
                         <div className="text-lg font-semibold">Combate #{battleId}</div>
 
@@ -1923,7 +1883,7 @@ export default function CombatAdmin({
                                 };
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-3">
                                                 <span>{t("combatAdmin.labels.versoPerfectionRank")}</span>
@@ -1959,7 +1919,7 @@ export default function CombatAdmin({
                                 const pct = Math.max(0, Math.min(100, Math.round((chargePoints / maxChargePoints) * 100)));
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-2">
                                                 <span>{t("combatAdmin.labels.gustaveCharges")}</span>
@@ -1999,7 +1959,7 @@ export default function CombatAdmin({
                                 const twilightStatus = activeChar.status?.find(s => s.effectName === "Twilight");
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-2">
                                                 <span>{t("combatAdmin.labels.scielCharges")}</span>
@@ -2061,7 +2021,7 @@ export default function CombatAdmin({
                                 };
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
                                         <div className="flex items-center justify-between text-sm mb-2">
                                             <span>{t("combatAdmin.labels.luneStains")}</span>
                                             <button
@@ -2124,7 +2084,7 @@ export default function CombatAdmin({
                                 };
 
                                 return (
-                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
+                                    <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-3 mt-2">
                                         <div>
                                             <div className="flex items-center justify-between text-sm mb-3">
                                                 <span>{t("combatAdmin.labels.maelleStance")}</span>
@@ -2160,7 +2120,7 @@ export default function CombatAdmin({
                     )}
 
                     {/* Equipes A e B - sempre visíveis */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {renderAttackOptions()}
                         {renderActionOptions()}
                         {renderTeamCard(t("combatAdmin.labels.teamA"), "A", teamA)}
@@ -2185,7 +2145,6 @@ export default function CombatAdmin({
                     {renderGustaveChargeModal()}
                     {renderScielChargesModal()}
                     {renderLuneStainsModal()}
-                </div>
             </div>
 
             {renderAddModal()}

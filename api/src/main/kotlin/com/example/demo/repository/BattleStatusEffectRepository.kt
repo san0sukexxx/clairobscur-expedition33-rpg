@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository
 interface BattleStatusEffectRepository : JpaRepository<BattleStatusEffect, Int> {
     fun findByBattleCharacterId(battleCharacterId: Int): List<BattleStatusEffect>
     fun findByBattleCharacterIdAndEffectType(battleCharacterId: Int, effectType: String): List<BattleStatusEffect>
-    fun findByEffectTypeAndSourceCharacterId(effectType: String, sourceCharacterId: Int): List<BattleStatusEffect>
 }

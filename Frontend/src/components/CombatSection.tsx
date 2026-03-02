@@ -181,6 +181,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 isAttacking={isAttacking}
                 isExecutingSkill={isExecutingSkill}
                 isSelectingSkillTarget={isSelectingSkillTarget}
+                hidden={bottomSheetOpen}
             />
 
             <CombatBottomSheet player={player} open={bottomSheetOpen} onOpen={() => setBottomSheetOpen(true)} onClose={() => setBottomSheetOpen(false)} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />

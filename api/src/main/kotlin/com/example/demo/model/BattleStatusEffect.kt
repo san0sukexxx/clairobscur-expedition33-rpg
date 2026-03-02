@@ -11,6 +11,5 @@ data class BattleStatusEffect(
         @Column(name = "ammount", nullable = false) var ammount: Int,
         @Column(name = "remaining_turns") val remainingTurns: Int? = null,
         @Column(name = "is_resolved", nullable = false) val isResolved: Boolean = false,
-        @Column(name = "skip_next_decrement", nullable = false) val skipNextDecrement: Boolean = false,
         @Column(name = "source_character_id") val sourceCharacterId: Int? = null
 )

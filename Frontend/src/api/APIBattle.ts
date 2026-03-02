@@ -114,12 +114,6 @@ export interface CreateDefenseRequest {
     defenseType?: string  // "block", "dodge", "jump", "gradient-block", "take"
 }
 
-export interface ResolveStatusRequest {
-    battleCharacterId: number
-    effectType: string
-    totalValue?: number
-}
-
 export interface AddStatusRequest {
     battleCharacterId: number;
     effectType: StatusType;
@@ -203,10 +197,6 @@ export class APIBattle {
         )
     }
 
-    static async resolveStatus(input: ResolveStatusRequest): Promise<void> {
-        await api.post<ResolveStatusRequest, void>("battle-status/resolve", input)
-    }
-
     static async addStatus(body: AddStatusRequest): Promise<void> {
         // Block "Heal" and "Cleanse" - these should NEVER be added as status
         if ((body.effectType as string) === "Heal" || (body.effectType as string) === "Cleanse") {
@@ -215,20 +205,12 @@ export class APIBattle {
         await api.post("battle-status/add", body);
     }
 
-    static async cleanse(battleCharacterId: number): Promise<void> {
-        await api.post(`battle-status/cleanse/${battleCharacterId}`, {});
-    }
-
     static async removeStatus(battleCharacterId: number, effectType: string): Promise<void> {
         await api.delete(`battle-status/${battleCharacterId}/status/${effectType}`);
     }
 
     static async heal(battleCharacterId: number, amount: number): Promise<void> {
         await api.post(`battle-status/heal/${battleCharacterId}`, { amount });
-    }
-
-    static async breakTarget(battleCharacterId: number): Promise<void> {
-        await api.post(`battle-status/break/${battleCharacterId}`, {});
     }
 
     static async extendStatusDuration(battleCharacterId: number, effectType: string, additionalTurns: number): Promise<void> {
