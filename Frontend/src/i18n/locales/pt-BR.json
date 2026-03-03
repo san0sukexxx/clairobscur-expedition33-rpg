@@ -3762,7 +3762,9 @@
         "medium": "Médio",
         "high": "Alto",
         "deadly": "Mortal"
-      }
+      },
+      "currentLocation": "Local Atual",
+      "setAsCurrent": "Definir como atual"
     }
   }
 }

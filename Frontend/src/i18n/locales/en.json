@@ -3760,7 +3760,9 @@
         "medium": "Medium",
         "high": "High",
         "deadly": "Deadly"
-      }
+      },
+      "currentLocation": "Current Location",
+      "setAsCurrent": "Set as current"
     }
   }
 }

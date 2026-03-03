@@ -300,8 +300,19 @@ export default function CampaignAdmin() {
                     <CampaignAdminEncountersTab campaignInfo={campaignInfo} />
                 )}
 
-                {activeTab === "locations" && (
-                    <CampaignAdminLocationsTab />
+                {activeTab === "locations" && campaignInfo !== null && (
+                    <CampaignAdminLocationsTab
+                        campaignInfo={campaignInfo}
+                        onLocationChange={async (locationId) => {
+                            if (campaignId === null || !campaignInfo) return;
+                            await APICampaign.update(campaignId, {
+                                name: campaignInfo.name,
+                                characters: campaignInfo.characters,
+                                currentLocationId: locationId,
+                            });
+                            setCampaignInfo({ ...campaignInfo, currentLocationId: locationId });
+                        }}
+                    />
                 )}
 
                 {activeTab === "npcs" && (

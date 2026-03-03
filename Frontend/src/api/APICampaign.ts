@@ -4,11 +4,13 @@ export interface Campaign {
   id: number;
   name: string;
   characters: string[];
+  currentLocationId?: string | null;
 }
 
 export interface CreateCampaignInput {
   name: string;
   characters: string[];
+  currentLocationId?: string | null;
 }
 
 export interface CreateCampaignResponse {

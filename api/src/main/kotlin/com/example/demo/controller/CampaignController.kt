@@ -19,7 +19,7 @@ class CampaignController(private val repository: CampaignRepository) {
             @Valid @RequestBody request: ListCampaignRequest
     ): ResponseEntity<CreateCampaignResponse> {
         return try {
-            val campaign = Campaign(name = request.name)
+            val campaign = Campaign(name = request.name, currentLocationId = request.currentLocationId)
             val characters =
                     request.characters.map { ch ->
                         CampaignCharacter(character = ch, campaign = campaign)
@@ -40,7 +40,8 @@ class CampaignController(private val repository: CampaignRepository) {
                     ListCampaignResponse(
                             id = campaign.id,
                             name = campaign.name,
-                            characters = campaign.characters.map { it.character }
+                            characters = campaign.characters.map { it.character },
+                            currentLocationId = campaign.currentLocationId
                     )
                 }
         return ResponseEntity.ok(campaigns)
@@ -55,7 +56,8 @@ class CampaignController(private val repository: CampaignRepository) {
                     GetCampaignResponse(
                             id = c.id,
                             name = c.name,
-                            characters = c.characters.map { it.character }
+                            characters = c.characters.map { it.character },
+                            currentLocationId = c.currentLocationId
                     )
             )
         } else {
@@ -84,6 +86,7 @@ class CampaignController(private val repository: CampaignRepository) {
 
         val campaign = opt.get()
         campaign.name = request.name
+        campaign.currentLocationId = request.currentLocationId
 
         campaign.characters.clear()
         val newCharacters =

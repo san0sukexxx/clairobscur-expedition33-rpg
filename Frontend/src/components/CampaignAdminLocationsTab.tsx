@@ -3,9 +3,15 @@ import { FaMapMarkerAlt, FaChevronDown, FaChevronUp, FaSkull } from "react-icons
 import { getAllLocationsSorted } from "../utils/LocationUtils";
 import { getNpcById, handleNpcImgError } from "../utils/NpcUtils";
 import type { LocationInfo } from "../api/ResponseModel";
+import type { Campaign } from "../api/APICampaign";
 import { t, getLocationName, getWeaponName, getPictoName } from "../i18n";
 
-export default function CampaignAdminLocationsTab() {
+interface Props {
+    campaignInfo: Campaign;
+    onLocationChange: (locationId: string | null) => void;
+}
+
+export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange }: Props) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -60,8 +66,9 @@ export default function CampaignAdminLocationsTab() {
                     <div className="mt-4 flex flex-col divide-y divide-base-300">
                         {locations.map((loc) => {
                             const isExpanded = expandedId === loc.id;
+                            const isCurrent = campaignInfo.currentLocationId === loc.id;
                             return (
-                                <div key={loc.id} className="py-3 px-1">
+                                <div key={loc.id} className={`py-3 px-1 ${isCurrent ? "bg-primary/10 rounded-lg border border-primary/30" : ""}`}>
                                     {/* Header */}
                                     <div
                                         className="flex items-center gap-3 cursor-pointer"
@@ -77,6 +84,12 @@ export default function CampaignAdminLocationsTab() {
                                         <div className="flex flex-col min-w-0 flex-1">
                                             <span className="font-semibold text-sm">{getLocationName(loc.id)}</span>
                                             <div className="flex flex-wrap gap-1 mt-0.5">
+                                                {isCurrent && (
+                                                    <span className="badge badge-xs badge-primary">
+                                                        <FaMapMarkerAlt className="w-2 h-2 mr-0.5" />
+                                                        {t("locations.currentLocation")}
+                                                    </span>
+                                                )}
                                                 {loc.terrain && (
                                                     <span className="badge badge-xs badge-ghost">
                                                         {t(`locations.terrain.${loc.terrain}`)}
@@ -91,13 +104,23 @@ export default function CampaignAdminLocationsTab() {
                                         </div>
 
                                         <div className="flex items-center gap-2 shrink-0">
+                                            <button
+                                                className={`btn btn-xs btn-square ${isCurrent ? "btn-primary" : "btn-ghost btn-outline"}`}
+                                                title={isCurrent ? t("locations.currentLocation") : t("locations.setAsCurrent")}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onLocationChange(isCurrent ? null : loc.id);
+                                                }}
+                                            >
+                                                <FaMapMarkerAlt className="w-3 h-3" />
+                                            </button>
                                             {((loc.residentNpcIds?.length ?? 0) + (loc.referenceNpcNames?.length ?? 0)) > 0 && (
-                                                <span className="badge badge-sm badge-ghost">
+                                                <span className="badge badge-sm badge-ghost hidden sm:inline-flex">
                                                     {(loc.residentNpcIds?.length ?? 0) + (loc.referenceNpcNames?.length ?? 0)} NPCs
                                                 </span>
                                             )}
                                             {(loc.encounters?.length ?? 0) > 0 && (
-                                                <span className="badge badge-sm badge-ghost">
+                                                <span className="badge badge-sm badge-ghost hidden sm:inline-flex">
                                                     {loc.encounters!.length} {t("locations.encounterCount")}
                                                 </span>
                                             )}
