@@ -1958,12 +1958,12 @@
       "bestialWheel": "Roda Bestial",
       "current": "Atual",
       "intensity": "Intensidade",
-      "intensityLow": "Baixo",
-      "intensityMedium": "Médio",
-      "intensityHigh": "Alto",
-      "intensityVeryHigh": "Muito Alto",
-      "intensityExtreme": "Extremo",
-      "intensityMaximum": "Máximo",
+      "intensityLow": "Baixa",
+      "intensityMedium": "Média",
+      "intensityHigh": "Alta",
+      "intensityVeryHigh": "Muito Alta",
+      "intensityExtreme": "Extrema",
+      "intensityMaximum": "Máxima",
       "defend": "Defender",
       "defenseDescDodge": "Defesa padrão. Rola 1d20 contra a CA.",
       "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PM (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque de mesma intensidade.",
@@ -1972,6 +1972,10 @@
       "weaponPassives": "Passivas da arma"
     },
     "combatAdmin": {
+      "npcAttacks": {
+        "comboHammers": "Combo Marteladas",
+        "comboSlaps": "Combo Tapas"
+      },
       "createCombat": "Criar combate",
       "creating": "Criando...",
       "combatsTitle": "Combates",
@@ -2148,6 +2152,17 @@
         "conditionImmunities": "Imunidades de Condição",
         "challenge": "Desafio",
         "proficiencyBonus": "Bônus de Proficiência"
+      },
+      "actionDesc": {
+        "meleeAttack": "Ataque Corpo a Corpo com Arma",
+        "areaAttack": "Ataque em Área",
+        "toHit": "para acertar",
+        "reach": "alcance 1,5m, um alvo",
+        "hit": "Acerto",
+        "damageOfType": "de dano",
+        "hits": "golpes",
+        "targetGains": "O alvo fica",
+        "forTurns": "por {count} turno(s)"
       }
     },
     "rewards": {
@@ -3516,7 +3531,8 @@
       "deleting": "Excluindo...",
       "back": "Voltar",
       "npcCount": "NPCs",
-      "rewardCount": "recompensas"
+      "rewardCount": "recompensas",
+      "challengeRating": "ND"
     }
   }
 }

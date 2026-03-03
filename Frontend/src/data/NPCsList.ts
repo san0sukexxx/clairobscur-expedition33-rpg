@@ -34,16 +34,17 @@ export const NPCsList: NPCInfo[] = [
         attackList: [
             {
                 type: "skill",
-                name: "Combo Marteladas",
+                name: "combatAdmin.npcAttacks.comboHammers",
                 additionalDamage: 3,
                 quantity: 4,
+                intensity: 2,
                 statusList: [
                     { ammount: 1, remainingTurns: 1, type: "Silenced" }
-                ]
+                ],
             },
             {
                 type: "skill",
-                name: "Combo Tapas",
+                name: "combatAdmin.npcAttacks.comboSlaps",
                 quantity: 3,
             }
         ],

@@ -126,6 +126,9 @@ export interface NPCAttack {
     name?: string;  // Custom name to display on the button (overrides default label)
     additionalDamage?: number;  // Flat damage bonus added to each attack roll
     additionalDices?: number;  // Additional dice rolled for this attack (e.g., 2 = roll 3d6 instead of 1d6)
+    description?: string;  // Manual D&D-style description (overrides auto-generated)
+    element?: Element;  // Damage element (defaults to Physical)
+    intensity?: number;  // Recommended intensity index (0=Low, 1=Medium, 2=High, 3=VeryHigh, 4=Extreme, 5=Maximum)
 }
 
 

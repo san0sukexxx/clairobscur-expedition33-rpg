@@ -1,5 +1,6 @@
-import type { StatusType, SpecialAttackType } from "../api/ResponseModel";
+import type { StatusType, SpecialAttackType, NPCInfo, NPCAttack } from "../api/ResponseModel";
 import { t } from "../i18n";
+import { getElementName } from "./ElementUtils";
 
 export function getBattleStatusLabel(status: string): string {
     switch (status) {
@@ -126,4 +127,62 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
     ];
 
     return !skillsWithoutAmmount.includes(type);
+}
+
+/** Auto-generate a D&D-style action description from NPC + attack data */
+export function generateActionDescription(npc: NPCInfo, atk: NPCAttack): string {
+    if (atk.description) return atk.description;
+
+    const strMod = Math.floor((npc.strength - 10) / 2);
+    const profBonus = npc.proficiencyBonus ?? 2;
+    const hitBonus = strMod + profBonus;
+    const hitSign = hitBonus >= 0 ? `+${hitBonus}` : `${hitBonus}`;
+
+    const numDice = 1 + (atk.additionalDices ?? 0);
+    const flatDmg = strMod + (atk.additionalDamage ?? 0);
+    const avgDmg = Math.floor(numDice * 3.5 + flatDmg);
+    const flatSign = flatDmg >= 0 ? `+${flatDmg}` : `${flatDmg}`;
+    const dmgExpr = `${avgDmg} (${numDice}d6${flatSign})`;
+
+    const isArea = atk.type === "jump-all";
+    const attackKind = isArea
+        ? t("combatAdmin.actionDesc.areaAttack")
+        : t("combatAdmin.actionDesc.meleeAttack");
+
+    let desc = `${attackKind}: ${hitSign} ${t("combatAdmin.actionDesc.toHit")}`;
+    const elementName = getElementName(atk.element ?? "Physical");
+    desc += `. ${t("combatAdmin.actionDesc.hit")}: ${dmgExpr} ${t("combatAdmin.actionDesc.damageOfType")} ${elementName}`;
+
+    if (atk.quantity && atk.quantity > 1) {
+        desc += `, ${atk.quantity} ${t("combatAdmin.actionDesc.hits")}`;
+    }
+
+    if (atk.statusList && atk.statusList.length > 0) {
+        const effects = atk.statusList.map(s => {
+            let eff = getStatusLabel(s.type);
+            if (s.remainingTurns != null) {
+                eff += ` ${t("combatAdmin.actionDesc.forTurns", { count: s.remainingTurns })}`;
+            }
+            return eff;
+        });
+        desc += `. ${t("combatAdmin.actionDesc.targetGains")} ${effects.join(", ")}`;
+    }
+
+    desc += ".";
+    return desc;
+}
+
+/** Auto-generate a D&D-style description for the basic "Atacar" action */
+export function generateBasicAttackDescription(npc: NPCInfo): string {
+    const strMod = Math.floor((npc.strength - 10) / 2);
+    const profBonus = npc.proficiencyBonus ?? 2;
+    const hitBonus = strMod + profBonus;
+    const hitSign = hitBonus >= 0 ? `+${hitBonus}` : `${hitBonus}`;
+
+    const flatDmg = strMod;
+    const avgDmg = Math.floor(3.5 + flatDmg);
+    const flatSign = flatDmg >= 0 ? `+${flatDmg}` : `${flatDmg}`;
+    const dmgExpr = `${avgDmg} (1d6${flatSign})`;
+
+    return `${t("combatAdmin.actionDesc.meleeAttack")}: ${hitSign} ${t("combatAdmin.actionDesc.toHit")}. ${t("combatAdmin.actionDesc.hit")}: ${dmgExpr} ${t("combatAdmin.actionDesc.damageOfType")} ${getElementName("Physical")}.`;
 }

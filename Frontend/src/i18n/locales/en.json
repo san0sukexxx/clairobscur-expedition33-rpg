@@ -1972,6 +1972,10 @@
       "weaponPassives": "Weapon passives"
     },
     "combatAdmin": {
+      "npcAttacks": {
+        "comboHammers": "Hammer Combo",
+        "comboSlaps": "Slap Combo"
+      },
       "createCombat": "Create combat",
       "creating": "Creating...",
       "combatsTitle": "Combats",
@@ -2148,6 +2152,17 @@
         "conditionImmunities": "Condition Immunities",
         "challenge": "Challenge",
         "proficiencyBonus": "Proficiency Bonus"
+      },
+      "actionDesc": {
+        "meleeAttack": "Melee Weapon Attack",
+        "areaAttack": "Area Attack",
+        "toHit": "to hit",
+        "reach": "reach 5 ft., one target",
+        "hit": "Hit",
+        "damageOfType": "damage",
+        "hits": "hits",
+        "targetGains": "The target gains",
+        "forTurns": "for {count} turn(s)"
       }
     },
     "rewards": {
@@ -3514,7 +3529,8 @@
       "deleting": "Deleting...",
       "back": "Back",
       "npcCount": "NPCs",
-      "rewardCount": "rewards"
+      "rewardCount": "rewards",
+      "challengeRating": "CR"
     }
   }
 }

@@ -26,7 +26,7 @@ import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
 import { StatusConditionsModal } from "./StatusConditionsModal";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
-import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
+import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount, generateActionDescription, generateBasicAttackDescription } from "../utils/BattleUtils";
 import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName } from "../i18n";
 import type { BattleReward } from "../api/ResponseModel";
 import { APIRewards } from "../api/APIRewards";
@@ -226,6 +226,7 @@ export default function CombatAdmin({
     const [npcSpecialAttack, setNPCSpecialAttack] = useState<NPCSpecialAttack | null>(null)
     const [npcSpecialAttackIndex, setNpcSpecialAttackIndex] = useState<number | null>(null)
     const [npcAttackIndex, setNpcAttackIndex] = useState<number | null>(null)
+    const [npcIntensityIndex, setNpcIntensityIndex] = useState(1)
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
@@ -526,6 +527,16 @@ export default function CombatAdmin({
         setTeamA(aTeam)
         setTeamB(bTeam)
     }, [battleDetails])
+
+    // Map real battleIDs to sequential display indices (#1, #2, ...)
+    const displayIndex = useMemo(() => {
+        const map = new Map<number, number>();
+        if (!battleDetails?.characters) return map;
+        battleDetails.characters.forEach((bc, i) => {
+            map.set(bc.battleID, i + 1);
+        });
+        return map;
+    }, [battleDetails]);
 
     async function handleStatusChange(newStatus: string) {
         if (battleId == undefined || battleId == null) return
@@ -872,7 +883,7 @@ export default function CombatAdmin({
                     <div className="flex flex-col items-start">
                         <div className="text-lg font-semibold">{t("combatAdmin.labels.npcTurn")}</div>
                         <div className="text-sm opacity-70">
-                            {currentNpc?.name} <span className="font-mono badge badge-ghost badge-xs">#{currentNpc?.battleID}</span>
+                            {currentNpc?.name} <span className="font-mono badge badge-ghost badge-xs">#{displayIndex.get(currentNpc?.battleID ?? 0) ?? "?"}</span>
                         </div>
                     </div>
 
@@ -985,125 +996,216 @@ export default function CombatAdmin({
                         );
                     })()}
 
-                    <div className="flex flex-row flex-wrap gap-6">
-                        {npcInfo?.attackList?.map((atk, idx) => {
-                            const isAtkSelected = isSelectingTarget && npcAttackIndex === idx;
+                    {/* ━━━ D&D-style Actions Section ━━━ */}
+                    {(() => {
+                        const strMod = npcInfo ? getAbilityModifier(npcInfo.strength) : 0;
+                        const profBonus = npcInfo?.proficiencyBonus ?? 2;
+                        const hitBonus = strMod + profBonus;
+                        const hitSign = hitBonus >= 0 ? `+${hitBonus}` : `${hitBonus}`;
+
+                        const rollActionDice = (diceCmd: string, modifier: number, label: string) => {
+                            if (!diceBoardRef.current) return;
+                            if (timeoutDiceBoardRef.current != null) {
+                                clearTimeout(timeoutDiceBoardRef.current);
+                                timeoutDiceBoardRef.current = null;
+                            }
+                            diceBoardRef.current.roll([diceCmd], (result) => {
+                                const rawTotal = diceTotal(result);
+                                const diceValues: number[] = [];
+                                for (const group of result) {
+                                    if (Array.isArray(group.rolls)) {
+                                        for (const roll of group.rolls) diceValues.push(roll.value);
+                                    }
+                                }
+                                dispatchRoll({
+                                    label,
+                                    diceRolled: rawTotal,
+                                    modifier,
+                                    total: rawTotal + modifier,
+                                    diceCommand: `${diceCmd}${modifier >= 0 ? "+" : ""}${modifier}`,
+                                    diceValues,
+                                });
+                                if (timeoutDiceBoardRef.current != null) {
+                                    clearTimeout(timeoutDiceBoardRef.current);
+                                }
+                                timeoutDiceBoardRef.current = window.setTimeout(() => {
+                                    diceBoardRef.current?.hideBoard();
+                                    timeoutDiceBoardRef.current = null;
+                                }, 5000);
+                            });
+                        };
+
+                        const DiceBtn = ({ diceCmd, modifier, label }: { diceCmd: string; modifier: number; label: string }) => {
+                            const modSign = modifier >= 0 ? `+${modifier}` : `${modifier}`;
                             return (
-                            <div key={idx} className="flex flex-col items-center gap-2">
                                 <button
-                                    className={`btn btn-md ${isAtkSelected ? "btn-error" : "btn-primary"}`}
-                                    onClick={() => {
-                                        if (isAtkSelected) {
-                                            setNPCAttack(null);
-                                            setAttackType(null);
-                                            setNpcAttackIndex(null);
-                                            setIsSelectingTarget(false);
-                                        } else {
-                                            npcCustomAttackTapped(atk, idx);
-                                        }
-                                    }}
-                                    disabled={isPassingTurn}
+                                    className="inline-flex items-center px-1.5 py-0.5 mx-0.5 bg-amber-700 text-amber-100 hover:bg-amber-500 hover:text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors align-baseline"
+                                    onClick={(e) => { e.stopPropagation(); rollActionDice(diceCmd, modifier, label); }}
                                 >
-                                    {isAtkSelected ? t("combatAdmin.labels.cancel") : (atk.name || getAttackTypeLabel(atk.type))}
-                                    {!isAtkSelected && atk.quantity && atk.quantity > 1 && (
-                                        <span className="ml-1 badge badge-warning badge-sm">
-                                            x{atk.quantity}
-                                        </span>
-                                    )}
+                                    {diceCmd === "1d20" ? modSign : modifier === 0 ? `(${diceCmd})` : `(${diceCmd}${modSign})`}
                                 </button>
-
-                                <div className="flex flex-col items-center text-sm opacity-80">
-                                    {atk.statusList?.map((s, i) => {
-                                        const showAmmount = shouldShowStatusAmmount(s.type);
-                                        const showTurns = s.type !== "IntenseFlames" && s.remainingTurns !== undefined;
-
-                                        return (
-                                            <div key={i} className="leading-tight text-center">
-                                                {getStatusLabel(s.type)}{" "}
-                                                {showAmmount && s.ammount != null ? s.ammount : ""}{" "}
-                                                {showTurns
-                                                    ? ` (Por ${s.remainingTurns} turno${s.remainingTurns! > 1 ? "s" : ""})`
-                                                    : ""}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
                             );
-                        })}
-                    </div>
+                        };
 
-                    {(npcInfo?.specialAttackList?.length ?? 0) > 0 && (
-                        <div className="flex flex-col gap-2 mt-2">
-                            <h3 className="text-lg font-semibold">{t("combatAdmin.labels.specialAttacks")}</h3>
+                        const npcName = npcInfo?.name ?? "";
+                        const INTENSITY_MULTIPLIER = [1, 1, 2, 3, 4, 5];
+                        const diceMultiplier = INTENSITY_MULTIPLIER[npcIntensityIndex] ?? 1;
+                        const isLowIntensity = npcIntensityIndex === 0;
 
-                            <div className="flex flex-row flex-wrap items-center gap-4">
-                                {npcInfo?.specialAttackList?.map((skill, idx) => {
-                                    const isSelected = isSelectingTarget && npcSpecialAttackIndex === idx;
+                        return (
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <div className="flex-1 border-t border-red-700/60" />
+                                    <span className="text-sm font-bold tracking-wide text-red-400 uppercase">{t("combatAdmin.npcDetails.actions")}</span>
+                                    <div className="flex-1 border-t border-red-700/60" />
+                                </div>
+
+                                {npcInfo?.attackList?.map((atk, idx) => {
+                                    const actionName = atk.name ? t(atk.name) : getAttackTypeLabel(atk.type);
+                                    const baseNumDice = 1 + (atk.additionalDices ?? 0);
+                                    const numDice = baseNumDice * diceMultiplier;
+                                    const rawFlatDmg = strMod + (atk.additionalDamage ?? 0);
+                                    const flatDmg = isLowIntensity ? Math.min(rawFlatDmg, 0) : rawFlatDmg;
+                                    const avgDmg = Math.floor(numDice * 3.5 + flatDmg);
+                                    const isArea = atk.type === "jump-all";
+                                    const attackKind = isArea ? t("combatAdmin.actionDesc.areaAttack") : t("combatAdmin.actionDesc.meleeAttack");
+
+                                    const statusParts = atk.statusList?.map(s => {
+                                        let eff = getStatusLabel(s.type);
+                                        if (s.remainingTurns != null) {
+                                            eff += ` ${t("combatAdmin.actionDesc.forTurns", { count: s.remainingTurns })}`;
+                                        }
+                                        return eff;
+                                    });
+
+                                    const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
+                                    const INTENSITY_COLORS = ["text-sky-400", "text-emerald-400", "text-amber-400", "text-orange-400", "text-red-400", "text-fuchsia-400"];
+
                                     return (
-                                    <div key={idx} className="flex flex-col items-center gap-2">
-                                        <button
-                                            className={`btn btn-md ${isSelected ? "btn-error" : "btn-primary"}`}
-                                            onClick={() => {
-                                                if (isSelected) {
-                                                    setNPCSpecialAttack(null);
-                                                    setNpcSpecialAttackIndex(null);
-                                                    setIsSelectingTarget(false);
-                                                } else {
-                                                    npcSpecialAttackTapped(skill, idx);
-                                                }
-                                            }}
-                                            disabled={isPassingTurn}
-                                        >
-                                            {isSelected ? t("combatAdmin.labels.cancel") : getSpecialAttackLabel(skill.type)}
-                                        </button>
-
-                                        <div className="flex flex-col items-center text-sm opacity-80">
-                                            {skill.statusList?.map((s, i) => {
-                                                const showAmount = shouldShowStatusAmmount(s.type);
-                                                const showTurns = s.type !== "IntenseFlames" && s.remainingTurns !== undefined;
-
-                                                return (
-                                                    <div key={i} className="leading-tight text-center">
-                                                        {getStatusLabel(s.type)} {showAmount ? s.ammount : ""}
-                                                        {showTurns && s.remainingTurns
-                                                            ? ` (${s.remainingTurns} turno${s.remainingTurns > 1 ? "s" : ""})`
-                                                            : ""}
-                                                    </div>
-                                                );
-                                            })}
+                                        <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                            <span>
+                                                <strong className="text-red-300">{"▸ "}{actionName}.</strong>{" "}
+                                                {atk.intensity != null && (
+                                                    <span className={`text-xs font-bold ${INTENSITY_COLORS[atk.intensity]} mr-1`}>
+                                                        [{t("combat.intensity")} {t(`combat.${INTENSITY_KEYS[atk.intensity]}`)}]
+                                                    </span>
+                                                )}
+                                                <span className="italic opacity-90">
+                                                    <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                                    {" "}{t("combatAdmin.actionDesc.toHit")}
+                                                    . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
+                                                    <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                    {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
+                                                    {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                    {statusParts && statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
+                                                    .
+                                                </span>
+                                            </span>
                                         </div>
-                                    </div>
                                     );
                                 })}
+
+                                {(npcInfo?.specialAttackList?.length ?? 0) > 0 && npcInfo?.specialAttackList?.map((skill, idx) => {
+                                    const skillName = getSpecialAttackLabel(skill.type);
+                                    const statusParts = skill.statusList?.map(s => {
+                                        const label = getStatusLabel(s.type);
+                                        const showAmt = shouldShowStatusAmmount(s.type);
+                                        const turns = s.remainingTurns != null ? ` ${t("combatAdmin.actionDesc.forTurns", { count: s.remainingTurns })}` : "";
+                                        return `${label}${showAmt && s.ammount ? ` ${s.ammount}` : ""}${turns}`;
+                                    }) ?? [];
+                                    const skillDesc = statusParts.length > 0 ? `${t("combatAdmin.actionDesc.targetGains")} ${statusParts.join(", ")}.` : "";
+                                    return (
+                                        <div key={`special-${idx}`} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                            <span>
+                                                <strong className="text-red-300">{"▸ "}{skillName}.</strong>{" "}
+                                                <span className="italic opacity-90">{skillDesc}</span>
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+
+                                {/* Basic "Atacar" action */}
+                                {(() => {
+                                    const basicNumDice = 1 * diceMultiplier;
+                                    const basicFlatDmg = isLowIntensity ? Math.min(strMod, 0) : strMod;
+                                    const basicAvgDmg = Math.floor(basicNumDice * 3.5 + basicFlatDmg);
+                                    return (
+                                        <div className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                            <span>
+                                                <strong className="text-red-300">{"▸ "}{t("combat.attack")}.</strong>{" "}
+                                                <span className="italic opacity-90">
+                                                    <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${t("combat.attack")} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                                    {" "}{t("combatAdmin.actionDesc.toHit")}
+                                                    . {t("combatAdmin.actionDesc.hit")}: {basicAvgDmg}{" "}
+                                                    <DiceBtn diceCmd={`${basicNumDice}d6`} modifier={basicFlatDmg} label={`${npcName} – ${t("combat.attack")} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                    {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName("Physical")}.
+                                                </span>
+                                            </span>
+                                        </div>
+                                    );
+                                })()}
                             </div>
-                        </div>
-                    )}
+                        );
+                    })()}
 
-                    <div className="flex flex-row flex-wrap items-center gap-4">
-                        {(() => {
-                            const isBasicSelected = isSelectingTarget && attackType === "basic" && !npcAttack && npcSpecialAttackIndex === null && npcAttackIndex === null;
-                            return (
-                                <button
-                                    className={`btn btn-md ${isBasicSelected ? "btn-error" : "btn-primary"}`}
-                                    onClick={() => {
-                                        if (isBasicSelected) {
-                                            setAttackType(null);
-                                            setIsSelectingTarget(false);
-                                        } else {
-                                            npcAttackTapped("basic");
-                                        }
-                                    }}
-                                    disabled={isPassingTurn}
-                                >
-                                    <FaFistRaised className="mr-1" />
-                                    {isBasicSelected ? t("combatAdmin.labels.cancel") : t("combat.attack")}
-                                </button>
-                            );
-                        })()}
+                    {/* Intensity slider */}
+                    {(() => {
+                        const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
+                        return (
+                            <div className="pt-1 space-y-1">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.intensity")}</span>
+                                    <span className={`text-xs font-bold ${
+                                        npcIntensityIndex === 0 ? "text-sky-400"
+                                        : npcIntensityIndex === 1 ? "text-emerald-400"
+                                        : npcIntensityIndex === 2 ? "text-amber-400"
+                                        : npcIntensityIndex === 3 ? "text-orange-400"
+                                        : npcIntensityIndex === 4 ? "text-red-400"
+                                        : "text-fuchsia-400"
+                                    }`}>
+                                        {t(`combat.${INTENSITY_KEYS[npcIntensityIndex]}`)}
+                                    </span>
+                                </div>
+                                <div className="relative flex items-center gap-2">
+                                    <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[0]}`)}</span>
+                                    <input
+                                        type="range"
+                                        min={0}
+                                        max={INTENSITY_KEYS.length - 1}
+                                        step={1}
+                                        value={npcIntensityIndex}
+                                        onChange={(e) => setNpcIntensityIndex(Number(e.target.value))}
+                                        className="range range-xs flex-1"
+                                        style={{
+                                            accentColor:
+                                                npcIntensityIndex === 0 ? "#38bdf8"
+                                                : npcIntensityIndex === 1 ? "#34d399"
+                                                : npcIntensityIndex === 2 ? "#fbbf24"
+                                                : npcIntensityIndex === 3 ? "#fb923c"
+                                                : npcIntensityIndex === 4 ? "#f87171"
+                                                : "#e879f9"
+                                        }}
+                                    />
+                                    <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[INTENSITY_KEYS.length - 1]}`)}</span>
+                                </div>
+                                <div className="flex justify-between px-8">
+                                    {INTENSITY_KEYS.map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                                                i === npcIntensityIndex ? "bg-base-content" : "bg-base-content/20"
+                                            }`}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })()}
 
+                    {/* Pass Turn */}
+                    <div className="flex">
                         <button
-                            className="btn btn-md btn-warning hover:brightness-110"
+                            className="btn btn-sm btn-warning hover:brightness-110"
                             onClick={() => npcPassTurnTapped()}
                             disabled={isPassingTurn}
                         >
@@ -1387,7 +1489,7 @@ export default function CombatAdmin({
                                             {m.currentHp === 0 && (
                                                 <FaSkull className="text-red-600 w-3.5 h-3.5 shrink-0" title={t("combatAdmin.labels.dead")} />
                                             )}
-                                            <span className="badge badge-ghost badge-xs font-mono shrink-0">#{m.rowId}</span>
+                                            <span className="badge badge-ghost badge-xs font-mono shrink-0">#{displayIndex.get(m.rowId ?? 0) ?? "?"}</span>
                                             <span className={`badge badge-xs shrink-0 ${m.isReadyToStart ? "badge-success" : "badge-warning"}`}>
                                                 {m.isReadyToStart ? t("combatAdmin.labels.ready") : t("combatAdmin.labels.waiting")}
                                             </span>
@@ -1617,28 +1719,24 @@ export default function CombatAdmin({
                                                         </div>
                                                     )}
 
-                                                    {/* Actions */}
+                                                    {/* Actions (D&D stat block style) */}
                                                     {(npc.attackList?.length ?? 0) > 0 && (
                                                         <div className="flex flex-col gap-1 text-xs">
-                                                            <span className="font-bold text-sm">{t("combatAdmin.npcDetails.actions")}</span>
-                                                            {npc.attackList!.map((atk, idx) => (
-                                                                <div key={idx} className="flex flex-wrap items-center gap-1">
-                                                                    <span className="font-semibold">{atk.name || getAttackTypeLabel(atk.type)}</span>
-                                                                    <span className="opacity-70">({getAttackTypeLabel(atk.type)})</span>
-                                                                    {atk.additionalDamage != null && atk.additionalDamage > 0 && (
-                                                                        <span className="badge badge-xs badge-error">+{atk.additionalDamage} {t("combatAdmin.npcDetails.damage")}</span>
-                                                                    )}
-                                                                    {atk.additionalDices != null && atk.additionalDices > 0 && (
-                                                                        <span className="badge badge-xs badge-info">+{atk.additionalDices}d</span>
-                                                                    )}
-                                                                    {atk.quantity != null && atk.quantity > 1 && (
-                                                                        <span className="badge badge-xs badge-warning">x{atk.quantity}</span>
-                                                                    )}
-                                                                    {atk.statusList?.map((s, si) => (
-                                                                        <span key={si} className="badge badge-xs badge-ghost">{getStatusLabel(s.type)}</span>
-                                                                    ))}
-                                                                </div>
-                                                            ))}
+                                                            <div className="flex items-center gap-1">
+                                                                <div className="flex-1 border-t border-red-700/40" />
+                                                                <span className="font-bold text-sm text-red-400 uppercase tracking-wide">{t("combatAdmin.npcDetails.actions")}</span>
+                                                                <div className="flex-1 border-t border-red-700/40" />
+                                                            </div>
+                                                            {npc.attackList!.map((atk, idx) => {
+                                                                const actionName = atk.name ? t(atk.name) : getAttackTypeLabel(atk.type);
+                                                                const actionDesc = generateActionDescription(npc, atk);
+                                                                return (
+                                                                    <div key={idx} className="leading-snug">
+                                                                        <strong className="text-red-300">{actionName}.</strong>{" "}
+                                                                        <span className="italic opacity-90">{actionDesc}</span>
+                                                                    </div>
+                                                                );
+                                                            })}
                                                         </div>
                                                     )}
 
@@ -1674,7 +1772,7 @@ export default function CombatAdmin({
                                                     <span className="font-mono">{a.totalPower}</span>
 
                                                     <span className="opacity-70">{t("combatAdmin.labels.attacker")}:</span>
-                                                    <span className="font-mono">#{a.sourceBattleId}</span>
+                                                    <span className="font-mono">#{displayIndex.get(a.sourceBattleId) ?? "?"}</span>
 
                                                     {!a.isResolved && (
                                                         <span className="badge badge-warning badge-sm">{t("combatAdmin.labels.pending")}</span>
@@ -2286,7 +2384,7 @@ export default function CombatAdmin({
                                                     const battleID = battleChar?.battleID;
 
                                                     const buttonLabel = battleID
-                                                        ? `#${battleID} ${characterName} (${playerName})`
+                                                        ? `#${displayIndex.get(battleID) ?? "?"} ${characterName} (${playerName})`
                                                         : `${characterName} (${playerName})`;
 
                                                     // Check if player already has this item (case-insensitive comparison)
@@ -2343,7 +2441,8 @@ export default function CombatAdmin({
                                 isStarted={battleStatus == "started" || battleStatus == "finished"}
                                 showBattleId={true}
                                 isAdmin={true}
-                                onReorder={reloadBattleDetails} />
+                                onReorder={reloadBattleDetails}
+                                displayIndex={displayIndex} />
 
                             <GradientBar
                                 characters={battleDetails?.characters}

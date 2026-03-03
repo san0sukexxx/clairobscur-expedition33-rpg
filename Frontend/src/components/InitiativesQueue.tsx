@@ -12,11 +12,12 @@ interface InitiativesQueueProps {
     showBattleId: boolean
     isAdmin: boolean
     onReorder?: () => void
+    displayIndex?: Map<number, number>
 }
 
 type AnyItem = InitiativeResponse | BattleTurnResponse
 
-export default function InitiativesQueue({ characters, initiatives, turns, isStarted, showBattleId, isAdmin, onReorder }: InitiativesQueueProps) {
+export default function InitiativesQueue({ characters, initiatives, turns, isStarted, showBattleId, isAdmin, onReorder, displayIndex }: InitiativesQueueProps) {
     const { showToast } = useToast()
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
     const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
@@ -228,7 +229,7 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
 
                             {showBattleId && (
                                 <span className="text-xs text-base-content/50 mt-1">
-                                    #{battleId}
+                                    #{displayIndex?.get(battleId) ?? battleId}
                                 </span>
                             )}
                         </div>
