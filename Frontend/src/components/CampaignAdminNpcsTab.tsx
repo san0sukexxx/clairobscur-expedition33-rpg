@@ -8,12 +8,12 @@ import { t } from "../i18n";
 import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
 
 const ATTR_CONFIG = [
-    { key: "strength", label: () => t("combat.npcDetails.str"), icon: FaFistRaised, color: "text-red-400" },
-    { key: "dexterity", label: () => t("combat.npcDetails.dex"), icon: GiRunningShoe, color: "text-green-400" },
-    { key: "constitution", label: () => t("combat.npcDetails.con"), icon: FaHeart, color: "text-orange-400" },
-    { key: "intelligence", label: () => t("combat.npcDetails.int"), icon: FaBrain, color: "text-blue-400" },
-    { key: "wisdom", label: () => t("combat.npcDetails.wis"), icon: FaEye, color: "text-yellow-400" },
-    { key: "charisma", label: () => t("combat.npcDetails.cha"), icon: FaTheaterMasks, color: "text-pink-400" },
+    { key: "strength", label: () => t("combatAdmin.npcDetails.str"), icon: FaFistRaised, color: "text-red-400" },
+    { key: "dexterity", label: () => t("combatAdmin.npcDetails.dex"), icon: GiRunningShoe, color: "text-green-400" },
+    { key: "constitution", label: () => t("combatAdmin.npcDetails.con"), icon: FaHeart, color: "text-orange-400" },
+    { key: "intelligence", label: () => t("combatAdmin.npcDetails.int"), icon: FaBrain, color: "text-blue-400" },
+    { key: "wisdom", label: () => t("combatAdmin.npcDetails.wis"), icon: FaEye, color: "text-yellow-400" },
+    { key: "charisma", label: () => t("combatAdmin.npcDetails.cha"), icon: FaTheaterMasks, color: "text-pink-400" },
 ] as const;
 
 function abilityMod(score: number): string {
@@ -23,7 +23,7 @@ function abilityMod(score: number): string {
 
 function attackTypeName(type: NPCAttack["type"]): string {
     switch (type) {
-        case "basic": return t("combat.actionDesc.meleeAttack");
+        case "basic": return t("combatAdmin.actionDesc.meleeAttack");
         case "jump": return "Jump";
         case "jump-all": return "Jump (All)";
         case "gradient": return "Gradient";
@@ -151,7 +151,7 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
         <div className="bg-base-200/50 rounded-lg p-3 mt-2 space-y-3 text-sm">
             {/* Atributos */}
             <div>
-                <span className="font-bold text-xs">{t("combat.npcDetails.attributes")}</span>
+                <span className="font-bold text-xs">{t("combatAdmin.npcDetails.attributes")}</span>
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-1">
                     {ATTR_CONFIG.map(({ key, label, icon: Icon, color }) => {
                         const val = npc[key];
@@ -174,48 +174,48 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
                 {npc.armorClass != null && (
                     <div className="bg-base-300 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
                         <FaShieldAlt className="text-blue-400 w-3 h-3" />
-                        <span className="text-xs font-bold">{t("combat.npcDetails.armorClass")}</span>
+                        <span className="text-xs font-bold">{t("combatAdmin.npcDetails.armorClass")}</span>
                         <span className="font-bold">{npc.armorClass}</span>
                     </div>
                 )}
                 {npc.challengeRating && (
                     <div className="bg-base-300 rounded-lg px-3 py-1.5">
-                        <span className="text-xs font-bold">{t("combat.npcDetails.challenge")}:</span>
+                        <span className="text-xs font-bold">{t("combatAdmin.npcDetails.challenge")}:</span>
                         <span className="font-bold ml-1">{npc.challengeRating}</span>
                     </div>
                 )}
                 {npc.proficiencyBonus != null && (
                     <div className="bg-base-300 rounded-lg px-3 py-1.5">
-                        <span className="text-xs font-bold">{t("combat.npcDetails.proficiencyBonus")}:</span>
+                        <span className="text-xs font-bold">{t("combatAdmin.npcDetails.proficiencyBonus")}:</span>
                         <span className="font-bold ml-1">+{npc.proficiencyBonus}</span>
                     </div>
                 )}
                 {npc.initiativeBonus != null && (
                     <div className="bg-base-300 rounded-lg px-3 py-1.5">
-                        <span className="text-xs font-bold">{t("combat.npcDetails.initBonus")}:</span>
+                        <span className="text-xs font-bold">{t("combatAdmin.npcDetails.initBonus")}:</span>
                         <span className="font-bold ml-1">+{npc.initiativeBonus}</span>
                     </div>
                 )}
                 {npc.maxLifeBonus != null && (
                     <div className="bg-base-300 rounded-lg px-3 py-1.5">
-                        <span className="text-xs font-bold">{t("combat.npcDetails.maxHpBonus")}:</span>
+                        <span className="text-xs font-bold">{t("combatAdmin.npcDetails.maxHpBonus")}:</span>
                         <span className="font-bold ml-1">+{npc.maxLifeBonus}</span>
                     </div>
                 )}
                 {npc.freeShotWeakPoints != null && (
                     <div className="bg-base-300 rounded-lg px-3 py-1.5">
-                        <span className="text-xs font-bold">{t("combat.npcDetails.weakPoints")}:</span>
+                        <span className="text-xs font-bold">{t("combatAdmin.npcDetails.weakPoints")}:</span>
                         <span className="font-bold ml-1">{npc.freeShotWeakPoints}</span>
                     </div>
                 )}
                 {npc.playFirst && (
                     <div className="bg-warning/20 text-warning rounded-lg px-3 py-1.5 text-xs font-bold">
-                        {t("combat.npcDetails.playFirst")}
+                        {t("combatAdmin.npcDetails.playFirst")}
                     </div>
                 )}
                 {npc.isFlying && (
                     <div className="bg-info/20 text-info rounded-lg px-3 py-1.5 text-xs font-bold">
-                        {t("combat.npcDetails.flying")}
+                        {t("combatAdmin.npcDetails.flying")}
                     </div>
                 )}
             </div>
@@ -227,22 +227,22 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
                     <div className="flex flex-wrap gap-2 mt-1">
                         {npc.weakTo && (
                             <span className="badge badge-warning gap-1">
-                                {ELEMENT_EMOTE[npc.weakTo]} {t("combat.npcDetails.vulnerability")}: {getElementName(npc.weakTo)}
+                                {ELEMENT_EMOTE[npc.weakTo]} {t("combatAdmin.npcDetails.vulnerability")}: {getElementName(npc.weakTo)}
                             </span>
                         )}
                         {npc.resistentTo && (
                             <span className="badge badge-info gap-1">
-                                {ELEMENT_EMOTE[npc.resistentTo]} {t("combat.npcDetails.resistance")}: {getElementName(npc.resistentTo)}
+                                {ELEMENT_EMOTE[npc.resistentTo]} {t("combatAdmin.npcDetails.resistance")}: {getElementName(npc.resistentTo)}
                             </span>
                         )}
                         {npc.imuneTo && (
                             <span className="badge badge-error gap-1">
-                                {ELEMENT_EMOTE[npc.imuneTo]} {t("combat.npcDetails.immunity")}: {getElementName(npc.imuneTo)}
+                                {ELEMENT_EMOTE[npc.imuneTo]} {t("combatAdmin.npcDetails.immunity")}: {getElementName(npc.imuneTo)}
                             </span>
                         )}
                         {npc.absorbElement && (
                             <span className="badge badge-success gap-1">
-                                {ELEMENT_EMOTE[npc.absorbElement]} {t("combat.npcDetails.absorb")}: {getElementName(npc.absorbElement)}
+                                {ELEMENT_EMOTE[npc.absorbElement]} {t("combatAdmin.npcDetails.absorb")}: {getElementName(npc.absorbElement)}
                             </span>
                         )}
                     </div>
@@ -268,7 +268,7 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
             {/* Imunidades de condição */}
             {(npc.conditionImmunities?.length ?? 0) > 0 && (
                 <div>
-                    <span className="font-bold text-xs">{t("combat.npcDetails.conditionImmunities")}</span>
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.conditionImmunities")}</span>
                     <div className="flex flex-wrap gap-1 mt-1">
                         {npc.conditionImmunities!.map((status) => (
                             <span key={status} className="badge badge-sm badge-outline">
@@ -282,7 +282,7 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
             {/* Ações */}
             {(npc.attackList?.length ?? 0) > 0 && (
                 <div>
-                    <span className="font-bold text-xs">{t("combat.npcDetails.actions")}</span>
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.actions")}</span>
                     <div className="flex flex-col gap-1.5 mt-1">
                         {npc.attackList!.map((atk, idx) => (
                             <div key={idx} className="bg-base-300 rounded-lg px-3 py-2">
@@ -303,7 +303,7 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
                                     )}
                                     {atk.additionalDamage != null && atk.additionalDamage > 0 && (
                                         <span className="badge badge-xs badge-warning">
-                                            +{atk.additionalDamage} {t("combat.npcDetails.damage")}
+                                            +{atk.additionalDamage} {t("combatAdmin.npcDetails.damage")}
                                         </span>
                                     )}
                                     {atk.additionalDices != null && atk.additionalDices > 0 && (
