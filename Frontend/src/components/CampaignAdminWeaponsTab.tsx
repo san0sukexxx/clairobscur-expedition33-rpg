@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
-import { displayWeaponPlusPower, displayWeaponAttributeRank, getWeaponDamageDice } from "../utils/WeaponCalculator";
+import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponDexterityBonus, displayWeaponProficiencyBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponName, getWeaponPassive } from "../i18n";
 import type { WeaponDTO, AttributeType } from "../types/WeaponDTO";
@@ -24,11 +24,11 @@ const CHARACTER_LABELS: Record<string, string> = {
 
 const CHARACTERS = ["gustave", "verso", "maelle", "lune", "sciel", "monoco"] as const;
 
-const SCALING_CONFIG: { key: AttributeType; label: string }[] = [
-    { key: "vitality", label: "VIT" },
-    { key: "dexterity", label: "DEX" },
-    { key: "defense", label: "DEF" },
-    { key: "luck", label: "LCK" },
+const SCALING_CONFIG: { key: AttributeType; label: () => string; display: (rank: string, level: number) => string }[] = [
+    { key: "vitality", label: () => t("weapons.vitality"), display: displayWeaponVitalityBonus },
+    { key: "dexterity", label: () => t("weapons.dexterity"), display: displayWeaponDexterityBonus },
+    { key: "defense", label: () => t("weapons.defense"), display: displayWeaponDefenseBonus },
+    { key: "luck", label: () => t("weapons.proficiencyBonus"), display: displayWeaponProficiencyBonus },
 ];
 
 function buildWeaponList(): WeaponEntry[] {
@@ -153,9 +153,9 @@ function WeaponDetails({ entry }: { entry: WeaponEntry }) {
 
     const scalingEntries = SCALING_CONFIG
         .filter(({ key }) => attributes.scaling[key] != null)
-        .map(({ key, label }) => ({
-            label,
-            rank: displayWeaponAttributeRank(attributes.scaling[key], level),
+        .map(({ key, label, display }) => ({
+            label: label(),
+            value: display(attributes.scaling[key], level),
         }));
 
     return (
@@ -178,19 +178,20 @@ function WeaponDetails({ entry }: { entry: WeaponEntry }) {
 
             {/* Stats */}
             <div>
-                <span className="font-bold text-xs">Stats</span>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
-                    <div className="bg-base-300 rounded-lg px-3 py-1.5 flex items-center justify-between">
-                        <span className="text-xs font-bold opacity-70">Power</span>
+                <span className="font-bold text-xs">{t("combatAdmin.npcDetails.attributes")}</span>
+                <div className="flex flex-wrap gap-2 mt-1">
+                    <div className="bg-base-300 rounded-lg px-3 py-1.5 flex items-center gap-2">
+                        <span className="text-xs font-bold opacity-70">{t("weapons.power")}</span>
                         <span className="font-bold text-primary">{displayWeaponPlusPower(attributes.power, level)}</span>
                     </div>
-                    <div className="bg-base-300 rounded-lg px-3 py-1.5 flex items-center justify-between">
-                        <span className="text-xs font-bold opacity-70">Dice</span>
+                    <div className="bg-base-300 rounded-lg px-3 py-1.5 flex items-center gap-2">
+                        <span className="text-xs font-bold opacity-70">{t("weapons.dices")}</span>
                         <span className="font-bold text-primary">{getWeaponDamageDice(level)}</span>
                     </div>
-                    <div className="bg-base-300 rounded-lg px-3 py-1.5 flex items-center justify-between">
+                    <div className="bg-base-300 rounded-lg px-3 py-1.5 flex items-center gap-2">
                         <span className="text-xs font-bold opacity-70">{t("weapons.element")}</span>
-                        <span className="font-bold">{ELEMENT_EMOTE[attributes.element] ?? ""} {getElementName(attributes.element)}</span>
+                        <span className="font-bold text-primary">{ELEMENT_EMOTE[attributes.element] ?? ""}</span>
+                        <span className="font-bold text-primary">{getElementName(attributes.element)}</span>
                     </div>
                 </div>
             </div>
@@ -198,12 +199,12 @@ function WeaponDetails({ entry }: { entry: WeaponEntry }) {
             {/* Scaling */}
             {scalingEntries.length > 0 && (
                 <div>
-                    <span className="font-bold text-xs">Scaling</span>
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.attributes")}</span>
                     <div className="flex flex-wrap gap-2 mt-1">
-                        {scalingEntries.map(({ label, rank }) => (
+                        {scalingEntries.map(({ label, value }) => (
                             <div key={label} className="bg-base-300 rounded-lg px-3 py-1.5 flex items-center gap-2">
                                 <span className="text-xs font-bold opacity-70">{label}</span>
-                                <span className="font-bold text-primary">{rank}</span>
+                                <span className="font-bold text-primary">{value}</span>
                             </div>
                         ))}
                     </div>
@@ -213,7 +214,7 @@ function WeaponDetails({ entry }: { entry: WeaponEntry }) {
             {/* Passives */}
             {weapon.passives.length > 0 && (
                 <div>
-                    <span className="font-bold text-xs">Passives</span>
+                    <span className="font-bold text-xs">{t("weapons.passives")}</span>
                     <div className="flex flex-col gap-1 mt-1">
                         {weapon.passives.map((p) => {
                             const unlocked = level >= p.level;

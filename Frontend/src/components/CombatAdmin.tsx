@@ -237,6 +237,29 @@ export default function CombatAdmin({
         }
     }, [battleStatus, battleDetails?.characters, battleDetails?.encounterId, battleRewards.length, collectBattleRewards]);
 
+    // Drops dos NPCs que estavam na batalha
+    const npcDrops = useMemo(() => {
+        if (battleStatus !== 'finished' || !battleDetails?.characters) return [];
+        const hasAlivePlayer = battleDetails.characters.some(ch => ch.type === "player" && ch.healthPoints > 0);
+        if (!hasAlivePlayer) return [];
+
+        const drops: BattleReward[] = [];
+        const seenIds = new Set<string>();
+        for (const ch of battleDetails.characters) {
+            if (ch.type !== "npc") continue;
+            const npc = getNpcById(ch.id);
+            if (!npc?.drops || seenIds.has(npc.id)) continue;
+            seenIds.add(npc.id);
+            for (const weaponId of npc.drops.weapons ?? []) {
+                drops.push({ type: "weapon", itemId: weaponId, level: 1 });
+            }
+            for (const pictoId of npc.drops.pictos ?? []) {
+                drops.push({ type: "picto", itemId: pictoId, level: 1 });
+            }
+        }
+        return drops;
+    }, [battleStatus, battleDetails?.characters]);
+
     const reloadBattleDetails = useCallback(async (force?: boolean) => {
         if (!battleId) return
 
@@ -2407,7 +2430,7 @@ export default function CombatAdmin({
                     )}
 
                     {/* Mostrar recompensas no lugar da barra de turnos se a batalha terminou */}
-                    {battleStatus === 'finished' && battleRewards.length > 0 ? (
+                    {battleStatus === 'finished' && (battleRewards.length > 0 || npcDrops.length > 0) ? (
                         <div className="card bg-base-200 p-6">
                             <h2 className="text-3xl font-bold text-center mb-2 text-success">
                                 {t("combat.victoryTitle")}
@@ -2635,6 +2658,216 @@ export default function CombatAdmin({
                                     );
                                 })}
                             </div>
+
+                            {/* Drops dos NPCs */}
+                            {npcDrops.length > 0 && (
+                                <>
+                                    <div className="divider my-2">{t("combatAdmin.npcDetails.drops")}</div>
+                                    <div className="space-y-4">
+                                        {npcDrops.map((reward, index) => {
+                                            const isWeapon = reward.type === "weapon";
+                                            const kebabId = toKebabCase(reward.itemId);
+                                            const displayName = isWeapon
+                                                ? getWeaponName(kebabId)
+                                                : getPictoName(kebabId);
+                                            const englishName = isWeapon
+                                                ? getWeaponEnglishName(kebabId)
+                                                : getPictoEnglishName(kebabId);
+                                            const imagePath = isWeapon
+                                                ? `/weapons/${englishName}.webp`
+                                                : `/pictos/${englishName}.webp`;
+
+                                            let pictoColor = null;
+                                            if (!isWeapon) {
+                                                const pictoInfo = PictosList.find((p: any) => p.id === kebabId);
+                                                pictoColor = pictoInfo?.color;
+                                            }
+
+                                            return (
+                                                <div key={`drop-${index}`} className="flex flex-col gap-3 bg-base-300 p-4 rounded-lg">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="avatar">
+                                                            <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-base-200">
+                                                                {isWeapon ? (
+                                                                    <img
+                                                                        src={imagePath}
+                                                                        alt={displayName}
+                                                                        className="w-full h-full object-contain"
+                                                                        onError={(e) => { e.currentTarget.src = "/placeholder-item.png"; }}
+                                                                    />
+                                                                ) : (
+                                                                    <div
+                                                                        className="w-12 h-12"
+                                                                        style={{
+                                                                            backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
+                                                                            WebkitMaskImage: `url("${imagePath}")`,
+                                                                            maskImage: `url("${imagePath}")`,
+                                                                            WebkitMaskRepeat: "no-repeat",
+                                                                            maskRepeat: "no-repeat",
+                                                                            WebkitMaskSize: "contain",
+                                                                            maskSize: "contain",
+                                                                            WebkitMaskPosition: "center",
+                                                                            maskPosition: "center",
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex-1">
+                                                            <h3 className="font-bold text-lg">{displayName}</h3>
+                                                            <div className="flex items-center gap-2 text-sm opacity-70">
+                                                                {isWeapon ? (
+                                                                    <span className="badge badge-warning">{t("rewards.weapon")}</span>
+                                                                ) : (
+                                                                    <span
+                                                                        className="badge"
+                                                                        style={{
+                                                                            backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
+                                                                            color: "black"
+                                                                        }}
+                                                                    >
+                                                                        {t("rewards.picto")}
+                                                                    </span>
+                                                                )}
+                                                                <span className="badge badge-outline">
+                                                                    {t("rewards.level")} {reward.level}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full">
+                                                        {localPlayers.map(player => {
+                                                            const rawCharacterName = player.playerSheet?.characterId || "?";
+                                                            const characterName = rawCharacterName.charAt(0).toUpperCase() + rawCharacterName.slice(1);
+                                                            const playerName = player.playerSheet?.name || "?";
+
+                                                            const battleChar = battleDetails?.characters.find(
+                                                                ch => ch.type === "player" && ch.id === String(player.id)
+                                                            );
+                                                            const battleID = battleChar?.battleID;
+
+                                                            const baseLabel = battleID
+                                                                ? `#${displayIndex.get(battleID) ?? "?"} ${characterName} (${playerName})`
+                                                                : `${characterName} (${playerName})`;
+
+                                                            if (isWeapon) {
+                                                                const alreadyHas = player.weapons?.some(w => w.id.toLowerCase() === kebabId.toLowerCase());
+                                                                const canUse = canCharacterUseWeapon(player.playerSheet?.characterId, kebabId);
+                                                                const isDisabled = alreadyHas || !canUse;
+                                                                const tooltipText = alreadyHas ? t("rewards.alreadyOwned") : !canUse ? t("rewards.cannotUse") : undefined;
+
+                                                                return (
+                                                                    <button
+                                                                        key={player.id}
+                                                                        onClick={async () => {
+                                                                            try {
+                                                                                await APIRewards.claimReward(player.id, reward);
+                                                                                showToast(`${displayName} ${t("rewards.level")} ${reward.level} → ${characterName}!`);
+                                                                            } catch (error) {
+                                                                                console.error("Erro ao reivindicar recompensa:", error);
+                                                                                showToast(t("combatAdmin.toasts.errorClaimingReward"));
+                                                                            }
+                                                                        }}
+                                                                        className={`btn btn-sm w-full sm:w-auto ${isDisabled ? 'btn-disabled' : 'btn-success'}`}
+                                                                        disabled={isDisabled}
+                                                                        title={tooltipText}
+                                                                    >
+                                                                        {baseLabel}
+                                                                    </button>
+                                                                );
+                                                            }
+
+                                                            const existingPicto = player.pictos?.find(p => p.pictoId.toLowerCase() === kebabId.toLowerCase());
+
+                                                            if (!existingPicto) {
+                                                                return (
+                                                                    <button
+                                                                        key={player.id}
+                                                                        onClick={async () => {
+                                                                            try {
+                                                                                await APIRewards.claimReward(player.id, reward);
+                                                                                setLocalPlayers(prev => prev.map(p =>
+                                                                                    p.id === player.id
+                                                                                        ? {
+                                                                                            ...p,
+                                                                                            pictos: [...(p.pictos ?? []), {
+                                                                                                id: Date.now(),
+                                                                                                playerId: player.id,
+                                                                                                pictoId: kebabId.toLowerCase(),
+                                                                                                level: reward.level,
+                                                                                                slot: null
+                                                                                            }]
+                                                                                        }
+                                                                                        : p
+                                                                                ));
+                                                                                showToast(`${displayName} ${t("rewards.level")} ${reward.level} → ${characterName}!`);
+                                                                            } catch (error) {
+                                                                                console.error("Erro ao reivindicar recompensa:", error);
+                                                                                showToast(t("combatAdmin.toasts.errorClaimingReward"));
+                                                                            }
+                                                                        }}
+                                                                        className="btn btn-sm btn-success w-full sm:w-auto"
+                                                                    >
+                                                                        {baseLabel}
+                                                                    </button>
+                                                                );
+                                                            }
+
+                                                            const currentLevel = existingPicto.level ?? 1;
+
+                                                            if (currentLevel >= 4) {
+                                                                return (
+                                                                    <button
+                                                                        key={player.id}
+                                                                        className="btn btn-sm btn-disabled w-full sm:w-auto"
+                                                                        disabled
+                                                                        title={t("rewards.maxLevel")}
+                                                                    >
+                                                                        {baseLabel} - {t("rewards.maxLevel")}
+                                                                    </button>
+                                                                );
+                                                            }
+
+                                                            const nextLevel = currentLevel + 1;
+                                                            return (
+                                                                <button
+                                                                    key={player.id}
+                                                                    onClick={async () => {
+                                                                        try {
+                                                                            await APIPicto.updatePlayerPicto(existingPicto.id, { level: nextLevel });
+                                                                            setLocalPlayers(prev => prev.map(p =>
+                                                                                p.id === player.id
+                                                                                    ? {
+                                                                                        ...p,
+                                                                                        pictos: p.pictos?.map(pic =>
+                                                                                            pic.id === existingPicto.id
+                                                                                                ? { ...pic, level: nextLevel }
+                                                                                                : pic
+                                                                                        )
+                                                                                    }
+                                                                                    : p
+                                                                            ));
+                                                                            showToast(`${displayName} ${t("rewards.upgraded", { level: nextLevel })} → ${characterName}!`);
+                                                                        } catch (error) {
+                                                                            console.error("Erro ao fazer upgrade:", error);
+                                                                            showToast(t("combatAdmin.toasts.errorClaimingReward"));
+                                                                        }
+                                                                    }}
+                                                                    className="btn btn-sm btn-info w-full sm:w-auto"
+                                                                >
+                                                                    {baseLabel} - {t("rewards.upgrade", { level: nextLevel })}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </>
+                            )}
                         </div>
                     ) : (
                         <>
