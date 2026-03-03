@@ -132,6 +132,28 @@ export interface NPCAttack {
 }
 
 
+export type TerrainType = "forest" | "mountain" | "desert" | "swamp" | "cave" | "ruins" | "city" | "plains" | "coast" | "underground" | "volcano" | "tundra";
+export type DangerLevel = "safe" | "low" | "medium" | "high" | "deadly";
+
+export interface LocationEncounter {
+    npcIds: string[];           // NPCs que aparecem neste encontro
+    description?: string;       // Descrição do encontro
+    probability?: string;       // Ex.: "comum", "raro"
+}
+
+export interface LocationInfo {
+    id: string;
+    description?: string;
+    imageUrl?: string;
+    terrain?: TerrainType;
+    dangerLevel?: DangerLevel;
+    encounters?: LocationEncounter[];
+    loot?: BattleReward[];      // Recompensas possíveis nesta localização
+    residentNpcIds?: string[];  // NPCs que residem neste local
+    connectedLocationIds?: string[];  // Locais conectados/acessíveis
+    notes?: string;             // Notas livres do mestre
+}
+
 export interface PictoResponse {
     id: number,
     playerId: number,

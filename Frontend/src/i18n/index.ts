@@ -36,6 +36,7 @@ type UITexts = Record<string, any>;  // Nested structure for UI texts
 interface Translations {
   pictos: Record<string, PictoTranslation>;
   weapons: Record<string, WeaponTranslation>;
+  locations: Record<string, string>;
   ui: UITexts;
 }
 
@@ -294,6 +295,33 @@ export function hasWeapon(weaponId: string): boolean {
  */
 export function getAllWeaponIds(): string[] {
   return Object.keys(translations.en.weapons);
+}
+
+// ==================== LOCATION TRANSLATIONS ====================
+
+/**
+ * Get a location's translated name by its kebab-case ID
+ * @param locationId The kebab-case ID (e.g., "spring-meadows")
+ * @param locale The locale to use (defaults to current locale)
+ * @returns The translated location name
+ */
+export function getLocationName(locationId: string, locale?: Locale): string {
+  const targetLocale = locale || currentLocale;
+  const name = translations[targetLocale]?.locations[locationId];
+
+  if (!name) {
+    return locationId;
+  }
+
+  return name;
+}
+
+/**
+ * Get all available location IDs
+ * @returns Array of all location kebab-case IDs
+ */
+export function getAllLocationIds(): string[] {
+  return Object.keys(translations.en.locations);
 }
 
 // ==================== UI TEXT TRANSLATIONS ====================

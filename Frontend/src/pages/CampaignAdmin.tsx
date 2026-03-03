@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiLogOut, FiShare2, FiMaximize, FiMinimize } from "react-icons/fi";
-import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon } from "react-icons/fa";
+import { FiLogOut, FiShare2, FiMaximize, FiMinimize, FiSettings } from "react-icons/fi";
+import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon, FaMapMarkerAlt } from "react-icons/fa";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
@@ -9,6 +9,7 @@ import { APICampaign, type Campaign } from "../api/APICampaign";
 import CampaignAdminSheets from "../components/CampaignAdminSheets";
 import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
 import CampaignAdminEncountersTab from "../components/CampaignAdminEncountersTab";
+import CampaignAdminLocationsTab from "../components/CampaignAdminLocationsTab";
 import { GameLogSection } from "../components/GameLogSection";
 import { t } from "../i18n";
 import { useToast } from "../components/Toast";
@@ -17,9 +18,9 @@ export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
     const { campaign } = useParams<{ campaign?: string }>();
     const storageKey = `campaign-admin-tab-${campaign}`;
-    const [activeTab, setActiveTab] = useState<"players" | "combats" | "encounters" | "logs">(() => {
+    const [activeTab, setActiveTab] = useState<"players" | "combats" | "encounters" | "locations" | "logs">(() => {
         const saved = localStorage.getItem(storageKey);
-        if (saved === "players" || saved === "combats" || saved === "encounters" || saved === "logs") return saved;
+        if (saved === "players" || saved === "combats" || saved === "encounters" || saved === "locations" || saved === "logs") return saved;
         return "players";
     });
     const alreadyRan = useRef(false);
@@ -158,11 +159,18 @@ export default function CampaignAdmin() {
                         {isFullscreen ? <FiMinimize /> : <FiMaximize />}
                     </button>
                     <button
+                        onClick={() => navigate("/settings")}
+                        className="btn btn-ghost btn-square"
+                        title={t("characterSheet.navigation.tabs.settings")}
+                    >
+                        <FiSettings />
+                    </button>
+                    <button
                         onClick={() => navigate("/")}
-                        className="btn btn-ghost gap-2"
+                        className="btn btn-ghost btn-square"
+                        title={t("navigation.logout")}
                     >
                         <FiLogOut />
-                        {t("navigation.logout")}
                     </button>
                 </div>
             </div>
@@ -209,6 +217,17 @@ export default function CampaignAdmin() {
                             <span className="flex items-center gap-2">
                                 <FaDragon />
                                 {t("tabs.encounters")}
+                            </span>
+                        </button>
+
+                        <button
+                            role="tab"
+                            className={`tab text-sm px-4 ${activeTab === "locations" ? "tab-active font-semibold" : ""}`}
+                            onClick={() => { setActiveTab("locations"); localStorage.setItem(storageKey, "locations"); }}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FaMapMarkerAlt />
+                                {t("tabs.locations")}
                             </span>
                         </button>
 
@@ -262,6 +281,10 @@ export default function CampaignAdmin() {
 
                 {activeTab === "encounters" && campaignId !== null && campaignInfo !== null && (
                     <CampaignAdminEncountersTab campaignInfo={campaignInfo} />
+                )}
+
+                {activeTab === "locations" && (
+                    <CampaignAdminLocationsTab />
                 )}
 
                 {activeTab === "logs" && campaignId !== null && (
