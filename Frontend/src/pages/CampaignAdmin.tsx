@@ -305,7 +305,7 @@ export default function CampaignAdmin() {
                 )}
 
                 {activeTab === "npcs" && (
-                    <CampaignAdminNpcsTab />
+                    <CampaignAdminNpcsTab diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
                 )}
 
                 {activeTab === "logs" && campaignId !== null && (

@@ -1,9 +1,13 @@
-import { useState, useMemo } from "react";
-import { FaSkull, FaChevronDown, FaChevronUp, FaFistRaised, FaShieldAlt, FaHeart, FaBrain, FaEye, FaTheaterMasks } from "react-icons/fa";
+import { useState, useMemo, type RefObject, type MutableRefObject } from "react";
+import { FaSkull, FaChevronDown, FaChevronUp, FaFistRaised, FaShieldAlt, FaHeart, FaBrain, FaEye, FaTheaterMasks, FaArrowUp, FaUndo } from "react-icons/fa";
 import { GiRunningShoe } from "react-icons/gi";
 import { getAllNPCsSorted, handleNpcImgError } from "../utils/NpcUtils";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
-import { getStatusLabel } from "../utils/BattleUtils";
+import { getAbilityModifier } from "../utils/AttackCalculator";
+import { getAttackTypeLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
+import { diceTotal } from "../utils/DiceCalculator";
+import { dispatchRoll } from "../utils/rollDispatcher";
+import type { DiceBoardRef } from "../components/DiceBoard";
 import { t } from "../i18n";
 import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
 
@@ -16,24 +20,12 @@ const ATTR_CONFIG = [
     { key: "charisma", label: () => t("combatAdmin.npcDetails.cha"), icon: FaTheaterMasks, color: "text-pink-400" },
 ] as const;
 
-function abilityMod(score: number): string {
-    const mod = Math.floor((score - 10) / 2);
-    return mod >= 0 ? `+${mod}` : `${mod}`;
+interface NpcsTabProps {
+    diceBoardRef: RefObject<DiceBoardRef | null>;
+    timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
-function attackTypeName(type: NPCAttack["type"]): string {
-    switch (type) {
-        case "basic": return t("combatAdmin.actionDesc.meleeAttack");
-        case "jump": return "Jump";
-        case "jump-all": return "Jump (All)";
-        case "gradient": return "Gradient";
-        case "free-shot": return "Free Shot";
-        case "skill": return "Skill";
-        default: return type;
-    }
-}
-
-export default function CampaignAdminNpcsTab() {
+export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef }: NpcsTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -136,7 +128,13 @@ export default function CampaignAdminNpcsTab() {
                                 </div>
 
                                 {/* Expanded details */}
-                                {isExpanded && <NpcDetails npc={npc} />}
+                                {isExpanded && (
+                                    <NpcDetails
+                                        npc={npc}
+                                        diceBoardRef={diceBoardRef}
+                                        timeoutDiceBoardRef={timeoutDiceBoardRef}
+                                    />
+                                )}
                             </div>
                         );
                     })}
@@ -146,15 +144,88 @@ export default function CampaignAdminNpcsTab() {
     );
 }
 
-function NpcDetails({ npc }: { npc: NPCInfo }) {
+interface NpcDetailsProps {
+    npc: NPCInfo;
+    diceBoardRef: RefObject<DiceBoardRef | null>;
+    timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+}
+
+function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef }: NpcDetailsProps) {
+    const [npcIntensityOffset, setNpcIntensityOffset] = useState(0);
+
+    // ── dice rolling helpers ──
+
+    const rollActionDice = (diceCmd: string, modifier: number, label: string) => {
+        if (!diceBoardRef.current) return;
+        if (timeoutDiceBoardRef.current != null) {
+            clearTimeout(timeoutDiceBoardRef.current);
+            timeoutDiceBoardRef.current = null;
+        }
+        diceBoardRef.current.roll([diceCmd], (result) => {
+            const rawTotal = diceTotal(result);
+            const diceValues: number[] = [];
+            for (const group of result) {
+                if (Array.isArray(group.rolls)) {
+                    for (const roll of group.rolls) diceValues.push(roll.value);
+                }
+            }
+            dispatchRoll({
+                label,
+                diceRolled: rawTotal,
+                modifier,
+                total: rawTotal + modifier,
+                diceCommand: `${diceCmd}${modifier >= 0 ? "+" : ""}${modifier}`,
+                diceValues,
+            });
+            if (timeoutDiceBoardRef.current != null) {
+                clearTimeout(timeoutDiceBoardRef.current);
+            }
+            timeoutDiceBoardRef.current = window.setTimeout(() => {
+                diceBoardRef.current?.hideBoard();
+                timeoutDiceBoardRef.current = null;
+            }, 5000);
+        });
+    };
+
+    const rollAbility = (abilityLabel: string, mod: number) => {
+        rollActionDice("1d20", mod, `${npc.name} - ${abilityLabel}`);
+    };
+
+    const DiceBtn = ({ diceCmd, modifier, label }: { diceCmd: string; modifier: number; label: string }) => {
+        const modSign = modifier >= 0 ? `+${modifier}` : `${modifier}`;
+        return (
+            <button
+                className="inline-flex items-center px-1.5 py-0.5 mx-0.5 bg-amber-700 text-amber-100 hover:bg-amber-500 hover:text-white rounded text-xs font-mono font-bold cursor-pointer transition-colors align-baseline"
+                onClick={(e) => { e.stopPropagation(); rollActionDice(diceCmd, modifier, label); }}
+            >
+                {diceCmd === "1d20" ? modSign : modifier === 0 ? `(${diceCmd})` : `(${diceCmd}${modSign})`}
+            </button>
+        );
+    };
+
+    function calcDamage(baseDice: number, baseMod: number) {
+        const totalDice = Math.max(1, baseDice + npcIntensityOffset);
+        const atMinDice = baseDice + npcIntensityOffset < 1;
+        const mod = atMinDice ? 0 : baseMod;
+        return { numDice: totalDice, flatDmg: mod, avgDmg: Math.floor(totalDice * 3.5 + mod) };
+    }
+
+    // ── derived values ──
+
+    const strMod = getAbilityModifier(npc.strength);
+    const profBonus = npc.proficiencyBonus ?? 2;
+    const hitBonus = strMod + profBonus;
+    const npcName = npc.name;
+
     return (
         <div className="bg-base-200/50 rounded-lg p-3 mt-2 space-y-3 text-sm">
-            {/* Atributos */}
+            {/* Atributos (clicáveis) */}
             <div>
                 <span className="font-bold text-xs">{t("combatAdmin.npcDetails.attributes")}</span>
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-1">
                     {ATTR_CONFIG.map(({ key, label, icon: Icon, color }) => {
                         const val = npc[key];
+                        const mod = getAbilityModifier(val);
                         return (
                             <div key={key} className="bg-base-300 rounded-lg p-2 text-center">
                                 <div className="flex items-center justify-center gap-1 mb-0.5">
@@ -162,7 +233,12 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
                                     <span className="text-xs font-bold opacity-70">{label()}</span>
                                 </div>
                                 <span className="text-lg font-bold">{val}</span>
-                                <span className="text-xs opacity-50 ml-1">({abilityMod(val)})</span>
+                                <button
+                                    className="btn btn-sm btn-neutral font-mono px-2 min-h-0 h-6 ml-1 text-xs"
+                                    onClick={() => rollAbility(label(), mod)}
+                                >
+                                    {mod >= 0 ? `+${mod}` : mod}
+                                </button>
                             </div>
                         );
                     })}
@@ -279,56 +355,83 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
                 </div>
             )}
 
-            {/* Ações */}
+            {/* Ações (D&D style com dados clicáveis) */}
             {(npc.attackList?.length ?? 0) > 0 && (
                 <div>
                     <span className="font-bold text-xs">{t("combatAdmin.npcDetails.actions")}</span>
-                    <div className="flex flex-col gap-1.5 mt-1">
-                        {npc.attackList!.map((atk, idx) => (
-                            <div key={idx} className="bg-base-300 rounded-lg px-3 py-2">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="font-semibold text-xs">
-                                        {atk.name ? t(atk.name) || atk.name : attackTypeName(atk.type)}
+                    <div className="flex flex-col gap-1 mt-1">
+                        {npc.attackList!.map((atk, idx) => {
+                            const actionName = atk.name ? t(atk.name) || atk.name : getAttackTypeLabel(atk.type);
+                            const baseDice = 1 + (atk.additionalDices ?? 0);
+                            const baseMod = strMod + (atk.additionalDamage ?? 0);
+                            const { numDice, flatDmg, avgDmg } = calcDamage(baseDice, baseMod);
+
+                            const statusParts: string[] = [];
+                            if (atk.statusList) {
+                                for (const s of atk.statusList) {
+                                    let part = getStatusLabel(s.type);
+                                    if (shouldShowStatusAmmount(s.type) && s.ammount > 0) part += ` x${s.ammount}`;
+                                    if (s.remainingTurns) part += ` (${s.remainingTurns}t)`;
+                                    statusParts.push(part);
+                                }
+                            }
+
+                            return (
+                                <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                    <span>
+                                        <strong className="text-red-300">{"▸ "}{actionName}.</strong>{" "}
+                                        <span className="italic opacity-90">
+                                            <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                            {" "}{t("combatAdmin.actionDesc.toHit")}
+                                            . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
+                                            <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                            {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
+                                            {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                            {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
+                                            .
+                                        </span>
                                     </span>
-                                    {atk.name && (
-                                        <span className="badge badge-xs badge-ghost">{attackTypeName(atk.type)}</span>
-                                    )}
-                                    {atk.element && (
-                                        <span className="badge badge-xs badge-outline">
-                                            {ELEMENT_EMOTE[atk.element]} {getElementName(atk.element)}
-                                        </span>
-                                    )}
-                                    {(atk.quantity ?? 1) > 1 && (
-                                        <span className="badge badge-xs badge-accent">
-                                            x{atk.quantity}
-                                        </span>
-                                    )}
-                                    {atk.additionalDamage != null && atk.additionalDamage > 0 && (
-                                        <span className="badge badge-xs badge-warning">
-                                            +{atk.additionalDamage} {t("combatAdmin.npcDetails.damage")}
-                                        </span>
-                                    )}
-                                    {atk.additionalDices != null && atk.additionalDices > 0 && (
-                                        <span className="badge badge-xs badge-info">
-                                            +{atk.additionalDices}d
-                                        </span>
-                                    )}
                                 </div>
-                                {atk.description && (
-                                    <p className="text-xs opacity-60 mt-1">{atk.description}</p>
-                                )}
-                                {(atk.statusList?.length ?? 0) > 0 && (
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                        {atk.statusList!.map((s, si) => (
-                                            <span key={si} className="badge badge-xs badge-outline">
-                                                {getStatusLabel(s.type)} {s.ammount > 0 ? `x${s.ammount}` : ""}
-                                                {s.remainingTurns ? ` (${s.remainingTurns}t)` : ""}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                            );
+                        })}
+
+                        {/* Ação básica "Atacar" */}
+                        {(() => {
+                            const { numDice, flatDmg, avgDmg } = calcDamage(1, strMod);
+                            return (
+                                <div className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                    <span>
+                                        <strong className="text-red-300">{"▸ "}{t("combatAdmin.actionDesc.meleeAttack")}.</strong>{" "}
+                                        <span className="italic opacity-90">
+                                            <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${t("combatAdmin.actionDesc.meleeAttack")} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                            {" "}{t("combatAdmin.actionDesc.toHit")}
+                                            . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
+                                            <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${t("combatAdmin.actionDesc.meleeAttack")} (${t("combatAdmin.actionDesc.hit")})`} />
+                                            {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName("Physical")}
+                                            .
+                                        </span>
+                                    </span>
+                                </div>
+                            );
+                        })()}
+                    </div>
+
+                    {/* Intensity buttons */}
+                    <div className="flex items-center justify-center gap-3 pt-1">
+                        {npcIntensityOffset > 0 && (
+                            <button
+                                className="btn btn-sm btn-warning btn-outline"
+                                onClick={() => setNpcIntensityOffset(0)}
+                            >
+                                <FaUndo /> {t("combatAdmin.labels.resetIntensity")}
+                            </button>
+                        )}
+                        <button
+                            className="btn btn-sm btn-success btn-outline"
+                            onClick={() => setNpcIntensityOffset(prev => prev + 1)}
+                        >
+                            <FaArrowUp /> {t("combatAdmin.labels.increaseIntensity")}
+                        </button>
                     </div>
                 </div>
             )}
