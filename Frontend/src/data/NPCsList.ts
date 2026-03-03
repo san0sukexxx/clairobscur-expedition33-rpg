@@ -272,6 +272,7 @@ export const NPCsList: NPCInfo[] = [
         wisdom:        8,
         charisma:      6,
         weakTo: "Fire",
+        resistentTo: "Lightning",
         armorClass: 14,
         challengeRating: "2",
         attackList: [
@@ -598,6 +599,7 @@ export const NPCsList: NPCInfo[] = [
         intelligence:  4,
         wisdom:        6,
         charisma:      4,
+        weakTo: "Ice",
         resistentTo: "Physical",
         armorClass: 18,
         challengeRating: "1",
@@ -1097,7 +1099,6 @@ export const NPCsList: NPCInfo[] = [
         intelligence: 18,
         wisdom:       18,
         charisma:     16,
-        weakTo: "Dark",
         armorClass: 17,
         challengeRating: "8",
         attackList: [
@@ -2590,6 +2591,7 @@ export const NPCsList: NPCInfo[] = [
         wisdom:       12,
         charisma:      8,
         weakTo: "Fire",
+        resistentTo: "Lightning",
         armorClass: 20,
         challengeRating: "8",
         attackList: [
