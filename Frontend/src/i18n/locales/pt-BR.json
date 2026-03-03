@@ -2342,7 +2342,8 @@
         "conditionImmunities": "Imunidades de Condição",
         "challenge": "Desafio",
         "proficiencyBonus": "Bônus de Proficiência",
-        "attributes": "Atributos"
+        "attributes": "Atributos",
+        "drops": "Recompensas"
       },
       "actionDesc": {
         "meleeAttack": "Ataque Corpo a Corpo com Arma",

@@ -111,6 +111,7 @@ export interface NPCInfo {
     conditionImmunities?: StatusType[];
     damageVulnerabilities?: string[];
     damageImmunities?: string[];
+    drops?: { pictos?: string[]; weapons?: string[] };
 }
 
 export interface NPCStatusItem {

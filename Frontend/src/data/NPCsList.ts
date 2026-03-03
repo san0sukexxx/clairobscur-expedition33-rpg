@@ -117,6 +117,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.chromaWaves", element: "Light", additionalDamage: 5 },
             { type: "skill", name: "combatAdmin.npcAttacks.lightSword", element: "Light", additionalDamage: 4, quantity: 2 },
         ],
+        drops: { pictos: ["second-chance"], weapons: ["melarum"] },
     },
 
     // ── Inimigos Principais ──
@@ -137,6 +138,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.charge", additionalDamage: 6, additionalDices: 1 },
         ],
+        drops: { weapons: ["lighterim"] },
     },
     {
         id: "aberration",
@@ -295,6 +297,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.ceramicStrike", additionalDamage: 4 },
         ],
+        drops: { pictos: ["perilous-parry"] },
     },
     {
         id: "chalier",
@@ -314,6 +317,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", element: "Dark" },
             { type: "skill", name: "combatAdmin.npcAttacks.cuttingShadow", element: "Dark", additionalDamage: 3, statusList: [{ type: "Cursed", ammount: 1, remainingTurns: 2 }] },
         ],
+        drops: { weapons: ["troubadim", "ramasson"] },
     },
     {
         id: "chapelier",
@@ -351,6 +355,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.holyChant", element: "Light", additionalDamage: 3, statusList: [{ type: "Empowered", ammount: 2, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.healingHymn", statusList: [{ type: "Regeneration", ammount: 2, remainingTurns: 3 }] },
         ],
+        drops: { weapons: ["colim"] },
     },
     {
         id: "clair",
@@ -406,6 +411,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", element: "Fire", additionalDamage: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.crossfire", element: "Fire", additionalDamage: 4, statusList: [{ type: "Burning", ammount: 2, remainingTurns: 2 }] },
         ],
+        drops: { weapons: ["cruleram", "brulerum"] },
     },
     {
         id: "danseuses",
@@ -426,6 +432,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.flamingDance", element: "Fire", additionalDamage: 4, statusList: [{ type: "Burning", ammount: 1, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.icyDance", element: "Ice", additionalDamage: 4, statusList: [{ type: "Frozen", ammount: 1, remainingTurns: 1 }] },
         ],
+        drops: { weapons: ["braselim"] },
     },
     {
         id: "demineur",
@@ -533,6 +540,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.goldenStrike", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
         ],
+        drops: { pictos: ["perilous-parry"] },
     },
     {
         id: "greatsword-cultist",
@@ -624,6 +632,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.lanceCharge", additionalDamage: 5 },
         ],
+        drops: { weapons: ["lanceram"] },
     },
     {
         id: "licorne",
@@ -795,6 +804,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.shadowVeil", element: "Dark", additionalDamage: 6, statusList: [{ type: "Weakened", ammount: 2, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.eclipse", element: "Dark", additionalDamage: 8, additionalDices: 1 },
         ],
+        drops: { weapons: ["braselim"] },
     },
     {
         id: "orphelin",
@@ -868,6 +878,7 @@ export const NPCsList: NPCInfo[] = [
             },
             { type: "basic", additionalDamage: 5 },
         ],
+        drops: { pictos: ["dodger"], weapons: ["lighterim"] },
     },
     {
         id: "potier",
@@ -903,6 +914,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.forcedCollection", additionalDamage: 4, statusList: [{ type: "Weakened", ammount: 1, remainingTurns: 2 }] },
         ],
+        drops: { weapons: ["ramasson"] },
     },
     {
         id: "ranger-sakapatate",
@@ -921,6 +933,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", quantity: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.preciseShot", additionalDamage: 4 },
         ],
+        drops: { weapons: ["sakaram"] },
     },
     {
         id: "reaper-cultist",
@@ -957,6 +970,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 5 },
             { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", additionalDamage: 7, additionalDices: 1 },
         ],
+        drops: { weapons: ["sakaram"] },
     },
     {
         id: "rocher",
@@ -1142,6 +1156,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.shapeshift", additionalDamage: 5, statusList: [{ type: "Empowered", ammount: 2, remainingTurns: 2 }] },
         ],
+        drops: { pictos: ["faster-than-strong"] },
     },
     {
         id: "dualliste",
@@ -1160,6 +1175,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", quantity: 2, additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.dualSlash", additionalDamage: 5, quantity: 2 },
         ],
+        drops: { weapons: ["dualiso"] },
     },
     {
         id: "eveque",
@@ -1179,6 +1195,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.holySmite", element: "Light", additionalDamage: 6, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shielded", ammount: 4, remainingTurns: 3 }] },
         ],
+        drops: { pictos: ["cleansing-tint"] },
     },
     {
         id: "flame-eveque",
@@ -1254,6 +1271,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 7 },
             { type: "jump-all", name: "combatAdmin.npcAttacks.stomp", additionalDamage: 8, additionalDices: 2, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
         ],
+        drops: { pictos: ["anti-burn"], weapons: ["snowim"] },
     },
     {
         id: "glissando",
@@ -1326,6 +1344,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 5 },
             { type: "skill", name: "combatAdmin.npcAttacks.joyfulReap", additionalDamage: 7, statusList: [{ type: "Fragile", ammount: 2, remainingTurns: 2 }] },
         ],
+        drops: { weapons: ["chapelim"] },
     },
     {
         id: "lampmaster",
@@ -1343,6 +1362,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", element: "Light", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.lanternFlare", element: "Light", additionalDamage: 5, statusList: [{ type: "Dizzy", ammount: 1, remainingTurns: 2 }] },
         ],
+        drops: { pictos: ["at-deaths-door"] },
     },
     {
         id: "mask-keeper",
@@ -1362,6 +1382,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.maskSwap", additionalDamage: 6, statusList: [{ type: "Confused", ammount: 1, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.curseOfMasks", statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }] },
         ],
+        drops: { pictos: ["immaculate"] },
     },
     {
         id: "scavenger",
@@ -1398,6 +1419,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 5 },
             { type: "skill", name: "combatAdmin.npcAttacks.ragingShieldBash", additionalDamage: 8, additionalDices: 1, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
         ],
+        drops: { weapons: ["clierum"] },
     },
     {
         id: "serpenphare",
@@ -1417,6 +1439,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.venomousBite", additionalDamage: 4, statusList: [{ type: "Plagued", ammount: 2, remainingTurns: 3 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.lightBeacon", element: "Light", additionalDamage: 5 },
         ],
+        drops: { pictos: ["energy-master"] },
     },
     {
         id: "sirene",
@@ -1436,6 +1459,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.sirenSong", additionalDamage: 8, statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }, { type: "Slowed", ammount: 1, remainingTurns: 2 }] },
             { type: "jump-all", name: "combatAdmin.npcAttacks.tidalWave", element: "Ice", additionalDamage: 10, additionalDices: 2 },
         ],
+        drops: { pictos: ["energising-turn"], weapons: ["tisseron"] },
     },
     {
         id: "sorrowful-chapelier",
@@ -1454,6 +1478,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.sorrowfulSpin", additionalDamage: 6, statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }] },
         ],
+        drops: { weapons: ["boucharo"] },
     },
     {
         id: "sprong",
@@ -1492,6 +1517,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.weave", additionalDamage: 3, statusList: [{ type: "Entangled", ammount: 1, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.threadTrap", statusList: [{ type: "Slowed", ammount: 2, remainingTurns: 3 }] },
         ],
+        drops: { pictos: ["anti-charm"], weapons: ["tissenum"] },
     },
     {
         id: "ultimate-sakapatate",
@@ -1566,6 +1592,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", additionalDamage: 5 },
             { type: "skill", name: "combatAdmin.npcAttacks.miasma", additionalDamage: 3, statusList: [{ type: "Exhausted", ammount: 1, remainingTurns: 2 }] },
         ],
+        drops: { pictos: ["burning-death"], weapons: ["gaultaram", "abysseram", "potierim"] },
     },
     {
         id: "clea-unleashed",
@@ -1621,6 +1648,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "basic", element: "Ice", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.iceBeam", element: "Ice", additionalDamage: 6, additionalDices: 1 },
         ],
+        drops: { pictos: ["augmented-first-strike"] },
     },
     {
         id: "grown-bourgeon",
@@ -1783,6 +1811,7 @@ export const NPCsList: NPCInfo[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.voidMeteors", element: "Void", additionalDamage: 6, quantity: 7 },
             { type: "skill", name: "combatAdmin.npcAttacks.chromaScatter", element: "Light", additionalDamage: 5, quantity: 5 },
         ],
+        drops: { pictos: ["painted-power"] },
     },
 
     // ── Variantes Chromatic ──

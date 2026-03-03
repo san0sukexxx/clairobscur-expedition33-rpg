@@ -8,7 +8,7 @@ import { getAttackTypeLabel, getStatusLabel, shouldShowStatusAmmount } from "../
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { DiceBoardRef } from "../components/DiceBoard";
-import { t } from "../i18n";
+import { t, getPictoName, getWeaponName } from "../i18n";
 import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
 
 const ATTR_CONFIG = [
@@ -445,6 +445,25 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef }: NpcDetailsProps)
                         >
                             <FaArrowUp /> {t("combatAdmin.labels.increaseIntensity")}
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Drops */}
+            {npc.drops && ((npc.drops.pictos?.length ?? 0) > 0 || (npc.drops.weapons?.length ?? 0) > 0) && (
+                <div>
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.drops")}</span>
+                    <div className="flex flex-wrap gap-1.5 mt-1">
+                        {npc.drops.weapons?.map((weaponId) => (
+                            <span key={weaponId} className="badge badge-sm badge-warning gap-1">
+                                ⚔️ {getWeaponName(weaponId)}
+                            </span>
+                        ))}
+                        {npc.drops.pictos?.map((pictoId) => (
+                            <span key={pictoId} className="badge badge-sm badge-success gap-1">
+                                🎴 {getPictoName(pictoId)}
+                            </span>
+                        ))}
                     </div>
                 </div>
             )}

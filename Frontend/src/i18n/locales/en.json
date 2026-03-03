@@ -2342,7 +2342,8 @@
         "conditionImmunities": "Condition Immunities",
         "challenge": "Challenge",
         "proficiencyBonus": "Proficiency Bonus",
-        "attributes": "Attributes"
+        "attributes": "Attributes",
+        "drops": "Drops"
       },
       "actionDesc": {
         "meleeAttack": "Melee Weapon Attack",
