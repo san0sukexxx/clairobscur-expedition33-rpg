@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
-import { FaMapMarkerAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaMapMarkerAlt, FaChevronDown, FaChevronUp, FaSkull } from "react-icons/fa";
 import { getAllLocationsSorted } from "../utils/LocationUtils";
-import { getNpcById } from "../utils/NpcUtils";
+import { getNpcById, handleNpcImgError } from "../utils/NpcUtils";
 import type { LocationInfo } from "../api/ResponseModel";
 import { t, getLocationName, getWeaponName, getPictoName } from "../i18n";
 
@@ -125,12 +125,15 @@ export default function CampaignAdminLocationsTab() {
                                                             const npc = getNpcById(npcId);
                                                             return (
                                                                 <div key={npcId} className="flex items-center gap-1.5 bg-base-300 rounded-full px-2 py-0.5">
-                                                                    <img
-                                                                        src={`/enemies/${npcId}.png`}
-                                                                        alt={npc?.name ?? npcId}
-                                                                        className="w-5 h-5 rounded-full object-cover bg-base-100"
-                                                                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                                                    />
+                                                                    <div className="w-5 h-5 rounded-full bg-base-100 overflow-hidden flex items-center justify-center shrink-0">
+                                                                        <img
+                                                                            src={`/enemies/${npcId}.png`}
+                                                                            alt={npc?.name ?? npcId}
+                                                                            className="w-full h-full object-cover"
+                                                                            onError={(e) => handleNpcImgError(e, npcId)}
+                                                                        />
+                                                                        <FaSkull className="hidden text-base-content opacity-40 text-[10px]" />
+                                                                    </div>
                                                                     <span className="text-xs">{npc?.name ?? npcId}</span>
                                                                 </div>
                                                             );

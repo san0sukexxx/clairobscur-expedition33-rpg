@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaSkull, FaEdit } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
+import { handleNpcImgError } from "../utils/NpcUtils";
 import { APIBattle } from "../api/APIBattle";
 import { type BattleCharacterInfo, type Stance, type StainType } from "../api/ResponseModel";
 import AnimatedStatBar from "./AnimatedStatBar";
@@ -196,12 +197,20 @@ export default function BattleGroupStatus({
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="avatar">
-                                            <div className={`w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200
+                                            <div className={`w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200 flex items-center justify-center bg-base-300 overflow-hidden
                                                 ${isDead ? "grayscale" : ""}`}>
                                                 <img
                                                     src={ch.type == "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`}
                                                     alt={ch.name}
+                                                    onError={(e) => ch.type === "npc"
+                                                        ? handleNpcImgError(e, ch.id)
+                                                        : (() => {
+                                                            (e.target as HTMLImageElement).style.display = 'none';
+                                                            ((e.target as HTMLElement).nextElementSibling as HTMLElement)?.classList.remove('hidden');
+                                                        })()
+                                                    }
                                                 />
+                                                <FaSkull className="hidden text-base-content opacity-40 text-2xl" />
                                             </div>
                                         </div>
 

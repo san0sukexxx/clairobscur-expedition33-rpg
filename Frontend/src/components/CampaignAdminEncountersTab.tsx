@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { FaDragon, FaPlus, FaTrash, FaEdit, FaArrowLeft, FaMinus } from "react-icons/fa";
 import { APIEncounter, type EncounterResponse, type EncounterNpcDto, type EncounterRewardDto } from "../api/APIEncounter";
 import { type Campaign } from "../api/APICampaign";
-import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils";
+import { getAllNPCsSorted, getNpcById, handleNpcImgError } from "../utils/NpcUtils";
 import { CHARACTERS_LIST } from "../utils/CharacterUtils";
 import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds } from "../i18n";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
@@ -270,12 +270,15 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                 const npc = getNpcById(npcEntry.npcId);
                                 return (
                                     <div key={npcEntry.npcId} className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-base-200 rounded-lg p-2">
-                                        <img
-                                            src={`/enemies/${npcEntry.npcId}.png`}
-                                            alt={npc?.name ?? npcEntry.npcId}
-                                            className="w-10 h-10 rounded-full object-cover bg-base-300 shrink-0"
-                                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                        />
+                                        <div className="w-10 h-10 rounded-full bg-base-300 shrink-0 overflow-hidden flex items-center justify-center">
+                                            <img
+                                                src={`/enemies/${npcEntry.npcId}.png`}
+                                                alt={npc?.name ?? npcEntry.npcId}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => handleNpcImgError(e, npcEntry.npcId)}
+                                            />
+                                            <FaDragon className="hidden text-base-content opacity-40 text-lg" />
+                                        </div>
                                         <div className="flex flex-col min-w-0 flex-1 basis-32">
                                             <span className="font-semibold text-sm">{npc?.name ?? npcEntry.npcId}</span>
                                             <span className="text-xs opacity-60">
@@ -326,12 +329,15 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             className="flex items-center gap-3 w-full px-3 py-2 hover:bg-base-200 text-left"
                                             onClick={() => addNpc(npc.id)}
                                         >
-                                            <img
-                                                src={`/enemies/${npc.id}.png`}
-                                                alt={npc.name}
-                                                className="w-8 h-8 rounded-full object-cover bg-base-300"
-                                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                            />
+                                            <div className="w-8 h-8 rounded-full bg-base-300 overflow-hidden flex items-center justify-center">
+                                                <img
+                                                    src={`/enemies/${npc.id}.png`}
+                                                    alt={npc.name}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => handleNpcImgError(e, npc.id)}
+                                                />
+                                                <FaDragon className="hidden text-base-content opacity-40 text-sm" />
+                                            </div>
                                             <div className="flex flex-col min-w-0 flex-1">
                                                 <span className="text-sm font-medium truncate">{npc.name}</span>
                                                 <span className="text-xs opacity-60">{t("encounters.challengeRating")} {formatCR(calculateNPCDifficulty(npc.id))}</span>

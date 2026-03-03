@@ -1,5 +1,7 @@
 import { useMemo, useState, useRef, useCallback } from "react"
+import { FaSkull } from "react-icons/fa"
 import { type BattleCharacterInfo, type InitiativeResponse, type BattleTurnResponse } from "../api/ResponseModel"
+import { handleNpcImgError } from "../utils/NpcUtils"
 import { APIBattle } from "../api/APIBattle"
 import { useToast } from "./Toast"
 import { t } from "../i18n"
@@ -224,7 +226,17 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                                     src={ch.type === "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`}
                                     alt={ch.name}
                                     className="w-full h-full object-cover"
+                                    onError={(e) => ch.type === "npc"
+                                        ? handleNpcImgError(e, ch.id)
+                                        : (() => {
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                            ((e.target as HTMLElement).nextElementSibling as HTMLElement)?.classList.remove('hidden');
+                                        })()
+                                    }
                                 />
+                                <div className="hidden absolute inset-0 flex items-center justify-center">
+                                    <FaSkull className="text-base-content opacity-40 text-lg" />
+                                </div>
                             </div>
 
                             {showBattleId && (

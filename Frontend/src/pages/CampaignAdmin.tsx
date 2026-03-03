@@ -161,7 +161,7 @@ export default function CampaignAdmin() {
                     <button
                         onClick={() => navigate("/settings")}
                         className="btn btn-ghost btn-square"
-                        title={t("characterSheet.navigation.tabs.settings")}
+                        title={t("playerPage.navigation.tabs.settings")}
                     >
                         <FiSettings />
                     </button>
@@ -176,7 +176,7 @@ export default function CampaignAdmin() {
             </div>
 
             {/* Conteúdo */}
-            <main className="p-4 lg:p-6 flex flex-col gap-6 flex-1">
+            <main className="p-4 lg:p-6 flex flex-col gap-6 flex-1 max-w-[1200px] mx-auto w-full">
                 <div>
                     <h1 className="text-3xl font-bold">
                         {campaignInfo?.name ?? t("common.loading")}

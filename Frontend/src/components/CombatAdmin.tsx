@@ -5,8 +5,8 @@ import { APIEncounter, type EncounterResponse } from "../api/APIEncounter"
 import { APIPicto } from "../api/APIPicto"
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp } from "react-icons/fa"
-import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
-import { FaArrowsDownToLine } from "react-icons/fa6";
+import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt, FaUndo } from "react-icons/fa";
+import { FaArrowsDownToLine, FaArrowDown } from "react-icons/fa6";
 import { getCharacterLabelById, applyNpcNameSuffixes } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
 import { getAbilityModifier } from "../utils/AttackCalculator"
@@ -14,7 +14,7 @@ import { getElementName, ELEMENT_EMOTE } from "../utils/ElementUtils"
 import { dispatchRoll } from "../utils/rollDispatcher"
 import { diceTotal } from "../utils/DiceCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP, calculateArmorClass } from "../utils/PlayerCalculator"
-import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils"
+import { getAllNPCsSorted, getNpcById, handleNpcImgError } from "../utils/NpcUtils"
 import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse } from "../api/APIBattle"
@@ -33,6 +33,7 @@ import type { BattleReward } from "../api/ResponseModel";
 import { APIRewards } from "../api/APIRewards";
 import { PictosList } from "../data/PictosList";
 import { pictoColorHex } from "../utils/PictoUtils";
+import { SpecialAttacksList } from "../data/SpecialAttackList";
 
 const canCharacterUseWeapon = WeaponsDataLoader.canCharacterUseWeapon.bind(WeaponsDataLoader);
 
@@ -158,7 +159,7 @@ export default function CombatAdmin({
     const [npcSpecialAttack, setNPCSpecialAttack] = useState<NPCSpecialAttack | null>(null)
     const [npcSpecialAttackIndex, setNpcSpecialAttackIndex] = useState<number | null>(null)
     const [npcAttackIndex, setNpcAttackIndex] = useState<number | null>(null)
-    const [npcIntensityIndex, setNpcIntensityIndex] = useState(1)
+    const [npcIntensityOffset, setNpcIntensityOffset] = useState(0)
     const diceBoardRef = useRef<DiceBoardRef>(null)
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
@@ -185,6 +186,7 @@ export default function CombatAdmin({
     const [luneStains, setLuneStains] = useState<(StainType | null)[]>([null, null, null, null]);
     const [editingLuneCharacterId, setEditingLuneCharacterId] = useState<number | null>(null);
     const [isPassingTurn, setIsPassingTurn] = useState(false);
+    const [npcStatBlockOpen, setNpcStatBlockOpen] = useState(false);
     const [effectsModalCharId, setEffectsModalCharId] = useState<number | null>(null);
     const [effectsModalStatuses, setEffectsModalStatuses] = useState<StatusResponse[]>([]);
     const [expandedAdminStatus, setExpandedAdminStatus] = useState<string | null>(null);
@@ -824,11 +826,21 @@ export default function CombatAdmin({
             <div className="avatar">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center bg-base-300 overflow-hidden">
                     {isPlayerWithImage || isNpc ? (
-                        <img
-                            src={entity.avatarUrl}
-                            alt={entity.name}
-                            className={grayscaleClass}
-                        />
+                        <>
+                            <img
+                                src={entity.avatarUrl}
+                                alt={entity.name}
+                                className={grayscaleClass}
+                                onError={(e) => isNpc
+                                    ? handleNpcImgError(e, String(entity.externalId))
+                                    : (() => {
+                                        (e.target as HTMLImageElement).style.display = 'none';
+                                        ((e.target as HTMLElement).nextElementSibling as HTMLElement)?.classList.remove('hidden');
+                                    })()
+                                }
+                            />
+                            <FaSkull className={`hidden text-base-content opacity-40 text-lg ${grayscaleClass}`} />
+                        </>
                     ) : (
                         <FaUser className={`text-base-content opacity-60 ${grayscaleClass}`} />
                     )}
@@ -888,11 +900,21 @@ export default function CombatAdmin({
         return (
             <div className="card bg-base-200 shadow-inner flex-1">
                 <div className="p-3 flex flex-col gap-3">
-                    <div className="flex flex-col items-start">
-                        <div className="text-lg font-semibold">{t("combatAdmin.labels.npcTurn")}</div>
-                        <div className="text-sm opacity-70">
-                            {currentNpc?.name} <span className="font-mono badge badge-ghost badge-xs">#{displayIndex.get(currentNpc?.battleID ?? 0) ?? "?"}</span>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <div className="text-lg font-semibold">{t("combatAdmin.labels.npcTurn")}</div>
+                            <div className="text-sm opacity-70">
+                                {currentNpc?.name} <span className="font-mono badge badge-ghost badge-xs">#{displayIndex.get(currentNpc?.battleID ?? 0) ?? "?"}</span>
+                            </div>
                         </div>
+                        <button
+                            className="btn btn-sm btn-warning hover:brightness-110 shrink-0"
+                            onClick={() => npcPassTurnTapped()}
+                            disabled={isPassingTurn}
+                        >
+                            <FaHourglassHalf className="mr-1" />
+                            {t("combatAdmin.labels.passTurn")}
+                        </button>
                     </div>
 
                     {/* NPC Stat Block */}
@@ -951,58 +973,72 @@ export default function CombatAdmin({
                         const hasProperties = npcInfo.isFlying || npcInfo.playFirst || npcInfo.freeShotWeakPoints || npcInfo.initiativeBonus || npcInfo.maxLifeBonus;
 
                         return (
-                            <div className="bg-base-300/50 rounded-lg p-3 space-y-3 text-sm">
-                                <div className="grid grid-cols-3 gap-2 text-center">
-                                    {abilities.map(a => (
-                                        <div key={a.key} className="flex flex-col items-center gap-0.5">
-                                            <span className="font-bold text-xs opacity-70">{a.label}</span>
-                                            <span className="text-sm">{a.score}</span>
-                                            <button
-                                                className="btn btn-sm btn-neutral font-mono px-3 min-h-0 h-7"
-                                                onClick={() => rollAbility(a.label, a.mod)}
-                                            >
-                                                {a.mod >= 0 ? `+${a.mod}` : a.mod}
-                                            </button>
+                            <div className="bg-base-300/50 rounded-lg text-sm">
+                                <button
+                                    className="w-full flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-base-300/50 rounded-lg transition-colors"
+                                    onClick={() => setNpcStatBlockOpen(prev => !prev)}
+                                >
+                                    <span className="text-xs font-semibold opacity-70">{t("combatAdmin.npcDetails.attributes")}</span>
+                                    {npcStatBlockOpen ? <FaChevronUp className="text-xs opacity-50" /> : <FaChevronDown className="text-xs opacity-50" />}
+                                </button>
+
+                                <div className="grid transition-[grid-template-rows] duration-300 ease-in-out" style={{ gridTemplateRows: npcStatBlockOpen ? "1fr" : "0fr" }}>
+                                    <div className="overflow-hidden">
+                                        <div className="px-3 pb-3 space-y-3">
+                                            <div className="grid grid-cols-3 gap-2 text-center combat-abilities-grid">
+                                                {abilities.map(a => (
+                                                    <div key={a.key} className="flex flex-col items-center gap-0.5">
+                                                        <span className="font-bold text-xs opacity-70">{a.label}</span>
+                                                        <span className="text-sm">{a.score}</span>
+                                                        <button
+                                                            className="btn btn-sm btn-neutral font-mono px-3 min-h-0 h-7"
+                                                            onClick={() => rollAbility(a.label, a.mod)}
+                                                        >
+                                                            {a.mod >= 0 ? `+${a.mod}` : a.mod}
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            {hasDndExtras && (
+                                                <div className="flex flex-col gap-0.5 text-xs">
+                                                    {(npcInfo.damageVulnerabilities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.damageVulnerabilities")}:</strong> {npcInfo.damageVulnerabilities!.join(", ")}</span>}
+                                                    {(npcInfo.damageImmunities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.damageImmunities")}:</strong> {npcInfo.damageImmunities!.join(", ")}</span>}
+                                                    {(npcInfo.conditionImmunities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.conditionImmunities")}:</strong> {npcInfo.conditionImmunities!.map(s => getStatusLabel(s)).join(", ")}</span>}
+                                                </div>
+                                            )}
+
+                                            {hasChallenge && (
+                                                <div className="flex gap-4 text-xs">
+                                                    {npcInfo.challengeRating && <span><strong>{t("combatAdmin.npcDetails.challenge")}:</strong> {npcInfo.challengeRating}</span>}
+                                                    {npcInfo.proficiencyBonus && <span><strong>{t("combatAdmin.npcDetails.proficiencyBonus")}:</strong> +{npcInfo.proficiencyBonus}</span>}
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
+                                    </div>
                                 </div>
-
-                                {hasElementalInfo && (
-                                    <div className="flex flex-col gap-0.5 text-xs">
-                                        {npcInfo.weakTo && <span>{t("combatAdmin.npcDetails.vulnerability")}: {ELEMENT_EMOTE[npcInfo.weakTo] ?? ""} {getElementName(npcInfo.weakTo)}</span>}
-                                        {npcInfo.resistentTo && <span>{t("combatAdmin.npcDetails.resistance")}: {ELEMENT_EMOTE[npcInfo.resistentTo] ?? ""} {getElementName(npcInfo.resistentTo)}</span>}
-                                        {npcInfo.imuneTo && <span>{t("combatAdmin.npcDetails.immunity")}: {ELEMENT_EMOTE[npcInfo.imuneTo] ?? ""} {getElementName(npcInfo.imuneTo)}</span>}
-                                        {npcInfo.absorbElement && <span>{t("combatAdmin.npcDetails.absorb")}: {ELEMENT_EMOTE[npcInfo.absorbElement] ?? ""} {getElementName(npcInfo.absorbElement)}</span>}
-                                    </div>
-                                )}
-
-                                {hasDndExtras && (
-                                    <div className="flex flex-col gap-0.5 text-xs">
-                                        {(npcInfo.damageVulnerabilities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.damageVulnerabilities")}:</strong> {npcInfo.damageVulnerabilities!.join(", ")}</span>}
-                                        {(npcInfo.damageImmunities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.damageImmunities")}:</strong> {npcInfo.damageImmunities!.join(", ")}</span>}
-                                        {(npcInfo.conditionImmunities?.length ?? 0) > 0 && <span><strong>{t("combatAdmin.npcDetails.conditionImmunities")}:</strong> {npcInfo.conditionImmunities!.map(s => getStatusLabel(s)).join(", ")}</span>}
-                                    </div>
-                                )}
-
-                                {hasChallenge && (
-                                    <div className="flex gap-4 text-xs">
-                                        {npcInfo.challengeRating && <span><strong>{t("combatAdmin.npcDetails.challenge")}:</strong> {npcInfo.challengeRating}</span>}
-                                        {npcInfo.proficiencyBonus && <span><strong>{t("combatAdmin.npcDetails.proficiencyBonus")}:</strong> +{npcInfo.proficiencyBonus}</span>}
-                                    </div>
-                                )}
-
-                                {hasProperties && (
-                                    <div className="flex flex-wrap gap-1">
-                                        {npcInfo.isFlying && <span className="badge badge-xs badge-info">{t("combatAdmin.npcDetails.flying")}</span>}
-                                        {npcInfo.playFirst && <span className="badge badge-xs badge-warning">{t("combatAdmin.npcDetails.playFirst")}</span>}
-                                        {npcInfo.freeShotWeakPoints != null && npcInfo.freeShotWeakPoints > 0 && <span className="badge badge-xs badge-success">{t("combatAdmin.npcDetails.weakPoints")}: {npcInfo.freeShotWeakPoints}</span>}
-                                        {npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.initBonus")}: {npcInfo.initiativeBonus >= 0 ? "+" : ""}{npcInfo.initiativeBonus}</span>}
-                                        {npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.maxHpBonus")}: {npcInfo.maxLifeBonus >= 0 ? "+" : ""}{npcInfo.maxLifeBonus}</span>}
-                                    </div>
-                                )}
                             </div>
                         );
                     })()}
+
+                    {npcInfo && (npcInfo.weakTo || npcInfo.resistentTo || npcInfo.imuneTo || npcInfo.absorbElement) && (
+                        <div className="flex flex-col gap-0.5 text-xs combat-elemental-row">
+                            {npcInfo.weakTo && <span>{t("combatAdmin.npcDetails.vulnerability")}: {ELEMENT_EMOTE[npcInfo.weakTo] ?? ""} {getElementName(npcInfo.weakTo)}</span>}
+                            {npcInfo.resistentTo && <span>{t("combatAdmin.npcDetails.resistance")}: {ELEMENT_EMOTE[npcInfo.resistentTo] ?? ""} {getElementName(npcInfo.resistentTo)}</span>}
+                            {npcInfo.imuneTo && <span>{t("combatAdmin.npcDetails.immunity")}: {ELEMENT_EMOTE[npcInfo.imuneTo] ?? ""} {getElementName(npcInfo.imuneTo)}</span>}
+                            {npcInfo.absorbElement && <span>{t("combatAdmin.npcDetails.absorb")}: {ELEMENT_EMOTE[npcInfo.absorbElement] ?? ""} {getElementName(npcInfo.absorbElement)}</span>}
+                        </div>
+                    )}
+
+                    {npcInfo && (npcInfo.isFlying || npcInfo.playFirst || (npcInfo.freeShotWeakPoints != null && npcInfo.freeShotWeakPoints > 0) || (npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0) || (npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0)) && (
+                        <div className="flex flex-wrap gap-1">
+                            {npcInfo.isFlying && <span className="badge badge-xs badge-info">{t("combatAdmin.npcDetails.flying")}</span>}
+                            {npcInfo.playFirst && <span className="badge badge-xs badge-warning">{t("combatAdmin.npcDetails.playFirst")}</span>}
+                            {npcInfo.freeShotWeakPoints != null && npcInfo.freeShotWeakPoints > 0 && <span className="badge badge-xs badge-success">{t("combatAdmin.npcDetails.weakPoints")}: {npcInfo.freeShotWeakPoints}</span>}
+                            {npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.initBonus")}: {npcInfo.initiativeBonus >= 0 ? "+" : ""}{npcInfo.initiativeBonus}</span>}
+                            {npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.maxHpBonus")}: {npcInfo.maxLifeBonus >= 0 ? "+" : ""}{npcInfo.maxLifeBonus}</span>}
+                        </div>
+                    )}
 
                     {/* ━━━ D&D-style Actions Section ━━━ */}
                     {(() => {
@@ -1056,9 +1092,13 @@ export default function CombatAdmin({
                         };
 
                         const npcName = npcInfo?.name ?? "";
-                        const INTENSITY_MULTIPLIER = [1, 1, 2, 3, 4, 5];
-                        const diceMultiplier = INTENSITY_MULTIPLIER[npcIntensityIndex] ?? 1;
-                        const isLowIntensity = npcIntensityIndex === 0;
+
+                        function calcDamage(baseDice: number, baseMod: number) {
+                            const totalDice = Math.max(1, baseDice + npcIntensityOffset);
+                            const atMinDice = baseDice + npcIntensityOffset < 1;
+                            const mod = atMinDice ? 0 : baseMod;
+                            return { numDice: totalDice, flatDmg: mod, avgDmg: Math.floor(totalDice * 3.5 + mod) };
+                        }
 
                         return (
                             <div className="flex flex-col gap-1">
@@ -1070,11 +1110,9 @@ export default function CombatAdmin({
 
                                 {npcInfo?.attackList?.map((atk, idx) => {
                                     const actionName = atk.name ? t(atk.name) : getAttackTypeLabel(atk.type);
-                                    const baseNumDice = 1 + (atk.additionalDices ?? 0);
-                                    const numDice = baseNumDice * diceMultiplier;
-                                    const rawFlatDmg = strMod + (atk.additionalDamage ?? 0);
-                                    const flatDmg = isLowIntensity ? Math.min(rawFlatDmg, 0) : rawFlatDmg;
-                                    const avgDmg = Math.floor(numDice * 3.5 + flatDmg);
+                                    const baseDice = 1 + (atk.additionalDices ?? 0);
+                                    const baseMod = strMod + (atk.additionalDamage ?? 0);
+                                    const { numDice, flatDmg, avgDmg } = calcDamage(baseDice, baseMod);
                                     const isArea = atk.type === "jump-all";
                                     const attackKind = isArea ? t("combatAdmin.actionDesc.areaAttack") : t("combatAdmin.actionDesc.meleeAttack");
 
@@ -1086,18 +1124,10 @@ export default function CombatAdmin({
                                         return eff;
                                     });
 
-                                    const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
-                                    const INTENSITY_COLORS = ["text-sky-400", "text-emerald-400", "text-amber-400", "text-orange-400", "text-red-400", "text-fuchsia-400"];
-
                                     return (
                                         <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
                                             <span>
                                                 <strong className="text-red-300">{"▸ "}{actionName}.</strong>{" "}
-                                                {atk.intensity != null && (
-                                                    <span className={`text-xs font-bold ${INTENSITY_COLORS[atk.intensity]} mr-1`}>
-                                                        [{t("combat.intensity")} {t(`combat.${INTENSITY_KEYS[atk.intensity]}`)}]
-                                                    </span>
-                                                )}
                                                 <span className="italic opacity-90">
                                                     <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                     {" "}{t("combatAdmin.actionDesc.toHit")}
@@ -1134,9 +1164,7 @@ export default function CombatAdmin({
 
                                 {/* Basic "Atacar" action */}
                                 {(() => {
-                                    const basicNumDice = 1 * diceMultiplier;
-                                    const basicFlatDmg = isLowIntensity ? Math.min(strMod, 0) : strMod;
-                                    const basicAvgDmg = Math.floor(basicNumDice * 3.5 + basicFlatDmg);
+                                    const { numDice: basicNumDice, flatDmg: basicFlatDmg, avgDmg: basicAvgDmg } = calcDamage(1, strMod);
                                     return (
                                         <div className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
                                             <span>
@@ -1156,71 +1184,24 @@ export default function CombatAdmin({
                         );
                     })()}
 
-                    {/* Intensity slider */}
-                    {(() => {
-                        const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
-                        return (
-                            <div className="pt-1 space-y-1">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.intensity")}</span>
-                                    <span className={`text-xs font-bold ${
-                                        npcIntensityIndex === 0 ? "text-sky-400"
-                                        : npcIntensityIndex === 1 ? "text-emerald-400"
-                                        : npcIntensityIndex === 2 ? "text-amber-400"
-                                        : npcIntensityIndex === 3 ? "text-orange-400"
-                                        : npcIntensityIndex === 4 ? "text-red-400"
-                                        : "text-fuchsia-400"
-                                    }`}>
-                                        {t(`combat.${INTENSITY_KEYS[npcIntensityIndex]}`)}
-                                    </span>
-                                </div>
-                                <div className="relative flex items-center gap-2">
-                                    <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[0]}`)}</span>
-                                    <input
-                                        type="range"
-                                        min={0}
-                                        max={INTENSITY_KEYS.length - 1}
-                                        step={1}
-                                        value={npcIntensityIndex}
-                                        onChange={(e) => setNpcIntensityIndex(Number(e.target.value))}
-                                        className="range range-xs flex-1"
-                                        style={{
-                                            accentColor:
-                                                npcIntensityIndex === 0 ? "#38bdf8"
-                                                : npcIntensityIndex === 1 ? "#34d399"
-                                                : npcIntensityIndex === 2 ? "#fbbf24"
-                                                : npcIntensityIndex === 3 ? "#fb923c"
-                                                : npcIntensityIndex === 4 ? "#f87171"
-                                                : "#e879f9"
-                                        }}
-                                    />
-                                    <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[INTENSITY_KEYS.length - 1]}`)}</span>
-                                </div>
-                                <div className="flex justify-between px-8">
-                                    {INTENSITY_KEYS.map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                                                i === npcIntensityIndex ? "bg-base-content" : "bg-base-content/20"
-                                            }`}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    })()}
-
-                    {/* Pass Turn */}
-                    <div className="flex">
+                    {/* Intensity +/- buttons */}
+                    <div className="flex items-center justify-center gap-3 pt-1">
+                        {npcIntensityOffset > 0 && (
+                            <button
+                                className="btn btn-sm btn-warning btn-outline"
+                                onClick={() => setNpcIntensityOffset(0)}
+                            >
+                                <FaUndo /> {t("combatAdmin.labels.resetIntensity")}
+                            </button>
+                        )}
                         <button
-                            className="btn btn-sm btn-warning hover:brightness-110"
-                            onClick={() => npcPassTurnTapped()}
-                            disabled={isPassingTurn}
+                            className="btn btn-sm btn-success btn-outline"
+                            onClick={() => setNpcIntensityOffset(prev => prev + 1)}
                         >
-                            <FaHourglassHalf className="mr-1" />
-                            {t("combatAdmin.labels.passTurn")}
+                            <FaArrowUp /> {t("combatAdmin.labels.increaseIntensity")}
                         </button>
                     </div>
+
                 </div>
             </div>
         );
@@ -1261,7 +1242,7 @@ export default function CombatAdmin({
             };
 
             return (
-                <div className="rounded-lg bg-base-100/50 p-2">
+                <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
                     <div className="flex items-center justify-between text-sm mb-2">
                         <span>{t("combatAdmin.labels.versoPerfectionRank")}</span>
                         <span className="text-xs opacity-60 font-mono">{rankProgress} pts</span>
@@ -1289,7 +1270,7 @@ export default function CombatAdmin({
             const pct = Math.max(0, Math.min(100, Math.round((chargePoints / maxChargePoints) * 100)));
 
             return (
-                <div className="rounded-lg bg-base-100/50 p-2">
+                <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
                     <div className="flex items-center justify-between text-sm mb-1">
                         <span>{t("combatAdmin.labels.gustaveCharges")}</span>
                         <div className="flex items-center gap-2">
@@ -1320,7 +1301,7 @@ export default function CombatAdmin({
             const twilightStatus = char.status?.find(s => s.effectName === "Twilight");
 
             return (
-                <div className="rounded-lg bg-base-100/50 p-2">
+                <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
                     <div className="flex items-center justify-between text-sm mb-1">
                         <span>{t("combatAdmin.labels.scielCharges")}</span>
                         <button
@@ -1361,7 +1342,7 @@ export default function CombatAdmin({
             };
 
             return (
-                <div className="rounded-lg bg-base-100/50 p-2">
+                <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
                     <div className="flex items-center justify-between text-sm mb-1">
                         <span>{t("combatAdmin.labels.luneStains")}</span>
                         <button
@@ -1411,7 +1392,7 @@ export default function CombatAdmin({
             };
 
             return (
-                <div className="rounded-lg bg-base-100/50 p-2">
+                <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
                     <div className="flex items-center justify-between text-sm mb-2">
                         <span>{t("combatAdmin.labels.maelleStance")}</span>
                         <span className={`badge ${currentStance ? stanceColors[currentStance] : "badge-ghost"}`}>
@@ -1459,156 +1440,162 @@ export default function CombatAdmin({
                     {members.length === 0 ? (
                         <div className="text-sm opacity-60">{t("combatAdmin.labels.noTeamMembers")}</div>
                     ) : (
-                        <div className="flex flex-col divide-y divide-base-content/20 min-w-0 overflow-hidden">
-                            {members.map((m) => {
+                        <div className="flex flex-col min-w-0 overflow-hidden combat-members-list">
+                            {members.map((m, memberIdx) => {
                                 const isRowSelectable = isSelectingTarget && m.currentHp > 0
                                 const entityAttacks =
                                     battleDetails?.attacks?.filter(a => a.targetBattleId === m.rowId) ?? []
 
                                 return (
+                                    <React.Fragment key={m.rowId}>
+                                    {memberIdx > 0 && <hr className="border-base-content/40 mt-2 mb-5 combat-member-separator" />}
                                     <div
-                                        key={m.rowId}
-                                        className={`py-3 space-y-1 min-w-0 ${isRowSelectable ? "target-glow cursor-pointer" : ""}`}
+                                        className={`py-3 space-y-1 min-w-0 combat-member-card ${isRowSelectable ? "target-glow cursor-pointer" : ""}`}
                                         onClick={isRowSelectable ? () => handleTargetSelected(m) : undefined}
                                     >
-                                        {/* Linha 1: Avatar + Nome + ID + Ready + Remover */}
-                                        <div className="flex items-center gap-2 flex-wrap min-w-0">
-                                            {renderAvatarCell(m)}
-                                            {m.type === "npc" ? (
-                                                <span
-                                                    className={`font-semibold text-sm truncate cursor-pointer hover:underline flex items-center gap-1 ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}
-                                                    onClick={(e) => {
-                                                        if (!isRowSelectable) {
-                                                            e.stopPropagation();
-                                                            setExpandedNpcRowId(prev => prev === m.rowId! ? null : m.rowId!);
-                                                        }
-                                                    }}
-                                                >
-                                                    {m.name}
-                                                    {expandedNpcRowId === m.rowId
-                                                        ? <FaChevronUp className="w-2.5 h-2.5 shrink-0" />
-                                                        : <FaChevronDown className="w-2.5 h-2.5 shrink-0" />}
-                                                </span>
-                                            ) : (
-                                                <span className={`font-semibold text-sm truncate ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}>
-                                                    {m.name}
-                                                </span>
-                                            )}
-                                            {m.currentHp === 0 && (
-                                                <FaSkull className="text-red-600 w-3.5 h-3.5 shrink-0" title={t("combatAdmin.labels.dead")} />
-                                            )}
-                                            <span className="badge badge-ghost badge-xs font-mono shrink-0">#{displayIndex.get(m.rowId ?? 0) ?? "?"}</span>
-                                            <span className={`badge badge-xs shrink-0 ${m.isReadyToStart ? "badge-success" : "badge-warning"}`}>
-                                                {m.isReadyToStart ? t("combatAdmin.labels.ready") : t("combatAdmin.labels.waiting")}
-                                            </span>
-                                            <div className="flex-1 basis-0" />
-                                            {!isRowSelectable && (
-                                                <>
-                                                    <button
-                                                        className="btn btn-xs btn-outline btn-info shrink-0"
-                                                        onClick={(e) => { e.stopPropagation(); setEffectsModalCharId(m.rowId!); setEffectsModalStatuses(m.status ?? []); }}
+                                        {/* Linha principal: tudo inline em tela grande */}
+                                        <div className="combat-main-row">
+                                            {/* Parte 1: Avatar + Nome + badges */}
+                                            <div className="flex items-center gap-2 flex-wrap min-w-0 combat-info-section">
+                                                {renderAvatarCell(m)}
+                                                {m.type === "npc" ? (
+                                                    <span
+                                                        className={`font-semibold text-sm truncate cursor-pointer hover:underline flex items-center gap-1 ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}
+                                                        onClick={(e) => {
+                                                            if (!isRowSelectable) {
+                                                                e.stopPropagation();
+                                                                setExpandedNpcRowId(prev => prev === m.rowId! ? null : m.rowId!);
+                                                            }
+                                                        }}
                                                     >
-                                                        Condições
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-xs btn-error shrink-0"
-                                                        onClick={(e) => { e.stopPropagation(); handleRemove(m.rowId!); }}
-                                                    >
-                                                        Remover
-                                                    </button>
-                                                </>
-                                            )}
-                                        </div>
-
-                                        {/* Linha 2: HP bar + AC */}
-                                        <div className="flex items-center gap-1 min-w-0">
-                                            <span className="text-[10px] font-mono opacity-70 shrink-0">HP {m.currentHp}/{m.maxHp}</span>
-                                            <div className="flex-1 min-w-0">
-                                                <AnimatedStatBar
-                                                    value={Math.round((m.currentHp / m.maxHp) * 100)}
-                                                    label="HP"
-                                                    fillClass="bg-error"
-                                                    ghostClass="bg-error/30"
-                                                />
-                                            </div>
-                                            <button
-                                                className="btn btn-xs btn-ghost text-info p-0"
-                                                onClick={(e) => { e.stopPropagation(); openHpEditModal(m); }}
-                                            >
-                                                <FaEdit size={10} />
-                                            </button>
-                                            {(() => {
-                                                let ac: number | undefined;
-                                                if (m.type === "npc") {
-                                                    const npcData = getNpcById(m.characterId ?? "");
-                                                    if (npcData) {
-                                                        const dexMod = getAbilityModifier(npcData.dexterity);
-                                                        ac = npcData.armorClass ?? (10 + dexMod);
-                                                    }
-                                                } else {
-                                                    const playerData = players.find(p => p.playerSheet?.characterId === m.characterId);
-                                                    if (playerData) {
-                                                        ac = calculateArmorClass(playerData, loadWeaponInfo(playerData));
-                                                    }
-                                                }
-                                                if (ac == null) return null;
-                                                return (
-                                                    <span className="badge badge-sm badge-outline font-mono shrink-0 ml-1" title={t("combatAdmin.npcDetails.armorClass")}>
-                                                        {t("combatAdmin.npcDetails.armorClass")} {ac}
+                                                        {m.name}
+                                                        {expandedNpcRowId === m.rowId
+                                                            ? <FaChevronUp className="w-2.5 h-2.5 shrink-0" />
+                                                            : <FaChevronDown className="w-2.5 h-2.5 shrink-0" />}
                                                     </span>
-                                                );
-                                            })()}
-                                        </div>
+                                                ) : (
+                                                    <span className={`font-semibold text-sm truncate ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}>
+                                                        {m.name}
+                                                    </span>
+                                                )}
+                                                {m.currentHp === 0 && (
+                                                    <FaSkull className="text-red-600 w-3.5 h-3.5 shrink-0" title={t("combatAdmin.labels.dead")} />
+                                                )}
+                                                <span className="badge badge-ghost badge-xs font-mono shrink-0">#{displayIndex.get(m.rowId ?? 0) ?? "?"}</span>
+                                                <span className={`badge badge-xs shrink-0 ${m.isReadyToStart ? "badge-success" : "badge-warning"}`}>
+                                                    {m.isReadyToStart ? t("combatAdmin.labels.ready") : t("combatAdmin.labels.waiting")}
+                                                </span>
+                                            </div>
 
-                                        {/* Linha 3: MP bar */}
-                                        {m.currentMp !== undefined && m.maxMp !== undefined && (
-                                            <div className="flex items-center gap-1 min-w-0">
-                                                <span className="text-[10px] font-mono opacity-70 shrink-0">MP {m.currentMp}/{m.maxMp}</span>
+                                            {/* Parte 2: HP bar */}
+                                            <div className="flex items-center gap-1 min-w-0 combat-hp-section">
+                                                <span className="text-[10px] font-mono opacity-70 shrink-0">HP {m.currentHp}/{m.maxHp}</span>
                                                 <div className="flex-1 min-w-0">
                                                     <AnimatedStatBar
-                                                        value={Math.round((m.currentMp / m.maxMp) * 100)}
-                                                        label="MP"
-                                                        fillClass="bg-info"
-                                                        ghostClass="bg-info/30"
+                                                        value={Math.round((m.currentHp / m.maxHp) * 100)}
+                                                        label="HP"
+                                                        fillClass="bg-error"
+                                                        ghostClass="bg-error/30"
                                                     />
                                                 </div>
                                                 <button
                                                     className="btn btn-xs btn-ghost text-info p-0"
-                                                    onClick={(e) => { e.stopPropagation(); openMpEditModal(m); }}
+                                                    onClick={(e) => { e.stopPropagation(); openHpEditModal(m); }}
                                                 >
                                                     <FaEdit size={10} />
                                                 </button>
                                             </div>
-                                        )}
+
+                                            {/* Parte 3: MP bar */}
+                                            {m.currentMp !== undefined && m.maxMp !== undefined && (
+                                                <div className="flex items-center gap-1 min-w-0 combat-mp-section">
+                                                    <span className="text-[10px] font-mono opacity-70 shrink-0">MP {m.currentMp}/{m.maxMp}</span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <AnimatedStatBar
+                                                            value={Math.round((m.currentMp / m.maxMp) * 100)}
+                                                            label="MP"
+                                                            fillClass="bg-info"
+                                                            ghostClass="bg-info/30"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        className="btn btn-xs btn-ghost text-info p-0"
+                                                        onClick={(e) => { e.stopPropagation(); openMpEditModal(m); }}
+                                                    >
+                                                        <FaEdit size={10} />
+                                                    </button>
+                                                </div>
+                                            )}
+
+                                            {/* Parte 4: AC + Botões (mesma linha sempre) */}
+                                            <div className="flex items-center gap-2 shrink-0 combat-actions-section">
+                                                {(() => {
+                                                    let ac: number | undefined;
+                                                    if (m.type === "npc") {
+                                                        const npcData = getNpcById(m.characterId ?? "");
+                                                        if (npcData) {
+                                                            const dexMod = getAbilityModifier(npcData.dexterity);
+                                                            ac = npcData.armorClass ?? (10 + dexMod);
+                                                        }
+                                                    } else {
+                                                        const playerData = players.find(p => p.playerSheet?.characterId === m.characterId);
+                                                        if (playerData) {
+                                                            ac = calculateArmorClass(playerData, loadWeaponInfo(playerData));
+                                                        }
+                                                    }
+                                                    if (ac == null) return null;
+                                                    return (
+                                                        <span className="badge badge-sm badge-outline font-mono shrink-0" title={t("combatAdmin.npcDetails.armorClass")}>
+                                                            {t("combatAdmin.npcDetails.armorClass")} {ac}
+                                                        </span>
+                                                    );
+                                                })()}
+                                                {!isRowSelectable && (
+                                                    <>
+                                                        <button
+                                                            className="btn btn-xs btn-outline btn-info shrink-0"
+                                                            onClick={(e) => { e.stopPropagation(); setEffectsModalCharId(m.rowId!); setEffectsModalStatuses(m.status ?? []); }}
+                                                        >
+                                                            Condições
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-xs btn-error shrink-0"
+                                                            onClick={(e) => { e.stopPropagation(); handleRemove(m.rowId!); }}
+                                                        >
+                                                            Remover
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
 
                                         {/* Linha 4: Efeitos/Status */}
                                         {((m.status && m.status.length > 0) || npcIsFlyingById(m.characterId)) && (
-                                            <div className="flex items-start gap-1">
-                                                <div className="flex flex-row flex-wrap gap-1 flex-1">
-                                                    {m.status?.map((st, idx) => {
-                                                        const showAmount = shouldShowStatusAmmount(st.effectName);
-                                                        const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
+                                            <div className="flex flex-row flex-wrap items-center gap-1 mt-1">
+                                                {m.status?.map((st, idx) => {
+                                                    const showAmount = shouldShowStatusAmmount(st.effectName);
+                                                    const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
 
-                                                        return (
-                                                            <span
-                                                                key={idx}
-                                                                className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80 cursor-pointer hover:opacity-100 transition-opacity"
-                                                                onClick={(e) => { e.stopPropagation(); setExpandedAdminStatus(prev => prev === `${m.battleCharacterId}-${st.effectName}` ? null : `${m.battleCharacterId}-${st.effectName}`); }}
-                                                            >
-                                                                {getStatusLabel(st.effectName)} {showAmount ? st.ammount : ""}
-                                                                {showTurns ? ` (${st.remainingTurns})` : ""}
-                                                            </span>
-                                                        );
-                                                    })}
-
-                                                    {npcIsFlyingById(m.characterId) && (
-                                                        <span className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80">
-                                                            Voando
+                                                    return (
+                                                        <span
+                                                            key={idx}
+                                                            className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80 cursor-pointer hover:opacity-100 transition-opacity"
+                                                            onClick={(e) => { e.stopPropagation(); setExpandedAdminStatus(prev => prev === `${m.rowId}-${st.effectName}` ? null : `${m.rowId}-${st.effectName}`); }}
+                                                        >
+                                                            {getStatusLabel(st.effectName)} {showAmount ? st.ammount : ""}
+                                                            {showTurns ? ` (${st.remainingTurns})` : ""}
                                                         </span>
-                                                    )}
-                                                </div>
+                                                    );
+                                                })}
+
+                                                {npcIsFlyingById(m.characterId) && (
+                                                    <span className="px-1 py-0.5 rounded bg-base-300 text-[10px] opacity-80">
+                                                        Voando
+                                                    </span>
+                                                )}
+
                                                 <button
-                                                    className="btn btn-xs btn-ghost text-info shrink-0 p-0"
+                                                    className="btn btn-xs btn-ghost text-info p-0"
                                                     onClick={(e) => { e.stopPropagation(); setEffectsModalCharId(m.rowId!); setEffectsModalStatuses(m.status ?? []); }}
                                                 >
                                                     <FaEdit size={10} />
@@ -1616,13 +1603,13 @@ export default function CombatAdmin({
                                             </div>
                                         )}
 
-                                        {expandedAdminStatus?.startsWith(`${m.battleCharacterId}-`) && (
+                                        {expandedAdminStatus?.startsWith(`${m.rowId}-`) && (
                                             <p className="text-[10px] opacity-70 leading-relaxed">
                                                 {t(`battle.statusDescriptions.${expandedAdminStatus.split("-").slice(1).join("-")}`) || t("battle.statusDescriptions.default")}
                                             </p>
                                         )}
 
-                                        {renderCharacterPanel(m)}
+                                        <div className="mt-2">{renderCharacterPanel(m)}</div>
 
                                         {/* NPC Stat Block colapsável */}
                                         {m.type === "npc" && (() => {
@@ -1690,8 +1677,8 @@ export default function CombatAdmin({
                                                 >
                                                 <div className="overflow-hidden">
                                                 <div className="bg-base-300/50 rounded-lg p-3 space-y-3 text-sm" onClick={(e) => e.stopPropagation()}>
-                                                    {/* Ability Scores — 3 colunas, 2 linhas */}
-                                                    <div className="grid grid-cols-3 gap-2 text-center">
+                                                    {/* Ability Scores — 3 colunas mobile, 6 colunas desktop */}
+                                                    <div className="grid grid-cols-3 gap-2 text-center combat-abilities-grid">
                                                         {abilities.map(a => (
                                                             <div key={a.key} className="flex flex-col items-center gap-0.5">
                                                                 <span className="font-bold text-xs opacity-70">{a.label}</span>
@@ -1708,7 +1695,7 @@ export default function CombatAdmin({
 
                                                     {/* Elemental Affinities */}
                                                     {hasElementalInfo && (
-                                                        <div className="flex flex-col gap-0.5 text-xs">
+                                                        <div className="flex flex-col gap-0.5 text-xs combat-elemental-row">
                                                             {npc.weakTo && (
                                                                 <span>{t("combatAdmin.npcDetails.vulnerability")}: {ELEMENT_EMOTE[npc.weakTo] ?? ""} {getElementName(npc.weakTo)}</span>
                                                             )}
@@ -1846,6 +1833,7 @@ export default function CombatAdmin({
                                             )
                                         })}
                                     </div>
+                                    </React.Fragment>
                                 )
                             })}
                         </div>
@@ -2386,12 +2374,13 @@ export default function CombatAdmin({
                                                                             return (
                                                                                 <div key={idx} className="flex items-center gap-1 bg-base-300 rounded-lg px-2 py-1">
                                                                                     <div className="avatar">
-                                                                                        <div className="w-6 h-6 rounded">
+                                                                                        <div className="w-6 h-6 rounded flex items-center justify-center bg-base-300">
                                                                                             <img
                                                                                                 src={`/enemies/${npc.npcId}.png`}
                                                                                                 alt={npcInfo?.name ?? npc.npcId}
-                                                                                                onError={(e) => { e.currentTarget.src = "/placeholder-item.png"; }}
+                                                                                                onError={(e) => handleNpcImgError(e, npc.npcId)}
                                                                                             />
+                                                                                            <FaSkull className="hidden text-base-content opacity-40 text-xs" />
                                                                                         </div>
                                                                                     </div>
                                                                                     <span className="text-xs">{npcInfo?.name ?? npc.npcId}</span>
@@ -2659,14 +2648,16 @@ export default function CombatAdmin({
                                 onReorder={reloadBattleDetails}
                                 displayIndex={displayIndex} />
 
-                            <GradientBar
-                                characters={battleDetails?.characters}
-                                player={undefined}
-                                turns={battleDetails?.turns}
-                                forceShowTeamIsEnemy={getActiveTurnCharacter()?.isEnemy ?? false}
-                                isAdmin={true}
-                                onEditGradient={() => handleOpenGradientModal(getActiveTurnCharacter()?.isEnemy ?? false)}
-                            />
+                            {teamHasGradientPlayer(getActiveTurnCharacter()?.isEnemy ?? false) && (
+                                <GradientBar
+                                    characters={battleDetails?.characters}
+                                    player={undefined}
+                                    turns={battleDetails?.turns}
+                                    forceShowTeamIsEnemy={getActiveTurnCharacter()?.isEnemy ?? false}
+                                    isAdmin={true}
+                                    onEditGradient={() => handleOpenGradientModal(getActiveTurnCharacter()?.isEnemy ?? false)}
+                                />
+                            )}
 
                         </>
                     )}
@@ -2819,6 +2810,17 @@ export default function CombatAdmin({
     function isCurrentTurnPlayer() {
         const character = getActiveTurnCharacter()
         return character?.type == "player"
+    }
+
+    function teamHasGradientPlayer(isEnemy: boolean): boolean {
+        const teamPlayers = battleDetails?.characters?.filter(
+            ch => ch.isEnemy === isEnemy && ch.type === "player"
+        ) ?? [];
+        if (teamPlayers.length === 0) return false;
+
+        return teamPlayers.some(ch =>
+            SpecialAttacksList.some(sa => sa.character === ch.id && sa.isGradient)
+        );
     }
 
     function npcCustomAttackTapped(npcAttack: NPCAttack, index: number) {

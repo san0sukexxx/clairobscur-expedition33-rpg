@@ -2,6 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* === CombatAdmin: layout mobile (default) === */
+.combat-main-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+/* === CombatAdmin: layout wide em telas >= 800px === */
+@media (min-width: 800px) {
+  .combat-main-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+  }
+  .combat-info-section {
+    flex-wrap: nowrap !important;
+    flex-shrink: 0;
+  }
+  .combat-hp-section,
+  .combat-mp-section {
+    flex: 1;
+    min-width: 100px;
+  }
+  .combat-abilities-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+  .combat-elemental-row {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 0 1rem !important;
+  }
+  .combat-member-separator { display: none !important; }
+  .combat-members-list { gap: 0.5rem; }
+  .combat-member-card {
+    background-color: var(--color-base-100);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+  }
+  .combat-sub-card {
+    background-color: var(--color-base-200) !important;
+  }
+}
+
 /* === Overrides globais === */
 @media (orientation: landscape) {
   .mobile-dialog {
