@@ -4,8 +4,9 @@ import { APIEncounter, type EncounterResponse, type EncounterNpcDto, type Encoun
 import { type Campaign } from "../api/APICampaign";
 import { getAllNPCsSorted, getNpcById, handleNpcImgError } from "../utils/NpcUtils";
 import { CHARACTERS_LIST } from "../utils/CharacterUtils";
-import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds } from "../i18n";
+import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds, getLocationName } from "../i18n";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
+import { getAllLocationsSorted } from "../utils/LocationUtils";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
@@ -63,6 +64,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     // NPC search
     const [npcSearch, setNpcSearch] = useState("");
     const [npcDropdownOpen, setNpcDropdownOpen] = useState(false);
+    const [npcLocationFilter, setNpcLocationFilter] = useState<string>("");
 
     // Reward form
     const [newRewardType, setNewRewardType] = useState<string>("weapon");
@@ -186,15 +188,20 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     }
 
     const filteredNpcs = useMemo(() => {
-        const all = getAllNPCsSorted();
-        if (!npcSearch.trim()) return all;
+        let pool = getAllNPCsSorted();
+        if (npcLocationFilter) {
+            const loc = getAllLocationsSorted().find(l => l.id === npcLocationFilter);
+            const ids = new Set(loc?.residentNpcIds ?? []);
+            pool = pool.filter(npc => ids.has(npc.id));
+        }
+        if (!npcSearch.trim()) return pool;
         const search = npcSearch.toLowerCase();
-        return all.filter((npc) => {
+        return pool.filter((npc) => {
             const matchesName = npc.name.toLowerCase().includes(search);
             const cr = formatCR(calculateNPCDifficulty(npc.id));
             return matchesName || cr.includes(search);
         });
-    }, [npcSearch]);
+    }, [npcSearch, npcLocationFilter]);
 
     const filteredRewardItems = useMemo(() => {
         let ids: string[];
@@ -311,7 +318,19 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                             })}
                         </div>
 
-                        {/* NPC Search */}
+                        {/* NPC Location Filter + Search */}
+                        <select
+                            className="select select-bordered select-sm w-full mb-2"
+                            value={npcLocationFilter}
+                            onChange={(e) => setNpcLocationFilter(e.target.value)}
+                        >
+                            <option value="">{t("encounters.allLocations")}</option>
+                            {getAllLocationsSorted()
+                                .filter(loc => loc.residentNpcIds && loc.residentNpcIds.length > 0)
+                                .map(loc => (
+                                    <option key={loc.id} value={loc.id}>{getLocationName(loc.id)}</option>
+                                ))}
+                        </select>
                         <div className="relative">
                             <input
                                 type="text"
