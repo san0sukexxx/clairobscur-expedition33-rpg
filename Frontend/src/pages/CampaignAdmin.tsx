@@ -32,6 +32,7 @@ export default function CampaignAdmin() {
     const navigate = useNavigate();
     const { showToast } = useToast();
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [focusNpcId, setFocusNpcId] = useState<string | null>(null);
     const diceBoardRef = useRef<DiceBoardRef>(null);
     const timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null> = useRef(null);
 
@@ -312,11 +313,16 @@ export default function CampaignAdmin() {
                             });
                             setCampaignInfo({ ...campaignInfo, currentLocationId: locationId });
                         }}
+                        onNpcClick={(npcId) => {
+                            setFocusNpcId(npcId);
+                            setActiveTab("npcs");
+                            localStorage.setItem(storageKey, "npcs");
+                        }}
                     />
                 )}
 
                 {activeTab === "npcs" && (
-                    <CampaignAdminNpcsTab diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
+                    <CampaignAdminNpcsTab diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} focusNpcId={focusNpcId} onFocusHandled={() => setFocusNpcId(null)} />
                 )}
 
                 {activeTab === "logs" && campaignId !== null && (

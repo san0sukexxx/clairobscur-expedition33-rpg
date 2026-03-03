@@ -9,9 +9,10 @@ import { t, getLocationName, getWeaponName, getPictoName } from "../i18n";
 interface Props {
     campaignInfo: Campaign;
     onLocationChange: (locationId: string | null) => void;
+    onNpcClick: (npcId: string) => void;
 }
 
-export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange }: Props) {
+export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange, onNpcClick }: Props) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -147,7 +148,12 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
                                                         {loc.residentNpcIds!.map((npcId) => {
                                                             const npc = getNpcById(npcId);
                                                             return (
-                                                                <div key={npcId} className="flex items-center gap-1.5 bg-base-300 rounded-full px-2 py-0.5">
+                                                                <div
+                                                                    key={npcId}
+                                                                    className="flex items-center gap-1.5 bg-base-300 rounded-full px-2 py-0.5 cursor-pointer hover:bg-base-content/20 transition-colors"
+                                                                    onClick={() => onNpcClick(npcId)}
+                                                                    title={npc?.name ?? npcId}
+                                                                >
                                                                     <div className="w-5 h-5 rounded-full bg-base-100 overflow-hidden flex items-center justify-center shrink-0">
                                                                         <img
                                                                             src={`/enemies/${npcId}.png`}

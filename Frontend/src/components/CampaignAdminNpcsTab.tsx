@@ -1,4 +1,4 @@
-import { useState, useMemo, type RefObject, type MutableRefObject } from "react";
+import { useState, useMemo, useEffect, type RefObject, type MutableRefObject } from "react";
 import { FaSkull, FaChevronDown, FaChevronUp, FaFistRaised, FaShieldAlt, FaHeart, FaBrain, FaEye, FaTheaterMasks, FaArrowUp, FaUndo } from "react-icons/fa";
 import { GiRunningShoe } from "react-icons/gi";
 import { getAllNPCsSorted, handleNpcImgError } from "../utils/NpcUtils";
@@ -23,11 +23,24 @@ const ATTR_CONFIG = [
 interface NpcsTabProps {
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    focusNpcId?: string | null;
+    onFocusHandled?: () => void;
 }
 
-export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef }: NpcsTabProps) {
+export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef, focusNpcId, onFocusHandled }: NpcsTabProps) {
     const [filterText, setFilterText] = useState("");
-    const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [expandedId, setExpandedId] = useState<string | null>(focusNpcId ?? null);
+
+    useEffect(() => {
+        if (focusNpcId) {
+            setExpandedId(focusNpcId);
+            setFilterText("");
+            requestAnimationFrame(() => {
+                document.getElementById(`npc-${focusNpcId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+            onFocusHandled?.();
+        }
+    }, [focusNpcId]);
 
     const npcs = useMemo(() => {
         const all = getAllNPCsSorted();
@@ -72,7 +85,7 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                     {npcs.map((npc) => {
                         const isExpanded = expandedId === npc.id;
                         return (
-                            <div key={npc.id} className="py-2 px-1">
+                            <div key={npc.id} id={`npc-${npc.id}`} className="py-2 px-1">
                                 {/* Header */}
                                 <div
                                     className="flex items-center gap-3 cursor-pointer"
