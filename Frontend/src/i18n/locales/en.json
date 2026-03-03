@@ -3733,6 +3733,7 @@
       "filterPlaceholder": "Filter by name, terrain or danger...",
       "noLocationsFound": "No locations registered.",
       "residentNpcs": "Resident NPCs",
+      "referenceNpcs": "Other NPCs (Reference)",
       "encounters": "Encounters",
       "loot": "Loot",
       "connectedLocations": "Connected Locations",

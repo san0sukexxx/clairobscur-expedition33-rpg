@@ -91,9 +91,9 @@ export default function CampaignAdminLocationsTab() {
                                         </div>
 
                                         <div className="flex items-center gap-2 shrink-0">
-                                            {(loc.residentNpcIds?.length ?? 0) > 0 && (
+                                            {((loc.residentNpcIds?.length ?? 0) + (loc.referenceNpcNames?.length ?? 0)) > 0 && (
                                                 <span className="badge badge-sm badge-ghost">
-                                                    {loc.residentNpcIds!.length} NPCs
+                                                    {(loc.residentNpcIds?.length ?? 0) + (loc.referenceNpcNames?.length ?? 0)} NPCs
                                                 </span>
                                             )}
                                             {(loc.encounters?.length ?? 0) > 0 && (
@@ -138,6 +138,20 @@ export default function CampaignAdminLocationsTab() {
                                                                 </div>
                                                             );
                                                         })}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* NPCs de referência */}
+                                            {(loc.referenceNpcNames?.length ?? 0) > 0 && (
+                                                <div>
+                                                    <span className="font-bold text-xs">{t("locations.referenceNpcs")}</span>
+                                                    <div className="flex flex-wrap gap-1.5 mt-1">
+                                                        {loc.referenceNpcNames!.map((name) => (
+                                                            <span key={name} className="badge badge-sm badge-outline opacity-70">
+                                                                {name}
+                                                            </span>
+                                                        ))}
                                                     </div>
                                                 </div>
                                             )}

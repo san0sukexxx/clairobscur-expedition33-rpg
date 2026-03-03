@@ -3735,6 +3735,7 @@
       "filterPlaceholder": "Filtrar por nome, terreno ou perigo...",
       "noLocationsFound": "Nenhum local cadastrado.",
       "residentNpcs": "NPCs Residentes",
+      "referenceNpcs": "Outros NPCs (Referência)",
       "encounters": "Encontros",
       "loot": "Recompensas",
       "connectedLocations": "Locais Conectados",

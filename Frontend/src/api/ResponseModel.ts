@@ -148,7 +148,8 @@ export interface LocationInfo {
     dangerLevel?: DangerLevel;
     encounters?: LocationEncounter[];
     loot?: BattleReward[];      // Recompensas possíveis nesta localização
-    residentNpcIds?: string[];  // NPCs que residem neste local
+    residentNpcIds?: string[];        // NPCs vinculados ao sistema (combate)
+    referenceNpcNames?: string[];     // NPCs de referência (apenas nome)
     connectedLocationIds?: string[];  // Locais conectados/acessíveis
     notes?: string;             // Notas livres do mestre
 }
