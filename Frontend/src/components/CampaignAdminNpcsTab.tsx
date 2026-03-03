@@ -288,7 +288,7 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
                             <div key={idx} className="bg-base-300 rounded-lg px-3 py-2">
                                 <div className="flex items-center gap-2 flex-wrap">
                                     <span className="font-semibold text-xs">
-                                        {atk.name ?? attackTypeName(atk.type)}
+                                        {atk.name ? t(atk.name) || atk.name : attackTypeName(atk.type)}
                                     </span>
                                     <span className="badge badge-xs badge-ghost">{attackTypeName(atk.type)}</span>
                                     {atk.element && (
