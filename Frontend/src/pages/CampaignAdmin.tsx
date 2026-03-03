@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type MutableRefObject } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiLogOut, FiShare2, FiMaximize, FiMinimize, FiSettings } from "react-icons/fi";
 import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon, FaMapMarkerAlt, FaSkull } from "react-icons/fa";
@@ -12,6 +12,9 @@ import CampaignAdminEncountersTab from "../components/CampaignAdminEncountersTab
 import CampaignAdminLocationsTab from "../components/CampaignAdminLocationsTab";
 import CampaignAdminNpcsTab from "../components/CampaignAdminNpcsTab";
 import { GameLogSection } from "../components/GameLogSection";
+import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
+import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
+import { RollHistoryToast } from "../components/RollHistoryToast";
 import { t } from "../i18n";
 import { useToast } from "../components/Toast";
 
@@ -29,6 +32,8 @@ export default function CampaignAdmin() {
     const navigate = useNavigate();
     const { showToast } = useToast();
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const diceBoardRef = useRef<DiceBoardRef>(null);
+    const timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null> = useRef(null);
 
     useEffect(() => {
         const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
@@ -307,6 +312,14 @@ export default function CampaignAdmin() {
                     <GameLogSection campaignId={campaignId} />
                 )}
             </main>
+
+            {activeTab !== "combats" && (
+                <>
+                    <DiceBoard ref={diceBoardRef} />
+                    <RollHistoryToast />
+                    <FloatingDiceRoller diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} className="bottom-4 right-4" />
+                </>
+            )}
         </div>
     );
 }
