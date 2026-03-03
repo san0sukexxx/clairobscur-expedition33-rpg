@@ -290,7 +290,9 @@ function NpcDetails({ npc }: { npc: NPCInfo }) {
                                     <span className="font-semibold text-xs">
                                         {atk.name ? t(atk.name) || atk.name : attackTypeName(atk.type)}
                                     </span>
-                                    <span className="badge badge-xs badge-ghost">{attackTypeName(atk.type)}</span>
+                                    {atk.name && (
+                                        <span className="badge badge-xs badge-ghost">{attackTypeName(atk.type)}</span>
+                                    )}
                                     {atk.element && (
                                         <span className="badge badge-xs badge-outline">
                                             {ELEMENT_EMOTE[atk.element]} {getElementName(atk.element)}
