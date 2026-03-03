@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiLogOut, FiShare2, FiMaximize, FiMinimize, FiSettings } from "react-icons/fi";
-import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon, FaMapMarkerAlt } from "react-icons/fa";
+import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon, FaMapMarkerAlt, FaSkull } from "react-icons/fa";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
@@ -10,6 +10,7 @@ import CampaignAdminSheets from "../components/CampaignAdminSheets";
 import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
 import CampaignAdminEncountersTab from "../components/CampaignAdminEncountersTab";
 import CampaignAdminLocationsTab from "../components/CampaignAdminLocationsTab";
+import CampaignAdminNpcsTab from "../components/CampaignAdminNpcsTab";
 import { GameLogSection } from "../components/GameLogSection";
 import { t } from "../i18n";
 import { useToast } from "../components/Toast";
@@ -18,9 +19,9 @@ export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
     const { campaign } = useParams<{ campaign?: string }>();
     const storageKey = `campaign-admin-tab-${campaign}`;
-    const [activeTab, setActiveTab] = useState<"players" | "combats" | "encounters" | "locations" | "logs">(() => {
+    const [activeTab, setActiveTab] = useState<"players" | "combats" | "encounters" | "locations" | "npcs" | "logs">(() => {
         const saved = localStorage.getItem(storageKey);
-        if (saved === "players" || saved === "combats" || saved === "encounters" || saved === "locations" || saved === "logs") return saved;
+        if (saved === "players" || saved === "combats" || saved === "encounters" || saved === "locations" || saved === "npcs" || saved === "logs") return saved;
         return "players";
     });
     const alreadyRan = useRef(false);
@@ -233,6 +234,17 @@ export default function CampaignAdmin() {
 
                         <button
                             role="tab"
+                            className={`tab text-sm px-4 ${activeTab === "npcs" ? "tab-active font-semibold" : ""}`}
+                            onClick={() => { setActiveTab("npcs"); localStorage.setItem(storageKey, "npcs"); }}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FaSkull />
+                                NPCs
+                            </span>
+                        </button>
+
+                        <button
+                            role="tab"
                             className={`tab text-sm px-4 ${activeTab === "logs" ? "tab-active font-semibold" : ""}`}
                             onClick={() => { setActiveTab("logs"); localStorage.setItem(storageKey, "logs"); }}
                         >
@@ -285,6 +297,10 @@ export default function CampaignAdmin() {
 
                 {activeTab === "locations" && (
                     <CampaignAdminLocationsTab />
+                )}
+
+                {activeTab === "npcs" && (
+                    <CampaignAdminNpcsTab />
                 )}
 
                 {activeTab === "logs" && campaignId !== null && (
