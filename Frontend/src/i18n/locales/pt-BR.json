@@ -1961,7 +1961,8 @@
       "combats": "Combates",
       "encounters": "Encontros",
       "locations": "Locais",
-      "logs": "Logs"
+      "logs": "Logs",
+      "weapons": "Armas"
     },
     "combat": {
       "enemies": "Inimigos",
