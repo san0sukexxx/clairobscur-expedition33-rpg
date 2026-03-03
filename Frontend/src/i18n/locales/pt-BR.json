@@ -3145,7 +3145,9 @@
       "charisma": "Carisma",
       "equipped": "Equipado",
       "setLevelFor": "Definir nível para {name}",
-      "alreadyEquippedAsLumina": "Equipado como Lumina"
+      "alreadyEquippedAsLumina": "Equipado como Lumina",
+      "level": "Nível",
+      "luminaCost": "Lumina: {cost} pontos"
     },
     "luminas": {
       "title": "Luminas",

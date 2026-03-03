@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, type MutableRefObject } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiLogOut, FiShare2, FiMaximize, FiMinimize, FiSettings } from "react-icons/fi";
 import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon, FaMapMarkerAlt, FaSkull } from "react-icons/fa";
+import { GiStoneTablet } from "react-icons/gi";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
@@ -11,6 +12,7 @@ import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
 import CampaignAdminEncountersTab from "../components/CampaignAdminEncountersTab";
 import CampaignAdminLocationsTab from "../components/CampaignAdminLocationsTab";
 import CampaignAdminNpcsTab from "../components/CampaignAdminNpcsTab";
+import CampaignAdminPictosTab from "../components/CampaignAdminPictosTab";
 import { GameLogSection } from "../components/GameLogSection";
 import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
@@ -22,9 +24,9 @@ export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
     const { campaign } = useParams<{ campaign?: string }>();
     const storageKey = `campaign-admin-tab-${campaign}`;
-    const [activeTab, setActiveTab] = useState<"players" | "combats" | "encounters" | "locations" | "npcs" | "logs">(() => {
+    const [activeTab, setActiveTab] = useState<"players" | "combats" | "encounters" | "locations" | "npcs" | "pictos-list" | "logs">(() => {
         const saved = localStorage.getItem(storageKey);
-        if (saved === "players" || saved === "combats" || saved === "encounters" || saved === "locations" || saved === "npcs" || saved === "logs") return saved;
+        if (saved === "players" || saved === "combats" || saved === "encounters" || saved === "locations" || saved === "npcs" || saved === "pictos-list" || saved === "logs") return saved;
         return "players";
     });
     const alreadyRan = useRef(false);
@@ -251,6 +253,17 @@ export default function CampaignAdmin() {
 
                         <button
                             role="tab"
+                            className={`tab text-sm px-4 ${activeTab === "pictos-list" ? "tab-active font-semibold" : ""}`}
+                            onClick={() => { setActiveTab("pictos-list"); localStorage.setItem(storageKey, "pictos-list"); }}
+                        >
+                            <span className="flex items-center gap-2">
+                                <GiStoneTablet />
+                                {t("tabs.pictos")}
+                            </span>
+                        </button>
+
+                        <button
+                            role="tab"
                             className={`tab text-sm px-4 ${activeTab === "logs" ? "tab-active font-semibold" : ""}`}
                             onClick={() => { setActiveTab("logs"); localStorage.setItem(storageKey, "logs"); }}
                         >
@@ -323,6 +336,10 @@ export default function CampaignAdmin() {
 
                 {activeTab === "npcs" && (
                     <CampaignAdminNpcsTab diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} focusNpcId={focusNpcId} onFocusHandled={() => setFocusNpcId(null)} />
+                )}
+
+                {activeTab === "pictos-list" && (
+                    <CampaignAdminPictosTab />
                 )}
 
                 {activeTab === "logs" && campaignId !== null && (
