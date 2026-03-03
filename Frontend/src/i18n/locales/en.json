@@ -1972,6 +1972,16 @@
       "weaponPassives": "Weapon passives"
     },
     "combatAdmin": {
+      "encounter": {
+        "select": "Select Encounter",
+        "load": "Load Encounter",
+        "loading": "Loading...",
+        "loaded": "Encounter loaded!",
+        "noEncounters": "No encounters configured",
+        "selected": "Encounter: {name}",
+        "npcs": "{count} NPCs",
+        "rewards": "{count} rewards"
+      },
       "npcAttacks": {
         "comboHammers": "Hammer Combo",
         "comboSlaps": "Slap Combo"
@@ -2171,7 +2181,11 @@
       "level": "Level",
       "claim": "Claim",
       "alreadyOwned": "Already owned",
-      "cannotUse": "Cannot use"
+      "cannotUse": "Cannot use",
+      "upgrade": "↑ Lv. {level}",
+      "maxLevel": "Max Level",
+      "claimed": "Claimed!",
+      "upgraded": "Upgraded to Lv. {level}!"
     },
     "campaignAdminSheets": {
       "players": "Players",

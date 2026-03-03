@@ -156,7 +156,10 @@ class BattleController(
         val opt = battleRepository.findById(id)
         return if (opt.isPresent) {
             val existing = opt.get()
-            val newBattle = existing.copy(battleStatus = updated.battleStatus)
+            val newBattle = existing.copy(
+                    battleStatus = updated.battleStatus,
+                    encounterId = updated.encounterId ?: existing.encounterId
+            )
             battleRepository.save(newBattle)
 
             // Incrementar battle_count dos pictos quando a batalha termina

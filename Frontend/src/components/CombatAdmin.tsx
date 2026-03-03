@@ -1,7 +1,8 @@
 import React from "react";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBattle"
-import { APIEncounter } from "../api/APIEncounter"
+import { APIEncounter, type EncounterResponse } from "../api/APIEncounter"
+import { APIPicto } from "../api/APIPicto"
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt } from "react-icons/fa";
@@ -12,7 +13,7 @@ import { getAbilityModifier } from "../utils/AttackCalculator"
 import { getElementName, ELEMENT_EMOTE } from "../utils/ElementUtils"
 import { dispatchRoll } from "../utils/rollDispatcher"
 import { diceTotal } from "../utils/DiceCalculator"
-import { calculateMaxHP, calculateMaxMP, calculateInitialMP } from "../utils/PlayerCalculator"
+import { calculateMaxHP, calculateMaxMP, calculateInitialMP, calculateArmorClass } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils"
 import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
@@ -257,6 +258,10 @@ export default function CombatAdmin({
     const [effectsModalStatuses, setEffectsModalStatuses] = useState<StatusResponse[]>([]);
     const [expandedAdminStatus, setExpandedAdminStatus] = useState<string | null>(null);
     const [expandedNpcRowId, setExpandedNpcRowId] = useState<number | null>(null);
+    const [encounters, setEncounters] = useState<EncounterResponse[]>([]);
+    const [selectedEncounterId, setSelectedEncounterId] = useState<number | null>(null);
+    const [loadingEncounter, setLoadingEncounter] = useState(false);
+    const [localPlayers, setLocalPlayers] = useState(players);
 
     const lastReloadTimeRef = useRef<number>(0)
     const isReloadingRef = useRef<boolean>(false)
@@ -456,6 +461,23 @@ export default function CombatAdmin({
             console.error("Error updating Lune stains:", error);
         }
     }, [luneStains, editingLuneCharacterId, reloadBattleDetails]);
+
+    // Carregar encontros da campanha
+    useEffect(() => {
+        APIEncounter.listByCampaign(campaignInfo.id).then(setEncounters).catch(() => {});
+    }, [campaignInfo.id]);
+
+    // Sync localPlayers com prop players
+    useEffect(() => {
+        setLocalPlayers(players);
+    }, [players]);
+
+    // Se a batalha já tem encounterId (recarregamento), restaurar seleção
+    useEffect(() => {
+        if (battleDetails?.encounterId && !selectedEncounterId) {
+            setSelectedEncounterId(battleDetails.encounterId);
+        }
+    }, [battleDetails?.encounterId]);
 
     useEffect(() => {
         reloadBattleDetails()
@@ -714,6 +736,59 @@ export default function CombatAdmin({
             await reloadBattleDetails(true)
         } catch (error) {
             console.error("Erro ao remover personagem:", error)
+        }
+    }
+
+    async function handleLoadEncounter(encounterId: number) {
+        if (!battleId) return;
+        setLoadingEncounter(true);
+        try {
+            const encounter = await APIEncounter.getById(encounterId);
+
+            // Atualizar a batalha com o encounterId
+            await APIBattle.update(battleId, { battleStatus: battleStatus, encounterId });
+
+            // Limpar equipe B antes de adicionar os NPCs do encontro
+            for (const member of teamB) {
+                if (member.rowId) {
+                    await APIBattle.removeCharacter(member.rowId);
+                }
+            }
+
+            // Para cada NPC no encontro, adicionar diretamente à equipe B
+            for (const encounterNpc of encounter.npcs) {
+                const npcInfo = getNpcById(encounterNpc.npcId);
+                if (!npcInfo) continue;
+
+                for (let i = 0; i < encounterNpc.quantity; i++) {
+                    const initiative: AddBattleCharacterInitiativeData = {
+                        initiativeValue: randomizeNpcInitiativeTotal(npcInfo),
+                        hability: Math.floor((npcInfo.dexterity - 10) / 2),
+                        playFirst: npcInfo.playFirst ?? false
+                    };
+
+                    await APIBattle.addCharacter({
+                        battleId: battleId,
+                        externalId: npcInfo.id,
+                        characterName: npcInfo.name,
+                        characterType: "npc",
+                        team: "B",
+                        healthPoints: getNPCMaxHealth(npcInfo),
+                        maxHealthPoints: getNPCMaxHealth(npcInfo),
+                        initiative,
+                        canRollInitiative: false
+                    });
+                }
+            }
+
+            setSelectedEncounterId(encounterId);
+            await reloadBattleDetails(true);
+            showToast(t("combatAdmin.encounter.loaded"));
+        } catch (error) {
+            console.error("Erro ao carregar encontro:", error);
+            showToast("Erro ao carregar encontro");
+        } finally {
+            setLoadingEncounter(false);
         }
     }
 
@@ -1495,12 +1570,20 @@ export default function CombatAdmin({
                                             </span>
                                             <div className="flex-1 basis-0" />
                                             {!isRowSelectable && (
-                                                <button
-                                                    className="btn btn-xs btn-error shrink-0"
-                                                    onClick={(e) => { e.stopPropagation(); handleRemove(m.rowId!); }}
-                                                >
-                                                    Remover
-                                                </button>
+                                                <>
+                                                    <button
+                                                        className="btn btn-xs btn-outline btn-info shrink-0"
+                                                        onClick={(e) => { e.stopPropagation(); setEffectsModalCharId(m.rowId!); setEffectsModalStatuses(m.status ?? []); }}
+                                                    >
+                                                        Condições
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-xs btn-error shrink-0"
+                                                        onClick={(e) => { e.stopPropagation(); handleRemove(m.rowId!); }}
+                                                    >
+                                                        Remover
+                                                    </button>
+                                                </>
                                             )}
                                         </div>
 
@@ -1521,11 +1604,21 @@ export default function CombatAdmin({
                                             >
                                                 <FaEdit size={10} />
                                             </button>
-                                            {m.type === "npc" && (() => {
-                                                const npcAc = getNpcById(m.characterId ?? "");
-                                                if (!npcAc) return null;
-                                                const dexMod = getAbilityModifier(npcAc.dexterity);
-                                                const ac = npcAc.armorClass ?? (10 + dexMod);
+                                            {(() => {
+                                                let ac: number | undefined;
+                                                if (m.type === "npc") {
+                                                    const npcData = getNpcById(m.characterId ?? "");
+                                                    if (npcData) {
+                                                        const dexMod = getAbilityModifier(npcData.dexterity);
+                                                        ac = npcData.armorClass ?? (10 + dexMod);
+                                                    }
+                                                } else {
+                                                    const playerData = players.find(p => p.playerSheet?.characterId === m.characterId);
+                                                    if (playerData) {
+                                                        ac = calculateArmorClass(playerData, loadWeaponInfo(playerData));
+                                                    }
+                                                }
+                                                if (ac == null) return null;
                                                 return (
                                                     <span className="badge badge-sm badge-outline font-mono shrink-0 ml-1" title={t("combatAdmin.npcDetails.armorClass")}>
                                                         {t("combatAdmin.npcDetails.armorClass")} {ac}
@@ -1599,7 +1692,8 @@ export default function CombatAdmin({
                                         {renderCharacterPanel(m)}
 
                                         {/* NPC Stat Block colapsável */}
-                                        {expandedNpcRowId === m.rowId && m.type === "npc" && (() => {
+                                        {m.type === "npc" && (() => {
+                                            const isExpanded = expandedNpcRowId === m.rowId;
                                             const npc = getNpcById(m.characterId ?? "");
                                             if (!npc) return null;
                                             const strMod = getAbilityModifier(npc.strength);
@@ -1657,6 +1751,11 @@ export default function CombatAdmin({
                                             const hasProperties = npc.isFlying || npc.playFirst || npc.freeShotWeakPoints || npc.initiativeBonus || npc.maxLifeBonus;
 
                                             return (
+                                                <div
+                                                    className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+                                                    style={{ gridTemplateRows: isExpanded ? "1fr" : "0fr" }}
+                                                >
+                                                <div className="overflow-hidden">
                                                 <div className="bg-base-300/50 rounded-lg p-3 space-y-3 text-sm" onClick={(e) => e.stopPropagation()}>
                                                     {/* Ability Scores — 3 colunas, 2 linhas */}
                                                     <div className="grid grid-cols-3 gap-2 text-center">
@@ -1756,6 +1855,8 @@ export default function CombatAdmin({
                                                             )}
                                                         </div>
                                                     )}
+                                                </div>
+                                                </div>
                                                 </div>
                                             );
                                         })()}
@@ -2278,6 +2379,36 @@ export default function CombatAdmin({
                         </div>
                     </div>
 
+                    {/* Seleção de Encontro (apenas durante setup) */}
+                    {battleStatus === 'starting' && encounters.length > 0 && (
+                        <div className="card bg-base-200 shadow-inner">
+                            <div className="p-4 flex items-center gap-3">
+                                <span className="text-sm font-semibold shrink-0">{t("combatAdmin.encounter.select")}</span>
+                                <select
+                                    className="select select-bordered select-sm flex-1 min-w-[200px]"
+                                    value={selectedEncounterId ?? ""}
+                                    disabled={loadingEncounter}
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        if (val) handleLoadEncounter(Number(val));
+                                    }}
+                                >
+                                    <option value="" disabled>—</option>
+                                    {encounters.map(enc => {
+                                        const npcCount = enc.npcs.reduce((sum, n) => sum + n.quantity, 0);
+                                        const rewardCount = enc.rewards.length;
+                                        return (
+                                            <option key={enc.id} value={enc.id}>
+                                                {enc.name} ({npcCount} NPCs, {rewardCount} recompensas)
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                                {loadingEncounter && <span className="loading loading-spinner loading-sm" />}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Mostrar recompensas no lugar da barra de turnos se a batalha terminou */}
                     {battleStatus === 'finished' && battleRewards.length > 0 ? (
                         <div className="card bg-base-200 p-6">
@@ -2369,60 +2500,135 @@ export default function CombatAdmin({
                                                 </div>
                                             </div>
 
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-wrap items-center gap-2">
                                                 <span className="text-sm font-medium opacity-70">Dar recompensa para:</span>
-                                                {players.map(player => {
+                                                {localPlayers.map(player => {
                                                     const rawCharacterName = player.playerSheet?.characterId || "?";
-                                                    // Capitalizar primeira letra
                                                     const characterName = rawCharacterName.charAt(0).toUpperCase() + rawCharacterName.slice(1);
                                                     const playerName = player.playerSheet?.name || "?";
 
-                                                    // Encontrar o battleID do personagem
                                                     const battleChar = battleDetails?.characters.find(
                                                         ch => ch.type === "player" && ch.id === String(player.id)
                                                     );
                                                     const battleID = battleChar?.battleID;
 
-                                                    const buttonLabel = battleID
+                                                    const baseLabel = battleID
                                                         ? `#${displayIndex.get(battleID) ?? "?"} ${characterName} (${playerName})`
                                                         : `${characterName} (${playerName})`;
 
-                                                    // Check if player already has this item (case-insensitive comparison)
-                                                    const playerAlreadyHasItem = isWeapon
-                                                        ? player.weapons?.some(w => w.id.toLowerCase() === kebabId.toLowerCase())
-                                                        : player.pictos?.some(p => p.pictoId.toLowerCase() === kebabId.toLowerCase());
+                                                    if (isWeapon) {
+                                                        // Arma: manter lógica original (desabilitado se já possui)
+                                                        const alreadyHas = player.weapons?.some(w => w.id.toLowerCase() === kebabId.toLowerCase());
+                                                        const canUse = canCharacterUseWeapon(player.playerSheet?.characterId, kebabId);
+                                                        const isDisabled = alreadyHas || !canUse;
+                                                        const tooltipText = alreadyHas ? t("rewards.alreadyOwned") : !canUse ? t("rewards.cannotUse") : undefined;
 
-                                                    // Check if character can use this weapon
-                                                    const canUseWeapon = !isWeapon || canCharacterUseWeapon(player.playerSheet?.characterId, kebabId);
-
-                                                    // Determine if button should be disabled
-                                                    const isDisabled = playerAlreadyHasItem || !canUseWeapon;
-
-                                                    // Determine tooltip
-                                                    let tooltipText: string | undefined;
-                                                    if (playerAlreadyHasItem) {
-                                                        tooltipText = t("rewards.alreadyOwned");
-                                                    } else if (!canUseWeapon) {
-                                                        tooltipText = t("rewards.cannotUse");
+                                                        return (
+                                                            <button
+                                                                key={player.id}
+                                                                onClick={async () => {
+                                                                    try {
+                                                                        await APIRewards.claimReward(player.id, reward);
+                                                                        showToast(`${displayName} ${t("rewards.level")} ${reward.level} → ${characterName}!`);
+                                                                    } catch (error) {
+                                                                        console.error("Erro ao reivindicar recompensa:", error);
+                                                                        showToast(t("combatAdmin.toasts.errorClaimingReward"));
+                                                                    }
+                                                                }}
+                                                                className={`btn btn-sm ${isDisabled ? 'btn-disabled' : 'btn-success'}`}
+                                                                disabled={isDisabled}
+                                                                title={tooltipText}
+                                                            >
+                                                                {baseLabel}
+                                                            </button>
+                                                        );
                                                     }
 
+                                                    // Picto: lógica de upgrade inteligente
+                                                    const existingPicto = player.pictos?.find(p => p.pictoId.toLowerCase() === kebabId.toLowerCase());
+
+                                                    if (!existingPicto) {
+                                                        // Novo picto → botão "Claim"
+                                                        return (
+                                                            <button
+                                                                key={player.id}
+                                                                onClick={async () => {
+                                                                    try {
+                                                                        await APIRewards.claimReward(player.id, reward);
+                                                                        // Atualizar localPlayers para refletir o novo picto
+                                                                        setLocalPlayers(prev => prev.map(p =>
+                                                                            p.id === player.id
+                                                                                ? {
+                                                                                    ...p,
+                                                                                    pictos: [...(p.pictos ?? []), {
+                                                                                        id: Date.now(), // ID temporário
+                                                                                        playerId: player.id,
+                                                                                        pictoId: kebabId.toLowerCase(),
+                                                                                        level: reward.level,
+                                                                                        slot: null
+                                                                                    }]
+                                                                                }
+                                                                                : p
+                                                                        ));
+                                                                        showToast(`${displayName} ${t("rewards.level")} ${reward.level} → ${characterName}!`);
+                                                                    } catch (error) {
+                                                                        console.error("Erro ao reivindicar recompensa:", error);
+                                                                        showToast(t("combatAdmin.toasts.errorClaimingReward"));
+                                                                    }
+                                                                }}
+                                                                className="btn btn-sm btn-success"
+                                                            >
+                                                                {baseLabel}
+                                                            </button>
+                                                        );
+                                                    }
+
+                                                    const currentLevel = existingPicto.level ?? 1;
+
+                                                    if (currentLevel >= 4) {
+                                                        // Nível máximo → botão desabilitado
+                                                        return (
+                                                            <button
+                                                                key={player.id}
+                                                                className="btn btn-sm btn-disabled"
+                                                                disabled
+                                                                title={t("rewards.maxLevel")}
+                                                            >
+                                                                {baseLabel} - {t("rewards.maxLevel")}
+                                                            </button>
+                                                        );
+                                                    }
+
+                                                    // Upgrade → botão "↑ Nv. X+1"
+                                                    const nextLevel = currentLevel + 1;
                                                     return (
                                                         <button
                                                             key={player.id}
                                                             onClick={async () => {
                                                                 try {
-                                                                    await APIRewards.claimReward(player.id, reward);
-                                                                    showToast(`${displayName} ${t("rewards.level")} ${reward.level} reivindicado por ${characterName}!`);
+                                                                    await APIPicto.updatePlayerPicto(existingPicto.id, { level: nextLevel });
+                                                                    // Atualizar localPlayers para refletir o novo nível
+                                                                    setLocalPlayers(prev => prev.map(p =>
+                                                                        p.id === player.id
+                                                                            ? {
+                                                                                ...p,
+                                                                                pictos: p.pictos?.map(pic =>
+                                                                                    pic.id === existingPicto.id
+                                                                                        ? { ...pic, level: nextLevel }
+                                                                                        : pic
+                                                                                )
+                                                                            }
+                                                                            : p
+                                                                    ));
+                                                                    showToast(`${displayName} ${t("rewards.upgraded", { level: nextLevel })} → ${characterName}!`);
                                                                 } catch (error) {
-                                                                    console.error("Erro ao reivindicar recompensa:", error);
+                                                                    console.error("Erro ao fazer upgrade:", error);
                                                                     showToast(t("combatAdmin.toasts.errorClaimingReward"));
                                                                 }
                                                             }}
-                                                            className={`btn btn-sm ${isDisabled ? 'btn-disabled' : 'btn-success'}`}
-                                                            disabled={isDisabled}
-                                                            title={tooltipText}
+                                                            className="btn btn-sm btn-info"
                                                         >
-                                                            {buttonLabel}
+                                                            {baseLabel} - {t("rewards.upgrade", { level: nextLevel })}
                                                         </button>
                                                     );
                                                 })}

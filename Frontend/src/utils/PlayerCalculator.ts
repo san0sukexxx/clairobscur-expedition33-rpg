@@ -7,7 +7,7 @@ import {
     countCriticalRolls
 } from "./DiceCalculator";
 import { hasStatus } from "./NpcCalculator";
-import { calculateWeaponVitalityBonus } from "./WeaponCalculator";
+import { calculateWeaponVitalityBonus, calculateWeaponDefenseBonus, calculateWeaponDexterityBonus } from "./WeaponCalculator";
 import { getPlayerCharacter } from "./CharacterUtils";
 import { calculatePictoHealth, calculatePictoSpeed, calculatePictoDefense, calculatePictoAbility, getPictoByName } from "./PictoUtils";
 
@@ -102,6 +102,13 @@ const HIT_DIE_BY_CHARACTER: Record<string, number> = {
 
 export function getCharacterHitDie(characterId: string | undefined): number {
     return HIT_DIE_BY_CHARACTER[characterId?.toLowerCase() ?? ""] ?? 8;
+}
+
+export function calculateArmorClass(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {
+    const baseDex = player?.playerSheet?.abilityScores?.dexterity ?? 10;
+    const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
+    const dexMod = Math.floor((effectiveDex - 10) / 2);
+    return 10 + dexMod + calculateWeaponDefenseBonus(weaponInfo) + playerPictosTotalDefense(player);
 }
 
 export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {

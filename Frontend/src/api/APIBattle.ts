@@ -24,6 +24,7 @@ export interface CreateBattleInput {
 
 export interface UpdateBattleInput {
     battleStatus: string
+    encounterId?: number
 }
 
 export interface AddBattleCharacterRequest {

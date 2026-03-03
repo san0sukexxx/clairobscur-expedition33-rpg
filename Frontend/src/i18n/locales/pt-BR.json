@@ -1972,6 +1972,16 @@
       "weaponPassives": "Passivas da arma"
     },
     "combatAdmin": {
+      "encounter": {
+        "select": "Selecionar Encontro",
+        "load": "Carregar Encontro",
+        "loading": "Carregando...",
+        "loaded": "Encontro carregado!",
+        "noEncounters": "Nenhum encontro configurado",
+        "selected": "Encontro: {name}",
+        "npcs": "{count} NPCs",
+        "rewards": "{count} recompensas"
+      },
       "npcAttacks": {
         "comboHammers": "Combo Marteladas",
         "comboSlaps": "Combo Tapas"
@@ -2171,7 +2181,11 @@
       "level": "Nível",
       "claim": "Reivindicar",
       "alreadyOwned": "Já possui",
-      "cannotUse": "Não pode usar"
+      "cannotUse": "Não pode usar",
+      "upgrade": "↑ Nv. {level}",
+      "maxLevel": "Nível Máximo",
+      "claimed": "Reivindicado!",
+      "upgraded": "Upgrade para Nv. {level}!"
     },
     "campaignAdminSheets": {
       "players": "Jogadores",

@@ -3,7 +3,7 @@ import { FaDragon, FaPlus, FaTrash, FaEdit, FaArrowLeft, FaMinus } from "react-i
 import { APIEncounter, type EncounterResponse, type EncounterNpcDto, type EncounterRewardDto } from "../api/APIEncounter";
 import { type Campaign } from "../api/APICampaign";
 import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils";
-import { t, getWeaponName, getPictoName } from "../i18n";
+import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds } from "../i18n";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
@@ -64,7 +64,8 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
 
     // Reward form
     const [newRewardType, setNewRewardType] = useState<string>("weapon");
-    const [newRewardItemId, setNewRewardItemId] = useState("");
+    const [rewardSearch, setRewardSearch] = useState("");
+    const [rewardDropdownOpen, setRewardDropdownOpen] = useState(false);
     const [newRewardLevel, setNewRewardLevel] = useState(1);
 
     async function loadEncounters() {
@@ -168,14 +169,14 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     }
 
     // Reward management
-    function addReward() {
-        if (!newRewardItemId.trim()) return;
+    function addReward(itemId: string) {
         setEditRewards([...editRewards, {
             rewardType: newRewardType,
-            itemId: newRewardItemId.trim(),
+            itemId,
             level: newRewardLevel,
         }]);
-        setNewRewardItemId("");
+        setRewardSearch("");
+        setRewardDropdownOpen(false);
         setNewRewardLevel(1);
     }
 
@@ -193,6 +194,17 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
             return matchesName || cr.includes(search);
         });
     }, [npcSearch]);
+
+    const filteredRewardItems = useMemo(() => {
+        const ids = newRewardType === "weapon" ? getAllWeaponIds() : getAllPictoIds();
+        const getName = newRewardType === "weapon" ? getWeaponName : getPictoName;
+        const items = ids.map((id) => ({ id, name: getName(id) }));
+        const search = rewardSearch.toLowerCase();
+        const filtered = search
+            ? items.filter((item) => item.name.toLowerCase().includes(search))
+            : items;
+        return filtered.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+    }, [newRewardType, rewardSearch]);
 
     function getRewardDisplayName(reward: EncounterRewardDto): string {
         if (reward.rewardType === "weapon") {
@@ -256,7 +268,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                         <div className="flex flex-col min-w-0 flex-1">
                                             <span className="font-semibold text-sm truncate">{npc?.name ?? npcEntry.npcId}</span>
                                             <span className="text-xs opacity-60">
-                                                CR {formatCR(calculateNPCDifficulty(npcEntry.npcId))}
+                                                {t("encounters.challengeRating")} {formatCR(calculateNPCDifficulty(npcEntry.npcId))}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-1">
@@ -311,7 +323,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             />
                                             <div className="flex flex-col min-w-0 flex-1">
                                                 <span className="text-sm font-medium truncate">{npc.name}</span>
-                                                <span className="text-xs opacity-60">CR {formatCR(calculateNPCDifficulty(npc.id))}</span>
+                                                <span className="text-xs opacity-60">{t("encounters.challengeRating")} {formatCR(calculateNPCDifficulty(npc.id))}</span>
                                             </div>
                                             <FaPlus className="opacity-40" />
                                         </button>
@@ -339,12 +351,32 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
 
                         <div className="flex flex-col gap-2 mb-3">
                             {editRewards.map((reward, idx) => (
-                                <div key={idx} className="flex items-center gap-3 bg-base-200 rounded-lg p-2">
-                                    <span className="badge badge-sm badge-outline">
+                                <div key={idx} className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-base-200 rounded-lg p-2">
+                                    <span className="badge badge-sm badge-outline shrink-0">
                                         {reward.rewardType === "weapon" ? t("rewards.weapon") : t("rewards.picto")}
                                     </span>
-                                    <span className="text-sm flex-1 truncate">{getRewardDisplayName(reward)}</span>
-                                    <span className="text-xs opacity-60">{t("rewards.level")} {reward.level}</span>
+                                    <span className="text-sm flex-1 basis-0 min-w-[100px] break-words">{getRewardDisplayName(reward)}</span>
+                                    <div className="flex items-center gap-1 shrink-0">
+                                        <span className="text-xs opacity-60">{t("rewards.level")}</span>
+                                        <input
+                                            type="number"
+                                            className="input input-bordered input-xs w-14 text-center"
+                                            value={reward.level || ""}
+                                            min={1}
+                                            onChange={(e) => {
+                                                const raw = e.target.value;
+                                                const level = raw === "" ? 0 : parseInt(raw);
+                                                if (!isNaN(level)) {
+                                                    setEditRewards(editRewards.map((r, i) => i === idx ? { ...r, level } : r));
+                                                }
+                                            }}
+                                            onBlur={() => {
+                                                if (!reward.level) {
+                                                    setEditRewards(editRewards.map((r, i) => i === idx ? { ...r, level: 1 } : r));
+                                                }
+                                            }}
+                                        />
+                                    </div>
                                     <button
                                         className="btn btn-xs btn-error btn-ghost"
                                         onClick={() => removeReward(idx)}
@@ -364,23 +396,11 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                 <select
                                     className="select select-bordered select-sm"
                                     value={newRewardType}
-                                    onChange={(e) => setNewRewardType(e.target.value)}
+                                    onChange={(e) => { setNewRewardType(e.target.value); setRewardSearch(""); setRewardDropdownOpen(false); }}
                                 >
                                     <option value="weapon">{t("rewards.weapon")}</option>
                                     <option value="picto">{t("rewards.picto")}</option>
                                 </select>
-                            </div>
-                            <div className="form-control flex-1 min-w-[120px]">
-                                <label className="label py-0">
-                                    <span className="label-text text-xs">{t("encounters.rewardItem")}</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    className="input input-bordered input-sm"
-                                    value={newRewardItemId}
-                                    onChange={(e) => setNewRewardItemId(e.target.value)}
-                                    placeholder="item-id"
-                                />
                             </div>
                             <div className="form-control w-20">
                                 <label className="label py-0">
@@ -389,20 +409,49 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                 <input
                                     type="number"
                                     className="input input-bordered input-sm"
-                                    value={newRewardLevel}
+                                    value={newRewardLevel || ""}
                                     min={1}
-                                    onChange={(e) => setNewRewardLevel(parseInt(e.target.value) || 1)}
+                                    onChange={(e) => {
+                                        const raw = e.target.value;
+                                        const level = raw === "" ? 0 : parseInt(raw);
+                                        if (!isNaN(level)) setNewRewardLevel(level);
+                                    }}
+                                    onBlur={() => { if (!newRewardLevel) setNewRewardLevel(1); }}
                                 />
                             </div>
-                            <button
-                                className="btn btn-sm btn-outline btn-primary"
-                                onClick={addReward}
-                                disabled={!newRewardItemId.trim()}
-                            >
-                                <FaPlus />
-                                {t("encounters.addReward")}
-                            </button>
                         </div>
+                        <div className="relative mt-2">
+                            <input
+                                type="text"
+                                className="input input-bordered input-sm w-full"
+                                placeholder={t("encounters.rewardItem")}
+                                value={rewardSearch}
+                                onChange={(e) => { setRewardSearch(e.target.value); setRewardDropdownOpen(true); }}
+                                onFocus={() => setRewardDropdownOpen(true)}
+                            />
+                            {rewardDropdownOpen && (
+                                <div className="absolute z-50 mt-1 w-full bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                    {filteredRewardItems.map((item) => (
+                                        <button
+                                            key={item.id}
+                                            className="flex items-center gap-3 w-full px-3 py-2 hover:bg-base-200 text-left"
+                                            onClick={() => addReward(item.id)}
+                                        >
+                                            <span className="text-sm font-medium truncate flex-1">{item.name}</span>
+                                            <FaPlus className="opacity-40" />
+                                        </button>
+                                    ))}
+                                    {filteredRewardItems.length === 0 && (
+                                        <div className="px-3 py-2 text-sm opacity-60">
+                                            {t("encounters.noRewards")}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        {rewardDropdownOpen && (
+                            <div className="fixed inset-0 z-40" onClick={() => setRewardDropdownOpen(false)} />
+                        )}
                     </div>
 
                     {/* Save button */}
