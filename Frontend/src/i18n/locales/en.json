@@ -1746,6 +1746,7 @@
       "use": "Use",
       "enter": "Enter",
       "loading": "Loading...",
+      "all": "All",
       "actions": "Actions",
       "details": "Details",
       "clear": "Clear",
@@ -1980,7 +1981,9 @@
         "noEncounters": "No encounters configured",
         "selected": "Encounter: {name}",
         "npcs": "{count} NPCs",
-        "rewards": "{count} rewards"
+        "rewards": "{count} rewards",
+        "totalCR": "Total CR: {cr}",
+        "filterPlaceholder": "Filter encounters..."
       },
       "npcAttacks": {
         "comboHammers": "Hammer Combo",
@@ -3517,6 +3520,7 @@
     },
     "encounters": {
       "title": "Encounters",
+      "defaultName": "Encounter",
       "create": "Create Encounter",
       "creating": "Creating...",
       "loading": "Loading encounters...",

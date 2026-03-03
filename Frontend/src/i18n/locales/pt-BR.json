@@ -1746,6 +1746,7 @@
       "use": "Usar",
       "enter": "Entrar",
       "loading": "Carregando...",
+      "all": "Todos",
       "actions": "Ações",
       "details": "Detalhes",
       "clear": "Limpar",
@@ -1980,7 +1981,9 @@
         "noEncounters": "Nenhum encontro configurado",
         "selected": "Encontro: {name}",
         "npcs": "{count} NPCs",
-        "rewards": "{count} recompensas"
+        "rewards": "{count} recompensas",
+        "totalCR": "ND Total: {cr}",
+        "filterPlaceholder": "Filtrar encontros..."
       },
       "npcAttacks": {
         "comboHammers": "Combo Marteladas",
@@ -3519,6 +3522,7 @@
     },
     "encounters": {
       "title": "Encontros",
+      "defaultName": "Encontro",
       "create": "Criar Encontro",
       "creating": "Criando...",
       "loading": "Carregando encontros...",

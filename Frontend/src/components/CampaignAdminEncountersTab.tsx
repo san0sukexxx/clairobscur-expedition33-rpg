@@ -3,7 +3,9 @@ import { FaDragon, FaPlus, FaTrash, FaEdit, FaArrowLeft, FaMinus } from "react-i
 import { APIEncounter, type EncounterResponse, type EncounterNpcDto, type EncounterRewardDto } from "../api/APIEncounter";
 import { type Campaign } from "../api/APICampaign";
 import { getAllNPCsSorted, getNpcById } from "../utils/NpcUtils";
+import { CHARACTERS_LIST } from "../utils/CharacterUtils";
 import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds } from "../i18n";
+import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
@@ -66,7 +68,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     const [newRewardType, setNewRewardType] = useState<string>("weapon");
     const [rewardSearch, setRewardSearch] = useState("");
     const [rewardDropdownOpen, setRewardDropdownOpen] = useState(false);
-    const [newRewardLevel, setNewRewardLevel] = useState(1);
+    const [rewardCharFilter, setRewardCharFilter] = useState("");
 
     async function loadEncounters() {
         setLoading(true);
@@ -89,7 +91,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
             setCreating(true);
             const created = await APIEncounter.create({
                 campaignId: campaignInfo.id,
-                name: t("encounters.title") + " " + (encounters.length + 1),
+                name: t("encounters.defaultName") + " " + (encounters.length + 1),
             });
             await loadEncounters();
             startEditing(created);
@@ -173,11 +175,10 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
         setEditRewards([...editRewards, {
             rewardType: newRewardType,
             itemId,
-            level: newRewardLevel,
+            level: 1,
         }]);
         setRewardSearch("");
         setRewardDropdownOpen(false);
-        setNewRewardLevel(1);
     }
 
     function removeReward(index: number) {
@@ -196,7 +197,17 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     }, [npcSearch]);
 
     const filteredRewardItems = useMemo(() => {
-        const ids = newRewardType === "weapon" ? getAllWeaponIds() : getAllPictoIds();
+        let ids: string[];
+        if (newRewardType === "weapon" && rewardCharFilter) {
+            const file = WeaponsDataLoader.fileForCharacter(rewardCharFilter);
+            let weapons = WeaponsDataLoader.getByFile(file);
+            if (rewardCharFilter === "gustave") {
+                weapons = weapons.filter(w => !WeaponsDataLoader.VERSO_EXCLUSIVE_WEAPONS.has(w.name));
+            }
+            ids = weapons.map(w => w.name.toLowerCase());
+        } else {
+            ids = newRewardType === "weapon" ? getAllWeaponIds() : getAllPictoIds();
+        }
         const getName = newRewardType === "weapon" ? getWeaponName : getPictoName;
         const items = ids.map((id) => ({ id, name: getName(id) }));
         const search = rewardSearch.toLowerCase();
@@ -204,7 +215,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
             ? items.filter((item) => item.name.toLowerCase().includes(search))
             : items;
         return filtered.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
-    }, [newRewardType, rewardSearch]);
+    }, [newRewardType, rewardSearch, rewardCharFilter]);
 
     function getRewardDisplayName(reward: EncounterRewardDto): string {
         if (reward.rewardType === "weapon") {
@@ -258,20 +269,20 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                             {editNpcs.map((npcEntry) => {
                                 const npc = getNpcById(npcEntry.npcId);
                                 return (
-                                    <div key={npcEntry.npcId} className="flex items-center gap-3 bg-base-200 rounded-lg p-2">
+                                    <div key={npcEntry.npcId} className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-base-200 rounded-lg p-2">
                                         <img
                                             src={`/enemies/${npcEntry.npcId}.png`}
                                             alt={npc?.name ?? npcEntry.npcId}
-                                            className="w-10 h-10 rounded-full object-cover bg-base-300"
+                                            className="w-10 h-10 rounded-full object-cover bg-base-300 shrink-0"
                                             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                                         />
-                                        <div className="flex flex-col min-w-0 flex-1">
-                                            <span className="font-semibold text-sm truncate">{npc?.name ?? npcEntry.npcId}</span>
+                                        <div className="flex flex-col min-w-0 flex-1 basis-32">
+                                            <span className="font-semibold text-sm">{npc?.name ?? npcEntry.npcId}</span>
                                             <span className="text-xs opacity-60">
                                                 {t("encounters.challengeRating")} {formatCR(calculateNPCDifficulty(npcEntry.npcId))}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex items-center gap-1 ml-auto shrink-0">
                                             <button
                                                 className="btn btn-xs btn-ghost"
                                                 onClick={() => updateNpcQuantity(npcEntry.npcId, -1)}
@@ -285,13 +296,13 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             >
                                                 <FaPlus />
                                             </button>
+                                            <button
+                                                className="btn btn-xs btn-error btn-ghost"
+                                                onClick={() => removeNpc(npcEntry.npcId)}
+                                            >
+                                                <FaTrash />
+                                            </button>
                                         </div>
-                                        <button
-                                            className="btn btn-xs btn-error btn-ghost"
-                                            onClick={() => removeNpc(npcEntry.npcId)}
-                                        >
-                                            <FaTrash />
-                                        </button>
                                     </div>
                                 );
                             })}
@@ -358,24 +369,18 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                     <span className="text-sm flex-1 basis-0 min-w-[100px] break-words">{getRewardDisplayName(reward)}</span>
                                     <div className="flex items-center gap-1 shrink-0">
                                         <span className="text-xs opacity-60">{t("rewards.level")}</span>
-                                        <input
-                                            type="number"
-                                            className="input input-bordered input-xs w-14 text-center"
-                                            value={reward.level || ""}
-                                            min={1}
+                                        <select
+                                            className="select select-bordered select-xs w-14"
+                                            value={reward.level || 1}
                                             onChange={(e) => {
-                                                const raw = e.target.value;
-                                                const level = raw === "" ? 0 : parseInt(raw);
-                                                if (!isNaN(level)) {
-                                                    setEditRewards(editRewards.map((r, i) => i === idx ? { ...r, level } : r));
-                                                }
+                                                setEditRewards(editRewards.map((r, i) => i === idx ? { ...r, level: Number(e.target.value) } : r));
                                             }}
-                                            onBlur={() => {
-                                                if (!reward.level) {
-                                                    setEditRewards(editRewards.map((r, i) => i === idx ? { ...r, level: 1 } : r));
-                                                }
-                                            }}
-                                        />
+                                        >
+                                            <option value={1}>1</option>
+                                            <option value={2}>2</option>
+                                            <option value={3}>3</option>
+                                            <option value={4}>4</option>
+                                        </select>
                                     </div>
                                     <button
                                         className="btn btn-xs btn-error btn-ghost"
@@ -396,29 +401,29 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                 <select
                                     className="select select-bordered select-sm"
                                     value={newRewardType}
-                                    onChange={(e) => { setNewRewardType(e.target.value); setRewardSearch(""); setRewardDropdownOpen(false); }}
+                                    onChange={(e) => { setNewRewardType(e.target.value); setRewardSearch(""); setRewardDropdownOpen(false); setRewardCharFilter(""); }}
                                 >
                                     <option value="weapon">{t("rewards.weapon")}</option>
                                     <option value="picto">{t("rewards.picto")}</option>
                                 </select>
                             </div>
-                            <div className="form-control w-20">
-                                <label className="label py-0">
-                                    <span className="label-text text-xs">{t("encounters.rewardLevel")}</span>
-                                </label>
-                                <input
-                                    type="number"
-                                    className="input input-bordered input-sm"
-                                    value={newRewardLevel || ""}
-                                    min={1}
-                                    onChange={(e) => {
-                                        const raw = e.target.value;
-                                        const level = raw === "" ? 0 : parseInt(raw);
-                                        if (!isNaN(level)) setNewRewardLevel(level);
-                                    }}
-                                    onBlur={() => { if (!newRewardLevel) setNewRewardLevel(1); }}
-                                />
-                            </div>
+                            {newRewardType === "weapon" && (
+                                <div className="form-control">
+                                    <label className="label py-0">
+                                        <span className="label-text text-xs">{t("combatAdmin.labels.character")}</span>
+                                    </label>
+                                    <select
+                                        className="select select-bordered select-sm"
+                                        value={rewardCharFilter}
+                                        onChange={(e) => { setRewardCharFilter(e.target.value); setRewardSearch(""); }}
+                                    >
+                                        <option value="">{t("common.all")}</option>
+                                        {CHARACTERS_LIST.map(c => (
+                                            <option key={c.id} value={c.id}>{c.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
                         </div>
                         <div className="relative mt-2">
                             <input

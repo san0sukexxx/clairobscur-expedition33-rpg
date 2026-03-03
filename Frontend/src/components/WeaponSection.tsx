@@ -9,13 +9,9 @@ import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
 import { calculateMaxHP } from "../utils/PlayerCalculator";
 import type { WeaponInfo } from "../api/ResponseModel";
+import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 
-const VERSO_EXCLUSIVE_WEAPONS = new Set([
-  "Abysseram", "Blodam", "Chevalam", "Confuso", "Contorso", "Corpeso",
-  "Cruleram", "Cultam", "Danseso", "Delaram", "Dreameso", "Dualiso",
-  "Gaultaram", "Glaceso", "Lanceram", "Liteso", "Nosaram", "Sakaram",
-  "Seeram", "Simoso", "Sireso", "Tireso",
-]);
+const VERSO_EXCLUSIVE_WEAPONS = WeaponsDataLoader.VERSO_EXCLUSIVE_WEAPONS;
 
 // Helper to find the correct weapon ID considering character variations
 function getWeaponTranslationId(weaponName: string, weaponList: WeaponDTO[]): string {

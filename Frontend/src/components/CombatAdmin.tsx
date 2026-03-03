@@ -34,76 +34,7 @@ import { APIRewards } from "../api/APIRewards";
 import { PictosList } from "../data/PictosList";
 import { pictoColorHex } from "../utils/PictoUtils";
 
-// Map weapon types to characters that can use them
-const WEAPON_CHARACTER_MAP: Record<string, string[]> = {
-    "sword": ["verso", "gustave"],
-    "lune": ["lune"],
-    "maelle": ["maelle"],
-    "monoco": ["monoco"],
-    "sciel": ["sciel"]
-};
-
-// Swords that Gustave cannot use (they reference Perfection, a Verso-only mechanic)
-const GUSTAVE_EXCLUDED_SWORDS = new Set([
-    "abysseram", "blodam", "chevalam", "confuso", "contorso", "corpeso",
-    "cruleram", "cultam", "danseso", "delaram", "dreameso", "dualiso",
-    "gaultaram", "glaceso", "lanceram", "liteso", "nosaram", "sakaram",
-    "seeram", "simoso", "sireso", "tireso"
-]);
-
-// Determine weapon type from weapon ID
-function getWeaponType(weaponId: string): string | null {
-    const id = weaponId.toLowerCase();
-
-    // Check if it's a sword (verso/gustave weapons)
-    if (id.includes("verso") || id.includes("gustave") ||
-        ["lanceram", "abysseram", "algueron", "angerim", "verleso", "lunerim", "maellum", "noahram", "scieleson"].includes(id)) {
-        return "sword";
-    }
-
-    // Check if it's a Lune weapon
-    if (id.includes("lune") || id.startsWith("baguette-lune")) {
-        return "lune";
-    }
-
-    // Check if it's a Maelle weapon
-    if (id.includes("maelle") || id.startsWith("baguette-maelle")) {
-        return "maelle";
-    }
-
-    // Check if it's a Monoco weapon
-    if (id.includes("monoco")) {
-        return "monoco";
-    }
-
-    // Check if it's a Sciel weapon
-    if (id.includes("sciel")) {
-        return "sciel";
-    }
-
-    return null;
-}
-
-// Check if a character can use a weapon
-function canCharacterUseWeapon(characterId: string | undefined, weaponId: string): boolean {
-    if (!characterId) return false;
-
-    const charId = characterId.toLowerCase();
-    const wId = weaponId.toLowerCase();
-
-    // Gustave can't use swords that reference Perfection (Verso-only mechanic)
-    if (charId.includes("gustave") && GUSTAVE_EXCLUDED_SWORDS.has(wId)) {
-        return false;
-    }
-
-    const weaponType = getWeaponType(weaponId);
-    if (!weaponType) return true; // Unknown weapon type, allow it
-
-    const allowedCharacters = WEAPON_CHARACTER_MAP[weaponType];
-    if (!allowedCharacters) return true;
-
-    return allowedCharacters.some(char => charId.includes(char));
-}
+const canCharacterUseWeapon = WeaponsDataLoader.canCharacterUseWeapon.bind(WeaponsDataLoader);
 
 export interface CombatEntity {
     rowId?: number
@@ -261,6 +192,8 @@ export default function CombatAdmin({
     const [encounters, setEncounters] = useState<EncounterResponse[]>([]);
     const [selectedEncounterId, setSelectedEncounterId] = useState<number | null>(null);
     const [loadingEncounter, setLoadingEncounter] = useState(false);
+    const [showEncounterModal, setShowEncounterModal] = useState(false);
+    const [encounterFilter, setEncounterFilter] = useState("");
     const [localPlayers, setLocalPlayers] = useState(players);
 
     const lastReloadTimeRef = useRef<number>(0)
@@ -1526,7 +1459,7 @@ export default function CombatAdmin({
                     {members.length === 0 ? (
                         <div className="text-sm opacity-60">{t("combatAdmin.labels.noTeamMembers")}</div>
                     ) : (
-                        <div className="flex flex-col divide-y divide-base-300 min-w-0 overflow-hidden">
+                        <div className="flex flex-col divide-y divide-base-content/20 min-w-0 overflow-hidden">
                             {members.map((m) => {
                                 const isRowSelectable = isSelectingTarget && m.currentHp > 0
                                 const entityAttacks =
@@ -2381,32 +2314,107 @@ export default function CombatAdmin({
 
                     {/* Seleção de Encontro (apenas durante setup) */}
                     {battleStatus === 'starting' && encounters.length > 0 && (
-                        <div className="card bg-base-200 shadow-inner">
-                            <div className="p-4 flex items-center gap-3">
-                                <span className="text-sm font-semibold shrink-0">{t("combatAdmin.encounter.select")}</span>
-                                <select
-                                    className="select select-bordered select-sm flex-1 min-w-[200px]"
-                                    value={selectedEncounterId ?? ""}
-                                    disabled={loadingEncounter}
-                                    onChange={(e) => {
-                                        const val = e.target.value;
-                                        if (val) handleLoadEncounter(Number(val));
-                                    }}
-                                >
-                                    <option value="" disabled>—</option>
-                                    {encounters.map(enc => {
-                                        const npcCount = enc.npcs.reduce((sum, n) => sum + n.quantity, 0);
-                                        const rewardCount = enc.rewards.length;
-                                        return (
-                                            <option key={enc.id} value={enc.id}>
-                                                {enc.name} ({npcCount} NPCs, {rewardCount} recompensas)
-                                            </option>
-                                        );
-                                    })}
-                                </select>
-                                {loadingEncounter && <span className="loading loading-spinner loading-sm" />}
+                        <>
+                            <div className="card bg-base-200 shadow-inner">
+                                <div className="p-4 flex items-center gap-3">
+                                    <button
+                                        className="btn btn-sm btn-outline flex-1"
+                                        disabled={loadingEncounter}
+                                        onClick={() => { setEncounterFilter(""); setShowEncounterModal(true); }}
+                                    >
+                                        {loadingEncounter ? (
+                                            <span className="loading loading-spinner loading-sm" />
+                                        ) : selectedEncounterId ? (
+                                            t("combatAdmin.encounter.selected", { name: encounters.find(e => e.id === selectedEncounterId)?.name ?? "" })
+                                        ) : (
+                                            t("combatAdmin.encounter.select")
+                                        )}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+
+                            {/* Modal de seleção de encontro */}
+                            {showEncounterModal && (
+                                <dialog className="modal modal-open">
+                                    <div className="modal-box w-[95vw] max-w-2xl max-h-[85vh] flex flex-col p-4 sm:p-6">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <h3 className="font-bold text-lg">{t("combatAdmin.encounter.select")}</h3>
+                                            <button className="btn btn-sm btn-ghost" onClick={() => setShowEncounterModal(false)}>✕</button>
+                                        </div>
+
+                                        <input
+                                            type="text"
+                                            className="input input-bordered input-sm w-full mb-3"
+                                            placeholder={t("combatAdmin.encounter.filterPlaceholder")}
+                                            value={encounterFilter}
+                                            onChange={(e) => setEncounterFilter(e.target.value)}
+                                            autoFocus
+                                        />
+
+                                        <div className="overflow-y-auto flex-1 space-y-2 -mx-1 px-1 py-1">
+                                            {encounters
+                                                .filter(enc => !encounterFilter || enc.name.toLowerCase().includes(encounterFilter.toLowerCase()))
+                                                .map(enc => {
+                                                    const npcCount = enc.npcs.reduce((sum, n) => sum + n.quantity, 0);
+                                                    const rewardCount = enc.rewards.length;
+                                                    const totalCR = enc.npcs.reduce((sum, n) => sum + calculateNPCDifficulty(n.npcId) * n.quantity, 0);
+                                                    const isSelected = enc.id === selectedEncounterId;
+
+                                                    return (
+                                                        <div
+                                                            key={enc.id}
+                                                            className={`card bg-base-200 cursor-pointer hover:bg-base-300 transition-colors ${isSelected ? 'ring-2 ring-primary' : ''}`}
+                                                            onClick={() => {
+                                                                handleLoadEncounter(enc.id);
+                                                                setShowEncounterModal(false);
+                                                            }}
+                                                        >
+                                                            <div className="p-3">
+                                                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
+                                                                    <span className="font-bold">{enc.name}</span>
+                                                                    <div className="flex flex-wrap gap-1 text-xs">
+                                                                        <span className="badge badge-sm badge-ghost">{t("combatAdmin.encounter.npcs", { count: npcCount })}</span>
+                                                                        <span className="badge badge-sm badge-ghost">{t("combatAdmin.encounter.rewards", { count: rewardCount })}</span>
+                                                                        <span className="badge badge-sm badge-warning">{t("combatAdmin.encounter.totalCR", { cr: formatCR(totalCR) })}</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                {enc.npcs.length > 0 && (
+                                                                    <div className="flex flex-wrap gap-1.5">
+                                                                        {enc.npcs.map((npc, idx) => {
+                                                                            const npcInfo = getNpcById(npc.npcId);
+                                                                            return (
+                                                                                <div key={idx} className="flex items-center gap-1 bg-base-300 rounded-lg px-2 py-1">
+                                                                                    <div className="avatar">
+                                                                                        <div className="w-6 h-6 rounded">
+                                                                                            <img
+                                                                                                src={`/enemies/${npc.npcId}.png`}
+                                                                                                alt={npcInfo?.name ?? npc.npcId}
+                                                                                                onError={(e) => { e.currentTarget.src = "/placeholder-item.png"; }}
+                                                                                            />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <span className="text-xs">{npcInfo?.name ?? npc.npcId}</span>
+                                                                                    {npc.quantity > 1 && (
+                                                                                        <span className="badge badge-xs badge-primary">×{npc.quantity}</span>
+                                                                                    )}
+                                                                                </div>
+                                                                            );
+                                                                        })}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                        </div>
+                                    </div>
+                                    <form method="dialog" className="modal-backdrop">
+                                        <button onClick={() => setShowEncounterModal(false)}>close</button>
+                                    </form>
+                                </dialog>
+                            )}
+                        </>
                     )}
 
                     {/* Mostrar recompensas no lugar da barra de turnos se a batalha terminou */}
@@ -2444,64 +2452,65 @@ export default function CombatAdmin({
                                     return (
                                         <div
                                             key={index}
-                                            className="flex items-center gap-4 bg-base-300 p-4 rounded-lg"
+                                            className="flex flex-col gap-3 bg-base-300 p-4 rounded-lg"
                                         >
-                                            <div className="avatar">
-                                                <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-base-200">
-                                                    {isWeapon ? (
-                                                        <img
-                                                            src={imagePath}
-                                                            alt={displayName}
-                                                            className="w-full h-full object-contain"
-                                                            onError={(e) => {
-                                                                e.currentTarget.src = "/placeholder-item.png";
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <div
-                                                            className="w-12 h-12"
-                                                            style={{
-                                                                backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
-                                                                WebkitMaskImage: `url("${imagePath}")`,
-                                                                maskImage: `url("${imagePath}")`,
-                                                                WebkitMaskRepeat: "no-repeat",
-                                                                maskRepeat: "no-repeat",
-                                                                WebkitMaskSize: "contain",
-                                                                maskSize: "contain",
-                                                                WebkitMaskPosition: "center",
-                                                                maskPosition: "center",
-                                                            }}
-                                                        />
-                                                    )}
+                                            <div className="flex items-center gap-4">
+                                                <div className="avatar">
+                                                    <div className="w-16 h-16 rounded-lg flex items-center justify-center bg-base-200">
+                                                        {isWeapon ? (
+                                                            <img
+                                                                src={imagePath}
+                                                                alt={displayName}
+                                                                className="w-full h-full object-contain"
+                                                                onError={(e) => {
+                                                                    e.currentTarget.src = "/placeholder-item.png";
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <div
+                                                                className="w-12 h-12"
+                                                                style={{
+                                                                    backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
+                                                                    WebkitMaskImage: `url("${imagePath}")`,
+                                                                    maskImage: `url("${imagePath}")`,
+                                                                    WebkitMaskRepeat: "no-repeat",
+                                                                    maskRepeat: "no-repeat",
+                                                                    WebkitMaskSize: "contain",
+                                                                    maskSize: "contain",
+                                                                    WebkitMaskPosition: "center",
+                                                                    maskPosition: "center",
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex-1">
+                                                    <h3 className="font-bold text-lg">{displayName}</h3>
+                                                    <div className="flex items-center gap-2 text-sm opacity-70">
+                                                        {isWeapon ? (
+                                                            <span className="badge badge-warning">
+                                                                {t("rewards.weapon")}
+                                                            </span>
+                                                        ) : (
+                                                            <span
+                                                                className="badge"
+                                                                style={{
+                                                                    backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
+                                                                    color: "black"
+                                                                }}
+                                                            >
+                                                                {t("rewards.picto")}
+                                                            </span>
+                                                        )}
+                                                        <span className="badge badge-outline">
+                                                            {t("rewards.level")} {reward.level}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <div className="flex-1">
-                                                <h3 className="font-bold text-lg">{displayName}</h3>
-                                                <div className="flex items-center gap-2 text-sm opacity-70">
-                                                    {isWeapon ? (
-                                                        <span className="badge badge-warning">
-                                                            {t("rewards.weapon")}
-                                                        </span>
-                                                    ) : (
-                                                        <span
-                                                            className="badge"
-                                                            style={{
-                                                                backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
-                                                                color: "black"
-                                                            }}
-                                                        >
-                                                            {t("rewards.picto")}
-                                                        </span>
-                                                    )}
-                                                    <span className="badge badge-outline">
-                                                        {t("rewards.level")} {reward.level}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex flex-wrap items-center gap-2">
-                                                <span className="text-sm font-medium opacity-70">Dar recompensa para:</span>
+                                            <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full">
                                                 {localPlayers.map(player => {
                                                     const rawCharacterName = player.playerSheet?.characterId || "?";
                                                     const characterName = rawCharacterName.charAt(0).toUpperCase() + rawCharacterName.slice(1);
@@ -2535,7 +2544,7 @@ export default function CombatAdmin({
                                                                         showToast(t("combatAdmin.toasts.errorClaimingReward"));
                                                                     }
                                                                 }}
-                                                                className={`btn btn-sm ${isDisabled ? 'btn-disabled' : 'btn-success'}`}
+                                                                className={`btn btn-sm w-full sm:w-auto ${isDisabled ? 'btn-disabled' : 'btn-success'}`}
                                                                 disabled={isDisabled}
                                                                 title={tooltipText}
                                                             >
@@ -2576,7 +2585,7 @@ export default function CombatAdmin({
                                                                         showToast(t("combatAdmin.toasts.errorClaimingReward"));
                                                                     }
                                                                 }}
-                                                                className="btn btn-sm btn-success"
+                                                                className="btn btn-sm btn-success w-full sm:w-auto"
                                                             >
                                                                 {baseLabel}
                                                             </button>
@@ -2590,7 +2599,7 @@ export default function CombatAdmin({
                                                         return (
                                                             <button
                                                                 key={player.id}
-                                                                className="btn btn-sm btn-disabled"
+                                                                className="btn btn-sm btn-disabled w-full sm:w-auto"
                                                                 disabled
                                                                 title={t("rewards.maxLevel")}
                                                             >
@@ -2626,7 +2635,7 @@ export default function CombatAdmin({
                                                                     showToast(t("combatAdmin.toasts.errorClaimingReward"));
                                                                 }
                                                             }}
-                                                            className="btn btn-sm btn-info"
+                                                            className="btn btn-sm btn-info w-full sm:w-auto"
                                                         >
                                                             {baseLabel} - {t("rewards.upgrade", { level: nextLevel })}
                                                         </button>

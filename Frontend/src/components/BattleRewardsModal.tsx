@@ -2,77 +2,9 @@ import React, { useState } from "react";
 import type { BattleReward } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { t, getWeaponName, getPictoName, getPictoEnglishName, getWeaponEnglishName, toKebabCase } from "../i18n";
+import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 
-// Map weapon types to characters that can use them
-const WEAPON_CHARACTER_MAP: Record<string, string[]> = {
-    "sword": ["verso", "gustave"],
-    "lune": ["lune"],
-    "maelle": ["maelle"],
-    "monoco": ["monoco"],
-    "sciel": ["sciel"]
-};
-
-// Swords that Gustave cannot use (they reference Perfection, a Verso-only mechanic)
-const GUSTAVE_EXCLUDED_SWORDS = new Set([
-    "abysseram", "blodam", "chevalam", "confuso", "contorso", "corpeso",
-    "cruleram", "cultam", "danseso", "delaram", "dreameso", "dualiso",
-    "gaultaram", "glaceso", "lanceram", "liteso", "nosaram", "sakaram",
-    "seeram", "simoso", "sireso", "tireso"
-]);
-
-// Determine weapon type from weapon ID
-function getWeaponType(weaponId: string): string | null {
-    const id = weaponId.toLowerCase();
-
-    // Check if it's a sword (verso/gustave weapons)
-    if (id.includes("verso") || id.includes("gustave") ||
-        ["lanceram", "abysseram", "algueron", "angerim", "verleso", "lunerim", "maellum", "noahram", "scieleson"].includes(id)) {
-        return "sword";
-    }
-
-    // Check if it's a Lune weapon
-    if (id.includes("lune") || id.startsWith("baguette-lune")) {
-        return "lune";
-    }
-
-    // Check if it's a Maelle weapon
-    if (id.includes("maelle") || id.startsWith("baguette-maelle")) {
-        return "maelle";
-    }
-
-    // Check if it's a Monoco weapon
-    if (id.includes("monoco")) {
-        return "monoco";
-    }
-
-    // Check if it's a Sciel weapon
-    if (id.includes("sciel")) {
-        return "sciel";
-    }
-
-    return null;
-}
-
-// Check if a character can use a weapon
-function canCharacterUseWeapon(characterId: string | undefined, weaponId: string): boolean {
-    if (!characterId) return false;
-
-    const charId = characterId.toLowerCase();
-    const wId = weaponId.toLowerCase();
-
-    // Gustave can't use swords that reference Perfection (Verso-only mechanic)
-    if (charId.includes("gustave") && GUSTAVE_EXCLUDED_SWORDS.has(wId)) {
-        return false;
-    }
-
-    const weaponType = getWeaponType(weaponId);
-    if (!weaponType) return true; // Unknown weapon type, allow it
-
-    const allowedCharacters = WEAPON_CHARACTER_MAP[weaponType];
-    if (!allowedCharacters) return true;
-
-    return allowedCharacters.some(char => charId.includes(char));
-}
+const canCharacterUseWeapon = WeaponsDataLoader.canCharacterUseWeapon.bind(WeaponsDataLoader);
 
 interface BattleRewardsModalProps {
     rewards: BattleReward[];
