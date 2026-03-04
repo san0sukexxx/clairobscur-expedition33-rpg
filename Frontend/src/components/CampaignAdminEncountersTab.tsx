@@ -7,44 +7,10 @@ import { CHARACTERS_LIST } from "../utils/CharacterUtils";
 import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds, getLocationName } from "../i18n";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAllLocationsSorted } from "../utils/LocationUtils";
+import { calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
-}
-
-function calculateNPCDifficulty(npcId: string): number {
-    const npc = getNpcById(npcId);
-    if (!npc) return 0;
-
-    const strMod = Math.floor((npc.strength - 10) / 2);
-    const dexMod = Math.floor((npc.dexterity - 10) / 2);
-    const conMod = Math.floor((npc.constitution - 10) / 2);
-    let score = strMod + dexMod + conMod;
-
-    if (npc.weakTo) score -= 1;
-    if (npc.resistentTo) score += 1;
-    if (npc.imuneTo) score += 1;
-    if (npc.absorbElement) score += 1;
-    if (npc.freeShotWeakPoints) score -= 1;
-    if (npc.attackList && npc.attackList.length > 0) score += 1;
-    if (npc.isFlying) score += 1;
-    if (npc.maxLifeBonus) score += 1;
-
-    if (score <= 1) return 0.25;
-    if (score <= 3) return 0.5;
-    if (score <= 5) return 1;
-    if (score <= 7) return 2;
-    if (score <= 9) return 3;
-    if (score <= 11) return 4;
-    if (score <= 13) return 5;
-    return Math.min(30, 6 + Math.floor((score - 14) / 2));
-}
-
-function formatCR(cr: number): string {
-    if (cr === 0.125) return "1/8";
-    if (cr === 0.25) return "1/4";
-    if (cr === 0.5) return "1/2";
-    return String(cr);
 }
 
 export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdminEncountersTabProps) {

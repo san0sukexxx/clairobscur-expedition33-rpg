@@ -1,6 +1,5 @@
 import { useCallback, type Dispatch, type SetStateAction, type RefObject, type MutableRefObject } from "react";
 import { t } from "../../i18n";
-import { FaCheckCircle, FaSkull } from "react-icons/fa";
 import { APIBattle } from "../../api/APIBattle";
 import { APIPlayer, type GetPlayerResponse } from "../../api/APIPlayer";
 import type { WeaponInfo } from "../../api/ResponseModel";
@@ -10,16 +9,13 @@ import { rollWithTimeout } from "../../utils/RollUtils";
 import { dispatchRoll } from "../../utils/rollDispatcher";
 import {
   playerPictosTotalSpeed,
-  calculatePlayerCriticalBonus,
 } from "../../utils/PlayerCalculator";
 
 import { calculateWeaponDexterityBonus } from "../../utils/WeaponCalculator";
 
 import {
-  calculateFailureDiv,
   diceTotal,
   countCriticalRolls,
-  countFailuresRolls
 } from "../../utils/DiceCalculator";
 import { triggerOnBattleStart } from "../../utils/PictoEffectsIntegration";
 import type { PlayerTab, CombatTabType, SpecialAttacksTabType } from "../../pages/PlayerPage/PlayerPage.types";
@@ -86,45 +82,12 @@ export function useCombatActions({
     const baseDex = player.playerSheet?.abilityScores?.dexterity ?? 10;
     const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
     const dexMod = Math.floor((effectiveDex - 10) / 2);
-    const diceCommand = dexMod === 0 ? "1d20" : dexMod > 0 ? `1d20+${dexMod}` : `1d20${dexMod}`;
-    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, diceCommand, result => {
+    rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", result => {
       const criticalRolls = countCriticalRolls(result);
-      const criticalBonus = calculatePlayerCriticalBonus(result, player, weaponInfo);
       const rollTotal = diceTotal(result);
       const total = rollTotal + dexMod;
 
-      dispatchRoll({ label: t("characterSheet.initiative"), diceRolled: rollTotal, modifier: dexMod, total, diceCommand });
-      const failures = countFailuresRolls(result);
-      const failuresDiv = calculateFailureDiv(result);
-
-      openModal(
-        t("playerPage.modals.rollResult"),
-        <div className="space-y-2">
-          <p>{t("playerPage.initiative.roll")}: {rollTotal}</p>
-          {criticalRolls > 0 && (
-            <h3 className="flex items-center gap-2 text-green-600 font-bold text-lg">
-              <FaCheckCircle className="w-6 h-6" />
-              {t("playerPage.initiative.criticals")}: <b>{criticalRolls}</b>
-            </h3>
-          )}
-          {failures > 0 && (
-            <h3 className="flex items-center gap-2 text-red-600 font-bold text-lg">
-              <FaSkull className="w-6 h-6" />
-              {t("playerPage.initiative.criticalFailures")}: <b>{failures}</b>
-            </h3>
-          )}
-          <p>
-            {t("playerPage.initiative.ability")}: <b>{0}</b>
-            {criticalRolls > 0 && <b> (+{criticalBonus})</b>}
-            {failures > 0 && (
-              <span className="inline-flex items-center gap-1 font-bold ml-2">
-                (-{failures * 2})
-              </span>
-            )}
-          </p>
-          <h1 className="text-2xl font-bold">{t("playerPage.initiative.total")}: {total}</h1>
-        </div>
-      );
+      dispatchRoll({ label: t("characterSheet.initiative"), diceRolled: rollTotal, modifier: dexMod, total, diceCommand: "1d20" });
 
       const callAddInitiative = async () => {
         try {

@@ -27,6 +27,7 @@ import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
 import { StatusConditionsModal } from "./StatusConditionsModal";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
+import { calculateNPCDifficulty, formatCR, crToXp } from "../utils/NpcDifficulty";
 import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount, generateActionDescription, generateBasicAttackDescription } from "../utils/BattleUtils";
 import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName, getLocationName } from "../i18n";
 import type { BattleReward } from "../api/ResponseModel";
@@ -91,50 +92,6 @@ function getDefenseFailLabel(defenseType: string): string {
     return key ? t(`combatAdmin.defenseFail.${key}`) : t("combatAdmin.defenseFail.default");
 }
 
-/**
- * Calcula o Challenge Rating (CR) do NPC no estilo D&D 5e.
- * CR representa o nível que um grupo de 4 jogadores precisa ter para enfrentar a criatura.
- * CR < 1 (frações): criatura fraca, menos de 4 jogadores nível 1 bastam.
- *   1/4 = 1 jogador nível 1 sozinho consegue enfrentar
- *   1/2 = 2 jogadores nível 1
- * CR >= 1: 4 jogadores do nível indicado.
- */
-function calculateNPCDifficulty(npcId: string): number {
-    const npc = getNpcById(npcId);
-    if (!npc) return 0;
-
-    const strMod = Math.floor((npc.strength - 10) / 2);
-    const dexMod = Math.floor((npc.dexterity - 10) / 2);
-    const conMod = Math.floor((npc.constitution - 10) / 2);
-    let score = strMod + dexMod + conMod;
-
-    // Propriedades extras (playFirst e initiativeBonus não contam: são mecânicas narrativas)
-    if (npc.weakTo) score -= 1;
-    if (npc.resistentTo) score += 1;
-    if (npc.imuneTo) score += 1;
-    if (npc.absorbElement) score += 1;
-    if (npc.freeShotWeakPoints) score -= 1;
-    if (npc.attackList && npc.attackList.length > 0) score += 1;
-    if (npc.isFlying) score += 1;
-    if (npc.maxLifeBonus) score += 1;
-
-    // Mapear score para Challenge Rating (CR) estilo D&D
-    if (score <= 1) return 0.25;    // CR 1/4
-    if (score <= 3) return 0.5;     // CR 1/2
-    if (score <= 5) return 1;       // CR 1
-    if (score <= 7) return 2;       // CR 2
-    if (score <= 9) return 3;       // CR 3
-    if (score <= 11) return 4;      // CR 4
-    if (score <= 13) return 5;      // CR 5
-    return Math.min(30, 6 + Math.floor((score - 14) / 2));
-}
-
-function formatCR(cr: number): string {
-    if (cr === 0.125) return "1/8";
-    if (cr === 0.25) return "1/4";
-    if (cr === 0.5) return "1/2";
-    return String(cr);
-}
 
 export default function CombatAdmin({
     campaignInfo,
@@ -262,6 +219,13 @@ export default function CombatAdmin({
         }
         return drops;
     }, [battleStatus, battleDetails?.characters]);
+
+    const totalBattleXp = useMemo(() => {
+        if (!battleDetails?.characters) return 0;
+        return battleDetails.characters
+            .filter(ch => ch.type === "npc")
+            .reduce((sum, ch) => sum + crToXp(calculateNPCDifficulty(ch.id)), 0);
+    }, [battleDetails?.characters]);
 
     const reloadBattleDetails = useCallback(async (force?: boolean) => {
         if (!battleId) return
@@ -2492,14 +2456,19 @@ export default function CombatAdmin({
                     )}
 
                     {/* Mostrar recompensas no lugar da barra de turnos se a batalha terminou */}
-                    {battleStatus === 'finished' && (battleRewards.length > 0 || npcDrops.length > 0) ? (
+                    {battleStatus === 'finished' && (battleRewards.length > 0 || npcDrops.length > 0 || totalBattleXp > 0) ? (
                         <div className="card bg-base-200 p-6">
                             <h2 className="text-3xl font-bold text-center mb-2 text-success">
                                 {t("combat.victoryTitle")}
                             </h2>
-                            <p className="text-center text-lg mb-6 opacity-80">
+                            <p className="text-center text-lg mb-2 opacity-80">
                                 {t("combat.rewardsEarned")}
                             </p>
+                            {totalBattleXp > 0 && (
+                                <p className="text-center text-xl font-bold mb-6 text-amber-500">
+                                    +{totalBattleXp.toLocaleString()} XP
+                                </p>
+                            )}
 
                             <div className="space-y-4">
                                 {battleRewards.map((reward, index) => {

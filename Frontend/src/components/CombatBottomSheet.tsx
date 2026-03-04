@@ -149,12 +149,19 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                             rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
                                                 const d20Roll = diceTotal(result);
                                                 const total = d20Roll + attackBonus.total;
+                                                const diceValues: number[] = [];
+                                                for (const group of result) {
+                                                    if (Array.isArray(group.rolls)) {
+                                                        for (const roll of group.rolls) diceValues.push(roll.value);
+                                                    }
+                                                }
                                                 dispatchRoll({
                                                     label: t("combat.attack"),
                                                     diceRolled: d20Roll,
                                                     modifier: attackBonus.total,
                                                     total,
                                                     diceCommand: "1d20",
+                                                    diceValues,
                                                 });
                                             });
                                         }}
@@ -173,12 +180,19 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                             rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, damageDice, (result) => {
                                                 const diceRoll = diceTotal(result);
                                                 const total = diceRoll + effectiveBonus;
+                                                const diceValues: number[] = [];
+                                                for (const group of result) {
+                                                    if (Array.isArray(group.rolls)) {
+                                                        for (const roll of group.rolls) diceValues.push(roll.value);
+                                                    }
+                                                }
                                                 dispatchRoll({
                                                     label: t("playerPage.basicAttack.damage"),
                                                     diceRolled: diceRoll,
                                                     modifier: effectiveBonus,
                                                     total,
                                                     diceCommand: damageDice,
+                                                    diceValues,
                                                 });
                                             });
                                         }}
@@ -247,12 +261,19 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                 rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d4", (result) => {
                                     const diceRoll = diceTotal(result);
                                     const total = diceRoll + dexMod;
+                                    const diceValues: number[] = [];
+                                    for (const group of result) {
+                                        if (Array.isArray(group.rolls)) {
+                                            for (const roll of group.rolls) diceValues.push(roll.value);
+                                        }
+                                    }
                                     dispatchRoll({
                                         label: t("combat.freeShot"),
                                         diceRolled: diceRoll,
                                         modifier: dexMod,
                                         total,
                                         diceCommand: "1d4",
+                                        diceValues,
                                     });
                                 });
                             }}

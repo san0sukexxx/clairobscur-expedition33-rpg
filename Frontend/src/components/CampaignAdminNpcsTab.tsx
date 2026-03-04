@@ -10,6 +10,7 @@ import { dispatchRoll } from "../utils/rollDispatcher";
 import type { DiceBoardRef } from "../components/DiceBoard";
 import { t, getPictoName, getWeaponName } from "../i18n";
 import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
+import { crToXp, calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
 
 const ATTR_CONFIG = [
     { key: "strength", label: () => t("combatAdmin.npcDetails.str"), icon: FaFistRaised, color: "text-red-400" },
@@ -116,6 +117,14 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                                                     CA {npc.armorClass}
                                                 </span>
                                             )}
+                                            {(() => {
+                                                const xp = crToXp(calculateNPCDifficulty(npc.id));
+                                                return xp > 0 ? (
+                                                    <span className="badge badge-xs bg-amber-500/20 text-amber-500 border-amber-500/30">
+                                                        {xp.toLocaleString()} XP
+                                                    </span>
+                                                ) : null;
+                                            })()}
                                             {npc.weakTo && (
                                                 <span className="badge badge-xs badge-warning">
                                                     {ELEMENT_EMOTE[npc.weakTo]} Fraco
@@ -279,6 +288,16 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                         <span className="font-bold ml-1">{npc.challengeRating}</span>
                     </div>
                 )}
+                {(() => {
+                    const cr = calculateNPCDifficulty(npc.id);
+                    const xp = crToXp(cr);
+                    return xp > 0 ? (
+                        <div className="bg-amber-500/15 text-amber-500 rounded-lg px-3 py-1.5">
+                            <span className="text-xs font-bold">XP:</span>
+                            <span className="font-bold ml-1">{xp.toLocaleString()}</span>
+                        </div>
+                    ) : null;
+                })()}
                 {npc.proficiencyBonus != null && (
                     <div className="bg-base-300 rounded-lg px-3 py-1.5">
                         <span className="text-xs font-bold">{t("combatAdmin.npcDetails.proficiencyBonus")}:</span>
