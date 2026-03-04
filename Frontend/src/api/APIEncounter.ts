@@ -14,18 +14,18 @@ export interface EncounterRewardDto {
 export interface EncounterResponse {
     id: number
     campaignId: number
-    name: string
+    locationId?: string | null
     npcs: EncounterNpcDto[]
     rewards: EncounterRewardDto[]
 }
 
 export interface CreateEncounterInput {
     campaignId: number
-    name: string
+    locationId?: string | null
 }
 
 export interface UpdateEncounterInput {
-    name: string
+    locationId?: string | null
     npcs: EncounterNpcDto[]
     rewards: EncounterRewardDto[]
 }

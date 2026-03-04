@@ -2050,7 +2050,8 @@
         "npcs": "{count} NPCs",
         "rewards": "{count} rewards",
         "totalCR": "Total CR: {cr}",
-        "filterPlaceholder": "Filter encounters..."
+        "filterPlaceholder": "Filter encounters...",
+        "clear": "Remove encounter"
       },
       "npcAttacks": {
         "invisibleWall": "Invisible Wall",
@@ -3706,13 +3707,12 @@
     },
     "encounters": {
       "title": "Encounters",
-      "defaultName": "Encounter",
       "create": "Create Encounter",
       "creating": "Creating...",
       "loading": "Loading encounters...",
       "noEncountersFound": "No encounters found.",
-      "encounterName": "Encounter name",
-      "namePlaceholder": "E.g.: Forest ambush",
+      "location": "Location",
+      "noLocation": "No location",
       "npcs": "NPCs",
       "addNpc": "Add NPC",
       "searchNpc": "Search NPC...",

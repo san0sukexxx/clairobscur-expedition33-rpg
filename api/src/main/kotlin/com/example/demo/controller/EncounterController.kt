@@ -36,7 +36,7 @@ class EncounterController(
     @PostMapping
     fun create(@RequestBody request: CreateEncounterRequest): ResponseEntity<EncounterResponse> {
         val encounter = encounterRepository.save(
-                Encounter(campaignId = request.campaignId, name = request.name)
+                Encounter(campaignId = request.campaignId, locationId = request.locationId)
         )
         return ResponseEntity.ok(buildResponse(encounter))
     }
@@ -50,7 +50,7 @@ class EncounterController(
         val encounter = encounterRepository.findById(id).orElse(null)
                 ?: return ResponseEntity.notFound().build()
 
-        encounter.name = request.name
+        encounter.locationId = request.locationId
         encounterRepository.save(encounter)
 
         // Replace all NPCs
@@ -98,7 +98,7 @@ class EncounterController(
         return EncounterResponse(
                 id = encId,
                 campaignId = encounter.campaignId,
-                name = encounter.name,
+                locationId = encounter.locationId,
                 npcs = npcs,
                 rewards = rewards
         )

@@ -7,5 +7,5 @@ import jakarta.persistence.*
 data class Encounter(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int? = null,
         @Column(name = "campaign_id", nullable = false) val campaignId: Int,
-        @Column(name = "name", nullable = false) var name: String
+        @Column(name = "location_id", nullable = true) var locationId: String? = null
 )

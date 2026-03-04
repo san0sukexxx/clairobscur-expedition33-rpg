@@ -131,7 +131,7 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
 
 /** Auto-generate a D&D-style action description from NPC + attack data */
 export function generateActionDescription(npc: NPCInfo, atk: NPCAttack): string {
-    if (atk.description) return atk.description;
+    if (atk.description) return t(atk.description);
 
     const strMod = Math.floor((npc.strength - 10) / 2);
     const profBonus = npc.proficiencyBonus ?? 2;

@@ -28,7 +28,7 @@ import { StatusConditionsModal } from "./StatusConditionsModal";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount, generateActionDescription, generateBasicAttackDescription } from "../utils/BattleUtils";
-import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName } from "../i18n";
+import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName, getLocationName } from "../i18n";
 import type { BattleReward } from "../api/ResponseModel";
 import { APIRewards } from "../api/APIRewards";
 import { PictosList } from "../data/PictosList";
@@ -198,6 +198,7 @@ export default function CombatAdmin({
     const [loadingEncounter, setLoadingEncounter] = useState(false);
     const [showEncounterModal, setShowEncounterModal] = useState(false);
     const [encounterFilter, setEncounterFilter] = useState("");
+    const [encounterLocationOnly, setEncounterLocationOnly] = useState(() => localStorage.getItem("combatAdmin.encounterLocationOnly") === "true");
     const [localPlayers, setLocalPlayers] = useState(players);
 
     const lastReloadTimeRef = useRef<number>(0)
@@ -2369,11 +2370,20 @@ export default function CombatAdmin({
                                         {loadingEncounter ? (
                                             <span className="loading loading-spinner loading-sm" />
                                         ) : selectedEncounterId ? (
-                                            t("combatAdmin.encounter.selected", { name: encounters.find(e => e.id === selectedEncounterId)?.name ?? "" })
+                                            (() => { const enc = encounters.find(e => e.id === selectedEncounterId); return t("combatAdmin.encounter.selected", { name: enc?.locationId ? getLocationName(enc.locationId) : `#${enc?.id}` }); })()
                                         ) : (
                                             t("combatAdmin.encounter.select")
                                         )}
                                     </button>
+                                    {selectedEncounterId && (
+                                        <button
+                                            className="btn btn-sm btn-ghost btn-square text-error"
+                                            title={t("combatAdmin.encounter.clear")}
+                                            onClick={() => setSelectedEncounterId(null)}
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -2388,16 +2398,35 @@ export default function CombatAdmin({
 
                                         <input
                                             type="text"
-                                            className="input input-bordered input-sm w-full mb-3"
+                                            className="input input-bordered input-sm w-full mb-2"
                                             placeholder={t("combatAdmin.encounter.filterPlaceholder")}
                                             value={encounterFilter}
                                             onChange={(e) => setEncounterFilter(e.target.value)}
                                             autoFocus
                                         />
+                                        <label className={`flex items-center gap-2 mb-3 select-none ${campaignInfo.currentLocationId ? "cursor-pointer" : "opacity-40 cursor-not-allowed"}`}>
+                                            <input
+                                                type="checkbox"
+                                                className="checkbox checkbox-sm checkbox-primary"
+                                                checked={encounterLocationOnly}
+                                                disabled={!campaignInfo.currentLocationId}
+                                                onChange={(e) => { setEncounterLocationOnly(e.target.checked); localStorage.setItem("combatAdmin.encounterLocationOnly", String(e.target.checked)); }}
+                                            />
+                                            <span className="text-sm">{t("combatAdmin.labels.currentLocationOnly")}</span>
+                                        </label>
 
                                         <div className="overflow-y-auto flex-1 space-y-2 -mx-1 px-1 py-1">
                                             {encounters
-                                                .filter(enc => !encounterFilter || enc.name.toLowerCase().includes(encounterFilter.toLowerCase()))
+                                                .filter(enc => {
+                                                    if (encounterLocationOnly && campaignInfo.currentLocationId) {
+                                                        if (enc.locationId !== campaignInfo.currentLocationId) return false;
+                                                    }
+                                                    if (encounterFilter) {
+                                                        const displayName = enc.locationId ? getLocationName(enc.locationId) : `#${enc.id}`;
+                                                        return displayName.toLowerCase().includes(encounterFilter.toLowerCase());
+                                                    }
+                                                    return true;
+                                                })
                                                 .map(enc => {
                                                     const npcCount = enc.npcs.reduce((sum, n) => sum + n.quantity, 0);
                                                     const rewardCount = enc.rewards.length;
@@ -2415,7 +2444,7 @@ export default function CombatAdmin({
                                                         >
                                                             <div className="p-3">
                                                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
-                                                                    <span className="font-bold">{enc.name}</span>
+                                                                    <span className="font-bold">{enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`}</span>
                                                                     <div className="flex flex-wrap gap-1 text-xs">
                                                                         <span className="badge badge-sm badge-ghost">{t("combatAdmin.encounter.npcs", { count: npcCount })}</span>
                                                                         <span className="badge badge-sm badge-ghost">{t("combatAdmin.encounter.rewards", { count: rewardCount })}</span>

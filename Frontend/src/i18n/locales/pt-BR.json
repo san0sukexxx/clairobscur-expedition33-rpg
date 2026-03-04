@@ -2050,7 +2050,8 @@
         "npcs": "{count} NPCs",
         "rewards": "{count} recompensas",
         "totalCR": "ND Total: {cr}",
-        "filterPlaceholder": "Filtrar encontros..."
+        "filterPlaceholder": "Filtrar encontros...",
+        "clear": "Remover encontro"
       },
       "npcAttacks": {
         "invisibleWall": "Parede Invisível",
@@ -3708,13 +3709,12 @@
     },
     "encounters": {
       "title": "Encontros",
-      "defaultName": "Encontro",
       "create": "Criar Encontro",
       "creating": "Criando...",
       "loading": "Carregando encontros...",
       "noEncountersFound": "Nenhum encontro encontrado.",
-      "encounterName": "Nome do encontro",
-      "namePlaceholder": "Ex: Emboscada na floresta",
+      "location": "Localização",
+      "noLocation": "Nenhuma localização",
       "npcs": "NPCs",
       "addNpc": "Adicionar NPC",
       "searchNpc": "Buscar NPC...",
