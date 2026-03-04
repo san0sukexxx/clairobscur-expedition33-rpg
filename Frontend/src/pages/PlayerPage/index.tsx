@@ -202,7 +202,7 @@ export default function PlayerPage() {
         playerId={player?.id}
         className={
           tab === "combate"
-            ? combatBottomSheetOpen ? "bottom-4 right-4" : "bottom-28 right-4"
+            ? (player?.fightInfo?.battleStatus === "finished" || combatBottomSheetOpen) ? "bottom-16 right-4" : "bottom-28 right-4"
             : tab === "habilidades" ? "bottom-24 right-4"
             : "bottom-4 right-4"
         }
