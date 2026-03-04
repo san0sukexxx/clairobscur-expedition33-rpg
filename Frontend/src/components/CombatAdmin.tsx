@@ -2497,16 +2497,16 @@ export default function CombatAdmin({
                                                     </div>
                                                 </div>
 
-                                                <div className="flex-1">
+                                                <div className="flex-1 min-w-0">
                                                     <h3 className="font-bold text-lg">{displayName}</h3>
-                                                    <div className="flex items-center gap-2 text-sm opacity-70">
+                                                    <div className="flex flex-wrap items-center gap-1 text-sm opacity-70">
                                                         {isWeapon ? (
-                                                            <span className="badge badge-warning">
+                                                            <span className="badge badge-sm badge-warning">
                                                                 {t("rewards.weapon")}
                                                             </span>
                                                         ) : (
                                                             <span
-                                                                className="badge"
+                                                                className="badge badge-sm"
                                                                 style={{
                                                                     backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
                                                                     color: "black"
@@ -2515,7 +2515,7 @@ export default function CombatAdmin({
                                                                 {t("rewards.picto")}
                                                             </span>
                                                         )}
-                                                        <span className="badge badge-outline">
+                                                        <span className="badge badge-sm badge-outline whitespace-nowrap">
                                                             {t("rewards.level")} {reward.level}
                                                         </span>
                                                     </div>
@@ -2714,14 +2714,14 @@ export default function CombatAdmin({
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex-1">
+                                                        <div className="flex-1 min-w-0">
                                                             <h3 className="font-bold text-lg">{displayName}</h3>
-                                                            <div className="flex items-center gap-2 text-sm opacity-70">
+                                                            <div className="flex flex-wrap items-center gap-1 text-sm opacity-70">
                                                                 {isWeapon ? (
-                                                                    <span className="badge badge-warning">{t("rewards.weapon")}</span>
+                                                                    <span className="badge badge-sm badge-warning">{t("rewards.weapon")}</span>
                                                                 ) : (
                                                                     <span
-                                                                        className="badge"
+                                                                        className="badge badge-sm"
                                                                         style={{
                                                                             backgroundColor: pictoColor ? pictoColorHex[pictoColor as keyof typeof pictoColorHex] : "rgba(255,255,255,0.3)",
                                                                             color: "black"
@@ -2730,7 +2730,7 @@ export default function CombatAdmin({
                                                                         {t("rewards.picto")}
                                                                     </span>
                                                                 )}
-                                                                <span className="badge badge-outline">
+                                                                <span className="badge badge-sm badge-outline whitespace-nowrap">
                                                                     {t("rewards.level")} {reward.level}
                                                                 </span>
                                                             </div>
