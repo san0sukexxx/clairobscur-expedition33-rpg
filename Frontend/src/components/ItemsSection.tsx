@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { type PlayerItemResponse } from "../api/ResponseModel";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIItem } from "../api/APIItem";
@@ -359,7 +359,7 @@ function ElixirsCard({
                             className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                             value={editQtyValue}
                             onChange={(e) => setEditQtyValue(e.target.value)}
-                            autoFocus
+                            ref={focusRef}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") confirmEditQty();
                             }}
@@ -481,6 +481,10 @@ function ElixirsCard({
 
 
 export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false, weaponInfo, onReviveRequested, onPotionUsed }: ItemsSectionProps) {
+    const focusRef = useCallback((node: HTMLInputElement | null) => {
+        if (node) setTimeout(() => node.focus(), 50);
+    }, []);
+
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [editingItem, setEditingItem] = useState<PlayerItemResponse | null>(null);
 

@@ -100,6 +100,10 @@ export default function CombatAdmin({
     players,
     onStatusChanged
 }: CombatAdminProps) {
+    const focusRef = useCallback((node: HTMLInputElement | null) => {
+        if (node) setTimeout(() => node.focus(), 50);
+    }, []);
+
     const [battleDetails, setBattleDetails] = useState<BattleWithDetailsResponse | null>(null)
     const [battleStatus, setBattleStatus] = useState<string>(initialStatus)
     const [updatingStatus, setUpdatingStatus] = useState<boolean>(false)
@@ -130,16 +134,22 @@ export default function CombatAdmin({
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
     const [battleRewards, setBattleRewards] = useState<BattleReward[]>([]);
     const [showGradientModal, setShowGradientModal] = useState(false);
-    const [gradientCharges, setGradientCharges] = useState(0);
+    const [gradientCharges, setGradientCharges] = useState("");
+    const [gradientCurrentCharges, setGradientCurrentCharges] = useState(0);
     const [editingTeamIsEnemy, setEditingTeamIsEnemy] = useState(false);
     const [showGustaveChargeModal, setShowGustaveChargeModal] = useState(false);
-    const [gustaveChargePoints, setGustaveChargePoints] = useState(0);
+    const [gustaveChargePoints, setGustaveChargePoints] = useState("");
+    const [gustaveCurrentChargePoints, setGustaveCurrentChargePoints] = useState(0);
     const [editingGustaveCharacterId, setEditingGustaveCharacterId] = useState<number | null>(null);
     const [showScielChargesModal, setShowScielChargesModal] = useState(false);
-    const [scielSunCharges, setScielSunCharges] = useState(0);
-    const [scielMoonCharges, setScielMoonCharges] = useState(0);
-    const [scielTwilight, setScielTwilight] = useState(0);
-    const [scielTwilightTurns, setScielTwilightTurns] = useState(2);
+    const [scielSunCharges, setScielSunCharges] = useState("");
+    const [scielMoonCharges, setScielMoonCharges] = useState("");
+    const [scielTwilight, setScielTwilight] = useState("");
+    const [scielTwilightTurns, setScielTwilightTurns] = useState("");
+    const [scielCurrentSun, setScielCurrentSun] = useState(0);
+    const [scielCurrentMoon, setScielCurrentMoon] = useState(0);
+    const [scielCurrentTwilight, setScielCurrentTwilight] = useState(0);
+    const [scielCurrentTwilightTurns, setScielCurrentTwilightTurns] = useState(2);
     const [editingScielCharacterId, setEditingScielCharacterId] = useState<number | null>(null);
     const [showLuneStainsModal, setShowLuneStainsModal] = useState(false);
     const [luneStains, setLuneStains] = useState<(StainType | null)[]>([null, null, null, null]);
@@ -259,12 +269,18 @@ export default function CombatAdmin({
             ? (battleDetails?.characters?.find(ch => ch.isEnemy)?.gradientPoints ?? 0)
             : (battleDetails?.characters?.find(ch => !ch.isEnemy)?.gradientPoints ?? 0);
         const currentCharges = Math.floor(currentGradient / 12);
-        setGradientCharges(currentCharges);
+        setGradientCharges("");
+        setGradientCurrentCharges(currentCharges);
         setEditingTeamIsEnemy(isEnemy);
         setShowGradientModal(true);
     }, [battleDetails?.characters]);
 
     const handleConfirmGradient = useCallback(async () => {
+        if (gradientCharges === "") {
+            setShowGradientModal(false);
+            return;
+        }
+
         const teamCharacter = editingTeamIsEnemy
             ? battleDetails?.characters?.find(ch => ch.isEnemy)
             : battleDetails?.characters?.find(ch => !ch.isEnemy);
@@ -274,13 +290,14 @@ export default function CombatAdmin({
             return;
         }
 
-        const newGradientPoints = gradientCharges * 12;
+        const charges = parseInt(gradientCharges) || 0;
+        const newGradientPoints = charges * 12;
 
         try {
             await APIBattle.updateTeamGradient(teamCharacter.battleID, newGradientPoints);
             setShowGradientModal(false);
             await reloadBattleDetails();
-            showToast(t("combatAdmin.toasts.gradientChargesUpdated", { charges: gradientCharges }));
+            showToast(t("combatAdmin.toasts.gradientChargesUpdated", { charges }));
         } catch (error) {
             console.error("Erro ao atualizar gradiente:", error);
             showToast(t("combatAdmin.toasts.errorUpdatingGradient"));
@@ -288,22 +305,30 @@ export default function CombatAdmin({
     }, [gradientCharges, editingTeamIsEnemy, battleDetails?.characters, reloadBattleDetails, showToast]);
 
     const handleOpenGustaveChargeModal = useCallback((character: BattleCharacterInfo) => {
-        setGustaveChargePoints(character.chargePoints ?? 0);
+        setGustaveChargePoints("");
+        setGustaveCurrentChargePoints(character.chargePoints ?? 0);
         setEditingGustaveCharacterId(character.battleID);
         setShowGustaveChargeModal(true);
     }, []);
 
     const handleConfirmGustaveCharge = useCallback(async () => {
+        if (gustaveChargePoints === "") {
+            setShowGustaveChargeModal(false);
+            return;
+        }
+
         if (editingGustaveCharacterId === null) {
             showToast(t("combatAdmin.toasts.noCharacterSelected"));
             return;
         }
 
+        const charges = parseInt(gustaveChargePoints) || 0;
+
         try {
-            await APIBattle.updateCharacterChargePoints(editingGustaveCharacterId, gustaveChargePoints);
+            await APIBattle.updateCharacterChargePoints(editingGustaveCharacterId, charges);
             setShowGustaveChargeModal(false);
             await reloadBattleDetails();
-            showToast(t("combatAdmin.toasts.gustaveChargesUpdated", { charges: gustaveChargePoints }));
+            showToast(t("combatAdmin.toasts.gustaveChargesUpdated", { charges }));
         } catch (error) {
             console.error("Erro ao atualizar cargas:", error);
             showToast(t("combatAdmin.toasts.errorUpdatingCharges"));
@@ -311,11 +336,15 @@ export default function CombatAdmin({
     }, [gustaveChargePoints, editingGustaveCharacterId, reloadBattleDetails, showToast]);
 
     const handleOpenScielChargesModal = useCallback((character: BattleCharacterInfo) => {
-        setScielSunCharges(character.sunCharges ?? 0);
-        setScielMoonCharges(character.moonCharges ?? 0);
         const twilightStatus = character.status?.find(s => s.effectName === "Twilight");
-        setScielTwilight(twilightStatus?.ammount ?? 0);
-        setScielTwilightTurns(twilightStatus?.remainingTurns ?? 2);
+        setScielCurrentSun(character.sunCharges ?? 0);
+        setScielCurrentMoon(character.moonCharges ?? 0);
+        setScielCurrentTwilight(twilightStatus?.ammount ?? 0);
+        setScielCurrentTwilightTurns(twilightStatus?.remainingTurns ?? 2);
+        setScielSunCharges("");
+        setScielMoonCharges("");
+        setScielTwilight("");
+        setScielTwilightTurns("");
         setEditingScielCharacterId(character.battleID);
         setShowScielChargesModal(true);
     }, []);
@@ -326,28 +355,33 @@ export default function CombatAdmin({
             return;
         }
 
+        const sunVal = scielSunCharges === "" ? scielCurrentSun : (parseInt(scielSunCharges) || 0);
+        const moonVal = scielMoonCharges === "" ? scielCurrentMoon : (parseInt(scielMoonCharges) || 0);
+        const twilightVal = scielTwilight === "" ? scielCurrentTwilight : (parseInt(scielTwilight) || 0);
+        const twilightTurnsVal = scielTwilightTurns === "" ? scielCurrentTwilightTurns : (parseInt(scielTwilightTurns) || 1);
+
         try {
-            await APIBattle.updateSunMoonCharges(editingScielCharacterId, scielSunCharges, scielMoonCharges);
+            await APIBattle.updateSunMoonCharges(editingScielCharacterId, sunVal, moonVal);
 
             const currentChar = battleDetails?.characters?.find(ch => ch.battleID === editingScielCharacterId);
             const hadTwilight = currentChar?.status?.some(s => s.effectName === "Twilight") ?? false;
 
-            if (scielTwilight > 0 && !hadTwilight) {
+            if (twilightVal > 0 && !hadTwilight) {
                 await APIBattle.addStatus({
                     battleCharacterId: editingScielCharacterId,
                     effectType: "Twilight",
-                    ammount: scielTwilight,
-                    remainingTurns: scielTwilightTurns,
+                    ammount: twilightVal,
+                    remainingTurns: twilightTurnsVal,
                 });
-            } else if (scielTwilight > 0 && hadTwilight) {
+            } else if (twilightVal > 0 && hadTwilight) {
                 await APIBattle.removeStatus(editingScielCharacterId, "Twilight");
                 await APIBattle.addStatus({
                     battleCharacterId: editingScielCharacterId,
                     effectType: "Twilight",
-                    ammount: scielTwilight,
-                    remainingTurns: scielTwilightTurns,
+                    ammount: twilightVal,
+                    remainingTurns: twilightTurnsVal,
                 });
-            } else if (scielTwilight === 0 && hadTwilight) {
+            } else if (twilightVal === 0 && hadTwilight) {
                 await APIBattle.removeStatus(editingScielCharacterId, "Twilight");
             }
 
@@ -358,7 +392,7 @@ export default function CombatAdmin({
             console.error("Erro ao atualizar cargas de Sciel:", error);
             showToast(t("combatAdmin.toasts.errorUpdatingCharges"));
         }
-    }, [scielSunCharges, scielMoonCharges, scielTwilight, scielTwilightTurns, editingScielCharacterId, battleDetails?.characters, reloadBattleDetails, showToast]);
+    }, [scielSunCharges, scielMoonCharges, scielTwilight, scielTwilightTurns, scielCurrentSun, scielCurrentMoon, scielCurrentTwilight, scielCurrentTwilightTurns, editingScielCharacterId, battleDetails?.characters, reloadBattleDetails, showToast]);
 
     const handleOpenLuneStainsModal = useCallback((character: BattleCharacterInfo) => {
         setLuneStains([
@@ -1871,9 +1905,12 @@ export default function CombatAdmin({
                         type="number"
                         className="input input-bordered w-full"
                         value={newHpValue}
+                        placeholder={String(editingHp.currentHp)}
                         min={0}
                         max={editingHp.maxHp}
                         onChange={(e) => setNewHpValue(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") confirmHpEdit(); }}
+                        ref={focusRef}
                     />
 
                     <div className="modal-action">
@@ -1907,9 +1944,12 @@ export default function CombatAdmin({
                         type="number"
                         className="input input-bordered w-full"
                         value={newMpValue}
+                        placeholder={String(editingMp.currentMp)}
                         min={0}
                         max={editingMp.maxMp}
                         onChange={(e) => setNewMpValue(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") confirmMpEdit(); }}
+                        ref={focusRef}
                     />
 
                     <div className="modal-action">
@@ -1946,9 +1986,12 @@ export default function CombatAdmin({
                             type="number"
                             className="input input-bordered w-full"
                             value={gradientCharges}
+                            placeholder={String(gradientCurrentCharges)}
                             min={0}
                             max={3}
-                            onChange={(e) => setGradientCharges(parseInt(e.target.value) || 0)}
+                            onChange={(e) => setGradientCharges(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmGradient(); }}
+                            ref={focusRef}
                         />
                     </div>
 
@@ -1985,9 +2028,12 @@ export default function CombatAdmin({
                             type="number"
                             className="input input-bordered w-full"
                             value={gustaveChargePoints}
+                            placeholder={String(gustaveCurrentChargePoints)}
                             min={0}
                             max={maxCharges}
-                            onChange={(e) => setGustaveChargePoints(parseInt(e.target.value) || 0)}
+                            onChange={(e) => setGustaveChargePoints(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmGustaveCharge(); }}
+                            ref={focusRef}
                         />
                     </div>
 
@@ -2020,11 +2066,13 @@ export default function CombatAdmin({
                         <input
                             type="number"
                             className="input input-bordered w-full"
-                            value={scielSunCharges === 0 ? "" : scielSunCharges}
-                            placeholder="0"
+                            value={scielSunCharges}
+                            placeholder={String(scielCurrentSun)}
                             min={0}
                             max={20}
-                            onChange={(e) => setScielSunCharges(e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
+                            onChange={(e) => setScielSunCharges(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
+                            ref={focusRef}
                         />
                     </div>
 
@@ -2035,11 +2083,12 @@ export default function CombatAdmin({
                         <input
                             type="number"
                             className="input input-bordered w-full"
-                            value={scielMoonCharges === 0 ? "" : scielMoonCharges}
-                            placeholder="0"
+                            value={scielMoonCharges}
+                            placeholder={String(scielCurrentMoon)}
                             min={0}
                             max={20}
-                            onChange={(e) => setScielMoonCharges(e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
+                            onChange={(e) => setScielMoonCharges(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
                         />
                     </div>
 
@@ -2050,15 +2099,16 @@ export default function CombatAdmin({
                         <input
                             type="number"
                             className="input input-bordered w-full"
-                            value={scielTwilight === 0 ? "" : scielTwilight}
-                            placeholder="0"
+                            value={scielTwilight}
+                            placeholder={String(scielCurrentTwilight)}
                             min={0}
                             max={40}
-                            onChange={(e) => setScielTwilight(e.target.value === "" ? 0 : parseInt(e.target.value) || 0)}
+                            onChange={(e) => setScielTwilight(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
                         />
                     </div>
 
-                    {scielTwilight > 0 && (
+                    {((scielTwilight !== "" && (parseInt(scielTwilight) || 0) > 0) || (scielTwilight === "" && scielCurrentTwilight > 0)) && (
                         <div>
                             <label className="label">
                                 <span className="label-text">{t("combatAdmin.labels.twilightTurns")}</span>
@@ -2067,9 +2117,11 @@ export default function CombatAdmin({
                                 type="number"
                                 className="input input-bordered w-full"
                                 value={scielTwilightTurns}
+                                placeholder={String(scielCurrentTwilightTurns)}
                                 min={1}
                                 max={99}
-                                onChange={(e) => setScielTwilightTurns(parseInt(e.target.value) || 1)}
+                                onChange={(e) => setScielTwilightTurns(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
                             />
                         </div>
                     )}
@@ -2366,7 +2418,7 @@ export default function CombatAdmin({
                                             placeholder={t("combatAdmin.encounter.filterPlaceholder")}
                                             value={encounterFilter}
                                             onChange={(e) => setEncounterFilter(e.target.value)}
-                                            autoFocus
+                                            ref={focusRef}
                                         />
                                         <label className={`flex items-center gap-2 mb-3 select-none ${campaignInfo.currentLocationId ? "cursor-pointer" : "opacity-40 cursor-not-allowed"}`}>
                                             <input
@@ -3172,10 +3224,14 @@ export default function CombatAdmin({
 
     function openHpEditModal(entity: CombatEntity) {
         setEditingHp(entity);
-        setNewHpValue(entity.currentHp.toString());
+        setNewHpValue("");
     }
 
     function confirmHpEdit() {
+        if (newHpValue === "") {
+            setEditingHp(null);
+            return;
+        }
         const value = parseInt(newHpValue, 10);
         if (!isNaN(value) && editingHp) {
             handleHpSet(editingHp, value);
@@ -3195,10 +3251,14 @@ export default function CombatAdmin({
 
     function openMpEditModal(entity: CombatEntity) {
         setEditingMp(entity);
-        setNewMpValue((entity.currentMp ?? 0).toString());
+        setNewMpValue("");
     }
 
     function confirmMpEdit() {
+        if (newMpValue === "") {
+            setEditingMp(null);
+            return;
+        }
         const value = parseInt(newMpValue, 10);
         if (!isNaN(value) && editingMp) {
             handleMpSet(editingMp, value);

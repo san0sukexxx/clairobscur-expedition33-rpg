@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface StatEditModalProps {
     open: boolean;
@@ -19,13 +19,17 @@ export default function StatEditModal({
     onConfirm,
     onCancel
 }: StatEditModalProps) {
-    const [raw, setRaw] = useState(String(currentValue));
+    const [raw, setRaw] = useState("");
 
     useEffect(() => {
-        setRaw(String(currentValue));
+        setRaw("");
     }, [currentValue, open]);
 
-    const numericValue = raw === "" || raw === "-" ? 0 : Number(raw);
+    const numericValue = raw === "" || raw === "-" ? currentValue : Number(raw);
+
+    const inputRef = useCallback((node: HTMLInputElement | null) => {
+        if (node) setTimeout(() => node.focus(), 50);
+    }, [open]);
 
     if (!open) return null;
 
@@ -37,6 +41,7 @@ export default function StatEditModal({
                     type="number"
                     className="input input-bordered w-full"
                     value={raw}
+                    placeholder={String(currentValue)}
                     min={minValue}
                     max={maxValue}
                     onChange={e => setRaw(e.target.value)}
@@ -44,7 +49,7 @@ export default function StatEditModal({
                         if (e.key === "Enter") onConfirm(numericValue);
                         if (e.key === "Escape") onCancel();
                     }}
-                    autoFocus
+                    ref={inputRef}
                 />
                 {maxValue !== undefined && (
                     <div className="text-xs opacity-60 text-right">
