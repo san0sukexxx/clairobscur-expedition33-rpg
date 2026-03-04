@@ -15,7 +15,7 @@ interface Props {
 export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange, onNpcClick }: Props) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(null);
-    const [mainStoryOnly, setMainStoryOnly] = useState(false);
+    const [mainStoryOnly, setMainStoryOnly] = useState(() => localStorage.getItem("locations.mainStoryOnly") === "true");
 
     const locations = useMemo(() => {
         if (mainStoryOnly) {
@@ -73,7 +73,7 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
                         type="checkbox"
                         className="checkbox checkbox-sm checkbox-primary"
                         checked={mainStoryOnly}
-                        onChange={(e) => setMainStoryOnly(e.target.checked)}
+                        onChange={(e) => { setMainStoryOnly(e.target.checked); localStorage.setItem("locations.mainStoryOnly", String(e.target.checked)); }}
                     />
                     <span className="text-sm">{t("locations.mainStoryOnly")}</span>
                 </label>

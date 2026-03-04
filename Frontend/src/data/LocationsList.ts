@@ -11,8 +11,8 @@ export const LocationsList: LocationInfo[] = [
     // ── Locais Principais (ordem da história) ──
     {
         id: "lumiere",
-        residentNpcIds: ["sophie", "mime", "aberration", "lumiere-citizen", "contortionniste", "moissoneusse", "orphelin", "ballet", "renoir", "chromatic-echassier", "creation"],
-        referenceNpcNames: ["Tiffanie", "Marie", "Cyril", "Estelle", "Ulysse", "Richard", "Eloise", "Raphael", "Ophelie", "Maxime", "Henri", "Nicolas", "Trash-can Man", "Victor", "Benoit", "Tom", "Amandine", "Seba", "Jules", "Michel", "Colette", "Antoine", "Catherine", "Lucien", "Jerome", "Alan", "Lucie", "Tristan", "Bastien", "Alexandre", "Emma", "Young Boy", "Cribappa"],
+        residentNpcIds: ["mime"],
+        referenceNpcNames: ["Sophie", "Tiffanie", "Marie", "Cyril", "Estelle", "Ulysse", "Richard", "Eloise", "Raphael", "Ophelie", "Maxime", "Henri", "Nicolas", "Trash-can Man", "Victor", "Benoit", "Tom", "Amandine", "Seba", "Jules", "Michel", "Colette", "Antoine", "Catherine", "Lucien", "Jerome", "Alan", "Lucie", "Tristan", "Bastien", "Alexandre", "Emma", "Young Boy", "Cribappa"],
     },
     {
         id: "spring-meadows",
@@ -79,7 +79,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "lumiere-act-3",
-        residentNpcIds: ["aberration-act3", "contortionniste-act3", "moissoneusse-act3", "orphelin-act3", "ballet-act3", "mime-act3", "lumiere-citizen-act3", "renoir-act3", "creation-act3"],
+        residentNpcIds: ["aberration-act3", "contortionniste-act3", "moissoneusse-act3", "orphelin-act3", "ballet-act3", "mime-act3", "lumiere-citizen-act3", "renoir-act3", "creation-act3", "chromatic-echassier"],
     },
 
     // ── Hubs ──

@@ -2254,6 +2254,7 @@
         "editGustaveCharges": "Editar Cargas de Gustave",
         "filter": "Filtro",
         "filterPlaceholder": "Digite para filtrar por nome ou dificuldade...",
+        "currentLocationOnly": "Apenas local atual",
         "players": "Jogadores",
         "character": "Personagem",
         "npcs": "NPCs",

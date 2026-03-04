@@ -4,7 +4,7 @@ import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBatt
 import { APIEncounter, type EncounterResponse } from "../api/APIEncounter"
 import { APIPicto } from "../api/APIPicto"
 import { type GetPlayerResponse } from "../api/APIPlayer"
-import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp } from "react-icons/fa"
+import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp, FaCheck } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt, FaUndo } from "react-icons/fa";
 import { FaArrowsDownToLine, FaArrowDown } from "react-icons/fa6";
 import { getCharacterLabelById, applyNpcNameSuffixes } from "../utils/CharacterUtils"
@@ -34,6 +34,7 @@ import { APIRewards } from "../api/APIRewards";
 import { PictosList } from "../data/PictosList";
 import { pictoColorHex } from "../utils/PictoUtils";
 import { SpecialAttacksList } from "../data/SpecialAttackList";
+import { getLocationById } from "../utils/LocationUtils";
 
 const canCharacterUseWeapon = WeaponsDataLoader.canCharacterUseWeapon.bind(WeaponsDataLoader);
 
@@ -148,6 +149,7 @@ export default function CombatAdmin({
     const [showAddModal, setShowAddModal] = useState<boolean>(false)
     const [targetTeam, setTargetTeam] = useState<TeamKey>("A")
     const [filterText, setFilterText] = useState<string>("")
+    const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("combatAdmin.currentLocationOnly") === "true")
     const [teamA, setTeamA] = useState<CombatEntity[]>([])
     const [teamB, setTeamB] = useState<CombatEntity[]>([])
     const [justAddedId, setJustAddedId] = useState<string | number | null>(null)
@@ -809,9 +811,18 @@ export default function CombatAdmin({
         const f = filterText.trim().toLowerCase()
         let filtered = availableEnemies;
 
+        // Filter by current location
+        if (currentLocationOnly && campaignInfo.currentLocationId) {
+            const loc = getLocationById(campaignInfo.currentLocationId);
+            if (loc?.residentNpcIds) {
+                const npcSet = new Set(loc.residentNpcIds);
+                filtered = filtered.filter((e) => npcSet.has(e.externalId.toString()));
+            }
+        }
+
         // Apply filter by name or difficulty
         if (f) {
-            filtered = availableEnemies.filter((e) => {
+            filtered = filtered.filter((e) => {
                 const matchesName = e.name.toLowerCase().includes(f);
                 const difficulty = formatCR(calculateNPCDifficulty(e.externalId.toString()));
                 const matchesDifficulty = difficulty.includes(f);
@@ -837,7 +848,7 @@ export default function CombatAdmin({
         }
 
         return filtered;
-    }, [filterText, availableEnemies, sortColumn, sortDirection])
+    }, [filterText, availableEnemies, sortColumn, sortDirection, currentLocationOnly, campaignInfo.currentLocationId])
 
     function renderAvatarCell(entity: CombatEntity) {
         const isPlayerWithImage = entity.type === "player" && entity.avatarUrl;
@@ -2189,16 +2200,26 @@ export default function CombatAdmin({
                                 onChange={(e) => setFilterText(e.target.value)}
                             />
                         </label>
+                        <label className={`flex items-center gap-2 mt-1 select-none ${campaignInfo.currentLocationId ? "cursor-pointer" : "opacity-40 cursor-not-allowed"}`}>
+                            <input
+                                type="checkbox"
+                                className="checkbox checkbox-sm checkbox-primary"
+                                checked={currentLocationOnly}
+                                disabled={!campaignInfo.currentLocationId}
+                                onChange={(e) => { setCurrentLocationOnly(e.target.checked); localStorage.setItem("combatAdmin.currentLocationOnly", String(e.target.checked)); }}
+                            />
+                            <span className="text-sm">{t("combatAdmin.labels.currentLocationOnly")}</span>
+                        </label>
                     </div>
 
                     <div className="border rounded-lg">
                         <div className="px-4 py-2 border-b flex items-center justify-between">
                             <div className="font-semibold text-sm">{t("combatAdmin.labels.players")}</div>
                             <div className="flex items-center gap-2">
+                                {bulkAdded ? <FaCheck className="text-success w-4 h-4" /> : null}
                                 <button className="btn btn-xs btn-secondary" onClick={() => handleAddAllPlayers(filteredPlayers)}>
                                     {t("combatAdmin.labels.addAll")}
                                 </button>
-                                {bulkAdded ? <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span> : null}
                             </div>
                         </div>
 
@@ -2217,12 +2238,12 @@ export default function CombatAdmin({
                                                 <span className="text-xs opacity-60 truncate">{renderCharacterCell(entity)}</span>
                                             </div>
                                             <div className="flex items-center gap-2 shrink-0">
+                                                {justAddedId === entity.externalId ? (
+                                                    <FaCheck className="text-success w-4 h-4" />
+                                                ) : null}
                                                 <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
                                                     {t("combatAdmin.labels.add")}
                                                 </button>
-                                                {justAddedId === entity.externalId ? (
-                                                    <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span>
-                                                ) : null}
                                             </div>
                                         </div>
                                     ))}
@@ -2260,12 +2281,12 @@ export default function CombatAdmin({
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2 shrink-0">
+                                                {justAddedId === entity.externalId ? (
+                                                    <FaCheck className="text-success w-4 h-4" />
+                                                ) : null}
                                                 <button className="btn btn-xs btn-primary" onClick={() => handleAddToTeam(entity)}>
                                                     {t("combatAdmin.labels.add")}
                                                 </button>
-                                                {justAddedId === entity.externalId ? (
-                                                    <span className="text-xs text-success font-semibold">{t("combatAdmin.labels.added")}!</span>
-                                                ) : null}
                                             </div>
                                         </div>
                                     ))}
