@@ -1890,6 +1890,8 @@
       "selectCharacter": "Select your character",
       "characterLevel": "Level",
       "xp": "XP",
+      "xpRemaining": "Remaining",
+      "xpAdd": "Add XP",
       "levelPlaceholder": "Level",
       "specialAttackPoints": "Skill points",
       "power": "Power",

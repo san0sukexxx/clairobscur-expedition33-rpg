@@ -1,5 +1,5 @@
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import CharacterSelect from "../components/CharacterSelect";
 import { type Campaign } from "../api/APICampaign";
 import { t } from "../i18n";
@@ -19,6 +19,18 @@ const CHARACTER_INFO: Record<string, CharacterClassInfo> = {
     lune:    { raceKey: "characterSheet.races.human",   classKey: "characterSheet.classes.wizard",   attributeKey: "characterSheet.attributes.intelligence" },
 };
 
+// D&D 5e – XP needed to advance from level N to N+1
+const XP_THRESHOLDS: Record<number, number> = {
+    1:  300,     2:  600,     3:  1800,    4:  3800,
+    5:  7500,    6:  9000,    7:  11000,   8:  14000,
+    9:  16000,   10: 21000,   11: 25000,   12: 30000,
+    13: 35000,   14: 40000,   15: 45000,   16: 50000,
+    17: 55000,   18: 65000,   19: 75000,   20: 0,
+};
+
+function xpForLevel(level: number): number {
+    return XP_THRESHOLDS[level] ?? 0;
+}
 
 interface PlayerSheetProps {
     player: GetPlayerResponse | null;
@@ -27,6 +39,9 @@ interface PlayerSheetProps {
 }
 
 export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerSheetProps) {
+    const [xpOpen, setXpOpen] = useState(false);
+    const [xpInput, setXpInput] = useState("");
+
     async function sync(p: GetPlayerResponse) {
         await APIPlayer.update(p.id, { playerSheet: p.playerSheet ?? {} });
     }
@@ -35,7 +50,33 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
         if (!player) return;
         const next = {
             ...player,
-            playerSheet: { ...player.playerSheet, totalPoints: level },
+            playerSheet: { ...player.playerSheet, totalPoints: level, xp: 0 },
+        };
+        setPlayer(next);
+        await sync(next);
+        const updated = await APIPlayer.get(player.id);
+        setPlayer(updated);
+    }, [player]);
+
+    const handleAddXp = useCallback(async (amount: number) => {
+        if (!player || amount <= 0) return;
+        let xp = (player.playerSheet?.xp ?? 0) + amount;
+        let level = player.playerSheet?.totalPoints ?? 1;
+        const maxLevel = 20;
+
+        while (level < maxLevel && xp >= xpForLevel(level)) {
+            xp -= xpForLevel(level);
+            level++;
+        }
+
+        if (level >= maxLevel) {
+            level = maxLevel;
+            xp = Math.min(xp, 0);
+        }
+
+        const next = {
+            ...player,
+            playerSheet: { ...player.playerSheet, xp, totalPoints: level },
         };
         setPlayer(next);
         await sync(next);
@@ -81,26 +122,108 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                             </select>
                         </label>
 
-                        <label className="form-control w-24">
-                            <span className="label-text text-center">{t("characterSheet.xp")}</span>
-                            <input
-                                type="number"
-                                className="input input-bordered text-center font-bold w-full"
-                                min={0}
-                                value={player?.playerSheet?.xp ?? 0}
-                                onChange={async (e) => {
-                                    if (!player) return;
-                                    const next = {
-                                        ...player,
-                                        playerSheet: { ...player.playerSheet, xp: Number(e.target.value) },
-                                    };
-                                    setPlayer(next);
-                                    await sync(next);
-                                }}
-                                disabled={!player}
-                            />
-                        </label>
                     </div>
+
+                    {/* XP bar - thin, right below name */}
+                    {(() => {
+                        const level = player?.playerSheet?.totalPoints ?? 1;
+                        const currentXp = player?.playerSheet?.xp ?? 0;
+                        const needed = xpForLevel(level);
+                        const pct = needed > 0 ? Math.min(100, (currentXp / needed) * 100) : 100;
+                        return (
+                            <div
+                                className="w-full cursor-pointer -mt-1"
+                                onClick={() => { setXpOpen(true); setXpInput(""); }}
+                                title={`${currentXp} / ${needed} XP`}
+                            >
+                                <div className="w-full h-1.5 rounded-full bg-base-300 overflow-hidden">
+                                    <div
+                                        className="h-full rounded-full bg-amber-500 transition-all duration-300"
+                                        style={{ width: `${pct}%` }}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })()}
+
+                    {/* XP modal */}
+                    {xpOpen && (() => {
+                        const level = player?.playerSheet?.totalPoints ?? 1;
+                        const currentXp = player?.playerSheet?.xp ?? 0;
+                        const needed = xpForLevel(level);
+                        const pct = needed > 0 ? Math.min(100, (currentXp / needed) * 100) : 100;
+                        const isMaxLevel = level >= 20;
+                        return (
+                            <dialog className="modal modal-open" onClick={(e) => { if (e.target === e.currentTarget) setXpOpen(false); }}>
+                                <div className="modal-box max-w-sm">
+                                    <h3 className="font-bold text-lg mb-1">{t("characterSheet.xp")}</h3>
+                                    <p className="text-sm text-base-content/60 mb-4">
+                                        {t("characterSheet.characterLevel")} {level}{isMaxLevel ? " (Max)" : ""}
+                                    </p>
+
+                                    {/* Progress bar */}
+                                    <div className="relative mb-1">
+                                        <div className="w-full h-4 rounded-full bg-base-300 overflow-hidden">
+                                            <div
+                                                className="h-full rounded-full bg-amber-500 transition-all duration-300"
+                                                style={{ width: `${pct}%` }}
+                                            />
+                                        </div>
+                                        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-base-content">
+                                            {isMaxLevel ? "MAX" : `${currentXp.toLocaleString()} / ${needed.toLocaleString()}`}
+                                        </span>
+                                    </div>
+
+                                    {!isMaxLevel && (
+                                        <>
+                                            <p className="text-xs text-base-content/50 mb-4 text-right">
+                                                {t("characterSheet.xpRemaining")}: {(needed - currentXp).toLocaleString()}
+                                            </p>
+
+                                            {/* XP input */}
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="number"
+                                                    className="input input-bordered input-sm flex-1"
+                                                    placeholder={t("characterSheet.xpAdd")}
+                                                    min={1}
+                                                    value={xpInput}
+                                                    onChange={(e) => setXpInput(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") {
+                                                            const val = parseInt(xpInput);
+                                                            if (!isNaN(val) && val > 0) {
+                                                                handleAddXp(val);
+                                                                setXpInput("");
+                                                            }
+                                                        }
+                                                    }}
+                                                    disabled={!player}
+                                                />
+                                                <button
+                                                    className="btn btn-sm btn-primary"
+                                                    disabled={!player || !xpInput || isNaN(parseInt(xpInput)) || parseInt(xpInput) <= 0}
+                                                    onClick={() => {
+                                                        const val = parseInt(xpInput);
+                                                        if (!isNaN(val) && val > 0) {
+                                                            handleAddXp(val);
+                                                            setXpInput("");
+                                                        }
+                                                    }}
+                                                >+XP</button>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    <div className="modal-action">
+                                        <button className="btn btn-sm" onClick={() => setXpOpen(false)}>
+                                            {t("common.close")}
+                                        </button>
+                                    </div>
+                                </div>
+                            </dialog>
+                        );
+                    })()}
 
                     <CharacterSelect
                         selected={player?.playerSheet?.characterId}

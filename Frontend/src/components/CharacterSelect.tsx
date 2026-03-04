@@ -20,11 +20,11 @@ export default function CharacterSelect({ selected, onSelect, allowedCharacters 
     }
 
     return (
-        <details ref={detailsRef} className="dropdown w-full">
-            <summary className="btn btn-sm w-full justify-start gap-3 text-base h-12">
+        <details ref={detailsRef} className="dropdown flex-1">
+            <summary className="btn w-full justify-start gap-3 text-base h-[4.5rem]">
                 {current ? (
                     <>
-                        <div className="w-8 h-8 rounded-full bg-base-300 overflow-hidden shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-base-300 overflow-hidden shrink-0">
                             <img
                                 src={`/characters/${current.id}.webp`}
                                 alt={current.label}
