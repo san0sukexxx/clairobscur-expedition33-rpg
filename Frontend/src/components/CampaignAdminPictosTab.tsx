@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GiStoneTablet } from "react-icons/gi";
 import { getAllPictosSorted, pictoColorHex, calculatePictoSpeed, calculatePictoDefense, calculatePictoHealth, calculatePictoAbility } from "../utils/PictoUtils";
@@ -15,9 +15,25 @@ const STAT_CONFIG = [
     { key: "charisma", label: () => t("pictos.charisma"), calc: calculatePictoAbility },
 ] as const;
 
-export default function CampaignAdminPictosTab() {
+interface PictosTabProps {
+    focusPictoId?: string | null;
+    onFocusHandled?: () => void;
+}
+
+export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled }: PictosTabProps) {
     const [filterText, setFilterText] = useState("");
-    const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [expandedId, setExpandedId] = useState<string | null>(focusPictoId ?? null);
+
+    useEffect(() => {
+        if (focusPictoId) {
+            setExpandedId(focusPictoId);
+            setFilterText("");
+            requestAnimationFrame(() => {
+                document.getElementById(`picto-${focusPictoId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+            });
+            onFocusHandled?.();
+        }
+    }, [focusPictoId]);
 
     const pictos = useMemo(() => {
         const all = getAllPictosSorted();
@@ -60,7 +76,7 @@ export default function CampaignAdminPictosTab() {
                     {pictos.map((picto) => {
                         const isExpanded = expandedId === picto.id;
                         return (
-                            <div key={picto.id} className="py-3 px-1">
+                            <div key={picto.id} id={`picto-${picto.id}`} className="py-3 px-1">
                                 {/* Header */}
                                 <div
                                     className="flex items-center gap-3 cursor-pointer"

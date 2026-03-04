@@ -36,6 +36,8 @@ export default function CampaignAdmin() {
     const { showToast } = useToast();
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [focusNpcId, setFocusNpcId] = useState<string | null>(null);
+    const [focusPictoId, setFocusPictoId] = useState<string | null>(null);
+    const [focusWeaponId, setFocusWeaponId] = useState<string | null>(null);
     const diceBoardRef = useRef<DiceBoardRef>(null);
     const timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null> = useRef(null);
 
@@ -347,15 +349,30 @@ export default function CampaignAdmin() {
                 )}
 
                 {activeTab === "npcs" && (
-                    <CampaignAdminNpcsTab diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} focusNpcId={focusNpcId} onFocusHandled={() => setFocusNpcId(null)} />
+                    <CampaignAdminNpcsTab
+                        diceBoardRef={diceBoardRef}
+                        timeoutDiceBoardRef={timeoutDiceBoardRef}
+                        focusNpcId={focusNpcId}
+                        onFocusHandled={() => setFocusNpcId(null)}
+                        onPictoClick={(pictoId) => {
+                            setFocusPictoId(pictoId);
+                            setActiveTab("pictos-list");
+                            localStorage.setItem(storageKey, "pictos-list");
+                        }}
+                        onWeaponClick={(weaponId) => {
+                            setFocusWeaponId(weaponId);
+                            setActiveTab("weapons-list");
+                            localStorage.setItem(storageKey, "weapons-list");
+                        }}
+                    />
                 )}
 
                 {activeTab === "pictos-list" && (
-                    <CampaignAdminPictosTab />
+                    <CampaignAdminPictosTab focusPictoId={focusPictoId} onFocusHandled={() => setFocusPictoId(null)} />
                 )}
 
                 {activeTab === "weapons-list" && (
-                    <CampaignAdminWeaponsTab />
+                    <CampaignAdminWeaponsTab focusWeaponId={focusWeaponId} onFocusHandled={() => setFocusWeaponId(null)} />
                 )}
 
                 {activeTab === "logs" && campaignId !== null && (

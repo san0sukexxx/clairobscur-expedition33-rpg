@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
@@ -60,11 +60,31 @@ function buildWeaponList(): WeaponEntry[] {
     return entries;
 }
 
-export default function CampaignAdminWeaponsTab() {
+interface WeaponsTabProps {
+    focusWeaponId?: string | null;
+    onFocusHandled?: () => void;
+}
+
+export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled }: WeaponsTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
     const allWeapons = useMemo(() => buildWeaponList(), []);
+
+    useEffect(() => {
+        if (focusWeaponId) {
+            const entry = allWeapons.find((e) => e.weaponId === focusWeaponId);
+            if (entry) {
+                const key = `${entry.character}:${entry.weapon.name}`;
+                setExpandedKey(key);
+                setFilterText("");
+                requestAnimationFrame(() => {
+                    document.getElementById(`weapon-${focusWeaponId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+                });
+            }
+            onFocusHandled?.();
+        }
+    }, [focusWeaponId]);
 
     const weapons = useMemo(() => {
         if (!filterText.trim()) return allWeapons;
@@ -108,7 +128,7 @@ export default function CampaignAdminWeaponsTab() {
                         const name = getWeaponName(entry.weaponId);
 
                         return (
-                            <div key={key} className="py-3 px-1">
+                            <div key={key} id={`weapon-${entry.weaponId}`} className="py-3 px-1">
                                 <div
                                     className="flex items-center gap-3 cursor-pointer"
                                     onClick={() => setExpandedKey(isExpanded ? null : key)}

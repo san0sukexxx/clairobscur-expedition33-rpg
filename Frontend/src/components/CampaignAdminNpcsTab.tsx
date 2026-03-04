@@ -25,9 +25,11 @@ interface NpcsTabProps {
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
     focusNpcId?: string | null;
     onFocusHandled?: () => void;
+    onPictoClick?: (pictoId: string) => void;
+    onWeaponClick?: (weaponId: string) => void;
 }
 
-export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef, focusNpcId, onFocusHandled }: NpcsTabProps) {
+export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef, focusNpcId, onFocusHandled, onPictoClick, onWeaponClick }: NpcsTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(focusNpcId ?? null);
 
@@ -146,6 +148,8 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                                         npc={npc}
                                         diceBoardRef={diceBoardRef}
                                         timeoutDiceBoardRef={timeoutDiceBoardRef}
+                                        onPictoClick={onPictoClick}
+                                        onWeaponClick={onWeaponClick}
                                     />
                                 )}
                             </div>
@@ -161,9 +165,11 @@ interface NpcDetailsProps {
     npc: NPCInfo;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    onPictoClick?: (pictoId: string) => void;
+    onWeaponClick?: (weaponId: string) => void;
 }
 
-function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef }: NpcDetailsProps) {
+function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWeaponClick }: NpcDetailsProps) {
     const [npcIntensityOffset, setNpcIntensityOffset] = useState(0);
 
     // ── dice rolling helpers ──
@@ -455,12 +461,20 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef }: NpcDetailsProps)
                     <span className="font-bold text-xs">{t("combatAdmin.npcDetails.drops")}</span>
                     <div className="flex flex-wrap gap-1.5 mt-1">
                         {npc.drops.weapons?.map((weaponId) => (
-                            <span key={weaponId} className="badge badge-sm badge-warning gap-1">
+                            <span
+                                key={weaponId}
+                                className="badge badge-sm badge-warning gap-1 cursor-pointer hover:brightness-125 transition-all"
+                                onClick={() => onWeaponClick?.(weaponId)}
+                            >
                                 ⚔️ {getWeaponName(weaponId)}
                             </span>
                         ))}
                         {npc.drops.pictos?.map((pictoId) => (
-                            <span key={pictoId} className="badge badge-sm badge-success gap-1">
+                            <span
+                                key={pictoId}
+                                className="badge badge-sm badge-success gap-1 cursor-pointer hover:brightness-125 transition-all"
+                                onClick={() => onPictoClick?.(pictoId)}
+                            >
                                 🎴 {getPictoName(pictoId)}
                             </span>
                         ))}
