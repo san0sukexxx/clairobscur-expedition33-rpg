@@ -2053,6 +2053,8 @@
         "filterPlaceholder": "Filter encounters..."
       },
       "npcAttacks": {
+        "invisibleWall": "Invisible Wall",
+        "invisibleWallDesc": "Creates an invisible wall that secretly protects it from several attacks, at the master's discretion. The Mime always does this on its first turn and passes. Can only be used once per combat.",
         "comboHammers": "Hammer Combo",
         "comboSlaps": "Slap Combo",
         "charge": "Charge",

@@ -754,6 +754,11 @@ export const NPCsList: NPCInfo[] = [
         attackList: [
             {
                 type: "skill",
+                name: "combatAdmin.npcAttacks.invisibleWall",
+                description: "combatAdmin.npcAttacks.invisibleWallDesc",
+            },
+            {
+                type: "skill",
                 name: "combatAdmin.npcAttacks.comboHammers",
                 additionalDamage: 1,
                 quantity: 4,

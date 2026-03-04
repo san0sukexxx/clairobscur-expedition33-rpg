@@ -1144,6 +1144,18 @@ export default function CombatAdmin({
 
                                 {npcInfo?.attackList?.map((atk, idx) => {
                                     const actionName = atk.name ? t(atk.name) : getAttackTypeLabel(atk.type);
+
+                                    if (atk.description) {
+                                        return (
+                                            <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                                <span>
+                                                    <strong className="text-amber-300">{"▸ "}{actionName}.</strong>{" "}
+                                                    <span className="italic opacity-90">{t(atk.description)}</span>
+                                                </span>
+                                            </div>
+                                        );
+                                    }
+
                                     const baseDice = 1 + (atk.additionalDices ?? 0);
                                     const baseMod = strMod + (atk.additionalDamage ?? 0);
                                     const { numDice, flatDmg, avgDmg } = calcDamage(baseDice, baseMod);

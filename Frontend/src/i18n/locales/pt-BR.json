@@ -2053,6 +2053,8 @@
         "filterPlaceholder": "Filtrar encontros..."
       },
       "npcAttacks": {
+        "invisibleWall": "Parede Invisível",
+        "invisibleWallDesc": "Cria uma parede invisível que o protege em segredo de vários ataques, a critério do mestre. O Mímico sempre faz isso em sua primeira rodada e passa a vez. Só pode ser usada uma vez por combate.",
         "comboHammers": "Combo Marteladas",
         "comboSlaps": "Combo Tapas",
         "charge": "Investida",
