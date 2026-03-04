@@ -80,6 +80,26 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                                 ))}
                             </select>
                         </label>
+
+                        <label className="form-control w-24">
+                            <span className="label-text text-center">{t("characterSheet.xp")}</span>
+                            <input
+                                type="number"
+                                className="input input-bordered text-center font-bold w-full"
+                                min={0}
+                                value={player?.playerSheet?.xp ?? 0}
+                                onChange={async (e) => {
+                                    if (!player) return;
+                                    const next = {
+                                        ...player,
+                                        playerSheet: { ...player.playerSheet, xp: Number(e.target.value) },
+                                    };
+                                    setPlayer(next);
+                                    await sync(next);
+                                }}
+                                disabled={!player}
+                            />
+                        </label>
                     </div>
 
                     <CharacterSelect

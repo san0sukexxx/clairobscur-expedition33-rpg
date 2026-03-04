@@ -1889,6 +1889,7 @@
       "title": "Ficha",
       "selectCharacter": "Selecione seu personagem",
       "characterLevel": "Nível",
+      "xp": "XP",
       "levelPlaceholder": "Nível",
       "specialAttackPoints": "Ptos. de habilidade",
       "power": "Poder",
