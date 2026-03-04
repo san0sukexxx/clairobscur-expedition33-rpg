@@ -1,5 +1,12 @@
 import { type LocationInfo } from "../api/ResponseModel";
 
+/** IDs dos locais da história principal, na ordem da progressão. */
+export const MainStoryLocationIds: string[] = [
+    "lumiere", "spring-meadows", "flying-waters", "ancient-sanctuary", "gestral-village",
+    "esquies-nest", "stone-wave-cliffs", "forgotten-battlefield", "monocos-station",
+    "old-lumiere", "visages", "sirene", "the-monolith", "the-manor", "lumiere-act-3",
+];
+
 export const LocationsList: LocationInfo[] = [
     // ── Locais Principais (ordem da história) ──
     {
@@ -37,7 +44,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "forgotten-battlefield",
-        residentNpcIds: ["chalier", "petank", "ramasseur", "troubadour", "cruler", "dualliste", "chromatic-luster"],
+        residentNpcIds: ["chalier", "petank", "ramasseur", "troubadour", "cruler-battlefield", "dualliste", "chromatic-luster"],
         referenceNpcNames: ["Fading Woman", "Kasumi"],
     },
     {
@@ -47,28 +54,32 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "old-lumiere",
-        residentNpcIds: ["steel-chevaliere", "ceramic-chevaliere", "gold-chevaliere", "renoir", "chromatic-danseuse"],
+        residentNpcIds: ["steel-chevaliere", "ceramic-chevaliere", "gold-chevaliere", "renoir", "chromatic-danseuses"],
         referenceNpcNames: ["Mandelgo"],
     },
     {
         id: "visages",
-        residentNpcIds: ["bouchelier", "contortionniste", "moissoneusse", "chapelier", "chromatic-ramasseur", "mime", "seething-boucheclier", "jovial-moissonneuse", "sorrowful-chapelier", "visages", "mask-keeper"],
+        residentNpcIds: ["boucheclier", "contortionniste-visages", "moissoneusse-visages", "chapelier", "chromatic-ramasseur", "mime", "seething-boucheclier", "jovial-moissonneuse", "sorrowful-chapelier", "visages", "mask-keeper"],
         referenceNpcNames: ["Blooraga", "Fading Man"],
     },
     {
         id: "sirene",
-        residentNpcIds: ["ballet", "chorale", "benisseur", "petank", "mime", "chromatic-greatsword-cultist", "tisseur", "glissando", "sirene"],
+        residentNpcIds: ["ballet-sirene", "chorale", "benisseur", "petank", "mime", "chromatic-greatsword-cultist", "tisseur", "glissando", "sirene"],
         referenceNpcNames: ["Klaudiso"],
     },
     {
         id: "the-monolith",
-        residentNpcIds: ["lancer", "abbest", "gatekeeper", "clair", "bruler", "cruler", "demineur", "ranger-sakapatate", "robust-sakapatate", "catapult-sakapatate", "reaper-cultist", "greatsword-cultist", "petank", "mime", "obscur", "hexga", "chalier", "troubadour", "ramasseur", "danseuses", "ceramic-chevaliere", "gold-chevaliere", "pelerin", "braseleur", "the-paintress", "eveque", "chromatic-bourgeon", "ultimate-sakapatate", "gargant", "clair-obscur", "renoir", "chromatic-clair-obscur"],
+        residentNpcIds: ["lancer-monolith", "abbest-monolith", "gatekeeper-monolith", "clair", "bruler-monolith", "cruler-monolith", "demineur-monolith", "ranger-sakapatate-monolith", "robust-sakapatate-monolith", "catapult-sakapatate-monolith", "reaper-cultist-monolith", "greatsword-cultist-monolith", "petank-monolith", "mime-monolith", "obscur", "hexga-monolith", "chalier-monolith", "troubadour-monolith", "ramasseur-monolith", "danseuses", "ceramic-chevaliere-monolith", "gold-chevaliere-monolith", "pelerin", "braseleur", "the-paintress", "eveque-monolith", "chromatic-bourgeon", "ultimate-sakapatate-monolith", "gargant", "clair-obscur", "renoir-monolith", "chromatic-clair-obscur"],
         referenceNpcNames: ["Mistra", "Melosh"],
     },
     {
         id: "the-manor",
-        residentNpcIds: ["the-curator", "clea", "gold-chevaliere", "rocher"],
+        residentNpcIds: ["the-curator", "clea", "gold-chevaliere-manor", "rocher-manor"],
         referenceNpcNames: ["Gestral Worker", "Gestral"],
+    },
+    {
+        id: "lumiere-act-3",
+        residentNpcIds: ["aberration-act3", "contortionniste-act3", "moissoneusse-act3", "orphelin-act3", "ballet-act3", "mime-act3", "lumiere-citizen-act3", "renoir-act3", "creation-act3"],
     },
 
     // ── Hubs ──
@@ -122,7 +133,7 @@ export const LocationsList: LocationInfo[] = [
         residentNpcIds: [
             "gault", "luster", "ramasseur", "potier", "steel-chevaliere", "greatsword-cultist", "dualliste",
             "troubadour", "demineur", "benisseur", "volester", "reaper-cultist", "ballet", "chapelier",
-            "lampmaster", "echassier", "hexga", "cruler", "chromatic-benisseur", "bouchelier", "clair",
+            "lampmaster", "echassier", "hexga", "cruler", "chromatic-benisseur", "boucheclier", "clair",
             "chromatic-abbest", "goblu", "chromatic-orphelin", "ceramic-chevaliere", "bourgeon", "jar",
             "rocher", "chromatic-echassier", "moissoneusse", "catapult-sakapatate", "chromatic-veilleur",
             "bruler", "orphelin", "chromatic-greatsword-cultist", "sapling", "chromatic-troubadour",
@@ -130,7 +141,7 @@ export const LocationsList: LocationInfo[] = [
             "pelerin", "gargant", "noir", "flame-eveque", "chromatic-gold-chevaliere", "chromatic-bruler",
             "aberration", "ultimate-sakapatate", "francois", "robust-sakapatate", "chromatic-lancelier",
             "chromatic-boucheclier", "chromatic-glaise", "obscur", "chromatic-eveque", "chromatic-ballet",
-            "thunder-eveque", "chromatic-demineur", "frost-eveque", "chromatic-danseuse", "chromatic-portier",
+            "thunder-eveque", "chromatic-demineur", "frost-eveque", "chromatic-danseuses", "chromatic-portier",
             "chromatic-steel-chevaliere", "chromatic-ceramic-chevaliere", "chromatic-chalier", "chromatic-jar",
             "chromatic-moissonneuse", "mask-keeper", "creation", "chromatic-clair-obscur",
             "painted-love", "chromatic-lampmaster", "duollistes", "clea-unleashed", "simon-the-divergent-star",
@@ -195,7 +206,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "renoirs-drafts",
-        residentNpcIds: ["benisseur", "ballet", "aberration", "pelerin", "veilleur", "orphelin", "bouchelier", "echassier", "moissoneusse", "contortionniste", "chromatic-creation", "creation"],
+        residentNpcIds: ["benisseur", "ballet", "aberration", "pelerin", "veilleur", "orphelin", "boucheclier", "echassier", "moissoneusse", "contortionniste", "chromatic-creation", "creation"],
         referenceNpcNames: ["Fading Man", "Grour"],
     },
     {

@@ -22,7 +22,19 @@ export function getAllNPCsSorted(): NPCInfo[] {
 export function handleNpcImgError(e: { currentTarget: HTMLImageElement }, npcId: string) {
     const img = e.currentTarget;
     const step = img.dataset.imgStep ?? "0";
-    const baseId = npcId.startsWith("chromatic-") ? npcId.replace("chromatic-", "") : null;
+
+    const locationSuffixes = ["-monolith", "-visages", "-sirene", "-manor", "-battlefield", "-act3"];
+    let baseId: string | null = null;
+    if (npcId.startsWith("chromatic-")) {
+        baseId = npcId.replace("chromatic-", "");
+    } else {
+        for (const suffix of locationSuffixes) {
+            if (npcId.endsWith(suffix)) {
+                baseId = npcId.slice(0, -suffix.length);
+                break;
+            }
+        }
+    }
 
     if (step === "0") {
         img.dataset.imgStep = "1";

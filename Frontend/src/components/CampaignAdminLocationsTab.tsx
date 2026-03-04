@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { FaMapMarkerAlt, FaChevronDown, FaChevronUp, FaSkull } from "react-icons/fa";
-import { getAllLocationsSorted } from "../utils/LocationUtils";
+import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
 import { getNpcById, handleNpcImgError } from "../utils/NpcUtils";
 import type { LocationInfo } from "../api/ResponseModel";
 import type { Campaign } from "../api/APICampaign";
@@ -15,8 +15,19 @@ interface Props {
 export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange, onNpcClick }: Props) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [mainStoryOnly, setMainStoryOnly] = useState(false);
 
     const locations = useMemo(() => {
+        if (mainStoryOnly) {
+            const storyLocs = getMainStoryLocations();
+            if (!filterText.trim()) return storyLocs;
+            const search = filterText.toLowerCase();
+            return storyLocs.filter((loc) =>
+                getLocationName(loc.id).toLowerCase().includes(search) ||
+                loc.terrain?.toLowerCase().includes(search) ||
+                loc.dangerLevel?.toLowerCase().includes(search)
+            );
+        }
         const all = getAllLocationsSorted();
         if (!filterText.trim()) return all;
         const search = filterText.toLowerCase();
@@ -25,7 +36,7 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
             loc.terrain?.toLowerCase().includes(search) ||
             loc.dangerLevel?.toLowerCase().includes(search)
         );
-    }, [filterText]);
+    }, [filterText, mainStoryOnly]);
 
     function getDangerBadgeClass(level: LocationInfo["dangerLevel"]): string {
         switch (level) {
@@ -56,6 +67,16 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
                     value={filterText}
                     onChange={(e) => setFilterText(e.target.value)}
                 />
+
+                <label className="flex items-center gap-2 mt-2 cursor-pointer select-none">
+                    <input
+                        type="checkbox"
+                        className="checkbox checkbox-sm checkbox-primary"
+                        checked={mainStoryOnly}
+                        onChange={(e) => setMainStoryOnly(e.target.checked)}
+                    />
+                    <span className="text-sm">{t("locations.mainStoryOnly")}</span>
+                </label>
 
                 {locations.length === 0 && (
                     <div className="alert alert-info mt-4 text-sm leading-relaxed">

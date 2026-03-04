@@ -1746,6 +1746,7 @@
     "sirene": "Sirene",
     "the-monolith": "The Monolith",
     "the-manor": "The Manor",
+    "lumiere-act-3": "Lumière (Act III)",
     "camp": "Camp",
     "the-continent": "The Continent",
     "abbest-cave": "Abbest Cave",
@@ -3766,7 +3767,8 @@
         "deadly": "Deadly"
       },
       "currentLocation": "Current Location",
-      "setAsCurrent": "Set as current"
+      "setAsCurrent": "Set as current",
+      "mainStoryOnly": "Show main story"
     }
   }
 }

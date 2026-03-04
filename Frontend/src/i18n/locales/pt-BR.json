@@ -1746,6 +1746,7 @@
     "sirene": "Sirene",
     "the-monolith": "O Monolito",
     "the-manor": "A Mansão",
+    "lumiere-act-3": "Lumière (Ato III)",
     "camp": "Acampamento",
     "the-continent": "O Continente",
     "abbest-cave": "Caverna Abbest",
@@ -3768,7 +3769,8 @@
         "deadly": "Mortal"
       },
       "currentLocation": "Local Atual",
-      "setAsCurrent": "Definir como atual"
+      "setAsCurrent": "Definir como atual",
+      "mainStoryOnly": "Mostrar história principal"
     }
   }
 }
