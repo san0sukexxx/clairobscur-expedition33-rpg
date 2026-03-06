@@ -5,11 +5,13 @@ import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponDexterityBonus, displayWeaponProficiencyBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponName, getWeaponPassive } from "../i18n";
+import { getLocationById } from "../utils/LocationUtils";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { getCharacterLabelById } from "../utils/CharacterUtils";
 import { useToast } from "./Toast";
 import type { WeaponDTO, AttributeType } from "../types/WeaponDTO";
 import type { GetPlayerResponse } from "../api/APIPlayer";
+import type { Campaign } from "../api/APICampaign";
 
 interface WeaponEntry {
     weapon: WeaponDTO;
@@ -68,12 +70,14 @@ interface WeaponsTabProps {
     focusWeaponId?: string | null;
     onFocusHandled?: () => void;
     players?: GetPlayerResponse[];
+    campaignInfo?: Campaign | null;
 }
 
-export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled, players }: WeaponsTabProps) {
+export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled, players, campaignInfo }: WeaponsTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
     const [giveModalEntry, setGiveModalEntry] = useState<WeaponEntry | null>(null);
+    const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("weapons.currentLocationOnly") === "true");
     const { showToast } = useToast();
 
     const allWeapons = useMemo(() => buildWeaponList(), []);
@@ -93,15 +97,25 @@ export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled,
         }
     }, [focusWeaponId]);
 
+    const currentLocationLootIds = useMemo(() => {
+        if (!currentLocationOnly || !campaignInfo?.currentLocationId) return null;
+        const loc = getLocationById(campaignInfo.currentLocationId);
+        if (!loc?.loot) return new Set<string>();
+        return new Set(loc.loot.filter(r => r.type === "weapon").map(r => r.itemId));
+    }, [currentLocationOnly, campaignInfo?.currentLocationId]);
+
     const weapons = useMemo(() => {
-        if (!filterText.trim()) return allWeapons;
+        let filtered = currentLocationLootIds
+            ? allWeapons.filter((e) => currentLocationLootIds.has(e.weaponId))
+            : allWeapons;
+        if (!filterText.trim()) return filtered;
         const search = filterText.toLowerCase();
-        return allWeapons.filter((e) =>
+        return filtered.filter((e) =>
             getWeaponName(e.weaponId).toLowerCase().includes(search) ||
             e.weapon.name.toLowerCase().includes(search) ||
             CHARACTER_LABELS[e.character]?.toLowerCase().includes(search)
         );
-    }, [filterText, allWeapons]);
+    }, [filterText, allWeapons, currentLocationLootIds]);
 
     return (
         <div className="card bg-base-100 shadow">
@@ -121,6 +135,18 @@ export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled,
                     value={filterText}
                     onChange={(e) => setFilterText(e.target.value)}
                 />
+
+                {campaignInfo?.currentLocationId && (
+                    <label className="flex items-center gap-2 mt-2 cursor-pointer select-none">
+                        <input
+                            type="checkbox"
+                            className="checkbox checkbox-sm checkbox-primary"
+                            checked={currentLocationOnly}
+                            onChange={(e) => { setCurrentLocationOnly(e.target.checked); localStorage.setItem("weapons.currentLocationOnly", String(e.target.checked)); }}
+                        />
+                        <span className="text-sm">{t("locations.currentLocationOnly")}</span>
+                    </label>
+                )}
 
                 {weapons.length === 0 && (
                     <div className="alert alert-info mt-4 text-sm">

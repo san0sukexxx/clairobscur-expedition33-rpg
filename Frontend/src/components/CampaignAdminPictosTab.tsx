@@ -2,12 +2,14 @@ import { useState, useMemo, useEffect } from "react";
 import { FaChevronDown, FaChevronUp, FaGift } from "react-icons/fa";
 import { GiStoneTablet } from "react-icons/gi";
 import { getAllPictosSorted, pictoColorHex, calculatePictoSpeed, calculatePictoDefense, calculatePictoHealth, calculatePictoAbility } from "../utils/PictoUtils";
+import { getLocationById } from "../utils/LocationUtils";
 import { t } from "../i18n";
 import { APIPicto } from "../api/APIPicto";
 import { getCharacterLabelById } from "../utils/CharacterUtils";
 import { useToast } from "./Toast";
 import type { PictoInfo } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
+import type { Campaign } from "../api/APICampaign";
 
 const STAT_CONFIG = [
     { key: "health", label: () => t("pictos.health"), calc: calculatePictoHealth },
@@ -23,12 +25,14 @@ interface PictosTabProps {
     focusPictoId?: string | null;
     onFocusHandled?: () => void;
     players?: GetPlayerResponse[];
+    campaignInfo?: Campaign | null;
 }
 
-export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, players }: PictosTabProps) {
+export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, players, campaignInfo }: PictosTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(focusPictoId ?? null);
     const [giveModalPicto, setGiveModalPicto] = useState<PictoInfo | null>(null);
+    const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("pictos.currentLocationOnly") === "true");
     const { showToast } = useToast();
 
     useEffect(() => {
@@ -42,8 +46,18 @@ export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, p
         }
     }, [focusPictoId]);
 
+    const currentLocationLootIds = useMemo(() => {
+        if (!currentLocationOnly || !campaignInfo?.currentLocationId) return null;
+        const loc = getLocationById(campaignInfo.currentLocationId);
+        if (!loc?.loot) return new Set<string>();
+        return new Set(loc.loot.filter(r => r.type === "picto").map(r => r.itemId));
+    }, [currentLocationOnly, campaignInfo?.currentLocationId]);
+
     const pictos = useMemo(() => {
-        const all = getAllPictosSorted();
+        let all = getAllPictosSorted();
+        if (currentLocationLootIds) {
+            all = all.filter((p) => currentLocationLootIds.has(p.id));
+        }
         if (!filterText.trim()) return all;
         const search = filterText.toLowerCase();
         return all.filter((p) =>
@@ -52,7 +66,7 @@ export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, p
             p.color.toLowerCase().includes(search) ||
             p.description.toLowerCase().includes(search)
         );
-    }, [filterText]);
+    }, [filterText, currentLocationLootIds]);
 
     return (
         <div className="card bg-base-100 shadow">
@@ -72,6 +86,18 @@ export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, p
                     value={filterText}
                     onChange={(e) => setFilterText(e.target.value)}
                 />
+
+                {campaignInfo?.currentLocationId && (
+                    <label className="flex items-center gap-2 mt-2 cursor-pointer select-none">
+                        <input
+                            type="checkbox"
+                            className="checkbox checkbox-sm checkbox-primary"
+                            checked={currentLocationOnly}
+                            onChange={(e) => { setCurrentLocationOnly(e.target.checked); localStorage.setItem("pictos.currentLocationOnly", String(e.target.checked)); }}
+                        />
+                        <span className="text-sm">{t("locations.currentLocationOnly")}</span>
+                    </label>
+                )}
 
                 {pictos.length === 0 && (
                     <div className="alert alert-info mt-4 text-sm">

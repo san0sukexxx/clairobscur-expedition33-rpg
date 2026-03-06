@@ -3786,7 +3786,8 @@
       },
       "currentLocation": "Local Atual",
       "setAsCurrent": "Definir como atual",
-      "mainStoryOnly": "Mostrar história principal"
+      "mainStoryOnly": "Mostrar história principal",
+      "currentLocationOnly": "Local atual"
     }
   }
 }
