@@ -13,16 +13,6 @@ export const LocationsList: LocationInfo[] = [
         id: "lumiere",
         residentNpcIds: ["mime"],
         referenceNpcNames: ["Sophie", "Tiffanie", "Marie", "Cyril", "Estelle", "Ulysse", "Richard", "Eloise", "Raphael", "Ophelie", "Maxime", "Henri", "Nicolas", "Trash-can Man", "Victor", "Benoit", "Tom", "Amandine", "Seba", "Jules", "Michel", "Colette", "Antoine", "Catherine", "Lucien", "Jerome", "Alan", "Lucie", "Tristan", "Bastien", "Alexandre", "Emma", "Young Boy", "Cribappa"],
-        loot: [
-            { type: "weapon", itemId: "liteso", level: 1 },
-            { type: "weapon", itemId: "litheson", level: 1 },
-            { type: "picto", itemId: "shortcut", level: 1 },
-            { type: "picto", itemId: "energising-powerful", level: 1 },
-            { type: "picto", itemId: "charging-stun", level: 1 },
-            { type: "picto", itemId: "augmented-counter-iii", level: 1 },
-            { type: "picto", itemId: "gradient-fighter", level: 1 },
-            { type: "picto", itemId: "faster-than-strong", level: 1 },
-        ],
     },
     {
         id: "spring-meadows",
@@ -222,6 +212,16 @@ export const LocationsList: LocationInfo[] = [
     {
         id: "lumiere-act-3",
         residentNpcIds: ["aberration-act3", "contortionniste-act3", "moissoneusse-act3", "orphelin-act3", "ballet-act3", "mime-act3", "lumiere-citizen-act3", "renoir-act3", "creation-act3", "chromatic-echassier"],
+        loot: [
+            { type: "weapon", itemId: "liteso", level: 1 },
+            { type: "weapon", itemId: "litheson", level: 1 },
+            { type: "picto", itemId: "shortcut", level: 1 },
+            { type: "picto", itemId: "energising-powerful", level: 1 },
+            { type: "picto", itemId: "charging-stun", level: 1 },
+            { type: "picto", itemId: "augmented-counter-iii", level: 1 },
+            { type: "picto", itemId: "gradient-fighter", level: 1 },
+            { type: "picto", itemId: "faster-than-strong", level: 1 },
+        ],
     },
 
     // ── Hubs ──
