@@ -179,7 +179,7 @@ const SpecialAttacksBaseData = [
     id: "lune-healing-light",
     character: "lune",
     cost: 3,
-    unlockCost: 0,
+    unlockCost: 1,
     image: "Lune_HealingLight.webp",
     preRequisite: ["lune-ice-lance","lune-immolation"]
   },
@@ -376,7 +376,7 @@ const SpecialAttacksBaseData = [
     id: "maelle-breaking-rules",
     character: "maelle",
     cost: 3,
-    unlockCost: 3,
+    unlockCost: 4,
     image: "Maelle_BreakingRules.webp",
     preRequisite: ["maelle-fleuret-fury"]
   },
@@ -654,7 +654,7 @@ const SpecialAttacksBaseData = [
     id: "sciel-rush",
     character: "sciel",
     cost: 3,
-    unlockCost: 2,
+    unlockCost: 1,
     type: "sun",
     image: "Sciel_Rush.webp",
     preRequisite: ["sciel-focused-foretell"]
