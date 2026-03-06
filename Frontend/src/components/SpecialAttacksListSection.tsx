@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { FaChevronDown, FaChevronUp, FaInfoCircle, FaLock, FaUnlock, FaTrash, FaExchangeAlt } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
 import type { PlayerSpecialAttackResponse, SpecialAttackResponse } from "../api/ResponseModel";
@@ -260,9 +260,12 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
         const disabled = !getPlayerHasSpecialAttack(specialAttack.id, player);
 
         return (
-            <article
+            <motion.article
                 key={specialAttack.id}
-                className="group relative flex h-full flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm transition-all hover:shadow-md focus-within:ring-1 focus-within:ring-base-content/20"
+                layoutId={`skill-card-${specialAttack.id}`}
+                layout
+                transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+                className="group relative flex h-full flex-col rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm transition-shadow hover:shadow-md focus-within:ring-1 focus-within:ring-base-content/20"
             >
                 <button
                     type="button"
@@ -456,7 +459,7 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </article>
+            </motion.article>
         );
     }
 
@@ -478,32 +481,34 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
                 )}
             </div>
 
-            {unlockableSkills.length > 0 && (
-                <div className="mb-6">
-                    <h3 className="mb-3 text-sm font-semibold text-emerald-400 uppercase tracking-wider">{t("specialAttacksList.sectionUnlockable")}</h3>
-                    <div className="grid grid-cols-1 gap-2 md:gap-3">
-                        {unlockableSkills.map((sa) => renderSkillCard(sa))}
+            <LayoutGroup>
+                {unlockableSkills.length > 0 && (
+                    <div className="mb-6">
+                        <h3 className="mb-3 text-sm font-semibold text-emerald-400 uppercase tracking-wider">{t("specialAttacksList.sectionUnlockable")}</h3>
+                        <div className="grid grid-cols-1 gap-2 md:gap-3">
+                            {unlockableSkills.map((sa) => renderSkillCard(sa))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {unlockedSkills.length > 0 && (
-                <div className="mb-6">
-                    <h3 className="mb-3 text-sm font-semibold text-blue-400 uppercase tracking-wider">{t("specialAttacksList.sectionUnlocked")}</h3>
-                    <div className="grid grid-cols-1 gap-2 md:gap-3">
-                        {unlockedSkills.map((sa) => renderSkillCard(sa))}
+                {unlockedSkills.length > 0 && (
+                    <div className="mb-6">
+                        <h3 className="mb-3 text-sm font-semibold text-blue-400 uppercase tracking-wider">{t("specialAttacksList.sectionUnlocked")}</h3>
+                        <div className="grid grid-cols-1 gap-2 md:gap-3">
+                            {unlockedSkills.map((sa) => renderSkillCard(sa))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {blockedSkills.length > 0 && (
-                <div className="mb-6">
-                    <h3 className="mb-3 text-sm font-semibold text-base-content/50 uppercase tracking-wider">{t("specialAttacksList.sectionBlocked")}</h3>
-                    <div className="grid grid-cols-1 gap-2 md:gap-3">
-                        {blockedSkills.map((sa) => renderSkillCard(sa))}
+                {blockedSkills.length > 0 && (
+                    <div className="mb-6">
+                        <h3 className="mb-3 text-sm font-semibold text-base-content/50 uppercase tracking-wider">{t("specialAttacksList.sectionBlocked")}</h3>
+                        <div className="grid grid-cols-1 gap-2 md:gap-3">
+                            {blockedSkills.map((sa) => renderSkillCard(sa))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </LayoutGroup>
 
             {gradientSkills.length > 0 && (
                 <article
