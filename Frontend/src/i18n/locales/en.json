@@ -3748,7 +3748,12 @@
       "back": "Back",
       "npcCount": "NPCs",
       "rewardCount": "rewards",
-      "challengeRating": "CR"
+      "challengeRating": "CR",
+      "totalDifficulty": "Total difficulty",
+      "difficultyEasy": "Easy",
+      "difficultyMedium": "Medium",
+      "difficultyHard": "Hard",
+      "difficultyDeadly": "Deadly"
     },
     "locations": {
       "title": "Locations",

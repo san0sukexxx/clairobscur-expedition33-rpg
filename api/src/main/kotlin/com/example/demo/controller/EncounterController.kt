@@ -21,7 +21,7 @@ class EncounterController(
 
     @GetMapping("/campaign/{campaignId}")
     fun listByCampaign(@PathVariable campaignId: Int): ResponseEntity<List<EncounterResponse>> {
-        val encounters = encounterRepository.findByCampaignId(campaignId)
+        val encounters = encounterRepository.findByCampaignIdOrderByStoryOrderAsc(campaignId)
         val responses = encounters.map { buildResponse(it) }
         return ResponseEntity.ok(responses)
     }
@@ -35,8 +35,10 @@ class EncounterController(
 
     @PostMapping
     fun create(@RequestBody request: CreateEncounterRequest): ResponseEntity<EncounterResponse> {
+        val nextOrder = request.storyOrder
+                ?: encounterRepository.countByCampaignId(request.campaignId)
         val encounter = encounterRepository.save(
-                Encounter(campaignId = request.campaignId, locationId = request.locationId)
+                Encounter(campaignId = request.campaignId, locationId = request.locationId, storyOrder = nextOrder)
         )
         return ResponseEntity.ok(buildResponse(encounter))
     }
@@ -51,6 +53,9 @@ class EncounterController(
                 ?: return ResponseEntity.notFound().build()
 
         encounter.locationId = request.locationId
+        if (request.storyOrder != null) {
+            encounter.storyOrder = request.storyOrder
+        }
         encounterRepository.save(encounter)
 
         // Replace all NPCs
@@ -78,6 +83,17 @@ class EncounterController(
     }
 
     @Transactional
+    @PutMapping("/reorder")
+    fun reorder(@RequestBody request: ReorderEncountersRequest): ResponseEntity<Unit> {
+        request.orderedIds.forEachIndexed { index, encounterId ->
+            val encounter = encounterRepository.findById(encounterId).orElse(null) ?: return@forEachIndexed
+            encounter.storyOrder = index
+            encounterRepository.save(encounter)
+        }
+        return ResponseEntity.ok().build()
+    }
+
+    @Transactional
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Int): ResponseEntity<Unit> {
         if (!encounterRepository.existsById(id)) {
@@ -99,6 +115,7 @@ class EncounterController(
                 id = encId,
                 campaignId = encounter.campaignId,
                 locationId = encounter.locationId,
+                storyOrder = encounter.storyOrder,
                 npcs = npcs,
                 rewards = rewards
         )

@@ -15,6 +15,7 @@ export interface EncounterResponse {
     id: number
     campaignId: number
     locationId?: string | null
+    storyOrder: number
     npcs: EncounterNpcDto[]
     rewards: EncounterRewardDto[]
 }
@@ -28,6 +29,7 @@ export interface UpdateEncounterInput {
     locationId?: string | null
     npcs: EncounterNpcDto[]
     rewards: EncounterRewardDto[]
+    storyOrder?: number
 }
 
 export class APIEncounter {
@@ -45,6 +47,10 @@ export class APIEncounter {
 
     static async update(id: number, input: UpdateEncounterInput): Promise<EncounterResponse> {
         return api.put<UpdateEncounterInput, EncounterResponse>(`encounters/${id}`, input)
+    }
+
+    static async reorder(orderedIds: number[]): Promise<void> {
+        await api.put<{ orderedIds: number[] }, void>("encounters/reorder", { orderedIds })
     }
 
     static async delete(id: number): Promise<void> {

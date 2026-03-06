@@ -1,16 +1,31 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { FaDragon, FaPlus, FaTrash, FaEdit, FaArrowLeft, FaMinus } from "react-icons/fa";
+import { FaDragon, FaPlus, FaTrash, FaEdit, FaArrowLeft, FaMinus, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { APIEncounter, type EncounterResponse, type EncounterNpcDto, type EncounterRewardDto } from "../api/APIEncounter";
 import { type Campaign } from "../api/APICampaign";
 import { getAllNPCsSorted, getNpcById, handleNpcImgError } from "../utils/NpcUtils";
 import { CHARACTERS_LIST } from "../utils/CharacterUtils";
 import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds, getLocationName } from "../i18n";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
-import { getAllLocationsSorted } from "../utils/LocationUtils";
-import { calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
+import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
+import { calculateNPCDifficulty, crToXp, formatCR } from "../utils/NpcDifficulty";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
+}
+
+function calculateEncounterXp(npcs: EncounterNpcDto[]): number {
+    return npcs.reduce((total, npc) => {
+        const cr = calculateNPCDifficulty(npc.npcId);
+        return total + crToXp(cr) * npc.quantity;
+    }, 0);
+}
+
+function getDifficultyLabel(xp: number): { label: string; color: string } {
+    if (xp === 0) return { label: "-", color: "badge-ghost" };
+    if (xp <= 200) return { label: t("encounters.difficultyEasy"), color: "badge-success" };
+    if (xp <= 750) return { label: t("encounters.difficultyMedium"), color: "badge-warning" };
+    if (xp <= 1800) return { label: t("encounters.difficultyHard"), color: "badge-error" };
+    return { label: t("encounters.difficultyDeadly"), color: "badge-error badge-outline" };
 }
 
 export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdminEncountersTabProps) {
@@ -31,6 +46,9 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     const [npcSearch, setNpcSearch] = useState("");
     const [npcDropdownOpen, setNpcDropdownOpen] = useState(false);
     const [npcLocationFilter, setNpcLocationFilter] = useState<string>("");
+
+    // Location story mode
+    const [locationStoryMode, setLocationStoryMode] = useState(() => localStorage.getItem("encounters.locationStoryMode") === "true");
 
     // Reward form
     const [newRewardType, setNewRewardType] = useState<string>("weapon");
@@ -84,6 +102,20 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
             console.error("Error deleting encounter");
         } finally {
             setDeletingId(null);
+        }
+    }
+
+    async function handleMoveEncounter(index: number, direction: "up" | "down") {
+        const newIndex = direction === "up" ? index - 1 : index + 1;
+        if (newIndex < 0 || newIndex >= encounters.length) return;
+        const newOrder = [...encounters];
+        [newOrder[index], newOrder[newIndex]] = [newOrder[newIndex], newOrder[index]];
+        setEncounters(newOrder);
+        try {
+            await APIEncounter.reorder(newOrder.map((e) => e.id));
+        } catch {
+            console.error("Error reordering encounters");
+            await loadEncounters();
         }
     }
 
@@ -215,6 +247,11 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
         return getPictoName(reward.itemId) || reward.itemId;
     }
 
+    // Difficulty totalizer
+    const editTotalXp = useMemo(() => calculateEncounterXp(editNpcs), [editNpcs]);
+    const editDifficulty = useMemo(() => getDifficultyLabel(editTotalXp), [editTotalXp]);
+    const totalXpAll = useMemo(() => encounters.reduce((sum, enc) => sum + calculateEncounterXp(enc.npcs), 0), [encounters]);
+
     // ─── EDITING VIEW ──────────────────────────────────────────────
     if (editingEncounter) {
         return (
@@ -242,18 +279,39 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         <select
                             className="select select-bordered"
                             value={editLocationId}
-                            onChange={(e) => setEditLocationId(e.target.value)}
+                            onChange={(e) => { setEditLocationId(e.target.value); setNpcLocationFilter(e.target.value); }}
                         >
                             <option value="">{t("encounters.noLocation")}</option>
-                            {getAllLocationsSorted().map(loc => (
+                            {(locationStoryMode ? getMainStoryLocations() : getAllLocationsSorted()).map(loc => (
                                 <option key={loc.id} value={loc.id}>{getLocationName(loc.id)}</option>
                             ))}
                         </select>
+                        <label className="flex items-center gap-2 mt-2 cursor-pointer select-none">
+                            <input
+                                type="checkbox"
+                                className="checkbox checkbox-sm checkbox-primary"
+                                checked={locationStoryMode}
+                                onChange={(e) => { setLocationStoryMode(e.target.checked); localStorage.setItem("encounters.locationStoryMode", String(e.target.checked)); }}
+                            />
+                            <span className="text-sm">{t("locations.mainStoryOnly")}</span>
+                        </label>
                     </div>
 
                     {/* NPCs Section */}
                     <div className="mb-6">
-                        <h3 className="font-semibold text-lg mb-2">{t("encounters.npcs")}</h3>
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="font-semibold text-lg">{t("encounters.npcs")}</h3>
+                            {editNpcs.length > 0 && (
+                                <div className="flex items-center gap-2">
+                                    <span className={`badge ${editDifficulty.color}`}>
+                                        {editDifficulty.label}
+                                    </span>
+                                    <span className="text-sm font-mono opacity-70">
+                                        {editTotalXp.toLocaleString()} XP
+                                    </span>
+                                </div>
+                            )}
+                        </div>
 
                         {editNpcs.length === 0 && (
                             <p className="text-sm opacity-60 mb-2">{t("encounters.noNpcsAdded")}</p>
@@ -262,6 +320,8 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         <div className="flex flex-col gap-2 mb-3">
                             {editNpcs.map((npcEntry) => {
                                 const npc = getNpcById(npcEntry.npcId);
+                                const npcCr = calculateNPCDifficulty(npcEntry.npcId);
+                                const npcXp = crToXp(npcCr) * npcEntry.quantity;
                                 return (
                                     <div key={npcEntry.npcId} className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-base-200 rounded-lg p-2">
                                         <div className="w-10 h-10 rounded-full bg-base-300 shrink-0 overflow-hidden flex items-center justify-center">
@@ -276,7 +336,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                         <div className="flex flex-col min-w-0 flex-1 basis-32">
                                             <span className="font-semibold text-sm">{npc?.name ?? npcEntry.npcId}</span>
                                             <span className="text-xs opacity-60">
-                                                {t("encounters.challengeRating")} {formatCR(calculateNPCDifficulty(npcEntry.npcId))}
+                                                {t("encounters.challengeRating")} {formatCR(npcCr)} — {npcXp.toLocaleString()} XP
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-1 ml-auto shrink-0">
@@ -526,6 +586,21 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         </button>
                     </div>
 
+                    {/* Difficulty total summary */}
+                    {!loading && encounters.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-3 mt-2 px-1">
+                            <span className="text-sm opacity-70">
+                                {t("encounters.totalDifficulty")}:
+                            </span>
+                            <span className="font-mono text-sm font-semibold">
+                                {totalXpAll.toLocaleString()} XP
+                            </span>
+                            <span className="text-sm opacity-50">
+                                ({encounters.length} {t("encounters.npcCount").toLowerCase() === "npcs" ? t("locations.encounterCount") : t("locations.encounterCount")})
+                            </span>
+                        </div>
+                    )}
+
                     {loading && (
                         <div className="mt-4 text-sm opacity-70">{t("encounters.loading")}</div>
                     )}
@@ -538,39 +613,72 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
 
                     {!loading && encounters.length > 0 && (
                         <div className="mt-4 flex flex-col divide-y divide-base-300">
-                            {encounters.map((enc) => (
-                                <div key={enc.id} className="flex items-center gap-3 py-3 px-1">
-                                    <div className="flex flex-col min-w-0 flex-1">
-                                        <span className="font-semibold text-sm">
-                                            {enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`}
-                                        </span>
-                                        <div className="flex flex-wrap gap-2 mt-1">
-                                            <span className="badge badge-sm badge-ghost">
-                                                {enc.npcs.reduce((sum, n) => sum + n.quantity, 0)} {t("encounters.npcCount")}
+                            {encounters.map((enc, index) => {
+                                const encXp = calculateEncounterXp(enc.npcs);
+                                const diff = getDifficultyLabel(encXp);
+                                return (
+                                    <div key={enc.id} className="flex items-center gap-3 py-3 px-1">
+                                        {/* Order controls */}
+                                        <div className="flex flex-col gap-0.5 shrink-0">
+                                            <button
+                                                className="btn btn-xs btn-ghost px-1"
+                                                onClick={() => handleMoveEncounter(index, "up")}
+                                                disabled={index === 0}
+                                            >
+                                                <FaArrowUp className="text-xs" />
+                                            </button>
+                                            <span className="text-xs font-mono text-center opacity-50">{index + 1}</span>
+                                            <button
+                                                className="btn btn-xs btn-ghost px-1"
+                                                onClick={() => handleMoveEncounter(index, "down")}
+                                                disabled={index === encounters.length - 1}
+                                            >
+                                                <FaArrowDown className="text-xs" />
+                                            </button>
+                                        </div>
+
+                                        <div className="flex flex-col min-w-0 flex-1">
+                                            <span className="font-semibold text-sm">
+                                                {enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`}
                                             </span>
-                                            <span className="badge badge-sm badge-ghost">
-                                                {enc.rewards.length} {t("encounters.rewardCount")}
-                                            </span>
+                                            <div className="flex flex-wrap gap-2 mt-1">
+                                                <span className="badge badge-sm badge-ghost">
+                                                    {enc.npcs.reduce((sum, n) => sum + n.quantity, 0)} {t("encounters.npcCount")}
+                                                </span>
+                                                <span className="badge badge-sm badge-ghost">
+                                                    {enc.rewards.length} {t("encounters.rewardCount")}
+                                                </span>
+                                                {encXp > 0 && (
+                                                    <>
+                                                        <span className={`badge badge-sm ${diff.color}`}>
+                                                            {diff.label}
+                                                        </span>
+                                                        <span className="badge badge-sm badge-ghost font-mono">
+                                                            {encXp.toLocaleString()} XP
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <button
+                                                className="btn btn-xs btn-outline"
+                                                onClick={() => startEditing(enc)}
+                                            >
+                                                <FaEdit />
+                                                {t("encounters.edit")}
+                                            </button>
+                                            <button
+                                                className="btn btn-xs btn-error"
+                                                onClick={() => setConfirmDeleteId(enc.id)}
+                                                disabled={deletingId === enc.id}
+                                            >
+                                                <FaTrash />
+                                            </button>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 shrink-0">
-                                        <button
-                                            className="btn btn-xs btn-outline"
-                                            onClick={() => startEditing(enc)}
-                                        >
-                                            <FaEdit />
-                                            {t("encounters.edit")}
-                                        </button>
-                                        <button
-                                            className="btn btn-xs btn-error"
-                                            onClick={() => setConfirmDeleteId(enc.id)}
-                                            disabled={deletingId === enc.id}
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>

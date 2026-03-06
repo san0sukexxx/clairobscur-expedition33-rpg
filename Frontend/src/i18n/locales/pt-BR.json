@@ -3750,7 +3750,12 @@
       "back": "Voltar",
       "npcCount": "NPCs",
       "rewardCount": "recompensas",
-      "challengeRating": "ND"
+      "challengeRating": "ND",
+      "totalDifficulty": "Dificuldade total",
+      "difficultyEasy": "Fácil",
+      "difficultyMedium": "Médio",
+      "difficultyHard": "Difícil",
+      "difficultyDeadly": "Mortal"
     },
     "locations": {
       "title": "Locais",
