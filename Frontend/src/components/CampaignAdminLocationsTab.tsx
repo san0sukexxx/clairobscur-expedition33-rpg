@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { FaMapMarkerAlt, FaChevronDown, FaChevronUp, FaSkull } from "react-icons/fa";
 import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
 import { getNpcById, handleNpcImgError } from "../utils/NpcUtils";
+import { getPictoByName } from "../utils/PictoUtils";
 import type { LocationInfo } from "../api/ResponseModel";
 import type { Campaign } from "../api/APICampaign";
 import { t, getLocationName, getWeaponName, getPictoName } from "../i18n";
@@ -10,9 +11,11 @@ interface Props {
     campaignInfo: Campaign;
     onLocationChange: (locationId: string | null) => void;
     onNpcClick: (npcId: string) => void;
+    onPictoClick?: (pictoId: string) => void;
+    onWeaponClick?: (weaponId: string) => void;
 }
 
-export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange, onNpcClick }: Props) {
+export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange, onNpcClick, onPictoClick, onWeaponClick }: Props) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [mainStoryOnly, setMainStoryOnly] = useState(() => localStorage.getItem("locations.mainStoryOnly") === "true");
@@ -233,14 +236,42 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
                                                 </div>
                                             )}
 
-                                            {/* Loot */}
-                                            {(loc.loot?.length ?? 0) > 0 && (
+                                            {/* Loot - Pictos */}
+                                            {loc.loot?.some(r => r.type === "picto") && (
                                                 <div>
-                                                    <span className="font-bold text-xs">{t("locations.loot")}</span>
+                                                    <span className="font-bold text-xs">Pictos</span>
                                                     <div className="flex flex-wrap gap-1 mt-1">
-                                                        {loc.loot!.map((reward, idx) => (
-                                                            <span key={idx} className="badge badge-sm badge-outline">
-                                                                {reward.type === "weapon" ? getWeaponName(reward.itemId) : getPictoName(reward.itemId)}
+                                                        {loc.loot!.filter(r => r.type === "picto").map((reward, idx) => {
+                                                            const pictoInfo = getPictoByName(reward.itemId);
+                                                            const imgSrc = pictoInfo?.imageId ? `/pictos/${encodeURI(pictoInfo.imageId)}.webp` : null;
+                                                            return (
+                                                                <span
+                                                                    key={idx}
+                                                                    className="badge badge-sm badge-outline cursor-pointer hover:badge-primary transition-colors gap-1"
+                                                                    onClick={() => onPictoClick?.(reward.itemId)}
+                                                                >
+                                                                    {imgSrc && <img src={imgSrc} alt="" className="w-3.5 h-3.5 rounded-sm object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />}
+                                                                    {getPictoName(reward.itemId)}
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Loot - Armas */}
+                                            {loc.loot?.some(r => r.type === "weapon") && (
+                                                <div>
+                                                    <span className="font-bold text-xs">{t("tabs.weapons")}</span>
+                                                    <div className="flex flex-wrap gap-1 mt-1">
+                                                        {loc.loot!.filter(r => r.type === "weapon").map((reward, idx) => (
+                                                            <span
+                                                                key={idx}
+                                                                className="badge badge-sm badge-outline cursor-pointer hover:badge-primary transition-colors gap-1"
+                                                                onClick={() => onWeaponClick?.(reward.itemId)}
+                                                            >
+                                                                <img src={`/weapons/${reward.itemId}.webp`} alt="" className="w-3.5 h-3.5 rounded-sm object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                                                {getWeaponName(reward.itemId)}
                                                             </span>
                                                         ))}
                                                     </div>

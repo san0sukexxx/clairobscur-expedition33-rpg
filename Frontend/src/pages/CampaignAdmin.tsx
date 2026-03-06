@@ -345,6 +345,16 @@ export default function CampaignAdmin() {
                             setActiveTab("npcs");
                             localStorage.setItem(storageKey, "npcs");
                         }}
+                        onPictoClick={(pictoId) => {
+                            setFocusPictoId(pictoId);
+                            setActiveTab("pictos-list");
+                            localStorage.setItem(storageKey, "pictos-list");
+                        }}
+                        onWeaponClick={(weaponId) => {
+                            setFocusWeaponId(weaponId);
+                            setActiveTab("weapons-list");
+                            localStorage.setItem(storageKey, "weapons-list");
+                        }}
                     />
                 )}
 
