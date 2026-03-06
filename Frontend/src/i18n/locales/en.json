@@ -3072,7 +3072,11 @@
       "unlockPrerequisite": "Obtain one of these specials to unlock",
       "unlockError": "Error unlocking special:",
       "removeError": "Error removing special:",
-      "sectionAriaLabel": "Specials section"
+      "sectionAriaLabel": "Specials section",
+      "sectionUnlockable": "Unlockable",
+      "sectionBlocked": "Blocked",
+      "sectionUnlocked": "Unlocked",
+      "equip": "Equip"
     },
     "items": {
       "title": "Items",
@@ -3749,11 +3753,7 @@
       "npcCount": "NPCs",
       "rewardCount": "rewards",
       "challengeRating": "CR",
-      "totalDifficulty": "Total difficulty",
-      "difficultyEasy": "Easy",
-      "difficultyMedium": "Medium",
-      "difficultyHard": "Hard",
-      "difficultyDeadly": "Deadly"
+      "bonusXp": "Bonus XP"
     },
     "locations": {
       "title": "Locations",

@@ -3,8 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import SpecialAttackPickerSection from "./SpecialAttackPickerSection";
 import SpecialAttacksListSection from "./SpecialAttacksListSection";
-import { FaListCheck } from "react-icons/fa6";
-import { FaListUl } from "react-icons/fa";
+import { FaExchangeAlt } from "react-icons/fa";
 import { calculateSpecialAttackPoints } from "../utils/PlayerCalculator";
 import { calculateUsedSpecialAttackPoints } from "../utils/SpecialAttackUtils";
 import { t } from "../i18n";
@@ -75,7 +74,7 @@ export default function SpecialAttacksSection({ player, setPlayer, isAdmin, init
                             opacity: prefersReduced && tab !== "list" ? 0 : 1,
                         }}
                     >
-                        <SpecialAttacksListSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} inBattle={inBattle} />
+                        <SpecialAttacksListSection player={player} setPlayer={setPlayer} isAdmin={isAdmin} inBattle={inBattle} onFlipToPicker={() => { prev.current = tab; setTab("picker"); }} />
                     </div>
 
                     <div
@@ -100,7 +99,7 @@ export default function SpecialAttacksSection({ player, setPlayer, isAdmin, init
                     onClick={handleMenuAction}
                     aria-label={tab === "list" ? "Ir para seleção de ataques especiais" : "Voltar para lista de ataques especiais"}
                 >
-                    {tab === "list" ? <FaListCheck size={20} /> : <FaListUl size={20} />}
+                    <FaExchangeAlt size={18} />
                 </button>
             </div>
         </div>

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* === CombatAdmin: layout mobile (default) === */
 .combat-main-row {
   display: flex;

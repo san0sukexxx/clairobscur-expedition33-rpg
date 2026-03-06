@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaChevronDown, FaChevronUp, FaInfoCircle, FaLock, FaUnlock, FaTrash } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaInfoCircle, FaLock, FaUnlock, FaTrash, FaExchangeAlt } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
 import type { PlayerSpecialAttackResponse, SpecialAttackResponse } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
@@ -15,28 +15,41 @@ export interface SpecialAttacksListTabProps {
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     isAdmin: boolean;
     inBattle: boolean;
+    onFlipToPicker?: () => void;
 }
 
-export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, inBattle }: SpecialAttacksListTabProps) {
+export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, inBattle, onFlipToPicker }: SpecialAttacksListTabProps) {
     if(!player) { return }
 
     const list: SpecialAttackResponse[] = getEnrichedCharacterSpecialAttacks(player);
     const [expanded, setExpanded] = useState<Record<string, boolean>>({});
     const [gradientOpen, setGradientOpen] = useState(false);
 
-    const { regularSkills, gradientSkills } = useMemo(() => {
-        const regular: SpecialAttackResponse[] = [];
-        const gradient: SpecialAttackResponse[] = [];
-        for (const sa of list) {
-            if (sa.isGradient) gradient.push(sa);
-            else regular.push(sa);
-        }
-        return { regularSkills: regular, gradientSkills: gradient };
-    }, [list]);
-
     const totalPoints = calculateSpecialAttackPoints(player);
     const usedPoints = calculateUsedSpecialAttackPoints(player);
     const remainingPoints = totalPoints - usedPoints;
+
+    const { unlockableSkills, blockedSkills, unlockedSkills, gradientSkills } = useMemo(() => {
+        const unlockable: SpecialAttackResponse[] = [];
+        const blocked: SpecialAttackResponse[] = [];
+        const unlocked: SpecialAttackResponse[] = [];
+        const gradient: SpecialAttackResponse[] = [];
+        const alpha = (a: SpecialAttackResponse, b: SpecialAttackResponse) => a.name.localeCompare(b.name, "pt-BR");
+        for (const sa of list) {
+            if (sa.isGradient) { gradient.push(sa); continue; }
+            const owned = getPlayerHasSpecialAttack(sa.id, player!);
+            if (owned) { unlocked.push(sa); continue; }
+            const canUnlock = !getSpecialAttackIsBlocked(sa.id, player!) && hasPrerequisitesFulfilled(sa.id, player!);
+            const hasPoints = (sa.unlockCost ?? 0) <= remainingPoints;
+            if (canUnlock && hasPoints) unlockable.push(sa);
+            else blocked.push(sa);
+        }
+        unlockable.sort(alpha);
+        blocked.sort(alpha);
+        unlocked.sort(alpha);
+        gradient.sort(alpha);
+        return { unlockableSkills: unlockable, blockedSkills: blocked, unlockedSkills: unlocked, gradientSkills: gradient };
+    }, [list, player, remainingPoints]);
 
     const toggle = useCallback((id: string) => {
         setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -50,21 +63,39 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
         );
     }
 
+    function findFirstEmptySlot(): number | null {
+        const usedSlots = new Set(
+            (player?.specialAttacks ?? [])
+                .filter(s => s.slot !== null && s.slot !== undefined)
+                .map(s => s.slot as number)
+        );
+        for (let i = 0; i < 6; i++) {
+            if (!usedSlots.has(i)) return i;
+        }
+        return null;
+    }
+
     async function handleUnlock(specialAttackId: string) {
         if (!player) return;
 
         const alreadyUnlocked = player.specialAttacks?.some(s => s.specialAttackId === specialAttackId);
         if (alreadyUnlocked) return;
 
+        const specialAttackInfo = getSpecialAttackById(specialAttackId);
+        const isGradient = specialAttackInfo?.isGradient ?? false;
+        const emptySlot = isGradient ? null : findFirstEmptySlot();
+
         try {
             const relationId = await APISpecialAttack.addPlayerSpecialAttack({
                 playerId: player.id,
-                specialAttackId: specialAttackId
+                specialAttackId: specialAttackId,
+                slot: emptySlot,
             });
 
             const newSpecialAttack: PlayerSpecialAttackResponse = {
                 id: relationId.toString(),
-                specialAttackId: specialAttackId
+                specialAttackId: specialAttackId,
+                slot: emptySlot,
             };
 
             setPlayer((prev) => {
@@ -350,6 +381,22 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
                     </div>
                 )}
 
+                {!disabled && !inBattle && onFlipToPicker && (
+                    <div className="mt-4 flex justify-end">
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                onFlipToPicker();
+                            }}
+                            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        >
+                            <FaExchangeAlt className="h-3.5 w-3.5" aria-hidden />
+                            {t("specialAttacksList.equip")}
+                        </button>
+                    </div>
+                )}
+
                 {/* Área expansível */}
                 <AnimatePresence initial={false}>
                     {isOpen && (
@@ -414,7 +461,7 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
     }
 
     return (
-        <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6" aria-label={t("specialAttacksList.sectionAriaLabel")}>
+        <section className="w-full max-w-[1400px] mx-auto px-1 md:px-2" aria-label={t("specialAttacksList.sectionAriaLabel")}>
             <header className="mb-4">
                 <h2 className="text-xl font-semibold leading-none text-left">{t("specialAttacksList.title")}</h2>
                 <p className="text-sm opacity-70 text-left">{t("specialAttacksList.subtitle")}</p>
@@ -431,34 +478,70 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
                 )}
             </div>
 
-            {/* grade ajustada para desktop */}
-            <div className="grid grid-cols-1 gap-4 md:gap-6">
-                {regularSkills.map((sa) => renderSkillCard(sa))}
-            </div>
+            {unlockableSkills.length > 0 && (
+                <div className="mb-6">
+                    <h3 className="mb-3 text-sm font-semibold text-emerald-400 uppercase tracking-wider">{t("specialAttacksList.sectionUnlockable")}</h3>
+                    <div className="grid grid-cols-1 gap-2 md:gap-3">
+                        {unlockableSkills.map((sa) => renderSkillCard(sa))}
+                    </div>
+                </div>
+            )}
+
+            {unlockedSkills.length > 0 && (
+                <div className="mb-6">
+                    <h3 className="mb-3 text-sm font-semibold text-blue-400 uppercase tracking-wider">{t("specialAttacksList.sectionUnlocked")}</h3>
+                    <div className="grid grid-cols-1 gap-2 md:gap-3">
+                        {unlockedSkills.map((sa) => renderSkillCard(sa))}
+                    </div>
+                </div>
+            )}
+
+            {blockedSkills.length > 0 && (
+                <div className="mb-6">
+                    <h3 className="mb-3 text-sm font-semibold text-base-content/50 uppercase tracking-wider">{t("specialAttacksList.sectionBlocked")}</h3>
+                    <div className="grid grid-cols-1 gap-2 md:gap-3">
+                        {blockedSkills.map((sa) => renderSkillCard(sa))}
+                    </div>
+                </div>
+            )}
 
             {gradientSkills.length > 0 && (
-                <div className="mt-6">
-                    <button
-                        type="button"
-                        onClick={() => setGradientOpen((v) => !v)}
-                        className="flex w-full items-center gap-2 rounded-lg border border-fuchsia-400/30 bg-base-100 px-4 py-2.5 text-left shadow-sm hover:bg-base-200 transition-colors"
-                    >
-                        <span className="text-sm font-semibold text-fuchsia-200">{t("specialAttackPicker.gradientSection")}</span>
+                <article
+                    className="mt-4 rounded-2xl border border-fuchsia-400/30 bg-base-100 shadow-sm transition-all hover:shadow-md cursor-pointer"
+                    onClick={() => setGradientOpen((v) => !v)}
+                >
+                    <div className="flex items-center gap-3 px-5 py-4">
+                        <span className="text-lg font-semibold text-fuchsia-200">{t("specialAttackPicker.gradientSection")}</span>
                         <span className="badge badge-sm border-fuchsia-400/30 text-fuchsia-200">{gradientSkills.length}</span>
-                        <span className="ml-auto">
-                            {gradientOpen
-                                ? <FaChevronUp className="w-3 h-3 opacity-50" />
-                                : <FaChevronDown className="w-3 h-3 opacity-50" />
-                            }
-                        </span>
-                    </button>
+                        <motion.span
+                            className="ml-auto"
+                            animate={{ rotate: gradientOpen ? 180 : 0 }}
+                            transition={{ duration: 0.25 }}
+                        >
+                            <FaChevronDown className="w-3.5 h-3.5 text-fuchsia-300/60" />
+                        </motion.span>
+                    </div>
 
-                    {gradientOpen && (
-                        <div className="mt-4 grid grid-cols-1 gap-4 md:gap-6">
-                            {gradientSkills.map((sa) => renderSkillCard(sa))}
-                        </div>
-                    )}
-                </div>
+                    <AnimatePresence initial={false}>
+                        {gradientOpen && (
+                            <motion.div
+                                key="gradient-content"
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                className="overflow-hidden"
+                            >
+                                <div
+                                    className="grid grid-cols-1 gap-2 md:gap-3 px-5 pb-5 pt-1"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    {gradientSkills.map((sa) => renderSkillCard(sa))}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </article>
             )}
         </section>
     );

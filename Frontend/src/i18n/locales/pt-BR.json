@@ -3072,7 +3072,11 @@
       "unlockPrerequisite": "Obtenha um desses ataques especiais para desbloquear",
       "unlockError": "Erro ao desbloquear ataque especial:",
       "removeError": "Erro ao remover ataque especial:",
-      "sectionAriaLabel": "Seção de ataques especiais"
+      "sectionAriaLabel": "Seção de ataques especiais",
+      "sectionUnlockable": "Desbloqueáveis",
+      "sectionBlocked": "Bloqueadas",
+      "sectionUnlocked": "Desbloqueadas",
+      "equip": "Equipar"
     },
     "items": {
       "title": "Itens",
@@ -3751,11 +3755,7 @@
       "npcCount": "NPCs",
       "rewardCount": "recompensas",
       "challengeRating": "ND",
-      "totalDifficulty": "Dificuldade total",
-      "difficultyEasy": "Fácil",
-      "difficultyMedium": "Médio",
-      "difficultyHard": "Difícil",
-      "difficultyDeadly": "Mortal"
+      "bonusXp": "Bônus XP"
     },
     "locations": {
       "title": "Locais",

@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useLocation, matchPath, useParams } from "react-router-dom";
 import { t } from "../../i18n";
 
@@ -69,6 +69,13 @@ export default function PlayerPage() {
     loading, error,
     lastBattleLog, setLastBattleLog
   } = usePlayerData({ campaign, character });
+
+  // Setup progress
+  const setupComplete = useMemo(() => {
+    const abilityScoresDone = player?.setupProgress?.find(s => s.section === "abilityScores")?.done ?? false;
+    const skillProficiencyDone = player?.setupProgress?.find(s => s.section === "skillProficiency")?.done ?? false;
+    return abilityScoresDone && skillProficiencyDone;
+  }, [player?.setupProgress]);
 
   // Weapon info
   const { weaponInfo, weaponList } = useWeaponInfo(player);
@@ -202,7 +209,9 @@ export default function PlayerPage() {
         playerId={player?.id}
         className={
           tab === "combate"
-            ? (player?.fightInfo?.battleStatus === "finished" || combatBottomSheetOpen) ? "bottom-16 right-4" : "bottom-28 right-4"
+            ? (!player?.fightInfo || player?.fightInfo?.battleStatus === "finished")
+              ? "bottom-16 right-4"
+              : combatBottomSheetOpen ? "bottom-16 right-4" : "bottom-28 right-4"
             : tab === "habilidades" ? "bottom-24 right-4"
             : "bottom-4 right-4"
         }
@@ -227,6 +236,7 @@ export default function PlayerPage() {
         isExecutingSkill={isExecutingSkill}
         tab={tab}
         setTab={setTabWithSkillMode}
+        setupComplete={setupComplete}
       />
 
       <main className="p-4 max-w-md mx-auto pb-24">
@@ -242,6 +252,7 @@ export default function PlayerPage() {
 
         <PlayerContent
           tab={tab}
+          setTab={setTab}
           loading={loading}
           error={error}
           player={player}
