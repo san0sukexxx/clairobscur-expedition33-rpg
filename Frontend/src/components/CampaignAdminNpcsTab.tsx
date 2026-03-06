@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, type RefObject, type MutableRefObject } f
 import { FaSkull, FaChevronDown, FaChevronUp, FaFistRaised, FaShieldAlt, FaHeart, FaBrain, FaEye, FaTheaterMasks, FaArrowUp, FaUndo } from "react-icons/fa";
 import { GiRunningShoe } from "react-icons/gi";
 import { getAllNPCsSorted, handleNpcImgError } from "../utils/NpcUtils";
+import { getLocationById } from "../utils/LocationUtils";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { getAbilityModifier } from "../utils/AttackCalculator";
 import { getAttackTypeLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
@@ -10,6 +11,7 @@ import { dispatchRoll } from "../utils/rollDispatcher";
 import type { DiceBoardRef } from "../components/DiceBoard";
 import { t, getPictoName, getWeaponName } from "../i18n";
 import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
+import type { Campaign } from "../api/APICampaign";
 import { crToXp, calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
 
 const ATTR_CONFIG = [
@@ -28,11 +30,13 @@ interface NpcsTabProps {
     onFocusHandled?: () => void;
     onPictoClick?: (pictoId: string) => void;
     onWeaponClick?: (weaponId: string) => void;
+    campaignInfo?: Campaign | null;
 }
 
-export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef, focusNpcId, onFocusHandled, onPictoClick, onWeaponClick }: NpcsTabProps) {
+export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef, focusNpcId, onFocusHandled, onPictoClick, onWeaponClick, campaignInfo }: NpcsTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(focusNpcId ?? null);
+    const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("npcs.currentLocationOnly") === "true");
 
     useEffect(() => {
         if (focusNpcId) {
@@ -45,8 +49,22 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
         }
     }, [focusNpcId]);
 
+    const currentLocationNpcIds = useMemo(() => {
+        if (!currentLocationOnly || !campaignInfo?.currentLocationId) return null;
+        const loc = getLocationById(campaignInfo.currentLocationId);
+        if (!loc) return new Set<string>();
+        const ids = new Set<string>(loc.residentNpcIds ?? []);
+        for (const enc of loc.encounters ?? []) {
+            for (const npcId of enc.npcIds) ids.add(npcId);
+        }
+        return ids;
+    }, [currentLocationOnly, campaignInfo?.currentLocationId]);
+
     const npcs = useMemo(() => {
-        const all = getAllNPCsSorted();
+        let all = getAllNPCsSorted();
+        if (currentLocationNpcIds) {
+            all = all.filter((npc) => currentLocationNpcIds.has(npc.id));
+        }
         if (!filterText.trim()) return all;
         const search = filterText.toLowerCase();
         return all.filter((npc) =>
@@ -57,7 +75,7 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
             npc.resistentTo?.toLowerCase().includes(search) ||
             npc.imuneTo?.toLowerCase().includes(search)
         );
-    }, [filterText]);
+    }, [filterText, currentLocationNpcIds]);
 
     return (
         <div className="card bg-base-100 shadow">
@@ -77,6 +95,18 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                     value={filterText}
                     onChange={(e) => setFilterText(e.target.value)}
                 />
+
+                {campaignInfo?.currentLocationId && (
+                    <label className="flex items-center gap-2 mt-2 cursor-pointer select-none">
+                        <input
+                            type="checkbox"
+                            className="checkbox checkbox-sm checkbox-primary"
+                            checked={currentLocationOnly}
+                            onChange={(e) => { setCurrentLocationOnly(e.target.checked); localStorage.setItem("npcs.currentLocationOnly", String(e.target.checked)); }}
+                        />
+                        <span className="text-sm">{t("locations.currentLocationOnly")}</span>
+                    </label>
+                )}
 
                 {npcs.length === 0 && (
                     <div className="alert alert-info mt-4 text-sm">

@@ -364,6 +364,7 @@ export default function CampaignAdmin() {
                         timeoutDiceBoardRef={timeoutDiceBoardRef}
                         focusNpcId={focusNpcId}
                         onFocusHandled={() => setFocusNpcId(null)}
+                        campaignInfo={campaignInfo}
                         onPictoClick={(pictoId) => {
                             setFocusPictoId(pictoId);
                             setActiveTab("pictos-list");
