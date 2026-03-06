@@ -5,7 +5,7 @@ import { getNpcById, handleNpcImgError } from "../utils/NpcUtils";
 import { getPictoByName } from "../utils/PictoUtils";
 import type { LocationInfo } from "../api/ResponseModel";
 import type { Campaign } from "../api/APICampaign";
-import { t, getLocationName, getWeaponName, getPictoName } from "../i18n";
+import { t, getLocationName, getWeaponName, getWeaponEnglishName, getPictoName } from "../i18n";
 
 interface Props {
     campaignInfo: Campaign;
@@ -270,7 +270,7 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
                                                                 className="badge badge-sm badge-outline cursor-pointer hover:badge-primary transition-colors gap-1"
                                                                 onClick={() => onWeaponClick?.(reward.itemId)}
                                                             >
-                                                                <img src={`/weapons/${reward.itemId}.webp`} alt="" className="w-3.5 h-3.5 rounded-sm object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                                                <img src={`/weapons/${encodeURI(getWeaponEnglishName(reward.itemId))}.webp`} alt="" className="w-3.5 h-3.5 rounded-sm object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                                                                 {getWeaponName(reward.itemId)}
                                                             </span>
                                                         ))}
