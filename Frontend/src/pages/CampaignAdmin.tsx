@@ -368,11 +368,11 @@ export default function CampaignAdmin() {
                 )}
 
                 {activeTab === "pictos-list" && (
-                    <CampaignAdminPictosTab focusPictoId={focusPictoId} onFocusHandled={() => setFocusPictoId(null)} />
+                    <CampaignAdminPictosTab focusPictoId={focusPictoId} onFocusHandled={() => setFocusPictoId(null)} players={items} />
                 )}
 
                 {activeTab === "weapons-list" && (
-                    <CampaignAdminWeaponsTab focusWeaponId={focusWeaponId} onFocusHandled={() => setFocusWeaponId(null)} />
+                    <CampaignAdminWeaponsTab focusWeaponId={focusWeaponId} onFocusHandled={() => setFocusWeaponId(null)} players={items} />
                 )}
 
                 {activeTab === "logs" && campaignId !== null && (

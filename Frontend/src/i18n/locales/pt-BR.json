@@ -2036,7 +2036,7 @@
       "intensityExtreme": "Extrema",
       "intensityMaximum": "Máxima",
       "defend": "Defender",
-      "defenseDescDodge": "Defesa padrão. Rola 1d20 contra a CA.",
+      "defenseDescDodge": "Defesa padrão: o ataque d20 do adversário contra sua CA.",
       "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PM (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque de mesma intensidade.",
       "defenseDescJump": "Só para ataques que permitem pular. Cada defesa bem-sucedida concede um contra-ataque de mesma intensidade. Falhar aumenta a intensidade do ataque em +1.",
       "defenseDescGradient": "Ataques Gradiente não podem ser esquivados, apenas aparados. Mesma mecânica de aparar.",
@@ -2404,8 +2404,8 @@
         "description": "Causa dano baixo em alvo único. 5 ataques. Usa elemento da arma. Acertos críticos geram 1 Carga adicional."
       },
       "gustave-marking-shot": {
-        "name": "Tiro Marcante",
-        "description": "Causa dano de Raio baixo em alvo único. 1 ataque. Aplica Marcado no alvo por 3 turnos, fazendo-o receber +4 de dano por 1 ataque."
+        "name": "Disparo Marcado",
+        "description": "Causa dano de Raio baixo em alvo único. 1 ataque. Aplica Marcado no alvo por 3 turnos, concedendo +4 no ataque e no dano do próximo ataque contra o alvo."
       },
       "gustave-overcharge": {
         "name": "Sobrecarga",
@@ -2792,7 +2792,7 @@
         "description": "Causa dano de Luz médio em alvo único. 5 golpes. Ao completar, ganha 1 Rank. Se Verso usar esta habilidade no Rank A de Perfeição, concede 2 PM adicionais para Verso."
       },
       "verso-marking-shot": {
-        "name": "Tiro Marcante",
+        "name": "Disparo Marcado",
         "description": "Causa dano de Raio baixo em alvo único. 1 golpe. Aplica Marca."
       },
       "verso-overload": {
@@ -3137,7 +3137,12 @@
         "chooseLevel": "Escolher nível inicial",
         "chooseLevelDescription": "Selecione o nível desta arma (1 a 4).",
         "confirm": "Confirmar"
-      }
+      },
+      "giveToCharacter": "Dar ao personagem",
+      "selectCharacterToGive": "Selecione o personagem para receber esta arma",
+      "weaponGranted": "Arma concedida a {name}!",
+      "maxLevel": "Nível máximo",
+      "currentLevel": "Nv. {level}"
     },
     "pictos": {
       "title": "Pictos",
@@ -3156,7 +3161,12 @@
       "setLevelFor": "Definir nível para {name}",
       "alreadyEquippedAsLumina": "Equipado como Lumina",
       "level": "Nível",
-      "luminaCost": "Lumina: {cost} pontos"
+      "luminaCost": "Lumina: {cost} pontos",
+      "giveToCharacter": "Dar ao personagem",
+      "selectCharacterToGive": "Selecione o personagem para receber este picto",
+      "pictoGranted": "Picto concedido a {name}!",
+      "maxLevel": "Nível máximo",
+      "currentLevel": "Nv. {level}"
     },
     "luminas": {
       "title": "Luminas",
@@ -3316,7 +3326,7 @@
         "Frenzy": "O personagem tem +1 por frenesi em testes de ataque (exceto tiro livre).",
         "Rage": "Você tem direito a uma ação de ataque básico extra, além de suas outras ações.",
         "Inverted": "Quando receber cura de qualquer efeito, sofre dano ao invés de se curar.",
-        "Marked": "O personagem tem Perda no seu próximo teste de Defesa.",
+        "Marked": "O próximo ataque contra este personagem recebe +4 no ataque e no dano.",
         "Plagued": "O personagem tem –5 PV máximos até o fim da cena. Essa condição pode acumular, diminuindo 5 PV por cada acumulo, até o personagem ficar com o mínimo de 1 PV máximo.",
         "Silenced": "Não pode usar habilidades.",
         "Dizzy": "Perda em ataques usando tiro livre ou habilidades.",

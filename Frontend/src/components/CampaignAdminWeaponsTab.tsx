@@ -1,11 +1,15 @@
 import { useState, useMemo, useEffect } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaGift } from "react-icons/fa";
 import { GiCrossedSwords } from "react-icons/gi";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponDexterityBonus, displayWeaponProficiencyBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponName, getWeaponPassive } from "../i18n";
+import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
+import { getCharacterLabelById } from "../utils/CharacterUtils";
+import { useToast } from "./Toast";
 import type { WeaponDTO, AttributeType } from "../types/WeaponDTO";
+import type { GetPlayerResponse } from "../api/APIPlayer";
 
 interface WeaponEntry {
     weapon: WeaponDTO;
@@ -63,11 +67,14 @@ function buildWeaponList(): WeaponEntry[] {
 interface WeaponsTabProps {
     focusWeaponId?: string | null;
     onFocusHandled?: () => void;
+    players?: GetPlayerResponse[];
 }
 
-export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled }: WeaponsTabProps) {
+export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled, players }: WeaponsTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
+    const [giveModalEntry, setGiveModalEntry] = useState<WeaponEntry | null>(null);
+    const { showToast } = useToast();
 
     const allWeapons = useMemo(() => buildWeaponList(), []);
 
@@ -156,17 +163,42 @@ export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled 
                                     </div>
                                 </div>
 
-                                {isExpanded && <WeaponDetails entry={entry} />}
+                                {isExpanded && (
+                                    <WeaponDetails
+                                        entry={entry}
+                                        showGive={!!players?.length}
+                                        onGive={() => setGiveModalEntry(entry)}
+                                    />
+                                )}
                             </div>
                         );
                     })}
                 </div>
+
+                {/* Give to character modal */}
+                {giveModalEntry && players && (
+                    <GiveWeaponModal
+                        entry={giveModalEntry}
+                        players={players}
+                        onClose={() => setGiveModalEntry(null)}
+                        onGive={async (player, playerName) => {
+                            const existing = player.weapons?.find(w => w.id.toLowerCase() === giveModalEntry.weaponId.toLowerCase());
+                            if (existing) {
+                                await APIPlayerWeapons.update(player.id, giveModalEntry.weapon.name, { level: existing.level + 1 });
+                            } else {
+                                await APIPlayerWeapons.add({ playerId: player.id, weaponId: giveModalEntry.weapon.name, level: 1 });
+                            }
+                            showToast(t("weapons.weaponGranted", { name: playerName }));
+                            setGiveModalEntry(null);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );
 }
 
-function WeaponDetails({ entry }: { entry: WeaponEntry }) {
+function WeaponDetails({ entry, showGive, onGive }: { entry: WeaponEntry; showGive?: boolean; onGive?: () => void }) {
     const [level, setLevel] = useState(1);
     const { weapon, weaponId } = entry;
     const { attributes } = weapon;
@@ -252,6 +284,65 @@ function WeaponDetails({ entry }: { entry: WeaponEntry }) {
                     </div>
                 </div>
             )}
+
+            {showGive && (
+                <button className="btn btn-sm btn-outline btn-primary gap-2" onClick={onGive}>
+                    <FaGift className="w-3 h-3" />
+                    {t("weapons.giveToCharacter")}
+                </button>
+            )}
         </div>
+    );
+}
+
+function GiveWeaponModal({ entry, players, onClose, onGive }: {
+    entry: WeaponEntry;
+    players: GetPlayerResponse[];
+    onClose: () => void;
+    onGive: (player: GetPlayerResponse, playerName: string) => void;
+}) {
+    const MAX_LEVEL = 4;
+    const name = getWeaponName(entry.weaponId);
+    return (
+        <dialog className="modal modal-open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+            <div className="modal-box">
+                <h3 className="font-bold text-lg mb-1">{t("weapons.giveToCharacter")}</h3>
+                <p className="text-sm opacity-70 mb-4">{t("weapons.selectCharacterToGive")}</p>
+                <p className="text-sm font-semibold mb-3">{name}</p>
+                <div className="flex flex-col gap-2">
+                    {players.map((p) => {
+                        const pName = p.playerSheet?.name || `#${p.id}`;
+                        const charLabel = getCharacterLabelById(p.playerSheet?.characterId);
+                        const canUse = WeaponsDataLoader.canCharacterUseWeapon(p.playerSheet?.characterId, entry.weaponId);
+                        const existing = p.weapons?.find(w => w.id.toLowerCase() === entry.weaponId.toLowerCase());
+                        const currentLevel = existing?.level ?? 0;
+                        const isMaxLevel = currentLevel >= MAX_LEVEL;
+                        const isDisabled = !canUse || isMaxLevel;
+
+                        return (
+                            <button
+                                key={p.id}
+                                className={`btn btn-sm justify-start gap-2 ${isDisabled ? "btn-disabled" : "btn-outline"}`}
+                                disabled={isDisabled}
+                                title={!canUse ? t("rewards.cannotUse") : isMaxLevel ? t("weapons.maxLevel") : undefined}
+                                onClick={() => onGive(p, pName)}
+                            >
+                                <span className="font-semibold">{pName}</span>
+                                {charLabel && <span className="text-xs opacity-60">({charLabel})</span>}
+                                {!canUse && <span className="text-xs opacity-50 ml-auto">{t("rewards.cannotUse")}</span>}
+                                {canUse && existing && (
+                                    <span className={`text-xs ml-auto ${isMaxLevel ? "opacity-50" : "opacity-70"}`}>
+                                        {isMaxLevel ? t("weapons.maxLevel") : t("weapons.currentLevel", { level: currentLevel })}
+                                    </span>
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
+                <div className="modal-action">
+                    <button className="btn btn-ghost btn-sm" onClick={onClose}>{t("common.cancel")}</button>
+                </div>
+            </div>
+        </dialog>
     );
 }

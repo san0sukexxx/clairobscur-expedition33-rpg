@@ -2036,7 +2036,7 @@
       "intensityExtreme": "Extreme",
       "intensityMaximum": "Maximum",
       "defend": "Defend",
-      "defenseDescDodge": "Standard defense. Roll 1d20 against AC.",
+      "defenseDescDodge": "Standard defense: the opponent's d20 attack against your AC.",
       "defenseDescBlock": "Declare your intention to parry before defending. Failing to parry increases attack intensity by +1. A successful parry recovers 1 MP (1x per turn). Parrying all attacks in sequence grants a counter-attack of the same intensity.",
       "defenseDescJump": "Only for attacks that allow jumping. Each successful defense grants a counter-attack of the same intensity. Failing increases attack intensity by +1.",
       "defenseDescGradient": "Gradient attacks cannot be dodged, only parried. Same parry mechanics.",
@@ -2405,7 +2405,7 @@
       },
       "gustave-marking-shot": {
         "name": "Marking Shot",
-        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Marked to the target for 3 turns, making it take +4 damage for 1 attack."
+        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Marked to the target for 3 turns, granting +4 to the attack and damage of the next attack against the target."
       },
       "gustave-overcharge": {
         "name": "Overcharge",
@@ -3137,7 +3137,12 @@
         "chooseLevel": "Choose initial level",
         "chooseLevelDescription": "Select the level of this weapon (1 to 4).",
         "confirm": "Confirm"
-      }
+      },
+      "giveToCharacter": "Give to character",
+      "selectCharacterToGive": "Select the character to receive this weapon",
+      "weaponGranted": "Weapon granted to {name}!",
+      "maxLevel": "Max level",
+      "currentLevel": "Lv. {level}"
     },
     "pictos": {
       "title": "Pictos",
@@ -3156,7 +3161,12 @@
       "setLevelFor": "Set level for {name}",
       "alreadyEquippedAsLumina": "Equipped as Lumina",
       "level": "Level",
-      "luminaCost": "Lumina: {cost} points"
+      "luminaCost": "Lumina: {cost} points",
+      "giveToCharacter": "Give to character",
+      "selectCharacterToGive": "Select the character to receive this picto",
+      "pictoGranted": "Picto granted to {name}!",
+      "maxLevel": "Max level",
+      "currentLevel": "Lv. {level}"
     },
     "luminas": {
       "title": "Luminas",
@@ -3316,7 +3326,7 @@
         "Frenzy": "The character has +1 per frenzy in attack tests (except free shot).",
         "Rage": "You are entitled to an extra basic attack action, in addition to your other actions.",
         "Inverted": "When receiving healing from any effect, takes damage instead of healing.",
-        "Marked": "The character has Loss on their next Defense test.",
+        "Marked": "The next attack against this character gains +4 to attack and damage.",
         "Plagued": "The character has –5 maximum HP until the end of the scene. This condition can stack, reducing 5 HP per stack, until the character has a minimum of 1 maximum HP.",
         "Silenced": "Cannot use skills.",
         "Dizzy": "Loss on attacks using free shot or skills.",

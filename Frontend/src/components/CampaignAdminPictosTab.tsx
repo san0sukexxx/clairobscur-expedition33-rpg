@@ -1,9 +1,13 @@
 import { useState, useMemo, useEffect } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaGift } from "react-icons/fa";
 import { GiStoneTablet } from "react-icons/gi";
 import { getAllPictosSorted, pictoColorHex, calculatePictoSpeed, calculatePictoDefense, calculatePictoHealth, calculatePictoAbility } from "../utils/PictoUtils";
 import { t } from "../i18n";
+import { APIPicto } from "../api/APIPicto";
+import { getCharacterLabelById } from "../utils/CharacterUtils";
+import { useToast } from "./Toast";
 import type { PictoInfo } from "../api/ResponseModel";
+import type { GetPlayerResponse } from "../api/APIPlayer";
 
 const STAT_CONFIG = [
     { key: "health", label: () => t("pictos.health"), calc: calculatePictoHealth },
@@ -18,11 +22,14 @@ const STAT_CONFIG = [
 interface PictosTabProps {
     focusPictoId?: string | null;
     onFocusHandled?: () => void;
+    players?: GetPlayerResponse[];
 }
 
-export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled }: PictosTabProps) {
+export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, players }: PictosTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(focusPictoId ?? null);
+    const [giveModalPicto, setGiveModalPicto] = useState<PictoInfo | null>(null);
+    const { showToast } = useToast();
 
     useEffect(() => {
         if (focusPictoId) {
@@ -98,11 +105,36 @@ export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled }:
                                 </div>
 
                                 {/* Expanded details */}
-                                {isExpanded && <PictoDetails picto={picto} />}
+                                {isExpanded && (
+                                    <PictoDetails
+                                        picto={picto}
+                                        showGive={!!players?.length}
+                                        onGive={() => setGiveModalPicto(picto)}
+                                    />
+                                )}
                             </div>
                         );
                     })}
                 </div>
+
+                {/* Give to character modal */}
+                {giveModalPicto && players && (
+                    <GivePictoModal
+                        picto={giveModalPicto}
+                        players={players}
+                        onClose={() => setGiveModalPicto(null)}
+                        onGive={async (player, playerName) => {
+                            const existing = player.pictos?.find(pp => pp.pictoId.toLowerCase() === giveModalPicto.id.toLowerCase());
+                            if (existing) {
+                                await APIPicto.updatePlayerPicto(existing.id, { level: (existing.level ?? 1) + 1 });
+                            } else {
+                                await APIPicto.createPlayerPicto({ playerId: player.id, pictoId: giveModalPicto.id, level: 1 });
+                            }
+                            showToast(t("pictos.pictoGranted", { name: playerName }));
+                            setGiveModalPicto(null);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );
@@ -143,7 +175,7 @@ function PictoIcon({ picto }: { picto: PictoInfo }) {
     );
 }
 
-function PictoDetails({ picto }: { picto: PictoInfo }) {
+function PictoDetails({ picto, showGive, onGive }: { picto: PictoInfo; showGive?: boolean; onGive?: () => void }) {
     const [level, setLevel] = useState(1);
 
     const stats = STAT_CONFIG
@@ -202,6 +234,61 @@ function PictoDetails({ picto }: { picto: PictoInfo }) {
                     </div>
                 </div>
             )}
+
+            {showGive && (
+                <button className="btn btn-sm btn-outline btn-primary gap-2" onClick={onGive}>
+                    <FaGift className="w-3 h-3" />
+                    {t("pictos.giveToCharacter")}
+                </button>
+            )}
         </div>
+    );
+}
+
+function GivePictoModal({ picto, players, onClose, onGive }: {
+    picto: PictoInfo;
+    players: GetPlayerResponse[];
+    onClose: () => void;
+    onGive: (player: GetPlayerResponse, playerName: string) => void;
+}) {
+    const MAX_LEVEL = 4;
+    return (
+        <dialog className="modal modal-open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+            <div className="modal-box">
+                <h3 className="font-bold text-lg mb-1">{t("pictos.giveToCharacter")}</h3>
+                <p className="text-sm opacity-70 mb-4">{t("pictos.selectCharacterToGive")}</p>
+                <p className="text-sm font-semibold mb-3">{picto.name}</p>
+                <div className="flex flex-col gap-2">
+                    {players.map((p) => {
+                        const name = p.playerSheet?.name || `#${p.id}`;
+                        const charLabel = getCharacterLabelById(p.playerSheet?.characterId);
+                        const existing = p.pictos?.find(pp => pp.pictoId.toLowerCase() === picto.id.toLowerCase());
+                        const currentLevel = existing?.level ?? 0;
+                        const isMaxLevel = currentLevel >= MAX_LEVEL;
+
+                        return (
+                            <button
+                                key={p.id}
+                                className={`btn btn-sm justify-start gap-2 ${isMaxLevel ? "btn-disabled" : "btn-outline"}`}
+                                disabled={isMaxLevel}
+                                title={isMaxLevel ? t("pictos.maxLevel") : undefined}
+                                onClick={() => onGive(p, name)}
+                            >
+                                <span className="font-semibold">{name}</span>
+                                {charLabel && <span className="text-xs opacity-60">({charLabel})</span>}
+                                {existing && (
+                                    <span className={`text-xs ml-auto ${isMaxLevel ? "opacity-50" : "opacity-70"}`}>
+                                        {isMaxLevel ? t("pictos.maxLevel") : t("pictos.currentLevel", { level: currentLevel })}
+                                    </span>
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
+                <div className="modal-action">
+                    <button className="btn btn-ghost btn-sm" onClick={onClose}>{t("common.cancel")}</button>
+                </div>
+            </div>
+        </dialog>
     );
 }
