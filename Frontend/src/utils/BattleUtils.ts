@@ -138,11 +138,12 @@ export function generateActionDescription(npc: NPCInfo, atk: NPCAttack): string 
     const hitBonus = strMod + profBonus;
     const hitSign = hitBonus >= 0 ? `+${hitBonus}` : `${hitBonus}`;
 
+    const dieSize = npc.damageDie ?? 6;
     const numDice = 1 + (atk.additionalDices ?? 0);
     const flatDmg = strMod + (atk.additionalDamage ?? 0);
-    const avgDmg = Math.floor(numDice * 3.5 + flatDmg);
-    const flatSign = flatDmg >= 0 ? `+${flatDmg}` : `${flatDmg}`;
-    const dmgExpr = `${avgDmg} (${numDice}d6${flatSign})`;
+    const avgDmg = Math.floor(numDice * ((dieSize + 1) / 2) + flatDmg);
+    const flatPart = flatDmg === 0 ? "" : flatDmg > 0 ? `+${flatDmg}` : `${flatDmg}`;
+    const dmgExpr = `${avgDmg} (${numDice}d${dieSize}${flatPart})`;
 
     const isArea = atk.type === "jump-all";
     const attackKind = isArea
@@ -179,10 +180,11 @@ export function generateBasicAttackDescription(npc: NPCInfo): string {
     const hitBonus = strMod + profBonus;
     const hitSign = hitBonus >= 0 ? `+${hitBonus}` : `${hitBonus}`;
 
+    const dieSize = npc.damageDie ?? 6;
     const flatDmg = strMod;
-    const avgDmg = Math.floor(3.5 + flatDmg);
-    const flatSign = flatDmg >= 0 ? `+${flatDmg}` : `${flatDmg}`;
-    const dmgExpr = `${avgDmg} (1d6${flatSign})`;
+    const avgDmg = Math.floor((dieSize + 1) / 2 + flatDmg);
+    const flatPart = flatDmg === 0 ? "" : flatDmg > 0 ? `+${flatDmg}` : `${flatDmg}`;
+    const dmgExpr = `${avgDmg} (1d${dieSize}${flatPart})`;
 
     return `${t("combatAdmin.actionDesc.meleeAttack")}: ${hitSign} ${t("combatAdmin.actionDesc.toHit")}. ${t("combatAdmin.actionDesc.hit")}: ${dmgExpr} ${t("combatAdmin.actionDesc.damageOfType")} ${getElementName("Physical")}.`;
 }
