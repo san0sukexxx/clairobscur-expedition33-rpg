@@ -138,8 +138,17 @@ export function calculateMaxLuminas(player: GetPlayerResponse | null): number {
     return (level * 8) + bonus;
 }
 
+/** Pontos de habilidade especial acumulados por nível. */
+const SPECIAL_ATTACK_POINTS_BY_LEVEL: Record<number, number> = {
+    1: 0,   2: 1,   3: 3,   4: 6,   5: 10,
+    6: 15,  7: 21,  8: 28,  9: 36,  10: 45,
+    11: 55, 12: 65, 13: 76, 14: 87, 15: 98,
+    16: 109, 17: 120, 18: 131, 19: 142, 20: 153,
+};
+
 export function calculateSpecialAttackPoints(player: GetPlayerResponse | null): number {
-    return (player?.playerSheet?.totalPoints ?? 0) * 3;
+    const level = player?.playerSheet?.totalPoints ?? 1;
+    return SPECIAL_ATTACK_POINTS_BY_LEVEL[level] ?? 0;
 }
 
 export function calculateInitialMP(player: GetPlayerResponse | null): number {

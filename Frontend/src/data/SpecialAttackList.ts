@@ -32,7 +32,7 @@ const SpecialAttacksBaseData = [
     id: "gustave-powerful",
     character: "gustave",
     cost: 3,
-    unlockCost: 2,
+    unlockCost: 1,
     image: "Gustave_Powerful.webp",
     preRequisite: ["gustave-lumiere-assault"]
   },
@@ -885,7 +885,7 @@ const SpecialAttacksBaseData = [
     id: "verso-powerful",
     character: "verso",
     cost: 3,
-    unlockCost: 2,
+    unlockCost: 1,
     preRequisite: ["verso-quick-strike"],
     image: "Verso_Powerful.webp"
   },

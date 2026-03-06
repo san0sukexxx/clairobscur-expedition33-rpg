@@ -2393,7 +2393,7 @@
     },
     "specialAttacks": {
       "unlock": "Desbloquear",
-      "masterUnlock": "Desbloquear Mestre",
+      "masterUnlock": "Desbloqueie quando o mestre permitir",
       "selectSpecialAttack": "Selecione um ataque especial",
       "specialAttackBlocked": "Especial Bloqueado",
       "locked": "Bloqueado",
@@ -2405,15 +2405,15 @@
       },
       "gustave-marking-shot": {
         "name": "Disparo Marcado",
-        "description": "Causa dano de Raio baixo em alvo único. 1 ataque. Aplica Marcado no alvo por 3 turnos, concedendo +4 no ataque e no dano do próximo ataque contra o alvo."
+        "description": "Causa dano de Raio baixo em alvo único. 1 ataque. Aplica Marcado no alvo por 3 turnos."
       },
       "gustave-overcharge": {
         "name": "Sobrecarga",
         "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 ataque. Pode causar quebra."
       },
       "gustave-powerful": {
-        "name": "Poderoso",
-        "description": "Aplica Fortalecido em até 3 aliados por 3 turnos, aumentando o dano causado em +4. Faça 3 testes de Força CD 13. Concede 1 carga por sucesso."
+        "name": "Fortalecimento",
+        "description": "Aplica Fortalecido em até 3 aliados por 3 turnos. Faça 3 testes de Força CD 13. Concede 1 carga por sucesso."
       },
       "gustave-recovery": {
         "name": "Recuperação",
@@ -2816,7 +2816,7 @@
         "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Pode Quebrar. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 9 para 5."
       },
       "verso-powerful": {
-        "name": "Poderoso",
+        "name": "Fortalecimento",
         "description": "Aplica Fortalecido por 3 turnos. Faça um teste de Força CD 15. Se tiver sucesso, aplica em todos os aliados. Se falhar, aplica apenas em Verso. Se Verso usar esta habilidade no Rank A de Perfeição, a duração aumenta para 5 turnos."
       },
       "verso-purification": {

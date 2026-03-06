@@ -1126,11 +1126,14 @@ export default function CombatAdmin({
 
                         const npcName = npcInfo?.name ?? "";
 
+                        const dieSize = npcInfo?.damageDie ?? 6;
+                        const dieAvg = (dieSize + 1) / 2;
+
                         function calcDamage(baseDice: number, baseMod: number) {
                             const totalDice = Math.max(1, baseDice + npcIntensityOffset);
                             const atMinDice = baseDice + npcIntensityOffset < 1;
                             const mod = atMinDice ? 0 : baseMod;
-                            return { numDice: totalDice, flatDmg: mod, avgDmg: Math.floor(totalDice * 3.5 + mod) };
+                            return { numDice: totalDice, flatDmg: mod, avgDmg: Math.floor(totalDice * dieAvg + mod) };
                         }
 
                         return (
@@ -1177,7 +1180,7 @@ export default function CombatAdmin({
                                                     <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                     {" "}{t("combatAdmin.actionDesc.toHit")}
                                                     . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
-                                                    <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                    <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
                                                     {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
                                                     {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                     {statusParts && statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
@@ -1218,7 +1221,7 @@ export default function CombatAdmin({
                                                     <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${t("combat.attack")} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                     {" "}{t("combatAdmin.actionDesc.toHit")}
                                                     . {t("combatAdmin.actionDesc.hit")}: {basicAvgDmg}{" "}
-                                                    <DiceBtn diceCmd={`${basicNumDice}d6`} modifier={basicFlatDmg} label={`${npcName} – ${t("combat.attack")} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                    <DiceBtn diceCmd={`${basicNumDice}d${dieSize}`} modifier={basicFlatDmg} label={`${npcName} – ${t("combat.attack")} (${t("combatAdmin.actionDesc.hit")})`} />
                                                     {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName("Physical")}.
                                                 </span>
                                             </span>

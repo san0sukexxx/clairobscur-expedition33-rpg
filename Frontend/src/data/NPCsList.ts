@@ -751,6 +751,7 @@ export const NPCsList: NPCInfo[] = [
         playFirst:    true,
         armorClass: 11,
         challengeRating: "1",
+        damageDie: 4,
         attackList: [
             {
                 type: "skill",

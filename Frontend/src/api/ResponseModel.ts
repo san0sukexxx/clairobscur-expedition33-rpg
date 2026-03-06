@@ -108,6 +108,7 @@ export interface NPCInfo {
     armorClass?: number;
     challengeRating?: string;
     proficiencyBonus?: number;
+    damageDie?: number;  // Die size for damage rolls (default 6 = d6)
     conditionImmunities?: StatusType[];
     damageVulnerabilities?: string[];
     damageImmunities?: string[];

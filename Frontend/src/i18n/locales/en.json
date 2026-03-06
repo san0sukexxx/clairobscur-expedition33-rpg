@@ -2393,7 +2393,7 @@
     },
     "specialAttacks": {
       "unlock": "Unlock",
-      "masterUnlock": "Unlock Master",
+      "masterUnlock": "Unlock when the master allows",
       "selectSpecialAttack": "Select a special",
       "specialAttackBlocked": "Special Blocked",
       "locked": "Locked",
@@ -2405,7 +2405,7 @@
       },
       "gustave-marking-shot": {
         "name": "Marking Shot",
-        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Marked to the target for 3 turns, granting +4 to the attack and damage of the next attack against the target."
+        "description": "Deals low Lightning damage to a single target. 1 hit. Applies Marked to the target for 3 turns."
       },
       "gustave-overcharge": {
         "name": "Overcharge",
@@ -2413,7 +2413,7 @@
       },
       "gustave-powerful": {
         "name": "Powerful",
-        "description": "Applies Empowered to up to 3 allies for 3 turns, increasing damage dealt by +4. Make 3 Strength tests DC 13. Grants 1 charge per success."
+        "description": "Applies Empowered to up to 3 allies for 3 turns. Make 3 Strength tests DC 13. Grants 1 charge per success."
       },
       "gustave-recovery": {
         "name": "Recovery",
