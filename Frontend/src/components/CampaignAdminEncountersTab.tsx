@@ -7,25 +7,17 @@ import { CHARACTERS_LIST } from "../utils/CharacterUtils";
 import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds, getLocationName } from "../i18n";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
-import { calculateNPCDifficulty, crToXp, formatCR } from "../utils/NpcDifficulty";
+import { calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
 }
 
-function calculateEncounterXp(npcs: EncounterNpcDto[]): number {
+function calculateEncounterCR(npcs: EncounterNpcDto[]): number {
     return npcs.reduce((total, npc) => {
         const cr = calculateNPCDifficulty(npc.npcId);
-        return total + crToXp(cr) * npc.quantity;
+        return total + cr * npc.quantity;
     }, 0);
-}
-
-function getDifficultyLabel(xp: number): { label: string; color: string } {
-    if (xp === 0) return { label: "-", color: "badge-ghost" };
-    if (xp <= 200) return { label: t("encounters.difficultyEasy"), color: "badge-success" };
-    if (xp <= 750) return { label: t("encounters.difficultyMedium"), color: "badge-warning" };
-    if (xp <= 1800) return { label: t("encounters.difficultyHard"), color: "badge-error" };
-    return { label: t("encounters.difficultyDeadly"), color: "badge-error badge-outline" };
 }
 
 export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdminEncountersTabProps) {
@@ -40,6 +32,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     const [editLocationId, setEditLocationId] = useState<string>("");
     const [editNpcs, setEditNpcs] = useState<EncounterNpcDto[]>([]);
     const [editRewards, setEditRewards] = useState<EncounterRewardDto[]>([]);
+    const [editBonusXp, setEditBonusXp] = useState<number | null>(null);
     const [saving, setSaving] = useState(false);
 
     // NPC search
@@ -124,6 +117,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
         setEditLocationId(encounter.locationId ?? "");
         setEditNpcs([...encounter.npcs]);
         setEditRewards([...encounter.rewards]);
+        setEditBonusXp(encounter.bonusXp || null);
         setNpcSearch("");
         setNpcDropdownOpen(false);
         setNpcLocationFilter(encounter.locationId ?? "");
@@ -132,13 +126,14 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isFirstEdit = useRef(true);
 
-    const autoSave = useCallback(async (encounterId: number, locationId: string, npcs: EncounterNpcDto[], rewards: EncounterRewardDto[]) => {
+    const autoSave = useCallback(async (encounterId: number, locationId: string, npcs: EncounterNpcDto[], rewards: EncounterRewardDto[], bonusXp: number | null) => {
         try {
             setSaving(true);
             await APIEncounter.update(encounterId, {
                 locationId: locationId || null,
                 npcs,
                 rewards,
+                bonusXp: bonusXp ?? 0,
             });
             await loadEncounters();
         } catch {
@@ -159,10 +154,10 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
         }
         if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
         autoSaveTimer.current = setTimeout(() => {
-            autoSave(editingEncounter.id, editLocationId, editNpcs, editRewards);
+            autoSave(editingEncounter.id, editLocationId, editNpcs, editRewards, editBonusXp);
         }, 500);
         return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current); };
-    }, [editLocationId, editNpcs, editRewards]);
+    }, [editLocationId, editNpcs, editRewards, editBonusXp]);
 
     // NPC management
     function addNpc(npcId: string) {
@@ -248,9 +243,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     }
 
     // Difficulty totalizer
-    const editTotalXp = useMemo(() => calculateEncounterXp(editNpcs), [editNpcs]);
-    const editDifficulty = useMemo(() => getDifficultyLabel(editTotalXp), [editTotalXp]);
-    const totalXpAll = useMemo(() => encounters.reduce((sum, enc) => sum + calculateEncounterXp(enc.npcs), 0), [encounters]);
+    const editTotalCR = useMemo(() => calculateEncounterCR(editNpcs), [editNpcs]);
 
     // ─── EDITING VIEW ──────────────────────────────────────────────
     if (editingEncounter) {
@@ -302,14 +295,9 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         <div className="flex items-center justify-between mb-2">
                             <h3 className="font-semibold text-lg">{t("encounters.npcs")}</h3>
                             {editNpcs.length > 0 && (
-                                <div className="flex items-center gap-2">
-                                    <span className={`badge ${editDifficulty.color}`}>
-                                        {editDifficulty.label}
-                                    </span>
-                                    <span className="text-sm font-mono opacity-70">
-                                        {editTotalXp.toLocaleString()} XP
-                                    </span>
-                                </div>
+                                <span className="badge badge-ghost font-mono">
+                                    {t("encounters.challengeRating")} {formatCR(editTotalCR)}
+                                </span>
                             )}
                         </div>
 
@@ -321,7 +309,6 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                             {editNpcs.map((npcEntry) => {
                                 const npc = getNpcById(npcEntry.npcId);
                                 const npcCr = calculateNPCDifficulty(npcEntry.npcId);
-                                const npcXp = crToXp(npcCr) * npcEntry.quantity;
                                 return (
                                     <div key={npcEntry.npcId} className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-base-200 rounded-lg p-2">
                                         <div className="w-10 h-10 rounded-full bg-base-300 shrink-0 overflow-hidden flex items-center justify-center">
@@ -336,7 +323,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                         <div className="flex flex-col min-w-0 flex-1 basis-32">
                                             <span className="font-semibold text-sm">{npc?.name ?? npcEntry.npcId}</span>
                                             <span className="text-xs opacity-60">
-                                                {t("encounters.challengeRating")} {formatCR(npcCr)} — {npcXp.toLocaleString()} XP
+                                                {t("encounters.challengeRating")} {formatCR(npcCr)}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-1 ml-auto shrink-0">
@@ -531,6 +518,19 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         )}
                     </div>
 
+                    {/* Bonus XP */}
+                    <div className="flex flex-col mb-4">
+                        <span className="label-text font-semibold mb-1">{t("encounters.bonusXp")}</span>
+                        <input
+                            type="number"
+                            className="input input-bordered input-sm w-24"
+                            min={0}
+                            placeholder="0"
+                            value={editBonusXp ?? ""}
+                            onChange={(e) => setEditBonusXp(e.target.value === "" ? null : Math.max(0, Number(e.target.value) || 0))}
+                        />
+                    </div>
+
                     {saving && (
                         <div className="flex justify-end">
                             <span className="text-sm opacity-60">{t("encounters.saving")}</span>
@@ -586,21 +586,6 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         </button>
                     </div>
 
-                    {/* Difficulty total summary */}
-                    {!loading && encounters.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-3 mt-2 px-1">
-                            <span className="text-sm opacity-70">
-                                {t("encounters.totalDifficulty")}:
-                            </span>
-                            <span className="font-mono text-sm font-semibold">
-                                {totalXpAll.toLocaleString()} XP
-                            </span>
-                            <span className="text-sm opacity-50">
-                                ({encounters.length} {t("encounters.npcCount").toLowerCase() === "npcs" ? t("locations.encounterCount") : t("locations.encounterCount")})
-                            </span>
-                        </div>
-                    )}
-
                     {loading && (
                         <div className="mt-4 text-sm opacity-70">{t("encounters.loading")}</div>
                     )}
@@ -614,8 +599,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                     {!loading && encounters.length > 0 && (
                         <div className="mt-4 flex flex-col divide-y divide-base-300">
                             {encounters.map((enc, index) => {
-                                const encXp = calculateEncounterXp(enc.npcs);
-                                const diff = getDifficultyLabel(encXp);
+                                const encCR = calculateEncounterCR(enc.npcs);
                                 return (
                                     <div key={enc.id} className="flex items-center gap-3 py-3 px-1">
                                         {/* Order controls */}
@@ -648,15 +632,10 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                 <span className="badge badge-sm badge-ghost">
                                                     {enc.rewards.length} {t("encounters.rewardCount")}
                                                 </span>
-                                                {encXp > 0 && (
-                                                    <>
-                                                        <span className={`badge badge-sm ${diff.color}`}>
-                                                            {diff.label}
-                                                        </span>
-                                                        <span className="badge badge-sm badge-ghost font-mono">
-                                                            {encXp.toLocaleString()} XP
-                                                        </span>
-                                                    </>
+                                                {encCR > 0 && (
+                                                    <span className="badge badge-sm badge-ghost font-mono">
+                                                        {t("encounters.challengeRating")} {formatCR(encCR)}
+                                                    </span>
                                                 )}
                                             </div>
                                         </div>
