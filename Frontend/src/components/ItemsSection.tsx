@@ -72,6 +72,9 @@ function ElixirsCard({
     const [inputValue, setInputValue] = useState("30");
     const [editQtyModal, setEditQtyModal] = useState<{ elixirId: string; field: "quantity" | "max"; currentValue: number } | null>(null);
     const [editQtyValue, setEditQtyValue] = useState("");
+    const focusRef = useCallback((node: HTMLInputElement | null) => {
+        if (node) setTimeout(() => node.focus(), 50);
+    }, []);
 
     const hasDeadTeammate = useMemo(() => {
         if (!player?.fightInfo?.characters) return false;
@@ -481,10 +484,6 @@ function ElixirsCard({
 
 
 export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false, weaponInfo, onReviveRequested, onPotionUsed }: ItemsSectionProps) {
-    const focusRef = useCallback((node: HTMLInputElement | null) => {
-        if (node) setTimeout(() => node.focus(), 50);
-    }, []);
-
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [editingItem, setEditingItem] = useState<PlayerItemResponse | null>(null);
 

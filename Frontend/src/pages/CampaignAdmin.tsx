@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, type MutableRefObject } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { FiLogOut, FiShare2, FiMaximize, FiMinimize, FiSettings } from "react-icons/fi";
 import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon, FaMapMarkerAlt, FaSkull } from "react-icons/fa";
 import { GiStoneTablet, GiCrossedSwords } from "react-icons/gi";
@@ -21,15 +21,25 @@ import { RollHistoryToast } from "../components/RollHistoryToast";
 import { t } from "../i18n";
 import { useToast } from "../components/Toast";
 
+type AdminTab = "players" | "combats" | "encounters" | "locations" | "npcs" | "pictos-list" | "weapons-list" | "logs";
+const validTabs: AdminTab[] = ["players", "combats", "encounters", "locations", "npcs", "pictos-list", "weapons-list", "logs"];
+
 export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
     const { campaign } = useParams<{ campaign?: string }>();
-    const storageKey = `campaign-admin-tab-${campaign}`;
-    const [activeTab, setActiveTab] = useState<"players" | "combats" | "encounters" | "locations" | "npcs" | "pictos-list" | "weapons-list" | "logs">(() => {
-        const saved = localStorage.getItem(storageKey);
-        if (saved === "players" || saved === "combats" || saved === "encounters" || saved === "locations" || saved === "npcs" || saved === "pictos-list" || saved === "weapons-list" || saved === "logs") return saved;
-        return "players";
-    });
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabFromUrl = searchParams.get("tab") as AdminTab | null;
+    const activeTab: AdminTab = tabFromUrl && validTabs.includes(tabFromUrl) ? tabFromUrl : "players";
+    const changeTab = (tab: AdminTab) => {
+        setSearchParams({ tab }, { replace: false });
+    };
+
+    useEffect(() => {
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+    }, [activeTab]);
+
     const alreadyRan = useRef(false);
     const campaignId = campaign ? parseInt(campaign, 10) : null;
     const navigate = useNavigate();
@@ -198,99 +208,32 @@ export default function CampaignAdmin() {
 
                 {/* Tabs */}
                 <div className="w-full">
-                    <div role="tablist" className="tabs tabs-bordered">
+                    <div role="tablist" className="flex flex-wrap gap-1">
+                        {([
+                            { id: "players" as const, icon: <FaUserFriends />, label: t("tabs.players") },
+                            { id: "combats" as const, icon: <FaShieldAlt />, label: t("tabs.combats") },
+                            { id: "encounters" as const, icon: <FaDragon />, label: t("tabs.encounters") },
+                            { id: "locations" as const, icon: <FaMapMarkerAlt />, label: t("tabs.locations") },
+                            { id: "npcs" as const, icon: <FaSkull />, label: "NPCs" },
+                            { id: "pictos-list" as const, icon: <GiStoneTablet />, label: t("tabs.pictos") },
+                            { id: "weapons-list" as const, icon: <GiCrossedSwords />, label: t("tabs.weapons") },
+                            { id: "logs" as const, icon: <FaScroll />, label: t("tabs.logs") },
+                        ]).map(({ id, icon, label }) => (
+                            <button
+                                key={id}
+                                role="tab"
+                                className={`px-4 py-2 text-sm rounded-lg outline-none ${activeTab === id ? "bg-primary/10 text-primary font-semibold" : "text-base-content/50 hover:text-base-content"}`}
+                                onClick={() => changeTab(id)}
+                            >
+                                <span className="flex items-center gap-2">
+                                    {icon}
+                                    {label}
+                                </span>
+                            </button>
+                        ))}
                         <button
                             role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "players" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => { setActiveTab("players"); localStorage.setItem(storageKey, "players"); }}
-                        >
-                            <span className="flex items-center gap-2">
-                                <FaUserFriends />
-                                {t("tabs.players")}
-                            </span>
-                        </button>
-
-                        <button
-                            role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "combats" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => { setActiveTab("combats"); localStorage.setItem(storageKey, "combats"); }}
-                        >
-                            <span className="flex items-center gap-2">
-                                <FaShieldAlt />
-                                {t("tabs.combats")}
-                            </span>
-                        </button>
-
-                        <button
-                            role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "encounters" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => { setActiveTab("encounters"); localStorage.setItem(storageKey, "encounters"); }}
-                        >
-                            <span className="flex items-center gap-2">
-                                <FaDragon />
-                                {t("tabs.encounters")}
-                            </span>
-                        </button>
-
-                        <button
-                            role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "locations" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => { setActiveTab("locations"); localStorage.setItem(storageKey, "locations"); }}
-                        >
-                            <span className="flex items-center gap-2">
-                                <FaMapMarkerAlt />
-                                {t("tabs.locations")}
-                            </span>
-                        </button>
-
-                        <button
-                            role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "npcs" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => { setActiveTab("npcs"); localStorage.setItem(storageKey, "npcs"); }}
-                        >
-                            <span className="flex items-center gap-2">
-                                <FaSkull />
-                                NPCs
-                            </span>
-                        </button>
-
-                        <button
-                            role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "pictos-list" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => { setActiveTab("pictos-list"); localStorage.setItem(storageKey, "pictos-list"); }}
-                        >
-                            <span className="flex items-center gap-2">
-                                <GiStoneTablet />
-                                {t("tabs.pictos")}
-                            </span>
-                        </button>
-
-                        <button
-                            role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "weapons-list" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => { setActiveTab("weapons-list"); localStorage.setItem(storageKey, "weapons-list"); }}
-                        >
-                            <span className="flex items-center gap-2">
-                                <GiCrossedSwords />
-                                {t("tabs.weapons")}
-                            </span>
-                        </button>
-
-                        <button
-                            role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "logs" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => { setActiveTab("logs"); localStorage.setItem(storageKey, "logs"); }}
-                        >
-                            <span className="flex items-center gap-2">
-                                <FaScroll />
-                                {t("tabs.logs")}
-                            </span>
-                        </button>
-
-                        {/* Nova aba de detalhes da campanha */}
-                        <button
-                            role="tab"
-                            className="tab text-sm px-4"
+                            className="px-4 py-2 text-sm rounded-lg outline-none text-base-content/50 hover:text-base-content"
                             onClick={() => {
                                 if (campaignId != null) {
                                     navigate(`/edit-campaign-details/${campaignId}`);
@@ -342,18 +285,15 @@ export default function CampaignAdmin() {
                         }}
                         onNpcClick={(npcId) => {
                             setFocusNpcId(npcId);
-                            setActiveTab("npcs");
-                            localStorage.setItem(storageKey, "npcs");
+                            changeTab("npcs");
                         }}
                         onPictoClick={(pictoId) => {
                             setFocusPictoId(pictoId);
-                            setActiveTab("pictos-list");
-                            localStorage.setItem(storageKey, "pictos-list");
+                            changeTab("pictos-list");
                         }}
                         onWeaponClick={(weaponId) => {
                             setFocusWeaponId(weaponId);
-                            setActiveTab("weapons-list");
-                            localStorage.setItem(storageKey, "weapons-list");
+                            changeTab("weapons-list");
                         }}
                     />
                 )}
@@ -367,13 +307,11 @@ export default function CampaignAdmin() {
                         campaignInfo={campaignInfo}
                         onPictoClick={(pictoId) => {
                             setFocusPictoId(pictoId);
-                            setActiveTab("pictos-list");
-                            localStorage.setItem(storageKey, "pictos-list");
+                            changeTab("pictos-list");
                         }}
                         onWeaponClick={(weaponId) => {
                             setFocusWeaponId(weaponId);
-                            setActiveTab("weapons-list");
-                            localStorage.setItem(storageKey, "weapons-list");
+                            changeTab("weapons-list");
                         }}
                     />
                 )}

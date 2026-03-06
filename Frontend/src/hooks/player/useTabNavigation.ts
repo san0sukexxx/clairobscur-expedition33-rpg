@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import type {
   PlayerTab,
   CombatTabType,
@@ -7,22 +8,15 @@ import type {
 } from "../../pages/PlayerPage/PlayerPage.types";
 
 const VALID_TABS: PlayerTab[] = ["ficha", "combate", "habilidades", "inventario", "arma", "pictos", "luminas", "pericias", "notas", "gamelog"];
-const TAB_STORAGE_KEY = "player-active-tab";
-
-function readStoredTab(): PlayerTab {
-  try {
-    const stored = sessionStorage.getItem(TAB_STORAGE_KEY) as PlayerTab;
-    return VALID_TABS.includes(stored) ? stored : "ficha";
-  } catch {
-    return "ficha";
-  }
-}
 
 /**
  * Hook to manage tab navigation state
  */
 export function useTabNavigation(): UseTabNavigationReturn {
-  const [tab, setTabState] = useState<PlayerTab>(readStoredTab);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get("tab") as PlayerTab | null;
+  const tab: PlayerTab = tabFromUrl && VALID_TABS.includes(tabFromUrl) ? tabFromUrl : "ficha";
+
   const [combatTab, setCombatTab] = useState<CombatTabType>(null);
   const [specialAttacksInitialTab, setSpecialAttacksInitialTab] = useState<SpecialAttacksTabType>("list");
   const [isUsingSpecialAttackMode, setIsUsingSpecialAttackMode] = useState(false);
@@ -43,14 +37,14 @@ export function useTabNavigation(): UseTabNavigationReturn {
       setIsReviveMode(false);
       setCombatTab(null);
     }
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   }, [tab]);
 
   const setTab = useCallback((newTab: PlayerTab) => {
-    try {
-      sessionStorage.setItem(TAB_STORAGE_KEY, newTab);
-    } catch { /* ignore */ }
-    setTabState(newTab);
-  }, []);
+    setSearchParams({ tab: newTab }, { replace: false });
+  }, [setSearchParams]);
 
   return {
     tab,
