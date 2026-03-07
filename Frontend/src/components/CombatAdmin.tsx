@@ -1185,15 +1185,43 @@ export default function CombatAdmin({
                         </div>
                     )}
 
-                    {npcInfo && (npcInfo.isFlying || npcInfo.playFirst || (currentNpc?.freeShotWeakPoints != null && currentNpc.freeShotWeakPoints > 0) || (npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0) || (npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0)) && (
+                    {npcInfo && (npcInfo.isFlying || npcInfo.playFirst || (npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0) || (npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0)) && (
                         <div className="flex flex-wrap gap-1 items-center">
                             {npcInfo.isFlying && <span className="badge badge-xs badge-info">{t("combatAdmin.npcDetails.flying")}</span>}
                             {npcInfo.playFirst && <span className="badge badge-xs badge-warning">{t("combatAdmin.npcDetails.playFirst")}</span>}
-                            {currentNpc?.freeShotWeakPoints != null && currentNpc.freeShotWeakPoints > 0 && (
-                                <span className="badge badge-xs badge-success">{t("combatAdmin.npcDetails.weakPoints")}: {currentNpc.freeShotWeakPoints}</span>
-                            )}
                             {npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.initBonus")}: {npcInfo.initiativeBonus >= 0 ? "+" : ""}{npcInfo.initiativeBonus}</span>}
                             {npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.maxHpBonus")}: {npcInfo.maxLifeBonus >= 0 ? "+" : ""}{npcInfo.maxLifeBonus}</span>}
+                        </div>
+                    )}
+
+                    {/* Weak Points +/- */}
+                    {currentNpc && (
+                        <div className="flex items-center gap-2 text-xs">
+                            <span className="font-semibold opacity-70">{t("combatAdmin.npcDetails.weakPoints")}:</span>
+                            <button
+                                className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
+                                onClick={async () => {
+                                    if (currentNpc.battleID && (currentNpc.freeShotWeakPoints ?? 0) > 0) {
+                                        await APIBattle.updateWeakPoints(currentNpc.battleID, (currentNpc.freeShotWeakPoints ?? 0) - 1);
+                                        await reloadBattleDetails(true);
+                                    }
+                                }}
+                                disabled={(currentNpc.freeShotWeakPoints ?? 0) <= 0}
+                            >
+                                <FaMinus size={8} />
+                            </button>
+                            <span className="font-mono font-bold">{currentNpc.freeShotWeakPoints ?? 0}</span>
+                            <button
+                                className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
+                                onClick={async () => {
+                                    if (currentNpc.battleID) {
+                                        await APIBattle.updateWeakPoints(currentNpc.battleID, (currentNpc.freeShotWeakPoints ?? 0) + 1);
+                                        await reloadBattleDetails(true);
+                                    }
+                                }}
+                            >
+                                <FaPlus size={8} />
+                            </button>
                         </div>
                     )}
 
