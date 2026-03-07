@@ -2502,8 +2502,7 @@ export const NPCsList: NPCInfo[] = [
         armorClass: 19,
         challengeRating: "6",
         attackList: [
-            { type: "jump-all", additionalDamage: 5, additionalDices: 2 },
-            { type: "basic", additionalDamage: 7 },
+            { type: "jump-all", name: "combatAdmin.npcAttacks.groundSlam", additionalDamage: 5, additionalDices: 2 },
         ],
     },
     {
