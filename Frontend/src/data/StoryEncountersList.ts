@@ -74,4 +74,12 @@ export const StoryEncountersList: StoryEncounter[] = [
         rewards: [],
         bonusXp: 0,
     },
+    {
+        id: "spring-meadows-abbests",
+        name: "storyEncounters.spring-meadows-abbests",
+        locationId: "spring-meadows",
+        npcs: [{ npcId: "abbest", quantity: 2 }],
+        rewards: [],
+        bonusXp: 0,
+    },
 ];
