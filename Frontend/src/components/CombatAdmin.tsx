@@ -1952,9 +1952,10 @@ export default function CombatAdmin({
                                                         <span className="font-semibold opacity-70">{t("combatAdmin.npcDetails.weakPoints")}:</span>
                                                         <button
                                                             className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
-                                                            onClick={() => {
+                                                            onClick={async () => {
                                                                 if (m.rowId && currentWeakPoints > 0) {
-                                                                    APIBattle.updateWeakPoints(m.rowId, currentWeakPoints - 1).then(() => reloadBattleDetails());
+                                                                    await APIBattle.updateWeakPoints(m.rowId, currentWeakPoints - 1);
+                                                                    await reloadBattleDetails(true);
                                                                 }
                                                             }}
                                                             disabled={currentWeakPoints <= 0}
@@ -1964,9 +1965,10 @@ export default function CombatAdmin({
                                                         <span className="font-mono font-bold">{currentWeakPoints}</span>
                                                         <button
                                                             className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
-                                                            onClick={() => {
+                                                            onClick={async () => {
                                                                 if (m.rowId) {
-                                                                    APIBattle.updateWeakPoints(m.rowId, currentWeakPoints + 1).then(() => reloadBattleDetails());
+                                                                    await APIBattle.updateWeakPoints(m.rowId, currentWeakPoints + 1);
+                                                                    await reloadBattleDetails(true);
                                                                 }
                                                             }}
                                                         >
@@ -3405,7 +3407,8 @@ export default function CombatAdmin({
             "AUTO_DEATH",
             "PICTO_EFFECT_TRACKED",
             "PICTO_EFFECTS_CLEARED",
-            "PICTO_EFFECTS_RESET"
+            "PICTO_EFFECTS_RESET",
+            "WEAK_POINTS_CHANGED"
         ]);
 
         const shouldUpdate = logs.some(log => relevantEvents.has(log.eventType));
