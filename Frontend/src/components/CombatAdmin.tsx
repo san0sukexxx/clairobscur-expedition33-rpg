@@ -170,6 +170,7 @@ export default function CombatAdmin({
     const [encounterLocationOnly, setEncounterLocationOnly] = useState(() => localStorage.getItem("combatAdmin.encounterLocationOnly") === "true");
     const [encounterStoryMode, setEncounterStoryMode] = useState(() => localStorage.getItem("combatAdmin.encounterStoryMode") === "true");
     const [hasStoryEncounter, setHasStoryEncounter] = useState(false);
+    const [storyEncounterName, setStoryEncounterName] = useState<string | null>(null);
     const [localPlayers, setLocalPlayers] = useState(players);
 
     const lastReloadTimeRef = useRef<number>(0)
@@ -795,6 +796,8 @@ export default function CombatAdmin({
             }
 
             setSelectedEncounterId(null);
+            setStoryEncounterName(t(storyEncounter.name) || storyEncounter.id);
+            setHasStoryEncounter(true);
             // Guardar recompensas e bônus XP do encontro de história
             if (storyEncounter.rewards.length > 0 || storyEncounter.bonusXp > 0) {
                 setBattleRewards(storyEncounter.rewards.map(r => ({
@@ -803,7 +806,6 @@ export default function CombatAdmin({
                     level: r.level,
                 })));
                 setEncounterBonusXp(storyEncounter.bonusXp);
-                setHasStoryEncounter(true);
             }
             await reloadBattleDetails(true);
             showToast(t("combatAdmin.encounter.loaded"));
@@ -2455,15 +2457,17 @@ export default function CombatAdmin({
                                             <span className="loading loading-spinner loading-sm" />
                                         ) : selectedEncounterId ? (
                                             (() => { const enc = encounters.find(e => e.id === selectedEncounterId); return t("combatAdmin.encounter.selected", { name: enc?.locationId ? getLocationName(enc.locationId) : `#${enc?.id}` }); })()
+                                        ) : storyEncounterName ? (
+                                            t("combatAdmin.encounter.selected", { name: storyEncounterName })
                                         ) : (
                                             t("combatAdmin.encounter.select")
                                         )}
                                     </button>
-                                    {selectedEncounterId && (
+                                    {(selectedEncounterId || storyEncounterName) && (
                                         <button
                                             className="btn btn-sm btn-ghost btn-square text-error"
                                             title={t("combatAdmin.encounter.clear")}
-                                            onClick={() => setSelectedEncounterId(null)}
+                                            onClick={() => { setSelectedEncounterId(null); setStoryEncounterName(null); setHasStoryEncounter(false); }}
                                         >
                                             ✕
                                         </button>
