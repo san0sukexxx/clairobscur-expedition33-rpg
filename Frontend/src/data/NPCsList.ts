@@ -2393,7 +2393,7 @@ export const NPCsList: NPCInfo[] = [
         intelligence: 10,
         wisdom:       12,
         charisma:     11,
-        freeShotWeakPoints: 2,
+        freeShotWeakPoints: 1,
         weakTo: "Ice",
         armorClass: 16,
         challengeRating: "4",

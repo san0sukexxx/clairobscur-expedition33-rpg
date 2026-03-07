@@ -24,6 +24,16 @@ const ATTACK_ATTRIBUTE_MAP: Record<string, AbilityKey> = {
   lune:    "intelligence",
 };
 
+/** Returns the attack ability for basic (non-skill) attacks */
+export function getBasicAttackAttribute(characterId: string | undefined): AbilityKey {
+  const BASIC_ATTACK_OVERRIDE: Record<string, AbilityKey> = {
+    lune: "strength",
+    monoco: "strength",
+  };
+  const id = characterId?.toLowerCase() ?? "";
+  return BASIC_ATTACK_OVERRIDE[id] ?? ATTACK_ATTRIBUTE_MAP[id] ?? "strength";
+}
+
 /** Returns the primary attack ability for a character */
 export function getAttackAttribute(characterId: string | undefined): AbilityKey {
   return ATTACK_ATTRIBUTE_MAP[characterId?.toLowerCase() ?? ""] ?? "strength";
@@ -71,8 +81,8 @@ export interface AttackBonusBreakdown {
 }
 
 /** Calculates the full attack bonus breakdown */
-export function calculateAttackBonus(player: GetPlayerResponse, weaponInfo: WeaponInfo): AttackBonusBreakdown {
-  const abilityKey = getAttackAttribute(player.playerSheet?.characterId);
+export function calculateAttackBonus(player: GetPlayerResponse, weaponInfo: WeaponInfo, overrideAbilityKey?: AbilityKey): AttackBonusBreakdown {
+  const abilityKey = overrideAbilityKey ?? getAttackAttribute(player.playerSheet?.characterId);
   const baseScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
   const abilityScore = Math.min(abilityScoreCap(player), baseScore + getAbilityPictoBonus(player, abilityKey) + getAbilityWeaponBonus(abilityKey, weaponInfo));
   const abilityMod = getAbilityModifier(abilityScore);
@@ -100,8 +110,8 @@ export interface DamageBonusBreakdown {
 }
 
 /** Calculates the damage bonus (ability mod + weapon power, no proficiency) */
-export function calculateDamageBonus(player: GetPlayerResponse, weaponInfo: WeaponInfo): DamageBonusBreakdown {
-  const abilityKey = getAttackAttribute(player.playerSheet?.characterId);
+export function calculateDamageBonus(player: GetPlayerResponse, weaponInfo: WeaponInfo, overrideAbilityKey?: AbilityKey): DamageBonusBreakdown {
+  const abilityKey = overrideAbilityKey ?? getAttackAttribute(player.playerSheet?.characterId);
   const baseScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
   const abilityScore = Math.min(abilityScoreCap(player), baseScore + getAbilityPictoBonus(player, abilityKey) + getAbilityWeaponBonus(abilityKey, weaponInfo));
   const abilityMod = getAbilityModifier(abilityScore);

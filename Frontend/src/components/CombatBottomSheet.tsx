@@ -5,7 +5,7 @@ import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { DiceBoardRef } from "./DiceBoard";
 import { useWeaponInfo } from "../hooks/player/useWeaponInfo";
-import { calculateAttackBonus, calculateDamageBonus, getAbilityModifier } from "../utils/AttackCalculator";
+import { calculateAttackBonus, calculateDamageBonus, getAbilityModifier, getBasicAttackAttribute } from "../utils/AttackCalculator";
 import { getWeaponDamageDice, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
 import { playerPictosTotalSpeed, calculateArmorClass, abilityScoreCap } from "../utils/PlayerCalculator";
 import { rollWithTimeout } from "../utils/RollUtils";
@@ -42,21 +42,29 @@ interface CombatBottomSheetProps {
     onClose: () => void;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    activeSkillId?: string | null;
 }
 
-export default function CombatBottomSheet({ player, open, onOpen, onClose, diceBoardRef, timeoutDiceBoardRef }: CombatBottomSheetProps) {
+export default function CombatBottomSheet({ player, open, onOpen, onClose, diceBoardRef, timeoutDiceBoardRef, activeSkillId }: CombatBottomSheetProps) {
     const { weaponInfo, weaponList } = useWeaponInfo(player);
     const { weapon, details } = weaponInfo;
 
+    const effectiveAbilityKey = useMemo(() => {
+        if (!activeSkillId) {
+            return getBasicAttackAttribute(player?.playerSheet?.characterId);
+        }
+        return undefined;
+    }, [activeSkillId, player?.playerSheet?.characterId]);
+
     const attackBonus = useMemo(() => {
         if (!player) return null;
-        return calculateAttackBonus(player, weaponInfo);
-    }, [player, weaponInfo]);
+        return calculateAttackBonus(player, weaponInfo, effectiveAbilityKey);
+    }, [player, weaponInfo, effectiveAbilityKey]);
 
     const damageBonus = useMemo(() => {
         if (!player) return null;
-        return calculateDamageBonus(player, weaponInfo);
-    }, [player, weaponInfo]);
+        return calculateDamageBonus(player, weaponInfo, effectiveAbilityKey);
+    }, [player, weaponInfo, effectiveAbilityKey]);
 
     const dexMod = useMemo(() => {
         const baseDex = player?.playerSheet?.abilityScores?.dexterity ?? 10;

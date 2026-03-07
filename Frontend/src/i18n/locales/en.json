@@ -42,7 +42,7 @@
     },
     "second-chance": {
       "name": "Second Chance",
-      "description": "Revive with 100% Health. Once per battle."
+      "description": "Revive with full Health. Once per battle."
     },
     "first-strike": {
       "name": "First Strike",
@@ -402,7 +402,7 @@
     },
     "shortcut": {
       "name": "Shortcut",
-      "description": "Immediately play when falling below 30% Health. Once per battle."
+      "description": "Immediately play when falling below half Health. Once per battle."
     },
     "defensive-mode": {
       "name": "Defensive Mode",
@@ -534,7 +534,7 @@
     },
     "stay-marked": {
       "name": "Stay Marked",
-      "description": "50% chance to apply Mark when attacking a Marked target."
+      "description": "INT DC 10 test: reapply Mark when attacking a Marked target."
     },
     "burning-shots": {
       "name": "Burning Shots",
@@ -898,7 +898,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Kill self on battle start.",
-        "3": "Revive with 100% Health. Once per battle.",
+        "3": "Revive with full Health. Once per battle.",
         "4": "Play first."
       }
     },
@@ -930,7 +930,7 @@
       "name": "Contorso",
       "passives": {
         "2": "Switch to Rank S on Break. Base Attack can Break.",
-        "3": "100% Critical Chance on Rank S.",
+        "3": "Guaranteed Critical Hit on Rank S.",
         "4": "Triggers a lightning strike on Critical hits."
       }
     },
@@ -962,7 +962,7 @@
       "name": "Danseso",
       "passives": {
         "2": "Base attack gives 1 Perfection per Burn on target.",
-        "3": "While Powerful, 20% chance to Burn on hit.",
+        "3": "While Powerful, CHA DC 13 test: apply Burn on hit.",
         "4": "+1 MP on Rank Up."
       }
     },
@@ -986,7 +986,7 @@
       "name": "Dreameso",
       "passives": {
         "2": "Gain 1 Rank on Counterattack.",
-        "3": "50% increased Counterattack damage.",
+        "3": "+2d6 Counterattack damage.",
         "4": "Gain 2 MP on Counterattack."
       }
     },
@@ -1010,7 +1010,7 @@
       "name": "Gesam",
       "passives": {
         "2": "Convert Light damage from Skills to Physical damage.",
-        "3": "20% increased Physical damage with Skills.",
+        "3": "+1d4 Physical damage with Skills.",
         "4": "-1 MP cost for Physical Skills."
       }
     },
@@ -1018,7 +1018,7 @@
       "name": "Glaceso",
       "passives": {
         "2": "+1 Perfection on Critical hit.",
-        "3": "Self-Heal by 2% Health on dealing a Critical hit.",
+        "3": "Self-Heal by 1d4 HP on dealing a Critical hit.",
         "4": "Counterattack is always a Critical hit."
       }
     },
@@ -1106,7 +1106,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Kill self on battle start.",
-        "3": "Revive with 100% Health. Once per battle.",
+        "3": "Revive with full Health. Once per battle.",
         "4": "Play first."
       }
     },
@@ -1130,7 +1130,7 @@
       "name": "Braselim",
       "passives": {
         "2": "+1d8 Critical Chance bonus per Ice Stain.",
-        "3": "+5% of a Gradient Charge on Critical hit.",
+        "3": "+1 Gradient point on Critical hit.",
         "4": "+1d6 Fire damage with Skills."
       }
     },
@@ -1153,7 +1153,7 @@
     "colim": {
       "name": "Colim",
       "passives": {
-        "2": "50% chance to generate a Light Stain when consuming Stains.",
+        "2": "INT DC 10 test: generate a Light Stain when consuming Stains.",
         "3": "+1 MP on consuming a Light Stain.",
         "4": "+1d6 damage with Skills per active Light Stain."
       }
@@ -1253,7 +1253,7 @@
     "snowim": {
       "name": "Snowim",
       "passives": {
-        "2": "Freeze self when falling below 30% health. Prevent the next instance of damage while Frozen.",
+        "2": "Freeze self when falling below half Health. Prevent the next instance of damage while Frozen.",
         "3": "On turn start, if Frozen, remove Freeze and recover 8d6 HP.",
         "4": "Gain 2 Ice Stains and 3 MP when Frozen."
       }
@@ -1278,7 +1278,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Kill self on battle start.",
-        "3": "Revive with 100% Health. Once per battle.",
+        "3": "Revive with full Health. Once per battle.",
         "4": "Play first."
       }
     },
@@ -1303,7 +1303,7 @@
       "passives": {
         "2": "Critical hits apply Burn.",
         "3": "Base Attack applies 2 Burn.",
-        "4": "100% Critical Chance while Stanceless."
+        "4": "Guaranteed Critical Hit while Stanceless."
       }
     },
     "chalium": {
@@ -1394,8 +1394,8 @@
       "name": "Melarum",
       "passives": {
         "2": "Allies recover 3d6 HP on switching to Virtuose Stance.",
-        "3": "Applies Shell when Health is above 80%.",
-        "4": "Switch to Virtuose Stance when Health falls below 50%."
+        "3": "Applies Shell when at full Health.",
+        "4": "Switch to Virtuose Stance when Health falls below half."
       }
     },
     "plenum": {
@@ -1451,7 +1451,7 @@
       "passives": {
         "2": "+1 MP on Stance switch.",
         "3": "If Stanceless, Base Attack switches to Defensive Stance.",
-        "4": "Recover 5% Health on Stance switch."
+        "4": "Recover 1d4 HP on Stance switch."
       }
     },
     "yeverum": {
@@ -1466,7 +1466,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Kill self on battle start.",
-        "3": "Revive with 100% Health. Once per battle.",
+        "3": "Revive with full Health. Once per battle.",
         "4": "Play first."
       }
     },
@@ -1483,7 +1483,7 @@
       "passives": {
         "2": "Start battle in Agile Mask.",
         "3": "Agile Mask applies Rush for 3 turns.",
-        "4": "+50% Critical Chance while in Agile Mask."
+        "4": "+2d6 Critical Chance bonus while in Agile Mask."
       }
     },
     "brumaro": {
@@ -1507,7 +1507,7 @@
       "passives": {
         "2": "Free Aim shots spin the Bestial Wheel to a random value.",
         "3": "Free Aim shots deal +3d6 damage with all Masks except Almighty.",
-        "4": "100% Critical Chance while in Almighty Mask."
+        "4": "Guaranteed Critical Hit while in Almighty Mask."
       }
     },
     "grandaro": {
@@ -1570,7 +1570,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Kill self on battle start.",
-        "3": "Revive with 100% Health. Once per battle.",
+        "3": "Revive with full Health. Once per battle.",
         "4": "Play first."
       }
     },
@@ -1593,7 +1593,7 @@
     "charnon": {
       "name": "Charnon",
       "passives": {
-        "2": "100% Critical Chance during Twilight.",
+        "2": "Guaranteed Critical Hit during Twilight.",
         "3": "Apply 1 Foretell on Critical hit.",
         "4": "+1d6 damage for each consecutive turn without taking damage. Can stack up to 5 times."
       }
@@ -1697,7 +1697,7 @@
     "ramasson": {
       "name": "Ramasson",
       "passives": {
-        "2": "Can consume 1 Moon charge on turn start to recover 20% of each ally's Health.",
+        "2": "Can consume 1 Moon charge on turn start to recover 2d6 HP of each ally.",
         "3": "Base Attack gives 1 Moon charge.",
         "4": "Moon Skills give one more charge."
       }
@@ -2647,7 +2647,7 @@
       },
       "maelle-gommage": {
         "name": "Gommage",
-        "description": "Does not consume turn. Kills targets with HP ≤ 25%. Otherwise deals extreme Void damage to a single target. Using this skill changes Maelle's Stance to Virtuose."
+        "description": "Does not consume turn. Kills targets with HP ≤ quarter of max HP. Otherwise deals extreme Void damage to a single target. Using this skill changes Maelle's Stance to Virtuose."
       },
       "maelle-phoenix-flame": {
         "name": "Phoenix Flame",
@@ -2775,7 +2775,7 @@
       },
       "verso-blitz": {
         "name": "Blitz",
-        "description": "Deals low Physical damage to a single target. 1 hit. Plays a second time. Executes enemies below 10% HP. If Verso uses this skill at Perfection Rank B, the damage is increased."
+        "description": "Deals low Physical damage to a single target. 1 hit. Plays a second time. Executes enemies below 1d4 HP. If Verso uses this skill at Perfection Rank B, the damage is increased."
       },
       "verso-burden": {
         "name": "Burden",
@@ -3372,11 +3372,11 @@
         "EnfeeblingMark": "Mark that weakens the target, reducing their power.",
         "DamageReduction": "Reduces damage taken from all sources.",
         "SuccessiveParry": "Improves ability to parry consecutive attacks.",
-        "Aureole": "Revives the character with 30% HP when they die. Consumed on use.",
+        "Aureole": "Revives the character with 3d6 HP when they die. Consumed on use.",
         "Vulnerable": "The character takes increased damage from all sources.",
         "FortunesFury": "Each attack deals +8 attack bonus and +8 extra damage for 1 turn.",
         "Regen": "Regenerates health points over time.",
-        "Earthquake": "Deals damage at the start of turn. Each stack deals 1d6 damage. If the character is fragile, suffers Break and takes 150% of the damage that caused the Break.",
+        "Earthquake": "Deals damage at the start of turn. Each stack deals 1d6 damage. If the character is fragile, suffers Break and takes the damage that caused the Break +1d6.",
         "IntenseFlames": "Rolls Xd6 damage when resolved (X = current stacks). Increases by 2 stacks at end of turn. Does not expire. Removed from all enemies when the caster takes damage.",
         "freeShot": "Free aim shots taken this turn. Increases Follow-Up damage (up to 10 stacks).",
         "jump": "Ignores terrain or obstacles temporarily.",
@@ -3787,7 +3787,10 @@
       "lumiere-mime": "Lumiere Mime",
       "spring-meadows-lancer": "Spring Meadows Lancer",
       "spring-meadows-portier": "Field of the Dead",
-      "spring-meadows-abandoned-building": "In Front of the Abandoned Building"
+      "spring-meadows-abandoned-building": "In Front of the Abandoned Building",
+      "spring-meadows-mime": "Spring Meadows Mime",
+      "spring-meadows-volesters": "Volester Ambush",
+      "spring-meadows-chromatic-lancelier": "Chromatic Lancelier"
     },
     "locations": {
       "title": "Locations",

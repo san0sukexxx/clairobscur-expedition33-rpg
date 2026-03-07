@@ -42,4 +42,28 @@ export const StoryEncountersList: StoryEncounter[] = [
         rewards: [{ rewardType: "weapon", itemId: "lanceram" }],
         bonusXp: 0,
     },
+    {
+        id: "spring-meadows-mime",
+        name: "storyEncounters.spring-meadows-mime",
+        locationId: "spring-meadows",
+        npcs: [{ npcId: "mime", quantity: 1 }],
+        rewards: [],
+        bonusXp: 0,
+    },
+    {
+        id: "spring-meadows-volesters",
+        name: "storyEncounters.spring-meadows-volesters",
+        locationId: "spring-meadows",
+        npcs: [{ npcId: "volester", quantity: 3 }],
+        rewards: [],
+        bonusXp: 0,
+    },
+    {
+        id: "spring-meadows-chromatic-lancelier",
+        name: "storyEncounters.spring-meadows-chromatic-lancelier",
+        locationId: "spring-meadows",
+        npcs: [{ npcId: "chromatic-lancelier", quantity: 1 }],
+        rewards: [],
+        bonusXp: 0,
+    },
 ];

@@ -42,7 +42,7 @@
     },
     "second-chance": {
       "name": "Segunda Chance",
-      "description": "Revive com 100% de Vida. Uma vez por batalha."
+      "description": "Revive com Vida cheia. Uma vez por batalha."
     },
     "first-strike": {
       "name": "Primeiro Golpe",
@@ -402,7 +402,7 @@
     },
     "shortcut": {
       "name": "Atalho",
-      "description": "Joga imediatamente ao cair abaixo de 30% de Vida. Uma vez por batalha."
+      "description": "Joga imediatamente ao cair abaixo da metade da Vida. Uma vez por batalha."
     },
     "defensive-mode": {
       "name": "Modo Defensivo",
@@ -534,7 +534,7 @@
     },
     "stay-marked": {
       "name": "Permanecer Marcado",
-      "description": "50% de chance de aplicar Marca ao atacar um alvo Marcado."
+      "description": "Teste de CAR CD 10: aplica Marca ao atacar um alvo Marcado."
     },
     "burning-shots": {
       "name": "Disparos Ardentes",
@@ -898,7 +898,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Mata a si mesmo no início da batalha.",
-        "3": "Revive com 100% de Vida. Uma vez por batalha.",
+        "3": "Revive com Vida cheia. Uma vez por batalha.",
         "4": "Joga primeiro."
       }
     },
@@ -930,7 +930,7 @@
       "name": "Contorso",
       "passives": {
         "2": "Muda para Rank S ao Quebrar. Ataque Base pode Quebrar.",
-        "3": "100% de Chance Crítica no Rank S.",
+        "3": "Acerto Crítico garantido no Rank S.",
         "4": "Dispara um raio em acertos Críticos."
       }
     },
@@ -962,7 +962,7 @@
       "name": "Danseso",
       "passives": {
         "2": "Ataque Base dá 1 Perfeição por Queimadura no alvo.",
-        "3": "Enquanto Poderoso, 20% de chance de Queimar ao acertar.",
+        "3": "Enquanto Poderoso, teste de CAR CD 13: aplica Queimadura ao acertar.",
         "4": "+1 PM ao subir de Rank."
       }
     },
@@ -986,7 +986,7 @@
       "name": "Dreameso",
       "passives": {
         "2": "Ganha 1 Rank no Contra-ataque.",
-        "3": "50% de dano aumentado no Contra-ataque.",
+        "3": "+2d6 de dano no Contra-ataque.",
         "4": "Ganha 2 PM no Contra-ataque."
       }
     },
@@ -1010,7 +1010,7 @@
       "name": "Gesam",
       "passives": {
         "2": "Converte dano de Luz das Habilidades em dano Físico.",
-        "3": "20% de dano Físico aumentado com Habilidades.",
+        "3": "+1d4 de dano Físico com Habilidades.",
         "4": "-1 PM de custo para Habilidades Físicas."
       }
     },
@@ -1018,7 +1018,7 @@
       "name": "Glaceso",
       "passives": {
         "2": "+1 Perfeição em acerto Crítico.",
-        "3": "Auto-cura de 2% de Vida ao dar um acerto Crítico.",
+        "3": "Recupera 1d4 PV ao dar um acerto Crítico.",
         "4": "Contra-ataque é sempre um acerto Crítico."
       }
     },
@@ -1106,7 +1106,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Mata a si mesmo no início da batalha.",
-        "3": "Revive com 100% de Vida. Uma vez por batalha.",
+        "3": "Revive com Vida cheia. Uma vez por batalha.",
         "4": "Joga primeiro."
       }
     },
@@ -1130,7 +1130,7 @@
       "name": "Braselim",
       "passives": {
         "2": "+1d8 de bônus em Chance Crítica por Mancha de Gelo.",
-        "3": "+5% de uma Carga de Gradiente em acerto Crítico.",
+        "3": "+1 ponto de Gradiente em acerto Crítico.",
         "4": "+1d6 de dano de Fogo com Habilidades."
       }
     },
@@ -1153,7 +1153,7 @@
     "colim": {
       "name": "Colim",
       "passives": {
-        "2": "50% de chance de gerar uma Mancha de Luz ao consumir Manchas.",
+        "2": "Teste de INT CD 10: gera uma Mancha de Luz ao consumir Manchas.",
         "3": "+1 PM ao consumir uma Mancha de Luz.",
         "4": "+1d6 de dano com Habilidades por Mancha de Luz ativa."
       }
@@ -1253,7 +1253,7 @@
     "snowim": {
       "name": "Snowim",
       "passives": {
-        "2": "Congela a si mesmo ao cair abaixo de 30% de vida. Previne a próxima instância de dano enquanto Congelado.",
+        "2": "Congela a si mesmo ao cair abaixo da metade da Vida. Previne a próxima instância de dano enquanto Congelado.",
         "3": "No início do turno, se Congelado, remove Congelamento e recupera 8d6 PV.",
         "4": "Ganha 2 Manchas de Gelo e 3 PM quando Congelado."
       }
@@ -1278,7 +1278,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Mata a si mesmo no início da batalha.",
-        "3": "Revive com 100% de Vida. Uma vez por batalha.",
+        "3": "Revive com Vida cheia. Uma vez por batalha.",
         "4": "Joga primeiro."
       }
     },
@@ -1303,7 +1303,7 @@
       "passives": {
         "2": "Acertos Críticos aplicam Queimadura.",
         "3": "Ataque Base aplica 2 Queimaduras.",
-        "4": "100% de Chance Crítica enquanto Sem Postura."
+        "4": "Acerto Crítico garantido enquanto Sem Postura."
       }
     },
     "chalium": {
@@ -1394,8 +1394,8 @@
       "name": "Melarum",
       "passives": {
         "2": "Aliados recuperam 3d6 PV ao mudar para Postura Virtuosa.",
-        "3": "Aplica Protegido quando a Vida está acima de 80%.",
-        "4": "Muda para Postura Virtuosa quando a Vida cai abaixo de 50%."
+        "3": "Aplica Protegido quando a Vida está cheia.",
+        "4": "Muda para Postura Virtuosa quando a Vida cai abaixo da metade."
       }
     },
     "plenum": {
@@ -1451,7 +1451,7 @@
       "passives": {
         "2": "+1 PM ao trocar de Postura.",
         "3": "Se Sem Postura, Ataque Base muda para Postura Defensiva.",
-        "4": "Recupera 5% de Vida ao trocar de Postura."
+        "4": "Recupera 1d4 PV ao trocar de Postura."
       }
     },
     "yeverum": {
@@ -1466,7 +1466,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Mata a si mesmo no início da batalha.",
-        "3": "Revive com 100% de Vida. Uma vez por batalha.",
+        "3": "Revive com Vida cheia. Uma vez por batalha.",
         "4": "Joga primeiro."
       }
     },
@@ -1483,7 +1483,7 @@
       "passives": {
         "2": "Começa a batalha na Máscara Ágil.",
         "3": "Máscara Ágil aplica Velocidade por 3 turnos.",
-        "4": "+50% de Chance Crítica enquanto na Máscara Ágil."
+        "4": "+2d6 de bônus em Chance Crítica enquanto na Máscara Ágil."
       }
     },
     "brumaro": {
@@ -1507,7 +1507,7 @@
       "passives": {
         "2": "Tiros de Mira Livre giram a Roda Bestial para um valor aleatório.",
         "3": "Tiros de Mira Livre causam +3d6 de dano com todas as Máscaras exceto Todo-Poderosa.",
-        "4": "100% de Chance Crítica enquanto na Máscara Todo-Poderosa."
+        "4": "Acerto Crítico garantido enquanto na Máscara Todo-Poderosa."
       }
     },
     "grandaro": {
@@ -1570,7 +1570,7 @@
       "name": "Baguette",
       "passives": {
         "2": "Mata a si mesmo no início da batalha.",
-        "3": "Revive com 100% de Vida. Uma vez por batalha.",
+        "3": "Revive com Vida cheia. Uma vez por batalha.",
         "4": "Joga primeiro."
       }
     },
@@ -1593,7 +1593,7 @@
     "charnon": {
       "name": "Charnon",
       "passives": {
-        "2": "100% de Chance Crítica durante o Eclipse.",
+        "2": "Acerto Crítico garantido durante o Eclipse.",
         "3": "Aplica 1 Prenúncio em acerto Crítico.",
         "4": "+1d6 de dano para cada turno consecutivo sem receber dano. Pode acumular até 5 vezes."
       }
@@ -1697,7 +1697,7 @@
     "ramasson": {
       "name": "Ramasson",
       "passives": {
-        "2": "Pode consumir 1 carga de Lua no início do turno para recuperar 20% da Vida de cada aliado.",
+        "2": "Pode consumir 1 carga de Lua no início do turno para recuperar 2d6 PV de cada aliado.",
         "3": "Ataque Base dá 1 carga de Lua.",
         "4": "Habilidades da Lua dão uma carga a mais."
       }
@@ -2647,7 +2647,7 @@
       },
       "maelle-gommage": {
         "name": "Gommage",
-        "description": "Não consome turno. Mata alvos com HP ≤ 25%. Caso contrário, causa dano de Vazio extremo em alvo único. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
+        "description": "Não consome turno. Mata alvos com HP ≤ um quarto do HP máximo. Caso contrário, causa dano de Vazio extremo em alvo único. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
       },
       "maelle-phoenix-flame": {
         "name": "Chama da Fênix",
@@ -2775,7 +2775,7 @@
       },
       "verso-blitz": {
         "name": "Blitz",
-        "description": "Causa dano Físico baixo em alvo único. 1 golpe. Joga uma segunda vez. Executa inimigos com menos de 10% de Vida. Se Verso usar esta habilidade no Rank B de Perfeição, o dano é aumentado."
+        "description": "Causa dano Físico baixo em alvo único. 1 golpe. Joga uma segunda vez. Executa inimigos com menos de 1d4 PV. Se Verso usar esta habilidade no Rank B de Perfeição, o dano é aumentado."
       },
       "verso-burden": {
         "name": "Burden",
@@ -3372,11 +3372,11 @@
         "EnfeeblingMark": "Marca que enfraquece o alvo, reduzindo seu poder.",
         "DamageReduction": "Reduz o dano recebido de todas as fontes.",
         "SuccessiveParry": "Melhora a capacidade de aparar ataques consecutivos.",
-        "Aureole": "Revive o personagem com 30% de HP quando ele morre. Consumido ao ser usado.",
+        "Aureole": "Revive o personagem com 3d6 PV quando ele morre. Consumido ao ser usado.",
         "Vulnerable": "O personagem recebe dano aumentado de todas as fontes.",
         "FortunesFury": "Cada ataque causa +8 de bônus no ataque e +8 de dano adicional durante 1 turno.",
         "Regen": "Regenera pontos de vida ao longo do tempo.",
-        "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano. Se o personagem estiver frágil, sofre quebra e recebe 150% do dano que causou a quebra.",
+        "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano. Se o personagem estiver frágil, sofre quebra e recebe o dano que causou a quebra +1d6.",
         "IntenseFlames": "Rola Xd6 de dano quando resolvido (X = acúmulos atuais). Aumenta em 2 acúmulos no fim do turno. Não expira. Removido de todos os inimigos quando o conjurador recebe dano.",
         "freeShot": "Tiros livres realizados neste turno. Aumenta o dano de Sequência (até 10 stacks).",
         "jump": "Ignora terreno ou obstáculos temporariamente.",
@@ -3789,7 +3789,10 @@
       "lumiere-mime": "Mímico de Lumière",
       "spring-meadows-lancer": "Lanceiro das Campinas",
       "spring-meadows-portier": "Campo de Mortos",
-      "spring-meadows-abandoned-building": "Na Frente do Prédio Abandonado"
+      "spring-meadows-abandoned-building": "Na Frente do Prédio Abandonado",
+      "spring-meadows-mime": "Mímico das Campinas",
+      "spring-meadows-volesters": "Emboscada dos Volesters",
+      "spring-meadows-chromatic-lancelier": "Lancelier Cromático"
     },
     "locations": {
       "title": "Locais",
