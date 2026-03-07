@@ -1,4 +1,4 @@
-import { useEffect, useRef, type Dispatch, type SetStateAction, type RefObject, type MutableRefObject } from "react";
+import { useEffect, useRef, useMemo, type Dispatch, type SetStateAction, type RefObject, type MutableRefObject } from "react";
 import type { GetPlayerResponse } from "../../api/APIPlayer";
 import type { Campaign } from "../../api/APICampaign";
 import type { BattleCharacterInfo, WeaponInfo } from "../../api/ResponseModel";
@@ -27,6 +27,7 @@ import { GameLogSection } from "../GameLogSection";
 
 interface PlayerContentProps {
   tab: PlayerTab;
+  setTab: (tab: PlayerTab) => void;
   loading: boolean;
   error: string | null;
   player: GetPlayerResponse | null;
@@ -75,6 +76,7 @@ interface PlayerContentProps {
  */
 export function PlayerContent({
   tab,
+  setTab,
   loading,
   error,
   player,
@@ -122,6 +124,45 @@ export function PlayerContent({
   const skillProficiencyDone = player?.setupProgress?.find(s => s.section === "skillProficiency")?.done ?? false;
   const prevSheetReady = useRef(sheetReady);
   const hasLoadedOnce = useRef(false);
+
+  const setupComplete = useMemo(() => {
+    return abilityScoresDone && skillProficiencyDone;
+  }, [abilityScoresDone, skillProficiencyDone]);
+
+  // Auto-navigate to pericias after ability scores setup
+  // Skip on initial load (when player data arrives for the first time)
+  const prevAbilityScoresDone = useRef(abilityScoresDone);
+  useEffect(() => {
+    if (hasLoadedOnce.current && abilityScoresDone && !prevAbilityScoresDone.current) {
+      setTab("pericias");
+    }
+    prevAbilityScoresDone.current = abilityScoresDone;
+  }, [abilityScoresDone, setTab]);
+
+  // Auto-navigate to habilidades after skill proficiency setup
+  // Skip on initial load (when player data arrives for the first time)
+  const prevSkillProficiencyDone = useRef(skillProficiencyDone);
+  useEffect(() => {
+    if (hasLoadedOnce.current && skillProficiencyDone && !prevSkillProficiencyDone.current) {
+      setTab("habilidades");
+    }
+    prevSkillProficiencyDone.current = skillProficiencyDone;
+  }, [skillProficiencyDone, setTab]);
+
+  // On first load, resume setup at the correct tab
+  const hasResumedSetup = useRef(false);
+  useEffect(() => {
+    if (loading || hasResumedSetup.current || !player) return;
+    hasResumedSetup.current = true;
+    if (abilityScoresDone && !skillProficiencyDone) {
+      setTab("pericias");
+    } else if (abilityScoresDone && skillProficiencyDone) {
+      // setup complete — don't override user's tab
+    } else {
+      // ability scores not done — stay on ficha
+      if (tab !== "ficha") setTab("ficha");
+    }
+  }, [loading, player, abilityScoresDone, skillProficiencyDone, tab, setTab]);
 
   useEffect(() => {
     if (loading) return;
