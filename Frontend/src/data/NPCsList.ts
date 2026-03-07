@@ -636,7 +636,7 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "lancer",
-        name: "Lanceiro",
+        name: "Lancelier",
         strength:     13,
         dexterity:    10,
         constitution: 12,
@@ -2883,7 +2883,7 @@ export const NPCsList: NPCInfo[] = [
     // Spring Meadows (2) → Monolith (13)
     {
         id: "lancer-monolith",
-        name: "Lanceiro (Monolith)",
+        name: "Lancelier (Monolith)",
         strength:     19,
         dexterity:    14,
         constitution: 17,
