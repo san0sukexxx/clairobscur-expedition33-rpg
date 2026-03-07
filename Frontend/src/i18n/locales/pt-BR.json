@@ -3014,7 +3014,7 @@
       "monoco-lancelier-impale": {
         "name": "Empalamento Lancelier",
         "description": "Ataque de lança empaladora. Efeito: Causa dano de Gelo baixo em alvo único. 1 ataque. Desacelera o alvo por 3 turnos. Dano aumentado quando usado com o aprimoramento de Máscara Ágil ativo no Ponteiro da Roda Bestial.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Lancelier enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Lanceiro enquanto Monoco estiver no grupo ativo."
       },
       "monoco-luster-slices": {
         "name": "Fatias Lustrosas",
