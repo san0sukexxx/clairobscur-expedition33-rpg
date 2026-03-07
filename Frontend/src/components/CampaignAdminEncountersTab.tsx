@@ -691,7 +691,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             <div className="flex flex-wrap gap-2">
                                                 {enc.rewards.length > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
-                                                        {enc.rewards.length} {t("encounters.rewardCount")}
+                                                        {enc.rewards.length} {enc.rewards.length === 1 ? t("encounters.rewardCountSingular") : t("encounters.rewardCount")}
                                                     </span>
                                                 ) : enc.bonusXp > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
@@ -774,7 +774,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {enc.rewards.length > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
-                                                        {enc.rewards.length} {t("encounters.rewardCount")}
+                                                        {enc.rewards.length} {enc.rewards.length === 1 ? t("encounters.rewardCountSingular") : t("encounters.rewardCount")}
                                                     </span>
                                                 ) : enc.bonusXp > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">

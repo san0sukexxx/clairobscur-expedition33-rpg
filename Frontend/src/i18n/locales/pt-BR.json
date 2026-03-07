@@ -3764,6 +3764,7 @@
       "back": "Voltar",
       "npcCount": "NPCs",
       "rewardCount": "recompensas",
+      "rewardCountSingular": "recompensa",
       "challengeRating": "ND",
       "bonusXp": "Bônus XP",
       "bonusXpReward": "XP bônus",
