@@ -21,12 +21,13 @@ interface PlayerNavbarProps {
   isExecutingSkill: boolean;
   tab: PlayerTab;
   setTab: (tab: PlayerTab) => void;
+  setupComplete: boolean;
 }
 
 /**
  * Top navigation bar for PlayerPage
  */
-export function PlayerNavbar({ onNavigateBack, isExecutingSkill, tab, setTab }: PlayerNavbarProps) {
+export function PlayerNavbar({ onNavigateBack, isExecutingSkill, tab, setTab, setupComplete }: PlayerNavbarProps) {
   return (
     <div className="navbar bg-base-100 shadow sticky top-0 z-10">
       <div className="flex-1">
@@ -38,6 +39,7 @@ export function PlayerNavbar({ onNavigateBack, isExecutingSkill, tab, setTab }: 
           tab={tab}
           setTab={setTab}
           isExecutingSkill={isExecutingSkill}
+          setupComplete={setupComplete}
           onExit={onNavigateBack}
         />
       </div>

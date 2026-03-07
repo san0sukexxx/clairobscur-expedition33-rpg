@@ -14,6 +14,7 @@ interface HamburgerMenuDrawerProps {
   tab: PlayerTab;
   setTab: (tab: PlayerTab) => void;
   isExecutingSkill: boolean;
+  setupComplete: boolean;
   onExit?: () => void;
 }
 
@@ -36,12 +37,18 @@ const TABS: TabConfig[] = [
   { id: "gamelog",    icon: <FaHistory className="text-xl" />,       labelKey: "playerPage.navigation.tabs.gamelog"        },
 ];
 
-export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill, onExit }: HamburgerMenuDrawerProps) {
+export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill, setupComplete, onExit }: HamburgerMenuDrawerProps) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
+  function isTabDisabled(id: PlayerTab) {
+    if (isExecutingSkill) return true;
+    if (!setupComplete && id !== "ficha") return true;
+    return false;
+  }
+
   function handleSelect(id: PlayerTab) {
-    if (isExecutingSkill) return;
+    if (isTabDisabled(id)) return;
     setTab(id);
     setOpen(false);
   }
@@ -91,23 +98,26 @@ export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill, onExit }: H
 
         {/* Tab list */}
         <nav className="flex flex-col gap-1 p-3 overflow-y-auto flex-1">
-          {TABS.map(({ id, icon, labelKey }) => (
+          {TABS.map(({ id, icon, labelKey }) => {
+            const disabled = isTabDisabled(id);
+            return (
             <button
               key={id}
               onClick={() => handleSelect(id)}
-              disabled={isExecutingSkill}
+              disabled={disabled}
               className={`flex items-center gap-4 px-4 py-3 rounded-lg text-left transition ${
                 tab === id
                   ? "bg-primary/15 text-primary font-bold"
                   : "hover:bg-base-200 text-base-content/80"
-              } ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+              } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               {icon}
               <span className="text-sm font-semibold tracking-wide">
                 {t(labelKey)}
               </span>
             </button>
-          ))}
+            );
+          })}
         </nav>
 
         {/* Settings & Exit — bottom of drawer */}

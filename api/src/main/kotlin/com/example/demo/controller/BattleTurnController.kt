@@ -7,6 +7,7 @@ import com.example.demo.model.BattleTurn
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleLogRepository
 import com.example.demo.repository.BattleTurnRepository
+import com.example.demo.service.BattleCharacterService
 import com.example.demo.service.BattleTurnService
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +19,8 @@ class BattleTurnController(
         private val battleTurnRepository: BattleTurnRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val battleLogRepository: BattleLogRepository,
-        private val battleTurnService: BattleTurnService
+        private val battleTurnService: BattleTurnService,
+        private val battleCharacterService: BattleCharacterService
 ) {
 
         @PostMapping
@@ -62,6 +64,15 @@ class BattleTurnController(
                 val battleId = bc.battleId
 
                 battleTurnService.advanceTurn(battleId)
+
+                // Grant +1 MP to the next player whose turn is starting
+                val nextTurn = battleTurnRepository.findByBattleIdOrderByPlayOrderAsc(battleId).firstOrNull()
+                if (nextTurn != null) {
+                        val nextChar = battleCharacterRepository.findById(nextTurn.battleCharacterId).orElse(null)
+                        if (nextChar != null && nextChar.characterType.equals("player", ignoreCase = true)) {
+                                battleCharacterService.updateCharacterAP(nextTurn.battleCharacterId, 1)
+                        }
+                }
 
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "TURN_ENDED", eventJson = null)

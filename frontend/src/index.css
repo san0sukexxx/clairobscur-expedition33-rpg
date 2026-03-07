@@ -278,6 +278,21 @@
   animation: half-turn 4s linear infinite;
 }
 
+@keyframes combat-menu-blink {
+  0%, 100% {
+    box-shadow: 0 0 0 0 oklch(var(--p) / 0.7);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 12px 6px oklch(var(--p) / 0.35);
+    transform: scale(1.12);
+  }
+}
+
+.animate-combat-menu-blink {
+  animation: combat-menu-blink 1.2s ease-in-out infinite;
+}
+
 /* ====== TipTap rich text editor ====== */
 .ProseMirror {
   outline: none;
