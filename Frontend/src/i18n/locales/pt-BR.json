@@ -3767,7 +3767,13 @@
       "bonusXp": "Bônus XP",
       "bonusXpReward": "XP bônus",
       "showStoryMode": "Mostrar modo história",
-      "currentLocationOnly": "Somente local atual"
+      "currentLocationOnly": "Somente local atual",
+      "name": "Nome",
+      "namePlaceholder": "Nome do encontro (opcional)"
+    },
+    "storyEncounters": {
+      "lumiere-mime": "Mímico de Lumière",
+      "spring-meadows-lancer": "Lanceiro das Campinas"
     },
     "locations": {
       "title": "Locais",

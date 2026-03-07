@@ -15,7 +15,9 @@ export interface EncounterResponse {
     id: number
     campaignId: number
     locationId?: string | null
+    name?: string | null
     storyOrder: number
+    bonusXp: number
     npcs: EncounterNpcDto[]
     rewards: EncounterRewardDto[]
 }
@@ -27,8 +29,10 @@ export interface CreateEncounterInput {
 
 export interface UpdateEncounterInput {
     locationId?: string | null
+    name?: string | null
     npcs: EncounterNpcDto[]
     rewards: EncounterRewardDto[]
+    bonusXp?: number
     storyOrder?: number
 }
 

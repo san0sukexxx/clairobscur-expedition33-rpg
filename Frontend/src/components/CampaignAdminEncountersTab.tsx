@@ -34,6 +34,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     const [editNpcs, setEditNpcs] = useState<EncounterNpcDto[]>([]);
     const [editRewards, setEditRewards] = useState<EncounterRewardDto[]>([]);
     const [editBonusXp, setEditBonusXp] = useState<number | null>(null);
+    const [editName, setEditName] = useState("");
     const [saving, setSaving] = useState(false);
 
     // NPC search
@@ -121,6 +122,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     function startEditing(encounter: EncounterResponse) {
         setEditingEncounter(encounter);
         setEditLocationId(encounter.locationId ?? "");
+        setEditName(encounter.name ?? "");
         setEditNpcs([...encounter.npcs]);
         setEditRewards([...encounter.rewards]);
         setEditBonusXp(encounter.bonusXp || null);
@@ -132,11 +134,12 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isFirstEdit = useRef(true);
 
-    const autoSave = useCallback(async (encounterId: number, locationId: string, npcs: EncounterNpcDto[], rewards: EncounterRewardDto[], bonusXp: number | null) => {
+    const autoSave = useCallback(async (encounterId: number, locationId: string, name: string, npcs: EncounterNpcDto[], rewards: EncounterRewardDto[], bonusXp: number | null) => {
         try {
             setSaving(true);
             await APIEncounter.update(encounterId, {
                 locationId: locationId || null,
+                name: name || null,
                 npcs,
                 rewards,
                 bonusXp: bonusXp ?? 0,
@@ -160,10 +163,10 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
         }
         if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
         autoSaveTimer.current = setTimeout(() => {
-            autoSave(editingEncounter.id, editLocationId, editNpcs, editRewards, editBonusXp);
+            autoSave(editingEncounter.id, editLocationId, editName, editNpcs, editRewards, editBonusXp);
         }, 500);
         return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current); };
-    }, [editLocationId, editNpcs, editRewards, editBonusXp]);
+    }, [editLocationId, editName, editNpcs, editRewards, editBonusXp]);
 
     // NPC management
     function addNpc(npcId: string) {
@@ -289,6 +292,20 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                             <FaDragon className="opacity-60" />
                             {t("encounters.edit")}
                         </h2>
+                    </div>
+
+                    {/* Name */}
+                    <div className="form-control mb-4">
+                        <label className="label">
+                            <span className="label-text font-semibold">{t("encounters.name")}</span>
+                        </label>
+                        <input
+                            type="text"
+                            className="input input-bordered"
+                            placeholder={t("encounters.namePlaceholder")}
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                        />
                     </div>
 
                     {/* Location */}
@@ -664,7 +681,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                     <div key={enc.id} className="flex flex-col gap-2 rounded-lg border border-base-300 bg-base-200 p-3">
                                         <div className="flex items-center justify-between">
                                             <span className="font-semibold text-sm">
-                                                {enc.locationId ? getLocationName(enc.locationId) : enc.id}
+                                                {t(enc.name) || enc.id}
                                             </span>
                                             <div className="flex flex-wrap gap-2">
                                                 {enc.rewards.length > 0 ? (
@@ -751,7 +768,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
 
                                         <div className="flex flex-col min-w-0 flex-1">
                                             <span className="font-semibold text-sm">
-                                                {enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`}
+                                                {enc.name || (enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`)}
                                             </span>
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {enc.rewards.length > 0 ? (

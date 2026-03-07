@@ -3765,7 +3765,13 @@
       "bonusXp": "Bonus XP",
       "bonusXpReward": "bonus XP",
       "showStoryMode": "Show story mode",
-      "currentLocationOnly": "Current location only"
+      "currentLocationOnly": "Current location only",
+      "name": "Name",
+      "namePlaceholder": "Encounter name (optional)"
+    },
+    "storyEncounters": {
+      "lumiere-mime": "Lumiere Mime",
+      "spring-meadows-lancer": "Spring Meadows Lancer"
     },
     "locations": {
       "title": "Locations",

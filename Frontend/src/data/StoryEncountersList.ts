@@ -2,6 +2,7 @@ import type { EncounterNpcDto, EncounterRewardDto } from "../api/APIEncounter";
 
 export interface StoryEncounter {
     id: string;
+    name: string;
     locationId: string;
     npcs: EncounterNpcDto[];
     rewards: EncounterRewardDto[];
@@ -11,6 +12,7 @@ export interface StoryEncounter {
 export const StoryEncountersList: StoryEncounter[] = [
     {
         id: "lumiere-mime",
+        name: "storyEncounters.lumiere-mime",
         locationId: "lumiere",
         npcs: [{ npcId: "mime", quantity: 1 }],
         rewards: [],
@@ -18,6 +20,7 @@ export const StoryEncountersList: StoryEncounter[] = [
     },
     {
         id: "spring-meadows-lancer",
+        name: "storyEncounters.spring-meadows-lancer",
         locationId: "spring-meadows",
         npcs: [{ npcId: "lancer", quantity: 1 }],
         rewards: [],

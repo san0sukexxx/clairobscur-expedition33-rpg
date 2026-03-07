@@ -1,0 +1,1 @@
+ALTER TABLE encounter ADD COLUMN name TEXT;

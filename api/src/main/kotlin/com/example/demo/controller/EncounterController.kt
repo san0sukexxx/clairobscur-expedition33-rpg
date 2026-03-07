@@ -53,6 +53,10 @@ class EncounterController(
                 ?: return ResponseEntity.notFound().build()
 
         encounter.locationId = request.locationId
+        encounter.name = request.name
+        if (request.bonusXp != null) {
+            encounter.bonusXp = request.bonusXp
+        }
         if (request.storyOrder != null) {
             encounter.storyOrder = request.storyOrder
         }
@@ -115,7 +119,9 @@ class EncounterController(
                 id = encId,
                 campaignId = encounter.campaignId,
                 locationId = encounter.locationId,
+                name = encounter.name,
                 storyOrder = encounter.storyOrder,
+                bonusXp = encounter.bonusXp,
                 npcs = npcs,
                 rewards = rewards
         )
