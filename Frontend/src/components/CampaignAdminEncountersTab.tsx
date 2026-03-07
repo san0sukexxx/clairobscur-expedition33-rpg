@@ -656,7 +656,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                     </span>
                                                 ) : enc.bonusXp > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
-                                                        {enc.bonusXp} XP {t("encounters.bonusXp").toLowerCase()}
+                                                        {enc.bonusXp} {t("encounters.bonusXpReward")}
                                                     </span>
                                                 ) : (
                                                     <span className="badge badge-sm badge-ghost">
@@ -727,7 +727,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                     </span>
                                                 ) : enc.bonusXp > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
-                                                        {enc.bonusXp} XP {t("encounters.bonusXp").toLowerCase()}
+                                                        {enc.bonusXp} {t("encounters.bonusXpReward")}
                                                     </span>
                                                 ) : (
                                                     <span className="badge badge-sm badge-ghost">

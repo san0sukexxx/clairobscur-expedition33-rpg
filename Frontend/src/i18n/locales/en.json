@@ -3762,6 +3762,7 @@
       "rewardCount": "rewards",
       "challengeRating": "CR",
       "bonusXp": "Bonus XP",
+      "bonusXpReward": "bonus XP",
       "showStoryMode": "Show story mode",
       "currentLocationOnly": "Current location only"
     },
