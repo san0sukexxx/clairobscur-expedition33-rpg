@@ -2885,7 +2885,7 @@ export default function CombatAdmin({
                             </div>
 
                             {/* Drops dos NPCs — hidden if battle has an associated encounter */}
-                            {npcDrops.length > 0 && !selectedEncounterId && (
+                            {npcDrops.length > 0 && !battleDetails?.encounterId && (
                                 <>
                                     <div className="divider my-2">{t("combatAdmin.npcDetails.drops")}</div>
                                     <div className="space-y-4">
