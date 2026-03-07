@@ -2474,7 +2474,7 @@ export default function CombatAdmin({
                                             placeholder={t("combatAdmin.encounter.filterPlaceholder")}
                                             value={encounterFilter}
                                             onChange={(e) => setEncounterFilter(e.target.value)}
-                                            ref={focusRef}
+                                            autoFocus
                                         />
                                         <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
                                             <label className={`flex items-center gap-2 select-none ${campaignInfo.currentLocationId ? "cursor-pointer" : "opacity-40 cursor-not-allowed"}`}>
