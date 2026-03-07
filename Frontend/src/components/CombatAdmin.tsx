@@ -756,6 +756,53 @@ export default function CombatAdmin({
         }
     }
 
+    async function handleLoadStoryEncounter(storyEncounter: typeof StoryEncountersList[number]) {
+        if (!battleId) return;
+        setLoadingEncounter(true);
+        try {
+            // Limpar equipe B antes de adicionar os NPCs do encontro
+            for (const member of teamB) {
+                if (member.rowId) {
+                    await APIBattle.removeCharacter(member.rowId);
+                }
+            }
+
+            for (const encounterNpc of storyEncounter.npcs) {
+                const npcInfo = getNpcById(encounterNpc.npcId);
+                if (!npcInfo) continue;
+
+                for (let i = 0; i < encounterNpc.quantity; i++) {
+                    const initiative: AddBattleCharacterInitiativeData = {
+                        initiativeValue: randomizeNpcInitiativeTotal(npcInfo),
+                        hability: Math.floor((npcInfo.dexterity - 10) / 2),
+                        playFirst: npcInfo.playFirst ?? false
+                    };
+
+                    await APIBattle.addCharacter({
+                        battleId: battleId,
+                        externalId: npcInfo.id,
+                        characterName: npcInfo.name,
+                        characterType: "npc",
+                        team: "B",
+                        healthPoints: getNPCMaxHealth(npcInfo),
+                        maxHealthPoints: getNPCMaxHealth(npcInfo),
+                        initiative,
+                        canRollInitiative: false
+                    });
+                }
+            }
+
+            setSelectedEncounterId(null);
+            await reloadBattleDetails(true);
+            showToast(t("combatAdmin.encounter.loaded"));
+        } catch (error) {
+            console.error("Erro ao carregar encontro:", error);
+            showToast("Erro ao carregar encontro");
+        } finally {
+            setLoadingEncounter(false);
+        }
+    }
+
     function loadWeaponInfo(player: GetPlayerResponse): WeaponInfo | null {
         const weaponId = player?.playerSheet?.weaponId;
 
@@ -2471,7 +2518,11 @@ export default function CombatAdmin({
                                                     return (
                                                         <div
                                                             key={enc.id}
-                                                            className="card bg-base-200 opacity-70 cursor-default"
+                                                            className="card bg-base-200 cursor-pointer hover:bg-base-300 transition-colors"
+                                                            onClick={() => {
+                                                                handleLoadStoryEncounter(enc);
+                                                                setShowEncounterModal(false);
+                                                            }}
                                                         >
                                                             <div className="p-3">
                                                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
