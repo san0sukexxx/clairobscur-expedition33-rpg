@@ -2408,6 +2408,7 @@
     "specialAttacks": {
       "unlock": "Unlock",
       "masterUnlock": "Unlock when the master allows",
+      "prerequisiteUnlock": "Unlock by fulfilling prerequisite",
       "selectSpecialAttack": "Select a special",
       "specialAttackBlocked": "Special Blocked",
       "locked": "Locked",

@@ -2407,7 +2407,8 @@
     },
     "specialAttacks": {
       "unlock": "Desbloquear",
-      "masterUnlock": "Desbloqueie ao cumprir pré-requisito",
+      "masterUnlock": "Desbloqueie quando o mestre permitir",
+      "prerequisiteUnlock": "Desbloqueie ao cumprir pré-requisito",
       "selectSpecialAttack": "Selecione um ataque especial",
       "specialAttackBlocked": "Especial Bloqueado",
       "locked": "Bloqueado",

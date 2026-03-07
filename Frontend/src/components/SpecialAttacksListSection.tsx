@@ -366,10 +366,14 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
                                 }`}
                             >
                                 <FaUnlock className="h-3.5 w-3.5" aria-hidden />
-                                {specialAttackInfo.masterUnlock ? (
-                                    specialAttackInfo.unlockCost === undefined || specialAttackInfo.unlockCost === 0
-                                        ? t("specialAttacks.masterUnlock")
-                                        : `${t("specialAttacks.unlock")} (${specialAttackInfo.unlockCost}) - ${t("specialAttacks.masterUnlock")}`
+                                {specialAttackInfo.masterUnlock ? (() => {
+                                    const pKey = `specialAttacks.${specialAttack.id}.prerequisite`;
+                                    const hasPrereqKey = t(pKey) !== pKey;
+                                    const label = hasPrereqKey ? t("specialAttacks.prerequisiteUnlock") : t("specialAttacks.masterUnlock");
+                                    return specialAttackInfo.unlockCost === undefined || specialAttackInfo.unlockCost === 0
+                                        ? label
+                                        : `${t("specialAttacks.unlock")} (${specialAttackInfo.unlockCost}) - ${label}`;
+                                })(
                                 ) : (
                                     specialAttackInfo.unlockCost === undefined || specialAttackInfo.unlockCost === 0
                                         ? `${t("specialAttacks.unlock")} (${t("specialAttacksList.free")})`
