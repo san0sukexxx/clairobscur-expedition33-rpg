@@ -650,9 +650,19 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                 <span className="badge badge-sm badge-ghost">
                                                     {enc.npcs.reduce((sum, n) => sum + n.quantity, 0)} {t("encounters.npcCount")}
                                                 </span>
-                                                <span className="badge badge-sm badge-ghost">
-                                                    {enc.rewards.length} {t("encounters.rewardCount")}
-                                                </span>
+                                                {enc.rewards.length > 0 ? (
+                                                    <span className="badge badge-sm badge-ghost">
+                                                        {enc.rewards.length} {t("encounters.rewardCount")}
+                                                    </span>
+                                                ) : enc.bonusXp > 0 ? (
+                                                    <span className="badge badge-sm badge-ghost">
+                                                        {enc.bonusXp} XP {t("encounters.bonusXp").toLowerCase()}
+                                                    </span>
+                                                ) : (
+                                                    <span className="badge badge-sm badge-ghost">
+                                                        0 {t("encounters.rewardCount")}
+                                                    </span>
+                                                )}
                                                 {encCR > 0 && (
                                                     <span className="badge badge-sm badge-ghost font-mono">
                                                         {t("encounters.challengeRating")} {formatCR(encCR)}
@@ -711,9 +721,19 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                 <span className="badge badge-sm badge-ghost">
                                                     {enc.npcs.reduce((sum, n) => sum + n.quantity, 0)} {t("encounters.npcCount")}
                                                 </span>
-                                                <span className="badge badge-sm badge-ghost">
-                                                    {enc.rewards.length} {t("encounters.rewardCount")}
-                                                </span>
+                                                {enc.rewards.length > 0 ? (
+                                                    <span className="badge badge-sm badge-ghost">
+                                                        {enc.rewards.length} {t("encounters.rewardCount")}
+                                                    </span>
+                                                ) : enc.bonusXp > 0 ? (
+                                                    <span className="badge badge-sm badge-ghost">
+                                                        {enc.bonusXp} XP {t("encounters.bonusXp").toLowerCase()}
+                                                    </span>
+                                                ) : (
+                                                    <span className="badge badge-sm badge-ghost">
+                                                        0 {t("encounters.rewardCount")}
+                                                    </span>
+                                                )}
                                                 {encCR > 0 && (
                                                     <span className="badge badge-sm badge-ghost font-mono">
                                                         {t("encounters.challengeRating")} {formatCR(encCR)}
