@@ -569,6 +569,7 @@ export default function BattleGroupStatus({
                         currentValue={playerCh.bestialWheelPosition ?? 0}
                         minValue={0}
                         maxValue={8}
+                        wrapAround
                         onConfirm={v => confirmNumericEdit("bestialWheel", v)}
                         onCancel={closeEdit}
                     />

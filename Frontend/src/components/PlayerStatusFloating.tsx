@@ -479,6 +479,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                 currentValue={ch.bestialWheelPosition ?? 0}
                 minValue={0}
                 maxValue={8}
+                wrapAround
                 onConfirm={v => confirmNumericEdit("bestialWheel", v)}
                 onCancel={closeEdit}
             />

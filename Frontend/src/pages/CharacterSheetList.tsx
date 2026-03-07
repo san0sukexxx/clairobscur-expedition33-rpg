@@ -50,7 +50,7 @@ export default function CharacterSheetList() {
       </div>
 
       {/* Conteúdo */}
-      <main className="p-4 space-y-4 max-w-md mx-auto">
+      <main className="p-4 pb-28 space-y-4 max-w-md mx-auto">
         {loading && <div className="text-center opacity-70 py-16">{t("common.loading")}</div>}
 
         {error && !loading && (

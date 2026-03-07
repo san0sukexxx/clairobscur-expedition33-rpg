@@ -5,7 +5,7 @@ import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { DiceBoardRef } from "./DiceBoard";
 import { useWeaponInfo } from "../hooks/player/useWeaponInfo";
-import { calculateAttackBonus, calculateDamageBonus, getAbilityModifier, getBasicAttackAttribute } from "../utils/AttackCalculator";
+import { calculateAttackBonus, calculateDamageBonus, calculateProficiencyBonus, getAbilityModifier, getBasicAttackAttribute } from "../utils/AttackCalculator";
 import { getWeaponDamageDice, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
 import { playerPictosTotalSpeed, calculateArmorClass, abilityScoreCap } from "../utils/PlayerCalculator";
 import { rollWithTimeout } from "../utils/RollUtils";
@@ -70,6 +70,11 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
         const effectiveDex = Math.min(abilityScoreCap(player), baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
         return getAbilityModifier(effectiveDex);
     }, [player, weaponInfo]);
+
+    const freeShotHitMod = useMemo(() => {
+        const level = player?.playerSheet?.totalPoints ?? 1;
+        return dexMod + calculateProficiencyBonus(level);
+    }, [dexMod, player?.playerSheet?.totalPoints]);
 
     const armorClass = useMemo(() => {
         return calculateArmorClass(player, weaponInfo);
@@ -298,7 +303,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                     onClick={() => {
                                         rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
                                             const d20Roll = diceTotal(result);
-                                            const total = d20Roll + dexMod;
+                                            const total = d20Roll + freeShotHitMod;
                                             const diceValues: number[] = [];
                                             for (const group of result) {
                                                 if (Array.isArray(group.rolls)) {
@@ -308,7 +313,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                             dispatchRoll({
                                                 label: `${t("combat.freeShot")} - ${t("combat.attack")}`,
                                                 diceRolled: d20Roll,
-                                                modifier: dexMod,
+                                                modifier: freeShotHitMod,
                                                 total,
                                                 diceCommand: "1d20",
                                                 diceValues,
@@ -318,7 +323,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                     rollType: "attack",
                                                     abilityKey: "freeShot",
                                                     diceRolled: d20Roll,
-                                                    modifier: dexMod,
+                                                    modifier: freeShotHitMod,
                                                     total,
                                                     diceCommand: "1d20",
                                                 });
@@ -327,7 +332,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                     }}
                                 >
                                     <GiPerspectiveDiceSixFacesRandom size={18} />
-                                    Hit {dexMod >= 0 ? "+" : ""}{dexMod}
+                                    Hit {freeShotHitMod >= 0 ? "+" : ""}{freeShotHitMod}
                                 </button>
                                 <button
                                     className="btn btn-outline btn-sm gap-2 flex-1"

@@ -6,6 +6,7 @@ interface StatEditModalProps {
     currentValue: number;
     maxValue?: number;
     minValue?: number;
+    wrapAround?: boolean;
     onConfirm: (value: number) => void;
     onCancel: () => void;
 }
@@ -16,6 +17,7 @@ export default function StatEditModal({
     currentValue,
     maxValue,
     minValue = 0,
+    wrapAround = false,
     onConfirm,
     onCancel
 }: StatEditModalProps) {
@@ -29,8 +31,14 @@ export default function StatEditModal({
         const delta = raw === "" ? 0 : Math.abs(Number(raw)) || 0;
         const applied = sign === "+" ? delta : -delta;
         let result = currentValue + applied;
-        if (maxValue !== undefined) result = Math.min(result, maxValue);
-        return Math.max(result, minValue);
+        if (wrapAround && maxValue !== undefined) {
+            const range = maxValue - minValue + 1;
+            result = minValue + (((result - minValue) % range) + range) % range;
+        } else {
+            if (maxValue !== undefined) result = Math.min(result, maxValue);
+            result = Math.max(result, minValue);
+        }
+        return result;
     }
 
     function handleSign(sign: "+" | "-") {
