@@ -463,8 +463,8 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                             );
                         })}
 
-                        {/* Ação básica "Atacar" — never show for NPCs with defined attackList */}
-                        {!npc.attackList?.length && (() => {
+                        {/* Ação básica "Atacar" */}
+                        {!npc.noBasicAttack && (() => {
                             const { numDice, flatDmg, avgDmg } = calcDamage(1, strMod);
                             return (
                                 <div className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">

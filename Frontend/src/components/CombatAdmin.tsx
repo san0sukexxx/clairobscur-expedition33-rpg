@@ -1213,8 +1213,8 @@ export default function CombatAdmin({
                                     );
                                 })}
 
-                                {/* Basic "Atacar" action — only for NPCs without a defined attackList */}
-                                {!npcInfo?.attackList?.length && (() => {
+                                {/* Basic "Atacar" action */}
+                                {!npcInfo?.noBasicAttack && (() => {
                                     const { numDice: basicNumDice, flatDmg: basicFlatDmg, avgDmg: basicAvgDmg } = calcDamage(1, strMod);
                                     return (
                                         <div className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
