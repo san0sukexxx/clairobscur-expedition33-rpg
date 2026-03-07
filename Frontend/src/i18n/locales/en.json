@@ -2907,7 +2907,8 @@
       },
       "monoco-chalier-combo": {
         "name": "Chalier Combo",
-        "description": "Multi-hit combo attack. Effect: Deals high Physical damage to a single target. 6 hits. Interrupted if missed. Increased damage when used with Balanced Mask active."
+        "description": "Multi-hit combo attack. Effect: Deals high Physical damage to a single target. 6 hits. Interrupted if missed. Increased damage when used with Balanced Mask active.",
+        "prerequisite": "Defeat and acquire the foot of a Chalier enemy while Monoco is in the active group."
       },
       "monoco-chapelier-slash": {
         "name": "Chapelier Slash",

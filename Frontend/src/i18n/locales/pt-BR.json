@@ -2907,7 +2907,8 @@
       },
       "monoco-chalier-combo": {
         "name": "Combo Chalier",
-        "description": "Ataque combo de múltiplos golpes. Efeito: Causa dano Físico alto em alvo único. 6 ataques. Interrompido se falhar. Dano aumentado quando usado com Máscara Equilibrada ativa."
+        "description": "Ataque combo de múltiplos golpes. Efeito: Causa dano Físico alto em alvo único. 6 ataques. Interrompido se falhar. Dano aumentado quando usado com Máscara Equilibrada ativa.",
+        "prerequisite": "Derrote e adquira o pé de um inimigo Chalier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-chapelier-slash": {
         "name": "Corte do Chapeleiro",
