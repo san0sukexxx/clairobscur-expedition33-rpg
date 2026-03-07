@@ -540,7 +540,8 @@ export default function CombatAdmin({
             await reloadBattleDetails()
 
             // Se a batalha foi finalizada, buscar os dados atualizados e coletar recompensas
-            if (newStatus === "finished") {
+            // (não sobrescrever se já temos recompensas de um encontro de história)
+            if (newStatus === "finished" && !hasStoryEncounter) {
                 const updatedBattle = await APIBattle.getById(battleId);
                 if (updatedBattle?.characters) {
                     const rewards = await collectBattleRewards(updatedBattle.encounterId, updatedBattle.characters);
@@ -3219,7 +3220,8 @@ export default function CombatAdmin({
             onStatusChanged?.(battleInfo.battleStatus);
 
             // Coletar recompensas quando a batalha terminar
-            if (battleInfo.characters) {
+            // (não sobrescrever se já temos recompensas de um encontro de história)
+            if (battleInfo.characters && !hasStoryEncounter) {
                 collectBattleRewards(battleInfo.encounterId, battleInfo.characters).then(rewards => {
                     setBattleRewards(rewards);
                 });
