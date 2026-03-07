@@ -689,20 +689,21 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                 )}
                                             </span>
                                             <div className="flex flex-wrap gap-2">
-                                                {enc.rewards.length > 0 ? (
-                                                    <span className="badge badge-sm badge-ghost">
-                                                        {enc.rewards.length} {enc.rewards.length === 1 ? t("encounters.rewardCountSingular") : t("encounters.rewardCount")}
-                                                    </span>
-                                                ) : enc.bonusXp > 0 ? (
+                                                {enc.bonusXp > 0 && (
                                                     <span className="badge badge-sm badge-ghost">
                                                         {enc.bonusXp} {t("encounters.bonusXpReward")}
                                                     </span>
-                                                ) : null}
+                                                )}
                                                 {encCR > 0 && (
                                                     <span className="badge badge-sm badge-ghost font-mono">
                                                         {t("encounters.challengeRating")} {formatCR(encCR)}
                                                     </span>
                                                 )}
+                                                {enc.rewards.map((r, ri) => (
+                                                    <span key={ri} className={`badge badge-sm ${r.rewardType === "weapon" ? "badge-warning" : "badge-success"}`}>
+                                                        {r.rewardType === "weapon" ? `⚔️ ${getWeaponName(r.itemId)}` : `🎴 ${getPictoName(r.itemId)}`}
+                                                    </span>
+                                                ))}
                                             </div>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
