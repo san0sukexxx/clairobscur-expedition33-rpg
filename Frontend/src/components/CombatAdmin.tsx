@@ -169,6 +169,7 @@ export default function CombatAdmin({
     const [encounterFilter, setEncounterFilter] = useState("");
     const [encounterLocationOnly, setEncounterLocationOnly] = useState(() => localStorage.getItem("combatAdmin.encounterLocationOnly") === "true");
     const [encounterStoryMode, setEncounterStoryMode] = useState(() => localStorage.getItem("combatAdmin.encounterStoryMode") === "true");
+    const [hasStoryEncounter, setHasStoryEncounter] = useState(false);
     const [localPlayers, setLocalPlayers] = useState(players);
 
     const lastReloadTimeRef = useRef<number>(0)
@@ -793,6 +794,16 @@ export default function CombatAdmin({
             }
 
             setSelectedEncounterId(null);
+            // Guardar recompensas e bônus XP do encontro de história
+            if (storyEncounter.rewards.length > 0 || storyEncounter.bonusXp > 0) {
+                setBattleRewards(storyEncounter.rewards.map(r => ({
+                    type: r.rewardType as BattleReward["type"],
+                    itemId: r.itemId,
+                    level: r.level,
+                })));
+                setEncounterBonusXp(storyEncounter.bonusXp);
+                setHasStoryEncounter(true);
+            }
             await reloadBattleDetails(true);
             showToast(t("combatAdmin.encounter.loaded"));
         } catch (error) {
@@ -2885,7 +2896,7 @@ export default function CombatAdmin({
                             </div>
 
                             {/* Drops dos NPCs — hidden if battle has an associated encounter */}
-                            {npcDrops.length > 0 && !battleDetails?.encounterId && (
+                            {npcDrops.length > 0 && !battleDetails?.encounterId && !hasStoryEncounter && (
                                 <>
                                     <div className="divider my-2">{t("combatAdmin.npcDetails.drops")}</div>
                                     <div className="space-y-4">
