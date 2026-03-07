@@ -597,14 +597,16 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                             <FaDragon className="opacity-60" />
                             {t("encounters.title")}
                         </h2>
-                        <button
-                            className="btn btn-sm btn-primary gap-2"
-                            onClick={handleCreate}
-                            disabled={creating}
-                        >
-                            <FaPlus />
-                            {creating ? t("encounters.creating") : t("encounters.create")}
-                        </button>
+                        {!showStoryMode && (
+                            <button
+                                className="btn btn-sm btn-primary gap-2"
+                                onClick={handleCreate}
+                                disabled={creating}
+                            >
+                                <FaPlus />
+                                {creating ? t("encounters.creating") : t("encounters.create")}
+                            </button>
+                        )}
                     </div>
 
                     {/* Filters */}
@@ -664,13 +666,19 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         </div>
                     )}
 
-                    {!loading && filteredEncounters.length === 0 && filteredStoryEncounters.length === 0 && (
+                    {!loading && !showStoryMode && filteredEncounters.length === 0 && (
                         <div className="alert alert-info mt-4 text-sm leading-relaxed">
                             {t("encounters.noEncountersFound")}
                         </div>
                     )}
 
-                    {!loading && filteredEncounters.length > 0 && (
+                    {!loading && showStoryMode && filteredStoryEncounters.length === 0 && (
+                        <div className="alert alert-info mt-4 text-sm leading-relaxed">
+                            {t("encounters.noEncountersFound")}
+                        </div>
+                    )}
+
+                    {!loading && !showStoryMode && filteredEncounters.length > 0 && (
                         <div className="mt-4 flex flex-col divide-y divide-base-300">
                             {filteredEncounters.map((enc, index) => {
                                 const encCR = calculateEncounterCR(enc.npcs);
