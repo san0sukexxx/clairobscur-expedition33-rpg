@@ -615,7 +615,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
 
             <div className="card bg-base-100 shadow">
                 <div className="card-body">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                         <h2 className="card-title flex items-center gap-2">
                             <FaDragon className="opacity-60" />
                             {t("encounters.title")}
@@ -679,8 +679,8 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                 const encCR = calculateEncounterCR(enc.npcs);
                                 return (
                                     <div key={enc.id} className="flex flex-col gap-2 rounded-lg border border-base-300 bg-base-200 p-3">
-                                        <div className="flex items-center justify-between">
-                                            <span className="font-semibold text-sm">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                                            <span className="font-semibold text-sm min-w-0 break-words">
                                                 {t(enc.name) || enc.id}
                                                 {enc.locationId && (
                                                     <span className="ml-2 text-xs font-normal opacity-60">
@@ -688,7 +688,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                     </span>
                                                 )}
                                             </span>
-                                            <div className="flex flex-wrap gap-2">
+                                            <div className="flex flex-wrap gap-1.5 shrink-0">
                                                 {enc.bonusXp > 0 && (
                                                     <span className="badge badge-sm badge-ghost">
                                                         {enc.bonusXp} {t("encounters.bonusXpReward")}
@@ -748,7 +748,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                             {filteredEncounters.map((enc, index) => {
                                 const encCR = calculateEncounterCR(enc.npcs);
                                 return (
-                                    <div key={enc.id} className="flex items-center gap-3 py-3 px-1">
+                                    <div key={enc.id} className="flex items-start sm:items-center gap-3 py-3 px-1">
                                         {/* Order controls */}
                                         <div className="flex flex-col gap-0.5 shrink-0">
                                             <button

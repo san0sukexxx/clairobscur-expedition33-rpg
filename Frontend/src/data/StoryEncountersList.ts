@@ -39,7 +39,7 @@ export const StoryEncountersList: StoryEncounter[] = [
         name: "storyEncounters.spring-meadows-abandoned-building",
         locationId: "spring-meadows",
         npcs: [{ npcId: "lancer", quantity: 2 }],
-        rewards: [],
+        rewards: [{ rewardType: "weapon", itemId: "lanceram" }],
         bonusXp: 0,
     },
 ];
