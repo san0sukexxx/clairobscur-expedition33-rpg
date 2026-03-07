@@ -141,7 +141,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
         setEditing("stains");
     }
 
-    const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
+    const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice", "Light"];
 
     return (
         <div className="fixed bottom-14 left-4 z-40">
@@ -218,24 +218,27 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                 </div>
 
                 {/* Charge bar for Gustave - below HP/MP */}
-                {ch.maxChargePoints !== undefined &&
-                    ch.maxChargePoints !== null &&
-                    ch.maxChargePoints > 0 && (
+                {(() => {
+                    const isGustave = ch.id.toLowerCase().includes("gustave");
+                    const maxCharge = ch.maxChargePoints ?? (isGustave ? 10 : 0);
+                    if (maxCharge <= 0) return null;
+                    return (
                         <div className="mt-2 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openCharge}>
                             <div className="flex items-center justify-between text-[10px] uppercase">
                                 <span className="opacity-70 flex items-center gap-1">{t("combat.charge")} <FaEdit size={10} className="opacity-40" /></span>
                                 <span className="font-mono text-xs">
-                                    {ch.chargePoints ?? 0}/{ch.maxChargePoints}
+                                    {ch.chargePoints ?? 0}/{maxCharge}
                                 </span>
                             </div>
                             <AnimatedStatBar
-                                value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
+                                value={pct(ch.chargePoints ?? 0, maxCharge)}
                                 label={t("combat.charge")}
                                 fillClass="bg-warning"
                                 ghostClass="bg-warning/30"
                             />
                         </div>
-                    )}
+                    );
+                })()}
 
                 {/* Gradient bar - only if player has gradient skills equipped and is in turns */}
                 {hasGradientSkills && playerInTurns && (() => {
@@ -592,26 +595,39 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                         <h3 className="font-bold text-lg">{t("combat.stains")}</h3>
                         {editStains.map((stain, idx) => (
                             <div key={idx}>
-                                <label className="label label-text text-xs">Slot {idx + 1}</label>
-                                <select
-                                    className="select select-bordered w-full select-sm"
-                                    value={stain}
-                                    onChange={e => {
-                                        const copy = [...editStains];
-                                        copy[idx] = e.target.value as StainType | "";
-                                        setEditStains(copy);
-                                    }}
-                                >
-                                    <option value="">— Vazio —</option>
+                                <label className="label label-text text-xs opacity-70">Slot {idx + 1}</label>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        className={`btn btn-sm btn-circle ${!stain ? "btn-active ring-2 ring-primary" : "btn-ghost"}`}
+                                        onClick={() => {
+                                            const copy = [...editStains];
+                                            copy[idx] = "";
+                                            setEditStains(copy);
+                                        }}
+                                        title={t("combatAdmin.labels.stainEmpty")}
+                                    >
+                                        <span className="text-base-content/40 text-lg">✕</span>
+                                    </button>
                                     {stainOptions.map(s => (
-                                        <option key={s} value={s}>{s}</option>
+                                        <button
+                                            key={s}
+                                            className={`btn btn-sm btn-circle ${stain === s ? "btn-active ring-2 ring-primary" : "btn-ghost"}`}
+                                            onClick={() => {
+                                                const copy = [...editStains];
+                                                copy[idx] = s;
+                                                setEditStains(copy);
+                                            }}
+                                            title={t(`combatAdmin.labels.stain${s}`)}
+                                        >
+                                            <img src={`/stains/${s.toLowerCase()}-stain.png`} alt={s} className="w-6 h-6" />
+                                        </button>
                                     ))}
-                                </select>
+                                </div>
                             </div>
                         ))}
                         <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
-                            <button className="btn btn-primary btn-sm" onClick={confirmStains}>Confirmar</button>
+                            <button className="btn btn-ghost btn-sm" onClick={closeEdit}>{t("combatAdmin.labels.cancel")}</button>
+                            <button className="btn btn-primary btn-sm" onClick={confirmStains}>{t("combatAdmin.labels.confirm")}</button>
                         </div>
                     </div>
                     <div className="modal-backdrop" onClick={closeEdit} />

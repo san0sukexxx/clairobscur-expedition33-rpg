@@ -80,7 +80,7 @@ export class WeaponsDataLoader {
   static readonly VERSO_EXCLUSIVE_WEAPONS = new Set([
     "Abysseram", "Blodam", "Chevalam", "Confuso", "Contorso", "Corpeso",
     "Cruleram", "Cultam", "Danseso", "Delaram", "Dreameso", "Dualiso",
-    "Gaultaram", "Glaceso", "Lanceram", "Liteso", "Nosaram", "Sakaram",
+    "Gaultaram", "Glaceso", "Liteso", "Nosaram", "Sakaram",
     "Seeram", "Simoso", "Sireso", "Tireso",
   ]);
 

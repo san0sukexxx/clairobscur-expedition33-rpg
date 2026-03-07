@@ -10,5 +10,6 @@ data class BattleWithDetailsResponse(
         val initiatives: List<InitiativeResponse>,
         val turns: List<BattleTurnResponse>,
         val battleLogs: List<BattleLog>?,
-        val encounterId: Int? = null
+        val encounterId: Int? = null,
+        val idEncounterHistoryMode: String? = null
 )

@@ -1,6 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { Link, useLocation, matchPath, useNavigate, useParams } from "react-router-dom";
+import { MdSettings } from "react-icons/md";
 import { APICampaign } from "../api/APICampaign";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { t } from "../i18n";
 
 type Item = { id: string; label: string; checked: boolean };
@@ -111,7 +113,13 @@ export default function CreateCampaign() {
     }, [campaignId]);
 
     return (
-        <div className="min-h-dvh grid place-items-center bg-base-200 p-4">
+        <div className="min-h-dvh grid place-items-center bg-base-200 p-4 relative">
+            <div className="absolute top-3 right-3 flex items-center">
+                <FullscreenButton />
+                <Link to="/settings" className="btn btn-ghost btn-sm btn-circle">
+                    <MdSettings className="text-2xl" />
+                </Link>
+            </div>
             <form onSubmit={onSubmit} className="w-full max-w-md card bg-base-100 shadow-xl">
                 <div className="card-body gap-4">
                     <h2 className="card-title text-primary">

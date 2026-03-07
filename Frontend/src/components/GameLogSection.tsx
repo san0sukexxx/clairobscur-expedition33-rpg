@@ -52,6 +52,11 @@ function getRollLabel(entry: GameLogEntry): string {
     if (entry.rollType === "sense" && entry.senseKey) {
         return t(entry.senseKey);
     }
+    if (entry.rollType === "attack") {
+        if (entry.abilityKey === "damage") return t("gameLog.attackDamage");
+        if (entry.abilityKey === "freeShot") return t("gameLog.attackFreeShot");
+        return t("gameLog.attackHit");
+    }
     if (entry.rollType === "customRoll") {
         return t("characterSheet.customRoll");
     }
@@ -181,9 +186,9 @@ function GameLogCard({ entry }: { entry: GameLogEntry }) {
                 <span className="text-[10px] font-extrabold tracking-widest uppercase opacity-60">
                     {rollLabel}
                 </span>
-                <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-sm font-black text-primary">{resultStr}</span>
-                    <span className="text-[10px] opacity-40">{entry.diceCommand}</span>
+                <div className="flex flex-wrap items-baseline gap-x-2 mt-0.5">
+                    <span className="text-sm font-black text-primary break-all">{resultStr}</span>
+                    <span className="text-[10px] opacity-40 shrink-0">{entry.diceCommand}</span>
                 </div>
             </div>
         </div>

@@ -155,7 +155,7 @@ export function calculateInitialMP(player: GetPlayerResponse | null): number {
     const baseInt = player?.playerSheet?.abilityScores?.intelligence ?? 10;
     const effectiveInt = Math.min(20, baseInt + playerPictosTotalIntelligence(player));
     const intMod = Math.floor((effectiveInt - 10) / 2);
-    return 2 + intMod;
+    return Math.max(0, intMod);
 }
 
 export function calculateMaxPA(player: GetPlayerResponse | null): number {

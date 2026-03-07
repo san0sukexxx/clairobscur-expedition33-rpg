@@ -1,13 +1,20 @@
 import { AiFillPlusCircle } from "react-icons/ai";
 import { AiFillSave } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { MdOutlineKeyboardBackspace, MdSettings } from "react-icons/md";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { t } from "../i18n";
 
 
 export default function MasterPage() {
     return (
-        <div className="min-h-dvh grid place-items-center bg-base-200">
+        <div className="min-h-dvh grid place-items-center bg-base-200 relative">
+            <div className="absolute top-3 right-3 flex items-center">
+                <FullscreenButton />
+                <Link to="/settings" className="btn btn-ghost btn-sm btn-circle">
+                    <MdSettings className="text-2xl" />
+                </Link>
+            </div>
             <div className="w-full max-w-xs px-4 flex flex-col gap-6">
                 <Link to="/" className="gap-2">
                     <MdOutlineKeyboardBackspace />

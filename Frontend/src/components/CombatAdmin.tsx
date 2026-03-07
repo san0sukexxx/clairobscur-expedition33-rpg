@@ -29,11 +29,11 @@ import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { calculateNPCDifficulty, formatCR, crToXp } from "../utils/NpcDifficulty";
 import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount, generateActionDescription, generateBasicAttackDescription } from "../utils/BattleUtils";
-import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName, getLocationName } from "../i18n";
+import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName, getLocationName, getWeaponPassive, getPictoDescription } from "../i18n";
 import type { BattleReward } from "../api/ResponseModel";
 import { APIRewards } from "../api/APIRewards";
 import { PictosList } from "../data/PictosList";
-import { pictoColorHex } from "../utils/PictoUtils";
+import { pictoColorHex, calculatePictoSpeed, calculatePictoHealth, calculatePictoDefense, calculatePictoAbility } from "../utils/PictoUtils";
 import { SpecialAttacksList } from "../data/SpecialAttackList";
 import { getLocationById } from "../utils/LocationUtils";
 import { StoryEncountersList } from "../data/StoryEncountersList";
@@ -445,6 +445,24 @@ export default function CombatAdmin({
         }
     }, [battleDetails?.encounterId]);
 
+    // Restaurar encontro de história do banco de dados ao carregar battleDetails
+    useEffect(() => {
+        const storedId = battleDetails?.idEncounterHistoryMode;
+        if (storedId && !hasStoryEncounter) {
+            const enc = StoryEncountersList.find(e => e.id === storedId);
+            if (enc) {
+                setStoryEncounterName(t(enc.name) || enc.id);
+                setHasStoryEncounter(true);
+                setBattleRewards(enc.rewards.map(r => ({
+                    type: r.rewardType as BattleReward["type"],
+                    itemId: r.itemId,
+                    level: r.level,
+                })));
+                setEncounterBonusXp(enc.bonusXp);
+            }
+        }
+    }, [battleDetails?.idEncounterHistoryMode]);
+
     useEffect(() => {
         reloadBattleDetails()
     }, [reloadBattleDetails])
@@ -539,6 +557,22 @@ export default function CombatAdmin({
             }
             onStatusChanged?.(newStatus)
             await reloadBattleDetails()
+
+            // Ao iniciar a batalha, o primeiro jogador na ordem de turno recebe +1 MP
+            if (newStatus === "started") {
+                const updated = await APIBattle.getById(battleId);
+                if (updated?.turns && updated.characters) {
+                    const firstTurn = updated.turns.find(t => t.playOrder === 1);
+                    if (firstTurn) {
+                        const firstChar = updated.characters.find(c => c.battleID === firstTurn.battleCharacterId);
+                        if (firstChar && firstChar.type === "player") {
+                            const newMp = Math.min((firstChar.magicPoints ?? 0) + 1, firstChar.maxMagicPoints ?? 999);
+                            await APIBattle.updateCharacterMp(firstChar.battleID, newMp);
+                            await reloadBattleDetails();
+                        }
+                    }
+                }
+            }
 
             // Se a batalha foi finalizada, buscar os dados atualizados e coletar recompensas
             // (não sobrescrever se já temos recompensas de um encontro de história)
@@ -674,6 +708,15 @@ export default function CombatAdmin({
     async function handleAddAllPlayers(entities: CombatEntity[]) {
         if (battleId == undefined) return
         for (const ent of entities) {
+            const charId = ent.characterId?.toLowerCase() ?? ""
+            const isGustave = charId === "gustave" || charId.includes("gustave")
+            const isMaelle = charId === "maelle" || charId.includes("maelle")
+            const isSciel = charId === "sciel" || charId.includes("sciel")
+            const isLune = charId === "lune" || charId.includes("lune")
+            const isVerso = charId === "verso" || charId.includes("verso")
+            const isMonoco = charId === "monoco" || charId.includes("monoco")
+            const randomBestialPosition = isMonoco ? Math.floor(Math.random() * 9) : undefined
+
             await APIBattle.addCharacter({
                 battleId: battleId,
                 externalId: String(ent.externalId),
@@ -684,6 +727,18 @@ export default function CombatAdmin({
                 maxHealthPoints: ent.maxHp,
                 magicPoints: ent.currentHp === 0 ? 0 : ent.currentMp,
                 maxMagicPoints: ent.maxMp,
+                chargePoints: isGustave ? 0 : undefined,
+                maxChargePoints: isGustave ? 10 : undefined,
+                sunCharges: isSciel ? 0 : undefined,
+                moonCharges: isSciel ? 0 : undefined,
+                stance: isMaelle ? null : undefined,
+                stainSlot1: isLune ? null : undefined,
+                stainSlot2: isLune ? null : undefined,
+                stainSlot3: isLune ? null : undefined,
+                stainSlot4: isLune ? null : undefined,
+                perfectionRank: isVerso ? "D" : undefined,
+                rankProgress: isVerso ? 0 : undefined,
+                bestialWheelPosition: randomBestialPosition,
                 canRollInitiative: ent.type == "player"
             })
         }
@@ -798,6 +853,7 @@ export default function CombatAdmin({
             setSelectedEncounterId(null);
             setStoryEncounterName(t(storyEncounter.name) || storyEncounter.id);
             setHasStoryEncounter(true);
+            await APIBattle.update(battleId, { battleStatus: battleStatus, idEncounterHistoryMode: storyEncounter.id });
             // Guardar recompensas e bônus XP do encontro de história
             setBattleRewards(storyEncounter.rewards.map(r => ({
                 type: r.rewardType as BattleReward["type"],
@@ -1377,7 +1433,6 @@ export default function CombatAdmin({
 
         // Gustave – Charge Points
         if (charId === "gustave" || charId.includes("gustave")) {
-            if (char.maxChargePoints === undefined) return null;
             const chargePoints = char.chargePoints ?? 0;
             const maxChargePoints = char.maxChargePoints ?? 10;
             const pct = Math.max(0, Math.min(100, Math.round((chargePoints / maxChargePoints) * 100)));
@@ -1959,35 +2014,53 @@ export default function CombatAdmin({
     function renderEditEntityModal() {
         if (!editingHp) return null;
 
+        function handleHpSign(sign: "+" | "-") {
+            const delta = newHpValue === "" ? 0 : Math.abs(parseInt(newHpValue, 10)) || 0;
+            if (delta > 0 && editingHp) {
+                const applied = sign === "+" ? delta : -delta;
+                const value = Math.max(0, Math.min(editingHp.maxHp, editingHp.currentHp + applied));
+                handleHpSet(editingHp, value);
+                setEditingHp(null);
+            }
+        }
+
         return (
             <dialog className="modal modal-open">
                 <div className="modal-box space-y-4">
                     <h3 className="font-bold text-lg">{t("combatAdmin.labels.changeHp")}</h3>
 
-                    <p className="text-sm opacity-80">
-                        {t("combatAdmin.labels.currentHp")}: <span className="font-mono">{editingHp.currentHp}</span><br />
-                        {t("combatAdmin.labels.maxHp")}: <span className="font-mono">{editingHp.maxHp}</span>
-                    </p>
+                    <div className="text-center text-sm opacity-70">
+                        {t("combatAdmin.labels.currentHp")}: <span className="font-bold text-base font-mono">{editingHp.currentHp}</span> / {editingHp.maxHp}
+                    </div>
 
-                    <input
-                        type="number"
-                        className="input input-bordered w-full"
-                        value={newHpValue}
-                        placeholder={String(editingHp.currentHp)}
-                        min={0}
-                        max={editingHp.maxHp}
-                        onChange={(e) => setNewHpValue(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === "Enter") confirmHpEdit(); }}
-                        ref={focusRef}
-                    />
+                    <div className="flex items-center gap-2">
+                        <button
+                            className="btn btn-sm btn-circle btn-success"
+                            onClick={() => handleHpSign("+")}
+                        >
+                            +
+                        </button>
+                        <input
+                            type="number"
+                            className="input input-bordered w-full text-center"
+                            value={newHpValue}
+                            placeholder="0"
+                            min={0}
+                            onChange={(e) => setNewHpValue(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Escape") setEditingHp(null); }}
+                            ref={focusRef}
+                        />
+                        <button
+                            className="btn btn-sm btn-circle btn-error"
+                            onClick={() => handleHpSign("-")}
+                        >
+                            −
+                        </button>
+                    </div>
 
                     <div className="modal-action">
                         <button className="btn" onClick={() => setEditingHp(null)}>
                             {t("combatAdmin.labels.cancel")}
-                        </button>
-
-                        <button className="btn btn-primary" onClick={confirmHpEdit}>
-                            {t("combatAdmin.labels.confirm")}
                         </button>
                     </div>
                 </div>
@@ -1998,35 +2071,53 @@ export default function CombatAdmin({
     function renderEditMpModal() {
         if (!editingMp) return null;
 
+        function handleMpSign(sign: "+" | "-") {
+            const delta = newMpValue === "" ? 0 : Math.abs(parseInt(newMpValue, 10)) || 0;
+            if (delta > 0 && editingMp) {
+                const applied = sign === "+" ? delta : -delta;
+                const value = Math.max(0, Math.min(editingMp.maxMp ?? 999, (editingMp.currentMp ?? 0) + applied));
+                handleMpSet(editingMp, value);
+                setEditingMp(null);
+            }
+        }
+
         return (
             <dialog className="modal modal-open">
                 <div className="modal-box space-y-4">
                     <h3 className="font-bold text-lg">{t("combatAdmin.labels.changeMp")}</h3>
 
-                    <p className="text-sm opacity-80">
-                        {t("combatAdmin.labels.currentMp")}: <span className="font-mono">{editingMp.currentMp}</span><br />
-                        {t("combatAdmin.labels.maxMp")}: <span className="font-mono">{editingMp.maxMp}</span>
-                    </p>
+                    <div className="text-center text-sm opacity-70">
+                        {t("combatAdmin.labels.currentMp")}: <span className="font-bold text-base font-mono">{editingMp.currentMp}</span> / {editingMp.maxMp}
+                    </div>
 
-                    <input
-                        type="number"
-                        className="input input-bordered w-full"
-                        value={newMpValue}
-                        placeholder={String(editingMp.currentMp)}
-                        min={0}
-                        max={editingMp.maxMp}
-                        onChange={(e) => setNewMpValue(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === "Enter") confirmMpEdit(); }}
-                        ref={focusRef}
-                    />
+                    <div className="flex items-center gap-2">
+                        <button
+                            className="btn btn-sm btn-circle btn-success"
+                            onClick={() => handleMpSign("+")}
+                        >
+                            +
+                        </button>
+                        <input
+                            type="number"
+                            className="input input-bordered w-full text-center"
+                            value={newMpValue}
+                            placeholder="0"
+                            min={0}
+                            onChange={(e) => setNewMpValue(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Escape") setEditingMp(null); }}
+                            ref={focusRef}
+                        />
+                        <button
+                            className="btn btn-sm btn-circle btn-error"
+                            onClick={() => handleMpSign("-")}
+                        >
+                            −
+                        </button>
+                    </div>
 
                     <div className="modal-action">
                         <button className="btn" onClick={() => setEditingMp(null)}>
                             {t("combatAdmin.labels.cancel")}
-                        </button>
-
-                        <button className="btn btn-primary" onClick={confirmMpEdit}>
-                            {t("combatAdmin.labels.confirm")}
                         </button>
                     </div>
                 </div>
@@ -2442,7 +2533,7 @@ export default function CombatAdmin({
                     </div>
 
                     {/* Seleção de Encontro (apenas durante setup) */}
-                    {battleStatus === 'starting' && encounters.length > 0 && (
+                    {battleStatus === 'starting' && (encounters.length > 0 || StoryEncountersList.length > 0) && (
                         <>
                             <div className="card bg-base-200 shadow-inner">
                                 <div className="p-4 flex items-center gap-3">
@@ -2465,7 +2556,7 @@ export default function CombatAdmin({
                                         <button
                                             className="btn btn-sm btn-ghost btn-square text-error"
                                             title={t("combatAdmin.encounter.clear")}
-                                            onClick={() => { setSelectedEncounterId(null); setStoryEncounterName(null); setHasStoryEncounter(false); }}
+                                            onClick={() => { setSelectedEncounterId(null); setStoryEncounterName(null); setHasStoryEncounter(false); APIBattle.update(battleId, { battleStatus, idEncounterHistoryMode: "" }); }}
                                         >
                                             ✕
                                         </button>
@@ -2672,11 +2763,22 @@ export default function CombatAdmin({
                             <p className="text-center text-lg mb-2 opacity-80">
                                 {t("combat.rewardsEarned")}
                             </p>
-                            {totalBattleXp > 0 && (
-                                <p className="text-center text-xl font-bold mb-6 text-amber-500">
-                                    +{totalBattleXp.toLocaleString()} XP
-                                </p>
-                            )}
+                            {totalBattleXp > 0 && (() => {
+                                const playerCount = battleDetails?.characters?.filter(ch => ch.type === "player").length ?? 1;
+                                const xpPerPlayer = Math.floor(totalBattleXp / playerCount);
+                                return (
+                                    <>
+                                        <p className={`text-center text-xl font-bold ${playerCount > 1 ? "mb-1" : "mb-6"} text-amber-500`}>
+                                            +{totalBattleXp.toLocaleString()} XP
+                                        </p>
+                                        {playerCount > 1 && (
+                                            <p className="text-center text-sm opacity-60 mb-6">
+                                                {xpPerPlayer.toLocaleString()} {t("combat.xpPerPlayer")}
+                                            </p>
+                                        )}
+                                    </>
+                                );
+                            })()}
 
                             <div className="space-y-4">
                                 {battleRewards.map((reward, index) => {
@@ -2760,6 +2862,73 @@ export default function CombatAdmin({
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            {/* Weapon/Picto attributes & passives */}
+                                            {isWeapon ? (() => {
+                                                // Find weapon DTO across all weapon files
+                                                let weaponDto: import("../types/WeaponDTO").WeaponDTO | undefined;
+                                                for (const weapons of WeaponsDataLoader.getAllSeparated().values()) {
+                                                    weaponDto = weapons.find(w => toKebabCase(w.name) === kebabId || w.name === reward.itemId);
+                                                    if (weaponDto) break;
+                                                }
+                                                if (!weaponDto) return null;
+                                                const { attributes, passives } = weaponDto;
+                                                return (
+                                                    <div className="bg-base-200 rounded-lg p-3 text-sm space-y-2">
+                                                        <div className="flex flex-wrap gap-2">
+                                                            <span className="badge badge-sm">{t("weapons.power")}: {attributes.power}</span>
+                                                            <span className="badge badge-sm">{ELEMENT_EMOTE[attributes.element] ?? ""} {getElementName(attributes.element)}</span>
+                                                            {Object.entries(attributes.scaling).map(([attr, rank]) => (
+                                                                <span key={attr} className="badge badge-sm badge-outline">
+                                                                    {t(`weapons.${attr}`)}: {rank}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                        {passives.length > 0 && (
+                                                            <div className="space-y-1">
+                                                                <span className="text-xs font-semibold opacity-70">{t("weapons.passives")}</span>
+                                                                {passives.map((p, i) => (
+                                                                    <div key={i} className="text-xs opacity-80 flex gap-1">
+                                                                        <span className="font-bold whitespace-nowrap">Lv.{p.level}:</span>
+                                                                        <span>{getWeaponPassive(kebabId, p.level) || p.effect}</span>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })() : (() => {
+                                                const pictoInfo = PictosList.find((p: any) => p.id === kebabId);
+                                                if (!pictoInfo) return null;
+                                                const statEntries = Object.entries(pictoInfo.status).filter(([, v]) => v !== undefined && v !== 0);
+                                                const level = reward.level ?? 1;
+                                                const calcStat = (stat: string, raw: number) => {
+                                                    switch (stat) {
+                                                        case "speed": return calculatePictoSpeed(raw, level);
+                                                        case "health": return calculatePictoHealth(raw, level);
+                                                        case "defense": return calculatePictoDefense(raw, level);
+                                                        default: return calculatePictoAbility(raw, level);
+                                                    }
+                                                };
+                                                return (
+                                                    <div className="bg-base-200 rounded-lg p-3 text-sm space-y-2">
+                                                        {statEntries.length > 0 && (
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {statEntries.map(([stat, value]) => (
+                                                                    <span key={stat} className="badge badge-sm">
+                                                                        {t(`pictos.${stat}`)}: +{calcStat(stat, value as number)}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                        {pictoInfo.description && (
+                                                            <div className="text-xs opacity-80">
+                                                                {getPictoDescription(kebabId)}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })()}
 
                                             <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full">
                                                 {localPlayers.map(player => {
@@ -3384,18 +3553,6 @@ export default function CombatAdmin({
         setNewHpValue("");
     }
 
-    function confirmHpEdit() {
-        if (newHpValue === "") {
-            setEditingHp(null);
-            return;
-        }
-        const value = parseInt(newHpValue, 10);
-        if (!isNaN(value) && editingHp) {
-            handleHpSet(editingHp, value);
-        }
-        setEditingHp(null);
-    }
-
     async function handleHpSet(entity: CombatEntity, value: number) {
         try {
             await APIBattle.updateCharacterHp(entity.rowId ?? 0, value)
@@ -3409,18 +3566,6 @@ export default function CombatAdmin({
     function openMpEditModal(entity: CombatEntity) {
         setEditingMp(entity);
         setNewMpValue("");
-    }
-
-    function confirmMpEdit() {
-        if (newMpValue === "") {
-            setEditingMp(null);
-            return;
-        }
-        const value = parseInt(newMpValue, 10);
-        if (!isNaN(value) && editingMp) {
-            handleMpSet(editingMp, value);
-        }
-        setEditingMp(null);
     }
 
     async function handleMpSet(entity: CombatEntity, value: number) {

@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaPlay, FaArchive } from "react-icons/fa";
-import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { MdOutlineKeyboardBackspace, MdSettings } from "react-icons/md";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import { useApiListRaw } from "../api/UseApiListRaw";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { t } from "../i18n";
 
 export default function CampaignList() {
@@ -28,6 +29,12 @@ export default function CampaignList() {
           <Link to="/" className="flex items-center gap-2">
             <MdOutlineKeyboardBackspace />
             <span className="text-lg font-bold">{t("campaigns.title")}</span>
+          </Link>
+        </div>
+        <div className="flex-none flex items-center">
+          <FullscreenButton />
+          <Link to="/settings" className="btn btn-ghost btn-sm btn-circle">
+            <MdSettings className="text-2xl" />
           </Link>
         </div>
       </div>

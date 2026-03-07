@@ -2,8 +2,9 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { MdOutlineKeyboardBackspace, MdSettings } from "react-icons/md";
 import FloatingButton from "../components/FloatingButton";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { useApiListRaw } from "../api/UseApiListRaw";
@@ -38,6 +39,12 @@ export default function CharacterSheetList() {
           <Link to="/campaign-list" className="flex items-center gap-2">
             <MdOutlineKeyboardBackspace />
             <span className="text-lg font-bold">{t("navigation.characterSheets")}</span>
+          </Link>
+        </div>
+        <div className="flex-none flex items-center">
+          <FullscreenButton />
+          <Link to="/settings" className="btn btn-ghost btn-sm btn-circle">
+            <MdSettings className="text-2xl" />
           </Link>
         </div>
       </div>

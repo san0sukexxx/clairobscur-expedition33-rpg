@@ -1,6 +1,7 @@
 import { useState, useEffect, type RefObject, type MutableRefObject } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
+import { APIBattle } from "../api/APIBattle";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import type { DiceBoardRef } from "./DiceBoard";
@@ -136,6 +137,11 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
         const next = { ...player, playerSheet: { ...player.playerSheet, ...patch } };
         setPlayer(next);
         sync(next);
+
+        // Sync HP with active battle
+        if (patch.hpCurrent !== undefined && player.fightInfo?.playerBattleID) {
+            APIBattle.updateCharacterHp(player.fightInfo.playerBattleID, patch.hpCurrent);
+        }
     }
 
     const sheet = player?.playerSheet;

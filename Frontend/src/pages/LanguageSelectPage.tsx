@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { setLocale, type Locale } from "../i18n";
 
 const LANGUAGES: { locale: Locale; flag: string; label: string }[] = [
@@ -15,7 +16,10 @@ export default function LanguageSelectPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center bg-base-200 px-4">
+    <div className="min-h-dvh flex flex-col items-center justify-center bg-base-200 px-4 relative">
+      <div className="absolute top-3 right-3">
+        <FullscreenButton />
+      </div>
       <div className="flex flex-col items-center gap-10">
         <h1 className="text-2xl font-bold tracking-widest text-base-content/80 uppercase">
           Select your language

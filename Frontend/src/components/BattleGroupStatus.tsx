@@ -441,9 +441,11 @@ export default function BattleGroupStatus({
                                             );
                                         })()}
 
-                                        {ch.maxChargePoints !== undefined &&
-                                            ch.maxChargePoints !== null &&
-                                            ch.maxChargePoints > 0 && (
+                                        {(() => {
+                                            const isGustave = ch.id.toLowerCase().includes("gustave");
+                                            const maxCharge = ch.maxChargePoints ?? (isGustave ? 10 : 0);
+                                            if (maxCharge <= 0) return null;
+                                            return (
                                                 <div
                                                     className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
                                                     onClick={canEdit ? () => openCharge(ch) : undefined}
@@ -451,17 +453,18 @@ export default function BattleGroupStatus({
                                                     <div className="flex items-center justify-between text-xs uppercase">
                                                         <span className="opacity-70 flex items-center gap-1">{t("combat.charge")} {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                         <span className="font-mono">
-                                                            {ch.chargePoints ?? 0}/{ch.maxChargePoints}
+                                                            {ch.chargePoints ?? 0}/{maxCharge}
                                                         </span>
                                                     </div>
                                                     <AnimatedStatBar
-                                                        value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
+                                                        value={pct(ch.chargePoints ?? 0, maxCharge)}
                                                         label={t("combat.charge")}
                                                         fillClass="bg-warning"
                                                         ghostClass="bg-warning/30"
                                                     />
                                                 </div>
-                                            )}
+                                            );
+                                        })()}
 
                                         {/* Sun/Moon charges for Sciel */}
                                         {ch.id.toLowerCase().includes("sciel") && (
@@ -674,26 +677,39 @@ export default function BattleGroupStatus({
                                 <h3 className="font-bold text-lg">{t("combat.stains")}</h3>
                                 {editStains.map((stain, idx) => (
                                     <div key={idx}>
-                                        <label className="label label-text text-xs">Slot {idx + 1}</label>
-                                        <select
-                                            className="select select-bordered w-full select-sm"
-                                            value={stain}
-                                            onChange={e => {
-                                                const copy = [...editStains];
-                                                copy[idx] = e.target.value as StainType | "";
-                                                setEditStains(copy);
-                                            }}
-                                        >
-                                            <option value="">— Vazio —</option>
+                                        <label className="label label-text text-xs opacity-70">Slot {idx + 1}</label>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                className={`btn btn-sm btn-circle ${!stain ? "btn-active ring-2 ring-primary" : "btn-ghost"}`}
+                                                onClick={() => {
+                                                    const copy = [...editStains];
+                                                    copy[idx] = "";
+                                                    setEditStains(copy);
+                                                }}
+                                                title={t("combatAdmin.labels.stainEmpty")}
+                                            >
+                                                <span className="text-base-content/40 text-lg">✕</span>
+                                            </button>
                                             {stainOptions.map(s => (
-                                                <option key={s} value={s}>{s}</option>
+                                                <button
+                                                    key={s}
+                                                    className={`btn btn-sm btn-circle ${stain === s ? "btn-active ring-2 ring-primary" : "btn-ghost"}`}
+                                                    onClick={() => {
+                                                        const copy = [...editStains];
+                                                        copy[idx] = s;
+                                                        setEditStains(copy);
+                                                    }}
+                                                    title={t(`combatAdmin.labels.stain${s}`)}
+                                                >
+                                                    <img src={`/stains/${s.toLowerCase()}-stain.png`} alt={s} className="w-6 h-6" />
+                                                </button>
                                             ))}
-                                        </select>
+                                        </div>
                                     </div>
                                 ))}
                                 <div className="modal-action">
-                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
-                                    <button className="btn btn-primary btn-sm" onClick={confirmStains}>Confirmar</button>
+                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>{t("combatAdmin.labels.cancel")}</button>
+                                    <button className="btn btn-primary btn-sm" onClick={confirmStains}>{t("combatAdmin.labels.confirm")}</button>
                                 </div>
                             </div>
                             <div className="modal-backdrop" onClick={closeEdit} />

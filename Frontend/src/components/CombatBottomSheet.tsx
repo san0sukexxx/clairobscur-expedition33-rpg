@@ -11,6 +11,7 @@ import { playerPictosTotalSpeed, calculateArmorClass } from "../utils/PlayerCalc
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
+import { APIGameLog } from "../api/APIGameLog";
 import { getWeaponPassive, toKebabCase, hasWeapon, t, getPictoName, getPictoDescription } from "../i18n";
 import { getPictoByName } from "../utils/PictoUtils";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
@@ -140,8 +141,10 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
 
                         {/* Weapon attack buttons */}
                         <div className="border border-base-300 rounded-lg p-3 space-y-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.attack")}</span>
-                            <div className="flex gap-2">
+                            <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
+                                {t("combat.attack")} ({attackBonus ? t(`setup.abilityAbbr.${attackBonus.abilityKey}`) : ""})
+                            </span>
+                            <div className="flex gap-2 mt-2">
                                 {attackBonus && (
                                     <button
                                         className="btn btn-outline btn-sm gap-2 flex-1"
@@ -163,6 +166,15 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                     diceCommand: "1d20",
                                                     diceValues,
                                                 });
+                                                if (player?.id) {
+                                                    APIGameLog.create(player.id, {
+                                                        rollType: "attack",
+                                                        diceRolled: d20Roll,
+                                                        modifier: attackBonus.total,
+                                                        total,
+                                                        diceCommand: "1d20",
+                                                    });
+                                                }
                                             });
                                         }}
                                     >
@@ -194,6 +206,16 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                     diceCommand: damageDice,
                                                     diceValues,
                                                 });
+                                                if (player?.id) {
+                                                    APIGameLog.create(player.id, {
+                                                        rollType: "attack",
+                                                        abilityKey: "damage",
+                                                        diceRolled: diceRoll,
+                                                        modifier: effectiveBonus,
+                                                        total,
+                                                        diceCommand: damageDice,
+                                                    });
+                                                }
                                             });
                                         }}
                                     >
@@ -254,34 +276,89 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                             </div>
                         </div>
 
-                        {/* Free shot button */}
-                        <button
-                            className="btn btn-outline btn-sm gap-2 w-full"
-                            onClick={() => {
-                                rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d4", (result) => {
-                                    const diceRoll = diceTotal(result);
-                                    const total = diceRoll + dexMod;
-                                    const diceValues: number[] = [];
-                                    for (const group of result) {
-                                        if (Array.isArray(group.rolls)) {
-                                            for (const roll of group.rolls) diceValues.push(roll.value);
-                                        }
-                                    }
-                                    dispatchRoll({
-                                        label: t("combat.freeShot"),
-                                        diceRolled: diceRoll,
-                                        modifier: dexMod,
-                                        total,
-                                        diceCommand: "1d4",
-                                        diceValues,
-                                    });
-                                });
-                            }}
-                        >
-                            <GiPerspectiveDiceSixFacesRandom size={18} />
-                            {t("combat.freeShot")} 1d4 {dexMod >= 0 ? "+" : ""}{dexMod}
-                            <span className="badge badge-xs badge-warning">1 PM</span>
-                        </button>
+                        {/* Free shot section */}
+                        <div className="border border-base-300 rounded-lg p-3 space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
+                                    {t("combat.freeShot")} ({t("setup.abilityAbbr.dexterity")})
+                                </span>
+                                <span className="badge badge-xs badge-warning">1 PM</span>
+                            </div>
+                            <div className="flex gap-2 mt-2">
+                                <button
+                                    className="btn btn-outline btn-sm gap-2 flex-1"
+                                    onClick={() => {
+                                        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
+                                            const d20Roll = diceTotal(result);
+                                            const total = d20Roll + dexMod;
+                                            const diceValues: number[] = [];
+                                            for (const group of result) {
+                                                if (Array.isArray(group.rolls)) {
+                                                    for (const roll of group.rolls) diceValues.push(roll.value);
+                                                }
+                                            }
+                                            dispatchRoll({
+                                                label: `${t("combat.freeShot")} - ${t("combat.attack")}`,
+                                                diceRolled: d20Roll,
+                                                modifier: dexMod,
+                                                total,
+                                                diceCommand: "1d20",
+                                                diceValues,
+                                            });
+                                            if (player?.id) {
+                                                APIGameLog.create(player.id, {
+                                                    rollType: "attack",
+                                                    abilityKey: "freeShot",
+                                                    diceRolled: d20Roll,
+                                                    modifier: dexMod,
+                                                    total,
+                                                    diceCommand: "1d20",
+                                                });
+                                            }
+                                        });
+                                    }}
+                                >
+                                    <GiPerspectiveDiceSixFacesRandom size={18} />
+                                    Hit {dexMod >= 0 ? "+" : ""}{dexMod}
+                                </button>
+                                <button
+                                    className="btn btn-outline btn-sm gap-2 flex-1"
+                                    onClick={() => {
+                                        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d4", (result) => {
+                                            const diceRoll = diceTotal(result);
+                                            const total = diceRoll + dexMod;
+                                            const diceValues: number[] = [];
+                                            for (const group of result) {
+                                                if (Array.isArray(group.rolls)) {
+                                                    for (const roll of group.rolls) diceValues.push(roll.value);
+                                                }
+                                            }
+                                            dispatchRoll({
+                                                label: `${t("combat.freeShot")} - ${t("playerPage.basicAttack.damage")}`,
+                                                diceRolled: diceRoll,
+                                                modifier: dexMod,
+                                                total,
+                                                diceCommand: "1d4",
+                                                diceValues,
+                                            });
+                                            if (player?.id) {
+                                                APIGameLog.create(player.id, {
+                                                    rollType: "attack",
+                                                    abilityKey: "freeShotDamage",
+                                                    diceRolled: diceRoll,
+                                                    modifier: dexMod,
+                                                    total,
+                                                    diceCommand: "1d4",
+                                                });
+                                            }
+                                        });
+                                    }}
+                                >
+                                    <GiPerspectiveDiceSixFacesRandom size={18} />
+                                    1d4{dexMod !== 0 ? ` ${dexMod >= 0 ? "+" : ""}${dexMod}` : ""}
+                                </button>
+                            </div>
+                        </div>
 
                         {/* Defense section */}
                         <div className="border border-base-300 rounded-lg p-3">

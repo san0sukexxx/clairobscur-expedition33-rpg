@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { setLocale, getLocale, type Locale } from "../i18n";
 import { t } from "../i18n";
 import { getTheme, setTheme, THEMES, type Theme } from "../utils/theme";
@@ -39,6 +40,9 @@ export default function SettingsPage() {
             <MdOutlineKeyboardBackspace className="text-2xl" />
             <span>{t("settings.title")}</span>
           </button>
+        </div>
+        <div className="flex-none flex items-center">
+          <FullscreenButton />
         </div>
       </div>
 

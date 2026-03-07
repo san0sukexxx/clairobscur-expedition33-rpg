@@ -1984,6 +1984,7 @@
       "specialAttacks": "Especiais",
       "flee": "Tentar fugir",
       "freeShot": "Tiro livre",
+      "freeShotHint": "Acertar um ponto fraco dá direito a rolar o dado de tiro livre mais uma vez de forma gratuita.",
       "endTurn": "Encerrar o turno",
       "rollInitiative": "Rolar Iniciativa",
       "joinBattle": "Entrar na batalha",
@@ -2031,6 +2032,7 @@
       "victoryTitle": "Vitória!",
       "noRewards": "Nenhuma recompensa foi obtida nesta batalha.",
       "rewardsEarned": "Você conquistou as seguintes recompensas:",
+      "xpPerPlayer": "de XP por jogador",
       "charge": "Carga",
       "gradient": "Gradiente",
       "gradientCharges": "Cargas de Gradiente",
@@ -2143,6 +2145,7 @@
         "frostSmite": "Punição Gélida",
         "thunderSmite": "Punição Trovejante",
         "groundSlam": "Bater no Chão",
+        "shieldSlam": "Bater Escudo no Chão",
         "stomp": "Pisão",
         "glissade": "Deslizar",
         "sneakAttack": "Ataque Furtivo",
@@ -3179,6 +3182,11 @@
       "giveToCharacter": "Dar ao personagem",
       "selectCharacterToGive": "Selecione o personagem para receber este picto",
       "pictoGranted": "Picto concedido a {name}!",
+      "gift": "Presentear",
+      "giftPickPicto": "Escolha o Picto para presentear",
+      "giftPickPlayer": "Escolha o jogador",
+      "giftSending": "Enviando {name} para:",
+      "noPlayersAvailable": "Nenhum jogador disponível.",
       "maxLevel": "Nível máximo",
       "currentLevel": "Nv. {level}"
     },
@@ -3718,7 +3726,10 @@
       "justNow": "agora",
       "minutesAgo": "min atrás",
       "hoursAgo": "h atrás",
-      "daysAgo": "d atrás"
+      "daysAgo": "d atrás",
+      "attackHit": "Ataque (Acerto)",
+      "attackDamage": "Ataque (Dano)",
+      "attackFreeShot": "Tiro Livre"
     },
     "asi": {
       "title": "Aumento de Atributo",
@@ -3776,7 +3787,8 @@
     "storyEncounters": {
       "lumiere-mime": "Mímico de Lumière",
       "spring-meadows-lancer": "Lanceiro das Campinas",
-      "spring-meadows-portier": "Campo de Mortos"
+      "spring-meadows-portier": "Campo de Mortos",
+      "spring-meadows-abandoned-building": "Na Frente do Prédio Abandonado"
     },
     "locations": {
       "title": "Locais",

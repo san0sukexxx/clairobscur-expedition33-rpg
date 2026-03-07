@@ -14,6 +14,7 @@ export interface BattleWithDetailsResponse extends Battle {
     battleLogs?: BattleLogResponse[];
     attacks?: AttackResponse[];
     encounterId?: number;
+    idEncounterHistoryMode?: string;
 }
 
 export interface CreateBattleInput {
@@ -25,6 +26,7 @@ export interface CreateBattleInput {
 export interface UpdateBattleInput {
     battleStatus: string
     encounterId?: number
+    idEncounterHistoryMode?: string | null
 }
 
 export interface AddBattleCharacterRequest {

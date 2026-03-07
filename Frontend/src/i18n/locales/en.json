@@ -1984,6 +1984,7 @@
       "specialAttacks": "Specials",
       "flee": "Try to flee",
       "freeShot": "Free shot",
+      "freeShotHint": "Hitting a weak point grants a free additional free shot roll.",
       "endTurn": "End turn",
       "rollInitiative": "Roll Initiative",
       "joinBattle": "Join the battle",
@@ -2036,6 +2037,7 @@
       "victoryTitle": "Victory!",
       "noRewards": "No rewards were obtained in this battle.",
       "rewardsEarned": "You have earned the following rewards:",
+      "xpPerPlayer": "XP per player",
       "intensity": "Intensity",
       "intensityLow": "Low",
       "intensityMedium": "Medium",
@@ -2143,6 +2145,7 @@
         "frostSmite": "Frost Smite",
         "thunderSmite": "Thunder Smite",
         "groundSlam": "Ground Slam",
+        "shieldSlam": "Shield Slam",
         "stomp": "Stomp",
         "glissade": "Glissade",
         "sneakAttack": "Sneak Attack",
@@ -3179,6 +3182,11 @@
       "giveToCharacter": "Give to character",
       "selectCharacterToGive": "Select the character to receive this picto",
       "pictoGranted": "Picto granted to {name}!",
+      "gift": "Gift",
+      "giftPickPicto": "Choose a Picto to gift",
+      "giftPickPlayer": "Choose a player",
+      "giftSending": "Sending {name} to:",
+      "noPlayersAvailable": "No players available.",
       "maxLevel": "Max level",
       "currentLevel": "Lv. {level}"
     },
@@ -3716,7 +3724,10 @@
       "justNow": "just now",
       "minutesAgo": "min ago",
       "hoursAgo": "h ago",
-      "daysAgo": "d ago"
+      "daysAgo": "d ago",
+      "attackHit": "Attack (Hit)",
+      "attackDamage": "Attack (Damage)",
+      "attackFreeShot": "Free Shot"
     },
     "asi": {
       "title": "Ability Score Improvement",
@@ -3774,7 +3785,8 @@
     "storyEncounters": {
       "lumiere-mime": "Lumiere Mime",
       "spring-meadows-lancer": "Spring Meadows Lancer",
-      "spring-meadows-portier": "Field of the Dead"
+      "spring-meadows-portier": "Field of the Dead",
+      "spring-meadows-abandoned-building": "In Front of the Abandoned Building"
     },
     "locations": {
       "title": "Locations",

@@ -647,6 +647,7 @@ export const NPCsList: NPCInfo[] = [
         weakTo: "Ice",
         armorClass: 12,
         challengeRating: "1",
+        damageDie: 4,
         attackList: [
             { type: "basic", additionalDamage: 1 },
             { type: "skill", name: "combatAdmin.npcAttacks.lanceCharge", additionalDamage: 3 },
@@ -897,9 +898,11 @@ export const NPCsList: NPCInfo[] = [
         weakTo: "Ice",
         armorClass: 13,
         challengeRating: "2",
+        damageDie: 4,
         attackList: [
             {
                 type: "jump-all",
+                name: "combatAdmin.npcAttacks.shieldSlam",
                 additionalDamage: 1,
             },
             { type: "basic", additionalDamage: 2 },
@@ -2892,6 +2895,7 @@ export const NPCsList: NPCInfo[] = [
         armorClass: 18,
         challengeRating: "7",
         proficiencyBonus: 4,
+        damageDie: 4,
         attackList: [
             { type: "basic", additionalDamage: 7 },
             { type: "skill", name: "combatAdmin.npcAttacks.lanceCharge", additionalDamage: 11, additionalDices: 1 },
@@ -2933,7 +2937,7 @@ export const NPCsList: NPCInfo[] = [
         challengeRating: "8",
         proficiencyBonus: 4,
         attackList: [
-            { type: "jump-all", additionalDamage: 8, additionalDices: 2 },
+            { type: "jump-all", name: "combatAdmin.npcAttacks.shieldSlam", additionalDamage: 8, additionalDices: 2 },
             { type: "basic", additionalDamage: 7 },
         ],
         drops: { pictos: ["dodger"], weapons: ["lighterim"] },

@@ -260,11 +260,13 @@ export default function CampaignAdmin() {
                     />
                 )}
 
-                {activeTab === "combats" && campaignId !== null && campaignInfo !== null && (
-                    <CampaignAdminCombatsTab
-                        campaignInfo={campaignInfo}
-                        players={items}
-                    />
+                {campaignId !== null && campaignInfo !== null && (
+                    <div className={activeTab !== "combats" ? "hidden" : undefined}>
+                        <CampaignAdminCombatsTab
+                            campaignInfo={campaignInfo}
+                            players={items}
+                        />
+                    </div>
                 )}
 
                 {activeTab === "encounters" && campaignId !== null && campaignInfo !== null && (

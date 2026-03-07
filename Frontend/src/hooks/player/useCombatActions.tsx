@@ -7,6 +7,7 @@ import type { DiceBoardRef } from "../../components/DiceBoard";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../../utils/CombatMenuActions";
 import { rollWithTimeout } from "../../utils/RollUtils";
 import { dispatchRoll } from "../../utils/rollDispatcher";
+import { APIGameLog } from "../../api/APIGameLog";
 import {
   playerPictosTotalSpeed,
 } from "../../utils/PlayerCalculator";
@@ -88,6 +89,16 @@ export function useCombatActions({
       const total = rollTotal + dexMod;
 
       dispatchRoll({ label: t("characterSheet.initiative"), diceRolled: rollTotal, modifier: dexMod, total, diceCommand: "1d20" });
+      if (player.id) {
+        APIGameLog.create(player.id, {
+          rollType: "abilityCheck",
+          abilityKey: "initiative",
+          diceRolled: rollTotal,
+          modifier: dexMod,
+          total,
+          diceCommand: "1d20",
+        });
+      }
 
       const callAddInitiative = async () => {
         try {

@@ -132,7 +132,8 @@ class BattleController(
                         initiatives = initiatives,
                         turns = turns,
                         battleLogs = battleLogs,
-                        encounterId = battle.encounterId
+                        encounterId = battle.encounterId,
+                        idEncounterHistoryMode = battle.idEncounterHistoryMode
                 )
 
         return ResponseEntity.ok(response)
@@ -158,7 +159,12 @@ class BattleController(
             val existing = opt.get()
             val newBattle = existing.copy(
                     battleStatus = updated.battleStatus,
-                    encounterId = updated.encounterId ?: existing.encounterId
+                    encounterId = updated.encounterId ?: existing.encounterId,
+                    idEncounterHistoryMode = when {
+                        updated.idEncounterHistoryMode == "" -> null
+                        updated.idEncounterHistoryMode != null -> updated.idEncounterHistoryMode
+                        else -> existing.idEncounterHistoryMode
+                    }
             )
             battleRepository.save(newBattle)
 

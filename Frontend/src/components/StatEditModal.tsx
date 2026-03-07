@@ -25,7 +25,20 @@ export default function StatEditModal({
         setRaw("");
     }, [currentValue, open]);
 
-    const numericValue = raw === "" || raw === "-" ? currentValue : Number(raw);
+    function calcFinal(sign: "+" | "-") {
+        const delta = raw === "" ? 0 : Math.abs(Number(raw)) || 0;
+        const applied = sign === "+" ? delta : -delta;
+        let result = currentValue + applied;
+        if (maxValue !== undefined) result = Math.min(result, maxValue);
+        return Math.max(result, minValue);
+    }
+
+    function handleSign(sign: "+" | "-") {
+        const delta = raw === "" ? 0 : Math.abs(Number(raw)) || 0;
+        if (delta > 0) {
+            onConfirm(calcFinal(sign));
+        }
+    }
 
     const inputRef = useCallback((node: HTMLInputElement | null) => {
         if (node) setTimeout(() => node.focus(), 50);
@@ -37,34 +50,39 @@ export default function StatEditModal({
         <dialog className="modal modal-open">
             <div className="modal-box max-w-xs space-y-4">
                 <h3 className="font-bold text-lg">{title}</h3>
-                <input
-                    type="number"
-                    className="input input-bordered w-full"
-                    value={raw}
-                    placeholder={String(currentValue)}
-                    min={minValue}
-                    max={maxValue}
-                    onChange={e => setRaw(e.target.value)}
-                    onKeyDown={e => {
-                        if (e.key === "Enter") onConfirm(numericValue);
-                        if (e.key === "Escape") onCancel();
-                    }}
-                    ref={inputRef}
-                />
-                {maxValue !== undefined && (
-                    <div className="text-xs opacity-60 text-right">
-                        {minValue} – {maxValue}
-                    </div>
-                )}
+                <div className="text-center text-sm opacity-70">
+                    Atual: <span className="font-bold text-base">{currentValue}</span>
+                    {maxValue !== undefined && <span> / {maxValue}</span>}
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        className="btn btn-sm btn-circle btn-success"
+                        onClick={() => handleSign("+")}
+                    >
+                        +
+                    </button>
+                    <input
+                        type="number"
+                        className="input input-bordered w-full text-center"
+                        value={raw}
+                        placeholder="0"
+                        min={0}
+                        onChange={e => setRaw(e.target.value)}
+                        onKeyDown={e => {
+                            if (e.key === "Escape") onCancel();
+                        }}
+                        ref={inputRef}
+                    />
+                    <button
+                        className="btn btn-sm btn-circle btn-error"
+                        onClick={() => handleSign("-")}
+                    >
+                        −
+                    </button>
+                </div>
                 <div className="modal-action">
                     <button className="btn btn-ghost btn-sm" onClick={onCancel}>
                         Cancelar
-                    </button>
-                    <button
-                        className="btn btn-primary btn-sm"
-                        onClick={() => onConfirm(numericValue)}
-                    >
-                        Confirmar
                     </button>
                 </div>
             </div>

@@ -262,6 +262,7 @@ export function PlayerContent({
           player={player}
           setPlayer={setPlayer}
           isAdmin={isAdmin}
+          campaignId={campaignInfo?.id}
         />
       )}
 

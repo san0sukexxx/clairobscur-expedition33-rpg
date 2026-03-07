@@ -2,11 +2,15 @@ import { AiOutlineBook } from "react-icons/ai";
 import { FaUser } from "react-icons/fa";
 import { MdSettings } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { t } from "../i18n";
 
 export default function UserTypeSelect() {
   return (
-    <div className="min-h-dvh grid place-items-center bg-base-200">
+    <div className="min-h-dvh grid place-items-center bg-base-200 relative">
+      <div className="absolute top-3 right-3">
+        <FullscreenButton />
+      </div>
       <div className="w-full max-w-xs px-4 flex flex-col gap-6">
         <h1 className="text-3xl font-bold text-center text-primary">
           {t("userTypeSelect.title")}

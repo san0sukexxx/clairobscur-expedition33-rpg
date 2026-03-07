@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react"
+import React, { useMemo, useState, useCallback } from "react"
 import { type PictoResponse, type PictoInfo } from "../api/ResponseModel"
 import { t } from "../i18n"
 import {
@@ -16,15 +16,17 @@ import {
 import type { GetPlayerResponse } from "../api/APIPlayer"
 import { PictosList } from "../data/PictosList"
 import { APIPicto } from "../api/APIPicto"
-import { FaChartLine } from "react-icons/fa"
+import { APICampaignPlayer } from "../api/APICampaignPlayer"
+import { FaChartLine, FaGift } from "react-icons/fa"
 
 interface PictosTabProps {
   player: GetPlayerResponse | null
   setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>
   isAdmin: boolean
+  campaignId?: number
 }
 
-type ModalType = "slot" | "admin-add" | "admin-add-level" | "admin-remove" | null
+type ModalType = "slot" | "admin-add" | "admin-add-level" | "admin-remove" | "gift-pick" | "gift-target" | null
 
 function getPictoName(p: PictoResponse | null | undefined): string {
   if (!p) return ""
@@ -33,12 +35,15 @@ function getPictoName(p: PictoResponse | null | undefined): string {
   return pictoInfo?.name ?? p.pictoId ?? ""
 }
 
-export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps) {
+export default function PictosTab({ player, setPlayer, isAdmin, campaignId }: PictosTabProps) {
   const [modalType, setModalType] = useState<ModalType>(null)
   const [activeSlot, setActiveSlot] = useState<number | null>(null)
   const [query, setQuery] = useState("")
   const [pendingAddPicto, setPendingAddPicto] = useState<PictoInfo | null>(null)
   const [pendingLevel, setPendingLevel] = useState<string>("1")
+  const [pendingGiftPicto, setPendingGiftPicto] = useState<PictoResponse | null>(null)
+  const [campaignPlayers, setCampaignPlayers] = useState<GetPlayerResponse[]>([])
+  const [giftLoading, setGiftLoading] = useState(false)
 
   const slots: (PictoResponse | null)[] = useMemo(() => {
     const arr: (PictoResponse | null)[] = [null, null, null]
@@ -266,9 +271,59 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
     setModalType(null)
     setActiveSlot(null)
     setPendingAddPicto(null)
+    setPendingGiftPicto(null)
     setPendingLevel("1")
     setQuery("")
   }
+
+  function openGiftPick() {
+    setPendingGiftPicto(null)
+    setQuery("")
+    setModalType("gift-pick")
+  }
+
+  const handleGiftPickPicto = useCallback(async (picto: PictoResponse) => {
+    if (!campaignId || !player) return
+    setPendingGiftPicto(picto)
+    setQuery("")
+    setGiftLoading(true)
+    try {
+      const players = await APICampaignPlayer.list(campaignId)
+      setCampaignPlayers(players.filter(p => p.id !== player.id))
+    } catch (e) {
+      console.error(e)
+    }
+    setGiftLoading(false)
+    setModalType("gift-target")
+  }, [campaignId, player])
+
+  const handleGiftToPlayer = useCallback(async (targetPlayer: GetPlayerResponse) => {
+    if (!pendingGiftPicto || !player) return
+    setGiftLoading(true)
+    try {
+      // Unequip if equipped in a slot
+      if (typeof pendingGiftPicto.slot === "number") {
+        await APIPicto.updatePlayerPictoSlot(pendingGiftPicto.id, { slot: null })
+      }
+      // Delete from current player
+      await APIPicto.deletePlayerPicto(pendingGiftPicto.id)
+      // Create on target player
+      await APIPicto.createPlayerPicto({
+        playerId: targetPlayer.id,
+        pictoId: pendingGiftPicto.pictoId,
+        level: pendingGiftPicto.level ?? 1
+      })
+      // Update local state
+      setPlayer(prev => {
+        if (!prev) return prev
+        return { ...prev, pictos: (prev.pictos ?? []).filter(p => p.id !== pendingGiftPicto.id) }
+      })
+    } catch (e) {
+      console.error(e)
+    }
+    setGiftLoading(false)
+    closeModal()
+  }, [pendingGiftPicto, player, setPlayer])
 
   const modalTitle =
     modalType === "admin-add"
@@ -277,14 +332,29 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
         ? t("common.level")
         : modalType === "admin-remove"
           ? t("pictos.removePicto")
-          : t("pictos.selectPicto")
+          : modalType === "gift-pick"
+            ? t("pictos.giftPickPicto")
+            : modalType === "gift-target"
+              ? t("pictos.giftPickPlayer")
+              : t("pictos.selectPicto")
 
   return (
     <div className="text-base-content">
-      <div className="flex items-center justify-between pb-3">
-        <div className="text-center flex-1 text-lg tracking-widest opacity-90">PICTOS</div>
+      <div className="pb-3">
+        <div className="relative flex items-center justify-center">
+          <div className="text-center text-lg tracking-widest opacity-90">PICTOS</div>
+          {campaignId && (player?.pictos ?? []).length > 0 && (
+            <button
+              className="absolute right-0 px-3 py-1 text-sm rounded-md bg-purple-600/70 hover:bg-purple-600 transition border border-base-300 flex items-center gap-1.5"
+              onClick={openGiftPick}
+            >
+              <FaGift size={12} />
+              {t("pictos.gift")}
+            </button>
+          )}
+        </div>
         {isAdmin && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-2 justify-center">
             <button
               className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-base-300"
               onClick={openAdminAdd}
@@ -519,6 +589,66 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
               ))}
               {removeFiltered.length === 0 && (
                 <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
+              )}
+            </>
+          )}
+
+          {modalType === "gift-pick" && (() => {
+            const allPictos = (player?.pictos ?? []).sort((a, b) => getPictoName(a).localeCompare(getPictoName(b), "pt-BR"))
+            const q = query.trim().toLowerCase()
+            const filtered = q ? allPictos.filter(p => getPictoName(p).toLowerCase().includes(q)) : allPictos
+            return (
+              <>
+                {filtered.map((p) => (
+                  <PictoCard
+                    key={p.id}
+                    picto={p}
+                    onPick={handleGiftPickPicto}
+                  />
+                ))}
+                {filtered.length === 0 && (
+                  <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
+                )}
+              </>
+            )
+          })()}
+
+          {modalType === "gift-target" && pendingGiftPicto && (
+            <>
+              {giftLoading ? (
+                <div className="col-span-full opacity-70 p-8 text-center">{t("common.loading")}</div>
+              ) : (
+                <>
+                  <div className="col-span-full text-center opacity-70 text-sm mb-2">
+                    {t("pictos.giftSending", { name: getPictoName(pendingGiftPicto) })}
+                  </div>
+                  {campaignPlayers.map(p => {
+                    const charId = p.playerSheet?.characterId ?? ""
+                    const charName = charId.charAt(0).toUpperCase() + charId.slice(1)
+                    const playerName = p.playerSheet?.name ?? `Player #${p.id}`
+                    return (
+                      <button
+                        key={p.id}
+                        className="w-full text-left flex items-center gap-4 p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
+                        onClick={() => handleGiftToPlayer(p)}
+                        disabled={giftLoading}
+                      >
+                        {charId && (
+                          <div className="w-12 h-12 rounded-full overflow-hidden bg-base-300 shrink-0">
+                            <img src={`/characters/${charId}.webp`} alt={charName} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = "none" }} />
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-semibold text-lg">{charName}</div>
+                          <div className="text-sm opacity-70">{playerName}</div>
+                        </div>
+                      </button>
+                    )
+                  })}
+                  {campaignPlayers.length === 0 && (
+                    <div className="col-span-full opacity-70 p-8 text-center">{t("pictos.noPlayersAvailable")}</div>
+                  )}
+                </>
               )}
             </>
           )}

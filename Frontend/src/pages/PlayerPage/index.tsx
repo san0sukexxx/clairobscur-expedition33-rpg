@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { useLocation, matchPath, useParams } from "react-router-dom";
 import { t } from "../../i18n";
 
@@ -25,9 +25,11 @@ import {
 } from "../../hooks/player";
 
 // Utils
+import { APIPlayer } from "../../api/APIPlayer";
 import type { BattleCharacterInfo } from "../../api/ResponseModel";
 import type { PlayerTab } from "./PlayerPage.types";
 import type { AbilityTestRequestEvent } from "../../utils/SpecialAttackDisplayUtils";
+import { calculateMaxHP } from "../../utils/PlayerCalculator";
 import { rollWithTimeout } from "../../utils/RollUtils";
 import { diceTotal } from "../../utils/DiceCalculator";
 import { dispatchRoll } from "../../utils/rollDispatcher";
@@ -79,6 +81,24 @@ export default function PlayerPage() {
 
   // Weapon info
   const { weaponInfo, weaponList } = useWeaponInfo(player);
+
+  // Set HP to max when setup completes
+  const prevSetupComplete = useRef(false);
+  useEffect(() => {
+    if (setupComplete && !prevSetupComplete.current && player) {
+      const maxHp = calculateMaxHP(player, weaponInfo);
+      if (player.playerSheet?.hpCurrent !== maxHp) {
+        APIPlayer.update(player.id, {
+          playerSheet: { ...player.playerSheet, hpCurrent: maxHp, hpMax: maxHp },
+        });
+        setPlayer(prev => prev ? {
+          ...prev,
+          playerSheet: { ...prev.playerSheet, hpCurrent: maxHp, hpMax: maxHp },
+        } : prev);
+      }
+    }
+    prevSetupComplete.current = setupComplete;
+  }, [setupComplete]);
 
   // Player polling
   const { checkPlayerLoop, wasMasterEditing } = usePlayerPolling({

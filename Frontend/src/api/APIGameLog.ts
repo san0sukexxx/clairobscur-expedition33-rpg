@@ -1,7 +1,7 @@
 import { api } from "./api";
 
 export interface CreateGameLogInput {
-    rollType: "savingThrow" | "abilityCheck" | "skill" | "sense" | "attack" | "customRoll";
+    rollType: "savingThrow" | "abilityCheck" | "skill" | "sense" | "attack" | "customRoll" | "initiative";
     abilityKey?: string;
     skillId?: string;
     senseKey?: string;
