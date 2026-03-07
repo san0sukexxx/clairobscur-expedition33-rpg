@@ -16,7 +16,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "spring-meadows",
-        residentNpcIds: ["jar", "gatekeeper", "lancer", "volester", "abbest", "mime", "chromatic-lancelier", "eveque", "chromatic-portier"],
+        residentNpcIds: ["jar", "portier", "lancer", "volester", "abbest", "mime", "chromatic-lancelier", "eveque", "chromatic-portier"],
         loot: [
             { type: "weapon", itemId: "lanceram", level: 1 },
             { type: "weapon", itemId: "lighterim", level: 1 },
@@ -186,7 +186,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "the-monolith",
-        residentNpcIds: ["lancer-monolith", "abbest-monolith", "gatekeeper-monolith", "clair", "bruler-monolith", "cruler-monolith", "demineur-monolith", "ranger-sakapatate-monolith", "robust-sakapatate-monolith", "catapult-sakapatate-monolith", "reaper-cultist-monolith", "greatsword-cultist-monolith", "petank-monolith", "mime-monolith", "obscur", "hexga-monolith", "chalier-monolith", "troubadour-monolith", "ramasseur-monolith", "danseuses", "ceramic-chevaliere-monolith", "gold-chevaliere-monolith", "pelerin", "braseleur", "the-paintress", "eveque-monolith", "chromatic-bourgeon", "ultimate-sakapatate-monolith", "gargant", "clair-obscur", "renoir-monolith", "chromatic-clair-obscur"],
+        residentNpcIds: ["lancer-monolith", "abbest-monolith", "portier-monolith", "clair", "bruler-monolith", "cruler-monolith", "demineur-monolith", "ranger-sakapatate-monolith", "robust-sakapatate-monolith", "catapult-sakapatate-monolith", "reaper-cultist-monolith", "greatsword-cultist-monolith", "petank-monolith", "mime-monolith", "obscur", "hexga-monolith", "chalier-monolith", "troubadour-monolith", "ramasseur-monolith", "danseuses", "ceramic-chevaliere-monolith", "gold-chevaliere-monolith", "pelerin", "braseleur", "the-paintress", "eveque-monolith", "chromatic-bourgeon", "ultimate-sakapatate-monolith", "gargant", "clair-obscur", "renoir-monolith", "chromatic-clair-obscur"],
         referenceNpcNames: ["Mistra", "Melosh"],
         loot: [
             { type: "weapon", itemId: "braselim", level: 1 },
@@ -232,7 +232,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "the-continent",
-        residentNpcIds: ["volester", "gatekeeper", "abbest", "lancer", "pelerin", "ramasseur", "greatsword-cultist", "bruler", "luster", "cruler", "demineur", "bourgeon", "chromatic-bruler"],
+        residentNpcIds: ["volester", "portier", "abbest", "lancer", "pelerin", "ramasseur", "greatsword-cultist", "bruler", "luster", "cruler", "demineur", "bourgeon", "chromatic-bruler"],
         referenceNpcNames: ["Jumeliba", "Carrabi", "Blabary", "Granasori", "Colaro", "Sastro", "Strabami"],
         loot: [
             { type: "picto", itemId: "energising-start-i", level: 1 },
@@ -320,7 +320,7 @@ export const LocationsList: LocationInfo[] = [
             "chromatic-abbest", "goblu", "chromatic-orphelin", "ceramic-chevaliere", "bourgeon", "jar",
             "rocher", "chromatic-echassier", "moissoneusse", "catapult-sakapatate", "chromatic-veilleur",
             "bruler", "orphelin", "chromatic-greatsword-cultist", "sapling", "chromatic-troubadour",
-            "chromatic-aberration", "danseuses", "stalact", "gatekeeper", "chromatic-braseleur", "glaise",
+            "chromatic-aberration", "danseuses", "stalact", "portier", "chromatic-braseleur", "glaise",
             "pelerin", "gargant", "noir", "flame-eveque", "chromatic-gold-chevaliere", "chromatic-bruler",
             "aberration", "ultimate-sakapatate", "francois", "robust-sakapatate", "chromatic-lancelier",
             "chromatic-boucheclier", "chromatic-glaise", "obscur", "chromatic-eveque", "chromatic-ballet",
@@ -344,7 +344,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "esoteric-ruins",
-        residentNpcIds: ["gatekeeper"],
+        residentNpcIds: ["portier"],
         referenceNpcNames: ["Friendly Portier"],
         loot: [
             { type: "picto", itemId: "protecting-heal", level: 1 },
@@ -376,7 +376,7 @@ export const LocationsList: LocationInfo[] = [
     {
         id: "flying-manor",
         residentNpcIds: [
-            "jar", "pelerin", "braseleur", "danseuses", "hexga", "gatekeeper", "cruler",
+            "jar", "pelerin", "braseleur", "danseuses", "hexga", "portier", "cruler",
             "ceramic-chevaliere", "reaper-cultist", "lancer", "ramasseur", "abbest", "glaise",
             "greatsword-cultist", "petank", "bourgeon", "steel-chevaliere", "gold-chevaliere",
             "mime", "sapling", "stalact", "grosse-tete",

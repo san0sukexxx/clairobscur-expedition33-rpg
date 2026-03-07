@@ -837,7 +837,7 @@ const NPCsBaseData: NPCBaseData[] = [
         ],
     },
     {
-        id: "gatekeeper",
+        id: "portier",
         strength:     14,
         dexterity:     7,
         constitution: 14,
@@ -2765,7 +2765,7 @@ const NPCsBaseData: NPCBaseData[] = [
         drops: { weapons: ["lighterim"] },
     },
     {
-        id: "gatekeeper-monolith",
+        id: "portier-monolith",
         strength:     20,
         dexterity:    10,
         constitution: 20,
