@@ -3763,7 +3763,9 @@
       "npcCount": "NPCs",
       "rewardCount": "recompensas",
       "challengeRating": "ND",
-      "bonusXp": "Bônus XP"
+      "bonusXp": "Bônus XP",
+      "showStoryMode": "Mostrar modo história",
+      "currentLocationOnly": "Somente local atual"
     },
     "locations": {
       "title": "Locais",

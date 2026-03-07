@@ -8,6 +8,7 @@ import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds, getLoc
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
 import { calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
+import { StoryEncountersList } from "../data/StoryEncountersList";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
@@ -42,6 +43,10 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
 
     // Location story mode
     const [locationStoryMode, setLocationStoryMode] = useState(() => localStorage.getItem("encounters.locationStoryMode") === "true");
+
+    // List filters
+    const [showStoryMode, setShowStoryMode] = useState(() => localStorage.getItem("encounters.showStoryMode") === "true");
+    const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("encounters.currentLocationOnly") === "true");
 
     // Reward form
     const [newRewardType, setNewRewardType] = useState<string>("weapon");
@@ -244,6 +249,22 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
 
     // Difficulty totalizer
     const editTotalCR = useMemo(() => calculateEncounterCR(editNpcs), [editNpcs]);
+
+    // Filtered encounters for list view
+    const filteredEncounters = useMemo(() => {
+        if (!currentLocationOnly || !campaignInfo.currentLocationId) return encounters;
+        return encounters.filter(enc => enc.locationId === campaignInfo.currentLocationId);
+    }, [encounters, currentLocationOnly, campaignInfo.currentLocationId]);
+
+    // Filtered story encounters
+    const filteredStoryEncounters = useMemo(() => {
+        if (!showStoryMode) return [];
+        let list = StoryEncountersList;
+        if (currentLocationOnly && campaignInfo.currentLocationId) {
+            list = list.filter(enc => enc.locationId === campaignInfo.currentLocationId);
+        }
+        return list;
+    }, [showStoryMode, currentLocationOnly, campaignInfo.currentLocationId]);
 
     // ─── EDITING VIEW ──────────────────────────────────────────────
     if (editingEncounter) {
@@ -586,19 +607,72 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         </button>
                     </div>
 
+                    {/* Filters */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                            <input
+                                type="checkbox"
+                                className="checkbox checkbox-sm checkbox-primary"
+                                checked={showStoryMode}
+                                onChange={(e) => { setShowStoryMode(e.target.checked); localStorage.setItem("encounters.showStoryMode", String(e.target.checked)); }}
+                            />
+                            <span className="text-sm">{t("encounters.showStoryMode")}</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                            <input
+                                type="checkbox"
+                                className="checkbox checkbox-sm checkbox-primary"
+                                checked={currentLocationOnly}
+                                onChange={(e) => { setCurrentLocationOnly(e.target.checked); localStorage.setItem("encounters.currentLocationOnly", String(e.target.checked)); }}
+                            />
+                            <span className="text-sm">{t("encounters.currentLocationOnly")}</span>
+                        </label>
+                    </div>
+
                     {loading && (
                         <div className="mt-4 text-sm opacity-70">{t("encounters.loading")}</div>
                     )}
 
-                    {!loading && encounters.length === 0 && (
+                    {/* Story mode encounters */}
+                    {!loading && filteredStoryEncounters.length > 0 && (
+                        <div className="mt-4 flex flex-col divide-y divide-base-300">
+                            {filteredStoryEncounters.map((enc) => {
+                                const encCR = calculateEncounterCR(enc.npcs);
+                                return (
+                                    <div key={enc.id} className="flex items-center gap-3 py-3 px-1 opacity-70">
+                                        <div className="flex flex-col min-w-0 flex-1">
+                                            <span className="font-semibold text-sm">
+                                                {enc.locationId ? getLocationName(enc.locationId) : enc.id}
+                                            </span>
+                                            <div className="flex flex-wrap gap-2 mt-1">
+                                                <span className="badge badge-sm badge-ghost">
+                                                    {enc.npcs.reduce((sum, n) => sum + n.quantity, 0)} {t("encounters.npcCount")}
+                                                </span>
+                                                <span className="badge badge-sm badge-ghost">
+                                                    {enc.rewards.length} {t("encounters.rewardCount")}
+                                                </span>
+                                                {encCR > 0 && (
+                                                    <span className="badge badge-sm badge-ghost font-mono">
+                                                        {t("encounters.challengeRating")} {formatCR(encCR)}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+
+                    {!loading && filteredEncounters.length === 0 && filteredStoryEncounters.length === 0 && (
                         <div className="alert alert-info mt-4 text-sm leading-relaxed">
                             {t("encounters.noEncountersFound")}
                         </div>
                     )}
 
-                    {!loading && encounters.length > 0 && (
+                    {!loading && filteredEncounters.length > 0 && (
                         <div className="mt-4 flex flex-col divide-y divide-base-300">
-                            {encounters.map((enc, index) => {
+                            {filteredEncounters.map((enc, index) => {
                                 const encCR = calculateEncounterCR(enc.npcs);
                                 return (
                                     <div key={enc.id} className="flex items-center gap-3 py-3 px-1">
