@@ -154,7 +154,7 @@
     },
     "back-at-you": {
       "name": "Back At You",
-      "description": "50% increased Counter Attack damage."
+      "description": "+2d6 Counter Attack damage."
     },
     "dodger": {
       "name": "Dodger",
@@ -310,11 +310,11 @@
     },
     "augmented-counter-ii": {
       "name": "Augmented Counter II",
-      "description": "50% increased Counterattack damage."
+      "description": "+2d6 Counterattack damage."
     },
     "augmented-counter-iii": {
       "name": "Augmented Counter III",
-      "description": "50% increased Counterattack damage."
+      "description": "+2d6 Counterattack damage."
     },
     "anti-exhaust": {
       "name": "Anti Exhaust",
@@ -454,7 +454,7 @@
     },
     "confident-fighter": {
       "name": "Confident Fighter",
-      "description": "30% increased damage, but can't be Healed."
+      "description": "+2d6 damage, but can't be Healed."
     },
     "healing-share": {
       "name": "Healing Share",
@@ -530,7 +530,7 @@
     },
     "healing-mark": {
       "name": "Healing Mark",
-      "description": "Recover 25% Health on hitting a Marked enemy. Once per turn."
+      "description": "Recover 2d6 HP on hitting a Marked enemy. Once per turn."
     },
     "stay-marked": {
       "name": "Stay Marked",
@@ -610,7 +610,7 @@
     },
     "powered-attack": {
       "name": "Powered Attack",
-      "description": "On every damage dealt, try to consume 1 MP. If successful, increase damage by 20%."
+      "description": "On every damage dealt, try to consume 1 MP. If successful, +1d4 damage."
     },
     "combo-attack-ii": {
       "name": "Combo Attack II",
@@ -666,7 +666,7 @@
     },
     "gradient-breaker": {
       "name": "Gradient Breaker",
-      "description": "50% increased Break damage with Gradient Attacks."
+      "description": "+2d6 Break damage with Gradient Attacks."
     },
     "post-gradient": {
       "name": "Post Gradient",
@@ -818,7 +818,7 @@
     },
     "healing-boon": {
       "name": "Healing Boon",
-      "description": "Heal 15% HP on applying a buff."
+      "description": "Heal 1d6 HP on applying a buff."
     },
     "greater-powerless": {
       "name": "Greater Powerless",

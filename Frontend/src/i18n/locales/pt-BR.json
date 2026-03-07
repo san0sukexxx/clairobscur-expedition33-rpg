@@ -154,7 +154,7 @@
     },
     "back-at-you": {
       "name": "De Volta para Você",
-      "description": "50% de dano de Contra-Ataque aumentado."
+      "description": "+2d6 de dano de Contra-Ataque."
     },
     "dodger": {
       "name": "Escapista",
@@ -310,11 +310,11 @@
     },
     "augmented-counter-ii": {
       "name": "Contra-Ataque Aumentado II",
-      "description": "50% de dano de Contra-Ataque aumentado."
+      "description": "+2d6 de dano de Contra-Ataque."
     },
     "augmented-counter-iii": {
       "name": "Contra-Ataque Aumentado III",
-      "description": "50% de dano de Contra-Ataque aumentado."
+      "description": "+2d6 de dano de Contra-Ataque."
     },
     "anti-exhaust": {
       "name": "Anti-Exaustão",
@@ -454,7 +454,7 @@
     },
     "confident-fighter": {
       "name": "Lutador Confiante",
-      "description": "30% de dano aumentado, mas não pode ser Curado."
+      "description": "+2d6 de dano, mas não pode ser Curado."
     },
     "healing-share": {
       "name": "Compartilhamento Curativo",
@@ -530,7 +530,7 @@
     },
     "healing-mark": {
       "name": "Marca Curativa",
-      "description": "Recupera 25% de Vida ao acertar um inimigo Marcado. Uma vez por turno."
+      "description": "Recupera 2d6 PV ao acertar um inimigo Marcado. Uma vez por turno."
     },
     "stay-marked": {
       "name": "Permanecer Marcado",
@@ -610,7 +610,7 @@
     },
     "powered-attack": {
       "name": "Ataque Potencializado",
-      "description": "A cada dano causado, tenta consumir 1 PM. Se bem-sucedido, aumenta o dano em 20%."
+      "description": "A cada dano causado, tenta consumir 1 PM. Se bem-sucedido, +1d4 de dano."
     },
     "combo-attack-ii": {
       "name": "Ataque em Combo II",
@@ -666,7 +666,7 @@
     },
     "gradient-breaker": {
       "name": "Quebrador de Gradiente",
-      "description": "50% de dano de Quebra aumentado com Ataques de Gradiente."
+      "description": "+2d6 de dano de Quebra com Ataques de Gradiente."
     },
     "post-gradient": {
       "name": "Pós-Gradiente",
@@ -818,7 +818,7 @@
     },
     "healing-boon": {
       "name": "Bênção Curativa",
-      "description": "Cura 15% de Vida ao aplicar um bônus."
+      "description": "Cura 1d6 PV ao aplicar um bônus."
     },
     "greater-powerless": {
       "name": "Impotência Maior",
