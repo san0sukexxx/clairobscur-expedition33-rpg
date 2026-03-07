@@ -384,7 +384,7 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
                     </div>
                 )}
 
-                {!disabled && !inBattle && onFlipToPicker && (
+                {!disabled && !inBattle && onFlipToPicker && !(player?.specialAttacks ?? []).some(s => s.specialAttackId === specialAttack.id && s.slot != null) && (
                     <div className="mt-4 flex justify-end">
                         <button
                             type="button"
