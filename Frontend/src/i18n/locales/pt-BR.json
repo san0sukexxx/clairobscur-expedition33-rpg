@@ -2364,7 +2364,7 @@
         "drops": "Recompensas"
       },
       "actionDesc": {
-        "meleeAttack": "Ataque Corpo a Corpo com Arma",
+        "meleeAttack": "Ataque Básico",
         "areaAttack": "Ataque em Área",
         "toHit": "para acertar",
         "reach": "alcance 1,5m, um alvo",
