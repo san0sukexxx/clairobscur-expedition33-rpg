@@ -76,7 +76,7 @@ const SpecialAttacksBaseData = [
     id: "lune-electrify",
     character: "lune",
     cost: 1,
-    unlockCost: 0,
+    unlockCost: 1,
     image: "Lune_Electrify.webp",
     preRequisite: ["lune-thunderfall"]
   },
@@ -106,7 +106,7 @@ const SpecialAttacksBaseData = [
     id: "lune-thermal-transfer",
     character: "lune",
     cost: 2,
-    unlockCost: 0,
+    unlockCost: 2,
     image: "Lune_ThermalTransfer.webp",
     preRequisite: ["lune-earth-rising"]
   },
@@ -114,7 +114,7 @@ const SpecialAttacksBaseData = [
     id: "lune-thunderfall",
     character: "lune",
     cost: 5,
-    unlockCost: 0,
+    unlockCost: 1,
     image: "Lune_Thunderfall.webp",
     preRequisite: ["lune-immolation"]
   },
@@ -130,7 +130,7 @@ const SpecialAttacksBaseData = [
     id: "lune-mayhem",
     character: "lune",
     cost: 3,
-    unlockCost: 0,
+    unlockCost: 4,
     masterUnlock: true,
     image: "Lune_Mayhem.webp",
     preRequisite: ["lune-electrify","lune-thermal-transfer"]
