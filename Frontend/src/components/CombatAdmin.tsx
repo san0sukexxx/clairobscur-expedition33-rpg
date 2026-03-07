@@ -799,14 +799,12 @@ export default function CombatAdmin({
             setStoryEncounterName(t(storyEncounter.name) || storyEncounter.id);
             setHasStoryEncounter(true);
             // Guardar recompensas e bônus XP do encontro de história
-            if (storyEncounter.rewards.length > 0 || storyEncounter.bonusXp > 0) {
-                setBattleRewards(storyEncounter.rewards.map(r => ({
-                    type: r.rewardType as BattleReward["type"],
-                    itemId: r.itemId,
-                    level: r.level,
-                })));
-                setEncounterBonusXp(storyEncounter.bonusXp);
-            }
+            setBattleRewards(storyEncounter.rewards.map(r => ({
+                type: r.rewardType as BattleReward["type"],
+                itemId: r.itemId,
+                level: r.level,
+            })));
+            setEncounterBonusXp(storyEncounter.bonusXp);
             await reloadBattleDetails(true);
             showToast(t("combatAdmin.encounter.loaded"));
         } catch (error) {
