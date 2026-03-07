@@ -390,7 +390,7 @@
     },
     "warming-up": {
       "name": "Aquecimento",
-      "description": "+1 de dano por turno. Pode acumular até 5 vezes."
+      "description": "+1 de bônus no ataque e +1 de dano adicional por turno. Pode acumular até 5 vezes."
     },
     "glass-canon": {
       "name": "Canhão de Vidro",
@@ -586,7 +586,7 @@
     },
     "empowering-parry": {
       "name": "Aparar Fortalecedor",
-      "description": "Cada Aparar bem-sucedido concede +1 de dano até o fim do turno seguinte. Receber qualquer dano remove este bônus."
+      "description": "Cada Aparar bem-sucedido concede +1 de bônus no ataque e +1 de dano adicional até o fim do turno seguinte. Receber qualquer dano remove este bônus."
     },
     "accelerating-last-stand": {
       "name": "Última Resistência Aceleradora",
@@ -774,7 +774,7 @@
     },
     "empowering-dodge": {
       "name": "Esquiva Fortalecedora",
-      "description": "+1 de dano para cada Esquiva consecutiva bem-sucedida. Pode acumular até 10 vezes."
+      "description": "+1 de bônus no ataque e +1 de dano adicional para cada Esquiva consecutiva bem-sucedida. Pode acumular até 10 vezes."
     },
     "marking-break": {
       "name": "Quebra Marcadora",
@@ -870,7 +870,7 @@
     },
     "successive-parry": {
       "name": "Aparar Sucessivo",
-      "description": "Não pode Esquivar. +1 de dano por Aparar até receber dano."
+      "description": "Não pode Esquivar. +1 de bônus no ataque e +1 de dano adicional por Aparar até receber dano."
     },
     "breaking-attack": {
       "name": "Ataque Quebrador",
@@ -1844,6 +1844,14 @@
       "pointsRemaining": "Pontos Restantes",
       "point": "Ponto",
       "points": "Pontos",
+      "abilityAbbr": {
+        "strength": "FOR",
+        "dexterity": "DES",
+        "constitution": "CON",
+        "intelligence": "INT",
+        "wisdom": "SAB",
+        "charisma": "CAR"
+      },
       "savingThrowProficiencyTitle": "Proficiências em Testes de Resistência",
       "savingThrowProficiencyDesc": "Escolha 2 atributos nos quais seu personagem terá proficiência em Testes de Resistência.",
       "savingThrowProficiencyConfirm": "Confirmar Proficiências",
@@ -2437,15 +2445,15 @@
       },
       "lune-immolation": {
         "name": "Imolação",
-        "description": "Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 ataque. Consome Mancha de Gelo para causar +4 de dano. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Fogo a um único alvo e 3 Queimaduras. 1 ataque. Consome Mancha de Gelo para receber +4 de bônus no ataque e causar +4 de dano adicional. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-ice-lance": {
         "name": "Lança de Gelo",
-        "description": "Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 ataque. Consome Mancha de Terra para causar +4 de dano. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 ataque. Consome Mancha de Terra para receber +4 de bônus no ataque e causar +4 de dano adicional. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-earth-rising": {
         "name": "Ascensão Terrestre",
-        "description": "Causa dano baixo de Terra a todos os inimigos. 1 ataque. Consome Mancha de Raio para causar +4 de dano. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Terra a todos os inimigos. 1 ataque. Consome Mancha de Raio para receber +4 de bônus no ataque e causar +4 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-thermal-transfer": {
         "name": "Transferência Térmica",
@@ -2453,11 +2461,11 @@
       },
       "lune-thunderfall": {
         "name": "Queda do Trovão",
-        "description": "Causa dano médio de Raio em inimigos aleatórios. 4 ataques. Consome Mancha de Fogo para causar +4 de dano. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano médio de Raio em inimigos aleatórios. 4 ataques. Consome Mancha de Fogo para receber +4 de bônus no ataque e causar +4 de dano adicional. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-wildfire": {
         "name": "Fogo Selvagem",
-        "description": "Causa dano médio de Fogo a todos os inimigos. 1 ataque. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para causar +8 de dano. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Fogo a todos os inimigos. 1 ataque. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para receber +8 de bônus no ataque e causar +8 de dano adicional. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-mayhem": {
         "name": "Caos",
@@ -2473,15 +2481,15 @@
       },
       "lune-crippling-tsunami": {
         "name": "Tsunami Paralisante",
-        "description": "Causa dano médio de Gelo a todos os inimigos. 1 ataque. Aplica Desaceleração por 3 turnos. Consome Mancha de Terra, Mancha de Fogo e Mancha de Raio para causar +12 de dano. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano médio de Gelo a todos os inimigos. 1 ataque. Aplica Desaceleração por 3 turnos. Consome Mancha de Terra, Mancha de Fogo e Mancha de Raio para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-rockslide": {
         "name": "Deslizamento de Rochas",
-        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Pode causar quebra. Consome Mancha de Raio, Mancha de Gelo e Mancha de Fogo para causar +12 de dano. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Pode causar quebra. Consome Mancha de Raio, Mancha de Gelo e Mancha de Fogo para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-crustal-crush": {
         "name": "Esmagamento da Crosta",
-        "description": "Causa dano alto de Terra e dano de Quebra a um único alvo. 5 ataques. Consome 2 Manchas de Raio para causar +8 de dano. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano alto de Terra e dano de Quebra a um único alvo. 5 ataques. Consome 2 Manchas de Raio para receber +8 de bônus no ataque e causar +8 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-healing-light": {
         "name": "Luz Curativa",
@@ -2489,7 +2497,7 @@
       },
       "lune-lightning-dance": {
         "name": "Dança do Relâmpago",
-        "description": "Causa dano muito alto de Raio a um único alvo. 6 ataques. Consome Mancha de Terra, Mancha de Gelo e Mancha de Fogo para causar +12 de dano. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
+        "description": "Causa dano muito alto de Raio a um único alvo. 6 ataques. Consome Mancha de Terra, Mancha de Gelo e Mancha de Fogo para receber +12 de bônus no ataque e causar +12 de dano adicional. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-storm-caller": {
         "name": "Invocador da Tempestade",
@@ -2513,11 +2521,11 @@
       },
       "lune-fire-rage": {
         "name": "Fúria Flamejante",
-        "description": "Causa dano alto de Fogo crescente a todos os inimigos a cada turno até Lune receber dano. Consome 2 Manchas de Gelo para causar +8 de dano. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano alto de Fogo crescente a todos os inimigos a cada turno até Lune receber dano. Consome 2 Manchas de Gelo para receber +8 de bônus no ataque e causar +8 de dano adicional. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-hell": {
         "name": "Inferno",
-        "description": "Causa dano muito alto de Fogo aplicando 5 Queimaduras por ataque a todos os inimigos. 2 ataques. Consome Mancha de Gelo, Mancha de Terra e Mancha de Raio para causar +12 de dano. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
+        "description": "Causa dano muito alto de Fogo aplicando 5 Queimaduras por ataque a todos os inimigos. 2 ataques. Consome Mancha de Gelo, Mancha de Terra e Mancha de Raio para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-sky-break": {
         "name": "Quebra do Céu",
@@ -2541,7 +2549,7 @@
       },
       "maelle-percee": {
         "name": "Investida",
-        "description": "Causa dano Físico médio em alvo único. 1 ataque. +4 de dano contra alvos Marcados. Muda para Postura Defensiva. Custo reduzido para 2 PM se usado na Postura Virtuosa."
+        "description": "Causa dano Físico médio em alvo único. 1 ataque. +4 de bônus no ataque e +4 de dano adicional contra alvos Marcados. Muda para Postura Defensiva. Custo reduzido para 2 PM se usado na Postura Virtuosa."
       },
       "maelle-degagement": {
         "name": "Desengajamento",
@@ -2609,7 +2617,7 @@
       },
       "maelle-momentum-strike": {
         "name": "Golpe de Momento",
-        "description": "Causa dano Físico alto em alvo único. 1 ataque. Usa o elemento da arma. +4 de dano contra alvos Marcados. Custo reduzido para 4 PM se usado na Postura Virtuosa (normalmente 7 PM). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano Físico alto em alvo único. 1 ataque. Usa o elemento da arma. +4 de bônus no ataque e +4 de dano adicional contra alvos Marcados. Custo reduzido para 4 PM se usado na Postura Virtuosa (normalmente 7 PM). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-payback": {
         "name": "Retribuição",
@@ -2621,11 +2629,11 @@
       },
       "maelle-sword-ballet": {
         "name": "Balé de Espadas",
-        "description": "Causa dano extremo em alvo único. 5 ataques. Usa o elemento da arma. Acertos Críticos causam +4 de dano bônus. Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano extremo em alvo único. 5 ataques. Usa o elemento da arma. Acertos Críticos concedem +4 de bônus no ataque e +4 de dano adicional. Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-gustaves-homage": {
         "name": "Homenagem a Gustave",
-        "description": "Causa dano de Raio alto em alvo único. 8 ataques. +4 de dano contra alvos Marcados, não remove Marca."
+        "description": "Causa dano de Raio alto em alvo único. 8 ataques. +4 de bônus no ataque e +4 de dano adicional contra alvos Marcados, não remove Marca."
       },
       "maelle-virtuose-strike": {
         "name": "Golpe Virtuoso",
@@ -2641,7 +2649,7 @@
       },
       "sciel-twilight-slash": {
         "name": "Corte Crepuscular",
-        "description": "Causa dano das Trevas baixo em alvo único. 1 ataque. Consome todas as Predições do alvo e adiciona +2 de dano por Predição consumida."
+        "description": "Causa dano das Trevas baixo em alvo único. 1 ataque. Consome todas as Predições do alvo e adiciona +2 de bônus no ataque e +2 de dano adicional por Predição consumida."
       },
       "sciel-focused-foretell": {
         "name": "Presságio Focado",
@@ -2657,7 +2665,7 @@
       },
       "sciel-delaying-slash": {
         "name": "Corte Retardante",
-        "description": "Causa dano médio em alvo único. 2 ataques. Usa elemento da arma. Consome todas as Predições (+2 de dano por Predição) e atrasa o turno do alvo."
+        "description": "Causa dano médio em alvo único. 2 ataques. Usa elemento da arma. Consome todas as Predições (+2 de bônus no ataque e +2 de dano adicional por Predição) e atrasa o turno do alvo."
       },
       "sciel-dark-cleansing": {
         "name": "Purificação Sombria",
@@ -2665,7 +2673,7 @@
       },
       "sciel-dark-wave": {
         "name": "Onda Sombria",
-        "description": "Causa dano das Trevas alto em todos os inimigos. 3 ataques. Consome todas as Predições (+2 de dano por Predição)."
+        "description": "Causa dano das Trevas alto em todos os inimigos. 3 ataques. Consome todas as Predições (+2 de bônus no ataque e +2 de dano adicional por Predição)."
       },
       "sciel-grim-harvest": {
         "name": "Colheita Sombria",
@@ -2681,11 +2689,11 @@
       },
       "sciel-phantom-blade": {
         "name": "Lâmina Fantasma",
-        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições (+2 de dano por Predição). Pode causar quebra."
+        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições (+2 de bônus no ataque e +2 de dano adicional por Predição). Pode causar quebra."
       },
       "sciel-sealed-fate": {
         "name": "Destino Selado",
-        "description": "Causa dano alto em alvo único. 6 ataques. Usa elemento da arma. Cada ataque consome 1 Predição (+2 de dano por Predição)."
+        "description": "Causa dano alto em alvo único. 6 ataques. Usa elemento da arma. Cada ataque consome 1 Predição (+2 de bônus no ataque e +2 de dano adicional por Predição)."
       },
       "sciel-spectral-sweep": {
         "name": "Varredura Espectral",
@@ -2693,15 +2701,15 @@
       },
       "sciel-firing-shadow": {
         "name": "Sombra Flamejante",
-        "description": "Causa dano das Trevas baixo em todos os inimigos. 3 ataques. Cada ataque consome 1 Predição (+2 de dano por Predição)."
+        "description": "Causa dano das Trevas baixo em todos os inimigos. 3 ataques. Cada ataque consome 1 Predição (+2 de bônus no ataque e +2 de dano adicional por Predição)."
       },
       "sciel-fortunes-fury": {
         "name": "Fúria da Fortuna",
-        "description": "Aplica Fúria da Fortuna em um aliado alvo, concedendo +8 de dano por ataque durante 1 turno."
+        "description": "Aplica Fúria da Fortuna em um aliado alvo, concedendo +8 de bônus no ataque e +8 de dano adicional por ataque durante 1 turno."
       },
       "sciel-our-sacrifice": {
         "name": "Nosso Sacrifício",
-        "description": "Causa dano das Trevas extremo em todos os inimigos. 1 ataque. Reduz a Vida de todos os aliados (incluindo a si mesmo) para 1 (+1 de dano por HP drenado). Consome todas as Predições de todos os inimigos (+1 de dano por Predição)."
+        "description": "Causa dano das Trevas extremo em todos os inimigos. 1 ataque. Reduz a Vida de todos os aliados (incluindo a si mesmo) para 1 (+1 de bônus no ataque e +1 de dano adicional por HP drenado). Consome todas as Predições de todos os inimigos (+1 de bônus no ataque e +1 de dano adicional por Predição)."
       },
       "sciel-plentiful-harvest": {
         "name": "Colheita Abundante",
@@ -2729,7 +2737,7 @@
       },
       "sciel-twilight-dance": {
         "name": "Dança Crepuscular",
-        "description": "Causa dano das Trevas extremo em alvo único. 4 ataques. Durante o Eclipse, estende a duração do Eclipse em 1 turno. Consome todas as Predições (+2 de dano por Predição)."
+        "description": "Causa dano das Trevas extremo em alvo único. 4 ataques. Durante o Eclipse, estende a duração do Eclipse em 1 turno. Consome todas as Predições (+2 de bônus no ataque e +2 de dano adicional por Predição)."
       },
       "sciel-shadow-bringer": {
         "name": "Arauto das Sombras",
@@ -3005,7 +3013,7 @@
       },
       "monoco-ramasseur-bonk": {
         "name": "Pancada do Coletor",
-        "description": "Ataque de pancada do coletor. Efeito: Causa dano das Trevas baixo em alvo único. 1 ataque. Pode causar quebra. Efeito Máscara Ágil adiciona +2 ao dano de Break. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, adiciona +2 de dano de Break ao acertar.\nPré-requisito: Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo."
+        "description": "Ataque de pancada do coletor. Efeito: Causa dano das Trevas baixo em alvo único. 1 ataque. Pode causar quebra. Efeito Máscara Ágil adiciona +2 ao dano de Break. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, adiciona +2 de bônus no ataque e +2 de dano adicional de Break ao acertar.\nPré-requisito: Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-rocher-hammering": {
         "name": "Martelamento Rocher",
@@ -3340,7 +3348,7 @@
         "FireVulnerability": "O personagem recebe dano aumentado de ataques de Fogo.",
         "Guardian": "Protege aliados recebendo dano no lugar deles quando são atacados.",
         "Foretell": "Cada acúmulo de Predição aumenta o dano causado por Sciel. Consumido por certas habilidades.",
-        "Twilight": "Estado místico de Sciel. Cada ataque causa +2 de dano por carga acumulada. Dobra o máximo de Predição (até 20). Impede ganho de cargas Sol/Lua. Ativado ao ter pelo menos 1 carga de Sol e 1 de Lua.",
+        "Twilight": "Estado místico de Sciel. Cada ataque causa +2 de bônus no ataque e +2 de dano adicional por carga acumulada. Dobra o máximo de Predição (até 20). Impede ganho de cargas Sol/Lua. Ativado ao ter pelo menos 1 carga de Sol e 1 de Lua.",
         "Powerless": "O personagem não pode usar habilidades ou causar dano.",
         "Rush": "Aumenta a velocidade e a capacidade de ataque do personagem.",
         "Burn": "Causa dano de fogo contínuo ao personagem.",
@@ -3355,7 +3363,7 @@
         "SuccessiveParry": "Melhora a capacidade de aparar ataques consecutivos.",
         "Aureole": "Revive o personagem com 30% de HP quando ele morre. Consumido ao ser usado.",
         "Vulnerable": "O personagem recebe dano aumentado de todas as fontes.",
-        "FortunesFury": "Cada ataque causa +8 de dano durante 1 turno.",
+        "FortunesFury": "Cada ataque causa +8 de bônus no ataque e +8 de dano adicional durante 1 turno.",
         "Regen": "Regenera pontos de vida ao longo do tempo.",
         "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano. Se o personagem estiver frágil, sofre quebra e recebe 150% do dano que causou a quebra.",
         "IntenseFlames": "Rola Xd6 de dano quando resolvido (X = acúmulos atuais). Aumenta em 2 acúmulos no fim do turno. Não expira. Removido de todos os inimigos quando o conjurador recebe dano.",

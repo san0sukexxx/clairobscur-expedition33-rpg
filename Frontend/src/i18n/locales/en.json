@@ -390,7 +390,7 @@
     },
     "warming-up": {
       "name": "Warming Up",
-      "description": "+1 damage per turn. Can stack up to 5 times."
+      "description": "+1 attack bonus and +1 extra damage per turn. Can stack up to 5 times."
     },
     "glass-canon": {
       "name": "Glass Canon",
@@ -586,7 +586,7 @@
     },
     "empowering-parry": {
       "name": "Empowering Parry",
-      "description": "Each successful Parry grants +1 damage until end of the following turn. Taking any damage removes this buff."
+      "description": "Each successful Parry grants +1 attack bonus and +1 extra damage until end of the following turn. Taking any damage removes this buff."
     },
     "accelerating-last-stand": {
       "name": "Accelerating Last Stand",
@@ -774,7 +774,7 @@
     },
     "empowering-dodge": {
       "name": "Empowering Dodge",
-      "description": "+1 damage for each consecutive successful Dodge. Can stack up to 10 times."
+      "description": "+1 attack bonus and +1 extra damage for each consecutive successful Dodge. Can stack up to 10 times."
     },
     "marking-break": {
       "name": "Marking Break",
@@ -870,7 +870,7 @@
     },
     "successive-parry": {
       "name": "Successive Parry",
-      "description": "Can't Dodge. +1 damage per Parry until damage taken."
+      "description": "Can't Dodge. +1 attack bonus and +1 extra damage per Parry until damage taken."
     },
     "breaking-attack": {
       "name": "Breaking Attack",
@@ -1844,6 +1844,14 @@
       "pointsRemaining": "Points Remaining",
       "point": "Point",
       "points": "Points",
+      "abilityAbbr": {
+        "strength": "STR",
+        "dexterity": "DEX",
+        "constitution": "CON",
+        "intelligence": "INT",
+        "wisdom": "WIS",
+        "charisma": "CHA"
+      },
       "savingThrowProficiencyTitle": "Saving Throw Proficiencies",
       "savingThrowProficiencyDesc": "Choose 2 ability scores your character will be proficient in for Saving Throws.",
       "savingThrowProficiencyConfirm": "Confirm Proficiencies",
@@ -2437,15 +2445,15 @@
       },
       "lune-immolation": {
         "name": "Immolation",
-        "description": "Deals low Fire damage to a single target and 3 Burns. 1 hit. Consumes an Ice stain for +4 damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals low Fire damage to a single target and 3 Burns. 1 hit. Consumes an Ice stain granting +4 attack bonus and +4 extra damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-ice-lance": {
         "name": "Ice Lance",
-        "description": "Deals medium Ice damage to a single target and Slows the target. 1 hit. Consumes an Earth stain for +4 damage. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals medium Ice damage to a single target and Slows the target. 1 hit. Consumes an Earth stain granting +4 attack bonus and +4 extra damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-earth-rising": {
         "name": "Earth Rising",
-        "description": "Deals low Earth damage to all enemies. 1 hit. Consumes a Lightning stain for +4 damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals low Earth damage to all enemies. 1 hit. Consumes a Lightning stain granting +4 attack bonus and +4 extra damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-thermal-transfer": {
         "name": "Thermal Transfer",
@@ -2453,11 +2461,11 @@
       },
       "lune-thunderfall": {
         "name": "Thunderfall",
-        "description": "Deals medium Lightning damage to random enemies. 4 hits. Consumes a Fire stain for +4 damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals medium Lightning damage to random enemies. 4 hits. Consumes a Fire stain granting +4 attack bonus and +4 extra damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-wildfire": {
         "name": "Wildfire",
-        "description": "Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burns. Consumes 2 stains of Ice for +8 damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals medium Fire damage to all enemies. 1 hit. Applies 3 Burns. Consumes 2 stains of Ice granting +8 attack bonus and +8 extra damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-mayhem": {
         "name": "Mayhem",
@@ -2473,15 +2481,15 @@
       },
       "lune-crippling-tsunami": {
         "name": "Crippling Tsunami",
-        "description": "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes Earth stain, Fire stain and Lightning stain for +12 damage. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals medium Ice damage to all enemies. 1 hit. Applies Slow for 3 turns. Consumes Earth stain, Fire stain and Lightning stain granting +12 attack bonus and +12 extra damage. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-rockslide": {
         "name": "Rockslide",
-        "description": "Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes Lightning stain, Ice stain and Fire stain for +12 damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals medium Earth damage to a single target. 2 hits. Can cause Break. Consumes Lightning stain, Ice stain and Fire stain granting +12 attack bonus and +12 extra damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-crustal-crush": {
         "name": "Crustal Crush",
-        "description": "Deals high Earth damage and Break damage to a single target. 5 hits. Consumes 2 stains of Lightning for +8 damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals high Earth damage and Break damage to a single target. 5 hits. Consumes 2 stains of Lightning granting +8 attack bonus and +8 extra damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-healing-light": {
         "name": "Healing Light",
@@ -2489,7 +2497,7 @@
       },
       "lune-lightning-dance": {
         "name": "Lightning Dance",
-        "description": "Deals very high Lightning damage to a single target. 6 hits. Consumes Earth stain, Ice stain and Fire stain for +12 damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
+        "description": "Deals very high Lightning damage to a single target. 6 hits. Consumes Earth stain, Ice stain and Fire stain granting +12 attack bonus and +12 extra damage. Critical hits add an extra hit. Using this skill grants 1 Lightning stain and 1 Light stain."
       },
       "lune-storm-caller": {
         "name": "Storm Caller",
@@ -2513,11 +2521,11 @@
       },
       "lune-fire-rage": {
         "name": "Fire Rage",
-        "description": "Deals high increasing Fire damage to all enemies each turn until Lune receives damage. Consumes 2 stains of Ice for +8 damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals high increasing Fire damage to all enemies each turn until Lune receives damage. Consumes 2 stains of Ice granting +8 attack bonus and +8 extra damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-hell": {
         "name": "Hell",
-        "description": "Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes Ice stain, Earth stain and Lightning stain for +12 damage. Using this skill grants 1 Fire stain and 1 Light stain."
+        "description": "Deals very high Fire damage applying 5 Burns per hit to all enemies. 2 hits. Consumes Ice stain, Earth stain and Lightning stain granting +12 attack bonus and +12 extra damage. Using this skill grants 1 Fire stain and 1 Light stain."
       },
       "lune-sky-break": {
         "name": "Sky Break",
@@ -2541,7 +2549,7 @@
       },
       "maelle-percee": {
         "name": "Percee",
-        "description": "Deals medium Physical damage to a single target. 1 hit. +4 damage against Marked targets. Changes to Defensive Stance. Cost reduced to 2 MP if used in Virtuose Stance."
+        "description": "Deals medium Physical damage to a single target. 1 hit. +4 attack bonus and +4 extra damage against Marked targets. Changes to Defensive Stance. Cost reduced to 2 MP if used in Virtuose Stance."
       },
       "maelle-degagement": {
         "name": "Degagement",
@@ -2609,7 +2617,7 @@
       },
       "maelle-momentum-strike": {
         "name": "Momentum Strike",
-        "description": "Deals high Physical damage to a single target. 1 hit. Uses weapon's element. +4 damage against Marked targets. Cost reduced to 4 MP if used in Virtuose Stance (normally 7 MP). Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals high Physical damage to a single target. 1 hit. Uses weapon's element. +4 attack bonus and +4 extra damage against Marked targets. Cost reduced to 4 MP if used in Virtuose Stance (normally 7 MP). Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-payback": {
         "name": "Payback",
@@ -2621,11 +2629,11 @@
       },
       "maelle-sword-ballet": {
         "name": "Sword Ballet",
-        "description": "Deals extreme damage to a single target. 5 hits. Uses weapon's element. Critical Hits deal +4 bonus damage. Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals extreme damage to a single target. 5 hits. Uses weapon's element. Critical Hits grant +4 attack bonus and +4 extra damage. Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-gustaves-homage": {
         "name": "Gustave's Homage",
-        "description": "Deals high Lightning damage to a single target. 8 hits. +4 damage against Marked targets, doesn't remove Mark."
+        "description": "Deals high Lightning damage to a single target. 8 hits. +4 attack bonus and +4 extra damage against Marked targets, doesn't remove Mark."
       },
       "maelle-virtuose-strike": {
         "name": "Virtuose Strike",
@@ -2641,7 +2649,7 @@
       },
       "sciel-twilight-slash": {
         "name": "Twilight Slash",
-        "description": "Deals low Dark damage to a single target. 1 hit. Consumes all Foretell from target and adds +2 damage per Foretell consumed."
+        "description": "Deals low Dark damage to a single target. 1 hit. Consumes all Foretell from target and adds +2 attack bonus and +2 extra damage per Foretell consumed."
       },
       "sciel-focused-foretell": {
         "name": "Focused Foretell",
@@ -2657,7 +2665,7 @@
       },
       "sciel-delaying-slash": {
         "name": "Delaying Slash",
-        "description": "Deals medium damage to a single target. 2 hits. Uses weapon element. Consumes all Foretell (+2 damage per Foretell) and delays the target's turn."
+        "description": "Deals medium damage to a single target. 2 hits. Uses weapon element. Consumes all Foretell (+2 attack bonus and +2 extra damage per Foretell) and delays the target's turn."
       },
       "sciel-dark-cleansing": {
         "name": "Dark Cleansing",
@@ -2665,7 +2673,7 @@
       },
       "sciel-dark-wave": {
         "name": "Dark Wave",
-        "description": "Deals high Dark damage to all enemies. 3 hits. Consumes all Foretell (+2 damage per Foretell)."
+        "description": "Deals high Dark damage to all enemies. 3 hits. Consumes all Foretell (+2 attack bonus and +2 extra damage per Foretell)."
       },
       "sciel-grim-harvest": {
         "name": "Grim Harvest",
@@ -2681,11 +2689,11 @@
       },
       "sciel-phantom-blade": {
         "name": "Phantom Blade",
-        "description": "Deals high Dark damage to a single target. 1 hit. Consumes all Foretell (+2 damage per Foretell). Can cause Break."
+        "description": "Deals high Dark damage to a single target. 1 hit. Consumes all Foretell (+2 attack bonus and +2 extra damage per Foretell). Can cause Break."
       },
       "sciel-sealed-fate": {
         "name": "Sealed Fate",
-        "description": "Deals high damage to a single target. 6 hits. Uses weapon element. Each hit consumes 1 Foretell (+2 damage per Foretell)."
+        "description": "Deals high damage to a single target. 6 hits. Uses weapon element. Each hit consumes 1 Foretell (+2 attack bonus and +2 extra damage per Foretell)."
       },
       "sciel-spectral-sweep": {
         "name": "Spectral Sweep",
@@ -2693,15 +2701,15 @@
       },
       "sciel-firing-shadow": {
         "name": "Firing Shadow",
-        "description": "Deals low Dark damage to all enemies. 3 hits. Each hit consumes 1 Foretell (+2 damage per Foretell)."
+        "description": "Deals low Dark damage to all enemies. 3 hits. Each hit consumes 1 Foretell (+2 attack bonus and +2 extra damage per Foretell)."
       },
       "sciel-fortunes-fury": {
         "name": "Fortune's Fury",
-        "description": "Applies Fortune's Fury to a target ally, granting +8 damage per hit for 1 turn."
+        "description": "Applies Fortune's Fury to a target ally, granting +8 attack bonus and +8 extra damage per hit for 1 turn."
       },
       "sciel-our-sacrifice": {
         "name": "Our Sacrifice",
-        "description": "Deals extreme Dark damage to all enemies. 1 hit. Drains all allies (including self) HP to 1 (+1 damage per HP drained). Consumes all Foretell from all enemies (+1 damage per Foretell)."
+        "description": "Deals extreme Dark damage to all enemies. 1 hit. Drains all allies (including self) HP to 1 (+1 attack bonus and +1 extra damage per HP drained). Consumes all Foretell from all enemies (+1 attack bonus and +1 extra damage per Foretell)."
       },
       "sciel-plentiful-harvest": {
         "name": "Plentiful Harvest",
@@ -2729,7 +2737,7 @@
       },
       "sciel-twilight-dance": {
         "name": "Twilight Dance",
-        "description": "Deals extreme Dark damage to a single target. 4 hits. During Twilight, extends the duration of Twilight by 1 turn. Consumes all Foretell (+2 damage per Foretell)."
+        "description": "Deals extreme Dark damage to a single target. 4 hits. During Twilight, extends the duration of Twilight by 1 turn. Consumes all Foretell (+2 attack bonus and +2 extra damage per Foretell)."
       },
       "sciel-shadow-bringer": {
         "name": "Shadow Bringer",
@@ -3340,7 +3348,7 @@
         "FireVulnerability": "The character takes increased damage from Fire attacks.",
         "Guardian": "Protects allies by taking damage in their place when they are attacked.",
         "Foretell": "Each Foretell stack increases damage dealt by Sciel. Consumed by certain skills.",
-        "Twilight": "Mystical state of Sciel. Each attack deals +2 damage per accumulated charge. Doubles Foretell cap (up to 20). Prevents Sun/Moon charge gain. Activated when having at least 1 Sun and 1 Moon charge.",
+        "Twilight": "Mystical state of Sciel. Each attack deals +2 attack bonus and +2 extra damage per accumulated charge. Doubles Foretell cap (up to 20). Prevents Sun/Moon charge gain. Activated when having at least 1 Sun and 1 Moon charge.",
         "Powerless": "The character cannot use skills or deal damage.",
         "Rush": "Increases the character's speed and attack capability.",
         "Burn": "Deals continuous fire damage to the character.",
@@ -3355,7 +3363,7 @@
         "SuccessiveParry": "Improves ability to parry consecutive attacks.",
         "Aureole": "Revives the character with 30% HP when they die. Consumed on use.",
         "Vulnerable": "The character takes increased damage from all sources.",
-        "FortunesFury": "Each attack deals +8 damage for 1 turn.",
+        "FortunesFury": "Each attack deals +8 attack bonus and +8 extra damage for 1 turn.",
         "Regen": "Regenerates health points over time.",
         "Earthquake": "Deals damage at the start of turn. Each stack deals 1d6 damage. If the character is fragile, suffers Break and takes 150% of the damage that caused the Break.",
         "IntenseFlames": "Rolls Xd6 damage when resolved (X = current stacks). Increases by 2 stacks at end of turn. Does not expire. Removed from all enemies when the caster takes damage.",

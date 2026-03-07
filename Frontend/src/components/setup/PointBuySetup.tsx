@@ -4,13 +4,8 @@ import type { AbilityScores } from "../../api/APIPlayer";
 
 type AbilityKey = keyof AbilityScores;
 
-const ABILITIES: { key: AbilityKey; abbr: string }[] = [
-    { key: "strength",     abbr: "STR" },
-    { key: "dexterity",    abbr: "DEX" },
-    { key: "constitution", abbr: "CON" },
-    { key: "intelligence", abbr: "INT" },
-    { key: "wisdom",       abbr: "WIS" },
-    { key: "charisma",     abbr: "CHA" },
+const ABILITY_KEYS: AbilityKey[] = [
+    "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma",
 ];
 
 // D&D 5e standard point-buy cost table
@@ -55,13 +50,13 @@ export function PointBuySetup({ onConfirm }: PointBuySetupProps) {
 
             {/* Ability columns */}
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                {ABILITIES.map(({ key, abbr }) => {
+                {ABILITY_KEYS.map(key => {
                     const current = scores[key];
                     const currentCost = POINT_COST[current] ?? 0;
 
                     return (
                         <div key={key} className="flex flex-col items-center gap-2">
-                            <span className="text-xs font-bold uppercase tracking-wide">{abbr}</span>
+                            <span className="text-xs font-bold uppercase tracking-wide">{t(`setup.abilityAbbr.${key}`)}</span>
 
                             <select
                                 className="select select-bordered select-sm w-full"

@@ -6,13 +6,8 @@ import type { DiceBoardRef } from "../DiceBoard";
 
 type AbilityKey = keyof AbilityScores;
 
-const ABILITY_OPTIONS: { key: AbilityKey; abbr: string }[] = [
-    { key: "strength",     abbr: "STR" },
-    { key: "dexterity",    abbr: "DEX" },
-    { key: "constitution", abbr: "CON" },
-    { key: "intelligence", abbr: "INT" },
-    { key: "wisdom",       abbr: "WIS" },
-    { key: "charisma",     abbr: "CHA" },
+const ABILITY_KEYS: AbilityKey[] = [
+    "strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma",
 ];
 
 interface RollResult {
@@ -140,15 +135,15 @@ export function ManualRolledSetup({ diceBoardRef, timeoutDiceBoardRef, onConfirm
                                         onChange={(e) => handleAssign(i, e.target.value as AbilityKey | "")}
                                     >
                                         <option value="">--</option>
-                                        {ABILITY_OPTIONS
-                                            .filter(({ key }) => !taken.has(key))
-                                            .map(({ key, abbr }) => (
-                                                <option key={key} value={key}>{abbr}</option>
+                                        {ABILITY_KEYS
+                                            .filter(key => !taken.has(key))
+                                            .map(key => (
+                                                <option key={key} value={key}>{t(`setup.abilityAbbr.${key}`)}</option>
                                             ))
                                         }
                                         {current !== "" && taken.has(current as AbilityKey) && (
                                             <option value={current}>
-                                                {ABILITY_OPTIONS.find(a => a.key === current)?.abbr}
+                                                {t(`setup.abilityAbbr.${current}`)}
                                             </option>
                                         )}
                                     </select>
