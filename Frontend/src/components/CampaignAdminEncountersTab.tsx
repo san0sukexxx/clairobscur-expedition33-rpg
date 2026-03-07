@@ -47,6 +47,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     // List filters
     const [showStoryMode, setShowStoryMode] = useState(() => localStorage.getItem("encounters.showStoryMode") === "true");
     const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("encounters.currentLocationOnly") === "true");
+    const [listLocationFilter, setListLocationFilter] = useState(() => localStorage.getItem("encounters.listLocationFilter") ?? "");
 
     // Reward form
     const [newRewardType, setNewRewardType] = useState<string>("weapon");
@@ -250,21 +251,26 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
     // Difficulty totalizer
     const editTotalCR = useMemo(() => calculateEncounterCR(editNpcs), [editNpcs]);
 
+    // Resolve effective location filter: checkbox takes priority over dropdown
+    const effectiveLocationFilter = currentLocationOnly
+        ? (campaignInfo.currentLocationId ?? "")
+        : listLocationFilter;
+
     // Filtered encounters for list view
     const filteredEncounters = useMemo(() => {
-        if (!currentLocationOnly || !campaignInfo.currentLocationId) return encounters;
-        return encounters.filter(enc => enc.locationId === campaignInfo.currentLocationId);
-    }, [encounters, currentLocationOnly, campaignInfo.currentLocationId]);
+        if (!effectiveLocationFilter) return encounters;
+        return encounters.filter(enc => enc.locationId === effectiveLocationFilter);
+    }, [encounters, effectiveLocationFilter]);
 
     // Filtered story encounters
     const filteredStoryEncounters = useMemo(() => {
         if (!showStoryMode) return [];
         let list = StoryEncountersList;
-        if (currentLocationOnly && campaignInfo.currentLocationId) {
-            list = list.filter(enc => enc.locationId === campaignInfo.currentLocationId);
+        if (effectiveLocationFilter) {
+            list = list.filter(enc => enc.locationId === effectiveLocationFilter);
         }
         return list;
-    }, [showStoryMode, currentLocationOnly, campaignInfo.currentLocationId]);
+    }, [showStoryMode, effectiveLocationFilter]);
 
     // ─── EDITING VIEW ──────────────────────────────────────────────
     if (editingEncounter) {
@@ -610,25 +616,39 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                     </div>
 
                     {/* Filters */}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
-                        <label className="flex items-center gap-2 cursor-pointer select-none">
-                            <input
-                                type="checkbox"
-                                className="checkbox checkbox-sm checkbox-primary"
-                                checked={showStoryMode}
-                                onChange={(e) => { setShowStoryMode(e.target.checked); localStorage.setItem("encounters.showStoryMode", String(e.target.checked)); }}
-                            />
-                            <span className="text-sm">{t("encounters.showStoryMode")}</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer select-none">
-                            <input
-                                type="checkbox"
-                                className="checkbox checkbox-sm checkbox-primary"
-                                checked={currentLocationOnly}
-                                onChange={(e) => { setCurrentLocationOnly(e.target.checked); localStorage.setItem("encounters.currentLocationOnly", String(e.target.checked)); }}
-                            />
-                            <span className="text-sm">{t("encounters.currentLocationOnly")}</span>
-                        </label>
+                    <div className="flex flex-col gap-2 mt-3">
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                            <label className="flex items-center gap-2 cursor-pointer select-none">
+                                <input
+                                    type="checkbox"
+                                    className="checkbox checkbox-sm checkbox-primary"
+                                    checked={showStoryMode}
+                                    onChange={(e) => { setShowStoryMode(e.target.checked); localStorage.setItem("encounters.showStoryMode", String(e.target.checked)); }}
+                                />
+                                <span className="text-sm">{t("encounters.showStoryMode")}</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer select-none">
+                                <input
+                                    type="checkbox"
+                                    className="checkbox checkbox-sm checkbox-primary"
+                                    checked={currentLocationOnly}
+                                    onChange={(e) => { setCurrentLocationOnly(e.target.checked); localStorage.setItem("encounters.currentLocationOnly", String(e.target.checked)); }}
+                                />
+                                <span className="text-sm">{t("encounters.currentLocationOnly")}</span>
+                            </label>
+                        </div>
+                        {!currentLocationOnly && (
+                            <select
+                                className="select select-bordered select-sm w-full"
+                                value={listLocationFilter}
+                                onChange={(e) => { setListLocationFilter(e.target.value); localStorage.setItem("encounters.listLocationFilter", e.target.value); }}
+                            >
+                                <option value="">{t("encounters.allLocations")}</option>
+                                {getAllLocationsSorted().map(loc => (
+                                    <option key={loc.id} value={loc.id}>{getLocationName(loc.id)}</option>
+                                ))}
+                            </select>
+                        )}
                     </div>
 
                     {loading && (
