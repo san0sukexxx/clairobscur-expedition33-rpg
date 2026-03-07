@@ -1064,6 +1064,7 @@ const NPCsBaseData: NPCBaseData[] = [
         intelligence: 10,
         wisdom:       10,
         charisma:      8,
+        freeShotWeakPoints: 1,
         weakTo: "Ice",
         isFlying: true,
         armorClass: 12,
