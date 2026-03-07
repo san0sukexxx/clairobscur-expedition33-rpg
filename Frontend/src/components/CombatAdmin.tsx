@@ -2884,8 +2884,8 @@ export default function CombatAdmin({
                                 })}
                             </div>
 
-                            {/* Drops dos NPCs */}
-                            {npcDrops.length > 0 && (
+                            {/* Drops dos NPCs — hidden if encounter has its own rewards */}
+                            {npcDrops.length > 0 && battleRewards.length === 0 && (
                                 <>
                                     <div className="divider my-2">{t("combatAdmin.npcDetails.drops")}</div>
                                     <div className="space-y-4">
