@@ -646,10 +646,14 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             <span className="font-semibold text-sm">
                                                 {enc.locationId ? getLocationName(enc.locationId) : enc.id}
                                             </span>
+                                            <div className="text-xs opacity-60 mt-0.5">
+                                                {enc.npcs.map(n => {
+                                                    const npc = getNpcById(n.npcId);
+                                                    const name = npc?.name ?? n.npcId;
+                                                    return n.quantity > 1 ? `${name} x${n.quantity}` : name;
+                                                }).join(", ")}
+                                            </div>
                                             <div className="flex flex-wrap gap-2 mt-1">
-                                                <span className="badge badge-sm badge-ghost">
-                                                    {enc.npcs.reduce((sum, n) => sum + n.quantity, 0)} {t("encounters.npcCount")}
-                                                </span>
                                                 {enc.rewards.length > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
                                                         {enc.rewards.length} {t("encounters.rewardCount")}
@@ -717,10 +721,14 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             <span className="font-semibold text-sm">
                                                 {enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`}
                                             </span>
+                                            <div className="text-xs opacity-60 mt-0.5">
+                                                {enc.npcs.map(n => {
+                                                    const npc = getNpcById(n.npcId);
+                                                    const name = npc?.name ?? n.npcId;
+                                                    return n.quantity > 1 ? `${name} x${n.quantity}` : name;
+                                                }).join(", ")}
+                                            </div>
                                             <div className="flex flex-wrap gap-2 mt-1">
-                                                <span className="badge badge-sm badge-ghost">
-                                                    {enc.npcs.reduce((sum, n) => sum + n.quantity, 0)} {t("encounters.npcCount")}
-                                                </span>
                                                 {enc.rewards.length > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
                                                         {enc.rewards.length} {t("encounters.rewardCount")}
