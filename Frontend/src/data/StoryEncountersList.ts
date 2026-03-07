@@ -66,4 +66,12 @@ export const StoryEncountersList: StoryEncounter[] = [
         rewards: [{ rewardType: "picto", itemId: "augmented-attack", level: 1 }],
         bonusXp: 0,
     },
+    {
+        id: "spring-meadows-patrol",
+        name: "storyEncounters.spring-meadows-patrol",
+        locationId: "spring-meadows",
+        npcs: [{ npcId: "lancer", quantity: 1 }, { npcId: "gatekeeper", quantity: 1 }, { npcId: "volester", quantity: 1 }],
+        rewards: [],
+        bonusXp: 0,
+    },
 ];
