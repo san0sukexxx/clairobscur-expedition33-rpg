@@ -3050,7 +3050,7 @@
       "monoco-portier-crash": {
         "name": "Colisão Portier",
         "description": "Ataque de colisão que quebra portas. Efeito: Causa dano Físico alto em todos os inimigos. 1 ataque. Pode causar quebra. Máscara Pesada: Dano aumentado.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Porteiro enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-potier-energy": {
         "name": "Energia do Oleiro",
@@ -3932,7 +3932,7 @@
       "orphelin": "Orphelin",
       "pelerin": "Pèlerin",
       "petank": "Pétank",
-      "gatekeeper": "Porteiro",
+      "gatekeeper": "Portier",
       "potier": "Potier",
       "ramasseur": "Ramasseur",
       "ranger-sakapatate": "Ranger Sakapatate",
@@ -4041,7 +4041,7 @@
       "renoir-monolith": "Renoir (Monólito)",
       "lancer-monolith": "Lancelier (Monólito)",
       "abbest-monolith": "Abbest (Monólito)",
-      "gatekeeper-monolith": "Porteiro (Monólito)",
+      "gatekeeper-monolith": "Portier (Monólito)",
       "eveque-monolith": "Évêque (Monólito)",
       "bruler-monolith": "Brûler (Monólito)",
       "cruler-monolith": "Crûler (Monólito)",
