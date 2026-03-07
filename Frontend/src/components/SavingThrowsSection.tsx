@@ -8,7 +8,7 @@ import { APIGameLog } from "../api/APIGameLog";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
-import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma } from "../utils/PlayerCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma, abilityScoreCap } from "../utils/PlayerCalculator";
 import { calculateProficiencyBonus } from "../utils/AttackCalculator";
 
 type AbilityKey = keyof AbilityScores;
@@ -106,7 +106,7 @@ export function SavingThrowsSection({ player, weaponInfo, diceBoardRef, timeoutD
         constitution: 0, intelligence: 0, wisdom: 0, charisma: 0,
     };
     function getEffectiveScore(key: AbilityKey, base: number) {
-        return Math.min(20, base + (pictoBonus[key] ?? 0) + (weaponBonus[key] ?? 0));
+        return Math.min(abilityScoreCap(player), base + (pictoBonus[key] ?? 0) + (weaponBonus[key] ?? 0));
     }
 
     function roll(key: AbilityKey, label: string, mod: number) {

@@ -10,6 +10,7 @@ import { dispatchRoll } from "../../utils/rollDispatcher";
 import { APIGameLog } from "../../api/APIGameLog";
 import {
   playerPictosTotalSpeed,
+  abilityScoreCap,
 } from "../../utils/PlayerCalculator";
 
 import { calculateWeaponDexterityBonus } from "../../utils/WeaponCalculator";
@@ -81,7 +82,7 @@ export function useCombatActions({
 
     setIsExecutingSkill(true);
     const baseDex = player.playerSheet?.abilityScores?.dexterity ?? 10;
-    const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
+    const effectiveDex = Math.min(abilityScoreCap(player), baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
     const dexMod = Math.floor((effectiveDex - 10) / 2);
     rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", result => {
       const criticalRolls = countCriticalRolls(result);

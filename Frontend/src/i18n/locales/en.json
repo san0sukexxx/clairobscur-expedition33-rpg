@@ -298,7 +298,7 @@
     },
     "painted-power": {
       "name": "Painted Power",
-      "description": "Damage can exceed 9,999."
+      "description": "Your attributes can exceed 20."
     },
     "sos-shell": {
       "name": "SOS Shell",
@@ -1985,6 +1985,7 @@
       "flee": "Try to flee",
       "freeShot": "Free shot",
       "freeShotHint": "Hitting a weak point grants an additional damage roll at no cost.",
+      "freeShotHintShort": "Hitting a weak point...",
       "endTurn": "End turn",
       "rollInitiative": "Roll Initiative",
       "joinBattle": "Join the battle",

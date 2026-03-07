@@ -11,6 +11,18 @@ import { calculateWeaponVitalityBonus, calculateWeaponDefenseBonus, calculateWea
 import { getPlayerCharacter } from "./CharacterUtils";
 import { calculatePictoHealth, calculatePictoSpeed, calculatePictoDefense, calculatePictoAbility, getPictoByName } from "./PictoUtils";
 
+export function hasPaintedPower(player: GetPlayerResponse | null): boolean {
+    if (!player) return false;
+    const hasPicto = (player.pictos ?? []).some(p => p.pictoId === "painted-power" && p.slot !== null && p.slot !== undefined);
+    if (hasPicto) return true;
+    const hasLumina = (player.luminas ?? []).some(l => l.pictoId === "painted-power" && l.isEquiped);
+    return hasLumina;
+}
+
+export function abilityScoreCap(player: GetPlayerResponse | null): number {
+    return hasPaintedPower(player) ? 30 : 20;
+}
+
 export function playerPictosTotalHealth(player: GetPlayerResponse | null): number {
     let total = 0;
     if (player?.pictos && player.pictos.length > 0) {
@@ -106,7 +118,8 @@ export function getCharacterHitDie(characterId: string | undefined): number {
 
 export function calculateArmorClass(player: GetPlayerResponse | null, weaponInfo: WeaponInfo | null): number {
     const baseDex = player?.playerSheet?.abilityScores?.dexterity ?? 10;
-    const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
+    const cap = abilityScoreCap(player);
+    const effectiveDex = Math.min(cap, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
     const dexMod = Math.floor((effectiveDex - 10) / 2);
     return 10 + dexMod + calculateWeaponDefenseBonus(weaponInfo) + playerPictosTotalDefense(player);
 }
@@ -118,7 +131,7 @@ export function calculateMaxHP(player: GetPlayerResponse | null, weaponInfo: Wea
     const con = player?.playerSheet?.abilityScores?.constitution ?? 10;
     const weaponConBonus = calculateWeaponVitalityBonus(weaponInfo);
     const pictoConBonus = playerPictosTotalHealth(player);
-    const effectiveCon = Math.min(20, con + weaponConBonus + pictoConBonus);
+    const effectiveCon = Math.min(abilityScoreCap(player), con + weaponConBonus + pictoConBonus);
     const conMod = Math.floor((effectiveCon - 10) / 2);
 
     // D&D 5e formula: max die at level 1 + avg die per subsequent level, + CON mod each level
@@ -153,7 +166,7 @@ export function calculateSpecialAttackPoints(player: GetPlayerResponse | null): 
 
 export function calculateInitialMP(player: GetPlayerResponse | null): number {
     const baseInt = player?.playerSheet?.abilityScores?.intelligence ?? 10;
-    const effectiveInt = Math.min(20, baseInt + playerPictosTotalIntelligence(player));
+    const effectiveInt = Math.min(abilityScoreCap(player), baseInt + playerPictosTotalIntelligence(player));
     const intMod = Math.floor((effectiveInt - 10) / 2);
     return Math.max(0, intMod);
 }

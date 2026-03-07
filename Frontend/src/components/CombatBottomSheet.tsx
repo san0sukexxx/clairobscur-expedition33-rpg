@@ -7,7 +7,7 @@ import type { DiceBoardRef } from "./DiceBoard";
 import { useWeaponInfo } from "../hooks/player/useWeaponInfo";
 import { calculateAttackBonus, calculateDamageBonus, getAbilityModifier } from "../utils/AttackCalculator";
 import { getWeaponDamageDice, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
-import { playerPictosTotalSpeed, calculateArmorClass } from "../utils/PlayerCalculator";
+import { playerPictosTotalSpeed, calculateArmorClass, abilityScoreCap } from "../utils/PlayerCalculator";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
@@ -60,7 +60,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
 
     const dexMod = useMemo(() => {
         const baseDex = player?.playerSheet?.abilityScores?.dexterity ?? 10;
-        const effectiveDex = Math.min(20, baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
+        const effectiveDex = Math.min(abilityScoreCap(player), baseDex + calculateWeaponDexterityBonus(weaponInfo) + playerPictosTotalSpeed(player));
         return getAbilityModifier(effectiveDex);
     }, [player, weaponInfo]);
 
@@ -72,6 +72,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
     const INTENSITY_DICE_MULTIPLIER = [1, 1, 2, 3, 4, 5];
     const [intensityIndex, setIntensityIndex] = useState(1); // starts at "Médio"
     const [defenseExpanded, setDefenseExpanded] = useState(false);
+    const [freeShotHintExpanded, setFreeShotHintExpanded] = useState(false);
 
     if (!weapon || !details) return null;
     const baseDamageDice = getWeaponDamageDice(weapon.level);
@@ -358,7 +359,12 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                     1d4{dexMod !== 0 ? ` ${dexMod >= 0 ? "+" : ""}${dexMod}` : ""}
                                 </button>
                             </div>
-                            <p className="text-xs opacity-40 mt-1">{t("combat.freeShotHint")}</p>
+                            <p className="text-xs opacity-40 mt-1">
+                                {freeShotHintExpanded ? t("combat.freeShotHint") : t("combat.freeShotHintShort")}{" "}
+                                <button className="underline text-info" onClick={() => setFreeShotHintExpanded(e => !e)}>
+                                    {freeShotHintExpanded ? t("common.readLess") : t("common.readMore")}
+                                </button>
+                            </p>
                         </div>
 
                         {/* Defense section */}

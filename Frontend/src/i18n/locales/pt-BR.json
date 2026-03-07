@@ -298,7 +298,7 @@
     },
     "painted-power": {
       "name": "Poder Pintado",
-      "description": "Dano pode exceder 9.999."
+      "description": "Seus atributos podem exceder 20."
     },
     "sos-shell": {
       "name": "Escudo SOS",
@@ -1985,6 +1985,7 @@
       "flee": "Tentar fugir",
       "freeShot": "Tiro livre",
       "freeShotHint": "Acertar um ponto fraco dá direito a rolar o dado de dano mais uma vez sem custo.",
+      "freeShotHintShort": "Acertar um ponto fraco...",
       "endTurn": "Encerrar o turno",
       "rollInitiative": "Rolar Iniciativa",
       "joinBattle": "Entrar na batalha",

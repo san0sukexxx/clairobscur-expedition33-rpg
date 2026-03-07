@@ -1,7 +1,7 @@
 import type { AbilityScores, GetPlayerResponse } from "../api/APIPlayer";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponPlusPower, calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "./WeaponCalculator";
-import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma } from "./PlayerCalculator";
+import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma, abilityScoreCap } from "./PlayerCalculator";
 
 /** D&D 5e ability modifier: floor((score - 10) / 2) */
 export function getAbilityModifier(score: number): number {
@@ -33,7 +33,7 @@ export function getAttackAttribute(characterId: string | undefined): AbilityKey 
 export function getAttackAttributeScore(player: GetPlayerResponse, weaponInfo?: WeaponInfo): number {
   const attrKey = getAttackAttribute(player.playerSheet?.characterId);
   const base = player.playerSheet?.abilityScores?.[attrKey] ?? 10;
-  return Math.min(20, base + getAbilityPictoBonus(player, attrKey) + getAbilityWeaponBonus(attrKey, weaponInfo));
+  return Math.min(abilityScoreCap(player), base + getAbilityPictoBonus(player, attrKey) + getAbilityWeaponBonus(attrKey, weaponInfo));
 }
 
 function getAbilityPictoBonus(player: GetPlayerResponse, key: AbilityKey): number {
@@ -74,7 +74,7 @@ export interface AttackBonusBreakdown {
 export function calculateAttackBonus(player: GetPlayerResponse, weaponInfo: WeaponInfo): AttackBonusBreakdown {
   const abilityKey = getAttackAttribute(player.playerSheet?.characterId);
   const baseScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
-  const abilityScore = Math.min(20, baseScore + getAbilityPictoBonus(player, abilityKey) + getAbilityWeaponBonus(abilityKey, weaponInfo));
+  const abilityScore = Math.min(abilityScoreCap(player), baseScore + getAbilityPictoBonus(player, abilityKey) + getAbilityWeaponBonus(abilityKey, weaponInfo));
   const abilityMod = getAbilityModifier(abilityScore);
   const level = player.playerSheet?.totalPoints ?? 1;
   const baseProficiency = calculateProficiencyBonus(level);
@@ -103,7 +103,7 @@ export interface DamageBonusBreakdown {
 export function calculateDamageBonus(player: GetPlayerResponse, weaponInfo: WeaponInfo): DamageBonusBreakdown {
   const abilityKey = getAttackAttribute(player.playerSheet?.characterId);
   const baseScore = player.playerSheet?.abilityScores?.[abilityKey] ?? 10;
-  const abilityScore = Math.min(20, baseScore + getAbilityPictoBonus(player, abilityKey) + getAbilityWeaponBonus(abilityKey, weaponInfo));
+  const abilityScore = Math.min(abilityScoreCap(player), baseScore + getAbilityPictoBonus(player, abilityKey) + getAbilityWeaponBonus(abilityKey, weaponInfo));
   const abilityMod = getAbilityModifier(abilityScore);
   const weaponPower = getWeaponPowerModifier(weaponInfo);
 
