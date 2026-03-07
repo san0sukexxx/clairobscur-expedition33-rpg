@@ -2501,7 +2501,6 @@ export const NPCsList: NPCInfo[] = [
         weakTo: "Ice",
         armorClass: 19,
         challengeRating: "6",
-        noBasicAttack: true,
         attackList: [
             { type: "jump-all", name: "combatAdmin.npcAttacks.groundSlam", additionalDamage: 5, additionalDices: 2 },
         ],

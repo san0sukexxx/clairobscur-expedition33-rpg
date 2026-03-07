@@ -1213,8 +1213,8 @@ export default function CombatAdmin({
                                     );
                                 })}
 
-                                {/* Basic "Atacar" action — hidden if NPC has noBasicAttack or already has basic in attackList */}
-                                {!npcInfo?.noBasicAttack && !npcInfo?.attackList?.some(a => a.type === "basic") && (() => {
+                                {/* Basic "Atacar" action — hidden if NPC already has basic in attackList */}
+                                {!npcInfo?.attackList?.some(a => a.type === "basic") && (() => {
                                     const { numDice: basicNumDice, flatDmg: basicFlatDmg, avgDmg: basicAvgDmg } = calcDamage(1, strMod);
                                     return (
                                         <div className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
