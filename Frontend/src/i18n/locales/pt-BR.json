@@ -1984,7 +1984,7 @@
       "specialAttacks": "Especiais",
       "flee": "Tentar fugir",
       "freeShot": "Tiro livre",
-      "freeShotHint": "Acertar um ponto fraco dá direito a rolar o dado de tiro livre mais uma vez de forma gratuita.",
+      "freeShotHint": "Acertar um ponto fraco dá direito a rolar o dado de dano mais uma vez sem custo.",
       "endTurn": "Encerrar o turno",
       "rollInitiative": "Rolar Iniciativa",
       "joinBattle": "Entrar na batalha",

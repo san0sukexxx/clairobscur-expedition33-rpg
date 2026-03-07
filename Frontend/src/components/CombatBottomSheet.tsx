@@ -358,6 +358,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                     1d4{dexMod !== 0 ? ` ${dexMod >= 0 ? "+" : ""}${dexMod}` : ""}
                                 </button>
                             </div>
+                            <p className="text-xs opacity-40 mt-1">{t("combat.freeShotHint")}</p>
                         </div>
 
                         {/* Defense section */}

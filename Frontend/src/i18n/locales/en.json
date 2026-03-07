@@ -1984,7 +1984,7 @@
       "specialAttacks": "Specials",
       "flee": "Try to flee",
       "freeShot": "Free shot",
-      "freeShotHint": "Hitting a weak point grants a free additional free shot roll.",
+      "freeShotHint": "Hitting a weak point grants an additional damage roll at no cost.",
       "endTurn": "End turn",
       "rollInitiative": "Roll Initiative",
       "joinBattle": "Join the battle",
