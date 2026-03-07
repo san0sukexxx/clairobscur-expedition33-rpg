@@ -63,7 +63,7 @@ export const StoryEncountersList: StoryEncounter[] = [
         name: "storyEncounters.spring-meadows-chromatic-lancelier",
         locationId: "spring-meadows",
         npcs: [{ npcId: "chromatic-lancelier", quantity: 1 }],
-        rewards: [],
+        rewards: [{ rewardType: "picto", itemId: "augmented-attack", level: 1 }],
         bonusXp: 0,
     },
 ];
