@@ -133,6 +133,7 @@ export default function CombatAdmin({
     const [sortColumn, setSortColumn] = useState<"name" | "difficulty" | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
     const [battleRewards, setBattleRewards] = useState<BattleReward[]>([]);
+    const [encounterBonusXp, setEncounterBonusXp] = useState(0);
     const [showGradientModal, setShowGradientModal] = useState(false);
     const [gradientCharges, setGradientCharges] = useState("");
     const [gradientCurrentCharges, setGradientCurrentCharges] = useState(0);
@@ -186,6 +187,7 @@ export default function CombatAdmin({
 
         try {
             const encounter = await APIEncounter.getById(encounterId);
+            setEncounterBonusXp(encounter.bonusXp ?? 0);
             return encounter.rewards.map(r => ({
                 type: r.rewardType as BattleReward["type"],
                 itemId: r.itemId,
@@ -231,11 +233,12 @@ export default function CombatAdmin({
     }, [battleStatus, battleDetails?.characters]);
 
     const totalBattleXp = useMemo(() => {
-        if (!battleDetails?.characters) return 0;
-        return battleDetails.characters
+        if (!battleDetails?.characters) return encounterBonusXp;
+        const npcXp = battleDetails.characters
             .filter(ch => ch.type === "npc")
             .reduce((sum, ch) => sum + crToXp(calculateNPCDifficulty(ch.id)), 0);
-    }, [battleDetails?.characters]);
+        return npcXp + encounterBonusXp;
+    }, [battleDetails?.characters, encounterBonusXp]);
 
     const reloadBattleDetails = useCallback(async (force?: boolean) => {
         if (!battleId) return
@@ -1210,8 +1213,8 @@ export default function CombatAdmin({
                                     );
                                 })}
 
-                                {/* Basic "Atacar" action */}
-                                {(() => {
+                                {/* Basic "Atacar" action — hidden if NPC has attackList without basic */}
+                                {(!npcInfo?.attackList?.length || npcInfo.attackList.some(a => a.type === "basic")) && (() => {
                                     const { numDice: basicNumDice, flatDmg: basicFlatDmg, avgDmg: basicAvgDmg } = calcDamage(1, strMod);
                                     return (
                                         <div className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
