@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { FaBars, FaExchangeAlt } from "react-icons/fa";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
@@ -95,6 +95,18 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
 
   const canRollInitiative = !!player?.fightInfo?.canRollInitiative && !isAttacking;
   const isFlipOnly = !isYourTurn && !isAttacking && !isSelectingSkillTarget && !canRollInitiative && !isExecutingSkill;
+
+  // Blink the menu button when it's the player's turn until first click
+  const [hasOpenedThisTurn, setHasOpenedThisTurn] = useState(false);
+  const prevIsYourTurn = useRef(isYourTurn);
+  useEffect(() => {
+    if (isYourTurn && !prevIsYourTurn.current) {
+      setHasOpenedThisTurn(false);
+    }
+    prevIsYourTurn.current = isYourTurn;
+  }, [isYourTurn]);
+
+  const shouldBlink = isYourTurn && !hasOpenedThisTurn && !isFlipOnly && !isExecutingSkill;
 
   function handleFlipTab() {
     if (tab == opositeTeamTab) {
@@ -205,8 +217,8 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
 
       {/* Botão principal */}
       <button
-        className={`btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
-        onClick={isFlipOnly ? handleFlipTab : () => setOpen((prev) => !prev)}
+        className={`btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""} ${shouldBlink ? "animate-combat-menu-blink" : ""}`}
+        onClick={isFlipOnly ? handleFlipTab : () => { setHasOpenedThisTurn(true); setOpen((prev) => !prev); }}
         disabled={isExecutingSkill}
       >
         {isFlipOnly ? <FaExchangeAlt size={18} /> : <FaBars size={20} />}
