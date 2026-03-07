@@ -2874,7 +2874,7 @@
       "monoco-aberration-light": {
         "name": "Aberration Light",
         "description": "Aberration light attack. Effect: Deals high Light damage to all enemies. 2 hits. Applies 4 Burns per hit. Agile Mask: Applies 2 additional Burns per hit. Costs 7 MP. Using this skill advances the Bestial Wheel Pointer by 4 positions.",
-        "prerequisite": "Defeat and acquire the foot of an Aberration enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of an Aberração enemy while Monoco is in the active group."
       },
       "monoco-ballet-charm": {
         "name": "Ballet Charm",
@@ -2884,7 +2884,7 @@
       "monoco-benisseur-mortar": {
         "name": "Benisseur Mortar",
         "description": "Mortar bombardment attack. Effect: Deals medium Ice damage to a single target. 3 hits. Changes to Omnipotent Mask if the target is Marked. Conjurer Mask: Increased damage.",
-        "prerequisite": "Defeat and acquire the foot of a Bénisseur enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of a Benisseur enemy while Monoco is in the active group."
       },
       "monoco-boucheclier-fortify": {
         "name": "Boucheclier Fortify",
@@ -2904,7 +2904,7 @@
       "monoco-bruler-bash": {
         "name": "Bruler Bash",
         "description": "Burning bash attack. Effect: Deals medium Physical damage to a single target. 3 hits. Can cause Break. Increased damage when Conjurer Mask is active. Advances the Bestial Wheel Pointer by 4 positions.",
-        "prerequisite": "Defeat and acquire the foot of a Bruler enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of a Brûler enemy while Monoco is in the active group."
       },
       "monoco-chalier-combo": {
         "name": "Chalier Combo",
@@ -2939,17 +2939,17 @@
       "monoco-contorsionniste-blast": {
         "name": "Contorsionniste Blast",
         "description": "Contortionist explosive blast. Effect: Deals medium Physical damage to all enemies. 1 hit. Heals all allies by 1d6 HP for each enemy hit. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask.",
-        "prerequisite": "Defeat and acquire the foot of a Contorsionniste enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of a Contortionniste enemy while Monoco is in the active group."
       },
       "monoco-creation-void": {
         "name": "Creation Void",
         "description": "Creates void energy. Effect: Deals extreme Void damage to random targets. 3 hits. Increased damage if the same target is hit multiple times. Receives damage increase when used while the Bestial Wheel Pointer aligns with Conjurer Mask or Omnipotent Mask.",
-        "prerequisite": "Defeat and acquire the foot of a Création enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of a Creation enemy while Monoco is in the active group."
       },
       "monoco-cruler-barrier": {
         "name": "Cruler Barrier",
         "description": "Protective barrier skill. Effect: Applies 1-2 Shields to the target. Heavy Mask: Grants 2 MP to the target. Using this skill advances the Bestial Wheel Pointer by 4 positions. When activated while the pointer is on Heavy Mask or Omnipotent Mask, grants 2 additional MP to the target.",
-        "prerequisite": "Defeat and acquire the foot of a Cruler enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of a Crûler enemy while Monoco is in the active group."
       },
       "monoco-cultist-blood": {
         "name": "Cultist Blood",
@@ -2969,7 +2969,7 @@
       "monoco-demineur-thunder": {
         "name": "Demineur Thunder",
         "description": "Thunder-based explosive attack. Effect: Deals low Lightning damage to a single target. 1 hit. Deals extra Break damage. Break damage bonus increased when Conjurer Mask is active. Using this skill advances the Bestial Wheel Pointer by 5 positions.",
-        "prerequisite": "Defeat and acquire the foot of a Demineur enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of a Démineur enemy while Monoco is in the active group."
       },
       "monoco-duallist-storm": {
         "name": "Duallist Storm",
@@ -3044,12 +3044,12 @@
       "monoco-pelerin-heal": {
         "name": "Pelerin Heal",
         "description": "Pilgrim's healing skill. Effect: Applies Regeneration to all allies. Conjurer Mask: also heals Resistance +2d6 HP. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, the team receives additional healing.",
-        "prerequisite": "Defeat and acquire the foot of a Pelerin enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of a Pèlerin enemy while Monoco is in the active group."
       },
       "monoco-portier-crash": {
         "name": "Portier Crash",
         "description": "Door-breaking crash attack. Effect: Deals high Physical damage to all enemies. 1 hit. Can cause Break. Heavy Mask: Increased damage.",
-        "prerequisite": "Defeat and acquire the foot of a Portier enemy while Monoco is in the active group."
+        "prerequisite": "Defeat and acquire the foot of a Porteiro enemy while Monoco is in the active group."
       },
       "monoco-potier-energy": {
         "name": "Potier Energy",
@@ -3098,7 +3098,8 @@
       },
       "monoco-stalact-punches": {
         "name": "Stalact Punches",
-        "description": "Stalactite-like punching attacks. Effect: Deals medium Ice damage to a single target. 4 hits. High Break damage. Heavy Mask or Omnipotent: Increased damage. Bestial Wheel: +4 positions."
+        "description": "Stalactite-like punching attacks. Effect: Deals medium Ice damage to a single target. 4 hits. High Break damage. Heavy Mask or Omnipotent: Increased damage. Bestial Wheel: +4 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Stalact enemy while Monoco is in the active group."
       },
       "monoco-troubadour-trumpet": {
         "name": "Troubadour Trumpet",

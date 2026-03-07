@@ -2874,7 +2874,7 @@
       "monoco-aberration-light": {
         "name": "Luz da Aberração",
         "description": "Ataque de luz da aberração. Efeito: Causa dano de Luz alto em todos os inimigos. 2 ataques. Aplica 4 Queimaduras por ataque. Máscara Ágil: Aplica 2 Queimaduras adicionais por ataque. Custa 7 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Aberration enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Aberração enquanto Monoco estiver no grupo ativo."
       },
       "monoco-ballet-charm": {
         "name": "Encanto do Balé",
@@ -2884,7 +2884,7 @@
       "monoco-benisseur-mortar": {
         "name": "Morteiro do Benfeitor",
         "description": "Ataque de bombardeio de morteiro. Efeito: Causa dano de Gelo médio em alvo único. 3 ataques. Muda para Máscara Onipotente se o alvo estiver Marcado. Máscara de Conjurador: Dano aumentado.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Bénisseur enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Benisseur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-boucheclier-fortify": {
         "name": "Fortificação Boucheclier",
@@ -2904,7 +2904,7 @@
       "monoco-bruler-bash": {
         "name": "Pancada Bruler",
         "description": "Ataque flamejante. Efeito: Causa dano Físico médio em alvo único. 3 ataques. Pode causar quebra. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Bruler enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Brûler enquanto Monoco estiver no grupo ativo."
       },
       "monoco-chalier-combo": {
         "name": "Combo Chalier",
@@ -2939,17 +2939,17 @@
       "monoco-contorsionniste-blast": {
         "name": "Explosão Contorsionista",
         "description": "Explosão explosiva contorcionista. Efeito: Causa dano Físico médio em todos os inimigos. 1 ataque. Cura todos os aliados em 1d6 de Vida para cada inimigo atingido. Dano aumentado quando o Ponteiro da Roda Bestial está posicionado em Máscara Equilibrada ou Máscara Onipotente.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Contorsionniste enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Contortionniste enquanto Monoco estiver no grupo ativo."
       },
       "monoco-creation-void": {
         "name": "Criação do Vazio",
         "description": "Cria energia do vazio. Efeito: Causa dano de Vazio extremo em alvos aleatórios. 3 ataques. Dano aumentado se o mesmo alvo for atingido múltiplas vezes. Recebe aumento de dano quando utilizado enquanto o Ponteiro da Roda Bestial se alinha com Máscara de Conjurador ou Máscara Onipotente.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Création enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Creation enquanto Monoco estiver no grupo ativo."
       },
       "monoco-cruler-barrier": {
         "name": "Barreira Cruler",
         "description": "Habilidade de barreira protetora. Efeito: Aplica 1-2 Escudos no alvo. Máscara Pesada: Concede 2 PM ao alvo. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições. Quando ativado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 2 PM adicionais ao alvo.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Cruler enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Crûler enquanto Monoco estiver no grupo ativo."
       },
       "monoco-cultist-blood": {
         "name": "Sangue Cultista",
@@ -2969,7 +2969,7 @@
       "monoco-demineur-thunder": {
         "name": "Trovão Demineur",
         "description": "Ataque explosivo baseado em trovão. Efeito: Causa dano de Raio baixo em alvo único. 1 ataque. Causa dano de Break extra. Bônus de dano de Break aumentado quando a Máscara de Conjurador está ativa. Usar esta habilidade avança o Ponteiro da Roda Bestial em 5 posições.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Demineur enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Démineur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-duallist-storm": {
         "name": "Tempestade do Duelista",
@@ -3044,12 +3044,12 @@
       "monoco-pelerin-heal": {
         "name": "Cura do Peregrino",
         "description": "Habilidade de cura do peregrino. Efeito: Aplica Regeneração em todos os aliados. Máscara de Conjurador: também cura Resistência +2d6 de Vida. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições. Quando o ponteiro está em Máscara de Conjurador ou Máscara Onipotente, o time recebe cura adicional.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Pelerin enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Pèlerin enquanto Monoco estiver no grupo ativo."
       },
       "monoco-portier-crash": {
         "name": "Colisão Portier",
         "description": "Ataque de colisão que quebra portas. Efeito: Causa dano Físico alto em todos os inimigos. 1 ataque. Pode causar quebra. Máscara Pesada: Dano aumentado.",
-        "prerequisite": "Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Porteiro enquanto Monoco estiver no grupo ativo."
       },
       "monoco-potier-energy": {
         "name": "Energia do Oleiro",
@@ -3079,7 +3079,7 @@
       "monoco-sakapatate-fire": {
         "name": "Fogo Sakapatate",
         "description": "Ataque baseado em fogo. Efeito: Causa dano de Fogo extremo em todos os inimigos. 3 ataques. Aplica 3 Queimaduras por ataque (9 total possível). Máscara Onipotente: Dano aumentado. Roda Bestial: +1 posição. Combo ótimo: Sakapatate Fire → Sapling Absorption → skill intermediária → Sakapatate Fire.",
-        "prerequisite": "Derrote e adquira o pé do inimigo Ultimate Sakapatate enquanto Monoco estiver no grupo ativo."
+        "prerequisite": "Derrote e adquira o pé de um inimigo Ultimate Sakapatate enquanto Monoco estiver no grupo ativo."
       },
       "monoco-sakapatate-slam": {
         "name": "Sakapatate Slam",
@@ -3098,7 +3098,8 @@
       },
       "monoco-stalact-punches": {
         "name": "Socos Stalact",
-        "description": "Ataques de socos como estalactites. Efeito: Causa dano de Gelo médio em alvo único. 4 ataques. Alto dano de Break. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +4 posições."
+        "description": "Ataques de socos como estalactites. Efeito: Causa dano de Gelo médio em alvo único. 4 ataques. Alto dano de Break. Máscara Pesada ou Onipotente: Dano aumentado. Roda Bestial: +4 posições.",
+        "prerequisite": "Derrote e adquira o pé de um inimigo Stalact enquanto Monoco estiver no grupo ativo."
       },
       "monoco-troubadour-trumpet": {
         "name": "Trombeta do Trovador",
