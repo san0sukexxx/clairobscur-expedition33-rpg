@@ -52,7 +52,8 @@ export interface AddBattleCharacterRequest {
     rankProgress?: number | null
     bestialWheelPosition?: number | null
     initiative?: AddBattleCharacterInitiativeData,
-    canRollInitiative: boolean
+    canRollInitiative: boolean,
+    freeShotWeakPoints?: number
 }
 
 export interface AddBattleCharacterInitiativeData {
@@ -276,6 +277,13 @@ export class APIBattle {
         await api.put<{ newChargePoints: number }, void>(
             `battles/characters/${id}/charge-points`,
             { newChargePoints }
+        )
+    }
+
+    static async updateWeakPoints(id: number, newWeakPoints: number): Promise<void> {
+        await api.put<{ newWeakPoints: number }, void>(
+            `battles/characters/${id}/weak-points`,
+            { newWeakPoints }
         )
     }
 

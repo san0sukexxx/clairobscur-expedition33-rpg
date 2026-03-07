@@ -74,6 +74,7 @@ export interface BattleCharacterInfo {
     parriesThisTurn?: number;
     hitsTakenThisTurn?: number;
     foretellConsumedTotal?: number;
+    freeShotWeakPoints?: number;
 }
 
 export type RewardType = "weapon" | "picto";

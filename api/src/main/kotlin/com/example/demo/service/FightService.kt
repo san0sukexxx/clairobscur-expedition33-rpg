@@ -93,7 +93,8 @@ class FightService(
                                         canRollInitiative = bc.canRollInitiative,
                                         parriesThisTurn = bc.parriesThisTurn,
                                         hitsTakenThisTurn = bc.hitsTakenThisTurn,
-                                        foretellConsumedTotal = bc.foretellConsumedTotal
+                                        foretellConsumedTotal = bc.foretellConsumedTotal,
+                                        freeShotWeakPoints = bc.freeShotWeakPoints
                                 )
                         }
 

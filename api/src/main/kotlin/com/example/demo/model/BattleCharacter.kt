@@ -34,5 +34,7 @@ data class BattleCharacter(
         @Column(name = "hits_taken_this_turn", nullable = false)
         var hitsTakenThisTurn: Int = 0,  // Tracks attacks that dealt damage since last turn (for Revenge skill)
         @Column(name = "foretell_consumed_total", nullable = false)
-        var foretellConsumedTotal: Int = 0  // Total Foretell consumed since battle start (for End Slice)
+        var foretellConsumedTotal: Int = 0,  // Total Foretell consumed since battle start (for End Slice)
+        @Column(name = "free_shot_weak_points", nullable = false)
+        var freeShotWeakPoints: Int = 0
 )

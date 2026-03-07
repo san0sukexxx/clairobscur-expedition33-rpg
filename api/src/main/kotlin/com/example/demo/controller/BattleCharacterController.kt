@@ -191,6 +191,16 @@ class BattleCharacterController(private val service: BattleCharacterService) {
         return ResponseEntity.ok(ap)
     }
 
+    @PutMapping("/characters/{id}/weak-points")
+    fun updateWeakPoints(
+            @PathVariable id: Int,
+            @RequestBody body: Map<String, Int>
+    ): ResponseEntity<Void> {
+        val newWeakPoints = body["newWeakPoints"] ?: return ResponseEntity.badRequest().build()
+        service.updateFreeShotWeakPoints(id, newWeakPoints)
+        return ResponseEntity.noContent().build()
+    }
+
     @PutMapping("/characters/{id}/bestial-wheel-position")
     fun updateBestialWheelPosition(
             @PathVariable id: Int,

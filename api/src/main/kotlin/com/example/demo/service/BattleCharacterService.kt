@@ -60,7 +60,8 @@ class BattleCharacterService(
                                 perfectionRank = request.perfectionRank,
                                 rankProgress = request.rankProgress,
                                 bestialWheelPosition = request.bestialWheelPosition ?: 0,
-                                canRollInitiative = request.canRollInitiative
+                                canRollInitiative = request.canRollInitiative,
+                                freeShotWeakPoints = request.freeShotWeakPoints
                         )
 
                 val savedCharacter = repository.save(entity)
@@ -612,6 +613,22 @@ class BattleCharacterService(
 
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "BESTIAL_WHEEL_CHANGED", eventJson = """{"characterId":${entity.id},"position":${entity.bestialWheelPosition}}""")
+                )
+        }
+
+        @Transactional
+        fun updateFreeShotWeakPoints(id: Int, newWeakPoints: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+                entity.freeShotWeakPoints = newWeakPoints.coerceAtLeast(0)
+                repository.save(entity)
+
+                val battleId = entity.battleId
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "WEAK_POINTS_CHANGED", eventJson = """{"characterId":${entity.id},"weakPoints":${entity.freeShotWeakPoints}}""")
                 )
         }
 

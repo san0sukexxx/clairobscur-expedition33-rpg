@@ -5,7 +5,7 @@ import { APIEncounter, type EncounterResponse } from "../api/APIEncounter"
 import { APIPicto } from "../api/APIPicto"
 import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp, FaCheck } from "react-icons/fa"
-import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt, FaUndo } from "react-icons/fa";
+import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt, FaUndo, FaMinus, FaPlus } from "react-icons/fa";
 import { FaArrowsDownToLine, FaArrowDown } from "react-icons/fa6";
 import { getCharacterLabelById, applyNpcNameSuffixes } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
@@ -798,7 +798,8 @@ export default function CombatAdmin({
                         healthPoints: getNPCMaxHealth(npcInfo),
                         maxHealthPoints: getNPCMaxHealth(npcInfo),
                         initiative,
-                        canRollInitiative: false
+                        canRollInitiative: false,
+                        freeShotWeakPoints: npcInfo.freeShotWeakPoints ?? 0
                     });
                 }
             }
@@ -845,7 +846,8 @@ export default function CombatAdmin({
                         healthPoints: getNPCMaxHealth(npcInfo),
                         maxHealthPoints: getNPCMaxHealth(npcInfo),
                         initiative,
-                        canRollInitiative: false
+                        canRollInitiative: false,
+                        freeShotWeakPoints: npcInfo.freeShotWeakPoints ?? 0
                     });
                 }
             }
@@ -1123,7 +1125,7 @@ export default function CombatAdmin({
                         const hasElementalInfo = npcInfo.weakTo || npcInfo.resistentTo || npcInfo.imuneTo || npcInfo.absorbElement;
                         const hasDndExtras = (npcInfo.damageVulnerabilities?.length ?? 0) > 0 || (npcInfo.damageImmunities?.length ?? 0) > 0 || (npcInfo.conditionImmunities?.length ?? 0) > 0;
                         const hasChallenge = npcInfo.challengeRating || npcInfo.proficiencyBonus;
-                        const hasProperties = npcInfo.isFlying || npcInfo.playFirst || npcInfo.freeShotWeakPoints || npcInfo.initiativeBonus || npcInfo.maxLifeBonus;
+                        const hasProperties = npcInfo.isFlying || npcInfo.playFirst || (currentNpc?.freeShotWeakPoints ?? 0) > 0 || npcInfo.initiativeBonus || npcInfo.maxLifeBonus;
 
                         return (
                             <div className="bg-base-300/50 rounded-lg text-sm">
@@ -1183,11 +1185,13 @@ export default function CombatAdmin({
                         </div>
                     )}
 
-                    {npcInfo && (npcInfo.isFlying || npcInfo.playFirst || (npcInfo.freeShotWeakPoints != null && npcInfo.freeShotWeakPoints > 0) || (npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0) || (npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0)) && (
-                        <div className="flex flex-wrap gap-1">
+                    {npcInfo && (npcInfo.isFlying || npcInfo.playFirst || (currentNpc?.freeShotWeakPoints != null && currentNpc.freeShotWeakPoints > 0) || (npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0) || (npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0)) && (
+                        <div className="flex flex-wrap gap-1 items-center">
                             {npcInfo.isFlying && <span className="badge badge-xs badge-info">{t("combatAdmin.npcDetails.flying")}</span>}
                             {npcInfo.playFirst && <span className="badge badge-xs badge-warning">{t("combatAdmin.npcDetails.playFirst")}</span>}
-                            {npcInfo.freeShotWeakPoints != null && npcInfo.freeShotWeakPoints > 0 && <span className="badge badge-xs badge-success">{t("combatAdmin.npcDetails.weakPoints")}: {npcInfo.freeShotWeakPoints}</span>}
+                            {currentNpc?.freeShotWeakPoints != null && currentNpc.freeShotWeakPoints > 0 && (
+                                <span className="badge badge-xs badge-success">{t("combatAdmin.npcDetails.weakPoints")}: {currentNpc.freeShotWeakPoints}</span>
+                            )}
                             {npcInfo.initiativeBonus != null && npcInfo.initiativeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.initBonus")}: {npcInfo.initiativeBonus >= 0 ? "+" : ""}{npcInfo.initiativeBonus}</span>}
                             {npcInfo.maxLifeBonus != null && npcInfo.maxLifeBonus !== 0 && <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.maxHpBonus")}: {npcInfo.maxLifeBonus >= 0 ? "+" : ""}{npcInfo.maxLifeBonus}</span>}
                         </div>
@@ -1783,6 +1787,7 @@ export default function CombatAdmin({
                                         {m.type === "npc" && (() => {
                                             const isExpanded = expandedNpcRowId === m.rowId;
                                             const npc = getNpcById(m.characterId ?? "");
+                                            const battleChar = battleDetails?.characters.find(c => c.battleID === m.rowId);
                                             if (!npc) return null;
                                             const strMod = getAbilityModifier(npc.strength);
                                             const dexMod = getAbilityModifier(npc.dexterity);
@@ -1836,7 +1841,8 @@ export default function CombatAdmin({
                                             const hasElementalInfo = npc.weakTo || npc.resistentTo || npc.imuneTo || npc.absorbElement;
                                             const hasDndExtras = (npc.damageVulnerabilities?.length ?? 0) > 0 || (npc.damageImmunities?.length ?? 0) > 0 || (npc.conditionImmunities?.length ?? 0) > 0;
                                             const hasChallenge = npc.challengeRating || npc.proficiencyBonus;
-                                            const hasProperties = npc.isFlying || npc.playFirst || npc.freeShotWeakPoints || npc.initiativeBonus || npc.maxLifeBonus;
+                                            const currentWeakPoints = battleChar?.freeShotWeakPoints ?? 0;
+                                            const hasProperties = npc.isFlying || npc.playFirst || currentWeakPoints > 0 || npc.initiativeBonus || npc.maxLifeBonus;
 
                                             return (
                                                 <div
@@ -1929,12 +1935,9 @@ export default function CombatAdmin({
 
                                                     {/* Properties */}
                                                     {hasProperties && (
-                                                        <div className="flex flex-wrap gap-1">
+                                                        <div className="flex flex-wrap gap-1 items-center">
                                                             {npc.isFlying && <span className="badge badge-xs badge-info">{t("combatAdmin.npcDetails.flying")}</span>}
                                                             {npc.playFirst && <span className="badge badge-xs badge-warning">{t("combatAdmin.npcDetails.playFirst")}</span>}
-                                                            {npc.freeShotWeakPoints != null && npc.freeShotWeakPoints > 0 && (
-                                                                <span className="badge badge-xs badge-success">{t("combatAdmin.npcDetails.weakPoints")}: {npc.freeShotWeakPoints}</span>
-                                                            )}
                                                             {npc.initiativeBonus != null && npc.initiativeBonus !== 0 && (
                                                                 <span className="badge badge-xs badge-ghost">{t("combatAdmin.npcDetails.initBonus")}: {npc.initiativeBonus >= 0 ? "+" : ""}{npc.initiativeBonus}</span>
                                                             )}
@@ -1943,6 +1946,33 @@ export default function CombatAdmin({
                                                             )}
                                                         </div>
                                                     )}
+
+                                                    {/* Weak Points +/- */}
+                                                    <div className="flex items-center gap-2 text-xs">
+                                                        <span className="font-semibold opacity-70">{t("combatAdmin.npcDetails.weakPoints")}:</span>
+                                                        <button
+                                                            className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
+                                                            onClick={() => {
+                                                                if (m.rowId && currentWeakPoints > 0) {
+                                                                    APIBattle.updateWeakPoints(m.rowId, currentWeakPoints - 1).then(() => reloadBattleDetails());
+                                                                }
+                                                            }}
+                                                            disabled={currentWeakPoints <= 0}
+                                                        >
+                                                            <FaMinus size={8} />
+                                                        </button>
+                                                        <span className="font-mono font-bold">{currentWeakPoints}</span>
+                                                        <button
+                                                            className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
+                                                            onClick={() => {
+                                                                if (m.rowId) {
+                                                                    APIBattle.updateWeakPoints(m.rowId, currentWeakPoints + 1).then(() => reloadBattleDetails());
+                                                                }
+                                                            }}
+                                                        >
+                                                            <FaPlus size={8} />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 </div>
                                                 </div>

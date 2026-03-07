@@ -27,5 +27,6 @@ data class AddBattleCharacterRequest(
         val initiative: InitiativeData? = null,
         val canRollInitiative: Boolean = false,
         val actionPoints: Int? = null,
-        val maxActionPoints: Int? = null
+        val maxActionPoints: Int? = null,
+        val freeShotWeakPoints: Int = 0
 )
