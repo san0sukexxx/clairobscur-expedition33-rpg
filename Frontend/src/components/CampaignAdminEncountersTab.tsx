@@ -682,6 +682,11 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                         <div className="flex items-center justify-between">
                                             <span className="font-semibold text-sm">
                                                 {t(enc.name) || enc.id}
+                                                {enc.locationId && (
+                                                    <span className="ml-2 text-xs font-normal opacity-60">
+                                                        {getLocationName(enc.locationId)}
+                                                    </span>
+                                                )}
                                             </span>
                                             <div className="flex flex-wrap gap-2">
                                                 {enc.rewards.length > 0 ? (

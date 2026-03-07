@@ -30,7 +30,7 @@ export const StoryEncountersList: StoryEncounter[] = [
         id: "spring-meadows-portier",
         name: "storyEncounters.spring-meadows-portier",
         locationId: "spring-meadows",
-        npcs: [{ npcId: "chromatic-portier", quantity: 1 }],
+        npcs: [{ npcId: "portier", quantity: 1 }],
         rewards: [{ rewardType: "picto", itemId: "dodger", level: 1 }],
         bonusXp: 0,
     },

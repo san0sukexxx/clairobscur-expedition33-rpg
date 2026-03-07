@@ -2489,6 +2489,23 @@ export const NPCsList: NPCInfo[] = [
         ],
     },
     {
+        id: "portier",
+        name: "Portier",
+        strength:     18,
+        dexterity:    10,
+        constitution: 20,
+        intelligence:  8,
+        wisdom:       10,
+        charisma:      9,
+        freeShotWeakPoints: 2,
+        weakTo: "Ice",
+        armorClass: 17,
+        challengeRating: "4",
+        attackList: [
+            { type: "jump-all", name: "combatAdmin.npcAttacks.groundSlam", additionalDamage: 3, additionalDices: 1 },
+        ],
+    },
+    {
         id: "chromatic-portier",
         name: "Chromatic Portier",
         strength:     20,
