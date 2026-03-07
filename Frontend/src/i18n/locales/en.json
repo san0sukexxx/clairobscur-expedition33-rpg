@@ -2867,35 +2867,43 @@
       },
       "monoco-abbest-wind": {
         "name": "Abbest Wind",
-        "description": "Wind-based attack. Effect: Deals low Physical damage to a single target. 1 hit. Takes a second turn. Normally costs 2 MP, but when the Bestial Wheel Pointer is positioned on an Agile Mask or Omnipotent Mask, the cost reduces to 0 MP. Using this skill advances the Bestial Wheel Pointer by 2 positions."
+        "description": "Wind-based attack. Effect: Deals low Physical damage to a single target. 1 hit. Takes a second turn. Normally costs 2 MP, but when the Bestial Wheel Pointer is positioned on an Agile Mask or Omnipotent Mask, the cost reduces to 0 MP. Using this skill advances the Bestial Wheel Pointer by 2 positions.",
+        "prerequisite": "Defeat and acquire the foot of an Abbest enemy while Monoco is in the active group."
       },
       "monoco-aberration-light": {
         "name": "Aberration Light",
-        "description": "Aberration light attack. Effect: Deals high Light damage to all enemies. 2 hits. Applies 4 Burns per hit. Agile Mask: Applies 2 additional Burns per hit. Costs 7 MP. Using this skill advances the Bestial Wheel Pointer by 4 positions."
+        "description": "Aberration light attack. Effect: Deals high Light damage to all enemies. 2 hits. Applies 4 Burns per hit. Agile Mask: Applies 2 additional Burns per hit. Costs 7 MP. Using this skill advances the Bestial Wheel Pointer by 4 positions.",
+        "prerequisite": "Defeat and acquire the foot of an Aberration enemy while Monoco is in the active group."
       },
       "monoco-ballet-charm": {
         "name": "Ballet Charm",
-        "description": "Charming ballet-style attack. Effect: Deals low Light damage to a single target. 1 hit. Applies Vulnerable to the target for 3 turns. Increases damage when used with Conjurer Mask equipped. Using this skill advances the Bestial Wheel Pointer by 3 positions."
+        "description": "Charming ballet-style attack. Effect: Deals low Light damage to a single target. 1 hit. Applies Vulnerable to the target for 3 turns. Increases damage when used with Conjurer Mask equipped. Using this skill advances the Bestial Wheel Pointer by 3 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Ballet enemy while Monoco is in the active group."
       },
       "monoco-benisseur-mortar": {
         "name": "Benisseur Mortar",
-        "description": "Mortar bombardment attack. Effect: Deals medium Ice damage to a single target. 3 hits. Changes to Omnipotent Mask if the target is Marked. Conjurer Mask: Increased damage."
+        "description": "Mortar bombardment attack. Effect: Deals medium Ice damage to a single target. 3 hits. Changes to Omnipotent Mask if the target is Marked. Conjurer Mask: Increased damage.",
+        "prerequisite": "Defeat and acquire the foot of a Bénisseur enemy while Monoco is in the active group."
       },
       "monoco-boucheclier-fortify": {
         "name": "Boucheclier Fortify",
-        "description": "Shield fortification skill. Effect: Applies Shell to 1-3 allies for 3 turns. Heavy Mask: Also applies 1 Shield. Using this skill moves the Bestial Wheel Pointer by 5 positions. When the pointer is on Heavy Mask or Omnipotent Mask, grants 1 Shield to affected allies."
+        "description": "Shield fortification skill. Effect: Applies Shell to 1-3 allies for 3 turns. Heavy Mask: Also applies 1 Shield. Using this skill moves the Bestial Wheel Pointer by 5 positions. When the pointer is on Heavy Mask or Omnipotent Mask, grants 1 Shield to affected allies.",
+        "prerequisite": "Defeat and acquire the foot of a Boucheclier enemy while Monoco is in the active group."
       },
       "monoco-braseleur-smash": {
         "name": "Braseleur Smash",
-        "description": "Powerful smashing attack. Effect: Deals medium Fire damage to a single target and applies 3 Burns. 2 hits. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask. Using this skill advances the Bestial Wheel Pointer by 2 positions."
+        "description": "Powerful smashing attack. Effect: Deals medium Fire damage to a single target and applies 3 Burns. 2 hits. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask. Using this skill advances the Bestial Wheel Pointer by 2 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Braseleur enemy while Monoco is in the active group."
       },
       "monoco-break-point": {
         "name": "Break Point",
-        "description": "Critical break point attack. Effect: Deals extreme damage to a single target. 1 hit. Uses weapon element. Fills the target's Break Bar and causes Break. Gradient Skill (doesn't consume turn)."
+        "description": "Critical break point attack. Effect: Deals extreme damage to a single target. 1 hit. Uses weapon element. Fills the target's Break Bar and causes Break. Gradient Skill (doesn't consume turn).",
+        "prerequisite": "Reach Relationship Level 7 with Monoco."
       },
       "monoco-bruler-bash": {
         "name": "Bruler Bash",
-        "description": "Burning bash attack. Effect: Deals medium Physical damage to a single target. 3 hits. Can cause Break. Increased damage when Conjurer Mask is active. Advances the Bestial Wheel Pointer by 4 positions."
+        "description": "Burning bash attack. Effect: Deals medium Physical damage to a single target. 3 hits. Can cause Break. Increased damage when Conjurer Mask is active. Advances the Bestial Wheel Pointer by 4 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Bruler enemy while Monoco is in the active group."
       },
       "monoco-chalier-combo": {
         "name": "Chalier Combo",
@@ -2903,151 +2911,188 @@
       },
       "monoco-chapelier-slash": {
         "name": "Chapelier Slash",
-        "description": "Slashing attack. Effect: Deals high Physical damage to all enemies. 3 hits. Applies Mark. Moves the Bestial Wheel Pointer by 4 positions. Increased damage when used while the pointer is on Agile Mask or Omnipotent Mask."
+        "description": "Slashing attack. Effect: Deals high Physical damage to all enemies. 3 hits. Applies Mark. Moves the Bestial Wheel Pointer by 4 positions. Increased damage when used while the pointer is on Agile Mask or Omnipotent Mask.",
+        "prerequisite": "Defeat and acquire the foot of a Chapelier enemy while Monoco is in the active group."
       },
       "monoco-chevaliere-ice": {
         "name": "Chevaliere Ice",
-        "description": "Ice-based knight attack. Effect: Deals high Ice damage to all enemies. 3 hits. Applies Slow to targets for 3 turns. Balanced Mask modifier increases damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask."
+        "description": "Ice-based knight attack. Effect: Deals high Ice damage to all enemies. 3 hits. Applies Slow to targets for 3 turns. Balanced Mask modifier increases damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask.",
+        "prerequisite": "Defeat and acquire the foot of a Gold Chevalière enemy while Monoco is in the active group."
       },
       "monoco-chevaliere-piercing": {
         "name": "Chevaliere Piercing",
-        "description": "Piercing knight attack. Effect: Deals Physical damage to a single target piercing through Shields. 6 hits. Increased damage for each Shield on the target. Increased damage when used with Agile Mask equipped."
+        "description": "Piercing knight attack. Effect: Deals Physical damage to a single target piercing through Shields. 6 hits. Increased damage for each Shield on the target. Increased damage when used with Agile Mask equipped.",
+        "prerequisite": "Defeat and acquire the foot of a Ceramic Chevalière enemy while Monoco is in the active group."
       },
       "monoco-chevaliere-thrusts": {
         "name": "Chevaliere Thrusts",
-        "description": "Multiple thrusting attacks. Effect: Deals high Physical damage to all enemies. 3 hits. Critical hits deal double damage. Heavy Mask: Increased damage."
+        "description": "Multiple thrusting attacks. Effect: Deals high Physical damage to all enemies. 3 hits. Critical hits deal double damage. Heavy Mask: Increased damage.",
+        "prerequisite": "Defeat and acquire the foot of a Steel Chevalière enemy while Monoco is in the active group."
       },
       "monoco-clair-enfeeble": {
         "name": "Clair Enfeeble",
-        "description": "Enfeebling light attack. Effect: Deals medium Light damage to all enemies. 1 hit. Applies Vulnerable for 3 turns. Using while the Bestial Wheel Pointer is on Balanced Mask or Omnipotent Mask increases damage."
+        "description": "Enfeebling light attack. Effect: Deals medium Light damage to all enemies. 1 hit. Applies Vulnerable for 3 turns. Using while the Bestial Wheel Pointer is on Balanced Mask or Omnipotent Mask increases damage.",
+        "prerequisite": "Defeat and acquire the foot of a Clair enemy while Monoco is in the active group."
       },
       "monoco-contorsionniste-blast": {
         "name": "Contorsionniste Blast",
-        "description": "Contortionist explosive blast. Effect: Deals medium Physical damage to all enemies. 1 hit. Heals all allies by 1d6 HP for each enemy hit. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask."
+        "description": "Contortionist explosive blast. Effect: Deals medium Physical damage to all enemies. 1 hit. Heals all allies by 1d6 HP for each enemy hit. Increased damage when the Bestial Wheel Pointer is positioned on Balanced Mask or Omnipotent Mask.",
+        "prerequisite": "Defeat and acquire the foot of a Contorsionniste enemy while Monoco is in the active group."
       },
       "monoco-creation-void": {
         "name": "Creation Void",
-        "description": "Creates void energy. Effect: Deals extreme Void damage to random targets. 3 hits. Increased damage if the same target is hit multiple times. Receives damage increase when used while the Bestial Wheel Pointer aligns with Conjurer Mask or Omnipotent Mask."
+        "description": "Creates void energy. Effect: Deals extreme Void damage to random targets. 3 hits. Increased damage if the same target is hit multiple times. Receives damage increase when used while the Bestial Wheel Pointer aligns with Conjurer Mask or Omnipotent Mask.",
+        "prerequisite": "Defeat and acquire the foot of a Création enemy while Monoco is in the active group."
       },
       "monoco-cruler-barrier": {
         "name": "Cruler Barrier",
-        "description": "Protective barrier skill. Effect: Applies 1-2 Shields to the target. Heavy Mask: Grants 2 MP to the target. Using this skill advances the Bestial Wheel Pointer by 4 positions. When activated while the pointer is on Heavy Mask or Omnipotent Mask, grants 2 additional MP to the target."
+        "description": "Protective barrier skill. Effect: Applies 1-2 Shields to the target. Heavy Mask: Grants 2 MP to the target. Using this skill advances the Bestial Wheel Pointer by 4 positions. When activated while the pointer is on Heavy Mask or Omnipotent Mask, grants 2 additional MP to the target.",
+        "prerequisite": "Defeat and acquire the foot of a Cruler enemy while Monoco is in the active group."
       },
       "monoco-cultist-blood": {
         "name": "Cultist Blood",
-        "description": "Blood-based cultist attack. Effect: Deals medium Darkness damage to all enemies. 3 hits. Sacrifices most HP to increase damage. Heavy Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 5 positions."
+        "description": "Blood-based cultist attack. Effect: Deals medium Darkness damage to all enemies. 3 hits. Sacrifices most HP to increase damage. Heavy Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 5 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Greatsword Cultist enemy while Monoco is in the active group."
       },
       "monoco-cultist-slashes": {
         "name": "Cultist Slashes",
-        "description": "Multiple cultist slashing attacks. Effect: Deals medium Darkness damage to a single target. 3 hits. Deals more damage the less HP Monoco has. Increased damage when the Bestial Wheel Pointer aligns with Agile Mask or Omnipotent Mask. Using this skill advances the Bestial Wheel Pointer by 3 positions."
+        "description": "Multiple cultist slashing attacks. Effect: Deals medium Darkness damage to a single target. 3 hits. Deals more damage the less HP Monoco has. Increased damage when the Bestial Wheel Pointer aligns with Agile Mask or Omnipotent Mask. Using this skill advances the Bestial Wheel Pointer by 3 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Reaper Cultist enemy while Monoco is in the active group."
       },
       "monoco-danseuse-waltz": {
         "name": "Danseuse Waltz",
-        "description": "Graceful waltzing attack. Effect: Deals high Fire damage to a single target. 3 hits. Deals more damage against Burning targets. Balanced Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 3 positions."
+        "description": "Graceful waltzing attack. Effect: Deals high Fire damage to a single target. 3 hits. Deals more damage against Burning targets. Balanced Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 3 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Danseuses enemy while Monoco is in the active group."
       },
       "monoco-demineur-thunder": {
         "name": "Demineur Thunder",
-        "description": "Thunder-based explosive attack. Effect: Deals low Lightning damage to a single target. 1 hit. Deals extra Break damage. Break damage bonus increased when Conjurer Mask is active. Using this skill advances the Bestial Wheel Pointer by 5 positions."
+        "description": "Thunder-based explosive attack. Effect: Deals low Lightning damage to a single target. 1 hit. Deals extra Break damage. Break damage bonus increased when Conjurer Mask is active. Using this skill advances the Bestial Wheel Pointer by 5 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Demineur enemy while Monoco is in the active group."
       },
       "monoco-duallist-storm": {
         "name": "Duallist Storm",
-        "description": "Dual-wielding storm attack. Effect: Deals extreme Physical damage to a single target. 4 hits. Can cause Break. Omnipotent Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 1 position."
+        "description": "Dual-wielding storm attack. Effect: Deals extreme Physical damage to a single target. 4 hits. Can cause Break. Omnipotent Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 1 position.",
+        "prerequisite": "Defeat and acquire the foot of a Dualliste enemy while Monoco is in the active group."
       },
       "monoco-echassier-stabs": {
         "name": "Echassier Stabs",
-        "description": "Multiple stabbing attacks. Effect: Deals medium Physical damage to a single target. 2 hits. The second hit applies Mark to the target. Agile Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 4 positions."
+        "description": "Multiple stabbing attacks. Effect: Deals medium Physical damage to a single target. 2 hits. The second hit applies Mark to the target. Agile Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 4 positions.",
+        "prerequisite": "Defeat and acquire the foot of an Échassier enemy while Monoco is in the active group."
       },
       "monoco-eveque-spear": {
         "name": "Eveque Spear",
-        "description": "Bishop's spear attack. Effect: Deals high Earth damage to a single target and applies Impotent for 3 turns. 1 hit. Increased damage when used with Heavy Mask modifier. Using this skill advances the Bestial Wheel Pointer by 3 positions."
+        "description": "Bishop's spear attack. Effect: Deals high Earth damage to a single target and applies Impotent for 3 turns. 1 hit. Increased damage when used with Heavy Mask modifier. Using this skill advances the Bestial Wheel Pointer by 3 positions.",
+        "prerequisite": "Defeat and acquire the foot of an Évêque enemy while Monoco is in the active group."
       },
       "monoco-gault-fury": {
         "name": "Gault Fury",
-        "description": "Furious rage attack. Effect: Deals low Physical damage to a single target. 4 hits. Applies Mark. Balanced Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 2 positions. When activated while the pointer is on Balanced Mask or Omnipotent Mask, damage increases."
+        "description": "Furious rage attack. Effect: Deals low Physical damage to a single target. 4 hits. Applies Mark. Balanced Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 2 positions. When activated while the pointer is on Balanced Mask or Omnipotent Mask, damage increases.",
+        "prerequisite": "Defeat and acquire the foot of a Gault enemy while Monoco is in the active group."
       },
       "monoco-glaise-earthquakes": {
         "name": "Glaise Earthquakes",
-        "description": "Earth-shaking earthquake attack. Effect: Deals medium Earth damage to all enemies. 3 hits. Applies Empowered to self. Heavy Mask: applies Empowered to all allies. Using this skill advances the Bestial Wheel Pointer by 6 positions."
+        "description": "Earth-shaking earthquake attack. Effect: Deals medium Earth damage to all enemies. 3 hits. Applies Empowered to self. Heavy Mask: applies Empowered to all allies. Using this skill advances the Bestial Wheel Pointer by 6 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Glaise enemy while Monoco is in the active group."
       },
       "monoco-hexga-crush": {
         "name": "Hexga Crush",
-        "description": "Crushing hex attack. Effect: Deals medium Earth damage to a single target. 2 hits. Applies Vulnerable to the target for 3 turns. Heavy Mask modifier increases damage. Requires 5 MP to cast and advances the Bestial Wheel Pointer by 6 positions. When used while the pointer is on Heavy Mask or Omnipotent Mask, the debuff duration increases to 5 turns."
+        "description": "Crushing hex attack. Effect: Deals medium Earth damage to a single target. 2 hits. Applies Vulnerable to the target for 3 turns. Heavy Mask modifier increases damage. Requires 5 MP to cast and advances the Bestial Wheel Pointer by 6 positions. When used while the pointer is on Heavy Mask or Omnipotent Mask, the debuff duration increases to 5 turns.",
+        "prerequisite": "Defeat and acquire the foot of a Hexga enemy while Monoco is in the active group."
       },
       "monoco-jar-lampstorm": {
         "name": "Jar Lampstorm",
-        "description": "Lamp jar storm attack. Effect: Deals medium Physical damage to all enemies. 4 hits. Heavy Mask: Increased damage."
+        "description": "Lamp jar storm attack. Effect: Deals medium Physical damage to all enemies. 4 hits. Heavy Mask: Increased damage.",
+        "prerequisite": "Defeat and acquire the foot of a Jar enemy while Monoco is in the active group."
       },
       "monoco-lampmaster-light": {
         "name": "Lampmaster Light",
-        "description": "Master lamp light attack. Effect: Deals high Light damage to all enemies. 1 hit. Increased damage with each use. Includes Omnipotent Mask enhancement that provides increased damage. Damage scales with each successive use, reaching maximum after five casts."
+        "description": "Master lamp light attack. Effect: Deals high Light damage to all enemies. 1 hit. Increased damage with each use. Includes Omnipotent Mask enhancement that provides increased damage. Damage scales with each successive use, reaching maximum after five casts.",
+        "prerequisite": "Defeat and acquire the foot of a Lampmaster enemy while Monoco is in the active group."
       },
       "monoco-lancelier-impale": {
         "name": "Lancelier Impale",
-        "description": "Impaling lance attack. Effect: Deals low Ice damage to a single target. 1 hit. Slows the target for 3 turns. Increased damage when used with Agile Mask enhancement active on the Bestial Wheel Pointer."
+        "description": "Impaling lance attack. Effect: Deals low Ice damage to a single target. 1 hit. Slows the target for 3 turns. Increased damage when used with Agile Mask enhancement active on the Bestial Wheel Pointer.",
+        "prerequisite": "Defeat and acquire the foot of a Lancelier enemy while Monoco is in the active group."
       },
       "monoco-luster-slices": {
         "name": "Luster Slices",
-        "description": "Lustrous slicing attacks. Effect: Deals low Physical damage to a single target. 3 hits. Applies Haste to self for 3 turns. Having Agile Mask or Omnipotent Mask active increases damage."
+        "description": "Lustrous slicing attacks. Effect: Deals low Physical damage to a single target. 3 hits. Applies Haste to self for 3 turns. Having Agile Mask or Omnipotent Mask active increases damage.",
+        "prerequisite": "Defeat and acquire the foot of a Luster enemy while Monoco is in the active group."
       },
       "monoco-mighty-strike": {
         "name": "Mighty Strike",
-        "description": "Powerful mighty strike. Effect: Deals high damage to a single target. 2 hits. Uses weapon element. Deals double damage if the target is Stunned. Goes to Omnipotent Mask.\nPrerequisite: Automatically unlocked upon learning the Gradient Attacks/Skills feature, which becomes available as you progress through the story."
+        "description": "Powerful mighty strike. Effect: Deals high damage to a single target. 2 hits. Uses weapon element. Deals double damage if the target is Stunned. Goes to Omnipotent Mask.",
+        "prerequisite": "Automatically unlocked upon learning the Gradient Attacks/Skills feature, which becomes available as you progress through the story."
       },
       "monoco-moissonneuse-vendange": {
         "name": "Moissonneuse Vendange",
-        "description": "Harvesting reaper attack. Effect: Deals high Physical damage to a single target. 3 hits. Can cause Break. Increased damage when Balanced Mask or Omnipotent Mask is active on the Bestial Wheel Pointer. Using this skill advances the pointer by 2 positions."
+        "description": "Harvesting reaper attack. Effect: Deals high Physical damage to a single target. 3 hits. Can cause Break. Increased damage when Balanced Mask or Omnipotent Mask is active on the Bestial Wheel Pointer. Using this skill advances the pointer by 2 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Moissoneusse enemy while Monoco is in the active group."
       },
       "monoco-obscur-sword": {
         "name": "Obscur Sword",
-        "description": "Dark shadow sword attack. Effect: Deals high Darkness damage to a single target. 5 hits. Deals more damage against Vulnerable targets. Heavy Mask: Increased damage."
+        "description": "Dark shadow sword attack. Effect: Deals high Darkness damage to a single target. 5 hits. Deals more damage against Vulnerable targets. Heavy Mask: Increased damage.",
+        "prerequisite": "Defeat and acquire the foot of an Obscur enemy while Monoco is in the active group."
       },
       "monoco-orphelin-cheers": {
         "name": "Orphelin Cheers",
-        "description": "Orphan's cheerful buff. Effect: Applies Empowered to 1-3 allies. Conjurer Mask: Also grants 3 MP to targets. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, affected allies receive tripled benefits."
+        "description": "Orphan's cheerful buff. Effect: Applies Empowered to 1-3 allies. Conjurer Mask: Also grants 3 MP to targets. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, affected allies receive tripled benefits.",
+        "prerequisite": "Defeat and acquire the foot of an Orphelin enemy while Monoco is in the active group."
       },
       "monoco-pelerin-heal": {
         "name": "Pelerin Heal",
-        "description": "Pilgrim's healing skill. Effect: Applies Regeneration to all allies. Conjurer Mask: also heals Resistance +2d6 HP. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, the team receives additional healing."
+        "description": "Pilgrim's healing skill. Effect: Applies Regeneration to all allies. Conjurer Mask: also heals Resistance +2d6 HP. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, the team receives additional healing.",
+        "prerequisite": "Defeat and acquire the foot of a Pelerin enemy while Monoco is in the active group."
       },
       "monoco-portier-crash": {
         "name": "Portier Crash",
-        "description": "Door-breaking crash attack. Effect: Deals high Physical damage to all enemies. 1 hit. Can cause Break. Heavy Mask: Increased damage."
+        "description": "Door-breaking crash attack. Effect: Deals high Physical damage to all enemies. 1 hit. Can cause Break. Heavy Mask: Increased damage.",
+        "prerequisite": "Defeat and acquire the foot of a Portier enemy while Monoco is in the active group."
       },
       "monoco-potier-energy": {
         "name": "Potier Energy",
-        "description": "Potter's energy skill. Effect: Grants 1-3 MP to all allies. With Conjurer Mask enhancement, provides 1 additional MP. Using this skill advances the Bestial Wheel Pointer by 6 positions. When activated on Conjurer Mask or Omnipotent Mask, allies receive an extra MP."
+        "description": "Potter's energy skill. Effect: Grants 1-3 MP to all allies. With Conjurer Mask enhancement, provides 1 additional MP. Using this skill advances the Bestial Wheel Pointer by 6 positions. When activated on Conjurer Mask or Omnipotent Mask, allies receive an extra MP.",
+        "prerequisite": "Defeat and acquire the foot of a Potier enemy while Monoco is in the active group."
       },
       "monoco-ramasseur-bonk": {
         "name": "Ramasseur Bonk",
-        "description": "Collector's bonking attack. Effect: Deals low Darkness damage to a single target. 1 hit. Can cause Break. Agile Mask effect adds +2 to Break damage. Moves the Bestial Wheel Pointer by 4 positions. When used while the pointer is on Agile Mask or Omnipotent Mask, adds +2 Break damage on hit."
+        "description": "Collector's bonking attack. Effect: Deals low Darkness damage to a single target. 1 hit. Can cause Break. Agile Mask effect adds +2 to Break damage. Moves the Bestial Wheel Pointer by 4 positions. When used while the pointer is on Agile Mask or Omnipotent Mask, adds +2 Break damage on hit.",
+        "prerequisite": "Defeat and acquire the foot of a Ramasseur enemy while Monoco is in the active group."
       },
       "monoco-rocher-hammering": {
         "name": "Rocher Hammering",
-        "description": "Rock hammering attack. Effect: Deals medium Physical damage to a single target. 4 hits. Can cause Break. Heavy Mask modifier provides increased damage. Advances the Bestial Wheel Pointer by 3 positions and gains enhanced damage when used on Heavy Mask or Omnipotent Mask."
+        "description": "Rock hammering attack. Effect: Deals medium Physical damage to a single target. 4 hits. Can cause Break. Heavy Mask modifier provides increased damage. Advances the Bestial Wheel Pointer by 3 positions and gains enhanced damage when used on Heavy Mask or Omnipotent Mask.",
+        "prerequisite": "Defeat and acquire the foot of a Rocher enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-estoc": {
         "name": "Sakapatate Estoc",
-        "description": "Estoc thrusting attack. Effect: Deals low Lightning damage to a single target. 1 hit. Deals more damage if the target is Stunned. Balanced Mask: Increased damage."
+        "description": "Estoc thrusting attack. Effect: Deals low Lightning damage to a single target. 1 hit. Deals more damage if the target is Stunned. Balanced Mask: Increased damage.",
+        "prerequisite": "Defeat and acquire the foot of a Ranger Sakapatate enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-explosion": {
         "name": "Sakapatate Explosion",
-        "description": "Explosive attack. Effect: Deals medium Lightning damage to random enemies. 3 hits. Critical hits trigger an additional hit. Conjurer Mask: Increased damage."
+        "description": "Explosive attack. Effect: Deals medium Lightning damage to random enemies. 3 hits. Critical hits trigger an additional hit. Conjurer Mask: Increased damage.",
+        "prerequisite": "Defeat and acquire the foot of a Catapult Sakapatate enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-fire": {
         "name": "Sakapatate Fire",
-        "description": "Fire-based attack. Effect: Deals extreme Fire damage to all enemies. 3 hits. Applies 3 Burns per hit (9 total possible). Omnipotent Mask: Increased damage. Bestial Wheel: +1 position. Optimal combo: Sakapatate Fire → Sapling Absorption → intermediate skill → Sakapatate Fire."
+        "description": "Fire-based attack. Effect: Deals extreme Fire damage to all enemies. 3 hits. Applies 3 Burns per hit (9 total possible). Omnipotent Mask: Increased damage. Bestial Wheel: +1 position. Optimal combo: Sakapatate Fire → Sapling Absorption → intermediate skill → Sakapatate Fire.",
+        "prerequisite": "Defeat and acquire the foot of an Ultimate Sakapatate enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-slam": {
         "name": "Sakapatate Slam",
-        "description": "Powerful slamming attack. Effect: Deals high Physical damage to all enemies. 1 hit. Increased damage against Marked targets. Heavy Mask or Omnipotent: Increased damage. Bestial Wheel: +5 positions."
+        "description": "Powerful slamming attack. Effect: Deals high Physical damage to all enemies. 1 hit. Increased damage against Marked targets. Heavy Mask or Omnipotent: Increased damage. Bestial Wheel: +5 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Robust Sakapatate enemy while Monoco is in the active group."
       },
       "monoco-sanctuary": {
         "name": "Sanctuary",
-        "description": "Creates protective sanctuary. Effect: Gradient Skill (2 charges). Grants 2 Shields and applies Regeneration to all allies for 3 turns. Doesn't consume turn."
+        "description": "Creates protective sanctuary. Effect: Gradient Skill (2 charges). Grants 2 Shields and applies Regeneration to all allies for 3 turns. Doesn't consume turn.",
+        "prerequisite": "Reach Relationship Level 4 with Monoco."
       },
       "monoco-sapling-absorption": {
         "name": "Sapling Absorption",
-        "description": "Absorbs energy like a sapling. Effect: Deals high Darkness damage. 3 hits. Recovers 1d6 HP per hit (2d6 on Conjurer Mask or Omnipotent). Bestial Wheel: +5 positions."
+        "description": "Absorbs energy like a sapling. Effect: Deals high Darkness damage. 3 hits. Recovers 1d6 HP per hit (2d6 on Conjurer Mask or Omnipotent). Bestial Wheel: +5 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Sapling enemy while Monoco is in the active group."
       },
       "monoco-stalact-punches": {
         "name": "Stalact Punches",
@@ -3055,7 +3100,8 @@
       },
       "monoco-troubadour-trumpet": {
         "name": "Troubadour Trumpet",
-        "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Shell, Shielded, Regeneration or Hastened). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions."
+        "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Shell, Shielded, Regeneration or Hastened). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions.",
+        "prerequisite": "Defeat and acquire the foot of a Troubadour enemy while Monoco is in the active group."
       }
     },
     "specialAttackPicker": {

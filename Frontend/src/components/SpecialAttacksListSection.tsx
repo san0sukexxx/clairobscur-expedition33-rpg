@@ -324,12 +324,24 @@ export default function SpecialAttacksListSection({ player, setPlayer, isAdmin, 
                                 </span>
                             </div>
 
-                            {disabled && (
-                                <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-warning">
-                                    <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
-                                    <span>{t("specialAttacksList.notUnlocked")}</span>
-                                </div>
-                            )}
+                            {disabled && (() => {
+                                const prereqKey = `specialAttacks.${specialAttack.id}.prerequisite`;
+                                const prereqText = t(prereqKey);
+                                const hasPrereq = prereqText !== prereqKey;
+                                return (
+                                    <>
+                                        <div className="mt-1 inline-flex items-center gap-1 rounded-md border border-warning/40 bg-warning/25 px-2 py-0.5 text-[11px] text-warning">
+                                            <FaInfoCircle className="h-3.5 w-3.5" aria-hidden />
+                                            <span>{t("specialAttacksList.notUnlocked")}</span>
+                                        </div>
+                                        {hasPrereq && (
+                                            <p className="mt-1 text-[11px] leading-tight text-base-content/50 italic">
+                                                {prereqText}
+                                            </p>
+                                        )}
+                                    </>
+                                );
+                            })()}
                         </div>
                     </div>
                 </button>
