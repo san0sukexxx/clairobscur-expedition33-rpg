@@ -50,10 +50,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
     const { weapon, details } = weaponInfo;
 
     const effectiveAbilityKey = useMemo(() => {
-        if (!activeSkillId) {
-            return getBasicAttackAttribute(player?.playerSheet?.characterId);
-        }
-        return undefined;
+        return activeSkillId
+            ? undefined // skill selecionada: usa atributo principal (INT/SAB)
+            : getBasicAttackAttribute(player?.playerSheet?.characterId); // ataque básico: FOR
     }, [activeSkillId, player?.playerSheet?.characterId]);
 
     const attackBonus = useMemo(() => {
