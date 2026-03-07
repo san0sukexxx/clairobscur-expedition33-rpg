@@ -2428,7 +2428,7 @@
         "description": "Restaura Vida igual a resistência +2d6 e remove todos os efeitos de status negativos. Concede 2 cargas."
       },
       "gustave-from-fire": {
-        "name": "Do Fogo",
+        "name": "Das Chamas",
         "description": "Causa dano médio em alvo único usando elemento da arma. 3 ataques. Se o alvo estiver Queimando, Gustave se cura igual à sua Resistência +1d6."
       },
       "gustave-shatter": {
@@ -2436,11 +2436,11 @@
         "description": "Causa dano de Raio alto em todos os inimigos. 1 ataque. Pode causar quebra. Se um alvo sofrer quebra pelo ataque, sobrecarga é totalmente carregado."
       },
       "gustave-strike-storm": {
-        "name": "Tempestade de Golpes",
+        "name": "Tempestade de Ataques",
         "description": "Causa dano muito alto em alvo único. 6 ataques. Usa elemento da arma. Acertos críticos geram 2 Cargas adicionais."
       },
       "lune-electrify": {
-        "name": "Eletrificar",
+        "name": "Eletrizar",
         "description": "Causa dano baixo de Raio a um único alvo. 3 ataques. Consome Mancha de Fogo para gerar uma Mancha de Luz. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 2 Manchas de Raio."
       },
       "lune-immolation": {
@@ -2452,19 +2452,19 @@
         "description": "Causa dano médio de Gelo a um único alvo e Desacelera o alvo. 1 ataque. Consome Mancha de Terra para receber +4 de bônus no ataque e causar +4 de dano adicional. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-earth-rising": {
-        "name": "Ascensão Terrestre",
+        "name": "Despertar Terrestre",
         "description": "Causa dano baixo de Terra a todos os inimigos. 1 ataque. Consome Mancha de Raio para receber +4 de bônus no ataque e causar +4 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-thermal-transfer": {
-        "name": "Transferência Térmica",
+        "name": "Transferência Terminal",
         "description": "Causa dano baixo de Gelo a um único alvo. 2 ataques. Ganha 4 PM se o alvo estiver Queimando. Consome 2 Manchas de Terra para jogar um segundo turno. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-thunderfall": {
-        "name": "Queda do Trovão",
+        "name": "Trovejar",
         "description": "Causa dano médio de Raio em inimigos aleatórios. 4 ataques. Consome Mancha de Fogo para receber +4 de bônus no ataque e causar +4 de dano adicional. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-wildfire": {
-        "name": "Fogo Selvagem",
+        "name": "Incêndio",
         "description": "Causa dano médio de Fogo a todos os inimigos. 1 ataque. Aplica 3 Queimaduras. Consome 2 Manchas de Gelo para receber +8 de bônus no ataque e causar +8 de dano adicional. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-mayhem": {
@@ -2480,15 +2480,15 @@
         "description": "Causa dano extremo a todos os inimigos. 8 ataques. Cada ataque causa dano em um elemento aleatório. Requer Mancha de Raio, Mancha de Terra, Mancha de Fogo e Mancha de Gelo para lançar."
       },
       "lune-crippling-tsunami": {
-        "name": "Tsunami Paralisante",
+        "name": "Tsunami Devastador",
         "description": "Causa dano médio de Gelo a todos os inimigos. 1 ataque. Aplica Desaceleração por 3 turnos. Consome Mancha de Terra, Mancha de Fogo e Mancha de Raio para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-rockslide": {
-        "name": "Deslizamento de Rochas",
+        "name": "Deslizamento",
         "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Pode causar quebra. Consome Mancha de Raio, Mancha de Gelo e Mancha de Fogo para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-crustal-crush": {
-        "name": "Esmagamento da Crosta",
+        "name": "Esmaga-Crosta",
         "description": "Causa dano alto de Terra e dano de Quebra a um único alvo. 5 ataques. Consome 2 Manchas de Raio para receber +8 de bônus no ataque e causar +8 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-healing-light": {
@@ -2496,11 +2496,11 @@
         "description": "Cura o aliado alvo e dissipa Efeitos de Status. Consome 2 Manchas de Terra para custar 0 PM. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-lightning-dance": {
-        "name": "Dança do Relâmpago",
+        "name": "Dança Eletrizante",
         "description": "Causa dano muito alto de Raio a um único alvo. 6 ataques. Consome Mancha de Terra, Mancha de Gelo e Mancha de Fogo para receber +12 de bônus no ataque e causar +12 de dano adicional. Acertos críticos adicionam um ataque extra. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-storm-caller": {
-        "name": "Invocador da Tempestade",
+        "name": "Astrape",
         "description": "Todos os inimigos recebem dano médio de Raio no começo do turno e dano baixo quando recebem dano. Duração: 3 turnos. Consome 2 Manchas de Fogo para dobrar os ataques de trovão no começo do turno. Usar esta habilidade concede 1 Mancha de Raio e 1 Mancha de Luz."
       },
       "lune-terraquake": {
@@ -2520,7 +2520,7 @@
         "description": "Teste de Inteligência CD 15: Sucesso = cura todos os aliados em Resistência +3d6, Falha = cura 1 aliado em Resistência +2d6. Consome 3 Manchas de Fogo para também aplicar Regeneração 2 por 3 turnos. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-fire-rage": {
-        "name": "Fúria Flamejante",
+        "name": "Fúria Fulgurante",
         "description": "Causa dano alto de Fogo crescente a todos os inimigos a cada turno até Lune receber dano. Consome 2 Manchas de Gelo para receber +8 de bônus no ataque e causar +8 de dano adicional. Usar esta habilidade concede 1 Mancha de Fogo e 1 Mancha de Luz."
       },
       "lune-hell": {
