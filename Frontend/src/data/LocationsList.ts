@@ -16,7 +16,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "spring-meadows",
-        residentNpcIds: ["jar", "gatekeeper", "lancer", "volester", "abbest", "mime", "chromatic-lancelier", "eveque", "portier"],
+        residentNpcIds: ["jar", "gatekeeper", "lancer", "volester", "abbest", "mime", "chromatic-lancelier", "eveque", "chromatic-portier"],
         loot: [
             { type: "weapon", itemId: "lanceram", level: 1 },
             { type: "weapon", itemId: "lighterim", level: 1 },
