@@ -697,11 +697,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                     <span className="badge badge-sm badge-ghost">
                                                         {enc.bonusXp} {t("encounters.bonusXpReward")}
                                                     </span>
-                                                ) : (
-                                                    <span className="badge badge-sm badge-ghost">
-                                                        0 {t("encounters.rewardCount")}
-                                                    </span>
-                                                )}
+                                                ) : null}
                                                 {encCR > 0 && (
                                                     <span className="badge badge-sm badge-ghost font-mono">
                                                         {t("encounters.challengeRating")} {formatCR(encCR)}
@@ -784,11 +780,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                     <span className="badge badge-sm badge-ghost">
                                                         {enc.bonusXp} {t("encounters.bonusXpReward")}
                                                     </span>
-                                                ) : (
-                                                    <span className="badge badge-sm badge-ghost">
-                                                        0 {t("encounters.rewardCount")}
-                                                    </span>
-                                                )}
+                                                ) : null}
                                                 {encCR > 0 && (
                                                     <span className="badge badge-sm badge-ghost font-mono">
                                                         {t("encounters.challengeRating")} {formatCR(encCR)}
