@@ -9,4 +9,11 @@ export interface StoryEncounter {
 }
 
 export const StoryEncountersList: StoryEncounter[] = [
+    {
+        id: "lumiere-mime",
+        locationId: "lumiere",
+        npcs: [{ npcId: "mime", quantity: 1 }],
+        rewards: [],
+        bonusXp: 50,
+    },
 ];
