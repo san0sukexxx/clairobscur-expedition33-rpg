@@ -641,19 +641,12 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                             {filteredStoryEncounters.map((enc) => {
                                 const encCR = calculateEncounterCR(enc.npcs);
                                 return (
-                                    <div key={enc.id} className="flex items-center gap-3 py-3 px-1 opacity-70">
-                                        <div className="flex flex-col min-w-0 flex-1">
+                                    <div key={enc.id} className="flex flex-col gap-2 rounded-lg border border-base-300 bg-base-200 p-3">
+                                        <div className="flex items-center justify-between">
                                             <span className="font-semibold text-sm">
                                                 {enc.locationId ? getLocationName(enc.locationId) : enc.id}
                                             </span>
-                                            <div className="text-xs opacity-60 mt-0.5">
-                                                {enc.npcs.map(n => {
-                                                    const npc = getNpcById(n.npcId);
-                                                    const name = npc?.name ?? n.npcId;
-                                                    return n.quantity > 1 ? `${name} x${n.quantity}` : name;
-                                                }).join(", ")}
-                                            </div>
-                                            <div className="flex flex-wrap gap-2 mt-1">
+                                            <div className="flex flex-wrap gap-2">
                                                 {enc.rewards.length > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
                                                         {enc.rewards.length} {t("encounters.rewardCount")}
@@ -673,6 +666,25 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                     </span>
                                                 )}
                                             </div>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {enc.npcs.map(n => {
+                                                const npc = getNpcById(n.npcId);
+                                                const name = npc?.name ?? n.npcId;
+                                                return (
+                                                    <div key={n.npcId} className="flex items-center gap-1.5 bg-base-100 rounded-full px-2 py-0.5 border border-base-300">
+                                                        <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
+                                                            <img
+                                                                src={`/enemies/${n.npcId}.png`}
+                                                                alt={name}
+                                                                className="w-full h-full object-cover"
+                                                                onError={(e) => handleNpcImgError(e, n.npcId)}
+                                                            />
+                                                        </div>
+                                                        <span className="text-xs">{n.quantity > 1 ? `${name} x${n.quantity}` : name}</span>
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 );
@@ -721,13 +733,6 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             <span className="font-semibold text-sm">
                                                 {enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`}
                                             </span>
-                                            <div className="text-xs opacity-60 mt-0.5">
-                                                {enc.npcs.map(n => {
-                                                    const npc = getNpcById(n.npcId);
-                                                    const name = npc?.name ?? n.npcId;
-                                                    return n.quantity > 1 ? `${name} x${n.quantity}` : name;
-                                                }).join(", ")}
-                                            </div>
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {enc.rewards.length > 0 ? (
                                                     <span className="badge badge-sm badge-ghost">
@@ -747,6 +752,25 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                         {t("encounters.challengeRating")} {formatCR(encCR)}
                                                     </span>
                                                 )}
+                                            </div>
+                                            <div className="flex flex-wrap gap-2 mt-1.5">
+                                                {enc.npcs.map(n => {
+                                                    const npc = getNpcById(n.npcId);
+                                                    const name = npc?.name ?? n.npcId;
+                                                    return (
+                                                        <div key={n.npcId} className="flex items-center gap-1.5 bg-base-200 rounded-full px-2 py-0.5 border border-base-300">
+                                                            <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
+                                                                <img
+                                                                    src={`/enemies/${n.npcId}.png`}
+                                                                    alt={name}
+                                                                    className="w-full h-full object-cover"
+                                                                    onError={(e) => handleNpcImgError(e, n.npcId)}
+                                                                />
+                                                            </div>
+                                                            <span className="text-xs">{n.quantity > 1 ? `${name} x${n.quantity}` : name}</span>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2 shrink-0">
