@@ -2371,6 +2371,7 @@
         "hit": "Acerto",
         "damageOfType": "de dano",
         "hits": "golpes",
+        "targetsAll": "Ataca todos os adversários.",
         "targetGains": "O alvo fica",
         "forTurns": "por {count} turno(s)"
       }

@@ -1180,6 +1180,7 @@ export default function CombatAdmin({
                                             <span>
                                                 <strong className="text-red-300">{"▸ "}{actionName}.</strong>{" "}
                                                 <span className="italic opacity-90">
+                                                    {atk.type === "jump-all" && <>{t("combatAdmin.actionDesc.targetsAll")} </>}
                                                     <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                     {" "}{t("combatAdmin.actionDesc.toHit")}
                                                     . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}

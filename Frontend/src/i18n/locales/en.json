@@ -2371,6 +2371,7 @@
         "hit": "Hit",
         "damageOfType": "damage",
         "hits": "hits",
+        "targetsAll": "Targets all enemies.",
         "targetGains": "The target gains",
         "forTurns": "for {count} turn(s)"
       }
