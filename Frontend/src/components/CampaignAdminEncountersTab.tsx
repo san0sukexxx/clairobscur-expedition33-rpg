@@ -769,7 +769,16 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
 
                                         <div className="flex flex-col min-w-0 flex-1">
                                             <span className="font-semibold text-sm">
-                                                {enc.name || (enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`)}
+                                                {enc.name ? (
+                                                    <>
+                                                        {enc.name}
+                                                        {enc.locationId && (
+                                                            <span className="ml-2 text-xs font-normal opacity-60">
+                                                                {getLocationName(enc.locationId)}
+                                                            </span>
+                                                        )}
+                                                    </>
+                                                ) : (enc.locationId ? getLocationName(enc.locationId) : `${t("encounters.title")} #${enc.id}`)}
                                             </span>
                                             <div className="flex flex-wrap gap-2 mt-1">
                                                 {enc.rewards.length > 0 ? (
