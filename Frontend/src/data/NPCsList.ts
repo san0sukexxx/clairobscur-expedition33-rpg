@@ -1,10 +1,12 @@
 import { type NPCInfo } from "../api/ResponseModel";
+import { t } from "../i18n";
 
-export const NPCsList: NPCInfo[] = [
+type NPCBaseData = Omit<NPCInfo, "name">;
+
+const NPCsBaseData: NPCBaseData[] = [
     // ── NPCs Especiais ──
     {
         id: "sophie",
-        name: "Sophie",
         strength:     10,
         dexterity:    12,
         constitution: 10,
@@ -14,7 +16,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "punch-bag",
-        name: "Saco de Pancada",
         strength:     16,
         dexterity:     6,
         constitution: 18,
@@ -24,7 +25,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "noco",
-        name: "Noco",
         strength:      8,
         dexterity:    10,
         constitution: 10,
@@ -34,7 +34,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "esquie",
-        name: "Esquie",
         strength:      9,
         dexterity:    14,
         constitution: 10,
@@ -44,7 +43,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "eesda",
-        name: "Eesda",
         strength:     15,
         dexterity:    12,
         constitution: 13,
@@ -59,7 +57,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "gestral-warrior",
-        name: "Guerreiro Gestral",
         strength:     16,
         dexterity:    11,
         constitution: 15,
@@ -75,7 +72,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "jerijeri",
-        name: "Jerijeri",
         strength:     12,
         dexterity:    16,
         constitution: 12,
@@ -92,7 +88,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "jujubree",
-        name: "Jujubree",
         strength:      9,
         dexterity:    15,
         constitution: 10,
@@ -109,7 +104,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "renoir",
-        name: "Renoir",
         strength:     10,
         dexterity:    12,
         constitution: 10,
@@ -130,7 +124,6 @@ export const NPCsList: NPCInfo[] = [
     // ── Inimigos Principais ──
     {
         id: "abbest",
-        name: "Abbest",
         strength:     14,
         dexterity:     8,
         constitution: 12,
@@ -149,7 +142,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "aberration",
-        name: "Aberração",
         strength:     11,
         dexterity:     9,
         constitution: 11,
@@ -166,7 +158,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ballet",
-        name: "Ballet",
         strength:      8,
         dexterity:    12,
         constitution:  8,
@@ -185,7 +176,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "barbasucette",
-        name: "Barbasucette",
         strength:     12,
         dexterity:    14,
         constitution: 12,
@@ -201,7 +191,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "benisseur",
-        name: "Benisseur",
         strength:      9,
         dexterity:    13,
         constitution: 13,
@@ -221,7 +210,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "boucheclier",
-        name: "Boucheclier",
         strength:     18,
         dexterity:    11,
         constitution: 18,
@@ -240,7 +228,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "braseleur",
-        name: "Braseleur",
         strength:     16,
         dexterity:    15,
         constitution: 14,
@@ -259,7 +246,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "bruler",
-        name: "Brûler",
         strength:     10,
         dexterity:    12,
         constitution:  9,
@@ -276,7 +262,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "catapult-sakapatate",
-        name: "Catapult Sakapatate",
         strength:     14,
         dexterity:     8,
         constitution: 13,
@@ -294,7 +279,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ceramic-chevaliere",
-        name: "Ceramic Chevalière",
         strength:     16,
         dexterity:    13,
         constitution: 14,
@@ -312,7 +296,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chalier",
-        name: "Chalier",
         strength:     11,
         dexterity:    16,
         constitution: 11,
@@ -333,7 +316,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chapelier",
-        name: "Chapelier",
         strength:     17,
         dexterity:    13,
         constitution: 17,
@@ -352,7 +334,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chorale",
-        name: "Chorale",
         strength:      9,
         dexterity:    11,
         constitution: 14,
@@ -373,7 +354,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "clair",
-        name: "Clair",
         strength:     13,
         dexterity:    16,
         constitution: 15,
@@ -393,7 +373,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "contortionniste",
-        name: "Contortionniste",
         strength:      9,
         dexterity:    12,
         constitution:  8,
@@ -412,7 +391,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "cruler",
-        name: "Crûler",
         strength:     13,
         dexterity:    11,
         constitution: 11,
@@ -430,7 +408,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "danseuses",
-        name: "Danseuses",
         strength:     13,
         dexterity:    20,
         constitution: 14,
@@ -452,7 +429,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "demineur",
-        name: "Démineur",
         strength:     10,
         dexterity:    13,
         constitution: 11,
@@ -469,7 +445,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "echassier",
-        name: "Échassier",
         strength:     14,
         dexterity:    16,
         constitution: 12,
@@ -487,7 +462,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "franctale",
-        name: "Franctale",
         strength:     14,
         dexterity:    12,
         constitution: 14,
@@ -503,7 +477,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "gault",
-        name: "Gault",
         strength:     18,
         dexterity:     8,
         constitution: 18,
@@ -522,7 +495,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "glaise",
-        name: "Glaise",
         strength:     16,
         dexterity:     6,
         constitution: 18,
@@ -541,7 +513,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "gold-chevaliere",
-        name: "Gold Chevalière",
         strength:     16,
         dexterity:    11,
         constitution: 15,
@@ -561,7 +532,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "greatsword-cultist",
-        name: "Greatsword Cultist",
         strength:     17,
         dexterity:    10,
         constitution: 15,
@@ -580,7 +550,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "grosse-tete",
-        name: "Grosse Tête",
         strength:     10,
         dexterity:     8,
         constitution: 16,
@@ -599,7 +568,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "hexga",
-        name: "Hexga",
         strength:      8,
         dexterity:    13,
         constitution: 10,
@@ -619,7 +587,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "jar",
-        name: "Jar",
         strength:      6,
         dexterity:     7,
         constitution: 14,
@@ -636,7 +603,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "lancer",
-        name: "Lancelier",
         strength:     13,
         dexterity:    10,
         constitution: 12,
@@ -656,7 +622,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "licorne",
-        name: "Licorne",
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -675,7 +640,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "lumiere-citizen",
-        name: "Cidadão de Lumière",
         strength:     10,
         dexterity:    10,
         constitution: 10,
@@ -690,7 +654,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "luster",
-        name: "Luster",
         strength:     10,
         dexterity:    11,
         constitution: 12,
@@ -707,7 +670,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "machinapieds",
-        name: "Machinapieds",
         strength:     16,
         dexterity:    10,
         constitution: 16,
@@ -723,7 +685,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "mage-cultist",
-        name: "Mage Cultist",
         strength:      8,
         dexterity:    12,
         constitution: 10,
@@ -742,7 +703,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "mime",
-        name: "Mímico",
         strength:      8,
         dexterity:    12,
         constitution: 10,
@@ -756,12 +716,10 @@ export const NPCsList: NPCInfo[] = [
         attackList: [
             {
                 type: "skill",
-                name: "combatAdmin.npcAttacks.invisibleWall",
                 description: "combatAdmin.npcAttacks.invisibleWallDesc",
             },
             {
                 type: "skill",
-                name: "combatAdmin.npcAttacks.comboHammers",
                 additionalDamage: 1,
                 quantity: 4,
                 statusList: [
@@ -770,14 +728,12 @@ export const NPCsList: NPCInfo[] = [
             },
             {
                 type: "skill",
-                name: "combatAdmin.npcAttacks.comboSlaps",
                 quantity: 3,
             }
         ],
     },
     {
         id: "moissoneusse",
-        name: "Moissoneusse",
         strength:     12,
         dexterity:    10,
         constitution: 10,
@@ -795,7 +751,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "noir",
-        name: "Noir",
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -814,7 +769,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "obscur",
-        name: "Obscur",
         strength:     14,
         dexterity:    15,
         constitution: 15,
@@ -835,7 +789,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "orphelin",
-        name: "Orphelin",
         strength:      7,
         dexterity:    11,
         constitution:  7,
@@ -852,7 +805,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "pelerin",
-        name: "Pèlerin",
         strength:     14,
         dexterity:    14,
         constitution: 16,
@@ -871,7 +823,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "petank",
-        name: "Pétank",
         strength:     14,
         dexterity:     9,
         constitution: 15,
@@ -887,7 +838,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "gatekeeper",
-        name: "Porteiro",
         strength:     14,
         dexterity:     7,
         constitution: 14,
@@ -902,7 +852,6 @@ export const NPCsList: NPCInfo[] = [
         attackList: [
             {
                 type: "jump-all",
-                name: "combatAdmin.npcAttacks.shieldSlam",
                 additionalDamage: 1,
             },
             { type: "basic", additionalDamage: 2 },
@@ -911,7 +860,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "potier",
-        name: "Potier",
         strength:     12,
         dexterity:    10,
         constitution: 14,
@@ -928,7 +876,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ramasseur",
-        name: "Ramasseur",
         strength:     16,
         dexterity:    13,
         constitution: 15,
@@ -948,7 +895,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ranger-sakapatate",
-        name: "Ranger Sakapatate",
         strength:     10,
         dexterity:    15,
         constitution: 11,
@@ -967,7 +913,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "reaper-cultist",
-        name: "Reaper Cultist",
         strength:     16,
         dexterity:    13,
         constitution: 14,
@@ -986,7 +931,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "robust-sakapatate",
-        name: "Robust Sakapatate",
         strength:     16,
         dexterity:     8,
         constitution: 16,
@@ -1005,7 +949,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "rocher",
-        name: "Rocher",
         strength:     17,
         dexterity:     6,
         constitution: 17,
@@ -1024,7 +967,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "sapling",
-        name: "Sapling",
         strength:      6,
         dexterity:     8,
         constitution: 12,
@@ -1044,7 +986,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "stalact",
-        name: "Stalact",
         strength:     16,
         dexterity:    10,
         constitution: 18,
@@ -1064,7 +1005,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "steel-chevaliere",
-        name: "Steel Chevalière",
         strength:     18,
         dexterity:    10,
         constitution: 18,
@@ -1082,7 +1022,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "troubadour",
-        name: "Troubadour",
         strength:      8,
         dexterity:    14,
         constitution: 11,
@@ -1102,7 +1041,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "veilleur",
-        name: "Veilleur",
         strength:     12,
         dexterity:    14,
         constitution: 12,
@@ -1120,7 +1058,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "volester",
-        name: "Volester",
         strength:      8,
         dexterity:    14,
         constitution:  8,
@@ -1141,7 +1078,6 @@ export const NPCsList: NPCInfo[] = [
     // ── Inimigos Adicionais ──
     {
         id: "clair-obscur",
-        name: "Clair Obscur",
         strength:     17,
         dexterity:    17,
         constitution: 17,
@@ -1159,7 +1095,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "clea",
-        name: "Cléa",
         strength:     12,
         dexterity:    17,
         constitution: 14,
@@ -1179,7 +1114,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "creation",
-        name: "Creation",
         strength:     10,
         dexterity:     9,
         constitution: 11,
@@ -1197,7 +1131,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "dualliste",
-        name: "Dualliste",
         strength:     16,
         dexterity:    16,
         constitution: 14,
@@ -1217,7 +1150,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "eveque",
-        name: "Évêque",
         strength:      8,
         dexterity:    10,
         constitution: 11,
@@ -1237,7 +1169,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "flame-eveque",
-        name: "Flame Évêque",
         strength:     10,
         dexterity:    12,
         constitution: 14,
@@ -1256,7 +1187,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "frost-eveque",
-        name: "Frost Évêque",
         strength:     10,
         dexterity:    12,
         constitution: 14,
@@ -1275,7 +1205,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "thunder-eveque",
-        name: "Thunder Évêque",
         strength:     10,
         dexterity:    12,
         constitution: 14,
@@ -1294,7 +1223,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "gargant",
-        name: "Gargant",
         strength:     20,
         dexterity:     6,
         constitution: 20,
@@ -1314,7 +1242,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "glissando",
-        name: "Glissando",
         strength:      9,
         dexterity:    19,
         constitution: 13,
@@ -1334,7 +1261,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "goblu",
-        name: "Goblu",
         strength:     10,
         dexterity:    13,
         constitution:  9,
@@ -1352,7 +1278,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "golgra",
-        name: "Golgra",
         strength:     16,
         dexterity:     8,
         constitution: 16,
@@ -1369,7 +1294,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "jovial-moissonneuse",
-        name: "Jovial Moissonneuse",
         strength:     18,
         dexterity:    17,
         constitution: 15,
@@ -1389,7 +1313,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "lampmaster",
-        name: "Lampmaster",
         strength:     10,
         dexterity:    13,
         constitution: 12,
@@ -1408,7 +1331,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "mask-keeper",
-        name: "Mask Keeper",
         strength:     14,
         dexterity:    14,
         constitution: 17,
@@ -1429,7 +1351,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "scavenger",
-        name: "Scavenger",
         strength:     12,
         dexterity:    16,
         constitution: 10,
@@ -1447,7 +1368,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "seething-boucheclier",
-        name: "Seething Boucheclier",
         strength:     19,
         dexterity:    11,
         constitution: 19,
@@ -1467,7 +1387,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "serpenphare",
-        name: "Serpenphare",
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -1487,7 +1406,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "sirene",
-        name: "Sirène",
         strength:     15,
         dexterity:    17,
         constitution: 18,
@@ -1508,7 +1426,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "sorrowful-chapelier",
-        name: "Sorrowful Chapelier",
         strength:     18,
         dexterity:    14,
         constitution: 17,
@@ -1528,7 +1445,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "sprong",
-        name: "Sprong",
         strength:     12,
         dexterity:    18,
         constitution: 10,
@@ -1547,7 +1463,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "tisseur",
-        name: "Tisseur",
         strength:     11,
         dexterity:    15,
         constitution: 14,
@@ -1568,7 +1483,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ultimate-sakapatate",
-        name: "Ultimate Sakapatate",
         strength:     16,
         dexterity:     9,
         constitution: 16,
@@ -1587,7 +1501,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "visages",
-        name: "Visages",
         strength:     17,
         dexterity:    15,
         constitution: 19,
@@ -1606,7 +1519,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "alicia",
-        name: "Alicia",
         strength:     14,
         dexterity:    18,
         constitution: 14,
@@ -1625,7 +1537,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "bourgeon",
-        name: "Bourgeon",
         strength:     15,
         dexterity:     8,
         constitution: 15,
@@ -1643,7 +1554,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "clea-unleashed",
-        name: "Clea Unleashed",
         strength:     12,
         dexterity:    18,
         constitution: 14,
@@ -1662,7 +1572,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "duollistes",
-        name: "Duollistes",
         strength:     18,
         dexterity:    20,
         constitution: 16,
@@ -1680,7 +1589,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "francois",
-        name: "François",
         strength:     14,
         dexterity:     8,
         constitution: 16,
@@ -1698,7 +1606,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "grown-bourgeon",
-        name: "Grown Bourgeon",
         strength:     20,
         dexterity:     8,
         constitution: 22,
@@ -1716,7 +1623,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "half-baked-gestral",
-        name: "Half-Baked Gestral",
         strength:     10,
         dexterity:    14,
         constitution: 12,
@@ -1732,7 +1638,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "licornapieds",
-        name: "Licornapieds",
         strength:     18,
         dexterity:    12,
         constitution: 18,
@@ -1750,7 +1655,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "osquio",
-        name: "Osquio",
         strength:     18,
         dexterity:    16,
         constitution: 18,
@@ -1769,7 +1673,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "painted-love",
-        name: "Painted Love",
         strength:     16,
         dexterity:    16,
         constitution: 18,
@@ -1787,7 +1690,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "simon",
-        name: "Simon",
         strength:     20,
         dexterity:    20,
         constitution: 18,
@@ -1805,7 +1707,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "simon-the-divergent-star",
-        name: "Simon the Divergent Star",
         strength:     22,
         dexterity:    22,
         constitution: 20,
@@ -1824,7 +1725,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "the-curator",
-        name: "The Curator",
         strength:     15,
         dexterity:    13,
         constitution: 17,
@@ -1842,7 +1742,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "the-paintress",
-        name: "The Paintress",
         strength:     14,
         dexterity:    16,
         constitution: 16,
@@ -1863,7 +1762,6 @@ export const NPCsList: NPCInfo[] = [
     // ── Variantes Chromatic ──
     {
         id: "chromatic-abbest",
-        name: "Chromatic Abbest",
         strength:     20,
         dexterity:    12,
         constitution: 18,
@@ -1881,7 +1779,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-aberration",
-        name: "Chromatic Aberration",
         strength:     16,
         dexterity:    14,
         constitution: 16,
@@ -1898,7 +1795,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-ballet",
-        name: "Chromatic Ballet",
         strength:     12,
         dexterity:    20,
         constitution: 12,
@@ -1917,7 +1813,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-benisseur",
-        name: "Chromatic Benisseur",
         strength:     10,
         dexterity:    14,
         constitution: 12,
@@ -1936,7 +1831,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-boucheclier",
-        name: "Chromatic Boucheclier",
         strength:     18,
         dexterity:    12,
         constitution: 18,
@@ -1954,7 +1848,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-bourgeon",
-        name: "Chromatic Bourgeon",
         strength:      8,
         dexterity:    10,
         constitution: 14,
@@ -1974,7 +1867,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-braseleur",
-        name: "Chromatic Braseleur",
         strength:     16,
         dexterity:    16,
         constitution: 14,
@@ -1992,7 +1884,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-bruler",
-        name: "Chromatic Brûler",
         strength:     14,
         dexterity:    16,
         constitution: 12,
@@ -2009,7 +1900,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-catapult-sakapatate",
-        name: "Chromatic Catapult Sakapatate",
         strength:     18,
         dexterity:    10,
         constitution: 16,
@@ -2027,7 +1917,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-ceramic-chevaliere",
-        name: "Chromatic Ceramic Chevalière",
         strength:     16,
         dexterity:    14,
         constitution: 14,
@@ -2043,7 +1932,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-chalier",
-        name: "Chromatic Chalier",
         strength:     12,
         dexterity:    18,
         constitution: 12,
@@ -2062,7 +1950,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-chapelier",
-        name: "Chromatic Chapelier",
         strength:     16,
         dexterity:    14,
         constitution: 16,
@@ -2079,7 +1966,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-clair-obscur",
-        name: "Chromatic Clair Obscur",
         strength:     18,
         dexterity:    18,
         constitution: 18,
@@ -2096,7 +1982,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-creation",
-        name: "Chromatic Creation",
         strength:     16,
         dexterity:    14,
         constitution: 18,
@@ -2113,7 +1998,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-cruler",
-        name: "Chromatic Crûler",
         strength:     16,
         dexterity:    14,
         constitution: 14,
@@ -2130,7 +2014,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-danseuses",
-        name: "Chromatic Danseuses",
         strength:     12,
         dexterity:    20,
         constitution: 14,
@@ -2150,7 +2033,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-demineur",
-        name: "Chromatic Démineur",
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -2167,7 +2049,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-dualliste",
-        name: "Chromatic Dualliste",
         strength:     18,
         dexterity:    18,
         constitution: 16,
@@ -2185,7 +2066,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-echassier",
-        name: "Chromatic Échassier",
         strength:     16,
         dexterity:    18,
         constitution: 14,
@@ -2203,7 +2083,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-eveque",
-        name: "Chromatic Évêque",
         strength:     12,
         dexterity:    14,
         constitution: 16,
@@ -2222,7 +2101,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-gargant",
-        name: "Chromatic Gargant",
         strength:     22,
         dexterity:     8,
         constitution: 22,
@@ -2240,7 +2118,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-gault",
-        name: "Chromatic Gault",
         strength:     20,
         dexterity:    10,
         constitution: 20,
@@ -2259,7 +2136,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-glaise",
-        name: "Chromatic Glaise",
         strength:     18,
         dexterity:     8,
         constitution: 20,
@@ -2278,7 +2154,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-glissando",
-        name: "Chromatic Glissando",
         strength:     10,
         dexterity:    20,
         constitution: 12,
@@ -2297,7 +2172,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-goblu",
-        name: "Chromatic Goblu",
         strength:     14,
         dexterity:    16,
         constitution: 12,
@@ -2315,7 +2189,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-gold-chevaliere",
-        name: "Chromatic Gold Chevalière",
         strength:     18,
         dexterity:    14,
         constitution: 18,
@@ -2333,7 +2206,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-greatsword-cultist",
-        name: "Chromatic Greatsword Cultist",
         strength:     20,
         dexterity:    12,
         constitution: 18,
@@ -2351,7 +2223,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-hexga",
-        name: "Chromatic Hexga",
         strength:     10,
         dexterity:    16,
         constitution: 12,
@@ -2370,7 +2241,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-jar",
-        name: "Chromatic Jar",
         strength:      8,
         dexterity:    10,
         constitution: 22,
@@ -2386,7 +2256,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-lancelier",
-        name: "Chromatic Lancelier",
         strength:     18,
         dexterity:    14,
         constitution: 16,
@@ -2404,7 +2273,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-luster",
-        name: "Chromatic Luster",
         strength:     14,
         dexterity:    14,
         constitution: 16,
@@ -2421,7 +2289,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-mage-cultist",
-        name: "Chromatic Mage Cultist",
         strength:     10,
         dexterity:    14,
         constitution: 12,
@@ -2440,7 +2307,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-moissonneuse",
-        name: "Chromatic Moissonneuse",
         strength:     18,
         dexterity:    16,
         constitution: 16,
@@ -2458,7 +2324,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-orphelin",
-        name: "Chromatic Orphelin",
         strength:     10,
         dexterity:    16,
         constitution: 10,
@@ -2475,7 +2340,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-pelerin",
-        name: "Chromatic Pèlerin",
         strength:     14,
         dexterity:    14,
         constitution: 16,
@@ -2493,7 +2357,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-portier",
-        name: "Chromatic Portier",
         strength:     20,
         dexterity:    10,
         constitution: 22,
@@ -2510,7 +2373,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-ramasseur",
-        name: "Chromatic Ramasseur",
         strength:     16,
         dexterity:    14,
         constitution: 16,
@@ -2528,7 +2390,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-ranger-sakapatate",
-        name: "Chromatic Ranger Sakapatate",
         strength:     14,
         dexterity:    18,
         constitution: 14,
@@ -2546,7 +2407,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-reaper-cultist",
-        name: "Chromatic Reaper Cultist",
         strength:     18,
         dexterity:    16,
         constitution: 16,
@@ -2564,7 +2424,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-robust-sakapatate",
-        name: "Chromatic Robust Sakapatate",
         strength:     20,
         dexterity:    10,
         constitution: 20,
@@ -2582,7 +2441,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-sapling",
-        name: "Chromatic Sapling",
         strength:      8,
         dexterity:    10,
         constitution: 14,
@@ -2602,7 +2460,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-stalact",
-        name: "Chromatic Stalact",
         strength:     18,
         dexterity:    12,
         constitution: 20,
@@ -2621,7 +2478,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-steel-chevaliere",
-        name: "Chromatic Steel Chevalière",
         strength:     20,
         dexterity:    12,
         constitution: 20,
@@ -2638,7 +2494,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-troubadour",
-        name: "Chromatic Troubadour",
         strength:     10,
         dexterity:    16,
         constitution: 12,
@@ -2657,7 +2512,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-ultimate-sakapatate",
-        name: "Chromatic Ultimate Sakapatate",
         strength:     22,
         dexterity:    12,
         constitution: 22,
@@ -2676,7 +2530,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-veilleur",
-        name: "Chromatic Veilleur",
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -2694,7 +2547,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-volester",
-        name: "Chromatic Volester",
         strength:     12,
         dexterity:    20,
         constitution: 12,
@@ -2713,7 +2565,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-barbasucette",
-        name: "Chromatic Barbasucette",
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -2729,7 +2580,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-franctale",
-        name: "Chromatic Franctale",
         strength:     16,
         dexterity:    14,
         constitution: 16,
@@ -2745,7 +2595,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-lampmaster",
-        name: "Chromatic Lampmaster",
         strength:     12,
         dexterity:    16,
         constitution: 14,
@@ -2762,7 +2611,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-machinapieds",
-        name: "Chromatic Machinapieds",
         strength:     18,
         dexterity:    12,
         constitution: 18,
@@ -2778,7 +2626,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "chromatic-petank",
-        name: "Chromatic Pétank",
         strength:     16,
         dexterity:    12,
         constitution: 18,
@@ -2798,7 +2645,6 @@ export const NPCsList: NPCInfo[] = [
     // Lumiere (1) → Visages (11)
     {
         id: "contortionniste-visages",
-        name: "Contortionniste (Visages)",
         strength:     12,
         dexterity:    19,
         constitution: 12,
@@ -2818,7 +2664,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "moissoneusse-visages",
-        name: "Moissoneusse (Visages)",
         strength:     19,
         dexterity:    15,
         constitution: 16,
@@ -2839,7 +2684,6 @@ export const NPCsList: NPCInfo[] = [
     // Lumiere (1) → Sirene (12)
     {
         id: "ballet-sirene",
-        name: "Ballet (Sirène)",
         strength:     11,
         dexterity:    19,
         constitution: 13,
@@ -2861,7 +2705,6 @@ export const NPCsList: NPCInfo[] = [
     // Lumiere/Old Lumiere → Monolith (13)
     {
         id: "renoir-monolith",
-        name: "Renoir (Monolith)",
         strength:     14,
         dexterity:    17,
         constitution: 15,
@@ -2883,7 +2726,6 @@ export const NPCsList: NPCInfo[] = [
     // Spring Meadows (2) → Monolith (13)
     {
         id: "lancer-monolith",
-        name: "Lancelier (Monolith)",
         strength:     19,
         dexterity:    14,
         constitution: 17,
@@ -2904,7 +2746,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "abbest-monolith",
-        name: "Abbest (Monolith)",
         strength:     20,
         dexterity:    12,
         constitution: 18,
@@ -2924,7 +2765,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "gatekeeper-monolith",
-        name: "Porteiro (Monolith)",
         strength:     20,
         dexterity:    10,
         constitution: 20,
@@ -2944,7 +2784,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "eveque-monolith",
-        name: "Évêque (Monolith)",
         strength:     12,
         dexterity:    14,
         constitution: 16,
@@ -2967,7 +2806,6 @@ export const NPCsList: NPCInfo[] = [
     // Flying Waters (3) → Monolith (13)
     {
         id: "bruler-monolith",
-        name: "Brûler (Monolith)",
         strength:     14,
         dexterity:    16,
         constitution: 13,
@@ -2985,7 +2823,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "cruler-monolith",
-        name: "Crûler (Monolith)",
         strength:     19,
         dexterity:    15,
         constitution: 16,
@@ -3004,7 +2841,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "demineur-monolith",
-        name: "Démineur (Monolith)",
         strength:     14,
         dexterity:    17,
         constitution: 15,
@@ -3024,7 +2860,6 @@ export const NPCsList: NPCInfo[] = [
     // Ancient Sanctuary (4) → Monolith (13)
     {
         id: "robust-sakapatate-monolith",
-        name: "Robust Sakapatate (Monolith)",
         strength:     20,
         dexterity:    10,
         constitution: 20,
@@ -3044,7 +2879,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "catapult-sakapatate-monolith",
-        name: "Catapult Sakapatate (Monolith)",
         strength:     19,
         dexterity:    10,
         constitution: 17,
@@ -3063,7 +2897,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ranger-sakapatate-monolith",
-        name: "Ranger Sakapatate (Monolith)",
         strength:     14,
         dexterity:    19,
         constitution: 15,
@@ -3083,7 +2916,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ultimate-sakapatate-monolith",
-        name: "Ultimate Sakapatate (Monolith)",
         strength:     20,
         dexterity:    12,
         constitution: 20,
@@ -3105,7 +2937,6 @@ export const NPCsList: NPCInfo[] = [
     // Stone Wave Cliffs (7) → Monolith (13)
     {
         id: "reaper-cultist-monolith",
-        name: "Reaper Cultist (Monolith)",
         strength:     19,
         dexterity:    16,
         constitution: 17,
@@ -3124,7 +2955,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "greatsword-cultist-monolith",
-        name: "Greatsword Cultist (Monolith)",
         strength:     20,
         dexterity:    13,
         constitution: 18,
@@ -3143,7 +2973,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "hexga-monolith",
-        name: "Hexga (Monolith)",
         strength:     10,
         dexterity:    16,
         constitution: 14,
@@ -3165,7 +2994,6 @@ export const NPCsList: NPCInfo[] = [
     // Stone Wave Cliffs (7) → Manor (14)
     {
         id: "rocher-manor",
-        name: "Rocher (Manor)",
         strength:     21,
         dexterity:     8,
         constitution: 21,
@@ -3184,7 +3012,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "gold-chevaliere-manor",
-        name: "Gold Chevalière (Manor)",
         strength:     20,
         dexterity:    14,
         constitution: 19,
@@ -3206,7 +3033,6 @@ export const NPCsList: NPCInfo[] = [
     // Forgotten Battlefield (8) → Monolith (13)
     {
         id: "chalier-monolith",
-        name: "Chalier (Monolith)",
         strength:     14,
         dexterity:    19,
         constitution: 14,
@@ -3227,7 +3053,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "troubadour-monolith",
-        name: "Troubadour (Monolith)",
         strength:     10,
         dexterity:    16,
         constitution: 14,
@@ -3247,7 +3072,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ramasseur-monolith",
-        name: "Ramasseur (Monolith)",
         strength:     19,
         dexterity:    15,
         constitution: 17,
@@ -3269,7 +3093,6 @@ export const NPCsList: NPCInfo[] = [
     // Old Lumiere (10) → Monolith (13)
     {
         id: "ceramic-chevaliere-monolith",
-        name: "Ceramic Chevalière (Monolith)",
         strength:     19,
         dexterity:    16,
         constitution: 17,
@@ -3287,7 +3110,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "gold-chevaliere-monolith",
-        name: "Gold Chevalière (Monolith)",
         strength:     19,
         dexterity:    14,
         constitution: 18,
@@ -3309,7 +3131,6 @@ export const NPCsList: NPCInfo[] = [
     // Mime e Petank → Monolith (13)
     {
         id: "mime-monolith",
-        name: "Mímico (Monolith)",
         strength:     14,
         dexterity:    19,
         constitution: 15,
@@ -3323,7 +3144,6 @@ export const NPCsList: NPCInfo[] = [
         attackList: [
             {
                 type: "skill",
-                name: "combatAdmin.npcAttacks.comboHammers",
                 additionalDamage: 10,
                 quantity: 4,
                 statusList: [
@@ -3332,7 +3152,6 @@ export const NPCsList: NPCInfo[] = [
             },
             {
                 type: "skill",
-                name: "combatAdmin.npcAttacks.comboSlaps",
                 additionalDamage: 7,
                 quantity: 3,
             }
@@ -3340,7 +3159,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "petank-monolith",
-        name: "Pétank (Monolith)",
         strength:     19,
         dexterity:    13,
         constitution: 19,
@@ -3359,7 +3177,6 @@ export const NPCsList: NPCInfo[] = [
     // Cruler caso especial: Flying Waters (3) → Battlefield (8)
     {
         id: "cruler-battlefield",
-        name: "Crûler (Battlefield)",
         strength:     16,
         dexterity:    14,
         constitution: 14,
@@ -3380,7 +3197,6 @@ export const NPCsList: NPCInfo[] = [
     // ── Lumiere Ato III (Tier 15) ──
     {
         id: "aberration-act3",
-        name: "Aberração (Ato III)",
         strength:     20,
         dexterity:    16,
         constitution: 19,
@@ -3398,7 +3214,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "contortionniste-act3",
-        name: "Contortionniste (Ato III)",
         strength:     15,
         dexterity:    22,
         constitution: 16,
@@ -3418,7 +3233,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "moissoneusse-act3",
-        name: "Moissoneusse (Ato III)",
         strength:     22,
         dexterity:    17,
         constitution: 19,
@@ -3437,7 +3251,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "orphelin-act3",
-        name: "Orphelin (Ato III)",
         strength:     14,
         dexterity:    20,
         constitution: 15,
@@ -3455,7 +3268,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "ballet-act3",
-        name: "Ballet (Ato III)",
         strength:     14,
         dexterity:    22,
         constitution: 16,
@@ -3475,7 +3287,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "mime-act3",
-        name: "Mímico (Ato III)",
         strength:     16,
         dexterity:    22,
         constitution: 17,
@@ -3489,7 +3300,6 @@ export const NPCsList: NPCInfo[] = [
         attackList: [
             {
                 type: "skill",
-                name: "combatAdmin.npcAttacks.comboHammers",
                 additionalDamage: 14,
                 quantity: 4,
                 statusList: [
@@ -3498,7 +3308,6 @@ export const NPCsList: NPCInfo[] = [
             },
             {
                 type: "skill",
-                name: "combatAdmin.npcAttacks.comboSlaps",
                 additionalDamage: 10,
                 quantity: 3,
             }
@@ -3506,7 +3315,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "lumiere-citizen-act3",
-        name: "Cidadão de Lumière (Ato III)",
         strength:     19,
         dexterity:    19,
         constitution: 19,
@@ -3523,7 +3331,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "renoir-act3",
-        name: "Renoir (Ato III)",
         strength:     16,
         dexterity:    19,
         constitution: 17,
@@ -3543,7 +3350,6 @@ export const NPCsList: NPCInfo[] = [
     },
     {
         id: "creation-act3",
-        name: "Creation (Ato III)",
         strength:     17,
         dexterity:    16,
         constitution: 20,
@@ -3561,3 +3367,12 @@ export const NPCsList: NPCInfo[] = [
         drops: { pictos: ["faster-than-strong"] },
     },
 ];
+
+export function getTranslatedNPCs(): NPCInfo[] {
+  return NPCsBaseData.map(npc => ({
+    ...npc,
+    name: t(`npcNames.${npc.id}`),
+  }));
+}
+
+export const NPCsList: NPCInfo[] = getTranslatedNPCs();
