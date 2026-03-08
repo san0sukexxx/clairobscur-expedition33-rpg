@@ -9,7 +9,8 @@ export type StatusType =
     "Silenced" | "Dizzy" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Guardian" | "Foretell" | "Twilight" | "Powerless" |
     "Rush" | "Burn" | "Shield" | "Powerful" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
-    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "FortunesFury" | "Regen" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation";
+    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "FortunesFury" | "Regen" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation" |
+    "BlueFlower" | "RedFlower";
 
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent" | "absorb";
@@ -115,6 +116,7 @@ export interface NPCInfo {
     damageVulnerabilities?: string[];
     damageImmunities?: string[];
     drops?: { pictos?: string[]; weapons?: string[] };
+    isBoss?: boolean;
 }
 
 export interface NPCStatusItem {

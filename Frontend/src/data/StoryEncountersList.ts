@@ -66,4 +66,20 @@ export const StoryEncountersList: StoryEncounter[] = [
         rewards: [{ rewardType: "weapon", itemId: "cruciferam" }],
         bonusXp: 0,
     },
+    {
+        id: "flying-waters-bourgeon",
+        name: "storyEncounters.flying-waters-bourgeon",
+        locationId: "flying-waters",
+        npcs: [{ npcId: "bourgeon", quantity: 1 }],
+        rewards: [{ rewardType: "picto", itemId: "augmented-counter-i", level: 1 }],
+        bonusXp: 0,
+    },
+    {
+        id: "flying-waters-chromatic-troubadour",
+        name: "storyEncounters.flying-waters-chromatic-troubadour",
+        locationId: "flying-waters",
+        npcs: [{ npcId: "chromatic-troubadour", quantity: 1 }],
+        rewards: [{ rewardType: "weapon", itemId: "troubadim" }],
+        bonusXp: 0,
+    },
 ];

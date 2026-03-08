@@ -2070,10 +2070,12 @@
         "clear": "Remover encontro"
       },
       "npcPassives": {
+        "startWith2Shields": "Começa a batalha com 2 escudos.",
         "startWith3Shields": "Começa a batalha com 3 escudos.",
         "desperationCharge": "Ao chegar em 35% de vida ou menos, recebe 8 escudos e começa a carregar um ataque supremo.",
         "mineCarrier": "Carrega uma mina. Atirar na mina faz ela explodir, causando dano {{dice}} em todos os aliados inclusive nele. Sem mina, fica impedido de usar o Ataque Suicida e o ataque básico.",
         "giantForm": "Pode ficar gigante ao iniciar um combate.",
+        "spitOnBreak": "Se sofrer quebra, cospe todos os personagens engolidos.",
         "mercifulDamage": "Ao enfrentar a expedição, ele pode escolher reduzir seu dano de forma proposital. Nesse caso, como mestre, diga um valor menor para o dano depois da sua rolagem. Também reduza o XP concedido pela batalha."
       },
       "npcAttacks": {
@@ -2138,6 +2140,8 @@
         "dualWeaponStrikeDesc": "Para causar quebra, exige um teste de força contra a força do alvo.",
         "impactLeap": "Salto com Impacto",
         "impactLeapDesc": "Atinge todos os adversários. Só é possível evitar saltando.",
+        "warCry": "Grito de Guerra",
+        "warCryDesc": "Concede 2 escudos a todos os aliados.",
         "shockwave": "Onda de Choque",
         "shockwaveDesc": "Acerta todos os adversários. Só é possível pular para evitar este ataque.",
         "luminousBarrier": "Barreira Luminosa",
@@ -2212,6 +2216,11 @@
         "chromaWaves": "Ondas Cromáticas",
         "lightSword": "Espada de Luz",
         "miasma": "Miasma",
+        "trumpetCombo": "Combo Trompete",
+        "hitSequence": "Sequência de Golpes",
+        "hitSequenceDesc": "Combo de 3 a 6 golpes (a critério do mestre) em alvo único.",
+        "swallow": "Engolir",
+        "swallowDesc": "O alvo deve fazer um Teste de Resistência de Destreza CD 16. Se falhar, é engolido: sai de combate e não pode ser trazido de volta com reviver.",
         "summonNevrons": "Invocar Névrons",
         "stormblood": "Sangue da Tempestade",
         "iceBeam": "Raio de Gelo",
@@ -2222,7 +2231,11 @@
         "lightSpeed": "Velocidade da Luz",
         "swordOfLumiere": "Espada de Lumière",
         "chromaStack": "Acúmulo Cromático",
-        "chromaScatter": "Dispersão Cromática"
+        "chromaScatter": "Dispersão Cromática",
+        "jumpOnAll": "Pular em todos",
+        "jumpOnAllDesc": "Pula 3 vezes em todos os adversários.",
+        "flowerField": "Criar Campo de Flores",
+        "flowerFieldDesc": "Invoca 7 flores, azuis e vermelhas (a critério do mestre). Em 3 turnos, cada flor azul não destruída adiciona um escudo. Cada flor vermelha não destruída recupera 2d6 de vida. Como mestre, você pode usar as condições \"Flor Azul\" e \"Flor Vermelha\" para fazer a contagem."
       },
       "createCombat": "Criar combate",
       "creating": "Criando...",
@@ -2345,7 +2358,6 @@
         "cancel": "Cancelar",
         "basicAttack": "Ataque básico",
         "jumpOnOne": "Pular em um",
-        "jumpOnAll": "Pular em todos",
         "gradientAttack": "Ataque Gradiente",
         "passTurn": "Passar o turno",
         "resetIntensity": "Redefinir",
@@ -2464,7 +2476,7 @@
       },
       "gustave-overcharge": {
         "name": "Sobrecarga",
-        "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 ataque. Teste de Força contra a Força do alvo para causar quebra. Só pode causar quebra com cargas no máximo."
+        "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 ataque. Teste de Força contra a Força do alvo para causar quebra. Só pode causar quebra com 5 ou mais cargas."
       },
       "gustave-powerful": {
         "name": "Fortalecimento",
@@ -3414,7 +3426,9 @@
         "gradient": "🌈 Gradiente",
         "invisibleBarrier": "🧊 Barreira Invisível",
         "DamageEscalation": "📈 Escalada de Dano",
-        "Charging": "⚡ Carregando"
+        "Charging": "⚡ Carregando",
+        "BlueFlower": "🔵 Flor Azul",
+        "RedFlower": "🔴 Flor Vermelha"
       },
       "statusDescriptions": {
         "Frozen": "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.",
@@ -3471,6 +3485,8 @@
         "invisibleBarrier": "Barreira mágica invisível que protege o personagem. Visível apenas para o mestre.",
         "DamageEscalation": "Dano base aumentado a cada uso consecutivo. Acumula +1 por uso adicional.",
         "Charging": "Você está carregando alguma habilidade",
+        "BlueFlower": "Flor azul invocada. Ao final da contagem, se não destruída, adiciona um escudo ao invocador.",
+        "RedFlower": "Flor vermelha invocada. Ao final da contagem, se não destruída, recupera 2d6 de vida do invocador.",
         "default": "Efeito ativo."
       },
       "resolveButton": {
@@ -4146,7 +4162,9 @@
       "spring-meadows-eveque": "Évêque",
       "flying-waters-luster": "Luster",
       "flying-waters-brulers": "2x Brûler",
-      "flying-waters-blacksmith": "O Ferreiro"
+      "flying-waters-blacksmith": "O Ferreiro",
+      "flying-waters-bourgeon": "Bourgeon",
+      "flying-waters-chromatic-troubadour": "Troubadour Cromático"
     },
     "locations": {
       "title": "Locais",
@@ -4363,6 +4381,7 @@
       "ramasseur-monolith": "Ramasseur (Monólito)",
       "ceramic-chevaliere-monolith": "Ceramic Chevalière (Monólito)",
       "gold-chevaliere-monolith": "Gold Chevalière (Monólito)",
+      "mime-flying-waters": "Mímico (Águas Voadoras)",
       "mime-monolith": "Mímico (Monólito)",
       "petank-monolith": "Pétank (Monólito)",
       "cruler-battlefield": "Crûler (Campo de Batalha)",

@@ -137,6 +137,11 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                                     <div className="flex flex-col min-w-0 flex-1">
                                         <span className="font-semibold text-sm">{npc.name}</span>
                                         <div className="flex flex-wrap gap-1 mt-0.5">
+                                            {npc.isBoss && (
+                                                <span className="badge badge-xs bg-red-600/20 text-red-400 border-red-600/30 font-bold">
+                                                    BOSS
+                                                </span>
+                                            )}
                                             {npc.challengeRating && (
                                                 <span className="badge badge-xs badge-ghost">
                                                     ND {npc.challengeRating}

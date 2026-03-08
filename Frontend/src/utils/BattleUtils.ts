@@ -91,6 +91,8 @@ export function getStatusLabel(status: StatusType): string {
         case "invisible-barrier": return t("battle.statusEffects.invisibleBarrier");
         case "DamageEscalation": return t("battle.statusEffects.DamageEscalation");
         case "Charging": return t("battle.statusEffects.Charging");
+        case "BlueFlower": return t("battle.statusEffects.BlueFlower");
+        case "RedFlower": return t("battle.statusEffects.RedFlower");
         default: return status;
     }
 }

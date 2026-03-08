@@ -36,7 +36,7 @@ const NPCsBaseData: NPCBaseData[] = [
         passives: ["combatAdmin.npcPassives.giantForm"],
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.strongPunch", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.strongPunch", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
         ],
     },
     {
@@ -111,6 +111,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "renoir",
+        isBoss: true,
         strength:     10,
         dexterity:    12,
         constitution: 10,
@@ -408,10 +409,12 @@ const NPCsBaseData: NPCBaseData[] = [
         weakTo: "Lightning",
         armorClass: 12,
         challengeRating: "2",
+        passives: ["combatAdmin.npcPassives.startWith2Shields"],
         attackList: [
             { type: "basic", additionalDamage: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.dualWeaponStrike", description: "combatAdmin.npcAttacks.dualWeaponStrikeDesc", additionalDamage: 3, quantity: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.impactLeap", description: "combatAdmin.npcAttacks.impactLeapDesc", additionalDamage: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.warCry", description: "combatAdmin.npcAttacks.warCryDesc", statusList: [{ type: "Shielded", ammount: 2, remainingTurns: 3 }] },
         ],
         drops: { weapons: ["cruleram", "brulerum"] },
     },
@@ -451,7 +454,7 @@ const NPCsBaseData: NPCBaseData[] = [
         passives: ["combatAdmin.npcPassives.mineCarrier"],
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.lightningBolt", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, element: "Lightning" },
+            { type: "skill", name: "combatAdmin.npcAttacks.lightningBolt", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, additionalDices: 1, element: "Lightning" },
             { type: "skill", name: "combatAdmin.npcAttacks.suicideBomb", description: "combatAdmin.npcAttacks.suicideBombDesc", additionalDamage: 12 },
         ],
     },
@@ -562,6 +565,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "grosse-tete",
+        isBoss: true,
         strength:     10,
         dexterity:     8,
         constitution: 16,
@@ -731,6 +735,25 @@ const NPCsBaseData: NPCBaseData[] = [
             { type: "skill", name: "combatAdmin.npcAttacks.invisibleWall", description: "combatAdmin.npcAttacks.invisibleWallDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.comboHammers", additionalDamage: 1, quantity: 4, statusList: [{ ammount: 1, remainingTurns: 1, type: "Silenced" }] },
             { type: "skill", name: "combatAdmin.npcAttacks.comboSlaps", quantity: 3 },
+        ],
+    },
+    {
+        id: "mime-flying-waters",
+        strength:     10,
+        dexterity:    14,
+        constitution: 12,
+        intelligence: 10,
+        wisdom:        9,
+        charisma:     12,
+        playFirst:    true,
+        armorClass: 12,
+        challengeRating: "2",
+        damageDie: 4,
+        passives: ["combatAdmin.npcPassives.startWith2Shields"],
+        attackList: [
+            { type: "skill", name: "combatAdmin.npcAttacks.invisibleWall", description: "combatAdmin.npcAttacks.invisibleWallDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboHammers", additionalDamage: 3, quantity: 4, statusList: [{ ammount: 1, remainingTurns: 1, type: "Silenced" }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboSlaps", additionalDamage: 1, quantity: 3 },
         ],
     },
     {
@@ -947,6 +970,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "rocher",
+        isBoss: true,
         strength:     17,
         dexterity:     6,
         constitution: 17,
@@ -984,6 +1008,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "stalact",
+        isBoss: true,
         strength:     16,
         dexterity:    10,
         constitution: 18,
@@ -1077,6 +1102,7 @@ const NPCsBaseData: NPCBaseData[] = [
     // ── Inimigos Adicionais ──
     {
         id: "clair-obscur",
+        isBoss: true,
         strength:     17,
         dexterity:    17,
         constitution: 17,
@@ -1094,6 +1120,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "clea",
+        isBoss: true,
         strength:     12,
         dexterity:    17,
         constitution: 14,
@@ -1113,6 +1140,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "creation",
+        isBoss: true,
         strength:     10,
         dexterity:     9,
         constitution: 11,
@@ -1130,6 +1158,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "dualliste",
+        isBoss: true,
         strength:     16,
         dexterity:    16,
         constitution: 14,
@@ -1149,6 +1178,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "eveque",
+        isBoss: true,
         strength:      8,
         dexterity:    10,
         constitution: 11,
@@ -1163,7 +1193,7 @@ const NPCsBaseData: NPCBaseData[] = [
         passives: ["combatAdmin.npcPassives.startWith3Shields", "combatAdmin.npcPassives.desperationCharge"],
         attackList: [
             { type: "basic", additionalDamage: 1, description: "combatAdmin.npcAttacks.lanceStrikeDesc" },
-            { type: "skill", name: "combatAdmin.npcAttacks.dualLanceStrike", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 1 },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualLanceStrike", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 1, additionalDices: 1 },
             { type: "skill", name: "combatAdmin.npcAttacks.tremor", description: "combatAdmin.npcAttacks.tremorDesc", additionalDamage: 2, quantity: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.summonMinions", description: "combatAdmin.npcAttacks.summonMinionsDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.supremeAttack", description: "combatAdmin.npcAttacks.supremeAttackDesc", additionalDamage: 6 },
@@ -1172,6 +1202,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "flame-eveque",
+        isBoss: true,
         strength:     10,
         dexterity:    12,
         constitution: 14,
@@ -1190,6 +1221,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "frost-eveque",
+        isBoss: true,
         strength:     10,
         dexterity:    12,
         constitution: 14,
@@ -1208,6 +1240,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "thunder-eveque",
+        isBoss: true,
         strength:     10,
         dexterity:    12,
         constitution: 14,
@@ -1226,6 +1259,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "gargant",
+        isBoss: true,
         strength:     20,
         dexterity:     6,
         constitution: 20,
@@ -1245,6 +1279,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "glissando",
+        isBoss: true,
         strength:      9,
         dexterity:    19,
         constitution: 13,
@@ -1264,6 +1299,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "goblu",
+        isBoss: true,
         strength:     10,
         dexterity:    13,
         constitution:  9,
@@ -1274,13 +1310,16 @@ const NPCsBaseData: NPCBaseData[] = [
         resistentTo: "Ice",
         armorClass: 12,
         challengeRating: "2",
+        passives: ["combatAdmin.npcPassives.startWith2Shields"],
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.sneakAttack", additionalDamage: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.jumpOnAll", description: "combatAdmin.npcAttacks.jumpOnAllDesc", additionalDamage: 2, quantity: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.flowerField", description: "combatAdmin.npcAttacks.flowerFieldDesc" },
         ],
     },
     {
         id: "golgra",
+        isBoss: true,
         strength:     16,
         dexterity:     8,
         constitution: 16,
@@ -1297,6 +1336,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "jovial-moissonneuse",
+        isBoss: true,
         strength:     18,
         dexterity:    17,
         constitution: 15,
@@ -1316,6 +1356,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "lampmaster",
+        isBoss: true,
         strength:     10,
         dexterity:    13,
         constitution: 12,
@@ -1334,6 +1375,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "mask-keeper",
+        isBoss: true,
         strength:     14,
         dexterity:    14,
         constitution: 17,
@@ -1354,6 +1396,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "scavenger",
+        isBoss: true,
         strength:     12,
         dexterity:    16,
         constitution: 10,
@@ -1371,6 +1414,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "seething-boucheclier",
+        isBoss: true,
         strength:     19,
         dexterity:    11,
         constitution: 19,
@@ -1390,6 +1434,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "serpenphare",
+        isBoss: true,
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -1409,6 +1454,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "sirene",
+        isBoss: true,
         strength:     15,
         dexterity:    17,
         constitution: 18,
@@ -1429,6 +1475,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "sorrowful-chapelier",
+        isBoss: true,
         strength:     18,
         dexterity:    14,
         constitution: 17,
@@ -1448,6 +1495,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "sprong",
+        isBoss: true,
         strength:     12,
         dexterity:    18,
         constitution: 10,
@@ -1466,6 +1514,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "tisseur",
+        isBoss: true,
         strength:     11,
         dexterity:    15,
         constitution: 14,
@@ -1486,6 +1535,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "ultimate-sakapatate",
+        isBoss: true,
         strength:     16,
         dexterity:     9,
         constitution: 16,
@@ -1504,6 +1554,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "visages",
+        isBoss: true,
         strength:     17,
         dexterity:    15,
         constitution: 19,
@@ -1522,6 +1573,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "alicia",
+        isBoss: true,
         strength:     14,
         dexterity:    18,
         constitution: 14,
@@ -1540,6 +1592,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "bourgeon",
+        isBoss: true,
         strength:     15,
         dexterity:     8,
         constitution: 15,
@@ -1549,14 +1602,18 @@ const NPCsBaseData: NPCBaseData[] = [
         weakTo: "Lightning",
         armorClass: 14,
         challengeRating: "2",
+        passives: ["combatAdmin.npcPassives.spitOnBreak"],
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.miasma", additionalDamage: 3, statusList: [{ type: "Exhausted", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.miasma", additionalDamage: 3, quantity: 4, statusList: [{ type: "Exhausted", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.hitSequence", description: "combatAdmin.npcAttacks.hitSequenceDesc", additionalDamage: 2, quantity: 5 },
+            { type: "skill", name: "combatAdmin.npcAttacks.swallow", description: "combatAdmin.npcAttacks.swallowDesc" },
         ],
         drops: { pictos: ["burning-death"], weapons: ["gaultaram", "abysseram", "potierim"] },
     },
     {
         id: "clea-unleashed",
+        isBoss: true,
         strength:     12,
         dexterity:    18,
         constitution: 14,
@@ -1575,6 +1632,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "duollistes",
+        isBoss: true,
         strength:     18,
         dexterity:    20,
         constitution: 16,
@@ -1592,6 +1650,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "francois",
+        isBoss: true,
         strength:     14,
         dexterity:     8,
         constitution: 16,
@@ -1609,6 +1668,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "grown-bourgeon",
+        isBoss: true,
         strength:     20,
         dexterity:     8,
         constitution: 22,
@@ -1626,6 +1686,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "half-baked-gestral",
+        isBoss: true,
         strength:     10,
         dexterity:    14,
         constitution: 12,
@@ -1641,6 +1702,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "licornapieds",
+        isBoss: true,
         strength:     18,
         dexterity:    12,
         constitution: 18,
@@ -1658,6 +1720,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "osquio",
+        isBoss: true,
         strength:     18,
         dexterity:    16,
         constitution: 18,
@@ -1676,6 +1739,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "painted-love",
+        isBoss: true,
         strength:     16,
         dexterity:    16,
         constitution: 18,
@@ -1693,6 +1757,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "simon",
+        isBoss: true,
         strength:     20,
         dexterity:    20,
         constitution: 18,
@@ -1710,6 +1775,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "simon-the-divergent-star",
+        isBoss: true,
         strength:     22,
         dexterity:    22,
         constitution: 20,
@@ -1728,6 +1794,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "the-curator",
+        isBoss: true,
         strength:     15,
         dexterity:    13,
         constitution: 17,
@@ -1747,6 +1814,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "the-paintress",
+        isBoss: true,
         strength:     14,
         dexterity:    16,
         constitution: 16,
@@ -1767,6 +1835,7 @@ const NPCsBaseData: NPCBaseData[] = [
     // ── Variantes Chromatic ──
     {
         id: "chromatic-abbest",
+        isBoss: true,
         strength:     20,
         dexterity:    12,
         constitution: 18,
@@ -1779,11 +1848,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.charge", description: "combatAdmin.npcAttacks.intensityVeryHigh", additionalDamage: 8, additionalDices: 1 },
+            { type: "skill", name: "combatAdmin.npcAttacks.charge", description: "combatAdmin.npcAttacks.intensityVeryHigh", additionalDamage: 8, additionalDices: 2 },
         ],
     },
     {
         id: "chromatic-aberration",
+        isBoss: true,
         strength:     16,
         dexterity:    14,
         constitution: 16,
@@ -1800,6 +1870,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "chromatic-ballet",
+        isBoss: true,
         strength:     12,
         dexterity:    20,
         constitution: 12,
@@ -1813,11 +1884,12 @@ const NPCsBaseData: NPCBaseData[] = [
         playFirst: true,
         attackList: [
             { type: "basic", quantity: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.pirouette", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.pirouette", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-benisseur",
+        isBoss: true,
         strength:     10,
         dexterity:    14,
         constitution: 12,
@@ -1831,11 +1903,12 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic" },
             { type: "skill", name: "combatAdmin.npcAttacks.blessing", statusList: [{ type: "Regeneration", ammount: 5, remainingTurns: 3 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.holyRay", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.holyRay", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
         ],
     },
     {
         id: "chromatic-boucheclier",
+        isBoss: true,
         strength:     18,
         dexterity:    12,
         constitution: 18,
@@ -1848,11 +1921,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.shieldBash", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.shieldBash", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, additionalDices: 1, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
         ],
     },
     {
         id: "chromatic-bourgeon",
+        isBoss: true,
         strength:      8,
         dexterity:    10,
         constitution: 14,
@@ -1866,12 +1940,13 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.darkRoots", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, statusList: [{ type: "Entangled", ammount: 2, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.lifeAbsorb", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, statusList: [{ type: "Regeneration", ammount: 4, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.darkRoots", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Entangled", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.lifeAbsorb", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, additionalDices: 1, statusList: [{ type: "Regeneration", ammount: 4, remainingTurns: 3 }] },
         ],
     },
     {
         id: "chromatic-braseleur",
+        isBoss: true,
         strength:     16,
         dexterity:    16,
         constitution: 14,
@@ -1884,11 +1959,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.livingFlame", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Burning", ammount: 3, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.livingFlame", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Burning", ammount: 3, remainingTurns: 3 }] },
         ],
     },
     {
         id: "chromatic-bruler",
+        isBoss: true,
         strength:     14,
         dexterity:    16,
         constitution: 12,
@@ -1900,11 +1976,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.igneousExplosion", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, statusList: [{ type: "Burning", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.igneousExplosion", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Burning", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-catapult-sakapatate",
+        isBoss: true,
         strength:     18,
         dexterity:    10,
         constitution: 16,
@@ -1922,6 +1999,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "chromatic-ceramic-chevaliere",
+        isBoss: true,
         strength:     16,
         dexterity:    14,
         constitution: 14,
@@ -1932,11 +2010,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.ceramicStrike", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.ceramicStrike", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
         ],
     },
     {
         id: "chromatic-chalier",
+        isBoss: true,
         strength:     12,
         dexterity:    18,
         constitution: 12,
@@ -1950,11 +2029,12 @@ const NPCsBaseData: NPCBaseData[] = [
         playFirst: true,
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.cuttingShadow", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.cuttingShadow", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-chapelier",
+        isBoss: true,
         strength:     16,
         dexterity:    14,
         constitution: 16,
@@ -1966,11 +2046,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.spinningHat", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.spinningHat", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-clair-obscur",
+        isBoss: true,
         strength:     18,
         dexterity:    18,
         constitution: 18,
@@ -1981,12 +2062,13 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "12",
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.dualityStrike", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 10, additionalDices: 2, statusList: [{ type: "Cursed", ammount: 3, remainingTurns: 3 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.convergence", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 12, additionalDices: 1 },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualityStrike", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 10, additionalDices: 3, statusList: [{ type: "Cursed", ammount: 3, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.convergence", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 12, additionalDices: 3 },
         ],
     },
     {
         id: "chromatic-creation",
+        isBoss: true,
         strength:     16,
         dexterity:    14,
         constitution: 18,
@@ -1998,11 +2080,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "6",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.shapeshift", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, statusList: [{ type: "Empowered", ammount: 3, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.shapeshift", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, additionalDices: 1, statusList: [{ type: "Empowered", ammount: 3, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-cruler",
+        isBoss: true,
         strength:     16,
         dexterity:    14,
         constitution: 14,
@@ -2014,11 +2097,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.crossfire", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Burning", ammount: 3, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.crossfire", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Burning", ammount: 3, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-danseuses",
+        isBoss: true,
         strength:     12,
         dexterity:    20,
         constitution: 14,
@@ -2032,12 +2116,13 @@ const NPCsBaseData: NPCBaseData[] = [
         playFirst: true,
         attackList: [
             { type: "basic", quantity: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.flamingDance", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Burning", ammount: 2, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.icyDance", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Frozen", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.flamingDance", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Burning", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.icyDance", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Frozen", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-demineur",
+        isBoss: true,
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -2049,7 +2134,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.explosiveMine", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 7, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.explosiveMine", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 7, additionalDices: 3 },
         ],
     },
     {
@@ -2066,7 +2151,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", quantity: 2, additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.dualSlash", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, quantity: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualSlash", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, additionalDices: 1, quantity: 2 },
         ],
     },
     {
@@ -2083,11 +2168,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.aerialStrike", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.aerialStrike", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
         ],
     },
     {
         id: "chromatic-eveque",
+        isBoss: true,
         strength:     12,
         dexterity:    14,
         constitution: 16,
@@ -2100,7 +2186,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "6",
         attackList: [
             { type: "basic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.holySmite", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.holySmite", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, additionalDices: 1, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shielded", ammount: 6, remainingTurns: 3 }] },
         ],
     },
@@ -2123,6 +2209,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "chromatic-gault",
+        isBoss: true,
         strength:     20,
         dexterity:    10,
         constitution: 20,
@@ -2136,11 +2223,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "6",
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.earthquake", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 8, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.earthquake", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 8, additionalDices: 3 },
         ],
     },
     {
         id: "chromatic-glaise",
+        isBoss: true,
         strength:     18,
         dexterity:     8,
         constitution: 20,
@@ -2154,11 +2242,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.crush", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, statusList: [{ type: "Slowed", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.crush", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, additionalDices: 1, statusList: [{ type: "Slowed", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-glissando",
+        isBoss: true,
         strength:     10,
         dexterity:    20,
         constitution: 12,
@@ -2172,11 +2261,12 @@ const NPCsBaseData: NPCBaseData[] = [
         playFirst: true,
         attackList: [
             { type: "basic", quantity: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.glissade", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.glissade", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-goblu",
+        isBoss: true,
         strength:     14,
         dexterity:    16,
         constitution: 12,
@@ -2189,11 +2279,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.sneakAttack", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5 },
+            { type: "skill", name: "combatAdmin.npcAttacks.sneakAttack", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1 },
         ],
     },
     {
         id: "chromatic-gold-chevaliere",
+        isBoss: true,
         strength:     18,
         dexterity:    14,
         constitution: 18,
@@ -2206,11 +2297,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "6",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.goldenStrike", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 8, additionalDices: 2, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.goldenStrike", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 8, additionalDices: 3, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
         ],
     },
     {
         id: "chromatic-greatsword-cultist",
+        isBoss: true,
         strength:     20,
         dexterity:    12,
         constitution: 18,
@@ -2223,11 +2315,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.holyStrike", description: "combatAdmin.npcAttacks.intensityVeryHigh", additionalDamage: 9 },
+            { type: "skill", name: "combatAdmin.npcAttacks.holyStrike", description: "combatAdmin.npcAttacks.intensityVeryHigh", additionalDamage: 9, additionalDices: 2 },
         ],
     },
     {
         id: "chromatic-hexga",
+        isBoss: true,
         strength:     10,
         dexterity:    16,
         constitution: 12,
@@ -2240,12 +2333,13 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.burningCurse", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }, { type: "Burning", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.burningCurse", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }, { type: "Burning", ammount: 2, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.hex", statusList: [{ type: "Weakened", ammount: 3, remainingTurns: 3 }] },
         ],
     },
     {
         id: "chromatic-jar",
+        isBoss: true,
         strength:      8,
         dexterity:    10,
         constitution: 22,
@@ -2261,6 +2355,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "chromatic-lancelier",
+        isBoss: true,
         strength:     18,
         dexterity:    14,
         constitution: 16,
@@ -2273,11 +2368,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.lanceCombo", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, quantity: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.lanceCombo", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, additionalDices: 1, quantity: 2 },
         ],
     },
     {
         id: "chromatic-luster",
+        isBoss: true,
         strength:     14,
         dexterity:    14,
         constitution: 16,
@@ -2289,7 +2385,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.blindingGlow", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.blindingGlow", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
@@ -2306,12 +2402,13 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.holyMagic", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7 },
+            { type: "skill", name: "combatAdmin.npcAttacks.holyMagic", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, additionalDices: 1 },
             { type: "skill", name: "combatAdmin.npcAttacks.luminousBarrier", statusList: [{ type: "Shielded", ammount: 5, remainingTurns: 3 }] },
         ],
     },
     {
         id: "chromatic-moissonneuse",
+        isBoss: true,
         strength:     18,
         dexterity:    16,
         constitution: 16,
@@ -2324,11 +2421,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.reap", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8 },
+            { type: "skill", name: "combatAdmin.npcAttacks.reap", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, additionalDices: 1 },
         ],
     },
     {
         id: "chromatic-orphelin",
+        isBoss: true,
         strength:     10,
         dexterity:    16,
         constitution: 10,
@@ -2357,11 +2455,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.icyWind", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Frozen", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.icyWind", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Frozen", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-portier",
+        isBoss: true,
         strength:     20,
         dexterity:    10,
         constitution: 22,
@@ -2378,6 +2477,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "chromatic-ramasseur",
+        isBoss: true,
         strength:     16,
         dexterity:    14,
         constitution: 16,
@@ -2390,11 +2490,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.forcedCollection", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Weakened", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.forcedCollection", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Weakened", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-ranger-sakapatate",
+        isBoss: true,
         strength:     14,
         dexterity:    18,
         constitution: 14,
@@ -2407,11 +2508,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", quantity: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.preciseShot", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.preciseShot", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
         ],
     },
     {
         id: "chromatic-reaper-cultist",
+        isBoss: true,
         strength:     18,
         dexterity:    16,
         constitution: 16,
@@ -2424,11 +2526,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.reapSouls", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.reapSouls", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, additionalDices: 1, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-robust-sakapatate",
+        isBoss: true,
         strength:     20,
         dexterity:    10,
         constitution: 20,
@@ -2441,7 +2544,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 9, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 9, additionalDices: 3 },
         ],
     },
     {
@@ -2459,8 +2562,8 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.darkRoots", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, statusList: [{ type: "Entangled", ammount: 2, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.lifeAbsorb", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, statusList: [{ type: "Regeneration", ammount: 4, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.darkRoots", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Entangled", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.lifeAbsorb", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, additionalDices: 1, statusList: [{ type: "Regeneration", ammount: 4, remainingTurns: 3 }] },
         ],
     },
     {
@@ -2477,12 +2580,13 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "6",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.iceStake", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, statusList: [{ type: "Frozen", ammount: 1, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.fireEruption", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, statusList: [{ type: "Burning", ammount: 3, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.iceStake", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, additionalDices: 1, statusList: [{ type: "Frozen", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.fireEruption", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, additionalDices: 1, statusList: [{ type: "Burning", ammount: 3, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-steel-chevaliere",
+        isBoss: true,
         strength:     20,
         dexterity:    12,
         constitution: 20,
@@ -2494,11 +2598,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "6",
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.steelStrike", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 9, additionalDices: 2, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.steelStrike", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 9, additionalDices: 3, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-troubadour",
+        isBoss: true,
         strength:     10,
         dexterity:    16,
         constitution: 12,
@@ -2511,8 +2616,8 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.darkMelody", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, statusList: [{ type: "Slowed", ammount: 2, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.fortressSong", statusList: [{ type: "Empowered", ammount: 3, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.darkMelody", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, quantity: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.trumpetCombo", description: "combatAdmin.npcAttacks.intensityVeryHigh", additionalDamage: 7, additionalDices: 2, quantity: 3 },
         ],
     },
     {
@@ -2530,11 +2635,12 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 9 },
             { type: "skill", name: "combatAdmin.npcAttacks.catapult", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 11, additionalDices: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 10, additionalDices: 2, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 10, additionalDices: 3, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
         ],
     },
     {
         id: "chromatic-veilleur",
+        isBoss: true,
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -2547,7 +2653,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.eternalVigil", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.eternalVigil", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }] },
         ],
     },
     {
@@ -2565,11 +2671,12 @@ const NPCsBaseData: NPCBaseData[] = [
         playFirst: true,
         attackList: [
             { type: "basic", quantity: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.aerialDive", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.aerialDive", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
         ],
     },
     {
         id: "chromatic-barbasucette",
+        isBoss: true,
         strength:     14,
         dexterity:    16,
         constitution: 14,
@@ -2580,11 +2687,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.suction", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, statusList: [{ type: "Weakened", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.suction", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, additionalDices: 1, statusList: [{ type: "Weakened", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-franctale",
+        isBoss: true,
         strength:     16,
         dexterity:    14,
         constitution: 16,
@@ -2595,11 +2703,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.fragmentation", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.fragmentation", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
         ],
     },
     {
         id: "chromatic-lampmaster",
+        isBoss: true,
         strength:     12,
         dexterity:    16,
         constitution: 14,
@@ -2611,11 +2720,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.lanternFlare", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.lanternFlare", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, additionalDices: 1, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-machinapieds",
+        isBoss: true,
         strength:     18,
         dexterity:    12,
         constitution: 18,
@@ -2626,11 +2736,12 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.trample", description: "combatAdmin.npcAttacks.intensityVeryHigh", additionalDamage: 7, additionalDices: 1, statusList: [{ type: "Slowed", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.trample", description: "combatAdmin.npcAttacks.intensityVeryHigh", additionalDamage: 7, additionalDices: 2, statusList: [{ type: "Slowed", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
         id: "chromatic-petank",
+        isBoss: true,
         strength:     16,
         dexterity:    12,
         constitution: 18,
@@ -2641,7 +2752,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.ironBall", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.ironBall", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
         ],
     },
 

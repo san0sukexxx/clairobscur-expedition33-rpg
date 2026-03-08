@@ -23,6 +23,7 @@ const SELECTABLE_EFFECTS: StatusType[] = [
     "Vulnerable", "FortunesFury",
     "IntenseFlames", "Earthquake", "StormCaller", "Typhoon",
     "Charging", "DamageEscalation",
+    "BlueFlower", "RedFlower",
 ];
 
 function sortedEffects(effects: StatusType[]) {
@@ -42,8 +43,8 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
     const [editingStatuses, setEditingStatuses] = useState<StatusResponse[]>([]);
     const [newEffectFilter, setNewEffectFilter] = useState("");
     const [newEffectType, setNewEffectType] = useState<StatusType>("Burning");
-    const [newEffectAmount, setNewEffectAmount] = useState(1);
-    const [newEffectTurns, setNewEffectTurns] = useState(3);
+    const [newEffectAmount, setNewEffectAmount] = useState("1");
+    const [newEffectTurns, setNewEffectTurns] = useState("3");
     const [newEffectUnlimited, setNewEffectUnlimited] = useState(false);
     const [expandedStatus, setExpandedStatus] = useState<string | null>(null);
     const prevOpen = useRef(false);
@@ -56,8 +57,8 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
             snapshotStatuses.current = filtered.map(s => ({ ...s }));
             setNewEffectFilter("");
             setNewEffectType("Burning");
-            setNewEffectAmount(1);
-            setNewEffectTurns(3);
+            setNewEffectAmount("1");
+            setNewEffectTurns("3");
             setNewEffectUnlimited(false);
             setExpandedStatus(null);
         }
@@ -72,8 +73,8 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
         if (editingStatuses.some(s => s.effectName === newEffectType)) return;
         setEditingStatuses(prev => [...prev, {
             effectName: newEffectType,
-            ammount: newEffectAmount,
-            remainingTurns: newEffectUnlimited ? null : newEffectTurns,
+            ammount: parseInt(newEffectAmount) || 1,
+            remainingTurns: newEffectUnlimited ? null : (parseInt(newEffectTurns) || 1),
             isResolved: false,
         }]);
     }
@@ -147,8 +148,10 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                                                 type="number"
                                                 className="input input-bordered input-xs w-16"
                                                 min={1}
-                                                value={st.ammount}
-                                                onChange={e => updateStatus(idx, { ammount: parseInt(e.target.value) || 1 })}
+                                                placeholder="1"
+                                                value={st.ammount === 0 ? "" : st.ammount}
+                                                onChange={e => updateStatus(idx, { ammount: e.target.value === "" ? 0 : (parseInt(e.target.value) || 0) })}
+                                                onBlur={e => { if (e.target.value === "" || parseInt(e.target.value) < 1) updateStatus(idx, { ammount: 1 }); }}
                                             />
                                         </div>
                                     )}
@@ -158,10 +161,11 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                                             type="number"
                                             className="input input-bordered input-xs w-16"
                                             min={1}
-                                            value={st.remainingTurns ?? ""}
+                                            value={st.remainingTurns === null ? "" : (st.remainingTurns === 0 ? "" : st.remainingTurns)}
                                             disabled={st.remainingTurns === null}
-                                            placeholder="∞"
-                                            onChange={e => updateStatus(idx, { remainingTurns: parseInt(e.target.value) || 1 })}
+                                            placeholder={st.remainingTurns === null ? "∞" : "1"}
+                                            onChange={e => updateStatus(idx, { remainingTurns: e.target.value === "" ? 0 : (parseInt(e.target.value) || 0) })}
+                                            onBlur={e => { if (st.remainingTurns !== null && (e.target.value === "" || parseInt(e.target.value) < 1)) updateStatus(idx, { remainingTurns: 1 }); }}
                                         />
                                     </div>
                                     <label className="flex items-center gap-1 text-xs cursor-pointer">
@@ -215,8 +219,10 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                                     type="number"
                                     className="input input-bordered input-xs w-16"
                                     min={1}
+                                    placeholder="1"
                                     value={newEffectAmount}
-                                    onChange={e => setNewEffectAmount(parseInt(e.target.value) || 1)}
+                                    onChange={e => setNewEffectAmount(e.target.value)}
+                                    onBlur={e => { if (e.target.value === "" || parseInt(e.target.value) < 1) setNewEffectAmount("1"); }}
                                 />
                             </div>
                         )}
@@ -226,9 +232,11 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                                 type="number"
                                 className="input input-bordered input-xs w-16"
                                 min={1}
+                                placeholder="1"
                                 value={newEffectTurns}
                                 disabled={newEffectUnlimited}
-                                onChange={e => setNewEffectTurns(parseInt(e.target.value) || 1)}
+                                onChange={e => setNewEffectTurns(e.target.value)}
+                                onBlur={e => { if (e.target.value === "" || parseInt(e.target.value) < 1) setNewEffectTurns("1"); }}
                             />
                             <label className="flex items-center gap-1 text-xs cursor-pointer">
                                 <input

@@ -2070,10 +2070,12 @@
         "clear": "Remove encounter"
       },
       "npcPassives": {
+        "startWith2Shields": "Starts battle with 2 shields.",
         "startWith3Shields": "Starts battle with 3 shields.",
         "desperationCharge": "At 35% HP or below, gains 8 shields and begins charging a supreme attack.",
         "mineCarrier": "Carries a mine. Shooting the mine causes it to explode, dealing {{dice}} damage to all allies including itself. Without the mine, it cannot use Suicide Bomb or basic attack.",
         "giantForm": "Can become giant at the start of a combat.",
+        "spitOnBreak": "If broken, spits out all swallowed characters.",
         "mercifulDamage": "When facing the expedition, he can choose to intentionally reduce his damage. In that case, as the game master, announce a lower value for the damage after your roll. Also reduce the XP granted by the battle."
       },
       "npcAttacks": {
@@ -2138,6 +2140,8 @@
         "dualWeaponStrikeDesc": "To cause break, requires a strength check against the target's strength.",
         "impactLeap": "Impact Leap",
         "impactLeapDesc": "Hits all opponents. Can only be avoided by jumping.",
+        "warCry": "War Cry",
+        "warCryDesc": "Grants 2 shields to all allies.",
         "shockwave": "Shockwave",
         "shockwaveDesc": "Hits all opponents. Can only be avoided by jumping.",
         "luminousBarrier": "Luminous Barrier",
@@ -2212,6 +2216,11 @@
         "chromaWaves": "Chroma Waves",
         "lightSword": "Light Sword",
         "miasma": "Miasma",
+        "trumpetCombo": "Trumpet Combo",
+        "hitSequence": "Hit Sequence",
+        "hitSequenceDesc": "3 to 6 hit combo on a single target, at the game master's discretion.",
+        "swallow": "Swallow",
+        "swallowDesc": "The target must make a Dexterity saving throw DC 16. On a failure, the target is swallowed: removed from combat and cannot be brought back with revive.",
         "summonNevrons": "Summon Nevrons",
         "stormblood": "Stormblood",
         "iceBeam": "Ice Beam",
@@ -2222,7 +2231,11 @@
         "lightSpeed": "Light Speed",
         "swordOfLumiere": "Sword of Lumière",
         "chromaStack": "Chroma Stack",
-        "chromaScatter": "Chroma Scatter"
+        "chromaScatter": "Chroma Scatter",
+        "jumpOnAll": "Jump on all",
+        "jumpOnAllDesc": "Jumps 3 times on all enemies.",
+        "flowerField": "Create Flower Field",
+        "flowerFieldDesc": "Summons 7 blue or red flowers (GM's choice). After 3 turns, each undestroyed blue flower adds a shield. Each undestroyed red flower heals 2d6 HP. As GM, you can use the \"Blue Flower\" and \"Red Flower\" conditions to track the countdown."
       },
       "createCombat": "Create combat",
       "creating": "Creating...",
@@ -2345,7 +2358,6 @@
         "cancel": "Cancel",
         "basicAttack": "Basic attack",
         "jumpOnOne": "Jump on one",
-        "jumpOnAll": "Jump on all",
         "gradientAttack": "Gradient Attack",
         "passTurn": "Pass turn",
         "resetIntensity": "Reset",
@@ -2464,7 +2476,7 @@
       },
       "gustave-overcharge": {
         "name": "Overcharge",
-        "description": "Deals high Lightning damage based on Charge amount. 1 hit. Strength test against the target's Strength to cause Break. Can only cause Break at maximum charges."
+        "description": "Deals high Lightning damage based on Charge amount. 1 hit. Strength test against the target's Strength to cause Break. Can only cause Break with 5 or more charges."
       },
       "gustave-powerful": {
         "name": "Powerful",
@@ -3414,7 +3426,9 @@
         "gradient": "🌈 Gradient",
         "invisibleBarrier": "🧊 Invisible Barrier",
         "DamageEscalation": "📈 Damage Escalation",
-        "Charging": "⚡ Charging"
+        "Charging": "⚡ Charging",
+        "BlueFlower": "🔵 Blue Flower",
+        "RedFlower": "🔴 Red Flower"
       },
       "statusDescriptions": {
         "Frozen": "Cannot perform actions. Each 1d6 value reduces freezing by 1. Receiving an attack removes all freezing.",
@@ -3471,6 +3485,8 @@
         "invisibleBarrier": "Invisible magical barrier that protects the character. Visible only to the master.",
         "DamageEscalation": "Base damage increased with each consecutive use. Accumulates +1 per additional use.",
         "Charging": "You are charging a skill.",
+        "BlueFlower": "Summoned blue flower. When the countdown ends, if not destroyed, adds a shield to the summoner.",
+        "RedFlower": "Summoned red flower. When the countdown ends, if not destroyed, heals 2d6 HP to the summoner.",
         "default": "Active effect."
       },
       "resolveButton": {
@@ -4144,7 +4160,9 @@
       "spring-meadows-eveque": "Eveque",
       "flying-waters-luster": "Luster",
       "flying-waters-brulers": "2x Brûler",
-      "flying-waters-blacksmith": "The Blacksmith"
+      "flying-waters-blacksmith": "The Blacksmith",
+      "flying-waters-bourgeon": "Bourgeon",
+      "flying-waters-chromatic-troubadour": "Chromatic Troubadour"
     },
     "locations": {
       "title": "Locations",
@@ -4361,6 +4379,7 @@
       "ramasseur-monolith": "Ramasseur (Monolith)",
       "ceramic-chevaliere-monolith": "Ceramic Chevaliere (Monolith)",
       "gold-chevaliere-monolith": "Gold Chevaliere (Monolith)",
+      "mime-flying-waters": "Mime (Flying Waters)",
       "mime-monolith": "Mime (Monolith)",
       "petank-monolith": "Petank (Monolith)",
       "cruler-battlefield": "Cruler (Battlefield)",

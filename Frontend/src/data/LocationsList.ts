@@ -32,7 +32,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "flying-waters",
-        residentNpcIds: ["noco", "luster", "demineur", "bruler", "cruler", "mime", "bourgeon", "chromatic-troubadour", "goblu"],
+        residentNpcIds: ["noco", "luster", "demineur", "bruler", "cruler", "mime-flying-waters", "bourgeon", "chromatic-troubadour", "goblu"],
         loot: [
             { type: "weapon", itemId: "brulerum", level: 1 },
             { type: "weapon", itemId: "cruleram", level: 1 },
