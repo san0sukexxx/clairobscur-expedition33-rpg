@@ -1866,6 +1866,7 @@
     },
     "userTypeSelect": {
       "title": "RPG Clair Obscur Expedition 33",
+      "subtitle": "For those who come after",
       "master": "Master",
       "player": "Player"
     },
@@ -1880,6 +1881,7 @@
       "campaignPanel": "Campaign Panel",
       "campaignAdmin": "Campaign administration",
       "share": "Share",
+      "fullscreen": "Fullscreen",
       "linkCopied": "Link copied to clipboard!"
     },
     "createCampaign": {
@@ -3737,6 +3739,13 @@
           "gamelog": "Log"
         }
       }
+    },
+    "manual": {
+      "title": "Manual",
+      "masterTitle": "Game Master's Manual",
+      "playerTitle": "Player's Manual",
+      "bookSubtitle": "For those who come after",
+      "comingSoon": "Coming soon..."
     },
     "settings": {
       "title": "Settings",

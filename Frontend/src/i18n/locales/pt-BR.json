@@ -1866,6 +1866,7 @@
     },
     "userTypeSelect": {
       "title": "RPG Clair Obscur Expedition 33",
+      "subtitle": "Por aqueles que vêm depois",
       "master": "Mestre",
       "player": "Jogador"
     },
@@ -1880,6 +1881,7 @@
       "campaignPanel": "Painel da Campanha",
       "campaignAdmin": "Administração da campanha",
       "share": "Compartilhar",
+      "fullscreen": "Tela cheia",
       "linkCopied": "Link copiado para o clipboard!"
     },
     "createCampaign": {
@@ -3739,6 +3741,13 @@
           "gamelog": "Log"
         }
       }
+    },
+    "manual": {
+      "title": "Manual",
+      "masterTitle": "Manual do Mestre",
+      "playerTitle": "Manual do Jogador",
+      "bookSubtitle": "Por aqueles que vêm depois",
+      "comingSoon": "Em breve..."
     },
     "settings": {
       "title": "Configurações",

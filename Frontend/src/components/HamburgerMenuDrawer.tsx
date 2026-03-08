@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { MdMenu, MdClose, MdSettings } from "react-icons/md";
+import { MdMenu, MdClose, MdSettings, MdMenuBook } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { PiNoteFill } from "react-icons/pi";
 import { FaUser, FaClipboardList, FaHistory } from "react-icons/fa";
@@ -122,6 +122,15 @@ export function HamburgerMenuDrawer({ tab, setTab, isExecutingSkill, setupComple
 
         {/* Settings & Exit — bottom of drawer */}
         <div className="p-3 border-t border-base-300 shrink-0 flex flex-col gap-1">
+          <button
+            onClick={() => { setOpen(false); navigate("/manual/player"); }}
+            className="flex items-center gap-4 px-4 py-3 rounded-lg w-full text-left hover:bg-base-200 text-base-content/80 transition"
+          >
+            <MdMenuBook className="text-xl" />
+            <span className="text-sm font-semibold tracking-wide">
+              {t("manual.playerTitle")}
+            </span>
+          </button>
           <button
             onClick={() => { setOpen(false); navigate("/settings"); }}
             className="flex items-center gap-4 px-4 py-3 rounded-lg w-full text-left hover:bg-base-200 text-base-content/80 transition"

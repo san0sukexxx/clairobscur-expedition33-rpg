@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, type MutableRefObject } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { FiLogOut, FiShare2, FiMaximize, FiMinimize, FiSettings } from "react-icons/fi";
+import { AdminMenuDrawer } from "../components/AdminMenuDrawer";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon, FaMapMarkerAlt, FaSkull } from "react-icons/fa";
 import { GiStoneTablet, GiCrossedSwords } from "react-icons/gi";
 import { useApiListRaw } from "../api/UseApiListRaw";
@@ -44,18 +45,12 @@ export default function CampaignAdmin() {
     const campaignId = campaign ? parseInt(campaign, 10) : null;
     const navigate = useNavigate();
     const { showToast } = useToast();
-    const [isFullscreen, setIsFullscreen] = useState(false);
     const [focusNpcId, setFocusNpcId] = useState<string | null>(null);
     const [focusPictoId, setFocusPictoId] = useState<string | null>(null);
     const [focusWeaponId, setFocusWeaponId] = useState<string | null>(null);
     const diceBoardRef = useRef<DiceBoardRef>(null);
     const timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null> = useRef(null);
 
-    useEffect(() => {
-        const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
-        document.addEventListener("fullscreenchange", onFsChange);
-        return () => document.removeEventListener("fullscreenchange", onFsChange);
-    }, []);
 
     const { items, loading, error, reload } = useApiListRaw<GetPlayerResponse>(
         () => (campaignId !== null ? APICampaignPlayer.list(campaignId) : Promise.resolve([])),
@@ -159,41 +154,9 @@ export default function CampaignAdmin() {
                     <span className="text-xl font-bold text-primary">{t("campaigns.campaignPanel")}</span>
                 </div>
 
-                <div className="flex-none flex gap-2">
-                    <button
-                        onClick={handleShareCampaign}
-                        className="btn btn-ghost btn-square"
-                        title={t("campaigns.share") || "Compartilhar"}
-                    >
-                        <FiShare2 />
-                    </button>
-                    <button
-                        onClick={() => {
-                            if (document.fullscreenElement) {
-                                document.exitFullscreen();
-                            } else {
-                                document.documentElement.requestFullscreen();
-                            }
-                        }}
-                        className="btn btn-ghost btn-square"
-                        title={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}
-                    >
-                        {isFullscreen ? <FiMinimize /> : <FiMaximize />}
-                    </button>
-                    <button
-                        onClick={() => navigate("/settings")}
-                        className="btn btn-ghost btn-square"
-                        title={t("playerPage.navigation.tabs.settings")}
-                    >
-                        <FiSettings />
-                    </button>
-                    <button
-                        onClick={() => navigate("/")}
-                        className="btn btn-ghost btn-square"
-                        title={t("navigation.logout")}
-                    >
-                        <FiLogOut />
-                    </button>
+                <div className="flex-none flex items-center">
+                    <FullscreenButton />
+                    <AdminMenuDrawer onShare={handleShareCampaign} />
                 </div>
             </div>
 

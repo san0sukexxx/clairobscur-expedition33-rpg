@@ -1,5 +1,5 @@
-import { AiFillPlusCircle } from "react-icons/ai";
-import { AiFillSave } from "react-icons/ai";
+import { AiFillPlusCircle, AiFillSave } from "react-icons/ai";
+import { AiOutlineBook } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { MdOutlineKeyboardBackspace, MdSettings } from "react-icons/md";
 import { FullscreenButton } from "../components/FullscreenButton";
@@ -33,6 +33,12 @@ export default function MasterPage() {
                 <Link to="/load-campaign" className="btn btn-secondary btn-lg w-full flex items-center justify-center gap-3">
                     <AiFillSave size={22} />
                     {t("masterPage.loadCampaign")}
+                    <span className="opacity-0 w-1">.</span>
+                </Link>
+
+                <Link to="/manual/master" className="btn btn-ghost btn-lg w-full flex items-center justify-center gap-3">
+                    <AiOutlineBook size={24} />
+                    {t("manual.masterTitle")}
                     <span className="opacity-0 w-1">.</span>
                 </Link>
             </div>
