@@ -13,7 +13,7 @@ export type StatusType =
 
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent" | "absorb";
-export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot" | "skill";
+export type AttackType = "basic" | "gradient" | "free-shot" | "skill";
 export type SpecialAttackType = "give-status";
 export type PictoColor = "green" | "red" | "blue" | "yellow";
 export type BattleCharacterType = "player" | "npc";

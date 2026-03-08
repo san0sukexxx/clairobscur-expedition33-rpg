@@ -467,7 +467,6 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                         {atk.description && <span className="italic opacity-90">{t(atk.description)} </span>}
                                         {hasDamage && (
                                             <span className="italic opacity-90">
-                                                {atk.type === "jump-all" && <>{t("combatAdmin.actionDesc.targetsAll")} </>}
                                                 <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                 {" "}{t("combatAdmin.actionDesc.toHit")}
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
@@ -480,7 +479,6 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                         )}
                                         {!hasDamage && !atk.description && (
                                             <span className="italic opacity-90">
-                                                {atk.type === "jump-all" && <>{t("combatAdmin.actionDesc.targetsAll")} </>}
                                                 <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                 {" "}{t("combatAdmin.actionDesc.toHit")}
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}

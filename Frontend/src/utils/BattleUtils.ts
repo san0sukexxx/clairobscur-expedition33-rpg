@@ -19,10 +19,6 @@ export function getAttackTypeLabel(type: string): string {
     switch (type) {
         case "basic":
             return t("battle.attackType.basic");
-        case "jump":
-            return t("battle.attackType.jump");
-        case "jump-all":
-            return t("battle.attackType.jumpAll");
         case "gradient":
             return t("battle.attackType.gradient");
         default:
@@ -145,12 +141,7 @@ export function generateActionDescription(npc: NPCInfo, atk: NPCAttack): string 
     const flatPart = flatDmg === 0 ? "" : flatDmg > 0 ? `+${flatDmg}` : `${flatDmg}`;
     const dmgExpr = `${avgDmg} (${numDice}d${dieSize}${flatPart})`;
 
-    const isArea = atk.type === "jump-all";
-    const attackKind = isArea
-        ? t("combatAdmin.actionDesc.areaAttack")
-        : t("combatAdmin.actionDesc.meleeAttack");
-
-    let desc = `${attackKind}: ${hitSign} ${t("combatAdmin.actionDesc.toHit")}`;
+    let desc = `${hitSign} ${t("combatAdmin.actionDesc.toHit")}`;
     const elementName = getElementName(atk.element ?? "Physical");
     desc += `. ${t("combatAdmin.actionDesc.hit")}: ${dmgExpr} ${t("combatAdmin.actionDesc.damageOfType")} ${elementName}`;
 
