@@ -7,18 +7,26 @@ import { CHARACTERS_LIST } from "../utils/CharacterUtils";
 import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds, getLocationName } from "../i18n";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
-import { calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
 import { StoryEncountersList } from "../data/StoryEncountersList";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
 }
 
+function getNpcCR(npcId: string): number {
+    const npc = getNpcById(npcId);
+    return npc?.challengeRating ? parseFloat(npc.challengeRating) : 0;
+}
+
 function calculateEncounterCR(npcs: EncounterNpcDto[]): number {
-    return npcs.reduce((total, npc) => {
-        const cr = calculateNPCDifficulty(npc.npcId);
-        return total + cr * npc.quantity;
-    }, 0);
+    return npcs.reduce((total, npc) => total + getNpcCR(npc.npcId) * npc.quantity, 0);
+}
+
+function formatCR(cr: number): string {
+    if (cr === 0.125) return "1/8";
+    if (cr === 0.25) return "1/4";
+    if (cr === 0.5) return "1/2";
+    return String(cr);
 }
 
 export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdminEncountersTabProps) {
@@ -218,7 +226,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
         const search = npcSearch.toLowerCase();
         return pool.filter((npc) => {
             const matchesName = npc.name.toLowerCase().includes(search);
-            const cr = formatCR(calculateNPCDifficulty(npc.id));
+            const cr = formatCR(getNpcCR(npc.id));
             return matchesName || cr.includes(search);
         });
     }, [npcSearch, npcLocationFilter]);
@@ -352,7 +360,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                         <div className="flex flex-col gap-2 mb-3">
                             {editNpcs.map((npcEntry) => {
                                 const npc = getNpcById(npcEntry.npcId);
-                                const npcCr = calculateNPCDifficulty(npcEntry.npcId);
+                                const npcCr = getNpcCR(npcEntry.npcId);
                                 return (
                                     <div key={npcEntry.npcId} className="flex flex-wrap items-center gap-x-3 gap-y-1 bg-base-200 rounded-lg p-2">
                                         <div className="w-10 h-10 rounded-full bg-base-300 shrink-0 overflow-hidden flex items-center justify-center">
@@ -437,7 +445,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                             </div>
                                             <div className="flex flex-col min-w-0 flex-1">
                                                 <span className="text-sm font-medium truncate">{npc.name}</span>
-                                                <span className="text-xs opacity-60">{t("encounters.challengeRating")} {formatCR(calculateNPCDifficulty(npc.id))}</span>
+                                                <span className="text-xs opacity-60">{t("encounters.challengeRating")} {formatCR(getNpcCR(npc.id))}</span>
                                             </div>
                                             <FaPlus className="opacity-40" />
                                         </button>
