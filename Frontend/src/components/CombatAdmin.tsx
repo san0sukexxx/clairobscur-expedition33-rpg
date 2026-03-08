@@ -1339,7 +1339,6 @@ export default function CombatAdmin({
                                                         {" "}{t("combatAdmin.actionDesc.toHit")}
                                                         . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                         <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
-                                                        {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
                                                         {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                         {statusParts && statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                         .
@@ -1381,7 +1380,7 @@ export default function CombatAdmin({
                                                     {" "}{t("combatAdmin.actionDesc.toHit")}
                                                     . {t("combatAdmin.actionDesc.hit")}: {basicAvgDmg}{" "}
                                                     <DiceBtn diceCmd={`${basicNumDice}d${dieSize}`} modifier={basicFlatDmg} label={`${npcName} – ${t("combat.attack")} (${t("combatAdmin.actionDesc.hit")})`} />
-                                                    {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName("Physical")}.
+                                                    .
                                                 </span>
                                             </span>
                                         </div>
