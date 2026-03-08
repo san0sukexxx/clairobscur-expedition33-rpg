@@ -2159,7 +2159,7 @@
         "holySmite": "Holy Smite",
         "divineShield": "Divine Shield",
         "tremor": "Tremor",
-        "tremorDesc": "Strikes a single target twice, then hits all characters.",
+        "tremorDesc": "Strikes any target twice, then hits all characters.",
         "summonMinions": "Summon Minions",
         "summonMinionsDesc": "Summons two Abbests to the battlefield.",
         "intensityHigh": "High intensity.",
