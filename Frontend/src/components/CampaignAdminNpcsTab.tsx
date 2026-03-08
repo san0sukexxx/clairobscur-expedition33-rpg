@@ -471,7 +471,6 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                                 {" "}{t("combatAdmin.actionDesc.toHit")}
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                 <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
-                                                {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
                                                 {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                 {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                 .
@@ -483,7 +482,6 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                                 {" "}{t("combatAdmin.actionDesc.toHit")}
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                 <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
-                                                {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
                                                 {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                 {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                 .
@@ -506,7 +504,6 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                             {" "}{t("combatAdmin.actionDesc.toHit")}
                                             . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                             <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${t("combatAdmin.actionDesc.meleeAttack")} (${t("combatAdmin.actionDesc.hit")})`} />
-                                            {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName("Physical")}
                                             .
                                         </span>
                                     </span>
