@@ -107,7 +107,7 @@ export function ManualMasterContent() {
 
       <SubTitle>{t("manual.master.negativeStatus")}</SubTitle>
       <ul className="list-none ml-0 space-y-1 my-2">
-        {["slowed", "weakened", "unprotected", "cursed", "stunned", "confused", "frozen", "entangled", "silenced", "exhausted", "dizzy", "fragile", "broken", "burning", "plagued", "vulnerable", "inverted", "powerless"].map(s => (
+        {["slowed", "weakened", "unprotected", "cursed", "stunned", "confused", "frozen", "entangled", "silenced", "exhausted", "dizzy", "broken", "burning", "plagued", "vulnerable", "inverted", "powerless"].map(s => (
           <li key={s} className="text-xs">
             <strong style={{ color: "#58180d" }}>{t(`manual.master.status.${s}`)}.</strong>{" "}
             {t(`manual.master.status.${s}Desc`)}

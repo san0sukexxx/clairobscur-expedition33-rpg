@@ -2079,6 +2079,7 @@
         "comboHammers": "Combo Marteladas",
         "comboSlaps": "Combo Tapas",
         "charge": "Investida",
+        "subterraneanTremor": "Tremor",
         "profaneScream": "Grito Profano",
         "pirouette": "Pirueta",
         "suction": "Sucção",
@@ -2110,6 +2111,9 @@
         "mentalExplosion": "Explosão Mental",
         "burningCurse": "Maldição Ardente",
         "hex": "Hex",
+        "lanceStrikeDesc": "Ataca um alvo com sua lança.",
+        "dualLanceStrike": "Golpe Duplo de Lança",
+        "dualLanceStrikeDesc": "Ataca um alvo com as duas lanças em sequência.",
         "lanceCharge": "Investida de Lança",
         "lanceCombo": "Combo de Lança",
         "luminousHorn": "Chifre Luminoso",
@@ -2446,7 +2450,7 @@
       },
       "gustave-overcharge": {
         "name": "Sobrecarga",
-        "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 ataque. Pode causar quebra."
+        "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 ataque. Teste de Força (dificuldade alta) para causar quebra."
       },
       "gustave-powerful": {
         "name": "Fortalecimento",
@@ -2462,7 +2466,7 @@
       },
       "gustave-shatter": {
         "name": "Estilhaçar",
-        "description": "Causa dano de Raio alto em todos os inimigos. 1 ataque. Pode causar quebra. Se um alvo sofrer quebra pelo ataque, sobrecarga é totalmente carregado."
+        "description": "Causa dano de Raio alto em todos os inimigos. 1 ataque. Teste de Força (dificuldade alta) para causar quebra. Se um alvo sofrer quebra pelo ataque, sobrecarga é totalmente carregado."
       },
       "gustave-strike-storm": {
         "name": "Tempestade de Ataques",
@@ -2498,7 +2502,7 @@
       },
       "lune-mayhem": {
         "name": "Caos",
-        "description": "Consome todas as Manchas para causar dano elemental alto ao alvo. Pode causar quebra se 4 Manchas forem consumidas."
+        "description": "Consome todas as Manchas para causar dano elemental alto ao alvo. Se 4 Manchas forem consumidas, teste de Inteligência (dificuldade alta) para causar quebra."
       },
       "lune-elemental-trick": {
         "name": "Truque Elemental",
@@ -2514,7 +2518,7 @@
       },
       "lune-rockslide": {
         "name": "Deslizamento",
-        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Pode causar quebra. Consome Mancha de Raio, Mancha de Gelo e Mancha de Fogo para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Teste de Inteligência (dificuldade alta) para causar quebra. Consome Mancha de Raio, Mancha de Gelo e Mancha de Fogo para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-crustal-crush": {
         "name": "Esmaga-Crosta",
@@ -2534,7 +2538,7 @@
       },
       "lune-terraquake": {
         "name": "Terremoto",
-        "description": "Aplica o status Terremoto a todos os inimigos por 3 turnos. No início de seus turnos, personagens com Terremoto recebem 1d6 de dano e sofrem quebra se estiverem frágeis. Consome 2 Manchas de Raio para estender a duração para 5 turnos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Aplica o status Terremoto a todos os inimigos por 3 turnos. No início de seus turnos, personagens com Terremoto recebem 1d6 de dano. Teste de Inteligência (dificuldade alta) para causar quebra. Consome 2 Manchas de Raio para estender a duração para 5 turnos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-typhoon": {
         "name": "Tufão",
@@ -2558,7 +2562,7 @@
       },
       "lune-sky-break": {
         "name": "Quebra do Céu",
-        "description": "Não consome turno. Causa dano extremo a todos os inimigos. 1 ataque. Pode causar quebra. O elemento depende de qual Mancha Lune possui mais. Usar esta habilidade concede 3 Manchas de Luz."
+        "description": "Não consome turno. Causa dano extremo a todos os inimigos. 1 ataque. Teste de Inteligência (dificuldade alta) para causar quebra. O elemento depende de qual Mancha Lune possui mais. Usar esta habilidade concede 3 Manchas de Luz."
       },
       "lune-tree-of-life": {
         "name": "Árvore da Vida",
@@ -2614,7 +2618,7 @@
       },
       "maelle-fleuret-fury": {
         "name": "Fúria do Florete",
-        "description": "Causa dano Físico alto em alvo único. 3 ataques. Pode causar Quebra. Se Maelle usar esta habilidade enquanto estiver na Postura Virtuosa, permanece na Virtuosa. Usar esta habilidade muda a Postura de Maelle para Sem Postura."
+        "description": "Causa dano Físico alto em alvo único. 3 ataques. Teste de Destreza (dificuldade alta) para causar quebra. Se Maelle usar esta habilidade enquanto estiver na Postura Virtuosa, permanece na Virtuosa. Usar esta habilidade muda a Postura de Maelle para Sem Postura."
       },
       "maelle-breaking-rules": {
         "name": "Quebrando Regras",
@@ -2634,7 +2638,7 @@
       },
       "maelle-revenge": {
         "name": "Vingança",
-        "description": "Causa dano de Fogo alto em alvo único. 1 ataque. Dano aumentado para cada ataque que causou dano em você desde o turno anterior. Pode causar Quebra. Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano de Fogo alto em alvo único. 1 ataque. Dano aumentado para cada ataque que causou dano em você desde o turno anterior. Teste de Destreza (dificuldade alta) para causar quebra. Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-pyrolyse": {
         "name": "Pirólise",
@@ -2650,7 +2654,7 @@
       },
       "maelle-payback": {
         "name": "Retribuição",
-        "description": "Causa dano Físico muito alto em alvo único. 1 ataque. Pode causar Quebra. Custo de PM reduzido para cada ataque aparado desde o último turno (custo base 9 PM). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano Físico muito alto em alvo único. 1 ataque. Teste de Destreza (dificuldade alta) para causar quebra. Custo de PM reduzido para cada ataque aparado desde o último turno (custo base 9 PM). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-stendhal": {
         "name": "Stendhal",
@@ -2718,7 +2722,7 @@
       },
       "sciel-phantom-blade": {
         "name": "Lâmina Fantasma",
-        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições (+2 de bônus no ataque e +2 de dano adicional por Predição). Pode causar quebra."
+        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições (+2 de bônus no ataque e +2 de dano adicional por Predição). Teste de Carisma (dificuldade alta) para causar quebra."
       },
       "sciel-sealed-fate": {
         "name": "Destino Selado",
@@ -2762,7 +2766,7 @@
       },
       "sciel-final-path": {
         "name": "Caminho Final",
-        "description": "Causa dano das Trevas extremo em alvo único. 1 ataque. Aplica 10 Predições. Pode causar quebra."
+        "description": "Causa dano das Trevas extremo em alvo único. 1 ataque. Aplica 10 Predições. Teste de Carisma (dificuldade alta) para causar quebra."
       },
       "sciel-twilight-dance": {
         "name": "Dança Crepuscular",
@@ -2774,7 +2778,7 @@
       },
       "sciel-doom": {
         "name": "Perdição",
-        "description": "Não consome turno. Causa dano das Trevas muito alto em alvo único. 3 ataques. Aplica Enfraquecido, Desprotegido e Lento por 3 turnos. Pode causar quebra."
+        "description": "Não consome turno. Causa dano das Trevas muito alto em alvo único. 3 ataques. Aplica Enfraquecido, Desprotegido e Lento por 3 turnos. Teste de Carisma (dificuldade alta) para causar quebra."
       },
       "sciel-end-slice": {
         "name": "Corte Final",
@@ -2842,7 +2846,7 @@
       },
       "verso-perfect-break": {
         "name": "Quebra Perfeita",
-        "description": "Causa dano de Luz muito alto em alvo único. 1 golpe. Pode Quebrar. Se Verso usar esta habilidade no Rank B de Perfeição, o custo de PM é reduzido de 7 para 5."
+        "description": "Causa dano de Luz muito alto em alvo único. 1 golpe. Teste de Força (dificuldade alta) para causar quebra. Se Verso usar esta habilidade no Rank B de Perfeição, o custo de PM é reduzido de 7 para 5."
       },
       "verso-perfect-recovery": {
         "name": "Recuperação Perfeita",
@@ -2850,7 +2854,7 @@
       },
       "verso-phantom-stars": {
         "name": "Estrelas Fantasmas",
-        "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Pode Quebrar. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 9 para 5."
+        "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Teste de Força (dificuldade alta) para causar quebra. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 9 para 5."
       },
       "verso-powerful": {
         "name": "Fortalecimento",
@@ -2866,7 +2870,7 @@
       },
       "verso-radiant-slash": {
         "name": "Corte Radiante",
-        "description": "Causa dano de Luz baixo em todos os inimigos. 1 golpe. Pode Quebrar. Se Verso usar esta habilidade no Rank C de Perfeição, o dano é aumentado."
+        "description": "Causa dano de Luz baixo em todos os inimigos. 1 golpe. Teste de Força (dificuldade alta) para causar quebra. Se Verso usar esta habilidade no Rank C de Perfeição, o dano é aumentado."
       },
       "verso-sabotage": {
         "name": "Sabotagem",
@@ -2882,7 +2886,7 @@
       },
       "verso-striker": {
         "name": "Estocada",
-        "description": "Não consome turno. Causa dano Físico alto em alvo único. 1 golpe. Pode Quebrar."
+        "description": "Não consome turno. Causa dano Físico alto em alvo único. 1 golpe. Teste de Força (dificuldade alta) para causar quebra."
       },
       "verso-strike-storm": {
         "name": "Tempestade de Golpes",
@@ -2925,7 +2929,7 @@
       },
       "monoco-bruler-bash": {
         "name": "Pancada Bruler",
-        "description": "Ataque flamejante. Efeito: Causa dano Físico médio em alvo único. 3 ataques. Pode causar quebra. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.",
+        "description": "Ataque flamejante. Efeito: Causa dano Físico médio em alvo único. 3 ataques. Teste de Sabedoria (dificuldade alta) para causar quebra. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Brûler enquanto Monoco estiver no grupo ativo."
       },
       "monoco-chalier-combo": {
@@ -2995,7 +2999,7 @@
       },
       "monoco-duallist-storm": {
         "name": "Tempestade do Duelista",
-        "description": "Ataque de tempestade de duas armas. Efeito: Causa dano Físico extremo em alvo único. 4 ataques. Pode causar quebra. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.",
+        "description": "Ataque de tempestade de duas armas. Efeito: Causa dano Físico extremo em alvo único. 4 ataques. Teste de Sabedoria (dificuldade alta) para causar quebra. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Dualliste enquanto Monoco estiver no grupo ativo."
       },
       "monoco-echassier-stabs": {
@@ -3050,7 +3054,7 @@
       },
       "monoco-moissonneuse-vendange": {
         "name": "Vindima Moissonneuse",
-        "description": "Ataque ceifador de colheita. Efeito: Causa dano Físico alto em alvo único. 3 ataques. Pode causar quebra. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.",
+        "description": "Ataque ceifador de colheita. Efeito: Causa dano Físico alto em alvo único. 3 ataques. Teste de Sabedoria (dificuldade alta) para causar quebra. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Moissoneusse enquanto Monoco estiver no grupo ativo."
       },
       "monoco-obscur-sword": {
@@ -3070,7 +3074,7 @@
       },
       "monoco-portier-crash": {
         "name": "Colisão Portier",
-        "description": "Ataque de colisão que quebra portas. Efeito: Causa dano Físico alto em todos os inimigos. 1 ataque. Pode causar quebra. Máscara Pesada: Dano aumentado.",
+        "description": "Ataque de colisão que quebra portas. Efeito: Causa dano Físico alto em todos os inimigos. 1 ataque. Teste de Sabedoria (dificuldade alta) para causar quebra. Máscara Pesada: Dano aumentado.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-potier-energy": {
@@ -3080,12 +3084,12 @@
       },
       "monoco-ramasseur-bonk": {
         "name": "Pancada do Coletor",
-        "description": "Ataque de pancada do coletor. Efeito: Causa dano das Trevas baixo em alvo único. 1 ataque. Pode causar quebra. Efeito Máscara Ágil adiciona +2 ao dano de Break. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, adiciona +2 de bônus no ataque e +2 de dano adicional de Break ao acertar.",
+        "description": "Ataque de pancada do coletor. Efeito: Causa dano das Trevas baixo em alvo único. 1 ataque. Teste de Sabedoria (dificuldade alta) para causar quebra. Efeito Máscara Ágil adiciona +2 ao dano de Break. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, adiciona +2 de bônus no ataque e +2 de dano adicional de Break ao acertar.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-rocher-hammering": {
         "name": "Martelamento Rocher",
-        "description": "Ataque de martelamento rochoso. Efeito: Causa dano Físico médio em alvo único. 4 ataques. Pode causar quebra. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.",
+        "description": "Ataque de martelamento rochoso. Efeito: Causa dano Físico médio em alvo único. 4 ataques. Teste de Sabedoria (dificuldade alta) para causar quebra. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Rocher enquanto Monoco estiver no grupo ativo."
       },
       "monoco-sakapatate-estoc": {
@@ -3366,7 +3370,6 @@
         "Typhoon": "🌀 Tufão",
         "Silenced": "🔇 Silenciado",
         "Dizzy": "💫 Tonto",
-        "Fragile": "🪟 Frágil",
         "Broken": "💥 Quebrado",
         "Fleeing": "🏃 Fugindo",
         "FireVulnerability": "🔥 Vulnerável a Fogo",
@@ -3424,8 +3427,7 @@
         "Plagued": "O personagem tem –5 PV máximos até o fim da cena. Essa condição pode acumular, diminuindo 5 PV por cada acumulo, até o personagem ficar com o mínimo de 1 PV máximo.",
         "Silenced": "Não pode usar habilidades.",
         "Dizzy": "Perda em ataques usando tiro livre ou habilidades.",
-        "Fragile": "Receber um dano maior que o dobro de sua resistência te torna frágil por 3 turnos. Estando frágil você fica vulnerável a quebra.",
-        "Broken": "Você não pode se defender ou pode agir.",
+        "Broken": "Você não pode se defender ou agir.",
         "Fleeing": "O personagem está tentando fugir da batalha e não pode realizar nenhuma outra ação.",
         "FireVulnerability": "O personagem recebe dano aumentado de ataques de Fogo.",
         "Guardian": "Protege aliados recebendo dano no lugar deles quando são atacados.",
@@ -3447,7 +3449,7 @@
         "Vulnerable": "O personagem recebe dano aumentado de todas as fontes.",
         "FortunesFury": "Cada ataque causa +8 de bônus no ataque e +8 de dano adicional durante 1 turno.",
         "Regen": "Regenera pontos de vida ao longo do tempo.",
-        "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano. Se o personagem estiver frágil, sofre quebra e recebe o dano que causou a quebra +1d6.",
+        "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano.",
         "IntenseFlames": "Rola Xd6 de dano quando resolvido (X = acúmulos atuais). Aumenta em 2 acúmulos no fim do turno. Não expira. Removido de todos os inimigos quando o conjurador recebe dano.",
         "freeShot": "Tiros livres realizados neste turno. Aumenta o dano de Sequência (até 10 stacks).",
         "jump": "Ignora terreno ou obstáculos temporariamente.",
@@ -3853,8 +3855,6 @@
           "exhaustedDesc": "Todos os custos de MP +1. Não pode recuperar MP.",
           "dizzy": "Tonto",
           "dizzyDesc": "Penalidade em ataques de tiro livre e habilidades.",
-          "fragile": "Frágil",
-          "fragilDesc": "Se receber dano > 2× Resistência, fica Quebrado.",
           "broken": "Quebrado",
           "brokenDesc": "Não pode se defender nem agir.",
           "burning": "Queimando",
@@ -3978,8 +3978,6 @@
           "silencedDesc": "Não pode usar habilidades especiais.",
           "burning": "Queimando",
           "burningDesc": "Recebe 1d6 de dano de Fogo no início de cada turno.",
-          "fragile": "Frágil",
-          "fragilDesc": "Dano forte pode te Quebrar.",
           "broken": "Quebrado",
           "brokenDesc": "Não pode se defender nem agir.",
           "plagued": "Praguejado",

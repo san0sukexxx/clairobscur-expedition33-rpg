@@ -15,7 +15,7 @@ const SELECTABLE_EFFECTS: StatusType[] = [
     "Stunned", "Confused", "Frozen", "Entangled",
     "Exhausted", "Frenzy", "Rage",
     "Inverted", "Marked", "Plagued", "Burning",
-    "Silenced", "Dizzy", "Fragile", "Broken", "Fleeing",
+    "Silenced", "Dizzy", "Broken", "Fleeing",
     "FireVulnerability", "Guardian", "Foretell", "Twilight", "Powerless",
     "Rush", "Shield", "Powerful", "Shell",
     "GreaterRush", "GreaterSlow",

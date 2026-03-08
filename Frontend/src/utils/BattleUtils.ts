@@ -61,7 +61,6 @@ export function getStatusLabel(status: StatusType): string {
         case "Typhoon": return t("battle.statusEffects.Typhoon");
         case "Silenced": return t("battle.statusEffects.Silenced");
         case "Dizzy": return t("battle.statusEffects.Dizzy");
-        case "Fragile": return t("battle.statusEffects.Fragile");
         case "Broken": return t("battle.statusEffects.Broken");
         case "Fleeing": return t("battle.statusEffects.Fleeing");
         case "FireVulnerability": return t("battle.statusEffects.FireVulnerability");
@@ -112,7 +111,6 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Marked",
         "Silenced",
         "Dizzy",
-        "Fragile",
         "Broken",
         "Fleeing",
         "FireVulnerability",

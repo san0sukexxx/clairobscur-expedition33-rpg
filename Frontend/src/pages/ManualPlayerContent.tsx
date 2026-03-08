@@ -72,7 +72,7 @@ export function ManualPlayerContent() {
 
       <SubTitle>{t("manual.player.debuffs")}</SubTitle>
       <ul className="list-none ml-0 space-y-1 my-2">
-        {["slowed", "weakened", "cursed", "stunned", "confused", "frozen", "entangled", "silenced", "burning", "fragile", "broken", "plagued"].map(s => (
+        {["slowed", "weakened", "cursed", "stunned", "confused", "frozen", "entangled", "silenced", "burning", "broken", "plagued"].map(s => (
           <li key={s} className="text-xs">
             <strong style={{ color: "#58180d" }}>{t(`manual.player.status.${s}`)}.</strong>{" "}
             {t(`manual.player.status.${s}Desc`)}

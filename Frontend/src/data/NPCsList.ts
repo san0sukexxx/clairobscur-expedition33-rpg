@@ -136,7 +136,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "2",
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.charge", additionalDamage: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.subterraneanTremor", additionalDamage: 3 },
         ],
         drops: { weapons: ["lighterim"] },
     },
@@ -473,7 +473,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "2",
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.fragmentation", additionalDamage: 4, statusList: [{ type: "Fragile", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.fragmentation", additionalDamage: 4 },
         ],
     },
     {
@@ -735,7 +735,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "1",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 2, statusList: [{ type: "Fragile", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 2 },
         ],
     },
     {
@@ -1150,7 +1150,8 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "2",
         passives: ["combatAdmin.npcPassives.startWith3Shields", "combatAdmin.npcPassives.desperationCharge"],
         attackList: [
-            { type: "basic", element: "Light", additionalDamage: 1 },
+            { type: "basic", element: "Light", additionalDamage: 1, description: "combatAdmin.npcAttacks.lanceStrikeDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualLanceStrike", description: "combatAdmin.npcAttacks.dualLanceStrikeDesc", element: "Light", additionalDamage: 1, quantity: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.tremor", description: "combatAdmin.npcAttacks.tremorDesc", element: "Earth", additionalDamage: 2, quantity: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.summonMinions", description: "combatAdmin.npcAttacks.summonMinionsDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.supremeAttack", description: "combatAdmin.npcAttacks.supremeAttackDesc", element: "Light", additionalDamage: 6 },
@@ -1297,7 +1298,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.joyfulReap", additionalDamage: 9, statusList: [{ type: "Fragile", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.joyfulReap", additionalDamage: 9 },
         ],
         drops: { weapons: ["chapelim"] },
     },
@@ -2309,7 +2310,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.reap", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, statusList: [{ type: "Fragile", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.reap", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8 },
         ],
     },
     {
@@ -2580,7 +2581,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.fragmentation", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, statusList: [{ type: "Fragile", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.fragmentation", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
         ],
     },
     {
@@ -2667,7 +2668,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 9, statusList: [{ type: "Fragile", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 9 },
         ],
     },
 
@@ -3225,7 +3226,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 5,
         attackList: [
             { type: "basic", additionalDamage: 9 },
-            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 15, additionalDices: 2, statusList: [{ type: "Fragile", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 15, additionalDices: 2 },
         ],
     },
     {

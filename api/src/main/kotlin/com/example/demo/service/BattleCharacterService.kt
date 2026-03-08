@@ -900,7 +900,7 @@ class BattleCharacterService(
         }
 
         /**
-         * Breaking Shots: Deals 50% more damage with Free Aim shots if target has Fragile or Broken
+         * Breaking Shots: Deals 50% more damage with Free Aim shots if target has Broken
          */
         private fun checkAndApplyBreakingShotsModifier(battleCharacter: BattleCharacter) {
                 if (battleCharacter.characterType != "player") {
@@ -922,7 +922,7 @@ class BattleCharacterService(
                                 type = "free-shot",  // Only applies to free-aim shots
                                 multiplier = 1.5,  // 50% more damage (1 + 0.5)
                                 flatBonus = 0,
-                                condition = "enemy-fragile-or-broken"  // Only when target has Fragile or Broken
+                                condition = "enemy-broken"  // Only when target has Broken
                         )
                 }
         }

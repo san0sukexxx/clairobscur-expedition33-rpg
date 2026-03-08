@@ -51,5 +51,4 @@ export const hasShell = (t: BattleCharacterInfo) => hasStatus(t, "Shell");
 export const hasUnprotected = (t: BattleCharacterInfo) => hasStatus(t, "Unprotected");
 export const getFrenzyStatus = (t: BattleCharacterInfo) => getStatus(t, "Frenzy");
 export const hasMarked = (t: BattleCharacterInfo) => hasStatus(t, "Marked");
-export const hasFragile = (t: BattleCharacterInfo) => hasStatus(t, "Fragile");
 export const hasBroken = (t: BattleCharacterInfo) => hasStatus(t, "Broken");
