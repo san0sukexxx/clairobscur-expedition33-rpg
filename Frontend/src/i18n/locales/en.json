@@ -2113,7 +2113,7 @@
         "hex": "Hex",
         "lanceStrikeDesc": "Strikes a target with its lance.",
         "dualLanceStrike": "Dual Lance Strike",
-        "dualLanceStrikeDesc": "Strikes a target with both lances in sequence.",
+        "dualLanceStrikeDesc": "Strikes a target with both lances simultaneously.",
         "lanceCharge": "Lance Charge",
         "lanceCombo": "Lance Combo",
         "luminousHorn": "Luminous Horn",

@@ -1151,7 +1151,7 @@ const NPCsBaseData: NPCBaseData[] = [
         passives: ["combatAdmin.npcPassives.startWith3Shields", "combatAdmin.npcPassives.desperationCharge"],
         attackList: [
             { type: "basic", element: "Light", additionalDamage: 1, description: "combatAdmin.npcAttacks.lanceStrikeDesc" },
-            { type: "skill", name: "combatAdmin.npcAttacks.dualLanceStrike", description: "combatAdmin.npcAttacks.dualLanceStrikeDesc", element: "Light", additionalDamage: 1, quantity: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualLanceStrike", description: "combatAdmin.npcAttacks.intensityHigh", element: "Light", additionalDamage: 1 },
             { type: "skill", name: "combatAdmin.npcAttacks.tremor", description: "combatAdmin.npcAttacks.tremorDesc", element: "Earth", additionalDamage: 2, quantity: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.summonMinions", description: "combatAdmin.npcAttacks.summonMinionsDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.supremeAttack", description: "combatAdmin.npcAttacks.supremeAttackDesc", element: "Light", additionalDamage: 6 },
