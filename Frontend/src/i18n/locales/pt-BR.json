@@ -2115,6 +2115,11 @@
         "luminousHorn": "Chifre Luminoso",
         "divineHeal": "Cura Divina",
         "blindingGlow": "Brilho Cegante",
+        "tripleRush": "Corrida Tripla",
+        "tripleRushDesc": "Intensidade alta. Avança em até 3 alvos diferentes, atacando cada um.",
+        "doubleCharge": "Investida Dupla",
+        "suicideBomb": "Ataque Suicida",
+        "suicideBombDesc": "Intensidade muito alta. Explode a própria mina. O Démineur morre após o ataque.",
         "trample": "Pisotear",
         "holyMagic": "Magia Sagrada",
         "luminousBarrier": "Barreira Luminosa",
@@ -4126,7 +4131,8 @@
       "spring-meadows-chromatic-lancelier": "Lancelier Cromático",
       "spring-meadows-patrol": "Patrulha dos Prados",
       "spring-meadows-abbests": "Dupla de Abbests",
-      "spring-meadows-eveque": "Évêque"
+      "spring-meadows-eveque": "Évêque",
+      "flying-waters-luster": "Luster"
     },
     "locations": {
       "title": "Locais",

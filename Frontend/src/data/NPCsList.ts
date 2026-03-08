@@ -441,6 +441,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.explosiveMine", additionalDamage: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.suicideBomb", description: "combatAdmin.npcAttacks.suicideBombDesc", additionalDamage: 12 },
         ],
     },
     {
@@ -665,7 +666,8 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "2",
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.blindingGlow", element: "Light", additionalDamage: 3, statusList: [{ type: "Dizzy", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.tripleRush", description: "combatAdmin.npcAttacks.tripleRushDesc", additionalDamage: 4, quantity: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.doubleCharge", additionalDamage: 3, quantity: 2 },
         ],
     },
     {

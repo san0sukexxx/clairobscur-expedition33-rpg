@@ -2115,6 +2115,11 @@
         "luminousHorn": "Luminous Horn",
         "divineHeal": "Divine Heal",
         "blindingGlow": "Blinding Glow",
+        "tripleRush": "Triple Rush",
+        "tripleRushDesc": "High intensity. Charges at up to 3 different targets, attacking each one.",
+        "doubleCharge": "Double Charge",
+        "suicideBomb": "Suicide Bomb",
+        "suicideBombDesc": "Very high intensity. Detonates its own mine. The Démineur dies after the attack.",
         "trample": "Trample",
         "holyMagic": "Holy Magic",
         "luminousBarrier": "Luminous Barrier",
@@ -4124,7 +4129,8 @@
       "spring-meadows-chromatic-lancelier": "Chromatic Lancelier",
       "spring-meadows-patrol": "Spring Meadows Patrol",
       "spring-meadows-abbests": "Abbest Duo",
-      "spring-meadows-eveque": "Eveque"
+      "spring-meadows-eveque": "Eveque",
+      "flying-waters-luster": "Luster"
     },
     "locations": {
       "title": "Locations",

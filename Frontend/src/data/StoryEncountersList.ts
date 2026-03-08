@@ -90,4 +90,12 @@ export const StoryEncountersList: StoryEncounter[] = [
         rewards: [{ rewardType: "picto", itemId: "cleansing-tint" }],
         bonusXp: 0,
     },
+    {
+        id: "flying-waters-luster",
+        name: "storyEncounters.flying-waters-luster",
+        locationId: "flying-waters",
+        npcs: [{ npcId: "luster", quantity: 1 }],
+        rewards: [],
+        bonusXp: 0,
+    },
 ];
