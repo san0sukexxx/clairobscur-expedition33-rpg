@@ -2076,7 +2076,8 @@
         "mineCarrier": "Carrega uma mina. Atirar na mina faz ela explodir, causando dano {{dice}} em todos os aliados inclusive nele. Sem mina, fica impedido de usar o Ataque Suicida e o ataque básico.",
         "giantForm": "Pode ficar gigante ao iniciar um combate.",
         "spitOnBreak": "Se sofrer quebra, cospe todos os personagens engolidos.",
-        "mercifulDamage": "Ao enfrentar a expedição, ele pode escolher reduzir seu dano de forma proposital. Nesse caso, como mestre, diga um valor menor para o dano depois da sua rolagem. Também reduza o XP concedido pela batalha."
+        "mercifulDamage": "Ao enfrentar a expedição, ele pode escolher reduzir seu dano de forma proposital. Nesse caso, como mestre, diga um valor menor para o dano depois da sua rolagem. Também reduza o XP concedido pela batalha.",
+        "explodeOnDefeat": "Explode em cima dos adversários ao ser derrotado. Pode ser evitado com um Teste de Resistência de Destreza CD 13. Causa {{explosionDice}} de dano."
       },
       "npcAttacks": {
         "invisibleWall": "Parede Invisível",
@@ -2181,6 +2182,7 @@
         "summonMinions": "Invocar Minions",
         "summonMinionsDesc": "Invoca dois Abbests para o campo de batalha.",
         "intensityHigh": "Intensidade alta.",
+        "intensityHighHitsAll": "Intensidade alta. Acerta todos os adversários.",
         "intensityVeryHigh": "Intensidade muito alta.",
         "intensityExtreme": "Intensidade extrema.",
         "supremeAttack": "Ataque Supremo",
@@ -2232,10 +2234,14 @@
         "swordOfLumiere": "Espada de Lumière",
         "chromaStack": "Acúmulo Cromático",
         "chromaScatter": "Dispersão Cromática",
+        "doubleAttack": "Ataque Duplo",
+        "doubleAttackDesc": "Ataque duplo em um alvo único.",
+        "clunkyCombo": "Combo Desajeitado",
+        "clunkyComboDesc": "4 ataques de intensidade alta. O terceiro ataque só pode ser pulado para evitar. Evitar o terceiro ataque não dá direito a contra-ataque.",
         "jumpOnAll": "Pular em todos",
         "jumpOnAllDesc": "Pula 3 vezes em todos os adversários.",
         "flowerField": "Criar Campo de Flores",
-        "flowerFieldDesc": "Invoca 7 flores, azuis e vermelhas (a critério do mestre). Em 3 turnos, cada flor azul não destruída adiciona um escudo. Cada flor vermelha não destruída recupera 2d6 de vida. Como mestre, você pode usar as condições \"Flor Azul\" e \"Flor Vermelha\" para fazer a contagem."
+        "flowerFieldDesc": "Invoca 7 flores, azuis e vermelhas (a critério do mestre). Em 3 turnos, cada flor azul não destruída adiciona um escudo. Cada flor vermelha não destruída recupera 2d6 de vida. Os adversários podem destruir as flores com tiros livres, sem necessidade de rolagem. Como mestre, você pode usar as condições \"Flor Azul\" e \"Flor Vermelha\" para fazer a contagem."
       },
       "createCombat": "Criar combate",
       "creating": "Criando...",
@@ -4164,7 +4170,8 @@
       "flying-waters-brulers": "2x Brûler",
       "flying-waters-blacksmith": "O Ferreiro",
       "flying-waters-bourgeon": "Bourgeon",
-      "flying-waters-chromatic-troubadour": "Troubadour Cromático"
+      "flying-waters-chromatic-troubadour": "Troubadour Cromático",
+      "ancient-sanctuary-robust-sakapatate": "Robust Sakapatate"
     },
     "locations": {
       "title": "Locais",

@@ -233,7 +233,21 @@ export default function CampaignAdmin() {
                 )}
 
                 {activeTab === "encounters" && campaignId !== null && campaignInfo !== null && (
-                    <CampaignAdminEncountersTab campaignInfo={campaignInfo} />
+                    <CampaignAdminEncountersTab
+                        campaignInfo={campaignInfo}
+                        onNpcClick={(npcId) => {
+                            setFocusNpcId(npcId);
+                            changeTab("npcs");
+                        }}
+                        onPictoClick={(pictoId) => {
+                            setFocusPictoId(pictoId);
+                            changeTab("pictos-list");
+                        }}
+                        onWeaponClick={(weaponId) => {
+                            setFocusWeaponId(weaponId);
+                            changeTab("weapons-list");
+                        }}
+                    />
                 )}
 
                 {activeTab === "locations" && campaignInfo !== null && (

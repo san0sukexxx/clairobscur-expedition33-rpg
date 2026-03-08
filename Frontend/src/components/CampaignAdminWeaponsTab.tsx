@@ -89,6 +89,7 @@ export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled,
                 const key = `${entry.character}:${entry.weapon.name}`;
                 setExpandedKey(key);
                 setFilterText("");
+                setCurrentLocationOnly(false);
                 requestAnimationFrame(() => {
                     document.getElementById(`weapon-${focusWeaponId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
                 });

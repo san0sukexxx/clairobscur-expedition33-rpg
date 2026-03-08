@@ -2076,7 +2076,8 @@
         "mineCarrier": "Carries a mine. Shooting the mine causes it to explode, dealing {{dice}} damage to all allies including itself. Without the mine, it cannot use Suicide Bomb or basic attack.",
         "giantForm": "Can become giant at the start of a combat.",
         "spitOnBreak": "If broken, spits out all swallowed characters.",
-        "mercifulDamage": "When facing the expedition, he can choose to intentionally reduce his damage. In that case, as the game master, announce a lower value for the damage after your roll. Also reduce the XP granted by the battle."
+        "mercifulDamage": "When facing the expedition, he can choose to intentionally reduce his damage. In that case, as the game master, announce a lower value for the damage after your roll. Also reduce the XP granted by the battle.",
+        "explodeOnDefeat": "Explodes on enemies when defeated. Can be avoided with a Dexterity saving throw DC 13. Deals {{explosionDice}} damage."
       },
       "npcAttacks": {
         "invisibleWall": "Invisible Wall",
@@ -2181,6 +2182,7 @@
         "summonMinions": "Summon Minions",
         "summonMinionsDesc": "Summons two Abbests to the battlefield.",
         "intensityHigh": "High intensity.",
+        "intensityHighHitsAll": "High intensity. Hits all enemies.",
         "intensityVeryHigh": "Very high intensity.",
         "intensityExtreme": "Extreme intensity.",
         "supremeAttack": "Supreme Attack",
@@ -2232,10 +2234,14 @@
         "swordOfLumiere": "Sword of Lumière",
         "chromaStack": "Chroma Stack",
         "chromaScatter": "Chroma Scatter",
+        "doubleAttack": "Double Attack",
+        "doubleAttackDesc": "Double attack on a single target.",
+        "clunkyCombo": "Clunky Combo",
+        "clunkyComboDesc": "4 high intensity attacks. The third attack can only be jumped to avoid. Avoiding the third attack does not grant a counter-attack.",
         "jumpOnAll": "Jump on all",
         "jumpOnAllDesc": "Jumps 3 times on all enemies.",
         "flowerField": "Create Flower Field",
-        "flowerFieldDesc": "Summons 7 blue or red flowers (GM's choice). After 3 turns, each undestroyed blue flower adds a shield. Each undestroyed red flower heals 2d6 HP. As GM, you can use the \"Blue Flower\" and \"Red Flower\" conditions to track the countdown."
+        "flowerFieldDesc": "Summons 7 blue or red flowers (GM's choice). After 3 turns, each undestroyed blue flower adds a shield. Each undestroyed red flower heals 2d6 HP. Enemies can destroy flowers with free shots, no roll needed. As GM, you can use the \"Blue Flower\" and \"Red Flower\" conditions to track the countdown."
       },
       "createCombat": "Create combat",
       "creating": "Creating...",
@@ -4162,7 +4168,8 @@
       "flying-waters-brulers": "2x Brûler",
       "flying-waters-blacksmith": "The Blacksmith",
       "flying-waters-bourgeon": "Bourgeon",
-      "flying-waters-chromatic-troubadour": "Chromatic Troubadour"
+      "flying-waters-chromatic-troubadour": "Chromatic Troubadour",
+      "ancient-sanctuary-robust-sakapatate": "Robust Sakapatate"
     },
     "locations": {
       "title": "Locations",

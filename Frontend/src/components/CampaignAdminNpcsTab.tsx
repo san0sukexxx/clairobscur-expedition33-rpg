@@ -42,6 +42,7 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
         if (focusNpcId) {
             setExpandedId(focusNpcId);
             setFilterText("");
+            setCurrentLocationOnly(false);
             requestAnimationFrame(() => {
                 document.getElementById(`npc-${focusNpcId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
             });
@@ -436,6 +437,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                         {npc.passives!.map((passive, idx) => {
                             const text = t(passive);
                             const dicePlaceholder = "{{dice}}";
+                            const explosionPlaceholder = "{{explosionDice}}";
                             if (text.includes(dicePlaceholder)) {
                                 const suicideAtk = npc.attackList?.find(a => a.name?.includes("suicideBomb"));
                                 const mineDice = 1 + (suicideAtk?.additionalDices ?? 0);
@@ -448,6 +450,19 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                         <span className="italic opacity-90 text-cyan-300">
                                             {parts[0]}
                                             <DiceBtn diceCmd={`${mNumDice}d6`} modifier={mFlatDmg} label={`${npcName} – Explosão da Mina`} />
+                                            {parts[1]}
+                                        </span>
+                                    </div>
+                                );
+                            }
+                            if (text.includes(explosionPlaceholder)) {
+                                const parts = text.split(explosionPlaceholder);
+                                return (
+                                    <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                        <span className="text-cyan-300">{"▸ "}</span>
+                                        <span className="italic opacity-90 text-cyan-300">
+                                            {parts[0]}
+                                            <DiceBtn diceCmd="1d6" modifier={3} label={`${npcName} – Explosão`} />
                                             {parts[1]}
                                         </span>
                                     </div>

@@ -8,9 +8,13 @@ import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds, getLoc
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
 import { StoryEncountersList } from "../data/StoryEncountersList";
+import { crToXp } from "../utils/NpcDifficulty";
 
 interface CampaignAdminEncountersTabProps {
     campaignInfo: Campaign;
+    onNpcClick?: (npcId: string) => void;
+    onWeaponClick?: (weaponId: string) => void;
+    onPictoClick?: (pictoId: string) => void;
 }
 
 function getNpcCR(npcId: string): number {
@@ -18,8 +22,38 @@ function getNpcCR(npcId: string): number {
     return npc?.challengeRating ? parseFloat(npc.challengeRating) : 0;
 }
 
+// D&D 5e encounter multiplier based on number of monsters
+function getEncounterMultiplier(count: number): number {
+    if (count <= 1) return 1;
+    if (count === 2) return 1.5;
+    if (count <= 6) return 2;
+    if (count <= 10) return 2.5;
+    if (count <= 14) return 3;
+    return 4;
+}
+
+// Convert adjusted XP back to an effective CR
+function xpToCR(xp: number): number {
+    const thresholds: [number, number][] = [
+        [10, 0], [25, 0.125], [50, 0.25], [100, 0.5],
+        [200, 1], [450, 2], [700, 3], [1100, 4], [1800, 5],
+        [2300, 6], [2900, 7], [3900, 8], [5000, 9], [5900, 10],
+        [7200, 11], [8400, 12], [10000, 13], [11500, 14], [13000, 15],
+        [15000, 16], [18000, 17], [20000, 18], [22000, 19], [25000, 20],
+        [33000, 21], [41000, 22], [50000, 23], [62000, 24], [75000, 25],
+        [90000, 26], [105000, 27], [120000, 28], [135000, 29], [155000, 30],
+    ];
+    let result = 0;
+    for (const [threshold, cr] of thresholds) {
+        if (xp >= threshold) result = cr;
+        else break;
+    }
+    return result;
+}
+
 function calculateEncounterCR(npcs: EncounterNpcDto[]): number {
-    return npcs.reduce((total, npc) => total + getNpcCR(npc.npcId) * npc.quantity, 0);
+    const totalXp = npcs.reduce((sum, n) => sum + crToXp(getNpcCR(n.npcId)) * n.quantity, 0);
+    return xpToCR(totalXp);
 }
 
 function formatCR(cr: number): string {
@@ -29,7 +63,7 @@ function formatCR(cr: number): string {
     return String(cr);
 }
 
-export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdminEncountersTabProps) {
+export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, onWeaponClick, onPictoClick }: CampaignAdminEncountersTabProps) {
     const [encounters, setEncounters] = useState<EncounterResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [creating, setCreating] = useState(false);
@@ -708,7 +742,11 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                     </span>
                                                 )}
                                                 {enc.rewards.map((r, ri) => (
-                                                    <span key={ri} className={`badge badge-sm ${r.rewardType === "weapon" ? "badge-warning" : "badge-success"}`}>
+                                                    <span
+                                                        key={ri}
+                                                        className={`badge badge-sm cursor-pointer hover:brightness-90 ${r.rewardType === "weapon" ? "badge-warning" : "badge-success"}`}
+                                                        onClick={() => r.rewardType === "weapon" ? onWeaponClick?.(r.itemId) : onPictoClick?.(r.itemId)}
+                                                    >
                                                         {r.rewardType === "weapon" ? `⚔️ ${getWeaponName(r.itemId)}` : `🎴 ${getPictoName(r.itemId)}`}
                                                     </span>
                                                 ))}
@@ -719,7 +757,11 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                 const npc = getNpcById(n.npcId);
                                                 const name = npc?.name ?? n.npcId;
                                                 return (
-                                                    <div key={n.npcId} className="flex items-center gap-1.5 bg-base-100 rounded-full px-2 py-0.5 border border-base-300">
+                                                    <div
+                                                        key={n.npcId}
+                                                        className="flex items-center gap-1.5 bg-base-100 rounded-full px-2 py-0.5 border border-base-300 cursor-pointer hover:bg-base-200 transition-colors"
+                                                        onClick={() => onNpcClick?.(n.npcId)}
+                                                    >
                                                         <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
                                                             <img
                                                                 src={`/enemies/${n.npcId}.png`}
@@ -810,7 +852,11 @@ export default function CampaignAdminEncountersTab({ campaignInfo }: CampaignAdm
                                                     const npc = getNpcById(n.npcId);
                                                     const name = npc?.name ?? n.npcId;
                                                     return (
-                                                        <div key={n.npcId} className="flex items-center gap-1.5 bg-base-200 rounded-full px-2 py-0.5 border border-base-300">
+                                                        <div
+                                                            key={n.npcId}
+                                                            className="flex items-center gap-1.5 bg-base-200 rounded-full px-2 py-0.5 border border-base-300 cursor-pointer hover:bg-base-300 transition-colors"
+                                                            onClick={() => onNpcClick?.(n.npcId)}
+                                                        >
                                                             <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
                                                                 <img
                                                                     src={`/enemies/${n.npcId}.png`}

@@ -82,4 +82,12 @@ export const StoryEncountersList: StoryEncounter[] = [
         rewards: [{ rewardType: "weapon", itemId: "troubadim" }],
         bonusXp: 0,
     },
+    {
+        id: "ancient-sanctuary-robust-sakapatate",
+        name: "storyEncounters.ancient-sanctuary-robust-sakapatate",
+        locationId: "ancient-sanctuary",
+        npcs: [{ npcId: "robust-sakapatate", quantity: 1 }],
+        rewards: [{ rewardType: "weapon", itemId: "sakaram" }],
+        bonusXp: 0,
+    },
 ];

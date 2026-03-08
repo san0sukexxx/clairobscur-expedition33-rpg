@@ -39,6 +39,7 @@ export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, p
         if (focusPictoId) {
             setExpandedId(focusPictoId);
             setFilterText("");
+            setCurrentLocationOnly(false);
             requestAnimationFrame(() => {
                 document.getElementById(`picto-${focusPictoId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
             });

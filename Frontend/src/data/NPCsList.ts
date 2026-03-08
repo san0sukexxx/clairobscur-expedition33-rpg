@@ -962,9 +962,11 @@ const NPCsBaseData: NPCBaseData[] = [
         resistentTo: "Lightning",
         armorClass: 15,
         challengeRating: "3",
+        passives: ["combatAdmin.npcPassives.explodeOnDefeat"],
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", additionalDamage: 5 },
+            { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", description: "combatAdmin.npcAttacks.intensityHighHitsAll", additionalDamage: 5, additionalDices: 1 },
+            { type: "skill", name: "combatAdmin.npcAttacks.clunkyCombo", description: "combatAdmin.npcAttacks.clunkyComboDesc", additionalDamage: 5, additionalDices: 1, quantity: 4 },
         ],
         drops: { weapons: ["sakaram"] },
     },
@@ -1313,6 +1315,7 @@ const NPCsBaseData: NPCBaseData[] = [
         passives: ["combatAdmin.npcPassives.startWith2Shields"],
         attackList: [
             { type: "basic", additionalDamage: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.doubleAttack", description: "combatAdmin.npcAttacks.doubleAttackDesc", additionalDamage: 2, quantity: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.jumpOnAll", description: "combatAdmin.npcAttacks.jumpOnAllDesc", additionalDamage: 2, quantity: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.flowerField", description: "combatAdmin.npcAttacks.flowerFieldDesc" },
         ],
