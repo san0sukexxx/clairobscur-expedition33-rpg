@@ -11,22 +11,6 @@ export interface StoryEncounter {
 
 export const StoryEncountersList: StoryEncounter[] = [
     {
-        id: "lumiere-mime",
-        name: "storyEncounters.lumiere-mime",
-        locationId: "lumiere",
-        npcs: [{ npcId: "mime", quantity: 1 }],
-        rewards: [],
-        bonusXp: 50,
-    },
-    {
-        id: "spring-meadows-lancer",
-        name: "storyEncounters.spring-meadows-lancer",
-        locationId: "spring-meadows",
-        npcs: [{ npcId: "lancer", quantity: 1 }],
-        rewards: [],
-        bonusXp: 0,
-    },
-    {
         id: "spring-meadows-portier",
         name: "storyEncounters.spring-meadows-portier",
         locationId: "spring-meadows",
@@ -43,35 +27,11 @@ export const StoryEncountersList: StoryEncounter[] = [
         bonusXp: 0,
     },
     {
-        id: "spring-meadows-mime",
-        name: "storyEncounters.spring-meadows-mime",
-        locationId: "spring-meadows",
-        npcs: [{ npcId: "mime", quantity: 1 }],
-        rewards: [],
-        bonusXp: 0,
-    },
-    {
-        id: "spring-meadows-volesters",
-        name: "storyEncounters.spring-meadows-volesters",
-        locationId: "spring-meadows",
-        npcs: [{ npcId: "volester", quantity: 3 }],
-        rewards: [],
-        bonusXp: 0,
-    },
-    {
         id: "spring-meadows-chromatic-lancelier",
         name: "storyEncounters.spring-meadows-chromatic-lancelier",
         locationId: "spring-meadows",
         npcs: [{ npcId: "chromatic-lancelier", quantity: 1 }],
         rewards: [{ rewardType: "picto", itemId: "augmented-attack", level: 1 }],
-        bonusXp: 0,
-    },
-    {
-        id: "spring-meadows-patrol",
-        name: "storyEncounters.spring-meadows-patrol",
-        locationId: "spring-meadows",
-        npcs: [{ npcId: "lancer", quantity: 1 }, { npcId: "portier", quantity: 1 }, { npcId: "volester", quantity: 1 }],
-        rewards: [],
         bonusXp: 0,
     },
     {
@@ -91,11 +51,19 @@ export const StoryEncountersList: StoryEncounter[] = [
         bonusXp: 0,
     },
     {
-        id: "flying-waters-luster",
-        name: "storyEncounters.flying-waters-luster",
+        id: "flying-waters-brulers",
+        name: "storyEncounters.flying-waters-brulers",
         locationId: "flying-waters",
-        npcs: [{ npcId: "luster", quantity: 1 }],
-        rewards: [],
+        npcs: [{ npcId: "bruler", quantity: 2 }],
+        rewards: [{ rewardType: "weapon", itemId: "brulerum" }],
+        bonusXp: 0,
+    },
+    {
+        id: "flying-waters-blacksmith",
+        name: "storyEncounters.flying-waters-blacksmith",
+        locationId: "flying-waters",
+        npcs: [{ npcId: "bruler", quantity: 1 }, { npcId: "cruler", quantity: 1 }],
+        rewards: [{ rewardType: "weapon", itemId: "cruciferam" }],
         bonusXp: 0,
     },
 ];

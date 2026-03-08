@@ -25,12 +25,19 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "noco",
-        strength:      8,
-        dexterity:    10,
-        constitution: 10,
+        strength:     18,
+        dexterity:     8,
+        constitution: 16,
         intelligence: 14,
         wisdom:       12,
         charisma:     16,
+        armorClass: 14,
+        challengeRating: "3",
+        passives: ["combatAdmin.npcPassives.giantForm"],
+        attackList: [
+            { type: "basic", additionalDamage: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.strongPunch", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6 },
+        ],
     },
     {
         id: "esquie",
@@ -252,12 +259,13 @@ const NPCsBaseData: NPCBaseData[] = [
         intelligence: 13,
         wisdom:        9,
         charisma:     10,
+        freeShotWeakPoints: 1,
         weakTo: "Lightning",
         armorClass: 12,
         challengeRating: "2",
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.igneousExplosion", additionalDamage: 3, statusList: [{ type: "Burning", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 3, quantity: 2 },
         ],
     },
     {
@@ -402,7 +410,8 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "2",
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.crossfire", additionalDamage: 4, statusList: [{ type: "Burning", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualWeaponStrike", description: "combatAdmin.npcAttacks.dualWeaponStrikeDesc", additionalDamage: 3, quantity: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.impactLeap", description: "combatAdmin.npcAttacks.impactLeapDesc", additionalDamage: 4 },
         ],
         drops: { weapons: ["cruleram", "brulerum"] },
     },
@@ -436,11 +445,13 @@ const NPCsBaseData: NPCBaseData[] = [
         wisdom:        9,
         charisma:      8,
         weakTo: "Lightning",
+        isFlying: true,
         armorClass: 12,
         challengeRating: "2",
+        passives: ["combatAdmin.npcPassives.mineCarrier"],
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.explosiveMine", additionalDamage: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.lightningBolt", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, element: "Lightning" },
             { type: "skill", name: "combatAdmin.npcAttacks.suicideBomb", description: "combatAdmin.npcAttacks.suicideBombDesc", additionalDamage: 12 },
         ],
     },
@@ -668,6 +679,7 @@ const NPCsBaseData: NPCBaseData[] = [
             { type: "basic", additionalDamage: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.tripleRush", description: "combatAdmin.npcAttacks.tripleRushDesc", additionalDamage: 4, quantity: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.doubleCharge", additionalDamage: 3, quantity: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.doubleChargeX2", description: "combatAdmin.npcAttacks.doubleChargeX2Desc", additionalDamage: 3, quantity: 4 },
         ],
     },
     {
@@ -1726,9 +1738,11 @@ const NPCsBaseData: NPCBaseData[] = [
         armorClass: 18,
         challengeRating: "8",
         proficiencyBonus: 4,
+        passives: ["combatAdmin.npcPassives.mercifulDamage"],
         attackList: [
             { type: "basic", additionalDamage: 8 },
             { type: "skill", name: "combatAdmin.npcAttacks.holyMagic", additionalDamage: 12, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.shockwave", description: "combatAdmin.npcAttacks.shockwaveDesc", additionalDamage: 8 },
         ],
     },
     {

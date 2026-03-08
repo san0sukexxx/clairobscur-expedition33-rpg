@@ -1298,11 +1298,32 @@ export default function CombatAdmin({
                                             <span className="text-sm font-bold tracking-wide text-cyan-400 uppercase">{t("combatAdmin.npcDetails.passives")}</span>
                                             <div className="flex-1 border-t border-cyan-700/60" />
                                         </div>
-                                        {npcInfo!.passives!.map((passive, idx) => (
-                                            <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
-                                                <span className="text-cyan-300">{"▸ "}</span><span className="italic opacity-90">{t(passive)}</span>
-                                            </div>
-                                        ))}
+                                        {npcInfo!.passives!.map((passive, idx) => {
+                                            const text = t(passive);
+                                            const dicePlaceholder = "{{dice}}";
+                                            if (text.includes(dicePlaceholder)) {
+                                                const suicideAtk = npcInfo?.attackList?.find(a => a.name?.includes("suicideBomb"));
+                                                const mineDice = 1 + (suicideAtk?.additionalDices ?? 0);
+                                                const mineMod = strMod + (suicideAtk?.additionalDamage ?? 0);
+                                                const { numDice: mNumDice, flatDmg: mFlatDmg } = calcDamage(mineDice, mineMod);
+                                                const parts = text.split(dicePlaceholder);
+                                                return (
+                                                    <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                                        <span className="text-cyan-300">{"▸ "}</span>
+                                                        <span className="italic opacity-90">
+                                                            {parts[0]}
+                                                            <DiceBtn diceCmd={`${mNumDice}d${dieSize}`} modifier={mFlatDmg} label={`${npcName} – ${t("combatAdmin.npcPassives.mineExplosion", "Explosão da Mina")}`} />
+                                                            {parts[1]}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            }
+                                            return (
+                                                <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                                    <span className="text-cyan-300">{"▸ "}</span><span className="italic opacity-90">{text}</span>
+                                                </div>
+                                            );
+                                        })}
                                     </>
                                 )}
 
@@ -1955,7 +1976,7 @@ export default function CombatAdmin({
                                                             </div>
                                                             {npc.passives!.map((passive, idx) => (
                                                                 <div key={idx} className="leading-snug">
-                                                                    <span className="text-cyan-300">{"▸ "}</span><span className="italic opacity-90">{t(passive)}</span>
+                                                                    <span className="text-cyan-300">{"▸ "}</span><span className="italic opacity-90">{t(passive).replace("{{dice}}", "")}</span>
                                                                 </div>
                                                             ))}
                                                         </div>
