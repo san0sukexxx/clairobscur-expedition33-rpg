@@ -14,6 +14,7 @@ import CharacterSheetList from "./pages/CharacterSheetList.tsx";
 import DiceExample from "./pages/DiceExample.tsx";
 import SettingsPage from "./pages/SettingsPage.tsx";
 import LanguageSelectPage from "./pages/LanguageSelectPage.tsx";
+import ManualPage from "./pages/ManualPage.tsx";
 import { applyTheme } from "./utils/theme.ts";
 
 applyTheme();
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       { path: "/dice-test", element: <DiceExample /> },
       { path: "/settings", element: <SettingsPage /> },
       { path: "/select-language", element: <LanguageSelectPage /> },
+      { path: "/manual/:type", element: <ManualPage /> },
     ],
   },
 ]);

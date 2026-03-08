@@ -2,6 +2,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { FullscreenButton } from "../components/FullscreenButton";
 import { t } from "../i18n";
+import { ManualMasterContent } from "./ManualMasterContent";
+import { ManualPlayerContent } from "./ManualPlayerContent";
 
 /* ── D&D 5e PHB palette ── */
 const parchment = "#eee5ce";
@@ -79,9 +81,7 @@ export default function ManualPage() {
 
       {/* Content */}
       <main className="flex-1 p-6 max-w-3xl mx-auto w-full">
-        <p className="text-center italic mt-8" style={{ color: inkMuted }}>
-          {t("manual.comingSoon")}
-        </p>
+        {isMaster ? <ManualMasterContent /> : <ManualPlayerContent />}
       </main>
     </div>
   );
