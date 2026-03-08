@@ -2067,6 +2067,9 @@
         "filterPlaceholder": "Filtrar encontros...",
         "clear": "Remover encontro"
       },
+      "npcPassives": {
+        "startWith3Shields": "Começa a batalha com 3 escudos."
+      },
       "npcAttacks": {
         "invisibleWall": "Parede Invisível",
         "invisibleWallDesc": "Cria uma parede invisível que o protege em segredo de vários ataques, a critério do mestre. O Mímico sempre faz isso em sua primeira rodada e passa a vez. Só pode ser usada uma vez por combate.",
@@ -2143,6 +2146,10 @@
         "dualSlash": "Corte Duplo",
         "holySmite": "Punição Sagrada",
         "divineShield": "Escudo Divino",
+        "tremor": "Tremor",
+        "tremorDesc": "Ataca um personagem duas vezes e depois realiza um ataque em todos.",
+        "summonMinions": "Invocar Minions",
+        "summonMinionsDesc": "Invoca dois Abbests para o campo de batalha.",
         "infernoSmite": "Punição Infernal",
         "frostSmite": "Punição Gélida",
         "thunderSmite": "Punição Trovejante",
@@ -2353,6 +2360,7 @@
         "resistance": "Resistência",
         "immunity": "Imunidade",
         "absorb": "Absorve",
+        "passives": "Passivas",
         "actions": "Ações",
         "playFirst": "Joga Primeiro",
         "flying": "Voando",
@@ -3844,7 +3852,8 @@
       "spring-meadows-volesters": "Emboscada dos Volesters",
       "spring-meadows-chromatic-lancelier": "Lancelier Cromático",
       "spring-meadows-patrol": "Patrulha dos Prados",
-      "spring-meadows-abbests": "Dupla de Abbests"
+      "spring-meadows-abbests": "Dupla de Abbests",
+      "spring-meadows-eveque": "Évêque"
     },
     "locations": {
       "title": "Locais",

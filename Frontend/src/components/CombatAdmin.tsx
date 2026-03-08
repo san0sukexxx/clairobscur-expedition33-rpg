@@ -1290,6 +1290,22 @@ export default function CombatAdmin({
 
                         return (
                             <div className="flex flex-col gap-1">
+                                {/* Passives */}
+                                {(npcInfo?.passives?.length ?? 0) > 0 && (
+                                    <>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <div className="flex-1 border-t border-cyan-700/60" />
+                                            <span className="text-sm font-bold tracking-wide text-cyan-400 uppercase">{t("combatAdmin.npcDetails.passives")}</span>
+                                            <div className="flex-1 border-t border-cyan-700/60" />
+                                        </div>
+                                        {npcInfo!.passives!.map((passive, idx) => (
+                                            <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                                <span className="text-cyan-300">{"▸ "}</span><span className="italic opacity-90">{t(passive)}</span>
+                                            </div>
+                                        ))}
+                                    </>
+                                )}
+
                                 <div className="flex items-center gap-2 mb-1">
                                     <div className="flex-1 border-t border-red-700/60" />
                                     <span className="text-sm font-bold tracking-wide text-red-400 uppercase">{t("combatAdmin.npcDetails.actions")}</span>
@@ -1298,23 +1314,11 @@ export default function CombatAdmin({
 
                                 {npcInfo?.attackList?.map((atk, idx) => {
                                     const actionName = atk.name ? t(atk.name) : getAttackTypeLabel(atk.type);
-
-                                    if (atk.description) {
-                                        return (
-                                            <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
-                                                <span>
-                                                    <strong className="text-amber-300">{"▸ "}{actionName}.</strong>{" "}
-                                                    <span className="italic opacity-90">{t(atk.description)}</span>
-                                                </span>
-                                            </div>
-                                        );
-                                    }
+                                    const hasDamage = atk.additionalDamage != null || atk.additionalDices != null;
 
                                     const baseDice = 1 + (atk.additionalDices ?? 0);
                                     const baseMod = strMod + (atk.additionalDamage ?? 0);
                                     const { numDice, flatDmg, avgDmg } = calcDamage(baseDice, baseMod);
-                                    const isArea = atk.type === "jump-all";
-                                    const attackKind = isArea ? t("combatAdmin.actionDesc.areaAttack") : t("combatAdmin.actionDesc.meleeAttack");
 
                                     const statusParts = atk.statusList?.map(s => {
                                         let eff = getStatusLabel(s.type);
@@ -1327,18 +1331,21 @@ export default function CombatAdmin({
                                     return (
                                         <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
                                             <span>
-                                                <strong className="text-red-300">{"▸ "}{actionName}.</strong>{" "}
-                                                <span className="italic opacity-90">
-                                                    {atk.type === "jump-all" && <>{t("combatAdmin.actionDesc.targetsAll")} </>}
-                                                    <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
-                                                    {" "}{t("combatAdmin.actionDesc.toHit")}
-                                                    . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
-                                                    <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
-                                                    {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
-                                                    {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
-                                                    {statusParts && statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
-                                                    .
-                                                </span>
+                                                <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>{" "}
+                                                {atk.description && <span className="italic opacity-90">{t(atk.description)} </span>}
+                                                {hasDamage && (
+                                                    <span className="italic opacity-90">
+                                                        {atk.type === "jump-all" && <>{t("combatAdmin.actionDesc.targetsAll")} </>}
+                                                        <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                                        {" "}{t("combatAdmin.actionDesc.toHit")}
+                                                        . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
+                                                        <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                        {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
+                                                        {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                        {statusParts && statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
+                                                        .
+                                                    </span>
+                                                )}
                                             </span>
                                         </div>
                                     );
@@ -1937,6 +1944,22 @@ export default function CombatAdmin({
                                                             {npc.proficiencyBonus && (
                                                                 <span><strong>{t("combatAdmin.npcDetails.proficiencyBonus")}:</strong> +{npc.proficiencyBonus}</span>
                                                             )}
+                                                        </div>
+                                                    )}
+
+                                                    {/* Passives (D&D stat block style) */}
+                                                    {(npc.passives?.length ?? 0) > 0 && (
+                                                        <div className="flex flex-col gap-1 text-xs">
+                                                            <div className="flex items-center gap-1">
+                                                                <div className="flex-1 border-t border-cyan-700/40" />
+                                                                <span className="font-bold text-sm text-cyan-400 uppercase tracking-wide">{t("combatAdmin.npcDetails.passives")}</span>
+                                                                <div className="flex-1 border-t border-cyan-700/40" />
+                                                            </div>
+                                                            {npc.passives!.map((passive, idx) => (
+                                                                <div key={idx} className="leading-snug">
+                                                                    <span className="text-cyan-300">{"▸ "}</span><span className="italic opacity-90">{t(passive)}</span>
+                                                                </div>
+                                                            ))}
                                                         </div>
                                                     )}
 

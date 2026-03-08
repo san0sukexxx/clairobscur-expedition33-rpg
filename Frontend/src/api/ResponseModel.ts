@@ -102,6 +102,7 @@ export interface NPCInfo {
     imuneTo?: Element;
     absorbElement?: Element;
     freeShotWeakPoints?: number;
+    passives?: string[];
     attackList?: NPCAttack[];
     isFlying?: boolean;
     initiativeBonus?: number;

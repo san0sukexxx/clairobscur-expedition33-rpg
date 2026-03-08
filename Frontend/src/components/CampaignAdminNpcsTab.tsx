@@ -423,6 +423,20 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                 </div>
             )}
 
+            {/* Passivas */}
+            {(npc.passives?.length ?? 0) > 0 && (
+                <div>
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.passives")}</span>
+                    <div className="flex flex-col gap-1 mt-1">
+                        {npc.passives!.map((passive, idx) => (
+                            <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                <span className="text-cyan-300">{"▸ "}</span><span className="italic opacity-90 text-cyan-300">{t(passive)}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Ações (D&D style com dados clicáveis) */}
             {(npc.attackList?.length ?? 0) > 0 && (
                 <div>
@@ -430,6 +444,8 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                     <div className="flex flex-col gap-1 mt-1">
                         {npc.attackList!.map((atk, idx) => {
                             const actionName = atk.name ? t(atk.name) || atk.name : getAttackTypeLabel(atk.type);
+
+                            const hasDamage = atk.additionalDamage != null || atk.additionalDices != null;
                             const baseDice = 1 + (atk.additionalDices ?? 0);
                             const baseMod = strMod + (atk.additionalDamage ?? 0);
                             const { numDice, flatDmg, avgDmg } = calcDamage(baseDice, baseMod);
@@ -447,18 +463,34 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                             return (
                                 <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
                                     <span>
-                                        <strong className="text-red-300">{"▸ "}{actionName}.</strong>{" "}
-                                        <span className="italic opacity-90">
-                                            {atk.type === "jump-all" && <>{t("combatAdmin.actionDesc.targetsAll")} </>}
-                                            <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
-                                            {" "}{t("combatAdmin.actionDesc.toHit")}
-                                            . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
-                                            <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
-                                            {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
-                                            {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
-                                            {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
-                                            .
-                                        </span>
+                                        <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>{" "}
+                                        {atk.description && <span className="italic opacity-90">{t(atk.description)} </span>}
+                                        {hasDamage && (
+                                            <span className="italic opacity-90">
+                                                {atk.type === "jump-all" && <>{t("combatAdmin.actionDesc.targetsAll")} </>}
+                                                <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                                {" "}{t("combatAdmin.actionDesc.toHit")}
+                                                . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
+                                                <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
+                                                {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
+                                                .
+                                            </span>
+                                        )}
+                                        {!hasDamage && !atk.description && (
+                                            <span className="italic opacity-90">
+                                                {atk.type === "jump-all" && <>{t("combatAdmin.actionDesc.targetsAll")} </>}
+                                                <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                                {" "}{t("combatAdmin.actionDesc.toHit")}
+                                                . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
+                                                <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                {" "}{t("combatAdmin.actionDesc.damageOfType")} {getElementName(atk.element ?? "Physical")}
+                                                {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
+                                                .
+                                            </span>
+                                        )}
                                     </span>
                                 </div>
                             );

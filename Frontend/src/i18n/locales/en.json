@@ -2067,6 +2067,9 @@
         "filterPlaceholder": "Filter encounters...",
         "clear": "Remove encounter"
       },
+      "npcPassives": {
+        "startWith3Shields": "Starts battle with 3 shields."
+      },
       "npcAttacks": {
         "invisibleWall": "Invisible Wall",
         "invisibleWallDesc": "Creates an invisible wall that secretly protects it from several attacks, at the master's discretion. The Mime always does this on its first turn and passes. Can only be used once per combat.",
@@ -2143,6 +2146,10 @@
         "dualSlash": "Dual Slash",
         "holySmite": "Holy Smite",
         "divineShield": "Divine Shield",
+        "tremor": "Tremor",
+        "tremorDesc": "Strikes a single target twice, then hits all characters.",
+        "summonMinions": "Summon Minions",
+        "summonMinionsDesc": "Summons two Abbests to the battlefield.",
         "infernoSmite": "Inferno Smite",
         "frostSmite": "Frost Smite",
         "thunderSmite": "Thunder Smite",
@@ -2353,6 +2360,7 @@
         "resistance": "Resistance",
         "immunity": "Immunity",
         "absorb": "Absorbs",
+        "passives": "Passives",
         "actions": "Actions",
         "playFirst": "Plays First",
         "flying": "Flying",
@@ -3842,7 +3850,8 @@
       "spring-meadows-volesters": "Volester Ambush",
       "spring-meadows-chromatic-lancelier": "Chromatic Lancelier",
       "spring-meadows-patrol": "Spring Meadows Patrol",
-      "spring-meadows-abbests": "Abbest Duo"
+      "spring-meadows-abbests": "Abbest Duo",
+      "spring-meadows-eveque": "Eveque"
     },
     "locations": {
       "title": "Locations",
