@@ -2068,7 +2068,8 @@
         "clear": "Remover encontro"
       },
       "npcPassives": {
-        "startWith3Shields": "Começa a batalha com 3 escudos."
+        "startWith3Shields": "Começa a batalha com 3 escudos.",
+        "desperationCharge": "Ao chegar em 35% de vida ou menos, recebe 8 escudos e começa a carregar um ataque supremo."
       },
       "npcAttacks": {
         "invisibleWall": "Parede Invisível",
@@ -2150,6 +2151,8 @@
         "tremorDesc": "Ataca um personagem duas vezes e depois realiza um ataque em todos.",
         "summonMinions": "Invocar Minions",
         "summonMinionsDesc": "Invoca dois Abbests para o campo de batalha.",
+        "supremeAttack": "Ataque Supremo",
+        "supremeAttackDesc": "Após carregar por dois turnos, desfere dois ataques de intensidade extrema em até dois alvos.",
         "infernoSmite": "Punição Infernal",
         "frostSmite": "Punição Gélida",
         "thunderSmite": "Punição Trovejante",

@@ -87,7 +87,7 @@ export const StoryEncountersList: StoryEncounter[] = [
         name: "storyEncounters.spring-meadows-eveque",
         locationId: "spring-meadows",
         npcs: [{ npcId: "eveque", quantity: 1 }],
-        rewards: [],
+        rewards: [{ rewardType: "picto", itemId: "cleansing-tint" }],
         bonusXp: 0,
     },
 ];

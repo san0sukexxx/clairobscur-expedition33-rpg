@@ -2068,7 +2068,8 @@
         "clear": "Remove encounter"
       },
       "npcPassives": {
-        "startWith3Shields": "Starts battle with 3 shields."
+        "startWith3Shields": "Starts battle with 3 shields.",
+        "desperationCharge": "At 35% HP or below, gains 8 shields and begins charging a supreme attack."
       },
       "npcAttacks": {
         "invisibleWall": "Invisible Wall",
@@ -2150,6 +2151,8 @@
         "tremorDesc": "Strikes a single target twice, then hits all characters.",
         "summonMinions": "Summon Minions",
         "summonMinionsDesc": "Summons two Abbests to the battlefield.",
+        "supremeAttack": "Supreme Attack",
+        "supremeAttackDesc": "After charging for two turns, unleashes two attacks of extreme intensity against up to two targets.",
         "infernoSmite": "Inferno Smite",
         "frostSmite": "Frost Smite",
         "thunderSmite": "Thunder Smite",

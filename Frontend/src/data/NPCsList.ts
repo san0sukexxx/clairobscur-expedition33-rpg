@@ -1162,11 +1162,12 @@ const NPCsBaseData: NPCBaseData[] = [
         resistentTo: "Earth",
         armorClass: 12,
         challengeRating: "2",
-        passives: ["combatAdmin.npcPassives.startWith3Shields"],
+        passives: ["combatAdmin.npcPassives.startWith3Shields", "combatAdmin.npcPassives.desperationCharge"],
         attackList: [
             { type: "basic", element: "Light", additionalDamage: 1 },
             { type: "skill", name: "combatAdmin.npcAttacks.tremor", description: "combatAdmin.npcAttacks.tremorDesc", element: "Earth", additionalDamage: 2, quantity: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.summonMinions", description: "combatAdmin.npcAttacks.summonMinionsDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.supremeAttack", description: "combatAdmin.npcAttacks.supremeAttackDesc", element: "Light", additionalDamage: 6 },
         ],
         drops: { pictos: ["cleansing-tint"] },
     },
