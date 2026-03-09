@@ -2072,6 +2072,7 @@
       "npcPassives": {
         "startWith2Shields": "Começa a batalha com 2 escudos.",
         "startWith3Shields": "Começa a batalha com 3 escudos.",
+        "startWith4Shields": "Começa a batalha com 4 escudos.",
         "desperationCharge": "Ao chegar em 35% de vida ou menos, recebe 8 escudos e começa a carregar um ataque supremo.",
         "mineCarrier": "Carrega uma mina. Atirar na mina faz ela explodir, causando dano {{dice}} em todos os aliados inclusive nele. Sem mina, fica impedido de usar o Ataque Suicida e o ataque básico.",
         "giantForm": "Pode ficar gigante ao iniciar um combate.",

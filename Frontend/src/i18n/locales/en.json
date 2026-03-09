@@ -2072,6 +2072,7 @@
       "npcPassives": {
         "startWith2Shields": "Starts battle with 2 shields.",
         "startWith3Shields": "Starts battle with 3 shields.",
+        "startWith4Shields": "Starts battle with 4 shields.",
         "desperationCharge": "At 35% HP or below, gains 8 shields and begins charging a supreme attack.",
         "mineCarrier": "Carries a mine. Shooting the mine causes it to explode, dealing {{dice}} damage to all allies including itself. Without the mine, it cannot use Suicide Bomb or basic attack.",
         "giantForm": "Can become giant at the start of a combat.",
