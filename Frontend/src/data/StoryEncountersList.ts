@@ -121,7 +121,7 @@ export const StoryEncountersList: StoryEncounter[] = [
         name: "storyEncounters.ancient-sanctuary-sciel",
         locationId: "ancient-sanctuary",
         npcs: [],
-        rewards: [],
+        rewards: [{ rewardType: "weapon", itemId: "medalum" }],
         bonusXp: 0,
         playerCharacterIds: ["sciel"],
     },
