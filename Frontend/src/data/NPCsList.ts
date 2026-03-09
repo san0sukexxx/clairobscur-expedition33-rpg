@@ -1721,7 +1721,7 @@ const NPCsBaseData: NPCBaseData[] = [
         constitution: 16,
         intelligence: 14,
         wisdom:       12,
-        charisma:     10,
+        charisma:      4,
         weakTo: "Dark",
         armorClass: 15,
         challengeRating: "3",
