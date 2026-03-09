@@ -117,6 +117,7 @@ export interface NPCInfo {
     damageImmunities?: string[];
     drops?: { pictos?: string[]; weapons?: string[] };
     isBoss?: boolean;
+    noBasicAttack?: boolean;
 }
 
 export interface NPCStatusItem {

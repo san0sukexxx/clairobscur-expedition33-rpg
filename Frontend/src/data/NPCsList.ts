@@ -1725,6 +1725,7 @@ const NPCsBaseData: NPCBaseData[] = [
         weakTo: "Dark",
         armorClass: 15,
         challengeRating: "3",
+        noBasicAttack: true,
         passives: ["combatAdmin.npcPassives.startWith5Shields", "combatAdmin.npcPassives.immobile"],
         attackList: [
             { type: "skill", name: "combatAdmin.npcAttacks.iceShaft", description: "combatAdmin.npcAttacks.iceShaftDesc", additionalDamage: 30, additionalDices: 3 },
