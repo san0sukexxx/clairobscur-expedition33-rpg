@@ -7,7 +7,7 @@ import { type GetPlayerResponse } from "../api/APIPlayer"
 import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp, FaCheck } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt, FaUndo, FaMinus, FaPlus } from "react-icons/fa";
 import { FaArrowsDownToLine, FaArrowDown } from "react-icons/fa6";
-import { getCharacterLabelById, applyNpcNameSuffixes } from "../utils/CharacterUtils"
+import { getCharacterLabelById, applyNpcNameSuffixes, CHARACTERS_LIST } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
 import { getAbilityModifier } from "../utils/AttackCalculator"
 import { getElementName, ELEMENT_EMOTE } from "../utils/ElementUtils"
@@ -802,6 +802,16 @@ export default function CombatAdmin({
                         freeShotWeakPoints: npcInfo.freeShotWeakPoints ?? 0
                     });
                 }
+            }
+
+            // Se o encontro tem personagens jogáveis, carregar recompensas diretamente
+            if (encounter.playerCharacterIds && encounter.playerCharacterIds.length > 0) {
+                setBattleRewards(encounter.rewards.map(r => ({
+                    type: r.rewardType as BattleReward["type"],
+                    itemId: r.itemId,
+                    level: r.level,
+                })));
+                setEncounterBonusXp(encounter.bonusXp ?? 0);
             }
 
             setSelectedEncounterId(encounterId);
@@ -2745,30 +2755,39 @@ export default function CombatAdmin({
                                                                     </div>
                                                                 </div>
 
-                                                                {enc.npcs.length > 0 && (
-                                                                    <div className="flex flex-wrap gap-1.5">
-                                                                        {enc.npcs.map((npc, idx) => {
-                                                                            const npcInfo = getNpcById(npc.npcId);
-                                                                            return (
-                                                                                <div key={idx} className="flex items-center gap-1 bg-base-300 rounded-lg px-2 py-1">
-                                                                                    <div className="avatar">
-                                                                                        <div className="w-6 h-6 rounded flex items-center justify-center bg-base-300">
-                                                                                            <img
-                                                                                                src={`/enemies/${npc.npcId}.png`}
-                                                                                                alt={npcInfo?.name ?? npc.npcId}
-                                                                                                onError={(e) => handleNpcImgError(e, npc.npcId)}
-                                                                                            />
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <span className="text-xs">{npcInfo?.name ?? npc.npcId}</span>
-                                                                                    {npc.quantity > 1 && (
-                                                                                        <span className="badge badge-xs badge-primary">×{npc.quantity}</span>
-                                                                                    )}
+                                                                <div className="flex flex-wrap gap-1.5">
+                                                                    {enc.playerCharacterIds?.map(charId => {
+                                                                        const char = CHARACTERS_LIST.find(c => c.id === charId);
+                                                                        return (
+                                                                            <div key={charId} className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2 py-0.5 border border-primary/30">
+                                                                                <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
+                                                                                    <img src={`/characters/${charId}.webp`} alt={char?.label ?? charId} className="w-full h-full object-cover" />
                                                                                 </div>
-                                                                            );
-                                                                        })}
-                                                                    </div>
-                                                                )}
+                                                                                <span className="text-xs font-medium">{char?.label ?? charId}</span>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                    {enc.npcs.map((npc, idx) => {
+                                                                        const npcInfo = getNpcById(npc.npcId);
+                                                                        return (
+                                                                            <div key={idx} className="flex items-center gap-1 bg-base-300 rounded-lg px-2 py-1">
+                                                                                <div className="avatar">
+                                                                                    <div className="w-6 h-6 rounded flex items-center justify-center bg-base-300">
+                                                                                        <img
+                                                                                            src={`/enemies/${npc.npcId}.png`}
+                                                                                            alt={npcInfo?.name ?? npc.npcId}
+                                                                                            onError={(e) => handleNpcImgError(e, npc.npcId)}
+                                                                                        />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <span className="text-xs">{npcInfo?.name ?? npc.npcId}</span>
+                                                                                {npc.quantity > 1 && (
+                                                                                    <span className="badge badge-xs badge-primary">×{npc.quantity}</span>
+                                                                                )}
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     );
@@ -2817,31 +2836,40 @@ export default function CombatAdmin({
                                                                     </div>
                                                                 </div>
 
-                                                                {enc.npcs.length > 0 && (
-                                                                    <div className="flex flex-wrap gap-1.5">
-                                                                        {enc.npcs.map((npc, idx) => {
-                                                                            const npcInfo = getNpcById(npc.npcId);
-                                                                            return (
-                                                                                <div key={idx} className="flex items-center gap-1 bg-base-300 rounded-lg px-2 py-1">
-                                                                                    <div className="avatar">
-                                                                                        <div className="w-6 h-6 rounded flex items-center justify-center bg-base-300">
-                                                                                            <img
-                                                                                                src={`/enemies/${npc.npcId}.png`}
-                                                                                                alt={npcInfo?.name ?? npc.npcId}
-                                                                                                onError={(e) => handleNpcImgError(e, npc.npcId)}
-                                                                                            />
-                                                                                            <FaSkull className="hidden text-base-content opacity-40 text-xs" />
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <span className="text-xs">{npcInfo?.name ?? npc.npcId}</span>
-                                                                                    {npc.quantity > 1 && (
-                                                                                        <span className="badge badge-xs badge-primary">×{npc.quantity}</span>
-                                                                                    )}
+                                                                <div className="flex flex-wrap gap-1.5">
+                                                                    {enc.playerCharacterIds?.map(charId => {
+                                                                        const char = CHARACTERS_LIST.find(c => c.id === charId);
+                                                                        return (
+                                                                            <div key={charId} className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2 py-0.5 border border-primary/30">
+                                                                                <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
+                                                                                    <img src={`/characters/${charId}.webp`} alt={char?.label ?? charId} className="w-full h-full object-cover" />
                                                                                 </div>
-                                                                            );
-                                                                        })}
-                                                                    </div>
-                                                                )}
+                                                                                <span className="text-xs font-medium">{char?.label ?? charId}</span>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                    {enc.npcs.map((npc, idx) => {
+                                                                        const npcInfo = getNpcById(npc.npcId);
+                                                                        return (
+                                                                            <div key={idx} className="flex items-center gap-1 bg-base-300 rounded-lg px-2 py-1">
+                                                                                <div className="avatar">
+                                                                                    <div className="w-6 h-6 rounded flex items-center justify-center bg-base-300">
+                                                                                        <img
+                                                                                            src={`/enemies/${npc.npcId}.png`}
+                                                                                            alt={npcInfo?.name ?? npc.npcId}
+                                                                                            onError={(e) => handleNpcImgError(e, npc.npcId)}
+                                                                                        />
+                                                                                        <FaSkull className="hidden text-base-content opacity-40 text-xs" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <span className="text-xs">{npcInfo?.name ?? npc.npcId}</span>
+                                                                                {npc.quantity > 1 && (
+                                                                                    <span className="badge badge-xs badge-primary">×{npc.quantity}</span>
+                                                                                )}
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     );
