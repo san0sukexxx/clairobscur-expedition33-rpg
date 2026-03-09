@@ -1400,7 +1400,7 @@ export default function CombatAdmin({
                                 })}
 
                                 {/* Basic "Atacar" action — hidden if NPC already has basic in attackList */}
-                                {!npcInfo?.attackList?.some(a => a.type === "basic") && (() => {
+                                {!(npcInfo?.attackList && npcInfo.attackList.length > 0) && (() => {
                                     const { numDice: basicNumDice, flatDmg: basicFlatDmg, avgDmg: basicAvgDmg } = calcDamage(1, strMod);
                                     return (
                                         <div className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
