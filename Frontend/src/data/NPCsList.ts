@@ -54,7 +54,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 6,
         attackList: [
             { type: "basic", additionalDamage: 10 },
-            { type: "skill", name: "combatAdmin.npcAttacks.flightCollision", description: "combatAdmin.npcAttacks.flightCollisionDesc", additionalDamage: 14, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.flightCollision", description: "combatAdmin.npcAttacks.flightCollisionDesc", additionalDamage: 14, additionalDices: 1 },
         ],
     },
     {
