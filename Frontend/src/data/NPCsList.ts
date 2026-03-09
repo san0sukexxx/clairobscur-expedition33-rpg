@@ -52,7 +52,7 @@ const NPCsBaseData: NPCBaseData[] = [
         id: "eesda",
         strength:     15,
         dexterity:    12,
-        constitution: 13,
+        constitution: 15,
         intelligence: 10,
         wisdom:       11,
         charisma:     10,
@@ -60,6 +60,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic", additionalDamage: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.jabAndStraight", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, quantity: 2 },
         ],
     },
     {
@@ -74,7 +75,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.heavySlash", additionalDamage: 5 },
+            { type: "skill", name: "combatAdmin.npcAttacks.jabAndStraight", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, quantity: 2 },
         ],
     },
     {
@@ -106,7 +107,6 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.seedBurst", additionalDamage: 5, statusList: [{ type: "Poisoned", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {
@@ -989,7 +989,7 @@ const NPCsBaseData: NPCBaseData[] = [
         resistentTo: "Lightning",
         armorClass: 15,
         challengeRating: "3",
-        passives: ["combatAdmin.npcPassives.explodeOnDefeat"],
+        passives: ["combatAdmin.npcPassives.explodeOnDefeat", "combatAdmin.npcPassives.startsWithShields"],
         attackList: [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", description: "combatAdmin.npcAttacks.intensityHighHitsAll", additionalDamage: 5, additionalDices: 1 },
@@ -1572,14 +1572,18 @@ const NPCsBaseData: NPCBaseData[] = [
         intelligence:  7,
         wisdom:        9,
         charisma:      6,
+        freeShotWeakPoints: 3,
         weakTo: "Fire",
         resistentTo: "Lightning",
         armorClass: 15,
         challengeRating: "3",
+        passives: ["combatAdmin.npcPassives.explodeOnDefeat", "combatAdmin.npcPassives.freeShotResistant", "combatAdmin.npcPassives.shieldedWeakPoint", "combatAdmin.npcPassives.reinforcedWeakPoint"],
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.catapult", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", additionalDamage: 5, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.clunkyCombo", description: "combatAdmin.npcAttacks.clunkyComboDesc", additionalDamage: 5, additionalDices: 1, quantity: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.heavyBlow", description: "combatAdmin.npcAttacks.intensityHighHitsAll", additionalDamage: 5, additionalDices: 1 },
+            { type: "skill", name: "combatAdmin.npcAttacks.tripleShieldCannon", description: "combatAdmin.npcAttacks.tripleShieldCannonDesc", additionalDamage: 5, additionalDices: 1, quantity: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.backLightningCatapult", description: "combatAdmin.npcAttacks.backLightningCatapultDesc", additionalDamage: 5, additionalDices: 1, quantity: 3 },
         ],
     },
     {

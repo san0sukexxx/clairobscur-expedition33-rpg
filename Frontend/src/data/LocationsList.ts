@@ -72,6 +72,7 @@ export const LocationsList: LocationInfo[] = [
         loot: [
             { type: "weapon", itemId: "trebuchim", level: 1 },
             { type: "weapon", itemId: "betelim", level: 1 },
+            { type: "weapon", itemId: "medalum", level: 1 },
             { type: "picto", itemId: "roulette", level: 1 },
             { type: "picto", itemId: "powerful-shots", level: 1 },
         ],

@@ -88,6 +88,17 @@ export function ManualMasterContent() {
       <SubTitle>{t("manual.master.npcAttacks")}</SubTitle>
       <p>{t("manual.master.npcAttacksText")}</p>
 
+      <SubTitle>{t("manual.master.intensity")}</SubTitle>
+      <p>{t("manual.master.intensityText")}</p>
+      <ul className="list-none ml-0 space-y-1 my-2">
+        {["low", "medium", "high", "veryHigh", "extreme", "maximum"].map(i => (
+          <li key={i} className="text-xs">
+            <strong style={{ color: "#58180d" }}>{t(`manual.master.intensityLevel.${i}`)}.</strong>{" "}
+            {t(`manual.master.intensityLevel.${i}Desc`)}
+          </li>
+        ))}
+      </ul>
+
       <SubTitle>{t("manual.master.flyingEnemies")}</SubTitle>
       <p>{t("manual.master.flyingEnemiesText")}</p>
 

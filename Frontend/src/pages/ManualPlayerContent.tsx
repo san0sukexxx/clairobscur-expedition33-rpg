@@ -42,6 +42,17 @@ export function ManualPlayerContent() {
       <SubTitle>{t("manual.player.attacking")}</SubTitle>
       <p>{t("manual.player.attackingText")}</p>
 
+      <SubTitle>{t("manual.player.intensity")}</SubTitle>
+      <p>{t("manual.player.intensityText")}</p>
+      <ul className="list-none ml-0 space-y-1 my-2">
+        {["low", "medium", "high", "veryHigh", "extreme", "maximum"].map(i => (
+          <li key={i} className="text-xs">
+            <strong style={{ color: "#58180d" }}>{t(`manual.player.intensityLevel.${i}`)}.</strong>{" "}
+            {t(`manual.player.intensityLevel.${i}Desc`)}
+          </li>
+        ))}
+      </ul>
+
       <SubTitle>{t("manual.player.defending")}</SubTitle>
       <p>{t("manual.player.defendingText")}</p>
       <ul className="list-none ml-0 space-y-1 my-2">
