@@ -2222,6 +2222,8 @@
         "golgranadeComboDesc": "Intensidade alta. Uma sequência explosiva de 5 socos.",
         "golgraSlam": "Golgra Slam Final",
         "golgraSlamDesc": "Intensidade extrema. Agarra o alvo e esmaga no chão com tudo. Teste de Força contra a Constituição do alvo para causar quebra.",
+        "flightCollision": "Colisão de Voo",
+        "flightCollisionDesc": "Intensidade alta.",
         "joyfulReap": "Ceifa Alegre",
         "lanternFlare": "Clarão da Lanterna",
         "maskSwap": "Troca de Máscara",

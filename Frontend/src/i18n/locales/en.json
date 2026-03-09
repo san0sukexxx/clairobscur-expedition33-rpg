@@ -2222,6 +2222,8 @@
         "golgranadeComboDesc": "High intensity. An explosive flurry of 5 punches.",
         "golgraSlam": "Golgra Slam Finale",
         "golgraSlamDesc": "Extreme intensity. Grabs the target and smashes them into the ground with everything. Strength check against the target's Constitution to inflict break.",
+        "flightCollision": "Flight Collision",
+        "flightCollisionDesc": "High intensity.",
         "joyfulReap": "Joyful Reap",
         "lanternFlare": "Lantern Flare",
         "maskSwap": "Mask Swap",

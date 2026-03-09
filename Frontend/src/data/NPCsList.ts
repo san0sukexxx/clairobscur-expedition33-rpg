@@ -47,6 +47,12 @@ const NPCsBaseData: NPCBaseData[] = [
         intelligence: 12,
         wisdom:       11,
         charisma:     13,
+        armorClass: 14,
+        challengeRating: "14",
+        attackList: [
+            { type: "basic", additionalDamage: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.flightCollision", description: "combatAdmin.npcAttacks.flightCollisionDesc", additionalDamage: 6, additionalDices: 1 },
+        ],
     },
     {
         id: "eesda",
