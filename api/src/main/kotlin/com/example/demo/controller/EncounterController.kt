@@ -60,6 +60,10 @@ class EncounterController(
         if (request.storyOrder != null) {
             encounter.storyOrder = request.storyOrder
         }
+        if (request.playerCharacterIds != null) {
+            encounter.playerCharacterIds = if (request.playerCharacterIds.isEmpty()) null
+                    else request.playerCharacterIds.joinToString(",")
+        }
         encounterRepository.save(encounter)
 
         // Replace all NPCs
@@ -115,6 +119,10 @@ class EncounterController(
         val rewards = encounterRewardRepository.findByEncounterId(encId).map {
             EncounterRewardDto(rewardType = it.rewardType, itemId = it.itemId, level = it.level)
         }
+        val playerCharacterIds = encounter.playerCharacterIds
+                ?.split(",")
+                ?.filter { it.isNotBlank() }
+                ?: emptyList()
         return EncounterResponse(
                 id = encId,
                 campaignId = encounter.campaignId,
@@ -123,7 +131,8 @@ class EncounterController(
                 storyOrder = encounter.storyOrder,
                 bonusXp = encounter.bonusXp,
                 npcs = npcs,
-                rewards = rewards
+                rewards = rewards,
+                playerCharacterIds = playerCharacterIds
         )
     }
 }

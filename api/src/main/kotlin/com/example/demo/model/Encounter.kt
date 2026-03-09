@@ -10,5 +10,6 @@ data class Encounter(
         @Column(name = "location_id", nullable = true) var locationId: String? = null,
         @Column(name = "name", nullable = true) var name: String? = null,
         @Column(name = "story_order", nullable = false) var storyOrder: Int = 0,
-        @Column(name = "bonus_xp", nullable = false) var bonusXp: Int = 0
+        @Column(name = "bonus_xp", nullable = false) var bonusXp: Int = 0,
+        @Column(name = "player_character_ids", nullable = true) var playerCharacterIds: String? = null
 )

@@ -6,5 +6,6 @@ data class UpdateEncounterRequest(
         val npcs: List<EncounterNpcDto>,
         val rewards: List<EncounterRewardDto>,
         val bonusXp: Int? = null,
-        val storyOrder: Int? = null
+        val storyOrder: Int? = null,
+        val playerCharacterIds: List<String>? = null
 )

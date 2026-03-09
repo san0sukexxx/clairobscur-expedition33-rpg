@@ -7,6 +7,7 @@ export interface StoryEncounter {
     npcs: EncounterNpcDto[];
     rewards: EncounterRewardDto[];
     bonusXp: number;
+    playerCharacterIds?: string[];
 }
 
 export const StoryEncountersList: StoryEncounter[] = [

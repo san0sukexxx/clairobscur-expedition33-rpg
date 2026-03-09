@@ -77,6 +77,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
     const [editRewards, setEditRewards] = useState<EncounterRewardDto[]>([]);
     const [editBonusXp, setEditBonusXp] = useState<number | null>(null);
     const [editName, setEditName] = useState("");
+    const [editPlayerCharacterIds, setEditPlayerCharacterIds] = useState<string[]>([]);
     const [saving, setSaving] = useState(false);
 
     // NPC search
@@ -168,6 +169,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
         setEditNpcs([...encounter.npcs]);
         setEditRewards([...encounter.rewards]);
         setEditBonusXp(encounter.bonusXp || null);
+        setEditPlayerCharacterIds([...(encounter.playerCharacterIds ?? [])]);
         setNpcSearch("");
         setNpcDropdownOpen(false);
         setNpcLocationFilter(encounter.locationId ?? "");
@@ -176,7 +178,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
     const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isFirstEdit = useRef(true);
 
-    const autoSave = useCallback(async (encounterId: number, locationId: string, name: string, npcs: EncounterNpcDto[], rewards: EncounterRewardDto[], bonusXp: number | null) => {
+    const autoSave = useCallback(async (encounterId: number, locationId: string, name: string, npcs: EncounterNpcDto[], rewards: EncounterRewardDto[], bonusXp: number | null, playerCharacterIds: string[]) => {
         try {
             setSaving(true);
             await APIEncounter.update(encounterId, {
@@ -185,6 +187,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
                 npcs,
                 rewards,
                 bonusXp: bonusXp ?? 0,
+                playerCharacterIds,
             });
             await loadEncounters();
         } catch {
@@ -205,10 +208,10 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
         }
         if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
         autoSaveTimer.current = setTimeout(() => {
-            autoSave(editingEncounter.id, editLocationId, editName, editNpcs, editRewards, editBonusXp);
+            autoSave(editingEncounter.id, editLocationId, editName, editNpcs, editRewards, editBonusXp, editPlayerCharacterIds);
         }, 500);
         return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current); };
-    }, [editLocationId, editName, editNpcs, editRewards, editBonusXp]);
+    }, [editLocationId, editName, editNpcs, editRewards, editBonusXp, editPlayerCharacterIds]);
 
     // NPC management
     function addNpc(npcId: string) {
@@ -497,6 +500,57 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
                         )}
                     </div>
 
+                    {/* Player Characters Section */}
+                    <div className="mb-6">
+                        <h3 className="font-semibold text-lg mb-2">{t("encounters.playerCharacters")}</h3>
+
+                        {editPlayerCharacterIds.length === 0 && (
+                            <p className="text-sm opacity-60 mb-2">{t("encounters.noPlayerCharacters")}</p>
+                        )}
+
+                        <div className="flex flex-wrap gap-2 mb-3">
+                            {editPlayerCharacterIds.map((charId) => {
+                                const char = CHARACTERS_LIST.find(c => c.id === charId);
+                                return (
+                                    <div key={charId} className="flex items-center gap-2 bg-base-200 rounded-lg p-2">
+                                        <div className="w-8 h-8 rounded-full bg-base-300 shrink-0 overflow-hidden">
+                                            <img
+                                                src={`/characters/${charId}.webp`}
+                                                alt={char?.label ?? charId}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <span className="font-semibold text-sm">{char?.label ?? charId}</span>
+                                        <button
+                                            className="btn btn-xs btn-error btn-ghost"
+                                            onClick={() => setEditPlayerCharacterIds(editPlayerCharacterIds.filter(id => id !== charId))}
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                            {CHARACTERS_LIST
+                                .filter(c => !editPlayerCharacterIds.includes(c.id))
+                                .map(c => (
+                                    <button
+                                        key={c.id}
+                                        className="btn btn-xs btn-outline gap-1"
+                                        onClick={() => setEditPlayerCharacterIds([...editPlayerCharacterIds, c.id])}
+                                    >
+                                        <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
+                                            <img src={`/characters/${c.id}.webp`} alt={c.label} className="w-full h-full object-cover" />
+                                        </div>
+                                        {c.label}
+                                        <FaPlus className="text-xs" />
+                                    </button>
+                                ))}
+                        </div>
+                    </div>
+
                     {/* Rewards Section */}
                     <div className="mb-6">
                         <h3 className="font-semibold text-lg mb-2">{t("encounters.rewards")}</h3>
@@ -753,6 +807,24 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
                                             </div>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
+                                            {enc.playerCharacterIds?.map(charId => {
+                                                const char = CHARACTERS_LIST.find(c => c.id === charId);
+                                                return (
+                                                    <div
+                                                        key={charId}
+                                                        className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2 py-0.5 border border-primary/30"
+                                                    >
+                                                        <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
+                                                            <img
+                                                                src={`/characters/${charId}.webp`}
+                                                                alt={char?.label ?? charId}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                        <span className="text-xs font-medium">{char?.label ?? charId}</span>
+                                                    </div>
+                                                );
+                                            })}
                                             {enc.npcs.map(n => {
                                                 const npc = getNpcById(n.npcId);
                                                 const name = npc?.name ?? n.npcId;
@@ -848,6 +920,24 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
                                                 )}
                                             </div>
                                             <div className="flex flex-wrap gap-2 mt-1.5">
+                                                {enc.playerCharacterIds?.map(charId => {
+                                                    const char = CHARACTERS_LIST.find(c => c.id === charId);
+                                                    return (
+                                                        <div
+                                                            key={charId}
+                                                            className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2 py-0.5 border border-primary/30"
+                                                        >
+                                                            <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
+                                                                <img
+                                                                    src={`/characters/${charId}.webp`}
+                                                                    alt={char?.label ?? charId}
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                            </div>
+                                                            <span className="text-xs font-medium">{char?.label ?? charId}</span>
+                                                        </div>
+                                                    );
+                                                })}
                                                 {enc.npcs.map(n => {
                                                     const npc = getNpcById(n.npcId);
                                                     const name = npc?.name ?? n.npcId;

@@ -2201,6 +2201,7 @@
         "summonMinionsDesc": "Invoca dois Abbests para o campo de batalha.",
         "intensityHigh": "Intensidade alta.",
         "intensityHighHitsAll": "Intensidade alta. Acerta todos os adversários.",
+        "intensityExtremeHitsAll": "Intensidade extrema. Acerta todos os adversários.",
         "intensityVeryHigh": "Intensidade muito alta.",
         "intensityExtreme": "Intensidade extrema.",
         "supremeAttack": "Ataque Supremo",
@@ -2215,6 +2216,12 @@
         "sneakAttack": "Ataque Furtivo",
         "devastatingBlow": "Golpe Devastador",
         "devastatingBlowDesc": "Teste de Força contra a Constituição do alvo para causar quebra.",
+        "oneTwo": "O Clássico Um-Dois",
+        "oneTwoDesc": "Intensidade alta. Jab seguido de direto. Simples, eficaz, doloroso.",
+        "golgranadeCombo": "Combo Golgranada",
+        "golgranadeComboDesc": "Intensidade alta. Uma sequência explosiva de 5 socos.",
+        "golgraSlam": "Golgra Slam Final",
+        "golgraSlamDesc": "Intensidade extrema. Agarra o alvo e esmaga no chão com tudo. Teste de Força contra a Constituição do alvo para causar quebra.",
         "joyfulReap": "Ceifa Alegre",
         "lanternFlare": "Clarão da Lanterna",
         "maskSwap": "Troca de Máscara",
@@ -4204,7 +4211,9 @@
       "showStoryMode": "Mostrar modo história",
       "currentLocationOnly": "Somente local atual",
       "name": "Nome",
-      "namePlaceholder": "Nome do encontro (opcional)"
+      "namePlaceholder": "Nome do encontro (opcional)",
+      "playerCharacters": "Personagens Jogáveis",
+      "noPlayerCharacters": "Nenhum personagem jogável adicionado."
     },
     "storyEncounters": {
       "lumiere-mime": "Mímico de Lumière",

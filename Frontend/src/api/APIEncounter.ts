@@ -20,6 +20,7 @@ export interface EncounterResponse {
     bonusXp: number
     npcs: EncounterNpcDto[]
     rewards: EncounterRewardDto[]
+    playerCharacterIds: string[]
 }
 
 export interface CreateEncounterInput {
@@ -34,6 +35,7 @@ export interface UpdateEncounterInput {
     rewards: EncounterRewardDto[]
     bonusXp?: number
     storyOrder?: number
+    playerCharacterIds?: string[]
 }
 
 export class APIEncounter {

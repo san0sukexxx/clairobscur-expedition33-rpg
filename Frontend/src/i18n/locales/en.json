@@ -2201,6 +2201,7 @@
         "summonMinionsDesc": "Summons two Abbests to the battlefield.",
         "intensityHigh": "High intensity.",
         "intensityHighHitsAll": "High intensity. Hits all enemies.",
+        "intensityExtremeHitsAll": "Extreme intensity. Hits all enemies.",
         "intensityVeryHigh": "Very high intensity.",
         "intensityExtreme": "Extreme intensity.",
         "supremeAttack": "Supreme Attack",
@@ -2215,6 +2216,12 @@
         "sneakAttack": "Sneak Attack",
         "devastatingBlow": "Devastating Blow",
         "devastatingBlowDesc": "Strength check against the target's Constitution to inflict break.",
+        "oneTwo": "The Classic One-Two",
+        "oneTwoDesc": "High intensity. Jab followed by a straight. Simple, effective, painful.",
+        "golgranadeCombo": "Golgranade Combo",
+        "golgranadeComboDesc": "High intensity. An explosive flurry of 5 punches.",
+        "golgraSlam": "Golgra Slam Finale",
+        "golgraSlamDesc": "Extreme intensity. Grabs the target and smashes them into the ground with everything. Strength check against the target's Constitution to inflict break.",
         "joyfulReap": "Joyful Reap",
         "lanternFlare": "Lantern Flare",
         "maskSwap": "Mask Swap",
@@ -4202,7 +4209,9 @@
       "showStoryMode": "Show story mode",
       "currentLocationOnly": "Current location only",
       "name": "Name",
-      "namePlaceholder": "Encounter name (optional)"
+      "namePlaceholder": "Encounter name (optional)",
+      "playerCharacters": "Player Characters",
+      "noPlayerCharacters": "No player characters added."
     },
     "storyEncounters": {
       "lumiere-mime": "Lumiere Mime",
