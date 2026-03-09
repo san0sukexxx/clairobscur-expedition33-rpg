@@ -1729,6 +1729,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.iceBeam", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.iceShaft", description: "combatAdmin.npcAttacks.iceShaftDesc", additionalDamage: 30, additionalDices: 3 },
         ],
         drops: { pictos: ["augmented-first-strike"] },
     },
