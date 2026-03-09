@@ -116,4 +116,13 @@ export const StoryEncountersList: StoryEncounter[] = [
         rewards: [{ rewardType: "weapon", itemId: "trebuchim" }],
         bonusXp: 0,
     },
+    {
+        id: "ancient-sanctuary-sciel",
+        name: "storyEncounters.ancient-sanctuary-sciel",
+        locationId: "ancient-sanctuary",
+        npcs: [],
+        rewards: [],
+        bonusXp: 0,
+        playerCharacterIds: ["sciel"],
+    },
 ];
