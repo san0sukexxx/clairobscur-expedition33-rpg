@@ -79,7 +79,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "esquies-nest",
-        residentNpcIds: ["esquie", "mime", "petank", "francois"],
+        residentNpcIds: ["esquie", "mime-esquies-nest", "petank", "francois"],
         referenceNpcNames: ["Sunniso"],
         loot: [
             { type: "picto", itemId: "augmented-first-strike", level: 1 },
