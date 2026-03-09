@@ -51,7 +51,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "ancient-sanctuary",
-        residentNpcIds: ["petank", "robust-sakapatate", "catapult-sakapatate", "ranger-sakapatate", "mime", "ultimate-sakapatate"],
+        residentNpcIds: ["petank", "robust-sakapatate", "catapult-sakapatate", "ranger-sakapatate", "mime-ancient-sanctuary", "ultimate-sakapatate"],
         referenceNpcNames: ["Young Boy", "Karatom"],
         loot: [
             { type: "weapon", itemId: "sakaram", level: 1 },

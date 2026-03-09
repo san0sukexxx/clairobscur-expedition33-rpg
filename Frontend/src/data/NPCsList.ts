@@ -277,12 +277,14 @@ const NPCsBaseData: NPCBaseData[] = [
         intelligence:  6,
         wisdom:        8,
         charisma:      6,
+        freeShotWeakPoints: 3,
         weakTo: "Fire",
         resistentTo: "Lightning",
         armorClass: 13,
         challengeRating: "2",
+        passives: ["combatAdmin.npcPassives.explodeOnDefeat", "combatAdmin.npcPassives.reinforcedWeakPoint"],
         attackList: [
-            { type: "basic", additionalDamage: 2 },
+            { type: "basic", additionalDamage: 2, description: "combatAdmin.npcAttacks.hiddenBladeDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.catapult", additionalDamage: 4 },
         ],
     },
@@ -731,6 +733,7 @@ const NPCsBaseData: NPCBaseData[] = [
         armorClass: 11,
         challengeRating: "1",
         damageDie: 4,
+        passives: ["combatAdmin.npcPassives.breakRemovesWall"],
         attackList: [
             { type: "skill", name: "combatAdmin.npcAttacks.invisibleWall", description: "combatAdmin.npcAttacks.invisibleWallDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.comboHammers", additionalDamage: 1, quantity: 4, statusList: [{ ammount: 1, remainingTurns: 1, type: "Silenced" }] },
@@ -749,11 +752,30 @@ const NPCsBaseData: NPCBaseData[] = [
         armorClass: 12,
         challengeRating: "2",
         damageDie: 4,
-        passives: ["combatAdmin.npcPassives.startWith2Shields"],
+        passives: ["combatAdmin.npcPassives.startWith2Shields", "combatAdmin.npcPassives.breakRemovesWall"],
         attackList: [
             { type: "skill", name: "combatAdmin.npcAttacks.invisibleWall", description: "combatAdmin.npcAttacks.invisibleWallDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.comboHammers", additionalDamage: 3, quantity: 4, statusList: [{ ammount: 1, remainingTurns: 1, type: "Silenced" }] },
             { type: "skill", name: "combatAdmin.npcAttacks.comboSlaps", additionalDamage: 1, quantity: 3 },
+        ],
+    },
+    {
+        id: "mime-ancient-sanctuary",
+        strength:     12,
+        dexterity:    16,
+        constitution: 13,
+        intelligence: 11,
+        wisdom:       10,
+        charisma:     13,
+        playFirst:    true,
+        armorClass: 13,
+        challengeRating: "3",
+        damageDie: 4,
+        passives: ["combatAdmin.npcPassives.startWith3Shields", "combatAdmin.npcPassives.breakRemovesWall"],
+        attackList: [
+            { type: "skill", name: "combatAdmin.npcAttacks.invisibleWall", description: "combatAdmin.npcAttacks.invisibleWallDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboHammers", additionalDamage: 4, quantity: 4, statusList: [{ ammount: 1, remainingTurns: 1, type: "Silenced" }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboSlaps", additionalDamage: 2, quantity: 3 },
         ],
     },
     {
@@ -855,9 +877,10 @@ const NPCsBaseData: NPCBaseData[] = [
         charisma:      6,
         armorClass: 14,
         challengeRating: "2",
+        passives: ["combatAdmin.npcPassives.mayFlee"],
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.ironBall", additionalDamage: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.ironBall", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 4, additionalDices: 1 },
         ],
     },
     {
@@ -922,13 +945,17 @@ const NPCsBaseData: NPCBaseData[] = [
         intelligence:  9,
         wisdom:       11,
         charisma:      8,
+        freeShotWeakPoints: 3,
         weakTo: "Fire",
         resistentTo: "Lightning",
         armorClass: 13,
         challengeRating: "2",
+        passives: ["combatAdmin.npcPassives.explodeOnDefeat", "combatAdmin.npcPassives.reinforcedWeakPoint"],
         attackList: [
             { type: "basic", quantity: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.preciseShot", additionalDamage: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.swordCombo", additionalDamage: 2, quantity: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.armCannon", description: "combatAdmin.npcAttacks.armCannonDesc", additionalDamage: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.concentratedSwordBeam", description: "combatAdmin.npcAttacks.concentratedSwordBeamDesc", additionalDamage: 6, additionalDices: 2, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 1 }] },
         ],
         drops: { weapons: ["sakaram"] },
     },
@@ -1042,7 +1069,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.steelStrike", additionalDamage: 9, additionalDices: 1, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.steelStrike", description: "combatAdmin.npcAttacks.steelStrikeDesc", additionalDamage: 9, additionalDices: 1, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 1 }] },
         ],
     },
     {
@@ -1333,7 +1360,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.devastatingBlow", additionalDamage: 5, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.devastatingBlow", description: "combatAdmin.npcAttacks.devastatingBlowDesc", additionalDamage: 5, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 1 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.earthquake", additionalDamage: 5 },
         ],
     },
@@ -2601,7 +2628,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "6",
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.steelStrike", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 9, additionalDices: 3, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.steelStrike", description: "combatAdmin.npcAttacks.steelStrikeDesc", description: "combatAdmin.npcAttacks.intensityExtreme", additionalDamage: 9, additionalDices: 3, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 1 }] },
         ],
     },
     {
@@ -2753,6 +2780,7 @@ const NPCsBaseData: NPCBaseData[] = [
         charisma:      8,
         armorClass: 17,
         challengeRating: "3",
+        passives: ["combatAdmin.npcPassives.mayFlee"],
         attackList: [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.ironBall", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1 },
@@ -3276,9 +3304,10 @@ const NPCsBaseData: NPCBaseData[] = [
         armorClass: 18,
         challengeRating: "7",
         proficiencyBonus: 4,
+        passives: ["combatAdmin.npcPassives.mayFlee"],
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.ironBall", additionalDamage: 11, additionalDices: 1 },
+            { type: "skill", name: "combatAdmin.npcAttacks.ironBall", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 11, additionalDices: 1 },
         ],
     },
 

@@ -2077,7 +2077,10 @@
         "giantForm": "Can become giant at the start of a combat.",
         "spitOnBreak": "If broken, spits out all swallowed characters.",
         "mercifulDamage": "When facing the expedition, he can choose to intentionally reduce his damage. In that case, as the game master, announce a lower value for the damage after your roll. Also reduce the XP granted by the battle.",
-        "explodeOnDefeat": "Explodes on enemies when defeated. Can be avoided with a Dexterity saving throw DC 13. Deals {{explosionDice}} damage."
+        "explodeOnDefeat": "Explodes on enemies when defeated. Can be avoided with a Dexterity saving throw DC 13. Deals {{explosionDice}} damage.",
+        "breakRemovesWall": "Inflicting a break removes the Invisible Wall.",
+        "reinforcedWeakPoint": "Its weak point requires 3 shots to break. When the weak point breaks, the player rolls the free shot damage 2 times at no cost. As the game master, use the weak point count to track how many shots remain.",
+        "mayFlee": "At the game master's discretion, this NPC will try to flee. At a certain point during the fight, add the Fleeing condition and tell the players it will flee in a few turns. If it flees before being defeated, the players receive no reward."
       },
       "npcAttacks": {
         "invisibleWall": "Invisible Wall",
@@ -2119,6 +2122,11 @@
         "burningCurse": "Burning Curse",
         "hex": "Hex",
         "lanceStrikeDesc": "Strikes a target with its lance.",
+        "hiddenBladeDesc": "Attacks with a hidden blade.",
+        "armCannon": "Arm Cannon",
+        "armCannonDesc": "Fire shot in a cone. Hits all opponents.",
+        "concentratedSwordBeam": "Concentrated Sword Beam",
+        "concentratedSwordBeamDesc": "Single very high intensity strike. Dexterity check against the target's Constitution to inflict break.",
         "dualLanceStrike": "Dual Lance Strike",
         "dualLanceStrikeDesc": "Strikes a target with both lances simultaneously.",
         "lanceCharge": "Lance Charge",
@@ -2138,7 +2146,7 @@
         "anchorStrike": "Double Anchor Strike",
         "strongPunch": "Strong Punch",
         "dualWeaponStrike": "Dual Weapon Strike",
-        "dualWeaponStrikeDesc": "To cause break, requires a strength check against the target's strength.",
+        "dualWeaponStrikeDesc": "To cause break, requires a strength check against the target's Constitution.",
         "impactLeap": "Impact Leap",
         "impactLeapDesc": "Hits all opponents. Can only be avoided by jumping.",
         "warCry": "War Cry",
@@ -2157,6 +2165,7 @@
         "ceramicThrow": "Ceramic Throw",
         "forcedCollection": "Forced Collection",
         "preciseShot": "Precise Shot",
+        "swordCombo": "Sword Combo",
         "reapSouls": "Reap Souls",
         "heavyBlow": "Heavy Blow",
         "avalanche": "Avalanche",
@@ -2165,6 +2174,7 @@
         "iceStake": "Ice Stake",
         "fireEruption": "Fire Eruption",
         "steelStrike": "Steel Strike",
+        "steelStrikeDesc": "Strength check against the target's Constitution to inflict break.",
         "darkMelody": "Dark Melody",
         "fortressSong": "Fortress Song",
         "eternalVigil": "Eternal Vigil",
@@ -2196,6 +2206,7 @@
         "glissade": "Glissade",
         "sneakAttack": "Sneak Attack",
         "devastatingBlow": "Devastating Blow",
+        "devastatingBlowDesc": "Strength check against the target's Constitution to inflict break.",
         "joyfulReap": "Joyful Reap",
         "lanternFlare": "Lantern Flare",
         "maskSwap": "Mask Swap",
@@ -2482,7 +2493,7 @@
       },
       "gustave-overcharge": {
         "name": "Overcharge",
-        "description": "Deals high Lightning damage based on Charge amount. 1 hit. Strength test against the target's Strength to cause Break. Can only cause Break with 5 or more charges."
+        "description": "Deals high Lightning damage based on Charge amount. 1 hit. Strength test against the target's Constitution to cause Break. Can only cause Break with 7 or more charges."
       },
       "gustave-powerful": {
         "name": "Powerful",
@@ -2498,7 +2509,7 @@
       },
       "gustave-shatter": {
         "name": "Shatter",
-        "description": "Deals high Lightning damage to all enemies. 1 hit. Strength test against the target's Strength to cause Break. If a target suffers Break from the hit, Overcharge is fully charged."
+        "description": "Deals high Lightning damage to all enemies. 1 hit. Strength test against the target's Constitution to cause Break. If a target suffers Break from the hit, Overcharge is fully charged."
       },
       "gustave-strike-storm": {
         "name": "Strike Storm",
@@ -2534,7 +2545,7 @@
       },
       "lune-mayhem": {
         "name": "Mayhem",
-        "description": "Consumes all Stains to deal high elemental damage to the target. If 4 Stains are consumed, Intelligence test against the target's Intelligence to cause Break."
+        "description": "Consumes all Stains to deal high elemental damage to the target. If 4 Stains are consumed, Intelligence test against the target's Constitution to cause Break."
       },
       "lune-elemental-trick": {
         "name": "Elemental Trick",
@@ -2550,7 +2561,7 @@
       },
       "lune-rockslide": {
         "name": "Rockslide",
-        "description": "Deals medium Earth damage to a single target. 2 hits. Intelligence test against the target's Intelligence to cause Break. Consumes Lightning stain, Ice stain and Fire stain granting +12 attack bonus and +12 extra damage. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Deals medium Earth damage to a single target. 2 hits. Intelligence test against the target's Constitution to cause Break. Consumes Lightning stain, Ice stain and Fire stain granting +12 attack bonus and +12 extra damage. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-crustal-crush": {
         "name": "Crustal Crush",
@@ -2570,7 +2581,7 @@
       },
       "lune-terraquake": {
         "name": "Terraquake",
-        "description": "Applies Earthquake status to all enemies for 3 turns. At the start of their turns, characters with Earthquake take 1d6 damage. Intelligence test against the target's Intelligence to cause Break. Consumes 2 stains of Lightning to extend duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
+        "description": "Applies Earthquake status to all enemies for 3 turns. At the start of their turns, characters with Earthquake take 1d6 damage. Intelligence test against the target's Constitution to cause Break. Consumes 2 stains of Lightning to extend duration to 5 turns. Using this skill grants 1 Earth stain and 1 Light stain."
       },
       "lune-typhoon": {
         "name": "Typhoon",
@@ -2594,7 +2605,7 @@
       },
       "lune-sky-break": {
         "name": "Sky Break",
-        "description": "Does not consume turn. Deals extreme damage to all enemies. 1 hit. Intelligence test against the target's Intelligence to cause Break. The element depends on which Stain Lune has more. Using this skill grants 3 stains of Light."
+        "description": "Does not consume turn. Deals extreme damage to all enemies. 1 hit. Intelligence test against the target's Constitution to cause Break. The element depends on which Stain Lune has more. Using this skill grants 3 stains of Light."
       },
       "lune-tree-of-life": {
         "name": "Tree of Life",
@@ -2650,7 +2661,7 @@
       },
       "maelle-fleuret-fury": {
         "name": "Fleuret Fury",
-        "description": "Deals high Physical damage to a single target. 3 hits. Dexterity test against the target's Dexterity to cause Break. If Maelle uses this skill while in Virtuose Stance, remains in Virtuose. Using this skill changes Maelle's Stance to Stanceless."
+        "description": "Deals high Physical damage to a single target. 3 hits. Dexterity test against the target's Constitution to cause Break. If Maelle uses this skill while in Virtuose Stance, remains in Virtuose. Using this skill changes Maelle's Stance to Stanceless."
       },
       "maelle-breaking-rules": {
         "name": "Breaking Rules",
@@ -2670,7 +2681,7 @@
       },
       "maelle-revenge": {
         "name": "Revenge",
-        "description": "Deals high Fire damage to a single target. 1 hit. Damage increased for each attack that dealt damage to you since previous turn. Dexterity test against the target's Dexterity to cause Break. Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals high Fire damage to a single target. 1 hit. Damage increased for each attack that dealt damage to you since previous turn. Dexterity test against the target's Constitution to cause Break. Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-pyrolyse": {
         "name": "Pyrolyse",
@@ -2686,7 +2697,7 @@
       },
       "maelle-payback": {
         "name": "Payback",
-        "description": "Deals very high Physical damage to a single target. 1 hit. Dexterity test against the target's Dexterity to cause Break. MP cost reduced for each attack parried since last turn (base cost 9 MP). Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals very high Physical damage to a single target. 1 hit. Dexterity test against the target's Constitution to cause Break. MP cost reduced for each attack parried since last turn (base cost 9 MP). Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-stendhal": {
         "name": "Stendhal",
@@ -2754,7 +2765,7 @@
       },
       "sciel-phantom-blade": {
         "name": "Phantom Blade",
-        "description": "Deals high Dark damage to a single target. 1 hit. Consumes all Foretell (+2 attack bonus and +2 extra damage per Foretell). Charisma test against the target's Charisma to cause Break."
+        "description": "Deals high Dark damage to a single target. 1 hit. Consumes all Foretell (+2 attack bonus and +2 extra damage per Foretell). Charisma test against the target's Constitution to cause Break."
       },
       "sciel-sealed-fate": {
         "name": "Sealed Fate",
@@ -2798,7 +2809,7 @@
       },
       "sciel-final-path": {
         "name": "Final Path",
-        "description": "Deals extreme Dark damage to a single target. 1 hit. Applies 10 Foretell. Charisma test against the target's Charisma to cause Break."
+        "description": "Deals extreme Dark damage to a single target. 1 hit. Applies 10 Foretell. Charisma test against the target's Constitution to cause Break."
       },
       "sciel-twilight-dance": {
         "name": "Twilight Dance",
@@ -2810,7 +2821,7 @@
       },
       "sciel-doom": {
         "name": "Doom",
-        "description": "Does not consume turn. Deals very high Dark damage to a single target. 3 hits. Applies Weakened, Unprotected and Slowed for 3 turns. Charisma test against the target's Charisma to cause Break."
+        "description": "Does not consume turn. Deals very high Dark damage to a single target. 3 hits. Applies Weakened, Unprotected and Slowed for 3 turns. Charisma test against the target's Constitution to cause Break."
       },
       "sciel-end-slice": {
         "name": "End Slice",
@@ -2878,7 +2889,7 @@
       },
       "verso-perfect-break": {
         "name": "Perfect Break",
-        "description": "Deals very high Light damage to a single target. 1 hit. Strength test against the target's Strength to cause Break. If Verso uses this skill at Perfection Rank B, the MP cost is reduced from 7 to 5."
+        "description": "Deals very high Light damage to a single target. 1 hit. Strength test against the target's Constitution to cause Break. If Verso uses this skill at Perfection Rank B, the MP cost is reduced from 7 to 5."
       },
       "verso-perfect-recovery": {
         "name": "Perfect Recovery",
@@ -2886,7 +2897,7 @@
       },
       "verso-phantom-stars": {
         "name": "Phantom Stars",
-        "description": "Deals extreme Light damage to all enemies. 5 hits. Strength test against the target's Strength to cause Break. If Verso uses this skill at Perfection Rank S, the MP cost is reduced from 9 to 5."
+        "description": "Deals extreme Light damage to all enemies. 5 hits. Strength test against the target's Constitution to cause Break. If Verso uses this skill at Perfection Rank S, the MP cost is reduced from 9 to 5."
       },
       "verso-powerful": {
         "name": "Powerful",
@@ -2902,7 +2913,7 @@
       },
       "verso-radiant-slash": {
         "name": "Radiant Slash",
-        "description": "Deals low Light damage to all enemies. 1 hit. Strength test against the target's Strength to cause Break. If Verso uses this skill at Perfection Rank C, the damage is increased."
+        "description": "Deals low Light damage to all enemies. 1 hit. Strength test against the target's Constitution to cause Break. If Verso uses this skill at Perfection Rank C, the damage is increased."
       },
       "verso-sabotage": {
         "name": "Sabotage",
@@ -2918,7 +2929,7 @@
       },
       "verso-striker": {
         "name": "Striker",
-        "description": "Does not consume turn. Deals high Physical damage to a single target. 1 hit. Strength test against the target's Strength to cause Break."
+        "description": "Does not consume turn. Deals high Physical damage to a single target. 1 hit. Strength test against the target's Constitution to cause Break."
       },
       "verso-strike-storm": {
         "name": "Strike Storm",
@@ -2961,7 +2972,7 @@
       },
       "monoco-bruler-bash": {
         "name": "Bruler Bash",
-        "description": "Burning bash attack. Effect: Deals medium Physical damage to a single target. 3 hits. Wisdom test against the target's Wisdom to cause Break. Increased damage when Conjurer Mask is active. Advances the Bestial Wheel Pointer by 4 positions.",
+        "description": "Burning bash attack. Effect: Deals medium Physical damage to a single target. 3 hits. Wisdom test against the target's Constitution to cause Break. Increased damage when Conjurer Mask is active. Advances the Bestial Wheel Pointer by 4 positions.",
         "prerequisite": "Defeat and acquire the foot of a Bruler enemy while Monoco is in the active group."
       },
       "monoco-chalier-combo": {
@@ -3031,7 +3042,7 @@
       },
       "monoco-duallist-storm": {
         "name": "Duallist Storm",
-        "description": "Dual-wielding storm attack. Effect: Deals extreme Physical damage to a single target. 4 hits. Wisdom test against the target's Wisdom to cause Break. Omnipotent Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 1 position.",
+        "description": "Dual-wielding storm attack. Effect: Deals extreme Physical damage to a single target. 4 hits. Wisdom test against the target's Constitution to cause Break. Omnipotent Mask: Increased damage. Using this skill advances the Bestial Wheel Pointer by 1 position.",
         "prerequisite": "Defeat and acquire the foot of a Dualliste enemy while Monoco is in the active group."
       },
       "monoco-echassier-stabs": {
@@ -3086,7 +3097,7 @@
       },
       "monoco-moissonneuse-vendange": {
         "name": "Moissonneuse Vendange",
-        "description": "Harvesting reaper attack. Effect: Deals high Physical damage to a single target. 3 hits. Wisdom test against the target's Wisdom to cause Break. Increased damage when Balanced Mask or Omnipotent Mask is active on the Bestial Wheel Pointer. Using this skill advances the pointer by 2 positions.",
+        "description": "Harvesting reaper attack. Effect: Deals high Physical damage to a single target. 3 hits. Wisdom test against the target's Constitution to cause Break. Increased damage when Balanced Mask or Omnipotent Mask is active on the Bestial Wheel Pointer. Using this skill advances the pointer by 2 positions.",
         "prerequisite": "Defeat and acquire the foot of a Moissoneusse enemy while Monoco is in the active group."
       },
       "monoco-obscur-sword": {
@@ -3106,7 +3117,7 @@
       },
       "monoco-portier-crash": {
         "name": "Portier Crash",
-        "description": "Door-breaking crash attack. Effect: Deals high Physical damage to all enemies. 1 hit. Wisdom test against the target's Wisdom to cause Break. Heavy Mask: Increased damage.",
+        "description": "Door-breaking crash attack. Effect: Deals high Physical damage to all enemies. 1 hit. Wisdom test against the target's Constitution to cause Break. Heavy Mask: Increased damage.",
         "prerequisite": "Defeat and acquire the foot of a Portier enemy while Monoco is in the active group."
       },
       "monoco-potier-energy": {
@@ -3116,12 +3127,12 @@
       },
       "monoco-ramasseur-bonk": {
         "name": "Ramasseur Bonk",
-        "description": "Collector's bonking attack. Effect: Deals low Darkness damage to a single target. 1 hit. Wisdom test against the target's Wisdom to cause Break. Agile Mask effect adds +2 to Break damage. Moves the Bestial Wheel Pointer by 4 positions. When used while the pointer is on Agile Mask or Omnipotent Mask, adds +2 Break damage on hit.",
+        "description": "Collector's bonking attack. Effect: Deals low Darkness damage to a single target. 1 hit. Wisdom test against the target's Constitution to cause Break. Agile Mask effect adds +2 to Break damage. Moves the Bestial Wheel Pointer by 4 positions. When used while the pointer is on Agile Mask or Omnipotent Mask, adds +2 Break damage on hit.",
         "prerequisite": "Defeat and acquire the foot of a Ramasseur enemy while Monoco is in the active group."
       },
       "monoco-rocher-hammering": {
         "name": "Rocher Hammering",
-        "description": "Rock hammering attack. Effect: Deals medium Physical damage to a single target. 4 hits. Wisdom test against the target's Wisdom to cause Break. Heavy Mask modifier provides increased damage. Advances the Bestial Wheel Pointer by 3 positions and gains enhanced damage when used on Heavy Mask or Omnipotent Mask.",
+        "description": "Rock hammering attack. Effect: Deals medium Physical damage to a single target. 4 hits. Wisdom test against the target's Constitution to cause Break. Heavy Mask modifier provides increased damage. Advances the Bestial Wheel Pointer by 3 positions and gains enhanced damage when used on Heavy Mask or Omnipotent Mask.",
         "prerequisite": "Defeat and acquire the foot of a Rocher enemy while Monoco is in the active group."
       },
       "monoco-sakapatate-estoc": {
@@ -4169,7 +4180,8 @@
       "flying-waters-blacksmith": "The Blacksmith",
       "flying-waters-bourgeon": "Bourgeon",
       "flying-waters-chromatic-troubadour": "Chromatic Troubadour",
-      "ancient-sanctuary-robust-sakapatate": "Robust Sakapatate"
+      "ancient-sanctuary-robust-sakapatate": "Robust Sakapatate",
+      "ancient-sanctuary-ranger-catapult-sakapatate": "Ranger & Catapult Sakapatate"
     },
     "locations": {
       "title": "Locations",
@@ -4386,6 +4398,7 @@
       "ramasseur-monolith": "Ramasseur (Monolith)",
       "ceramic-chevaliere-monolith": "Ceramic Chevaliere (Monolith)",
       "gold-chevaliere-monolith": "Gold Chevaliere (Monolith)",
+      "mime-ancient-sanctuary": "Mime (Ancient Sanctuary)",
       "mime-flying-waters": "Mime (Flying Waters)",
       "mime-monolith": "Mime (Monolith)",
       "petank-monolith": "Petank (Monolith)",

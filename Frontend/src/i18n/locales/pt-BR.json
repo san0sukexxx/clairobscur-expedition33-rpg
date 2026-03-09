@@ -2077,7 +2077,10 @@
         "giantForm": "Pode ficar gigante ao iniciar um combate.",
         "spitOnBreak": "Se sofrer quebra, cospe todos os personagens engolidos.",
         "mercifulDamage": "Ao enfrentar a expedição, ele pode escolher reduzir seu dano de forma proposital. Nesse caso, como mestre, diga um valor menor para o dano depois da sua rolagem. Também reduza o XP concedido pela batalha.",
-        "explodeOnDefeat": "Explode em cima dos adversários ao ser derrotado. Pode ser evitado com um Teste de Resistência de Destreza CD 13. Causa {{explosionDice}} de dano."
+        "explodeOnDefeat": "Explode em cima dos adversários ao ser derrotado. Pode ser evitado com um Teste de Resistência de Destreza CD 13. Causa {{explosionDice}} de dano.",
+        "breakRemovesWall": "Causar quebra remove a Parede Invisível.",
+        "reinforcedWeakPoint": "Seu ponto fraco precisa de 3 tiros para quebrar. Ao quebrar o ponto fraco, o jogador rola o dano do tiro livre 2 vezes sem custo. Como mestre, utilize a quantidade de pontos fracos para contar quantos tiros faltam.",
+        "mayFlee": "A critério do mestre, este NPC vai tentar fugir. Em um determinado momento da luta, adicione a condição Fugindo e diga aos jogadores que ele vai fugir em alguns turnos. Se ele fugir antes de ser derrotado, os jogadores não ganham recompensa."
       },
       "npcAttacks": {
         "invisibleWall": "Parede Invisível",
@@ -2119,6 +2122,11 @@
         "burningCurse": "Maldição Ardente",
         "hex": "Hex",
         "lanceStrikeDesc": "Ataca um alvo com sua lança.",
+        "hiddenBladeDesc": "Ataca com uma lâmina escondida.",
+        "armCannon": "Canhão de Braço",
+        "armCannonDesc": "Tiro de fogo em cone. Acerta todos os adversários.",
+        "concentratedSwordBeam": "Raio Concentrado na Espada",
+        "concentratedSwordBeamDesc": "Golpe único de intensidade muito alta. Teste de Destreza contra a Constituição do alvo para causar quebra.",
         "dualLanceStrike": "Golpe Duplo de Lança",
         "dualLanceStrikeDesc": "Ataca um alvo com as duas lanças simultaneamente.",
         "lanceCharge": "Investida de Lança",
@@ -2138,7 +2146,7 @@
         "anchorStrike": "Ataque Duplo com Âncora",
         "strongPunch": "Soco Forte",
         "dualWeaponStrike": "Ataque Duplo com Arma",
-        "dualWeaponStrikeDesc": "Para causar quebra, exige um teste de força contra a força do alvo.",
+        "dualWeaponStrikeDesc": "Para causar quebra, exige um teste de força contra a Constituição do alvo.",
         "impactLeap": "Salto com Impacto",
         "impactLeapDesc": "Atinge todos os adversários. Só é possível evitar saltando.",
         "warCry": "Grito de Guerra",
@@ -2157,6 +2165,7 @@
         "ceramicThrow": "Arremesso de Cerâmica",
         "forcedCollection": "Coleta Forçada",
         "preciseShot": "Tiro Certeiro",
+        "swordCombo": "Combo de Espadadas",
         "reapSouls": "Ceifar Almas",
         "heavyBlow": "Pancada Pesada",
         "avalanche": "Avalanche",
@@ -2165,6 +2174,7 @@
         "iceStake": "Estaca de Gelo",
         "fireEruption": "Erupção de Fogo",
         "steelStrike": "Golpe de Aço",
+        "steelStrikeDesc": "Teste de Força contra a Constituição do alvo para causar quebra.",
         "darkMelody": "Melodia Sombria",
         "fortressSong": "Canção de Fortaleza",
         "eternalVigil": "Vigília Eterna",
@@ -2196,6 +2206,7 @@
         "glissade": "Deslizar",
         "sneakAttack": "Ataque Furtivo",
         "devastatingBlow": "Golpe Devastador",
+        "devastatingBlowDesc": "Teste de Força contra a Constituição do alvo para causar quebra.",
         "joyfulReap": "Ceifa Alegre",
         "lanternFlare": "Clarão da Lanterna",
         "maskSwap": "Troca de Máscara",
@@ -2482,7 +2493,7 @@
       },
       "gustave-overcharge": {
         "name": "Sobrecarga",
-        "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 ataque. Teste de Força contra a Força do alvo para causar quebra. Só pode causar quebra com 5 ou mais cargas."
+        "description": "Causa dano de Raio alto baseado na quantidade de Cargas. 1 ataque. Teste de Força contra a Constituição do alvo para causar quebra. Só pode causar quebra com 7 ou mais cargas."
       },
       "gustave-powerful": {
         "name": "Fortalecimento",
@@ -2498,7 +2509,7 @@
       },
       "gustave-shatter": {
         "name": "Estilhaçar",
-        "description": "Causa dano de Raio alto em todos os inimigos. 1 ataque. Teste de Força contra a Força do alvo para causar quebra. Se um alvo sofrer quebra pelo ataque, sobrecarga é totalmente carregado."
+        "description": "Causa dano de Raio alto em todos os inimigos. 1 ataque. Teste de Força contra a Constituição do alvo para causar quebra. Se um alvo sofrer quebra pelo ataque, sobrecarga é totalmente carregado."
       },
       "gustave-strike-storm": {
         "name": "Tempestade de Ataques",
@@ -2550,7 +2561,7 @@
       },
       "lune-rockslide": {
         "name": "Deslizamento",
-        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Teste de Inteligência contra a Inteligência do alvo para causar quebra. Consome Mancha de Raio, Mancha de Gelo e Mancha de Fogo para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Causa dano médio de Terra a um único alvo. 2 ataques. Teste de Inteligência contra a Constituição do alvo para causar quebra. Consome Mancha de Raio, Mancha de Gelo e Mancha de Fogo para receber +12 de bônus no ataque e causar +12 de dano adicional. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-crustal-crush": {
         "name": "Esmaga-Crosta",
@@ -2570,7 +2581,7 @@
       },
       "lune-terraquake": {
         "name": "Terremoto",
-        "description": "Aplica o status Terremoto a todos os inimigos por 3 turnos. No início de seus turnos, personagens com Terremoto recebem 1d6 de dano. Teste de Inteligência contra a Inteligência do alvo para causar quebra. Consome 2 Manchas de Raio para estender a duração para 5 turnos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
+        "description": "Aplica o status Terremoto a todos os inimigos por 3 turnos. No início de seus turnos, personagens com Terremoto recebem 1d6 de dano. Teste de Inteligência contra a Constituição do alvo para causar quebra. Consome 2 Manchas de Raio para estender a duração para 5 turnos. Usar esta habilidade concede 1 Mancha de Terra e 1 Mancha de Luz."
       },
       "lune-typhoon": {
         "name": "Tufão",
@@ -2594,7 +2605,7 @@
       },
       "lune-sky-break": {
         "name": "Quebra do Céu",
-        "description": "Não consome turno. Causa dano extremo a todos os inimigos. 1 ataque. Teste de Inteligência contra a Inteligência do alvo para causar quebra. O elemento depende de qual Mancha Lune possui mais. Usar esta habilidade concede 3 Manchas de Luz."
+        "description": "Não consome turno. Causa dano extremo a todos os inimigos. 1 ataque. Teste de Inteligência contra a Constituição do alvo para causar quebra. O elemento depende de qual Mancha Lune possui mais. Usar esta habilidade concede 3 Manchas de Luz."
       },
       "lune-tree-of-life": {
         "name": "Árvore da Vida",
@@ -2650,7 +2661,7 @@
       },
       "maelle-fleuret-fury": {
         "name": "Fúria do Florete",
-        "description": "Causa dano Físico alto em alvo único. 3 ataques. Teste de Destreza contra a Destreza do alvo para causar quebra. Se Maelle usar esta habilidade enquanto estiver na Postura Virtuosa, permanece na Virtuosa. Usar esta habilidade muda a Postura de Maelle para Sem Postura."
+        "description": "Causa dano Físico alto em alvo único. 3 ataques. Teste de Destreza contra a Constituição do alvo para causar quebra. Se Maelle usar esta habilidade enquanto estiver na Postura Virtuosa, permanece na Virtuosa. Usar esta habilidade muda a Postura de Maelle para Sem Postura."
       },
       "maelle-breaking-rules": {
         "name": "Quebrando Regras",
@@ -2670,7 +2681,7 @@
       },
       "maelle-revenge": {
         "name": "Vingança",
-        "description": "Causa dano de Fogo alto em alvo único. 1 ataque. Dano aumentado para cada ataque que causou dano em você desde o turno anterior. Teste de Destreza contra a Destreza do alvo para causar quebra. Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano de Fogo alto em alvo único. 1 ataque. Dano aumentado para cada ataque que causou dano em você desde o turno anterior. Teste de Destreza contra a Constituição do alvo para causar quebra. Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-pyrolyse": {
         "name": "Pirólise",
@@ -2686,7 +2697,7 @@
       },
       "maelle-payback": {
         "name": "Retribuição",
-        "description": "Causa dano Físico muito alto em alvo único. 1 ataque. Teste de Destreza contra a Destreza do alvo para causar quebra. Custo de PM reduzido para cada ataque aparado desde o último turno (custo base 9 PM). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano Físico muito alto em alvo único. 1 ataque. Teste de Destreza contra a Constituição do alvo para causar quebra. Custo de PM reduzido para cada ataque aparado desde o último turno (custo base 9 PM). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-stendhal": {
         "name": "Stendhal",
@@ -2754,7 +2765,7 @@
       },
       "sciel-phantom-blade": {
         "name": "Lâmina Fantasma",
-        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições (+2 de bônus no ataque e +2 de dano adicional por Predição). Teste de Carisma contra o Carisma do alvo para causar quebra."
+        "description": "Causa dano das Trevas alto em alvo único. 1 ataque. Consome todas as Predições (+2 de bônus no ataque e +2 de dano adicional por Predição). Teste de Carisma contra a Constituição do alvo para causar quebra."
       },
       "sciel-sealed-fate": {
         "name": "Destino Selado",
@@ -2798,7 +2809,7 @@
       },
       "sciel-final-path": {
         "name": "Caminho Final",
-        "description": "Causa dano das Trevas extremo em alvo único. 1 ataque. Aplica 10 Predições. Teste de Carisma contra o Carisma do alvo para causar quebra."
+        "description": "Causa dano das Trevas extremo em alvo único. 1 ataque. Aplica 10 Predições. Teste de Carisma contra a Constituição do alvo para causar quebra."
       },
       "sciel-twilight-dance": {
         "name": "Dança Crepuscular",
@@ -2810,7 +2821,7 @@
       },
       "sciel-doom": {
         "name": "Perdição",
-        "description": "Não consome turno. Causa dano das Trevas muito alto em alvo único. 3 ataques. Aplica Enfraquecido, Desprotegido e Lento por 3 turnos. Teste de Carisma contra o Carisma do alvo para causar quebra."
+        "description": "Não consome turno. Causa dano das Trevas muito alto em alvo único. 3 ataques. Aplica Enfraquecido, Desprotegido e Lento por 3 turnos. Teste de Carisma contra a Constituição do alvo para causar quebra."
       },
       "sciel-end-slice": {
         "name": "Corte Final",
@@ -2878,7 +2889,7 @@
       },
       "verso-perfect-break": {
         "name": "Quebra Perfeita",
-        "description": "Causa dano de Luz muito alto em alvo único. 1 golpe. Teste de Força contra a Força do alvo para causar quebra. Se Verso usar esta habilidade no Rank B de Perfeição, o custo de PM é reduzido de 7 para 5."
+        "description": "Causa dano de Luz muito alto em alvo único. 1 golpe. Teste de Força contra a Constituição do alvo para causar quebra. Se Verso usar esta habilidade no Rank B de Perfeição, o custo de PM é reduzido de 7 para 5."
       },
       "verso-perfect-recovery": {
         "name": "Recuperação Perfeita",
@@ -2886,7 +2897,7 @@
       },
       "verso-phantom-stars": {
         "name": "Estrelas Fantasmas",
-        "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Teste de Força contra a Força do alvo para causar quebra. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 9 para 5."
+        "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Teste de Força contra a Constituição do alvo para causar quebra. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 9 para 5."
       },
       "verso-powerful": {
         "name": "Fortalecimento",
@@ -2902,7 +2913,7 @@
       },
       "verso-radiant-slash": {
         "name": "Corte Radiante",
-        "description": "Causa dano de Luz baixo em todos os inimigos. 1 golpe. Teste de Força contra a Força do alvo para causar quebra. Se Verso usar esta habilidade no Rank C de Perfeição, o dano é aumentado."
+        "description": "Causa dano de Luz baixo em todos os inimigos. 1 golpe. Teste de Força contra a Constituição do alvo para causar quebra. Se Verso usar esta habilidade no Rank C de Perfeição, o dano é aumentado."
       },
       "verso-sabotage": {
         "name": "Sabotagem",
@@ -2918,7 +2929,7 @@
       },
       "verso-striker": {
         "name": "Estocada",
-        "description": "Não consome turno. Causa dano Físico alto em alvo único. 1 golpe. Teste de Força contra a Força do alvo para causar quebra."
+        "description": "Não consome turno. Causa dano Físico alto em alvo único. 1 golpe. Teste de Força contra a Constituição do alvo para causar quebra."
       },
       "verso-strike-storm": {
         "name": "Tempestade de Golpes",
@@ -2961,7 +2972,7 @@
       },
       "monoco-bruler-bash": {
         "name": "Pancada Bruler",
-        "description": "Ataque flamejante. Efeito: Causa dano Físico médio em alvo único. 3 ataques. Teste de Sabedoria contra a Sabedoria do alvo para causar quebra. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.",
+        "description": "Ataque flamejante. Efeito: Causa dano Físico médio em alvo único. 3 ataques. Teste de Sabedoria contra a Constituição do alvo para causar quebra. Dano aumentado quando Máscara de Conjurador está ativa. Avança o Ponteiro da Roda Bestial em 4 posições.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Brûler enquanto Monoco estiver no grupo ativo."
       },
       "monoco-chalier-combo": {
@@ -3031,7 +3042,7 @@
       },
       "monoco-duallist-storm": {
         "name": "Tempestade do Duelista",
-        "description": "Ataque de tempestade de duas armas. Efeito: Causa dano Físico extremo em alvo único. 4 ataques. Teste de Sabedoria contra a Sabedoria do alvo para causar quebra. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.",
+        "description": "Ataque de tempestade de duas armas. Efeito: Causa dano Físico extremo em alvo único. 4 ataques. Teste de Sabedoria contra a Constituição do alvo para causar quebra. Máscara Onipotente: Dano aumentado. Usar esta habilidade avança o Ponteiro da Roda Bestial em 1 posição.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Dualliste enquanto Monoco estiver no grupo ativo."
       },
       "monoco-echassier-stabs": {
@@ -3086,7 +3097,7 @@
       },
       "monoco-moissonneuse-vendange": {
         "name": "Vindima Moissonneuse",
-        "description": "Ataque ceifador de colheita. Efeito: Causa dano Físico alto em alvo único. 3 ataques. Teste de Sabedoria contra a Sabedoria do alvo para causar quebra. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.",
+        "description": "Ataque ceifador de colheita. Efeito: Causa dano Físico alto em alvo único. 3 ataques. Teste de Sabedoria contra a Constituição do alvo para causar quebra. Dano aumentado quando Máscara Equilibrada ou Máscara Onipotente está ativa no Ponteiro da Roda Bestial. Usar esta habilidade avança o ponteiro em 2 posições.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Moissoneusse enquanto Monoco estiver no grupo ativo."
       },
       "monoco-obscur-sword": {
@@ -3106,7 +3117,7 @@
       },
       "monoco-portier-crash": {
         "name": "Colisão Portier",
-        "description": "Ataque de colisão que quebra portas. Efeito: Causa dano Físico alto em todos os inimigos. 1 ataque. Teste de Sabedoria contra a Sabedoria do alvo para causar quebra. Máscara Pesada: Dano aumentado.",
+        "description": "Ataque de colisão que quebra portas. Efeito: Causa dano Físico alto em todos os inimigos. 1 ataque. Teste de Sabedoria contra a Constituição do alvo para causar quebra. Máscara Pesada: Dano aumentado.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Portier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-potier-energy": {
@@ -3116,12 +3127,12 @@
       },
       "monoco-ramasseur-bonk": {
         "name": "Pancada do Coletor",
-        "description": "Ataque de pancada do coletor. Efeito: Causa dano das Trevas baixo em alvo único. 1 ataque. Teste de Sabedoria contra a Sabedoria do alvo para causar quebra. Efeito Máscara Ágil adiciona +2 ao dano de Break. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, adiciona +2 de bônus no ataque e +2 de dano adicional de Break ao acertar.",
+        "description": "Ataque de pancada do coletor. Efeito: Causa dano das Trevas baixo em alvo único. 1 ataque. Teste de Sabedoria contra a Constituição do alvo para causar quebra. Efeito Máscara Ágil adiciona +2 ao dano de Break. Move o Ponteiro da Roda Bestial em 4 posições. Quando usado enquanto o ponteiro está em Máscara Ágil ou Máscara Onipotente, adiciona +2 de bônus no ataque e +2 de dano adicional de Break ao acertar.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Ramasseur enquanto Monoco estiver no grupo ativo."
       },
       "monoco-rocher-hammering": {
         "name": "Martelamento Rocher",
-        "description": "Ataque de martelamento rochoso. Efeito: Causa dano Físico médio em alvo único. 4 ataques. Teste de Sabedoria contra a Sabedoria do alvo para causar quebra. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.",
+        "description": "Ataque de martelamento rochoso. Efeito: Causa dano Físico médio em alvo único. 4 ataques. Teste de Sabedoria contra a Constituição do alvo para causar quebra. Modificador de Máscara Pesada fornece dano aumentado. Avança o Ponteiro da Roda Bestial em 3 posições e ganha dano aprimorado quando usado em Máscara Pesada ou Máscara Onipotente.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Rocher enquanto Monoco estiver no grupo ativo."
       },
       "monoco-sakapatate-estoc": {
@@ -4171,7 +4182,8 @@
       "flying-waters-blacksmith": "O Ferreiro",
       "flying-waters-bourgeon": "Bourgeon",
       "flying-waters-chromatic-troubadour": "Troubadour Cromático",
-      "ancient-sanctuary-robust-sakapatate": "Robust Sakapatate"
+      "ancient-sanctuary-robust-sakapatate": "Robust Sakapatate",
+      "ancient-sanctuary-ranger-catapult-sakapatate": "Ranger & Catapult Sakapatate"
     },
     "locations": {
       "title": "Locais",
@@ -4388,6 +4400,7 @@
       "ramasseur-monolith": "Ramasseur (Monólito)",
       "ceramic-chevaliere-monolith": "Ceramic Chevalière (Monólito)",
       "gold-chevaliere-monolith": "Gold Chevalière (Monólito)",
+      "mime-ancient-sanctuary": "Mímico (Santuário Antigo)",
       "mime-flying-waters": "Mímico (Águas Voadoras)",
       "mime-monolith": "Mímico (Monólito)",
       "petank-monolith": "Pétank (Monólito)",
