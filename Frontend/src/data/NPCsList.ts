@@ -800,7 +800,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "5",
         proficiencyBonus: 3,
         damageDie: 4,
-        passives: ["combatAdmin.npcPassives.startWith4Shields", "combatAdmin.npcPassives.breakRemovesWall"],
+        passives: ["combatAdmin.npcPassives.startWith3Shields", "combatAdmin.npcPassives.breakRemovesWall"],
         attackList: [
             { type: "skill", name: "combatAdmin.npcAttacks.invisibleWall", description: "combatAdmin.npcAttacks.invisibleWallDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.comboHammers", additionalDamage: 7, quantity: 4, statusList: [{ ammount: 1, remainingTurns: 1, type: "Silenced" }] },
