@@ -1717,7 +1717,7 @@ const NPCsBaseData: NPCBaseData[] = [
         id: "francois",
         isBoss: true,
         strength:     14,
-        dexterity:     8,
+        dexterity:     0,
         constitution: 16,
         intelligence: 14,
         wisdom:       12,
@@ -1725,7 +1725,7 @@ const NPCsBaseData: NPCBaseData[] = [
         weakTo: "Dark",
         armorClass: 15,
         challengeRating: "3",
-        passives: ["combatAdmin.npcPassives.startWith5Shields"],
+        passives: ["combatAdmin.npcPassives.startWith5Shields", "combatAdmin.npcPassives.immobile"],
         attackList: [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.iceShaft", description: "combatAdmin.npcAttacks.iceShaftDesc", additionalDamage: 30, additionalDices: 3 },
