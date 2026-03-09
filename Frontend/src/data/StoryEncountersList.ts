@@ -12,6 +12,14 @@ export interface StoryEncounter {
 
 export const StoryEncountersList: StoryEncounter[] = [
     {
+        id: "lumiere-mime",
+        name: "storyEncounters.lumiere-mime",
+        locationId: "lumiere",
+        npcs: [{ npcId: "mime", quantity: 1 }],
+        rewards: [],
+        bonusXp: 0,
+    },
+    {
         id: "lumiere-maelle",
         name: "storyEncounters.lumiere-maelle",
         locationId: "lumiere",
@@ -19,14 +27,6 @@ export const StoryEncountersList: StoryEncounter[] = [
         rewards: [],
         bonusXp: 0,
         playerCharacterIds: ["maelle"],
-    },
-    {
-        id: "lumiere-mime",
-        name: "storyEncounters.lumiere-mime",
-        locationId: "lumiere",
-        npcs: [{ npcId: "mime", quantity: 1 }],
-        rewards: [],
-        bonusXp: 0,
     },
     {
         id: "spring-meadows-portier",
