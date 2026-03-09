@@ -1725,6 +1725,7 @@ const NPCsBaseData: NPCBaseData[] = [
         weakTo: "Dark",
         armorClass: 15,
         challengeRating: "3",
+        passives: ["combatAdmin.npcPassives.startWith5Shields"],
         attackList: [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.iceBeam", additionalDamage: 6 },
