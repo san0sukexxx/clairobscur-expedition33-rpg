@@ -2044,6 +2044,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 4, quantity: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.anchorDoubleImpact", description: "combatAdmin.npcAttacks.anchorDoubleImpactDesc", additionalDamage: 5, quantity: 2 },
         ],
     },
     {

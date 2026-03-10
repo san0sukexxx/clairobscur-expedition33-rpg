@@ -2156,6 +2156,8 @@
         "trample": "Pisotear",
         "holyMagic": "Magia Sagrada",
         "anchorStrike": "Ataque Duplo com Âncora",
+        "anchorDoubleImpact": "Impacto Duplo da Âncora",
+        "anchorDoubleImpactDesc": "Ataca todos os adversários com uma onda de choque. Só é possível evitar pulando.",
         "strongPunch": "Soco Forte",
         "dualWeaponStrike": "Ataque Duplo com Arma",
         "dualWeaponStrikeDesc": "Para causar quebra, exige um teste de força contra a Constituição do alvo.",

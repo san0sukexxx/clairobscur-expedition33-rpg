@@ -2156,6 +2156,8 @@
         "trample": "Trample",
         "holyMagic": "Holy Magic",
         "anchorStrike": "Double Anchor Strike",
+        "anchorDoubleImpact": "Anchor Double Impact",
+        "anchorDoubleImpactDesc": "Hits all enemies with a shockwave. Can only be dodged by jumping.",
         "strongPunch": "Strong Punch",
         "dualWeaponStrike": "Dual Weapon Strike",
         "dualWeaponStrikeDesc": "To cause break, requires a strength check against the target's Constitution.",
