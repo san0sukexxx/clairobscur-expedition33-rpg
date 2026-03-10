@@ -533,6 +533,7 @@ const NPCsBaseData: NPCBaseData[] = [
         absorbElement: "Earth",
         armorClass: 15,
         challengeRating: "3",
+        passives: ["combatAdmin.npcPassives.startWith3Shields"],
         attackList: [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.crush", additionalDamage: 6, statusList: [{ type: "Slowed", ammount: 1, remainingTurns: 2 }] },
