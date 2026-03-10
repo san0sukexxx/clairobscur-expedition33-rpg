@@ -48,6 +48,7 @@ export default function CampaignAdmin() {
     const [focusNpcId, setFocusNpcId] = useState<string | null>(null);
     const [focusPictoId, setFocusPictoId] = useState<string | null>(null);
     const [focusWeaponId, setFocusWeaponId] = useState<string | null>(null);
+    const [focusLocationId, setFocusLocationId] = useState<string | null>(null);
     const diceBoardRef = useRef<DiceBoardRef>(null);
     const timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null> = useRef(null);
 
@@ -253,6 +254,8 @@ export default function CampaignAdmin() {
                 {activeTab === "locations" && campaignInfo !== null && (
                     <CampaignAdminLocationsTab
                         campaignInfo={campaignInfo}
+                        focusLocationId={focusLocationId}
+                        onFocusHandled={() => setFocusLocationId(null)}
                         onLocationChange={async (locationId) => {
                             if (campaignId === null || !campaignInfo) return;
                             await APICampaign.update(campaignId, {
@@ -291,6 +294,10 @@ export default function CampaignAdmin() {
                         onWeaponClick={(weaponId) => {
                             setFocusWeaponId(weaponId);
                             changeTab("weapons-list");
+                        }}
+                        onLocationClick={(locationId) => {
+                            setFocusLocationId(locationId);
+                            changeTab("locations");
                         }}
                     />
                 )}

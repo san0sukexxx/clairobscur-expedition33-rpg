@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { FaMapMarkerAlt, FaChevronDown, FaChevronUp, FaSkull } from "react-icons/fa";
 import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
 import { getNpcById, handleNpcImgError } from "../utils/NpcUtils";
@@ -13,11 +13,20 @@ interface Props {
     onNpcClick: (npcId: string) => void;
     onPictoClick?: (pictoId: string) => void;
     onWeaponClick?: (weaponId: string) => void;
+    focusLocationId?: string | null;
+    onFocusHandled?: () => void;
 }
 
-export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange, onNpcClick, onPictoClick, onWeaponClick }: Props) {
+export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange, onNpcClick, onPictoClick, onWeaponClick, focusLocationId, onFocusHandled }: Props) {
     const [filterText, setFilterText] = useState("");
-    const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [expandedId, setExpandedId] = useState<string | null>(focusLocationId ?? null);
+
+    useEffect(() => {
+        if (focusLocationId) {
+            setExpandedId(focusLocationId);
+            onFocusHandled?.();
+        }
+    }, [focusLocationId]);
     const [mainStoryOnly, setMainStoryOnly] = useState(() => localStorage.getItem("locations.mainStoryOnly") === "true");
 
     const locations = useMemo(() => {

@@ -31,10 +31,11 @@ interface NpcsTabProps {
     onFocusHandled?: () => void;
     onPictoClick?: (pictoId: string) => void;
     onWeaponClick?: (weaponId: string) => void;
+    onLocationClick?: (locationId: string) => void;
     campaignInfo?: Campaign | null;
 }
 
-export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef, focusNpcId, onFocusHandled, onPictoClick, onWeaponClick, campaignInfo }: NpcsTabProps) {
+export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef, focusNpcId, onFocusHandled, onPictoClick, onWeaponClick, onLocationClick, campaignInfo }: NpcsTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(focusNpcId ?? null);
     const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("npcs.currentLocationOnly") === "true");
@@ -196,6 +197,7 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                                         timeoutDiceBoardRef={timeoutDiceBoardRef}
                                         onPictoClick={onPictoClick}
                                         onWeaponClick={onWeaponClick}
+                                        onLocationClick={onLocationClick}
                                     />
                                 )}
                             </div>
@@ -213,9 +215,10 @@ interface NpcDetailsProps {
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
     onPictoClick?: (pictoId: string) => void;
     onWeaponClick?: (weaponId: string) => void;
+    onLocationClick?: (locationId: string) => void;
 }
 
-function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWeaponClick }: NpcDetailsProps) {
+function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWeaponClick, onLocationClick }: NpcDetailsProps) {
     const [npcIntensityOffset, setNpcIntensityOffset] = useState(0);
 
     // ── dice rolling helpers ──
@@ -609,7 +612,11 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                         <span className="font-bold text-xs">{t("combatAdmin.npcDetails.locations")}</span>
                         <div className="flex flex-wrap gap-1.5 mt-1">
                             {npcLocations.map(loc => (
-                                <span key={loc.id} className="badge badge-sm badge-info gap-1">
+                                <span
+                                    key={loc.id}
+                                    className="badge badge-sm badge-info gap-1 cursor-pointer hover:brightness-125 transition-all"
+                                    onClick={() => onLocationClick?.(loc.id)}
+                                >
                                     {getLocationName(loc.id)}
                                 </span>
                             ))}
