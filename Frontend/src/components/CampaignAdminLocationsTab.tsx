@@ -24,6 +24,9 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
     useEffect(() => {
         if (focusLocationId) {
             setExpandedId(focusLocationId);
+            setTimeout(() => {
+                document.getElementById(`location-${focusLocationId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 100);
             onFocusHandled?.();
         }
     }, [focusLocationId]);
@@ -103,7 +106,7 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
                             const isExpanded = expandedId === loc.id;
                             const isCurrent = campaignInfo.currentLocationId === loc.id;
                             return (
-                                <div key={loc.id} className={`py-3 px-1 ${isCurrent ? "bg-primary/10 rounded-lg border border-primary/30" : ""}`}>
+                                <div key={loc.id} id={`location-${loc.id}`} className={`py-3 px-1 ${isCurrent ? "bg-primary/10 rounded-lg border border-primary/30" : ""}`}>
                                     {/* Header */}
                                     <div
                                         className="flex items-center gap-3 cursor-pointer"
