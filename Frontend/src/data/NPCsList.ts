@@ -3002,7 +3002,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 4,
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.igneousExplosion", additionalDamage: 11, additionalDices: 1, statusList: [{ type: "Burning", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 8, quantity: 2 },
         ],
     },
     {
