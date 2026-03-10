@@ -4,8 +4,9 @@ import { GiCrossedSwords } from "react-icons/gi";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponDexterityBonus, displayWeaponProficiencyBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
-import { t, getWeaponName, getWeaponPassive } from "../i18n";
+import { t, getWeaponName, getWeaponPassive, getLocationName } from "../i18n";
 import { getLocationById } from "../utils/LocationUtils";
+import { LocationsList } from "../data/LocationsList";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { getCharacterLabelById } from "../utils/CharacterUtils";
 import { useToast } from "./Toast";
@@ -71,9 +72,10 @@ interface WeaponsTabProps {
     onFocusHandled?: () => void;
     players?: GetPlayerResponse[];
     campaignInfo?: Campaign | null;
+    onLocationClick?: (locationId: string) => void;
 }
 
-export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled, players, campaignInfo }: WeaponsTabProps) {
+export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled, players, campaignInfo, onLocationClick }: WeaponsTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
     const [giveModalEntry, setGiveModalEntry] = useState<WeaponEntry | null>(null);
@@ -195,6 +197,7 @@ export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled,
                                         entry={entry}
                                         showGive={!!players?.length}
                                         onGive={() => setGiveModalEntry(entry)}
+                                        onLocationClick={onLocationClick}
                                     />
                                 )}
                             </div>
@@ -225,7 +228,7 @@ export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled,
     );
 }
 
-function WeaponDetails({ entry, showGive, onGive }: { entry: WeaponEntry; showGive?: boolean; onGive?: () => void }) {
+function WeaponDetails({ entry, showGive, onGive, onLocationClick }: { entry: WeaponEntry; showGive?: boolean; onGive?: () => void; onLocationClick?: (locationId: string) => void }) {
     const [level, setLevel] = useState(1);
     const { weapon, weaponId } = entry;
     const { attributes } = weapon;
@@ -311,6 +314,27 @@ function WeaponDetails({ entry, showGive, onGive }: { entry: WeaponEntry; showGi
                     </div>
                 </div>
             )}
+
+            {(() => {
+                const weaponLocations = LocationsList.filter(loc => loc.loot?.some(r => r.type === "weapon" && r.itemId === weaponId));
+                if (weaponLocations.length === 0) return null;
+                return (
+                    <div>
+                        <span className="font-bold text-xs">{t("combatAdmin.npcDetails.locations")}</span>
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                            {weaponLocations.map(loc => (
+                                <span
+                                    key={loc.id}
+                                    className="badge badge-sm badge-info gap-1 cursor-pointer hover:brightness-125 transition-all"
+                                    onClick={() => onLocationClick?.(loc.id)}
+                                >
+                                    {getLocationName(loc.id)}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
 
             {showGive && (
                 <button className="btn btn-sm btn-outline btn-primary gap-2" onClick={onGive}>

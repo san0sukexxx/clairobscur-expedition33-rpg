@@ -3,7 +3,8 @@ import { FaChevronDown, FaChevronUp, FaGift } from "react-icons/fa";
 import { GiStoneTablet } from "react-icons/gi";
 import { getAllPictosSorted, pictoColorHex, calculatePictoSpeed, calculatePictoDefense, calculatePictoHealth, calculatePictoAbility } from "../utils/PictoUtils";
 import { getLocationById } from "../utils/LocationUtils";
-import { t } from "../i18n";
+import { LocationsList } from "../data/LocationsList";
+import { t, getLocationName } from "../i18n";
 import { APIPicto } from "../api/APIPicto";
 import { getCharacterLabelById } from "../utils/CharacterUtils";
 import { useToast } from "./Toast";
@@ -26,9 +27,10 @@ interface PictosTabProps {
     onFocusHandled?: () => void;
     players?: GetPlayerResponse[];
     campaignInfo?: Campaign | null;
+    onLocationClick?: (locationId: string) => void;
 }
 
-export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, players, campaignInfo }: PictosTabProps) {
+export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, players, campaignInfo, onLocationClick }: PictosTabProps) {
     const [filterText, setFilterText] = useState("");
     const [expandedId, setExpandedId] = useState<string | null>(focusPictoId ?? null);
     const [giveModalPicto, setGiveModalPicto] = useState<PictoInfo | null>(null);
@@ -137,6 +139,7 @@ export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, p
                                         picto={picto}
                                         showGive={!!players?.length}
                                         onGive={() => setGiveModalPicto(picto)}
+                                        onLocationClick={onLocationClick}
                                     />
                                 )}
                             </div>
@@ -202,7 +205,7 @@ function PictoIcon({ picto }: { picto: PictoInfo }) {
     );
 }
 
-function PictoDetails({ picto, showGive, onGive }: { picto: PictoInfo; showGive?: boolean; onGive?: () => void }) {
+function PictoDetails({ picto, showGive, onGive, onLocationClick }: { picto: PictoInfo; showGive?: boolean; onGive?: () => void; onLocationClick?: (locationId: string) => void }) {
     const [level, setLevel] = useState(1);
 
     const stats = STAT_CONFIG
@@ -261,6 +264,27 @@ function PictoDetails({ picto, showGive, onGive }: { picto: PictoInfo; showGive?
                     </div>
                 </div>
             )}
+
+            {(() => {
+                const pictoLocations = LocationsList.filter(loc => loc.loot?.some(r => r.type === "picto" && r.itemId === picto.id));
+                if (pictoLocations.length === 0) return null;
+                return (
+                    <div>
+                        <span className="font-bold text-xs">{t("combatAdmin.npcDetails.locations")}</span>
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                            {pictoLocations.map(loc => (
+                                <span
+                                    key={loc.id}
+                                    className="badge badge-sm badge-info gap-1 cursor-pointer hover:brightness-125 transition-all"
+                                    onClick={() => onLocationClick?.(loc.id)}
+                                >
+                                    {getLocationName(loc.id)}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
 
             {showGive && (
                 <button className="btn btn-sm btn-outline btn-primary gap-2" onClick={onGive}>
