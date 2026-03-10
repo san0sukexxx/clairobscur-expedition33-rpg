@@ -254,6 +254,8 @@ export function PlayerContent({
           setPlayer={setPlayer}
           weaponList={weaponList}
           isAdmin={isAdmin}
+          diceBoardRef={diceBoardRef}
+          timeoutDiceBoardRef={timeoutDiceBoardRef}
         />
       )}
 
@@ -263,6 +265,8 @@ export function PlayerContent({
           setPlayer={setPlayer}
           isAdmin={isAdmin}
           campaignId={campaignInfo?.id}
+          diceBoardRef={diceBoardRef}
+          timeoutDiceBoardRef={timeoutDiceBoardRef}
         />
       )}
 
@@ -271,6 +275,8 @@ export function PlayerContent({
           player={player}
           setPlayer={setPlayer}
           isAdmin={isAdmin}
+          diceBoardRef={diceBoardRef}
+          timeoutDiceBoardRef={timeoutDiceBoardRef}
         />
       )}
 

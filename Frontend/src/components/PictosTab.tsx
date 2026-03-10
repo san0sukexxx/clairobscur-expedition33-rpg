@@ -1,6 +1,8 @@
-import React, { useMemo, useState, useCallback } from "react"
+import React, { useMemo, useState, useCallback, type RefObject, type MutableRefObject } from "react"
 import { type PictoResponse, type PictoInfo } from "../api/ResponseModel"
 import { t } from "../i18n"
+import type { DiceBoardRef } from "./DiceBoard"
+import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer"
 import {
   displayPictoAttributeAbility,
   displayPictoAttributeDefense,
@@ -24,6 +26,8 @@ interface PictosTabProps {
   setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>
   isAdmin: boolean
   campaignId?: number
+  diceBoardRef?: RefObject<DiceBoardRef | null>
+  timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }
 
 type ModalType = "slot" | "admin-add" | "admin-add-level" | "admin-remove" | "gift-pick" | "gift-target" | null
@@ -35,7 +39,7 @@ function getPictoName(p: PictoResponse | null | undefined): string {
   return pictoInfo?.name ?? p.pictoId ?? ""
 }
 
-export default function PictosTab({ player, setPlayer, isAdmin, campaignId }: PictosTabProps) {
+export default function PictosTab({ player, setPlayer, isAdmin, campaignId, diceBoardRef, timeoutDiceBoardRef }: PictosTabProps) {
   const [modalType, setModalType] = useState<ModalType>(null)
   const [activeSlot, setActiveSlot] = useState<number | null>(null)
   const [query, setQuery] = useState("")
@@ -489,7 +493,7 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId }: Pi
 
                     <div className="h-px w-full bg-base-300 my-1" />
 
-                    <div className="opacity-85">{pictoInfo?.description}</div>
+                    <div className="opacity-85">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, pictoInfo.name ?? "", diceBoardRef, timeoutDiceBoardRef) : ""}</div>
                   </div>
                 ) : (
                   <div className="text-center w-full opacity-60 tracking-wide text-lg">
@@ -525,6 +529,8 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId }: Pi
                     onPick={(pp) => upsertPictoAt(activeSlot, pp)}
                     disabled={!!isEquippedAsLumina}
                     disabledLabel={isEquippedAsLumina ? t("pictos.alreadyEquippedAsLumina") : undefined}
+                    diceBoardRef={diceBoardRef}
+                    timeoutDiceBoardRef={timeoutDiceBoardRef}
                   />
                 )
               })}
@@ -537,7 +543,7 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId }: Pi
           {modalType === "admin-add" && (
             <>
               {addFiltered.map((p) => (
-                <PictoInfoCard key={p.name} info={p} onPick={handleAdminAddPick} />
+                <PictoInfoCard key={p.name} info={p} onPick={handleAdminAddPick} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
               ))}
               {addFiltered.length === 0 && (
                 <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
@@ -585,6 +591,8 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId }: Pi
                   key={`${p.id}-${p.slot ?? "none"}-${p.level ?? 1}`}
                   picto={p}
                   onPick={handleAdminRemovePick}
+                  diceBoardRef={diceBoardRef}
+                  timeoutDiceBoardRef={timeoutDiceBoardRef}
                 />
               ))}
               {removeFiltered.length === 0 && (
@@ -604,6 +612,8 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId }: Pi
                     key={p.id}
                     picto={p}
                     onPick={handleGiftPickPicto}
+                    diceBoardRef={diceBoardRef}
+                    timeoutDiceBoardRef={timeoutDiceBoardRef}
                   />
                 ))}
                 {filtered.length === 0 && (
@@ -847,11 +857,15 @@ function PictoCard({
   onPick,
   disabled = false,
   disabledLabel,
+  diceBoardRef,
+  timeoutDiceBoardRef,
 }: {
   picto: PictoResponse
   onPick?: (p: PictoResponse) => void
   disabled?: boolean
   disabledLabel?: string
+  diceBoardRef?: RefObject<DiceBoardRef | null>
+  timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }) {
   const level = picto.level ?? 1
   const name = getPictoName(picto)
@@ -880,7 +894,7 @@ function PictoCard({
           <StatusTexts pictoResponse={picto} level={level} />
           <Stat label={t("common.level")} value={picto.level ?? 1} />
         </div>
-        <div className="opacity-80 text-sm sm:text-base line-clamp-3">{pictoInfo?.description}</div>
+        <div className="opacity-80 text-sm sm:text-base line-clamp-3">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, name, diceBoardRef, timeoutDiceBoardRef) : ""}</div>
         {disabled && disabledLabel && (
           <div className="text-xs text-red-400 mt-1">{disabledLabel}</div>
         )}
@@ -892,9 +906,13 @@ function PictoCard({
 function PictoInfoCard({
   info,
   onPick,
+  diceBoardRef,
+  timeoutDiceBoardRef,
 }: {
   info: PictoInfo
   onPick?: (p: PictoInfo) => void
+  diceBoardRef?: RefObject<DiceBoardRef | null>
+  timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }) {
   const picto = getPictoByName(info.name)
   const level = 1
@@ -915,7 +933,7 @@ function PictoInfoCard({
             />
           )}
         </div>
-        <div className="opacity-80 text-sm sm:text-base line-clamp-3">{info.description}</div>
+        <div className="opacity-80 text-sm sm:text-base line-clamp-3">{info.description ? renderTextWithDiceButtons(info.description, info.name, diceBoardRef, timeoutDiceBoardRef) : ""}</div>
       </div>
     </button>
   )

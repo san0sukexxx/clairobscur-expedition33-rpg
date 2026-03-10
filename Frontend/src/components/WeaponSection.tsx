@@ -1,4 +1,4 @@
-import { useRef, useMemo, useState } from "react";
+import { useRef, useMemo, useState, type RefObject, type MutableRefObject } from "react";
 import { FaChevronLeft, FaChevronRight, FaList, FaChartLine, FaLock } from "react-icons/fa";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
@@ -10,6 +10,8 @@ import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
 import { calculateMaxHP } from "../utils/PlayerCalculator";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
+import type { DiceBoardRef } from "./DiceBoard";
+import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
 
 const VERSO_EXCLUSIVE_WEAPONS = WeaponsDataLoader.VERSO_EXCLUSIVE_WEAPONS;
 
@@ -53,6 +55,8 @@ interface WeaponSectionProps {
   setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
   weaponList: WeaponDTO[];
   isAdmin: boolean;
+  diceBoardRef?: RefObject<DiceBoardRef | null>;
+  timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }
 
 function useActiveWeapon(weaponList: WeaponDTO[], player?: GetPlayerResponse | null): SelectorWeapon | null {
@@ -96,7 +100,7 @@ const levelColor = (lvl: number) =>
     : lvl >= 3 ? "text-yellow-400"
       : "text-sky-400";
 
-export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }: WeaponSectionProps) {
+export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, diceBoardRef, timeoutDiceBoardRef }: WeaponSectionProps) {
   const activeWeapon = useActiveWeapon(weaponList, player);
 
   const dialogRef = useRef<HTMLDialogElement | null>(null);
@@ -579,7 +583,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                         ? <FaLock className="mt-0.5 shrink-0 text-base-content/60" />
                         : <span className="w-3.5 shrink-0" />}
                       <span className={`font-semibold ${levelColor(p.level)}`}>Level {p.level}</span>
-                      <span className="flex-1 opacity-90">: {effectText}</span>
+                      <span className="flex-1 opacity-90">: {renderTextWithDiceButtons(effectText, activeWeapon.name, diceBoardRef, timeoutDiceBoardRef)}</span>
                     </li>
                   );
                 })}
@@ -721,7 +725,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin }
                                 ? <FaLock className="mt-0.5 shrink-0 text-base-content/60" />
                                 : <span className="w-3.5 shrink-0" />}
                               <span className={`font-semibold ${levelColor(p.level)}`}>{t("weapons.level")} {p.level}</span>
-                              <span className="flex-1 opacity-90">: {effectText}</span>
+                              <span className="flex-1 opacity-90">: {renderTextWithDiceButtons(effectText, weaponDetails.name, diceBoardRef, timeoutDiceBoardRef)}</span>
                             </li>
                           );
                         })}

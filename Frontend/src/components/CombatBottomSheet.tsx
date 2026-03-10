@@ -11,6 +11,7 @@ import { playerPictosTotalSpeed, calculateArmorClass, abilityScoreCap } from "..
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
+import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
 import { APIGameLog } from "../api/APIGameLog";
 import { getWeaponPassive, toKebabCase, hasWeapon, t, getPictoName, getPictoDescription } from "../i18n";
 import { getPictoByName } from "../utils/PictoUtils";
@@ -438,7 +439,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                             <span className={`font-semibold ${levelColor(p.level)}`}>
                                                                 Level {p.level}
                                                             </span>
-                                                            <span className="opacity-90">{effectText}</span>
+                                                            <span className="opacity-90">{renderTextWithDiceButtons(effectText, weapon?.id ?? "", diceBoardRef, timeoutDiceBoardRef)}</span>
                                                         </li>
                                                     );
                                                 })}
@@ -460,7 +461,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                             <span className="font-semibold text-primary">
                                                                 {name}
                                                             </span>
-                                                            <span className="opacity-90">{description}</span>
+                                                            <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef) : ""}</span>
                                                         </li>
                                                     );
                                                 })}
@@ -473,7 +474,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                             <span className="font-semibold text-primary">
                                                                 {name}
                                                             </span>
-                                                            <span className="opacity-90">{description}</span>
+                                                            <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef) : ""}</span>
                                                         </li>
                                                     );
                                                 })}

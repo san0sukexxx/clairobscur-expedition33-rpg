@@ -1,6 +1,8 @@
-import React, { useMemo, useState } from "react"
+import React, { useMemo, useState, type RefObject, type MutableRefObject } from "react"
 import { type PictoInfo, type LuminaResponse } from "../api/ResponseModel"
 import { t } from "../i18n"
+import type { DiceBoardRef } from "./DiceBoard"
+import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer"
 import {
     getPictoByName,
     getAllPictosSorted,
@@ -15,6 +17,8 @@ interface LuminasSectionProps {
     player: GetPlayerResponse | null
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>
     isAdmin: boolean
+    diceBoardRef?: RefObject<DiceBoardRef | null>
+    timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }
 
 type ModalType = "slot" | "admin-add" | "admin-remove" | null
@@ -28,6 +32,8 @@ export default function LuminasSection({
     player,
     setPlayer,
     isAdmin,
+    diceBoardRef,
+    timeoutDiceBoardRef,
 }: LuminasSectionProps) {
     const [modalType, setModalType] = useState<ModalType>(null)
     const [activeSlot, setActiveSlot] = useState<number | null>(null)
@@ -376,7 +382,7 @@ export default function LuminasSection({
                                             </button>
                                         </div>
 
-                                        <div className="opacity-85">{pictoInfo?.description}</div>
+                                        <div className="opacity-85">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, pictoInfo.name ?? "", diceBoardRef, timeoutDiceBoardRef) : ""}</div>
                                     </div>
                                 ) : (
                                     <div className="text-center w-full opacity-60 tracking-wide text-lg">
@@ -421,6 +427,8 @@ export default function LuminasSection({
                                         disabledLabel={isEquippedAsPicto ? t("luminas.alreadyEquippedAsPicto") : undefined}
                                         currentCost={currentLuminaCost}
                                         maxCost={maxCostLuminas}
+                                        diceBoardRef={diceBoardRef}
+                                        timeoutDiceBoardRef={timeoutDiceBoardRef}
                                     />
                                 )
                             })}
@@ -439,6 +447,8 @@ export default function LuminasSection({
                                     key={p.name}
                                     info={p}
                                     onPick={handleAdminAddPick}
+                                    diceBoardRef={diceBoardRef}
+                                    timeoutDiceBoardRef={timeoutDiceBoardRef}
                                 />
                             ))}
                             {addFiltered.length === 0 && (
@@ -456,6 +466,8 @@ export default function LuminasSection({
                                     key={`${l.id}-${l.isEquiped ? "on" : "off"}`}
                                     lumina={l}
                                     onPick={handleAdminRemovePick}
+                                    diceBoardRef={diceBoardRef}
+                                    timeoutDiceBoardRef={timeoutDiceBoardRef}
                                 />
                             ))}
                             {removeFiltered.length === 0 && (
@@ -623,6 +635,8 @@ function LuminaCard({
     disabledLabel,
     currentCost,
     maxCost,
+    diceBoardRef,
+    timeoutDiceBoardRef,
 }: {
     lumina: LuminaResponse
     onPick?: (l: LuminaResponse) => void
@@ -630,6 +644,8 @@ function LuminaCard({
     disabledLabel?: string
     currentCost?: number
     maxCost?: number
+    diceBoardRef?: RefObject<DiceBoardRef | null>
+    timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }) {
     const name = getLuminaName(lumina)
     const pictoInfo = getPictoByName(name)
@@ -659,7 +675,7 @@ function LuminaCard({
                         </div>
                     )}
                 </div>
-                <div className="opacity-80">{pictoInfo?.description}</div>
+                <div className="opacity-80">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, name, diceBoardRef, timeoutDiceBoardRef) : ""}</div>
                 {disabled && disabledLabel && (
                     <div className="text-xs text-red-400 mt-1">{disabledLabel}</div>
                 )}
@@ -676,9 +692,13 @@ function LuminaCard({
 function PictoInfoCard({
     info,
     onPick,
+    diceBoardRef,
+    timeoutDiceBoardRef,
 }: {
     info: PictoInfo
     onPick?: (p: PictoInfo) => void
+    diceBoardRef?: RefObject<DiceBoardRef | null>
+    timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }) {
     return (
         <button
@@ -692,7 +712,7 @@ function PictoInfoCard({
                         {info.name}
                     </div>
                 </div>
-                <div className="opacity-80">{info.description}</div>
+                <div className="opacity-80">{info.description ? renderTextWithDiceButtons(info.description, info.name, diceBoardRef, timeoutDiceBoardRef) : ""}</div>
             </div>
         </button>
     )
