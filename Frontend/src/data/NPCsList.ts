@@ -522,6 +522,7 @@ const NPCsBaseData: NPCBaseData[] = [
     },
     {
         id: "glaise",
+        playFirst: true,
         strength:     16,
         dexterity:     6,
         constitution: 18,
