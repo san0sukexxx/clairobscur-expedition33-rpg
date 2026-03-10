@@ -2232,6 +2232,8 @@
         "tripleComboDesc": "High intensity. Three consecutive strikes.",
         "flightCollision": "Flight Collision",
         "flightCollisionDesc": "Very high intensity.",
+        "poleCombo": "Pole Combo",
+        "poleComboDesc": "High intensity. Four consecutive strikes with the pole.",
         "joyfulReap": "Joyful Reap",
         "lanternFlare": "Lantern Flare",
         "maskSwap": "Mask Swap",

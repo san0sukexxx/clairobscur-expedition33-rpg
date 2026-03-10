@@ -2232,6 +2232,8 @@
         "tripleComboDesc": "Intensidade alta. Três golpes consecutivos.",
         "flightCollision": "Colisão de Voo",
         "flightCollisionDesc": "Intensidade muito alta.",
+        "poleCombo": "Combo com o Poste",
+        "poleComboDesc": "Intensidade alta. Quatro golpes consecutivos com o poste.",
         "joyfulReap": "Ceifa Alegre",
         "lanternFlare": "Clarão da Lanterna",
         "maskSwap": "Troca de Máscara",
