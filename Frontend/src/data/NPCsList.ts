@@ -276,7 +276,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "2",
         attackList: [
             { type: "basic", additionalDamage: 2 },
-            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 3, quantity: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 3, quantity: 4 },
         ],
     },
     {
@@ -2043,7 +2043,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 4, quantity: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 4, quantity: 4 },
         ],
     },
     {
@@ -3002,7 +3002,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 4,
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 8, quantity: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 8, quantity: 4 },
         ],
     },
     {
