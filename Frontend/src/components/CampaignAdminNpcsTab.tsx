@@ -9,7 +9,8 @@ import { getAttackTypeLabel, getStatusLabel, shouldShowStatusAmmount } from "../
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import type { DiceBoardRef } from "../components/DiceBoard";
-import { t, getPictoName, getWeaponName } from "../i18n";
+import { t, getPictoName, getWeaponName, getLocationName } from "../i18n";
+import { LocationsList } from "../data/LocationsList";
 import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
 import type { Campaign } from "../api/APICampaign";
 import { crToXp, calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
@@ -599,6 +600,23 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                     </div>
                 </div>
             )}
+
+            {(() => {
+                const npcLocations = LocationsList.filter(loc => loc.residentNpcIds?.includes(npc.id));
+                if (npcLocations.length === 0) return null;
+                return (
+                    <div>
+                        <span className="font-bold text-xs">{t("combatAdmin.npcDetails.locations")}</span>
+                        <div className="flex flex-wrap gap-1.5 mt-1">
+                            {npcLocations.map(loc => (
+                                <span key={loc.id} className="badge badge-sm badge-info gap-1">
+                                    {getLocationName(loc.id)}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 }

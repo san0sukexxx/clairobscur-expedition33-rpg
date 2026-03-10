@@ -2459,7 +2459,8 @@
         "challenge": "Desafio",
         "proficiencyBonus": "Bônus de Proficiência",
         "attributes": "Atributos",
-        "drops": "Recompensas"
+        "drops": "Recompensas",
+        "locations": "Locais"
       },
       "actionDesc": {
         "meleeAttack": "Ataque Básico",

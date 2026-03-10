@@ -2459,7 +2459,8 @@
         "challenge": "Challenge",
         "proficiencyBonus": "Proficiency Bonus",
         "attributes": "Attributes",
-        "drops": "Drops"
+        "drops": "Drops",
+        "locations": "Locations"
       },
       "actionDesc": {
         "meleeAttack": "Melee Weapon Attack",
