@@ -607,7 +607,7 @@ export const LocationsList: LocationInfo[] = [
     { id: "white-tree" },
     {
         id: "yellow-harvest",
-        residentNpcIds: ["gault", "jar", "potier", "mime", "glaise", "chromatic-orphelin"],
+        residentNpcIds: ["gault", "jar", "potier", "mime-yellow-harvest", "glaise", "chromatic-orphelin"],
         referenceNpcNames: ["Pinabby", "Young Boy"],
         loot: [
             { type: "weapon", itemId: "gaultaram", level: 1 },

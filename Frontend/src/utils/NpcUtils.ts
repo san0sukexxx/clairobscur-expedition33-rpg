@@ -23,7 +23,7 @@ export function handleNpcImgError(e: { currentTarget: HTMLImageElement }, npcId:
     const img = e.currentTarget;
     const step = img.dataset.imgStep ?? "0";
 
-    const locationSuffixes = ["-monolith", "-visages", "-sirene", "-manor", "-battlefield", "-act3", "-flying-waters", "-ancient-sanctuary", "-esquies-nest"];
+    const locationSuffixes = ["-monolith", "-visages", "-sirene", "-manor", "-battlefield", "-act3", "-flying-waters", "-ancient-sanctuary", "-esquies-nest", "-yellow-harvest"];
     let baseId: string | null = null;
     if (npcId.startsWith("chromatic-")) {
         baseId = npcId.replace("chromatic-", "");
