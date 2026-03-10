@@ -517,7 +517,6 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.earthquake", additionalDamage: 6, additionalDices: 1 },
         ],
     },
     {
