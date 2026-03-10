@@ -52,6 +52,7 @@ const NPCsBaseData: NPCBaseData[] = [
         armorClass: 22,
         challengeRating: "14",
         proficiencyBonus: 6,
+        passives: ["combatAdmin.npcPassives.friendlyNature"],
         attackList: [
             { type: "basic", additionalDamage: 10 },
             { type: "skill", name: "combatAdmin.npcAttacks.flightCollision", description: "combatAdmin.npcAttacks.flightCollisionDesc", additionalDamage: 14, additionalDices: 2 },

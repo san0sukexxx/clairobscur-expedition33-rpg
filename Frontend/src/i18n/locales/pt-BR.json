@@ -2075,6 +2075,7 @@
         "startWith4Shields": "Começa a batalha com 4 escudos.",
         "startWith5Shields": "Começa a batalha com 5 escudos.",
         "immobile": "Esse personagem é incapaz de se mover. Sua destreza é zero.",
+        "friendlyNature": "Esse personagem é totalmente amigável. Ele não vai atacar a expedição a menos que seja totalmente necessário.",
         "desperationCharge": "Ao chegar em 35% de vida ou menos, recebe 8 escudos e começa a carregar um ataque supremo.",
         "mineCarrier": "Carrega uma mina. Atirar na mina faz ela explodir, causando dano {{dice}} em todos os aliados inclusive nele. Sem mina, fica impedido de usar o Ataque Suicida e o ataque básico.",
         "giantForm": "Pode ficar gigante ao iniciar um combate.",
