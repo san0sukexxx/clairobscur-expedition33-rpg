@@ -517,6 +517,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 5 },
+            { type: "skill", name: "combatAdmin.npcAttacks.tripleCombo", description: "combatAdmin.npcAttacks.tripleComboDesc", additionalDamage: 4, quantity: 3 },
         ],
     },
     {
