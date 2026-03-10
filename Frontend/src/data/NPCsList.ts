@@ -2042,8 +2042,8 @@ const NPCsBaseData: NPCBaseData[] = [
         armorClass: 14,
         challengeRating: "3",
         attackList: [
-            { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.igneousExplosion", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Burning", ammount: 2, remainingTurns: 2 }] },
+            { type: "basic", additionalDamage: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.anchorStrike", additionalDamage: 4, quantity: 2 },
         ],
     },
     {
