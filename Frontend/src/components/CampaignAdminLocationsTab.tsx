@@ -21,24 +21,25 @@ export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChan
     const [mainStoryOnly, setMainStoryOnly] = useState(() => localStorage.getItem("locations.mainStoryOnly") === "true");
 
     const locations = useMemo(() => {
-        if (mainStoryOnly) {
-            const storyLocs = getMainStoryLocations();
-            if (!filterText.trim()) return storyLocs;
-            const search = filterText.toLowerCase();
-            return storyLocs.filter((loc) =>
-                getLocationName(loc.id).toLowerCase().includes(search) ||
-                loc.terrain?.toLowerCase().includes(search) ||
-                loc.dangerLevel?.toLowerCase().includes(search)
-            );
-        }
-        const all = getAllLocationsSorted();
-        if (!filterText.trim()) return all;
+        const base = mainStoryOnly ? getMainStoryLocations() : getAllLocationsSorted();
+        if (!filterText.trim()) return base;
         const search = filterText.toLowerCase();
-        return all.filter((loc) =>
-            getLocationName(loc.id).toLowerCase().includes(search) ||
-            loc.terrain?.toLowerCase().includes(search) ||
-            loc.dangerLevel?.toLowerCase().includes(search)
-        );
+        return base.filter((loc) => {
+            if (getLocationName(loc.id).toLowerCase().includes(search)) return true;
+            if (loc.terrain?.toLowerCase().includes(search)) return true;
+            if (loc.dangerLevel?.toLowerCase().includes(search)) return true;
+            if (loc.residentNpcIds?.some(npcId => {
+                const npc = getNpcById(npcId);
+                return npc?.name.toLowerCase().includes(search) || npcId.toLowerCase().includes(search);
+            })) return true;
+            if (loc.referenceNpcNames?.some(name => name.toLowerCase().includes(search))) return true;
+            if (loc.loot?.some(r => {
+                if (r.type === "picto") return getPictoName(r.itemId).toLowerCase().includes(search);
+                if (r.type === "weapon") return getWeaponName(r.itemId).toLowerCase().includes(search);
+                return false;
+            })) return true;
+            return false;
+        });
     }, [filterText, mainStoryOnly]);
 
     function getDangerBadgeClass(level: LocationInfo["dangerLevel"]): string {
