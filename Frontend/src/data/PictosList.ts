@@ -324,105 +324,6 @@ export const PictosList: PictoInfo[] = [
         luminaCost: 15
     },
     {
-        id: "anti-inverted",
-        imageId: getPictoEnglishName("anti-inverted"),
-        name: getPictoName("anti-inverted"),
-        status: {},
-        description: getPictoDescription("anti-inverted"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "anti-curse",
-        imageId: getPictoEnglishName("anti-curse"),
-        name: getPictoName("anti-curse"),
-        status: {},
-        description: getPictoDescription("anti-curse"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "anti-bound",
-        imageId: getPictoEnglishName("anti-bound"),
-        name: getPictoName("anti-bound"),
-        status: {},
-        description: getPictoDescription("anti-bound"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "anti-dizzy",
-        imageId: getPictoEnglishName("anti-dizzy"),
-        name: getPictoName("anti-dizzy"),
-        status: {},
-        description: getPictoDescription("anti-dizzy"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "physical-coat",
-        imageId: getPictoEnglishName("physical-coat"),
-        name: getPictoName("physical-coat"),
-        status: {},
-        description: getPictoDescription("physical-coat"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "fire-coat",
-        imageId: getPictoEnglishName("fire-coat"),
-        name: getPictoName("fire-coat"),
-        status: {},
-        description: getPictoDescription("fire-coat"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "ice-coat",
-        imageId: getPictoEnglishName("ice-coat"),
-        name: getPictoName("ice-coat"),
-        status: {},
-        description: getPictoDescription("ice-coat"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "thunder-coat",
-        imageId: getPictoEnglishName("thunder-coat"),
-        name: getPictoName("thunder-coat"),
-        status: {},
-        description: getPictoDescription("thunder-coat"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "earth-coat",
-        imageId: getPictoEnglishName("earth-coat"),
-        name: getPictoName("earth-coat"),
-        status: {},
-        description: getPictoDescription("earth-coat"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "light-coat",
-        imageId: getPictoEnglishName("light-coat"),
-        name: getPictoName("light-coat"),
-        status: {},
-        description: getPictoDescription("light-coat"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
-        id: "dark-coat",
-        imageId: getPictoEnglishName("dark-coat"),
-        name: getPictoName("dark-coat"),
-        status: {},
-        description: getPictoDescription("dark-coat"),
-        color: "blue",
-        luminaCost: 15
-    },
-    {
         id: "dodger",
         imageId: getPictoEnglishName("dodger"),
         name: getPictoName("dodger"),
@@ -773,15 +674,6 @@ export const PictosList: PictoInfo[] = [
         },
         description: getPictoDescription("augmented-counter-iii"),
         color: "red",
-        luminaCost: 15
-    },
-    {
-        id: "anti-exhaust",
-        imageId: getPictoEnglishName("anti-exhaust"),
-        name: getPictoName("anti-exhaust"),
-        status: {},
-        description: getPictoDescription("anti-exhaust"),
-        color: "blue",
         luminaCost: 15
     },
     {
