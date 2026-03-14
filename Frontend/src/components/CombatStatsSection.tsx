@@ -1,5 +1,6 @@
 import { useState, useEffect, type RefObject, type MutableRefObject } from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import { FaEdit } from "react-icons/fa";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIBattle } from "../api/APIBattle";
 import { rollWithTimeout } from "../utils/RollUtils";
@@ -13,6 +14,7 @@ import { getCharacterHitDie, calculateMaxHP, calculateArmorClass } from "../util
 import { calculateProficiencyBonus } from "../utils/AttackCalculator";
 import { calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
 import { playerPictosTotalSpeed, abilityScoreCap } from "../utils/PlayerCalculator";
+import { HpEditModal } from "./HpEditModal";
 
 /* ── Armor Class (escudo) ── */
 function ArmorClassCard({ value }: { value: number }) {
@@ -59,16 +61,13 @@ function InitiativeCard({ modifier, onRoll }: { modifier: number; onRoll: () => 
 }
 
 /* ── Hit Points ── */
-function HitPointsCard({ hpCurrent, hpMax, hitDie, onChangeCurrent, onChangeMax, onRefresh }: {
-    hpCurrent: number; hpMax: number; hitDie: number;
+function HitPointsCard({ hpCurrent, hpMax, hitDie, playerName, onChangeCurrent, onChangeMax, onRefresh }: {
+    hpCurrent: number; hpMax: number; hitDie: number; playerName: string;
     onChangeCurrent: (v: number) => void; onChangeMax: (v: number) => void;
     onRefresh: () => void;
 }) {
-    const [curInput, setCurInput] = useState(String(hpCurrent));
-    const [maxInput, setMaxInput] = useState(String(hpMax));
     const [spinning, setSpinning] = useState(false);
-    useEffect(() => setCurInput(String(hpCurrent)), [hpCurrent]);
-    useEffect(() => setMaxInput(String(hpMax)), [hpMax]);
+    const [showHpModal, setShowHpModal] = useState(false);
 
     const pct = hpMax > 0 ? Math.min(100, Math.max(0, (hpCurrent / hpMax) * 100)) : 0;
 
@@ -85,6 +84,13 @@ function HitPointsCard({ hpCurrent, hpMax, hitDie, onChangeCurrent, onChangeMax,
                 <div className="flex items-center gap-1.5">
                     <span className="text-[9px] font-extrabold tracking-widest opacity-50 uppercase">1d{hitDie}</span>
                     <button
+                        onClick={() => setShowHpModal(true)}
+                        title={t("combatAdmin.labels.changeHp")}
+                        className="text-base-content/50 hover:text-info active:scale-90 transition-all"
+                    >
+                        <FaEdit className="text-sm" />
+                    </button>
+                    <button
                         onClick={handleRefresh}
                         title={t("characterSheet.restoreHp")}
                         className="text-base-content/50 hover:text-success active:scale-90 transition-all"
@@ -94,25 +100,25 @@ function HitPointsCard({ hpCurrent, hpMax, hitDie, onChangeCurrent, onChangeMax,
                 </div>
             </div>
             <div className="flex items-center justify-center gap-0.5 text-xl font-black">
-                <input
-                    type="number"
-                    value={curInput}
-                    onChange={(e) => { setCurInput(e.target.value); const v = parseInt(e.target.value); if (!isNaN(v) && v >= 0) onChangeCurrent(v); }}
-                    onBlur={() => { if (isNaN(parseInt(curInput)) || parseInt(curInput) < 0) setCurInput(String(hpCurrent)); }}
-                    className="w-10 bg-transparent text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
+                <span>{hpCurrent}</span>
                 <span className="opacity-40 text-base">/</span>
-                <input
-                    type="number"
-                    value={maxInput}
-                    onChange={(e) => { setMaxInput(e.target.value); const v = parseInt(e.target.value); if (!isNaN(v) && v >= 0) onChangeMax(v); }}
-                    onBlur={() => { if (isNaN(parseInt(maxInput)) || parseInt(maxInput) < 0) setMaxInput(String(hpMax)); }}
-                    className="w-10 bg-transparent text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
+                <span>{hpMax}</span>
             </div>
             <div className="w-full h-1 rounded-full bg-base-300">
                 <div className="h-1 rounded-full bg-blue-500 transition-all" style={{ width: `${pct}%` }} />
             </div>
+            <HpEditModal
+                open={showHpModal}
+                name={playerName}
+                currentHp={hpCurrent}
+                maxHp={hpMax}
+                onClose={() => setShowHpModal(false)}
+                onConfirm={(newHp, newMaxHp) => {
+                    if (newHp !== hpCurrent) onChangeCurrent(newHp);
+                    if (newMaxHp !== hpMax) onChangeMax(newMaxHp);
+                    setShowHpModal(false);
+                }}
+            />
         </div>
     );
 }
@@ -141,6 +147,9 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
         // Sync HP with active battle
         if (patch.hpCurrent !== undefined && player.fightInfo?.playerBattleID) {
             APIBattle.updateCharacterHp(player.fightInfo.playerBattleID, patch.hpCurrent);
+        }
+        if (patch.hpMax !== undefined && player.fightInfo?.playerBattleID) {
+            APIBattle.updateCharacterMaxHp(player.fightInfo.playerBattleID, patch.hpMax);
         }
     }
 
@@ -195,6 +204,7 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
                     hpCurrent={hpCurrent}
                     hpMax={hpMax}
                     hitDie={hitDie}
+                    playerName={player?.name ?? ""}
                     onChangeCurrent={(v) => update({ hpCurrent: v })}
                     onChangeMax={(v) => update({ hpMax: v })}
                     onRefresh={() => update({ hpCurrent: hpMax, hpMax })}

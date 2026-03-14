@@ -202,7 +202,7 @@
     },
     "solidifying": {
       "name": "Solidificação",
-      "description": "+2 Escudos quando a Vida do personagem cai abaixo de metade do HP máximo. Uma vez por batalha."
+      "description": "+2 Escudos quando a Vida do personagem cai abaixo de metade do PV máximo. Uma vez por batalha."
     },
     "powerful-revive": {
       "name": "Reviver Poderoso",
@@ -302,11 +302,11 @@
     },
     "sos-shell": {
       "name": "Escudo SOS",
-      "description": "Aplica Protegido ao cair abaixo de metade do HP máximo."
+      "description": "Aplica Protegido ao cair abaixo de metade do PV máximo."
     },
     "sos-power": {
       "name": "Poder SOS",
-      "description": "Aplica Poderoso ao cair abaixo de metade do HP máximo."
+      "description": "Aplica Poderoso ao cair abaixo de metade do PV máximo."
     },
     "augmented-counter-ii": {
       "name": "Contra-Ataque Aumentado II",
@@ -322,7 +322,7 @@
     },
     "sos-rush": {
       "name": "Ímpeto SOS",
-      "description": "Aplica Ímpeto ao cair abaixo de metade do HP máximo."
+      "description": "Aplica Ímpeto ao cair abaixo de metade do PV máximo."
     },
     "solidifying-meditation": {
       "name": "Meditação Solidificadora",
@@ -386,7 +386,7 @@
     },
     "critical-moment": {
       "name": "Momento Crítico",
-      "description": "+2d6 de bônus em Chance Crítica se a Vida estiver abaixo de metade do HP máximo."
+      "description": "+2d6 de bônus em Chance Crítica se a Vida estiver abaixo de metade do PV máximo."
     },
     "warming-up": {
       "name": "Aquecimento",
@@ -969,7 +969,7 @@
     "delaram": {
       "name": "Delaram",
       "passives": {
-        "2": "Começa a batalha no Rank B, mas com metade do HP máximo.",
+        "2": "Começa a batalha no Rank B, mas com metade do PV máximo.",
         "3": "Recupera 3d6 PV no Ataque Base.",
         "4": "Aplica Poderoso no Rank B."
       }
@@ -1927,7 +1927,7 @@
       "initiative": "Iniciativa",
       "hitPoints": "Pontos de Vida",
       "hitDie": "Dado de Vida",
-      "restoreHp": "Restaurar HP total",
+      "restoreHp": "Restaurar PV total",
       "savingThrows": "Testes de Resistência",
       "race": "Raça",
       "class": "Classe",
@@ -2454,6 +2454,11 @@
         "allowCounter": "Permitir counter",
         "currentHp": "Vida atual",
         "maxHp": "Vida máxima",
+        "editMaxHp": "Editar máximo",
+        "heal": "Curar",
+        "damage": "Dano",
+        "amount": "Quantidade",
+        "preview": "Resultado",
         "currentMp": "Mana atual",
         "maxMp": "Mana máxima",
         "confirm": "Confirmar",
@@ -2498,7 +2503,7 @@
         "flying": "Voando",
         "weakPoints": "Pontos Fracos",
         "initBonus": "Iniciativa",
-        "maxHpBonus": "HP Máx",
+        "maxHpBonus": "PV Máx",
         "damage": "dano",
         "damageVulnerabilities": "Vulnerabilidades de Dano",
         "damageImmunities": "Imunidades de Dano",
@@ -2762,7 +2767,7 @@
       },
       "maelle-last-chance": {
         "name": "Última Chance",
-        "description": "Reduz HP próprio para 1 mas recupera todo o PM. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
+        "description": "Reduz PV próprio para 1 mas recupera todo o PM. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
       },
       "maelle-momentum-strike": {
         "name": "Golpe de Momento",
@@ -2790,7 +2795,7 @@
       },
       "maelle-gommage": {
         "name": "Gommage",
-        "description": "Não consome turno. Mata alvos com HP ≤ um quarto do HP máximo. Caso contrário, causa dano de Vazio extremo em alvo único. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
+        "description": "Não consome turno. Mata alvos com PV ≤ um quarto do PV máximo. Caso contrário, causa dano de Vazio extremo em alvo único. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
       },
       "maelle-phoenix-flame": {
         "name": "Chama da Fênix",
@@ -2858,7 +2863,7 @@
       },
       "sciel-our-sacrifice": {
         "name": "Nosso Sacrifício",
-        "description": "Causa dano das Trevas extremo em todos os inimigos. 1 ataque. Reduz a Vida de todos os aliados (incluindo a si mesmo) para 1 (+1 de bônus no ataque e +1 de dano adicional por HP drenado). Consome todas as Predições de todos os inimigos (+1 de bônus no ataque e +1 de dano adicional por Predição)."
+        "description": "Causa dano das Trevas extremo em todos os inimigos. 1 ataque. Reduz a Vida de todos os aliados (incluindo a si mesmo) para 1 (+1 de bônus no ataque e +1 de dano adicional por PV drenado). Consome todas as Predições de todos os inimigos (+1 de bônus no ataque e +1 de dano adicional por Predição)."
       },
       "sciel-plentiful-harvest": {
         "name": "Colheita Abundante",
@@ -3672,23 +3677,23 @@
         "aegidExtended": "Duração do Égide estendida! (3 turnos)",
         "criticalExtraHit": "Crítico! +1 acerto extra!",
         "gradientChargesConsumed": "{count} Carga(s) de Gradiente consumida(s)!",
-        "allAlliesHealed": "Todos os aliados curados para {percent}% de HP!",
+        "allAlliesHealed": "Todos os aliados curados para {percent}% de PV!",
         "allDebuffsRemoved": "Todos os debuffs removidos dos aliados!",
-        "allyHealed": "{name} curado em {percent}% ({amount} HP)!",
-        "healedFor": "Curou {amount} HP!",
-        "allAlliesHealedFor": "Todos os aliados curaram {amount} HP!",
+        "allyHealed": "{name} curado em {percent}% ({amount} PV)!",
+        "healedFor": "Curou {amount} PV!",
+        "allAlliesHealedFor": "Todos os aliados curaram {amount} PV!",
         "debuffsRemovedFrom": "Debuffs removidos de {name}!",
         "gainedCharges": "ganhou {amount} carga(s)!",
         "shatterFullCharge": "Quebra! Cargas totalmente carregadas!",
-        "revivedFullHp": "{name} reviveu com vida cheia! ({hp} HP)",
-        "revivedHalfHp": "{name} reviveu com metade da vida! ({hp} HP)",
+        "revivedFullHp": "{name} reviveu com vida cheia! ({hp} PV)",
+        "revivedHalfHp": "{name} reviveu com metade da vida! ({hp} PV)",
         "noDeadAlliesToRevive": "Não há aliados mortos para reviver!",
-        "revivedWithRoll": "{name} reviveu com {percent}% de vida! ({hp} HP) [Rolou {roll}]",
+        "revivedWithRoll": "{name} reviveu com {percent}% de vida! ({hp} PV) [Rolou {roll}]",
         "grantedMpToRevived": "{name} recebeu +{mp} PM!",
         "targetNotDead": "O alvo não está morto!",
         "scopeRollAll": "Rolou {roll}: Cura todos os aliados!",
         "scopeRollSingle": "Rolou {roll}: Cura 1 aliado!",
-        "healedTarget": "{name} curou {amount} HP!",
+        "healedTarget": "{name} curou {amount} PV!",
         "regenerationApplied": "Regeneração aplicada!",
         "bonusDamageVsMarked": "Alvo Marcado! +{bonus} de dano!",
         "burnConsumptionBonus": "Consumiu {stacks} Queimaduras! +{bonus} de dano!",
@@ -3700,7 +3705,7 @@
         "mpGranted": "+{amount} PM concedidos! ({before} → {after})",
         "allyReceivedMP": "{name} recebeu {amount} PM! ({before} → {after})",
         "allyPlaysImmediately": "{name} jogará imediatamente!",
-        "burningTargetHeal": "Alvo Queimando! Verso curado em {percent}% ({amount} HP)!",
+        "burningTargetHeal": "Alvo Queimando! Verso curado em {percent}% ({amount} PV)!",
         "burningTargetStance": "Alvo está Queimando! Mudou para postura Virtuosa!",
         "trumpetBuffs": "Trombeta! {buffs} aplicados em {count} aliado(s)!",
         "shieldsRemoved": "{count} Escudo(s) removido(s)!",
@@ -3719,8 +3724,8 @@
         "rolledDiceShieldSingleTarget": "Rolou {value}! Escudo aplicado apenas no alvo escolhido.",
         "rolledDicePowerfulTeam": "Rolou {value}! Powerful afeta toda equipe!",
         "rolledDicePowerfulVerso": "Rolou {value}! Powerful afeta apenas Verso.",
-        "rolledDiceReviving": "Rolou {value}! Revivendo aliados com {percent}% de HP!",
-        "rolledDiceRevivingAlly": "Rolou {value}! Revivendo {name} com {percent}% de HP!",
+        "rolledDiceReviving": "Rolou {value}! Revivendo aliados com {percent}% de PV!",
+        "rolledDiceRevivingAlly": "Rolou {value}! Revivendo {name} com {percent}% de PV!",
         "allyRevivedWithMP": "{name} revivido com 2 PM!",
         "twilightExtended": "Duração do Eclipse estendida! (+1 turno)",
         "sunChargeGained": "Carga de Sol obtida!",
@@ -3732,11 +3737,11 @@
         "randomHitCount": "Hits aleatórios: {hits}",
         "turnDelayed": "Turno atrasado em {positions} posições!",
         "stanceBonusApplied": "Bonus de postura! +{count} Queimaduras por acerto",
-        "absorptionHeal": "Absorção! Cura de {percent}% HP ({amount})",
+        "absorptionHeal": "Absorção! Cura de {percent}% PV ({amount})",
         "searingBond": "Vínculo Ardente: {count} inimigo(s) afetado(s)!",
         "increasedCritDamage": "Crítico! +{bonus} de dano bônus",
-        "hpSacrifice": "Sacrificando {percent}% HP ({amount})! Dano +{bonus}",
-        "hpDrained": "HP drenado de aliados em combate: {amount} (Dano +{amount})",
+        "hpSacrifice": "Sacrificando {percent}% PV ({amount})! Dano +{bonus}",
+        "hpDrained": "PV drenado de aliados em combate: {amount} (Dano +{amount})",
         "totalEnemyForetell": "Predição total de inimigos: {amount} (Dano +{amount})",
         "foretellsConsumed": "Consumindo {count} Predições! Dano +{bonus}",
         "foretellsConsumedHeal": "Consumindo {count} Predições! Cura +{bonus}%",
@@ -3745,7 +3750,7 @@
         "markedTarget": "Alvo Marcado! Dano +{percent}%",
         "perfectionRank": "Rank {rank} de Perfeição! Dano +{percent}%",
         "perfectionRankBonus": "Rank {rank} de Perfeição! Dano +{percent}% (bônus da habilidade!)",
-        "lowHPBonus": "HP baixo! Dano +{percent}%",
+        "lowHPBonus": "PV baixo! Dano +{percent}%",
         "lampmasterStacks": "Lampmaster Stacks: {count} (+{percent}% dano)",
         "burningTarget": "Alvo queimando! Dano +50%",
         "stunnedTarget": "Alvo atordoado! Dano x2",
@@ -3767,21 +3772,21 @@
         "hitsReceivedBonus": "{hits} ataques recebidos! Dano +{bonus}!",
         "freeAimBonus": "{stacks} tiros livres! Dano +{stacks}!",
         "burnScalingBonus": "{stacks} Queimaduras no alvo! Dano +{bonus}!",
-        "hpSetTo": "HP reduzido para {amount}!",
+        "hpSetTo": "PV reduzido para {amount}!",
         "shieldsConsumed": "{count} Escudo(s) consumido(s)!",
         "unprotectedApplied": "Desprotegido aplicado em si mesmo!",
         "shieldsDestroyed": "{count} Escudo(s) do inimigo destruído(s)!",
         "mpFromShields": "+{mp} PM por escudos destruídos!",
         "mpConceded": "{amount} PM concedidos ao aliado!",
-        "instantHeal": "Cura instantânea de {percent}% HP aplicada a todos os aliados!",
+        "instantHeal": "Cura instantânea de {percent}% PV aplicada a todos os aliados!",
         "stainsGained": "Manchas adquiridas: {stains}",
         "stainTransformed": "Mancha transformada: {from} → {to}",
         "insufficientStains": "Manchas insuficientes para esta habilidade!",
-        "insufficientHP": "HP insuficiente para esta habilidade!",
+        "insufficientHP": "PV insuficiente para esta habilidade!",
         "rankUp": "Rank subiu para {rank}!",
         "rankDown": "Rank diminuído!",
         "rankSetToS": "Rank de Perfeição definido como S!",
-        "hpCost": "Custo de HP: {amount}",
+        "hpCost": "Custo de PV: {amount}",
         "hpCostDeducted": "Custou {amount} de Vida",
         "statusTransferred": "{count} efeito(s) de status transferido(s)!",
         "rankGrantedMp": "+{mp} PM concedido (Bônus de Rank)!",
@@ -3797,14 +3802,14 @@
         "damageEscalation": "Escalação de Dano: {stacks} uso(s) (+{bonus}%)",
         "damageEscalationActive": "Bônus de Escalação ativo: +{bonus}%",
         "damageEscalationLinear": "Assalto Ascendente: +{bonus} de dano",
-        "alliesHealedPerHit": "Aliados curados em {percent}% HP!",
+        "alliesHealedPerHit": "Aliados curados em {percent}% PV!",
         "mpGainedFromBurning": "+{amount} PM ganho (alvo Queimando)!",
         "mpGrantedAtHeavy": "+{amount} PM concedido (Máscara Pesada)!",
-        "hpSacrificed": "{amount} HP sacrificado!",
+        "hpSacrificed": "{amount} PV sacrificado!",
         "mpGrantedAtCaster": "+{amount} PM concedido (Máscara Conjurador)!",
-        "healedAtCaster": "+{percent}% HP curado (Máscara Conjurador)!",
+        "healedAtCaster": "+{percent}% PV curado (Máscara Conjurador)!",
         "randomBuffsApplied": "{buffs} buff(s) aplicado(s) a {count} aliado(s)!",
-        "healedPerHit": "+{amount} HP curado pelos acertos!",
+        "healedPerHit": "+{amount} PV curado pelos acertos!",
         "foretellConsumedCount": "{count} Presságio consumido!",
         "foretellDamageBonus": "+{bonus} de dano pelos Presságios!",
         "foretellHealBonus": "+{bonus} cura por Presságio!",
@@ -3815,7 +3820,7 @@
         "noForetellToRedistribute": "Nenhum Presságio para redistribuir!",
         "noOtherEnemiesToRedistribute": "Nenhum outro inimigo para redistribuir Presságio!",
         "extraTurnGranted": "{name} jogará o próximo turno!",
-        "hpDrainedFromAllies": "{amount} HP drenado dos aliados!",
+        "hpDrainedFromAllies": "{amount} PV drenado dos aliados!",
         "mpGrantedToLowest": "+{amount} PM concedido a {name}!",
         "burnDamagePropagated": "{damage} dano propagado para {count} inimigo(s) queimando!",
         "buffsCopiedCount": "{count} buff(s) copiado(s) para {allies} aliado(s)!",
@@ -3848,7 +3853,7 @@
         "confirm": "Confirmar"
       },
       "revive": {
-        "success": "{name} foi revivido com {percent}% de HP!"
+        "success": "{name} foi revivido com {percent}% de PV!"
       },
       "modals": {
         "rollResult": "Resultado da rolagem"
@@ -3954,7 +3959,7 @@
           "empowered": "Empoderado",
           "empoweredDesc": "Melhora rolagens de ataque.",
           "regeneration": "Regeneração",
-          "regenerationDesc": "Restaura uma porcentagem de HP a cada turno.",
+          "regenerationDesc": "Restaura uma porcentagem de PV a cada turno.",
           "shell": "Carapaça",
           "shellDesc": "Reduz significativamente o dano recebido.",
           "shielded": "Escudado",
@@ -3964,7 +3969,7 @@
           "rush": "Impulso",
           "rushDesc": "Aumenta velocidade e poder de ataque.",
           "aureole": "Auréola",
-          "aureoleDesc": "Revive automaticamente com 3d6 HP ao morrer. Consumido no uso.",
+          "aureoleDesc": "Revive automaticamente com 3d6 PV ao morrer. Consumido no uso.",
           "guardian": "Guardião",
           "guardianDesc": "Recebe dano no lugar de aliados.",
           "successiveParry": "Bloqueio Sucessivo",
@@ -3988,7 +3993,7 @@
           "silenced": "Silenciado",
           "silencedDesc": "Não pode usar habilidades especiais.",
           "exhausted": "Exausto",
-          "exhaustedDesc": "Todos os custos de MP +1. Não pode recuperar MP.",
+          "exhaustedDesc": "Todos os custos de PM +1. Não pode recuperar PM.",
           "dizzy": "Tonto",
           "dizzyDesc": "Penalidade em ataques de tiro livre e habilidades.",
           "broken": "Quebrado",
@@ -3996,7 +4001,7 @@
           "burning": "Queimando",
           "burningDesc": "Recebe 1d6 de dano de Fogo por turno.",
           "blight": "Ruína",
-          "blightDesc": "HP Máximo -5 até o fim da cena. Acumula. Mínimo 1 HP.",
+          "blightDesc": "PV Máximo -5 até o fim da cena. Acumula. Mínimo 1 PV.",
           "vulnerable": "Vulnerável",
           "vulnerableDesc": "Recebe dano aumentado.",
           "inverted": "Invertido",
@@ -4009,9 +4014,9 @@
         "gradient": "Gradiente",
         "gradientText": "O Gradiente é um recurso compartilhado da equipe. Acumula-se com 12 pontos por carga. Pode ser usado para ataques Gradiente (habilidades especiais de equipe) ou para Bloqueio Gradiente na defesa. Algumas habilidades concedem pontos de Gradiente ao serem usadas.",
         "shields": "Escudos",
-        "shieldsText": "Escudos negam ataques completamente. Cada ponto de escudo absorve um acerto. Alguns ataques destroem escudos sem causar dano, outros os ignoram completamente. Destruir escudos pode conceder MP ao atacante.",
+        "shieldsText": "Escudos negam ataques completamente. Cada ponto de escudo absorve um acerto. Alguns ataques destroem escudos sem causar dano, outros os ignoram completamente. Destruir escudos pode conceder PM ao atacante.",
         "xpRewards": "Experiência e Recompensas",
-        "xpRewardsText": "Ao derrotar NPCs, os jogadores ganham XP baseado no ND dos inimigos. Encontros podem conceder XP bônus adicional. Recompensas incluem armas e pictos que são distribuídos pelo mestre. O nível do personagem afeta o bônus de proficiência, HP máximo, pontos de habilidade especial disponíveis e orçamento de Luminas.",
+        "xpRewardsText": "Ao derrotar NPCs, os jogadores ganham XP baseado no ND dos inimigos. Encontros podem conceder XP bônus adicional. Recompensas incluem armas e pictos que são distribuídos pelo mestre. O nível do personagem afeta o bônus de proficiência, PV máximo, pontos de habilidade especial disponíveis e orçamento de Luminas.",
         "characterMechanics": "Mecânicas de Personagem",
         "characterMechanicsText": "Cada personagem possui uma mecânica única que define seu estilo de combate. Como Mestre, é importante entender esses sistemas para criar encontros desafiadores e narrar os efeitos corretamente.",
         "char": {
@@ -4024,7 +4029,7 @@
           "sciel": "Sciel — Cargas Sol/Lua",
           "scielDesc": "Sciel acumula cargas de Sol (ofensivas) e Lua (defensivas). Habilidades são classificadas por tipo e consomem a carga correspondente. Com ≥1 Sol E ≥1 Lua, pode ativar Crepúsculo: +2 ataque/dano por carga, dobra o limite de Presságio. Atributo principal: Carisma. Dado de vida: d8.",
           "verso": "Verso — Rank de Perfeição",
-          "versoDesc": "Verso evolui seu Rank de Perfeição (D→C→B→A→S) ao usar habilidades. Ranks mais altos desbloqueiam ataques mais fortes. Algumas habilidades custam HP ao invés de MP. Atributo principal: Força. Dado de vida: d10.",
+          "versoDesc": "Verso evolui seu Rank de Perfeição (D→C→B→A→S) ao usar habilidades. Ranks mais altos desbloqueiam ataques mais fortes. Algumas habilidades custam PV ao invés de PM. Atributo principal: Força. Dado de vida: d10.",
           "monoco": "Monoco — Roda Bestial",
           "monocoDesc": "Monoco usa uma Roda Bestial com 9 posições e 5 máscaras: Ouro (Onipotente/coringa), Azul (Conjuradora), Roxo (Ágil), Vermelho (Feroz), Verde (Protetora). Habilidades avançam a roda, e a máscara atual afeta bônus e efeitos. Atributo principal: Sabedoria. Dado de vida: d8."
         }
@@ -4033,7 +4038,7 @@
         "intro": "Introdução",
         "introText": "Bem-vindo ao mundo de Clair Obscur: Expedition 33! Este manual explica as regras básicas que você precisa conhecer para jogar. Seu Mestre guiará a aventura, mas entender estes conceitos ajudará você a tomar melhores decisões em combate e exploração.",
         "sheet": "Sua Ficha de Personagem",
-        "sheetText": "Sua ficha contém todas as informações sobre seu personagem: atributos, HP, MP, equipamentos, habilidades e mais.",
+        "sheetText": "Sua ficha contém todas as informações sobre seu personagem: atributos, PV, PM, equipamentos, habilidades e mais.",
         "attributes": "Atributos",
         "attributesText": "Seu personagem tem 6 atributos que definem suas capacidades. Cada atributo gera um modificador usado em rolagens:",
         "attr": {
@@ -4044,14 +4049,14 @@
           "constitution": "Constituição (CON)",
           "constitutionDesc": "Resistência física. Determina seus Pontos de Vida máximos.",
           "intelligence": "Inteligência (INT)",
-          "intelligenceDesc": "Raciocínio e memória. Afeta MP inicial e habilidades arcanas.",
+          "intelligenceDesc": "Raciocínio e memória. Afeta PM inicial e habilidades arcanas.",
           "wisdom": "Sabedoria (SAB)",
           "wisdomDesc": "Percepção e intuição. Afeta testes de percepção e salvaguardas mentais.",
           "charisma": "Carisma (CAR)",
           "charismaDesc": "Presença e força de personalidade. Afeta persuasão e certas habilidades."
         },
-        "hpMp": "HP e MP",
-        "hpMpText": "HP (Pontos de Vida) representa sua saúde. Quando chega a 0, você cai inconsciente. MP (Pontos de Magia) é usado para ativar habilidades especiais. O máximo de MP é 9. Você recupera MP por certos efeitos e Pictos.",
+        "hpMp": "PV e PM",
+        "hpMpText": "PV (Pontos de Vida) representa sua saúde. Quando chega a 0, você cai inconsciente. PM (Pontos de Magia) é usado para ativar habilidades especiais. O máximo de PM é 9. Você recupera PM por certos efeitos e Pictos.",
         "armorClass": "Classe de Armadura (CA)",
         "armorClassText": "Sua CA determina quão difícil é te acertar. CA = 10 + Mod. de Destreza + bônus de arma + bônus de Pictos. Quanto maior, melhor.",
         "combat": "Combate",
@@ -4059,7 +4064,7 @@
         "initiative": "Iniciativa",
         "initiativeText": "Role 1d20 + seu modificador de Destreza e bônus. Quem tiver o maior resultado age primeiro. Um 20 natural garante que você jogue primeiro que todos.",
         "yourTurn": "Seu Turno",
-        "yourTurnText": "Em seu turno, você pode: atacar um inimigo (ataque básico ou habilidade especial), usar um item, ou realizar outra ação. Habilidades especiais custam MP.",
+        "yourTurnText": "Em seu turno, você pode: atacar um inimigo (ataque básico ou habilidade especial), usar um item, ou realizar outra ação. Habilidades especiais custam PM.",
         "attacking": "Atacando",
         "attackingText": "Para atacar, role 1d20 + seu bônus de ataque. Se o resultado for igual ou maior que a CA do alvo, você acerta. Então role seus dados de dano + bônus. Ataques de tiro livre (free shot) acertam automaticamente ao mirar pontos fracos.",
         "intensity": "Intensidade dos Ataques",
@@ -4103,7 +4108,7 @@
           "empowered": "Empoderado",
           "empoweredDesc": "Seus ataques ficam mais fortes.",
           "regeneration": "Regeneração",
-          "regenerationDesc": "Recupera HP a cada turno.",
+          "regenerationDesc": "Recupera PV a cada turno.",
           "shell": "Carapaça",
           "shellDesc": "Reduz muito o dano que você recebe.",
           "shielded": "Escudado",
@@ -4111,7 +4116,7 @@
           "powerful": "Poderoso",
           "powerfulDesc": "Aumenta muito seu dano.",
           "aureole": "Auréola",
-          "aureoleDesc": "Se você morrer, revive automaticamente com 3d6 HP. Consumido ao usar.",
+          "aureoleDesc": "Se você morrer, revive automaticamente com 3d6 PV. Consumido ao usar.",
           "slowed": "Lento",
           "slowedDesc": "Dificulta sua esquiva e pulo.",
           "weakened": "Enfraquecido",
@@ -4133,13 +4138,13 @@
           "broken": "Quebrado",
           "brokenDesc": "Não pode se defender nem agir.",
           "blight": "Ruína",
-          "blightDesc": "Seu HP máximo diminui em 5 (acumula)."
+          "blightDesc": "Seu PV máximo diminui em 5 (acumula)."
         },
         "debuffs": "Efeitos Negativos",
         "specialAttacks": "Habilidades Especiais",
-        "specialAttacksText": "Cada personagem possui habilidades únicas que custam MP. Algumas precisam ser desbloqueadas com pontos de habilidade ganhos ao subir de nível. Habilidades Gradiente são ataques de equipe que usam o recurso compartilhado de Gradiente. Habilidades marcadas como \"Mestre\" requerem autorização do Mestre para uso.",
+        "specialAttacksText": "Cada personagem possui habilidades únicas que custam PM. Algumas precisam ser desbloqueadas com pontos de habilidade ganhos ao subir de nível. Habilidades Gradiente são ataques de equipe que usam o recurso compartilhado de Gradiente. Habilidades marcadas como \"Mestre\" requerem autorização do Mestre para uso.",
         "weapons": "Armas",
-        "weaponsText": "Sua arma define o dado de dano, elemento de ataque e bônus passivos. Armas possuem níveis (1-4) que afetam o dado de dano: nível 1 (d4), nível 2 (d6), nível 3 (d8), nível 4 (d10). Cada arma tem atributos de escalonamento (Vitalidade, Destreza, Defesa, Sorte) que podem melhorar HP, CA, defesa e proficiência.",
+        "weaponsText": "Sua arma define o dado de dano, elemento de ataque e bônus passivos. Armas possuem níveis (1-4) que afetam o dado de dano: nível 1 (d4), nível 2 (d6), nível 3 (d8), nível 4 (d10). Cada arma tem atributos de escalonamento (Vitalidade, Destreza, Defesa, Sorte) que podem melhorar PV, CA, defesa e proficiência.",
         "pictos": "Pictos",
         "pictosText": "Pictos são habilidades passivas que concedem bônus de atributos e efeitos especiais. Existem 4 cores: Verde (suporte), Vermelho (dano), Azul (especial) e Amarelo (utilidade). Efeitos ativam em gatilhos como início de batalha, ao atacar, ao defender, etc.",
         "luminas": "Luminas",
@@ -4156,7 +4161,7 @@
           "sciel": "Sciel — Cargas Sol e Lua",
           "scielDesc": "Acumule cargas de Sol (habilidades ofensivas) e Lua (habilidades estratégicas). Com pelo menos 1 de cada, ative Crepúsculo para bônus massivos: +2 ataque e dano por carga, e dobra o limite de Presságio.",
           "verso": "Verso — Rank de Perfeição",
-          "versoDesc": "Seu Rank evolui de D até S conforme usa habilidades. Ranks maiores desbloqueiam ataques mais fortes. Cuidado: algumas habilidades custam HP ao invés de MP!",
+          "versoDesc": "Seu Rank evolui de D até S conforme usa habilidades. Ranks maiores desbloqueiam ataques mais fortes. Cuidado: algumas habilidades custam PV ao invés de PM!",
           "monoco": "Monoco — Roda Bestial",
           "monocoDesc": "Sua Roda tem 9 posições com 5 máscaras: Ouro (coringa), Azul (magia), Roxo (agilidade), Vermelho (força), Verde (proteção). Habilidades avançam a roda, e a máscara atual afeta seus bônus."
         }

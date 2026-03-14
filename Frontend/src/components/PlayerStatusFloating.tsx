@@ -8,6 +8,7 @@ import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils"
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
 import StatEditModal from "./StatEditModal";
+import { HpEditModal } from "./HpEditModal";
 import { StatusConditionsModal } from "./StatusConditionsModal";
 import { t } from "../i18n";
 
@@ -429,14 +430,17 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
             {/* ---- Modals ---- */}
 
             {/* HP */}
-            <StatEditModal
+            <HpEditModal
                 open={editing === "hp"}
-                title="HP"
-                currentValue={ch.healthPoints}
-                minValue={0}
-                maxValue={ch.maxHealthPoints}
-                onConfirm={v => confirmNumericEdit("hp", v)}
-                onCancel={closeEdit}
+                name={ch.name}
+                currentHp={ch.healthPoints}
+                maxHp={ch.maxHealthPoints}
+                onClose={closeEdit}
+                onConfirm={async (newHp, newMaxHp) => {
+                    if (newHp !== ch.healthPoints) await APIBattle.updateCharacterHp(ch.battleID, newHp);
+                    if (newMaxHp !== ch.maxHealthPoints) await APIBattle.updateCharacterMaxHp(ch.battleID, newMaxHp);
+                    closeEdit();
+                }}
             />
 
             {/* MP */}

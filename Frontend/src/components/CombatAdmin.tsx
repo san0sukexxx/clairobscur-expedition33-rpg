@@ -25,6 +25,7 @@ import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
 import { RollHistoryToast } from "../components/RollHistoryToast";
 import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
 import { StatusConditionsModal } from "./StatusConditionsModal";
+import { HpEditModal } from "./HpEditModal";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { calculateNPCDifficulty, formatCR, crToXp } from "../utils/NpcDifficulty";
@@ -129,7 +130,6 @@ export default function CombatAdmin({
     const timeoutDiceBoardRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const { showToast } = useToast();
     const [editingHp, setEditingHp] = useState<CombatEntity | null>(null);
-    const [newHpValue, setNewHpValue] = useState("");
     const [editingMp, setEditingMp] = useState<CombatEntity | null>(null);
     const [newMpValue, setNewMpValue] = useState("");
     const [sortColumn, setSortColumn] = useState<"name" | "difficulty" | null>(null);
@@ -2190,58 +2190,29 @@ export default function CombatAdmin({
 
     function renderEditEntityModal() {
         if (!editingHp) return null;
-
-        function handleHpSign(sign: "+" | "-") {
-            const delta = newHpValue === "" ? 0 : Math.abs(parseInt(newHpValue, 10)) || 0;
-            if (delta > 0 && editingHp) {
-                const applied = sign === "+" ? delta : -delta;
-                const value = Math.max(0, Math.min(editingHp.maxHp, editingHp.currentHp + applied));
-                handleHpSet(editingHp, value);
-                setEditingHp(null);
-            }
-        }
-
         return (
-            <dialog className="modal modal-open">
-                <div className="modal-box space-y-4">
-                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.changeHp")}</h3>
-
-                    <div className="text-center text-sm opacity-70">
-                        {t("combatAdmin.labels.currentHp")}: <span className="font-bold text-base font-mono">{editingHp.currentHp}</span> / {editingHp.maxHp}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            className="btn btn-sm btn-circle btn-success"
-                            onClick={() => handleHpSign("+")}
-                        >
-                            +
-                        </button>
-                        <input
-                            type="number"
-                            className="input input-bordered w-full text-center"
-                            value={newHpValue}
-                            placeholder="0"
-                            min={0}
-                            onChange={(e) => setNewHpValue(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === "Escape") setEditingHp(null); }}
-                            ref={focusRef}
-                        />
-                        <button
-                            className="btn btn-sm btn-circle btn-error"
-                            onClick={() => handleHpSign("-")}
-                        >
-                            −
-                        </button>
-                    </div>
-
-                    <div className="modal-action">
-                        <button className="btn" onClick={() => setEditingHp(null)}>
-                            {t("combatAdmin.labels.cancel")}
-                        </button>
-                    </div>
-                </div>
-            </dialog>
+            <HpEditModal
+                open
+                name={editingHp.name}
+                currentHp={editingHp.currentHp}
+                maxHp={editingHp.maxHp}
+                onClose={() => setEditingHp(null)}
+                onConfirm={async (newHp, newMaxHp) => {
+                    if (!editingHp) return;
+                    if (newHp !== editingHp.currentHp) {
+                        handleHpSet(editingHp, newHp);
+                    }
+                    if (newMaxHp !== editingHp.maxHp) {
+                        try {
+                            await APIBattle.updateCharacterMaxHp(editingHp.rowId ?? 0, newMaxHp);
+                        } catch (e) {
+                            console.error(e);
+                            showToast(t("combatAdmin.toasts.errorUpdatingHp"));
+                        }
+                    }
+                    setEditingHp(null);
+                }}
+            />
         );
     }
 
@@ -3742,7 +3713,6 @@ export default function CombatAdmin({
 
     function openHpEditModal(entity: CombatEntity) {
         setEditingHp(entity);
-        setNewHpValue("");
     }
 
     async function handleHpSet(entity: CombatEntity, value: number) {

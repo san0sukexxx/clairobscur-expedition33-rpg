@@ -9,6 +9,7 @@ import { BestialWheel } from "./BestialWheel";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
 import StatEditModal from "./StatEditModal";
+import { HpEditModal } from "./HpEditModal";
 import { StatusConditionsModal } from "./StatusConditionsModal";
 import { t } from "../i18n";
 
@@ -533,14 +534,17 @@ export default function BattleGroupStatus({
             {/* ---- Modals (only for player's own card) ---- */}
             {playerCh && (
                 <>
-                    <StatEditModal
+                    <HpEditModal
                         open={editing === "hp"}
-                        title="HP"
-                        currentValue={playerCh.healthPoints}
-                        minValue={0}
-                        maxValue={playerCh.maxHealthPoints}
-                        onConfirm={v => confirmNumericEdit("hp", v)}
-                        onCancel={closeEdit}
+                        name={playerCh.name}
+                        currentHp={playerCh.healthPoints}
+                        maxHp={playerCh.maxHealthPoints}
+                        onClose={closeEdit}
+                        onConfirm={async (newHp, newMaxHp) => {
+                            if (newHp !== playerCh.healthPoints) await APIBattle.updateCharacterHp(playerCh.battleID, newHp);
+                            if (newMaxHp !== playerCh.maxHealthPoints) await APIBattle.updateCharacterMaxHp(playerCh.battleID, newMaxHp);
+                            closeEdit();
+                        }}
                     />
 
                     <StatEditModal
