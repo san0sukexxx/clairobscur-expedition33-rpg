@@ -1,15 +1,15 @@
 import type { WeaponDTO } from "../types/WeaponDTO";
 
 export type StatusType =
-    "Hastened" | "Empowered" | "Regeneration" |
+    "Empowered" | "Regeneration" |
     "Unprotected" | "Slowed" | "Weakened" | "Cursed" |
-    "Stunned" | "Confused" | "Frozen" | "Entangled" |
-    "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
+    "Stunned" | "Charm" | "Frozen" | "Entangled" |
+    "Exhausted" | "Frenzy" | "Rage" |
     "Inverted" | "Marked" | "Blight" | "Burning" |
     "Silenced" | "Dizzy" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Guardian" | "Foretell" | "Twilight" | "Powerless" |
-    "Rush" | "Burn" | "Shield" | "Powerful" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
-    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "FortunesFury" | "Regen" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation" |
+    "Rush" | "Shield" | "Powerful" | "Shell" | "invisible-barrier" |
+    "DamageReduction" | "SuccessiveParry" | "Aureole" | "FortunesFury" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation" |
     "BlueFlower" | "RedFlower";
 
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";

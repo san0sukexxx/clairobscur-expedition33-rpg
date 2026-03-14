@@ -37,7 +37,7 @@ export function getSpecialAttackLabel(specialAttack: SpecialAttackType): string 
 
 export function getStatusLabel(status: StatusType): string {
     switch (status) {
-        case "Hastened": return t("battle.statusEffects.Hastened");
+
         case "Empowered": return t("battle.statusEffects.Empowered");
         case "Regeneration": return t("battle.statusEffects.Regeneration");
         case "Unprotected": return t("battle.statusEffects.Unprotected");
@@ -45,10 +45,10 @@ export function getStatusLabel(status: StatusType): string {
         case "Weakened": return t("battle.statusEffects.Weakened");
         case "Cursed": return t("battle.statusEffects.Cursed");
         case "Stunned": return t("battle.statusEffects.Stunned");
-        case "Confused": return t("battle.statusEffects.Confused");
+        case "Charm": return t("battle.statusEffects.Charm");
         case "Frozen": return t("battle.statusEffects.Frozen");
         case "Entangled": return t("battle.statusEffects.Entangled");
-        case "Shielded": return t("battle.statusEffects.Shielded");
+
         case "Exhausted": return t("battle.statusEffects.Exhausted");
         case "Frenzy": return t("battle.statusEffects.Frenzy");
         case "Rage": return t("battle.statusEffects.Rage");
@@ -69,21 +69,18 @@ export function getStatusLabel(status: StatusType): string {
         case "Twilight": return t("battle.statusEffects.Twilight");
         case "Powerless": return t("battle.statusEffects.Powerless");
         case "Rush": return t("battle.statusEffects.Rush");
-        case "Burn": return t("battle.statusEffects.Burn");
+
         case "Shield": return t("battle.statusEffects.Shield");
         case "Powerful": return t("battle.statusEffects.Powerful");
         case "Shell": return t("battle.statusEffects.Shell");
-        case "Slow": return t("battle.statusEffects.Slow");
-        case "Freeze": return t("battle.statusEffects.Freeze");
-        case "GreaterRush": return t("battle.statusEffects.GreaterRush");
-        case "GreaterSlow": return t("battle.statusEffects.GreaterSlow");
-        case "EnfeeblingMark": return t("battle.statusEffects.EnfeeblingMark");
+
+
         case "DamageReduction": return t("battle.statusEffects.DamageReduction");
         case "SuccessiveParry": return t("battle.statusEffects.SuccessiveParry");
         case "Aureole": return t("battle.statusEffects.Aureole");
-        case "Vulnerable": return t("battle.statusEffects.Vulnerable");
+
         case "FortunesFury": return t("battle.statusEffects.FortunesFury");
-        case "Regen": return t("battle.statusEffects.Regen");
+
         case "Earthquake": return t("battle.statusEffects.Earthquake");
         case "free-shot": return t("battle.statusEffects.freeShot");
         case "jump": return t("battle.statusEffects.jump");
@@ -99,7 +96,8 @@ export function getStatusLabel(status: StatusType): string {
 
 export function shouldShowStatusAmmount(type: StatusType): boolean {
     const skillsWithoutAmmount: StatusType[] = [
-        "Hastened",
+
+        "Rush",
         "Slowed",
         "Empowered",
         "Weakened",
@@ -117,7 +115,7 @@ export function shouldShowStatusAmmount(type: StatusType): boolean {
         "Fleeing",
         "FireVulnerability",
         "Guardian",
-        "Vulnerable",
+
         "FortunesFury",
         "Charging"
     ];

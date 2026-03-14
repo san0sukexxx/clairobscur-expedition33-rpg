@@ -110,19 +110,19 @@
     },
     "anti-inverted": {
       "name": "Anti-Inversão",
-      "description": "Não pode ser Invertido."
+      "description": "Não pode receber Invertido."
     },
     "anti-curse": {
       "name": "Anti-Maldição",
       "description": "Não pode ser Amaldiçoado."
     },
     "anti-bound": {
-      "name": "Anti-Aprisionamento",
-      "description": "Não pode ser Preso."
+      "name": "Anti-Acorrentado",
+      "description": "Não pode ser Acorrentado."
     },
     "anti-dizzy": {
       "name": "Anti-Tontura",
-      "description": "Não pode ser Tonto."
+      "description": "Não pode receber Tonto."
     },
     "physical-coat": {
       "name": "Proteção Física",
@@ -290,7 +290,7 @@
     },
     "at-deaths-door": {
       "name": "À Porta da Morte",
-      "description": "+2d6 de dano se a Vida estiver abaixo de 5 PV."
+      "description": "+2d6 de dano se a Vida estiver abaixo de 6 PV."
     },
     "full-strength": {
       "name": "Força Total",
@@ -422,7 +422,7 @@
     },
     "greater-rush": {
       "name": "Ímpeto Maior",
-      "description": "+1d6 ao bônus de Velocidade de Ímpeto."
+      "description": "+4 ao bônus de Velocidade de Ímpeto."
     },
     "last-stand-critical": {
       "name": "Crítico da Última Resistência",
@@ -830,7 +830,7 @@
     },
     "greater-slow": {
       "name": "Lentidão Maior",
-      "description": "+1d4 à redução de Velocidade de Lentidão."
+      "description": "+4 à redução de Velocidade de Lentidão."
     },
     "energising-cleanse": {
       "name": "Purificação Energizante",
@@ -878,7 +878,7 @@
     },
     "anti-charm": {
       "name": "Anti-Encanto",
-      "description": "Imune a Charm."
+      "description": "Imune a Charme."
     },
     "cleas-life": {
       "name": "Vida de Cléa",
@@ -2097,7 +2097,8 @@
         "comboOnlyEvolved": "Somente a versão mais adulta e com mais furos consegue usar o Combo 3 Golpes. A versão normal só pode usar o Combo 2 Golpes.",
         "summonJars": "Pode invocar 2 Jarros como uma ação bônus. Só pode ter no máximo 2 Jarros ao mesmo tempo.",
         "destroyJarsWithFreeShots": "É possível destruir seus Jarros com tiros livres.",
-        "orbitingOrbs": "Possui 3 esferas circulando ao redor de si, são seus pontos fracos. Destruir uma esfera concede 2 escudos para seus aliados."
+        "orbitingOrbs": "Possui 3 esferas circulando ao redor de si, são seus pontos fracos. Destruir uma esfera concede 2 escudos para seus aliados.",
+        "floatingLamps": "Possui 4 lâmpadas flutuantes que podem ser atingidas com tiro livre."
       },
       "npcAttacks": {
         "invisibleWall": "Parede Invisível",
@@ -2350,7 +2351,13 @@
         "freezingSwordCombo": "Combo Espada Congelante",
         "freezingSwordComboDesc": "Intensidade muito alta. 3 golpes de Gelo que acertam todos os adversários.",
         "blazingSwordCombo": "Combo Espada Flamejante",
-        "blazingSwordComboDesc": "Intensidade alta. A espada pega fogo. 4 golpes de Fogo que acertam todos os adversários. Aplica Queimando por 1 turno."
+        "blazingSwordComboDesc": "Intensidade alta. A espada pega fogo. 4 golpes de Fogo que acertam todos os adversários. Aplica Queimando por 1 turno.",
+        "darkCombo": "Combo de Trevas",
+        "darkComboDesc": "Intensidade alta. 3 ataques de magia das Trevas. Acerta todos os adversários.",
+        "lampBlast": "Rajada das Lâmpadas",
+        "lampBlastDesc": "Intensidade alta. 1 ataque de Luz por lâmpada flutuante não destruída.",
+        "fourHandsDarkness": "Trevas das 4 Mãos",
+        "fourHandsDarknessDesc": "Intensidade muito alta. 1 ataque de magia das Trevas. Acerta todos os adversários."
       },
       "createCombat": "Criar combate",
       "creating": "Criando...",
@@ -3276,7 +3283,7 @@
       },
       "monoco-troubadour-trumpet": {
         "name": "Trombeta do Trovador",
-        "description": "Ataque de som de trombeta. Efeito: Aplica 1 buff aleatório em 1-3 aliados (Empowered, Shell, Shielded, Regeneration ou Hastened). Máscara de Conjurador ou Onipotente: aplica 2 buffs aleatórios por aliado. Roda Bestial: +4 posições.",
+        "description": "Ataque de som de trombeta. Efeito: Aplica 1 buff aleatório em 1-3 aliados (Empowered, Shell, Shield, Regeneration ou Rush). Máscara de Conjurador ou Onipotente: aplica 2 buffs aleatórios por aliado. Roda Bestial: +4 posições.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Troubadour enquanto Monoco estiver no grupo ativo."
       }
     },
@@ -3494,7 +3501,7 @@
         "giveStatus": "Aplicar status"
       },
       "statusEffects": {
-        "Hastened": "💨 Acelerado",
+
         "Empowered": "💪 Fortalecido",
         "Regeneration": "💚 Regeneração",
         "Unprotected": "🔓 Desprotegido",
@@ -3502,10 +3509,10 @@
         "Weakened": "💧 Enfraquecido",
         "Cursed": "💀 Amaldiçoado",
         "Stunned": "😵 Atordoado",
-        "Confused": "😵‍💫 Confuso",
+        "Charm": "😵‍💫 Charme",
         "Frozen": "❄️ Congelado",
         "Entangled": "⛓️ Acorrentado",
-        "Shielded": "🛡️ Escudado",
+
         "Exhausted": "😩 Exausto",
         "Frenzy": "🗡️ Frenesi",
         "Rage": "😡 Fúria",
@@ -3525,21 +3532,18 @@
         "Twilight": "🌕 Eclipse",
         "Powerless": "⬇️ Impotente",
         "Rush": "⚡ Pressa",
-        "Burn": "🔥 Queimar",
+
         "Shield": "🛡️ Escudo",
         "Powerful": "💪 Poderoso",
         "Shell": "🐚 Protegido",
-        "Slow": "🐌 Lento",
-        "Freeze": "❄️ Congelar",
-        "GreaterRush": "⚡ Pressa Maior",
-        "GreaterSlow": "🐌 Lentidão Maior",
-        "EnfeeblingMark": "🎯 Marca Enfraquecedora",
+
+
         "DamageReduction": "🧱 Redução de Dano",
         "SuccessiveParry": "⚔️ Aparar Sucessivo",
         "Aureole": "✨ Auréola",
-        "Vulnerable": "⚠️ Vulnerável",
+
         "FortunesFury": "🃏 Fúria da Fortuna",
-        "Regen": "💚 Regeneração",
+
         "IntenseFlames": "🔥 Chamas Intensas",
         "Earthquake": "🌍 Terremoto",
         "freeShot": "🎯 Tiro Livre",
@@ -3553,21 +3557,21 @@
       },
       "statusDescriptions": {
         "Frozen": "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.",
-        "Shielded": "Cada escudo anula um ataque completamente.",
+
         "Burning": "Causa dano no início do turno. Cada queimadura causa 1d6 de dano.",
         "StormCaller": "Causa dano de Raio no início do turno. Cada stack causa 1d6 de dano de Raio.",
         "Typhoon": "Causa dano de Gelo no início do turno. Cada stack causa 1d6 de dano de Gelo.",
-        "Hastened": "Melhora a esquiva e o pulo.",
-        "Slowed": "Dificulta a esquiva e o pulo.",
-        "Empowered": "Melhora seu ataque.",
-        "Weakened": "Enfraquece seu ataque.",
-        "Shell": "Reduz o dano recebido significativamente.",
-        "Unprotected": "Dificulta sua defesa ao aparar.",
-        "Regeneration": "Restaura uma porcentagem da sua vida a cada turno.",
+
+        "Slowed": "-4 na classe de armadura para esquivar e pular.",
+        "Empowered": "+4 nos testes de ataque.",
+        "Weakened": "-4 nos testes de ataque.",
+        "Shell": "+4 na classe de armadura para aparar.",
+        "Unprotected": "-4 na classe de armadura para aparar.",
+        "Regeneration": "Recupera 2d6 PV no início de cada turno.",
         "Cursed": "Morre quando o contador chegar a zero.",
         "Stunned": "Impede o personagem de agir neste turno.",
-        "Confused": "Seu personagem deve fazer o que o mestre disser. Você tem direito a um teste de resistência a cada início de turno.",
-        "Entangled": "Não pode desviar de ataques, apenas aparar, aparar gradiente ou pular.",
+        "Charm": "Seu personagem deve fazer o que o mestre disser. Você tem direito a um teste de resistência a cada início de turno.",
+        "Entangled": "Não pode desviar ou pular, apenas aparar ou aparar gradiente.",
         "Exhausted": "Qualquer ação que custe PM, custa 1 a mais e os personagens não podem recuperar PM de nenhuma maneira.",
         "Frenzy": "O personagem tem +1 por frenesi em testes de ataque (exceto tiro livre).",
         "Rage": "Você tem direito a uma ação de ataque básico extra, além de suas outras ações.",
@@ -3575,29 +3579,26 @@
         "Marked": "O próximo ataque contra este personagem recebe +4 no ataque e no dano.",
         "Blight": "O personagem tem –5 PV máximos por acúmulo até o fim da cena. Essa condição é cumulativa. A vida mínima é 1. A vida atual não pode exceder a vida máxima.",
         "Silenced": "Não pode usar habilidades.",
-        "Dizzy": "Perda em ataques usando tiro livre ou habilidades.",
+        "Dizzy": "-4 no ataque do tiro livre. O dano não é afetado.",
         "Broken": "Você não pode se defender ou agir.",
         "Fleeing": "O personagem está tentando fugir da batalha e não pode realizar nenhuma outra ação. Quando todos da equipe estiverem fugindo, a batalha é encerrada. Se alguém receber um golpe enquanto estiver tentando fugir, seu status fugindo é removido.",
-        "FireVulnerability": "O personagem recebe dano aumentado de ataques de Fogo.",
+        "FireVulnerability": "+4 no dano recebido de ataques de Fogo e ao total de dano recebido pelo status Queimando, independente do acúmulo.",
         "Guardian": "Protege aliados recebendo dano no lugar deles quando são atacados.",
-        "Foretell": "Cada acúmulo de Predição aumenta o dano causado por Sciel. Consumido por certas habilidades.",
+        "Foretell": "Cada acúmulo concede +1 no ataque e +1 no dano de Sciel. Consumido por certas habilidades.",
         "Twilight": "Estado místico de Sciel. Cada ataque causa +2 de bônus no ataque e +2 de dano adicional por carga acumulada. Dobra o máximo de Predição (até 20). Impede ganho de cargas Sol/Lua. Ativado ao ter pelo menos 1 carga de Sol e 1 de Lua.",
-        "Powerless": "O personagem não pode usar habilidades ou causar dano.",
-        "Rush": "Aumenta a velocidade e a capacidade de ataque do personagem.",
-        "Burn": "Causa dano de fogo contínuo ao personagem.",
-        "Shield": "Protege o personagem de dano.",
-        "Powerful": "Aumenta significativamente o poder de ataque.",
-        "Slow": "Reduz a velocidade do personagem.",
-        "Freeze": "Congela o personagem, impedindo ações.",
-        "GreaterRush": "Versão aprimorada de Pressa, com efeitos mais fortes.",
-        "GreaterSlow": "Versão aprimorada de Lentidão, com efeitos mais fortes.",
-        "EnfeeblingMark": "Marca que enfraquece o alvo, reduzindo seu poder.",
-        "DamageReduction": "Reduz o dano recebido de todas as fontes.",
-        "SuccessiveParry": "Melhora a capacidade de aparar ataques consecutivos.",
+        "Powerless": "Não pode usar habilidades. -1d6 no dano causado.",
+        "Rush": "+4 na classe de armadura para esquivar e pular.",
+
+        "Shield": "Cada ponto de escudo anula um ataque completamente.",
+        "Powerful": "+1d6 no dano causado.",
+
+
+        "DamageReduction": "-2 no dano recebido por acúmulo.",
+        "SuccessiveParry": "+1 no ataque e +1 no dano por Aparar consecutivo bem-sucedido. Receber dano remove todos os acúmulos.",
         "Aureole": "Revive o personagem com 3d6 PV quando ele morre. Consumido ao ser usado.",
-        "Vulnerable": "O personagem recebe dano aumentado de todas as fontes.",
+
         "FortunesFury": "Cada ataque causa +8 de bônus no ataque e +8 de dano adicional durante 1 turno.",
-        "Regen": "Regenera pontos de vida ao longo do tempo.",
+
         "Earthquake": "Causa dano no início do turno. Cada acúmulo causa 1d6 de dano.",
         "IntenseFlames": "Rola Xd6 de dano quando resolvido (X = acúmulos atuais). Aumenta em 2 acúmulos no fim do turno. Não expira. Removido de todos os inimigos quando o conjurador recebe dano.",
         "freeShot": "Tiros livres realizados neste turno. Aumenta o dano de Sequência (até 10 stacks).",
@@ -3981,7 +3982,7 @@
         "positiveStatus": "Efeitos Positivos",
         "status": {
           "hastened": "Acelerado",
-          "hastenedDesc": "Melhora esquiva e pulo.",
+          "hastenedDesc": "+4 na classe de armadura para esquivar e pular.",
           "empowered": "Empoderado",
           "empoweredDesc": "Melhora rolagens de ataque.",
           "regeneration": "Regeneração",
@@ -4001,7 +4002,7 @@
           "successiveParry": "Bloqueio Sucessivo",
           "successiveParryDesc": "Melhora a habilidade de bloqueios consecutivos.",
           "slowed": "Lento",
-          "slowedDesc": "Dificulta esquiva e pulo.",
+          "slowedDesc": "-4 na classe de armadura para esquivar e pular.",
           "weakened": "Enfraquecido",
           "weakenedDesc": "Reduz o poder de ataque.",
           "unprotected": "Desprotegido",
@@ -4010,18 +4011,18 @@
           "cursedDesc": "Morre quando o contador chegar a 0. Decresce a cada turno.",
           "stunned": "Atordoado",
           "stunnedDesc": "Não pode agir neste turno.",
-          "confused": "Confuso",
-          "confusedDesc": "Deve seguir comandos do mestre. Pode resistir com teste de SAB CD 13.",
+          "charm": "Charme",
+          "charmDesc": "Deve seguir comandos do mestre. Pode resistir com teste de SAB CD 13.",
           "frozen": "Congelado",
           "frozenDesc": "Não pode agir. 1d6 reduz o congelamento. Um ataque remove todo o gelo.",
-          "entangled": "Preso",
+          "entangled": "Acorrentado",
           "entangledDesc": "Só pode bloquear, bloqueio gradiente ou pular. Não pode esquivar.",
           "silenced": "Silenciado",
           "silencedDesc": "Não pode usar habilidades especiais.",
           "exhausted": "Exausto",
           "exhaustedDesc": "Todos os custos de PM +1. Não pode recuperar PM.",
           "dizzy": "Tonto",
-          "dizzyDesc": "Penalidade em ataques de tiro livre e habilidades.",
+          "dizzyDesc": "-4 no ataque do tiro livre. O dano não é afetado.",
           "broken": "Quebrado",
           "brokenDesc": "Não pode se defender nem agir.",
           "burning": "Queimando",
@@ -4130,7 +4131,7 @@
         "buffs": "Efeitos Positivos",
         "status": {
           "hastened": "Acelerado",
-          "hastenedDesc": "Melhora sua esquiva e pulo.",
+          "hastenedDesc": "+4 na sua classe de armadura para esquivar e pular.",
           "empowered": "Empoderado",
           "empoweredDesc": "Seus ataques ficam mais fortes.",
           "regeneration": "Regeneração",
@@ -4144,18 +4145,18 @@
           "aureole": "Auréola",
           "aureoleDesc": "Se você morrer, revive automaticamente com 3d6 PV. Consumido ao usar.",
           "slowed": "Lento",
-          "slowedDesc": "Dificulta sua esquiva e pulo.",
+          "slowedDesc": "-4 na sua classe de armadura para esquivar e pular.",
           "weakened": "Enfraquecido",
           "weakenedDesc": "Reduz seu dano.",
           "cursed": "Amaldiçoado",
           "cursedDesc": "Você morre quando o contador chegar a 0!",
           "stunned": "Atordoado",
           "stunnedDesc": "Perde seu turno.",
-          "confused": "Confuso",
-          "confusedDesc": "O Mestre controla suas ações. Teste SAB CD 13 para resistir.",
+          "charm": "Charme",
+          "charmDesc": "O Mestre controla suas ações. Teste SAB CD 13 para resistir.",
           "frozen": "Congelado",
           "frozenDesc": "Não pode agir. Receber um ataque remove todo o gelo.",
-          "entangled": "Preso",
+          "entangled": "Acorrentado",
           "entangledDesc": "Só pode bloquear ou pular, não esquivar.",
           "silenced": "Silenciado",
           "silencedDesc": "Não pode usar habilidades especiais.",
@@ -4438,7 +4439,8 @@
       "goblu": "Goblu",
       "golgra": "Golgra",
       "jovial-moissonneuse": "Jovial Moissonneuse",
-      "lampmaster": "Lampmaster",
+      "lampmaster-phase1": "Lampmaster (Fase 1)",
+      "lampmaster-phase2": "Lampmaster (Fase 2)",
       "mask-keeper": "Mask Keeper",
       "scavenger": "Scavenger",
       "seething-boucheclier": "Seething Boucheclier",

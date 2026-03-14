@@ -110,7 +110,7 @@
     },
     "anti-inverted": {
       "name": "Anti Inverted",
-      "description": "Can't be Inverted."
+      "description": "Cannot receive Inverted."
     },
     "anti-curse": {
       "name": "Anti Curse",
@@ -290,7 +290,7 @@
     },
     "at-deaths-door": {
       "name": "At Death's Door",
-      "description": "+2d6 damage if Health is below 5 HP."
+      "description": "+2d6 damage if Health is below 6 HP."
     },
     "full-strength": {
       "name": "Full Strength",
@@ -422,7 +422,7 @@
     },
     "greater-rush": {
       "name": "Greater Rush",
-      "description": "+1d6 to Rush Speed bonus."
+      "description": "+4 to Rush Speed bonus."
     },
     "last-stand-critical": {
       "name": "Last Stand Critical",
@@ -830,7 +830,7 @@
     },
     "greater-slow": {
       "name": "Greater Slow",
-      "description": "+1d4 to Slow Speed reduction."
+      "description": "+4 to Slow Speed reduction."
     },
     "energising-cleanse": {
       "name": "Energising Cleanse",
@@ -2097,7 +2097,8 @@
         "comboOnlyEvolved": "Only the more mature version with more holes can use the 3-Hit Combo. The normal version can only use the 2-Hit Combo.",
         "summonJars": "Can summon 2 Jars as a bonus action. Can only have a maximum of 2 Jars at the same time.",
         "destroyJarsWithFreeShots": "Its Jars can be destroyed with free shots.",
-        "orbitingOrbs": "Has 3 orbs orbiting around it, which are its weak points. Destroying an orb grants 2 shields to its allies."
+        "orbitingOrbs": "Has 3 orbs orbiting around it, which are its weak points. Destroying an orb grants 2 shields to its allies.",
+        "floatingLamps": "Has 4 floating lamps that can be hit with free shots."
       },
       "npcAttacks": {
         "invisibleWall": "Invisible Wall",
@@ -2350,7 +2351,13 @@
         "freezingSwordCombo": "Freezing Sword Combo",
         "freezingSwordComboDesc": "Very high intensity. 3 Ice strikes that hit all enemies.",
         "blazingSwordCombo": "Blazing Sword Combo",
-        "blazingSwordComboDesc": "High intensity. The sword ignites. 4 Fire strikes that hit all enemies. Applies Burning for 1 turn."
+        "blazingSwordComboDesc": "High intensity. The sword ignites. 4 Fire strikes that hit all enemies. Applies Burning for 1 turn.",
+        "darkCombo": "Dark Combo",
+        "darkComboDesc": "High intensity. 3 Dark magic strikes that hit all enemies.",
+        "lampBlast": "Lamp Blast",
+        "lampBlastDesc": "High intensity. 1 Light attack per floating lamp not destroyed.",
+        "fourHandsDarkness": "Four Hands Darkness",
+        "fourHandsDarknessDesc": "Very high intensity. 1 Dark magic attack. Hits all enemies."
       },
       "createCombat": "Create combat",
       "creating": "Creating...",
@@ -2901,7 +2908,7 @@
       },
       "sciel-all-set": {
         "name": "All Set",
-        "description": "Applies Shell, Empowered and Hastened to all allies."
+        "description": "Applies Shell, Empowered and Rush to all allies."
       },
       "sciel-intervention": {
         "name": "Intervention",
@@ -3276,7 +3283,7 @@
       },
       "monoco-troubadour-trumpet": {
         "name": "Troubadour Trumpet",
-        "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Shell, Shielded, Regeneration or Hastened). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions.",
+        "description": "Trumpet sound attack. Effect: Applies 1 random buff to 1-3 allies (Empowered, Shell, Shield, Regeneration or Rush). Conjurer Mask or Omnipotent: applies 2 random buffs per ally. Bestial Wheel: +4 positions.",
         "prerequisite": "Defeat and acquire the foot of a Troubadour enemy while Monoco is in the active group."
       }
     },
@@ -3494,7 +3501,7 @@
         "giveStatus": "Apply status"
       },
       "statusEffects": {
-        "Hastened": "💨 Hastened",
+
         "Empowered": "💪 Empowered",
         "Regeneration": "💚 Regeneration",
         "Unprotected": "🔓 Unprotected",
@@ -3502,10 +3509,10 @@
         "Weakened": "💧 Weakened",
         "Cursed": "💀 Cursed",
         "Stunned": "😵 Stunned",
-        "Confused": "😵‍💫 Confused",
+        "Charm": "😵‍💫 Charm",
         "Frozen": "❄️ Frozen",
         "Entangled": "⛓️ Entangled",
-        "Shielded": "🛡️ Shielded",
+
         "Exhausted": "😩 Exhausted",
         "Frenzy": "🗡️ Frenzy",
         "Rage": "😡 Rage",
@@ -3525,21 +3532,18 @@
         "Twilight": "🌕 Twilight",
         "Powerless": "⬇️ Powerless",
         "Rush": "⚡ Rush",
-        "Burn": "🔥 Burn",
+
         "Shield": "🛡️ Shield",
         "Powerful": "💪 Powerful",
         "Shell": "🐚 Shell",
-        "Slow": "🐌 Slow",
-        "Freeze": "❄️ Freeze",
-        "GreaterRush": "⚡ Greater Rush",
-        "GreaterSlow": "🐌 Greater Slow",
-        "EnfeeblingMark": "🎯 Enfeebling Mark",
+
+
         "DamageReduction": "🧱 Damage Reduction",
         "SuccessiveParry": "⚔️ Successive Parry",
         "Aureole": "✨ Aureole",
-        "Vulnerable": "⚠️ Vulnerable",
+
         "FortunesFury": "🃏 Fortune's Fury",
-        "Regen": "💚 Regeneration",
+
         "Earthquake": "🌍 Earthquake",
         "IntenseFlames": "🔥 Intense Flames",
         "freeShot": "🎯 Free Shot",
@@ -3553,21 +3557,21 @@
       },
       "statusDescriptions": {
         "Frozen": "Cannot perform actions. Each 1d6 value reduces freezing by 1. Receiving an attack removes all freezing.",
-        "Shielded": "Each shield completely negates one attack.",
+
         "Burning": "Deals damage at the start of turn. Each burn deals 1d6 damage.",
         "StormCaller": "Deals Lightning damage at the start of turn. Each stack deals 1d6 Lightning damage.",
         "Typhoon": "Deals Ice damage at the start of turn. Each stack deals 1d6 Ice damage.",
-        "Hastened": "Improves dodge and jump.",
-        "Slowed": "Hinders dodge and jump.",
-        "Empowered": "Improves your attack.",
-        "Weakened": "Weakens your attack.",
-        "Shell": "Significantly reduces damage taken.",
-        "Unprotected": "Hinders your defense when parrying.",
-        "Regeneration": "Restores a percentage of your life each turn.",
+
+        "Slowed": "-4 to armor class for dodge and jump.",
+        "Empowered": "+4 to attack rolls.",
+        "Weakened": "-4 to attack rolls.",
+        "Shell": "+4 to armor class for parry.",
+        "Unprotected": "-4 to armor class for parry.",
+        "Regeneration": "Recovers 2d6 HP at the start of each turn.",
         "Cursed": "Dies when the counter reaches zero.",
         "Stunned": "Prevents the character from acting this turn.",
-        "Confused": "Your character must do what the master says. You have the right to a resistance test at the start of each turn.",
-        "Entangled": "Cannot dodge attacks, only parry, gradient parry or jump.",
+        "Charm": "Your character must do what the master says. You have the right to a resistance test at the start of each turn.",
+        "Entangled": "Cannot dodge or jump, only parry or gradient parry.",
         "Exhausted": "Any action that costs MP costs 1 more and characters cannot recover MP in any way.",
         "Frenzy": "The character has +1 per frenzy in attack tests (except free shot).",
         "Rage": "You are entitled to an extra basic attack action, in addition to your other actions.",
@@ -3575,29 +3579,26 @@
         "Marked": "The next attack against this character gains +4 to attack and damage.",
         "Blight": "The character has –5 maximum HP per stack until the end of the scene. This condition stacks. Minimum HP is 1. Current HP cannot exceed maximum HP.",
         "Silenced": "Cannot use skills.",
-        "Dizzy": "Loss on attacks using free shot or skills.",
+        "Dizzy": "-4 to free shot attack roll. Damage is not affected.",
         "Broken": "You cannot defend or act.",
         "Fleeing": "The character is trying to flee the battle and cannot perform any other action. When all team members are fleeing, the battle ends. If someone takes a hit while trying to flee, their fleeing status is removed.",
-        "FireVulnerability": "The character takes increased damage from Fire attacks.",
+        "FireVulnerability": "+4 to damage taken from Fire attacks and to the total damage taken from the Burning status, regardless of stacks.",
         "Guardian": "Protects allies by taking damage in their place when they are attacked.",
-        "Foretell": "Each Foretell stack increases damage dealt by Sciel. Consumed by certain skills.",
+        "Foretell": "Each stack grants +1 to attack and +1 to damage for Sciel. Consumed by certain skills.",
         "Twilight": "Mystical state of Sciel. Each attack deals +2 attack bonus and +2 extra damage per accumulated charge. Doubles Foretell cap (up to 20). Prevents Sun/Moon charge gain. Activated when having at least 1 Sun and 1 Moon charge.",
-        "Powerless": "The character cannot use skills or deal damage.",
-        "Rush": "Increases the character's speed and attack capability.",
-        "Burn": "Deals continuous fire damage to the character.",
-        "Shield": "Protects the character from damage.",
-        "Powerful": "Significantly increases attack power.",
-        "Slow": "Reduces the character's speed.",
-        "Freeze": "Freezes the character, preventing actions.",
-        "GreaterRush": "Enhanced version of Rush, with stronger effects.",
-        "GreaterSlow": "Enhanced version of Slow, with stronger effects.",
-        "EnfeeblingMark": "Mark that weakens the target, reducing their power.",
-        "DamageReduction": "Reduces damage taken from all sources.",
-        "SuccessiveParry": "Improves ability to parry consecutive attacks.",
+        "Powerless": "Cannot use skills. -1d6 to damage dealt.",
+        "Rush": "+4 to armor class for dodge and jump.",
+
+        "Shield": "Each shield point completely negates one attack.",
+        "Powerful": "+1d6 to damage dealt.",
+
+
+        "DamageReduction": "-2 to damage taken per stack.",
+        "SuccessiveParry": "+1 to attack and +1 to damage per consecutive successful parry. Taking damage removes all stacks.",
         "Aureole": "Revives the character with 3d6 HP when they die. Consumed on use.",
-        "Vulnerable": "The character takes increased damage from all sources.",
+
         "FortunesFury": "Each attack deals +8 attack bonus and +8 extra damage for 1 turn.",
-        "Regen": "Regenerates health points over time.",
+
         "Earthquake": "Deals damage at the start of turn. Each stack deals 1d6 damage.",
         "IntenseFlames": "Rolls Xd6 damage when resolved (X = current stacks). Increases by 2 stacks at end of turn. Does not expire. Removed from all enemies when the caster takes damage.",
         "freeShot": "Free aim shots taken this turn. Increases Follow-Up damage (up to 10 stacks).",
@@ -3936,7 +3937,7 @@
           "block": "Block",
           "blockDesc": "Reduces incoming damage using weapon or shield. Requires a successful defense check.",
           "dodge": "Dodge",
-          "dodgeDesc": "Attempts to avoid the attack completely. Uses Dexterity. Affected by Hastened/Slowed.",
+          "dodgeDesc": "Attempts to avoid the attack completely. Uses Dexterity. Affected by Rush/Slowed.",
           "jump": "Jump",
           "jumpDesc": "Leaps to avoid area or ground attacks. Temporarily ignores terrain.",
           "counter": "Counter",
@@ -3978,15 +3979,15 @@
         "statusEffectsText": "Status effects modify the capabilities of characters and NPCs. Each effect has an amount (intensity) and duration in turns.",
         "positiveStatus": "Positive Effects",
         "status": {
-          "hastened": "Hastened",
-          "hastenedDesc": "Improves dodge and jump.",
+          "hastened": "Rush",
+          "hastenedDesc": "+4 to armor class for dodge and jump.",
           "empowered": "Empowered",
           "empoweredDesc": "Improves attack rolls.",
           "regeneration": "Regeneration",
           "regenerationDesc": "Restores a percentage of HP each turn.",
           "shell": "Shell",
           "shellDesc": "Significantly reduces incoming damage.",
-          "shielded": "Shielded",
+          "shielded": "Shield",
           "shieldedDesc": "Each shield completely negates one attack.",
           "powerful": "Powerful",
           "powerfulDesc": "Significantly increases attack power.",
@@ -3999,7 +4000,7 @@
           "successiveParry": "Successive Parry",
           "successiveParryDesc": "Improves consecutive blocking ability.",
           "slowed": "Slowed",
-          "slowedDesc": "Hinders dodge and jump.",
+          "slowedDesc": "-4 to armor class for dodge and jump.",
           "weakened": "Weakened",
           "weakenedDesc": "Reduces attack power.",
           "unprotected": "Unprotected",
@@ -4008,8 +4009,8 @@
           "cursedDesc": "Dies when the counter reaches 0. Decreases each turn.",
           "stunned": "Stunned",
           "stunnedDesc": "Cannot act this turn.",
-          "confused": "Confused",
-          "confusedDesc": "Must follow GM's commands. Can resist with WIS check DC 13.",
+          "charm": "Charm",
+          "charmDesc": "Must follow GM's commands. Can resist with WIS check DC 13.",
           "frozen": "Frozen",
           "frozenDesc": "Cannot act. 1d6 reduces freezing. An attack removes all ice.",
           "entangled": "Entangled",
@@ -4019,7 +4020,7 @@
           "exhausted": "Exhausted",
           "exhaustedDesc": "All MP costs +1. Cannot recover MP.",
           "dizzy": "Dizzy",
-          "dizzyDesc": "Penalty on free shot and skill attacks.",
+          "dizzyDesc": "-4 to free shot attack roll. Damage is not affected.",
           "broken": "Broken",
           "brokenDesc": "Cannot defend or act.",
           "burning": "Burning",
@@ -4127,30 +4128,30 @@
         "statusEffectsText": "During combat, you may receive positive effects (buffs) or negative effects (debuffs). Pay attention to each effect's duration.",
         "buffs": "Positive Effects",
         "status": {
-          "hastened": "Hastened",
-          "hastenedDesc": "Improves your dodge and jump.",
+          "hastened": "Rush",
+          "hastenedDesc": "+4 to your armor class for dodge and jump.",
           "empowered": "Empowered",
           "empoweredDesc": "Your attacks become stronger.",
           "regeneration": "Regeneration",
           "regenerationDesc": "Recovers HP each turn.",
           "shell": "Shell",
           "shellDesc": "Greatly reduces damage you take.",
-          "shielded": "Shielded",
+          "shielded": "Shield",
           "shieldedDesc": "Each shield completely blocks one attack.",
           "powerful": "Powerful",
           "powerfulDesc": "Greatly increases your damage.",
           "aureole": "Aureole",
           "aureoleDesc": "If you die, automatically revive with 3d6 HP. Consumed on use.",
           "slowed": "Slowed",
-          "slowedDesc": "Hinders your dodge and jump.",
+          "slowedDesc": "-4 to your armor class for dodge and jump.",
           "weakened": "Weakened",
           "weakenedDesc": "Reduces your damage.",
           "cursed": "Cursed",
           "cursedDesc": "You die when the counter reaches 0!",
           "stunned": "Stunned",
           "stunnedDesc": "You lose your turn.",
-          "confused": "Confused",
-          "confusedDesc": "The GM controls your actions. WIS check DC 13 to resist.",
+          "charm": "Charm",
+          "charmDesc": "The GM controls your actions. WIS check DC 13 to resist.",
           "frozen": "Frozen",
           "frozenDesc": "Cannot act. Being attacked removes all ice.",
           "entangled": "Entangled",
@@ -4436,7 +4437,8 @@
       "goblu": "Goblu",
       "golgra": "Golgra",
       "jovial-moissonneuse": "Jovial Moissonneuse",
-      "lampmaster": "Lampmaster",
+      "lampmaster-phase1": "Lampmaster (Phase 1)",
+      "lampmaster-phase2": "Lampmaster (Phase 2)",
       "mask-keeper": "Mask Keeper",
       "scavenger": "Scavenger",
       "seething-boucheclier": "Seething Boucheclier",

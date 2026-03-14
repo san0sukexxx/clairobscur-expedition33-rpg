@@ -172,7 +172,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "1",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.profaneScream", statusList: [{ type: "Confused", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.profaneScream", statusList: [{ type: "Charm", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {
@@ -337,7 +337,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.spinningHat", additionalDamage: 9, statusList: [{ type: "Confused", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.spinningHat", additionalDamage: 9, statusList: [{ type: "Charm", ammount: 1, remainingTurns: 1 }] },
         ],
     },
     {
@@ -413,7 +413,7 @@ const NPCsBaseData: NPCBaseData[] = [
             { type: "basic", additionalDamage: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.dualWeaponStrike", description: "combatAdmin.npcAttacks.dualWeaponStrikeDesc", additionalDamage: 3, quantity: 2, statusList: [{ type: "Broken", ammount: 1, remainingTurns: 1 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.impactLeap", description: "combatAdmin.npcAttacks.impactLeapDesc", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.warCry", description: "combatAdmin.npcAttacks.warCryDesc", statusList: [{ type: "Shielded", ammount: 2, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.warCry", description: "combatAdmin.npcAttacks.warCryDesc", statusList: [{ type: "Shield", ammount: 2, remainingTurns: 3 }] },
         ],
         drops: { weapons: ["cruleram", "brulerum"] },
     },
@@ -566,7 +566,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.seppuku", description: "combatAdmin.npcAttacks.seppukuDesc", statusList: [{ type: "Shielded", ammount: 4, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.seppuku", description: "combatAdmin.npcAttacks.seppukuDesc", statusList: [{ type: "Shield", ammount: 4, remainingTurns: 3 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.seppukuStrike", description: "combatAdmin.npcAttacks.seppukuStrikeDesc", additionalDamage: 6, quantity: 3, targetsAll: true },
             { type: "skill", name: "combatAdmin.npcAttacks.overheadSlash", description: "combatAdmin.npcAttacks.overheadSlashDesc", additionalDamage: 10, additionalDices: 3 },
         ],
@@ -586,7 +586,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "3",
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.psychic", additionalDamage: 5, statusList: [{ type: "Confused", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.psychic", additionalDamage: 5, statusList: [{ type: "Charm", ammount: 1, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.mentalExplosion", additionalDamage: 6, additionalDices: 1 },
         ],
     },
@@ -607,7 +607,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.combo", description: "combatAdmin.npcAttacks.comboDesc", additionalDamage: 4, quantityText: "combatAdmin.npcAttacks.comboQuantity" },
-            { type: "skill", name: "combatAdmin.npcAttacks.grantShields", description: "combatAdmin.npcAttacks.grantShieldsDesc", statusList: [{ type: "Shielded", ammount: 2, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.grantShields", description: "combatAdmin.npcAttacks.grantShieldsDesc", statusList: [{ type: "Shield", ammount: 2, remainingTurns: 3 }] },
         ],
     },
     {
@@ -727,7 +727,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic" },
             { type: "skill", name: "combatAdmin.npcAttacks.holyMagic", additionalDamage: 5 },
-            { type: "skill", name: "combatAdmin.npcAttacks.luminousBarrier", statusList: [{ type: "Shielded", ammount: 3, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.luminousBarrier", statusList: [{ type: "Shield", ammount: 3, remainingTurns: 2 }] },
         ],
     },
     {
@@ -1307,7 +1307,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.infernoSmite", additionalDamage: 6, statusList: [{ type: "Burning", ammount: 2, remainingTurns: 3 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shielded", ammount: 4, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shield", ammount: 4, remainingTurns: 3 }] },
         ],
     },
     {
@@ -1327,7 +1327,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.frostSmite", additionalDamage: 6, statusList: [{ type: "Frozen", ammount: 1, remainingTurns: 1 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shielded", ammount: 4, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shield", ammount: 4, remainingTurns: 3 }] },
         ],
     },
     {
@@ -1347,7 +1347,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.thunderSmite", additionalDamage: 6, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shielded", ammount: 4, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shield", ammount: 4, remainingTurns: 3 }] },
         ],
     },
     {
@@ -1451,8 +1451,9 @@ const NPCsBaseData: NPCBaseData[] = [
         drops: { weapons: ["chapelim"] },
     },
     {
-        id: "lampmaster",
+        id: "lampmaster-phase1",
         isBoss: true,
+        passives: ["combatAdmin.npcPassives.floatingLamps"],
         strength:     10,
         dexterity:    13,
         constitution: 12,
@@ -1465,7 +1466,28 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.lanternFlare", additionalDamage: 6, statusList: [{ type: "Dizzy", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.darkCombo", description: "combatAdmin.npcAttacks.darkComboDesc", additionalDamage: 5, additionalDices: 1, quantity: 3, element: "Dark", targetsAll: true },
+            { type: "skill", name: "combatAdmin.npcAttacks.lampBlast", description: "combatAdmin.npcAttacks.lampBlastDesc", additionalDamage: 5, additionalDices: 1, quantity: 4, element: "Light" },
+            { type: "skill", name: "combatAdmin.npcAttacks.swordCombo", description: "combatAdmin.npcAttacks.swordComboDesc", additionalDamage: 4, additionalDices: 1, quantity: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.fourHandsDarkness", description: "combatAdmin.npcAttacks.fourHandsDarknessDesc", additionalDamage: 8, additionalDices: 3, element: "Dark", targetsAll: true },
+        ],
+    },
+    {
+        id: "lampmaster-phase2",
+        isBoss: true,
+        strength:     14,
+        dexterity:    16,
+        constitution: 16,
+        intelligence: 20,
+        wisdom:       18,
+        charisma:     16,
+        weakTo: "Dark",
+        resistentTo: ["Light", "Fire"],
+        armorClass: 17,
+        challengeRating: "5",
+        proficiencyBonus: 3,
+        attackList: [
+            { type: "basic", additionalDamage: 6 },
         ],
         drops: { pictos: ["at-deaths-door"] },
     },
@@ -1485,7 +1507,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.maskSwap", additionalDamage: 9, statusList: [{ type: "Confused", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.maskSwap", additionalDamage: 9, statusList: [{ type: "Charm", ammount: 1, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.curseOfMasks", statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }] },
         ],
         drops: { pictos: ["immaculate"] },
@@ -1565,7 +1587,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 4,
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.sirenSong", additionalDamage: 10, statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }, { type: "Slowed", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.sirenSong", additionalDamage: 10, statusList: [{ type: "Charm", ammount: 2, remainingTurns: 2 }, { type: "Slowed", ammount: 1, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.tidalWave", additionalDamage: 11, additionalDices: 1 },
         ],
         drops: { pictos: ["energising-turn"], weapons: ["tisseron"] },
@@ -1586,7 +1608,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.sorrowfulSpin", additionalDamage: 9, statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.sorrowfulSpin", additionalDamage: 9, statusList: [{ type: "Charm", ammount: 2, remainingTurns: 2 }] },
         ],
         drops: { weapons: ["boucharo"] },
     },
@@ -1668,7 +1690,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 6 },
-            { type: "skill", name: "combatAdmin.npcAttacks.faceSwap", additionalDamage: 9, statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.faceSwap", additionalDamage: 9, statusList: [{ type: "Charm", ammount: 2, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.masquerade", additionalDamage: 10, additionalDices: 1, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }] },
         ],
     },
@@ -1967,7 +1989,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.profaneScream", statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.profaneScream", statusList: [{ type: "Charm", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
@@ -2148,7 +2170,7 @@ const NPCsBaseData: NPCBaseData[] = [
         challengeRating: "4",
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.spinningHat", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Confused", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.spinningHat", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 6, additionalDices: 1, statusList: [{ type: "Charm", ammount: 2, remainingTurns: 2 }] },
         ],
     },
     {
@@ -2289,7 +2311,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 5 },
             { type: "skill", name: "combatAdmin.npcAttacks.holySmite", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 8, additionalDices: 1, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shielded", ammount: 6, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shield", ammount: 6, remainingTurns: 3 }] },
         ],
     },
     {
@@ -2529,7 +2551,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic" },
             { type: "skill", name: "combatAdmin.npcAttacks.holyMagic", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 7, additionalDices: 1 },
-            { type: "skill", name: "combatAdmin.npcAttacks.luminousBarrier", statusList: [{ type: "Shielded", ammount: 5, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.luminousBarrier", statusList: [{ type: "Shield", ammount: 5, remainingTurns: 3 }] },
         ],
     },
     {
@@ -3045,7 +3067,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 7 },
             { type: "skill", name: "combatAdmin.npcAttacks.holySmite", additionalDamage: 11, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shielded", ammount: 4, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.divineShield", statusList: [{ type: "Shield", ammount: 4, remainingTurns: 3 }] },
         ],
         drops: { pictos: ["cleansing-tint"] },
     },
@@ -3622,7 +3644,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 5,
         attackList: [
             { type: "basic", additionalDamage: 9 },
-            { type: "skill", name: "combatAdmin.npcAttacks.profaneScream", additionalDamage: 13, additionalDices: 2, statusList: [{ type: "Confused", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.profaneScream", additionalDamage: 13, additionalDices: 2, statusList: [{ type: "Charm", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {

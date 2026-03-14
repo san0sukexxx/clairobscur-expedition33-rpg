@@ -205,7 +205,7 @@ export function getPlayerStatus(player: GetPlayerResponse | null, status: Status
     return currentCharacter.status?.find(s => s.effectName === status);
 }
 
-export const playerHasShield = (p: GetPlayerResponse | null) => playerHasStatus(p, "Shielded");
+export const playerHasShield = (p: GetPlayerResponse | null) => playerHasStatus(p, "Shield");
 export const playerHasEmpowered = (p: GetPlayerResponse | null) => playerHasStatus(p, "Empowered");
 export const playerHasWeakened = (p: GetPlayerResponse | null) => playerHasStatus(p, "Weakened");
 export const playerHasEntangled = (p: GetPlayerResponse | null) => playerHasStatus(p, "Entangled");

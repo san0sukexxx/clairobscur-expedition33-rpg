@@ -42,8 +42,8 @@ export function hasStatus(target: BattleCharacterInfo, status: StatusType): bool
     return target.status?.some(s => s.effectName === status) ?? false;
 }
 
-export const hasShield = (t: BattleCharacterInfo) => hasStatus(t, "Shielded");
-export const hasHastened = (t: BattleCharacterInfo) => hasStatus(t, "Hastened");
+export const hasShield = (t: BattleCharacterInfo) => hasStatus(t, "Shield");
+export const hasHastened = (t: BattleCharacterInfo) => hasStatus(t, "Rush");
 export const hasSlowed = (t: BattleCharacterInfo) => hasStatus(t, "Slowed");
 export const hasWeakened = (t: BattleCharacterInfo) => hasStatus(t, "Weakened");
 export const hasEmpowered = (t: BattleCharacterInfo) => hasStatus(t, "Empowered");
