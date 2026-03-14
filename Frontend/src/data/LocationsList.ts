@@ -67,7 +67,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "gestral-village",
-        residentNpcIds: ["noco", "gestral-warrior", "golgra", "jujubree", "eesda"],
+        residentNpcIds: ["noco", "gestral-warrior", "golgra", "jujubree", "eesda", "ultimate-sakapatate"],
         referenceNpcNames: ["Gestral", "Gestral Kid", "Lorieniso", "Alexcyclo", "Gestral Worker", "Victorifo", "Tall Gestral", "Olivierso", "Gestral Merchant", "Berrami", "Shady Gestral", "Delsitra", "Alexsoundro", "Gestral Doctor", "Ono-Puncho", "Limonsol", "Bertrand Big Hands", "Dominique Giant Feet", "Matthieu the Colossus"],
         loot: [
             { type: "weapon", itemId: "trebuchim", level: 1 },
@@ -88,7 +88,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "stone-wave-cliffs",
-        residentNpcIds: ["jerijeri", "hexga", "reaper-cultist", "greatsword-cultist", "gold-chevaliere", "petank-stone-wave-cliffs", "rocher", "lampmaster", "chromatic-gault"],
+        residentNpcIds: ["jerijeri", "hexga", "reaper-cultist", "greatsword-cultist", "gold-chevaliere", "petank-stone-wave-cliffs", "rocher", "lampmaster", "chromatic-gault", "chromatic-rocher"],
         referenceNpcNames: ["White-Haired Man"],
         loot: [
             { type: "weapon", itemId: "delaram", level: 1 },
@@ -328,7 +328,7 @@ export const LocationsList: LocationInfo[] = [
             "thunder-eveque", "chromatic-demineur", "frost-eveque", "chromatic-danseuses", "chromatic-portier",
             "chromatic-steel-chevaliere", "chromatic-ceramic-chevaliere", "chromatic-chalier", "chromatic-jar",
             "chromatic-moissonneuse", "mask-keeper", "creation", "chromatic-clair-obscur",
-            "painted-love", "chromatic-lampmaster", "duollistes", "clea-unleashed", "simon-the-divergent-star",
+            "painted-love", "chromatic-lampmaster", "chromatic-rocher", "duollistes", "clea-unleashed", "simon-the-divergent-star",
         ],
         referenceNpcNames: ["Fading Woman"],
         loot: [

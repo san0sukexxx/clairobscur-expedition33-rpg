@@ -14,6 +14,7 @@ import { dispatchRoll } from "../utils/rollDispatcher";
 import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
 import { APIGameLog } from "../api/APIGameLog";
 import { getWeaponPassive, toKebabCase, hasWeapon, t, getPictoName, getPictoDescription } from "../i18n";
+import { isGustave } from "../constants/player/characterIds";
 import { getPictoByName } from "../utils/PictoUtils";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import type { WeaponDTO } from "../types/WeaponDTO";
@@ -425,7 +426,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                             return (
                                 <div className="space-y-4">
                                     {/* Weapon passives */}
-                                    {unlockedPassives.length > 0 && (
+                                    {unlockedPassives.length > 0 && !isGustave(player?.playerSheet?.characterId) && (
                                         <div>
                                             {hasPictoLumina && (
                                                 <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.weaponPassives")}</span>

@@ -7,6 +7,7 @@ import { type WeaponDTO, type Rank, type PassiveDTO } from "../types/WeaponDTO";
 import { displayWeaponPlusPower, displayWeaponVitalityBonus, displayWeaponDefenseBonus, displayWeaponProficiencyBonus, displayWeaponDexterityBonus, getWeaponDamageDice } from "../utils/WeaponCalculator";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import { t, getWeaponPassive, toKebabCase, hasWeapon } from "../i18n";
+import { isGustave } from "../constants/player/characterIds";
 import { calculateMaxHP } from "../utils/PlayerCalculator";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
@@ -566,6 +567,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
                 )}
               </div>
 
+              {!isGustave(player?.playerSheet?.characterId) && (
               <ul className="mt-4 w-full space-y-1 text-sm md:col-span-2">
                 {(activeWeapon.passives ?? []).map((p: any) => {
                   const weaponId = getWeaponTranslationId(activeWeapon.name, weaponList);
@@ -584,6 +586,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
                   );
                 })}
               </ul>
+              )}
             </div>
           )}
         </>
@@ -709,6 +712,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
                         </div>
                       </div>
 
+                      {!isGustave(player?.playerSheet?.characterId) && (
                       <ul className="mt-4 w-full space-y-1 text-sm md:col-span-2">
                         {(weaponDetails?.passives ?? []).map((p: any) => {
                           const weaponId = getWeaponTranslationId(weaponDetails.name, weaponList);
@@ -726,6 +730,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
                           );
                         })}
                       </ul>
+                      )}
                     </div>
                   </button>
                 );
