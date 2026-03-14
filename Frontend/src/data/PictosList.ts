@@ -502,10 +502,6 @@ export const PictosList: PictoInfo[] = [
         color: "blue",
         luminaCost: 15
     },
-        description: getPictoDescription("bloody-bullet"),
-        color: "green",
-        luminaCost: 15
-    },
     {
         id: "energising-revive",
         imageId: getPictoEnglishName("energising-revive"),
@@ -612,10 +608,6 @@ export const PictosList: PictoInfo[] = [
         color: "green",
         luminaCost: 15
     },
-        description: getPictoDescription("auto-curse"),
-        color: "green",
-        luminaCost: 15
-    },
     {
         id: "death-bomb",
         imageId: getPictoEnglishName("death-bomb"),
@@ -698,10 +690,6 @@ export const PictosList: PictoInfo[] = [
         },
         description: getPictoDescription("exhausting-power"),
         color: "red",
-        luminaCost: 15
-    },
-        description: getPictoDescription("auto-burn"),
-        color: "green",
         luminaCost: 15
     },
     {
@@ -806,10 +794,6 @@ export const PictosList: PictoInfo[] = [
         },
         description: getPictoDescription("sos-rush"),
         color: "red",
-        luminaCost: 15
-    },
-        description: getPictoDescription("solidifying-meditation"),
-        color: "blue",
         luminaCost: 15
     },
     {
@@ -952,10 +936,6 @@ export const PictosList: PictoInfo[] = [
         },
         description: getPictoDescription("in-medias-res"),
         color: "blue",
-        luminaCost: 15
-    },
-        description: getPictoDescription("shield-breaker"),
-        color: "red",
         luminaCost: 15
     },
     {
