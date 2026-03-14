@@ -88,7 +88,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "stone-wave-cliffs",
-        residentNpcIds: ["jerijeri", "hexga", "reaper-cultist", "greatsword-cultist", "gold-chevaliere", "petank-stone-wave-cliffs", "rocher", "lampmaster", "chromatic-gault", "chromatic-rocher"],
+        residentNpcIds: ["jerijeri", "hexga", "reaper-cultist", "greatsword-cultist", "gold-chevaliere", "petank-stone-wave-cliffs", "rocher", "lampmaster-phase1", "lampmaster-phase2", "chromatic-gault", "chromatic-rocher"],
         referenceNpcNames: ["White-Haired Man"],
         loot: [
             { type: "weapon", itemId: "delaram", level: 1 },
@@ -202,7 +202,7 @@ export const LocationsList: LocationInfo[] = [
             { type: "picto", itemId: "empowering-parry", level: 1 },
             { type: "picto", itemId: "combo-attack-ii", level: 1 },
             { type: "picto", itemId: "energising-cleanse", level: 1 },
-            { type: "picto", itemId: "greater-unprotected", level: 1 },
+            { type: "picto", itemId: "greater-defenceless", level: 1 },
         ],
     },
     {
@@ -317,7 +317,7 @@ export const LocationsList: LocationInfo[] = [
         residentNpcIds: [
             "gault", "luster", "ramasseur", "potier", "steel-chevaliere", "greatsword-cultist", "dualliste",
             "troubadour", "demineur", "benisseur", "volester", "reaper-cultist", "ballet", "chapelier",
-            "lampmaster", "echassier", "hexga", "cruler", "chromatic-benisseur", "boucheclier", "clair",
+            "lampmaster-phase1", "lampmaster-phase2", "echassier", "hexga", "cruler", "chromatic-benisseur", "boucheclier", "clair",
             "chromatic-abbest", "goblu", "chromatic-orphelin", "ceramic-chevaliere", "bourgeon", "jar",
             "rocher", "chromatic-echassier", "moissoneusse", "catapult-sakapatate", "chromatic-veilleur",
             "bruler", "orphelin", "chromatic-greatsword-cultist", "sapling", "chromatic-troubadour",
@@ -340,7 +340,7 @@ export const LocationsList: LocationInfo[] = [
             { type: "picto", itemId: "critical-weakness", level: 1 },
             { type: "picto", itemId: "greater-powerless", level: 1 },
             { type: "picto", itemId: "rush-on-powerful", level: 1 },
-            { type: "picto", itemId: "greater-unprotected", level: 1 },
+            { type: "picto", itemId: "greater-defenceless", level: 1 },
         ],
     },
     {
@@ -381,7 +381,7 @@ export const LocationsList: LocationInfo[] = [
             "ceramic-chevaliere", "reaper-cultist", "lancer", "ramasseur", "abbest", "glaise",
             "greatsword-cultist", "petank-flying-manor", "bourgeon", "steel-chevaliere", "gold-chevaliere",
             "mime", "sapling", "stalact", "grosse-tete",
-            "gargant", "lampmaster", "flame-eveque", "frost-eveque", "thunder-eveque", "goblu", "dualliste", "clea",
+            "gargant", "lampmaster-phase1", "lampmaster-phase2", "flame-eveque", "frost-eveque", "thunder-eveque", "goblu", "dualliste", "clea",
         ],
         referenceNpcNames: ["Gestral", "Young Boy", "Faceless Boy", "Fusoka"],
         loot: [
@@ -452,7 +452,7 @@ export const LocationsList: LocationInfo[] = [
     { id: "lost-woods" },
     {
         id: "painting-workshop",
-        residentNpcIds: ["lampmaster"],
+        residentNpcIds: ["lampmaster-phase1", "lampmaster-phase2"],
         referenceNpcNames: ["Faceless Boy"],
         loot: [
             { type: "picto", itemId: "at-deaths-door", level: 1 },

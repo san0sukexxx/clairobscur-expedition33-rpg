@@ -152,10 +152,6 @@
       "name": "Proteção das Trevas",
       "description": "Resistência a dano das Trevas."
     },
-    "back-at-you": {
-      "name": "De Volta para Você",
-      "description": "+2d6 de dano de Contra-Ataque."
-    },
     "dodger": {
       "name": "Escapista",
       "description": "Ganha 1 PM ao Esquivar. Uma vez por turno."
@@ -184,10 +180,6 @@
       "name": "Confiante",
       "description": "-2d6 de dano recebido, mas não pode ser Curado."
     },
-    "bloody-bullet": {
-      "name": "Bala Sangrenta",
-      "description": "+1 PM ao acertar um Ponto Fraco."
-    },
     "energising-revive": {
       "name": "Reviver Energizante",
       "description": "+3 PM para todos os aliados ao ser revivido."
@@ -195,10 +187,6 @@
     "rejuvenating-revive": {
       "name": "Reviver Rejuvenescedor",
       "description": "Aplica Regeneração por 3 turnos ao ser revivido."
-    },
-    "revive-with-shell": {
-      "name": "Reviver com Escudo",
-      "description": "Aplica Protegido por 3 turnos ao reviver."
     },
     "solidifying": {
       "name": "Solidificação",
@@ -208,10 +196,6 @@
       "name": "Reviver Poderoso",
       "description": "Aplica Poderoso por 3 turnos ao ser revivido."
     },
-    "revive-with-rush": {
-      "name": "Reviver com Ímpeto",
-      "description": "Aplica Ímpeto por 3 turnos ao reviver."
-    },
     "the-one": {
       "name": "O Único",
       "description": "Vida Máxima é reduzida para 1."
@@ -220,25 +204,9 @@
       "name": "Energia Mortal II",
       "description": "+3 PM ao matar um inimigo."
     },
-    "frozen-shot": {
-      "name": "Disparo Congelante",
-      "description": "Disparos de Mira Livre podem aplicar Congelamento."
-    },
     "piercing-shot": {
       "name": "Disparo Perfurante",
       "description": "+1d6 de dano de Mira Livre. Disparos de Mira Livre ignoram Escudos."
-    },
-    "burning-dodge": {
-      "name": "Esquiva Ardente",
-      "description": "Esquivas bem-sucedidas podem aplicar Queimadura no atacante."
-    },
-    "defense-breaker-dodge": {
-      "name": "Esquiva Quebradora de Defesa",
-      "description": "Esquivas bem-sucedidas podem aplicar Desprotegido no atacante."
-    },
-    "defense-riser-dodge": {
-      "name": "Esquiva Elevadora de Defesa",
-      "description": "Esquivar com sucesso pode aplicar Protegido."
     },
     "healing-death": {
       "name": "Morte Curativa",
@@ -247,10 +215,6 @@
     "auto-death": {
       "name": "Morte Automática",
       "description": "Mata a si mesmo no início da batalha."
-    },
-    "auto-curse": {
-      "name": "Maldição Automática",
-      "description": "Aplica Maldição em si mesmo no início da batalha."
     },
     "death-bomb": {
       "name": "Bomba da Morte",
@@ -268,10 +232,6 @@
       "name": "Morte Defensiva",
       "description": "Ao morrer, aliados ganham Protegido."
     },
-    "empowering-death": {
-      "name": "Morte Fortalecedora",
-      "description": "Ao morrer, aliados ganham Poderoso."
-    },
     "burn-affinity": {
       "name": "Afinidade com Queimadura",
       "description": "+1d6 de dano em alvos com Queimadura."
@@ -283,10 +243,6 @@
     "exhausting-power": {
       "name": "Poder Exauridor",
       "description": "+2d6 de dano se Exausto."
-    },
-    "auto-burn": {
-      "name": "Queimadura Automática",
-      "description": "Aplica Queimadura em si mesmo no início da batalha."
     },
     "at-deaths-door": {
       "name": "À Porta da Morte",
@@ -323,10 +279,6 @@
     "sos-rush": {
       "name": "Ímpeto SOS",
       "description": "Aplica Ímpeto ao cair abaixo de metade do PV máximo."
-    },
-    "solidifying-meditation": {
-      "name": "Meditação Solidificadora",
-      "description": "+1 Escudo ao passar o turno."
     },
     "double-burn": {
       "name": "Queimadura Dupla",
@@ -375,10 +327,6 @@
     "in-medias-res": {
       "name": "No Meio das Coisas",
       "description": "+3 Escudos no Início da Batalha, mas Vida máxima é reduzida à metade."
-    },
-    "shield-breaker": {
-      "name": "Quebrador de Escudo",
-      "description": "Todos os golpes quebram 1 Escudo a mais."
     },
     "shield-affinity": {
       "name": "Afinidade com Escudo",
@@ -472,10 +420,6 @@
       "name": "Ganho de Fraqueza",
       "description": "+1 PM ao acertar a Fraqueza de um inimigo. Uma vez por turno."
     },
-    "patient-fighter": {
-      "name": "Lutador Paciente",
-      "description": "+2 PM ao pular um turno."
-    },
     "energetic-healer": {
       "name": "Curador Energético",
       "description": "+2 PM ao Curar um aliado. Uma vez por turno."
@@ -487,10 +431,6 @@
     "roulette": {
       "name": "Roleta",
       "description": "Teste de CAR CD 10: sucesso causa +5d6 de dano, falha causa -2d6 de dano."
-    },
-    "soul-eater": {
-      "name": "Devorador de Almas",
-      "description": "+1d8 de dano, mas perde 3d6 PV por turno."
     },
     "painter": {
       "name": "Pintor",
@@ -507,10 +447,6 @@
     "first-offensive": {
       "name": "Primeira Ofensiva",
       "description": "Primeiro golpe causado e recebido causa +2d6 de dano."
-    },
-    "cursed-power": {
-      "name": "Poder Amaldiçoado",
-      "description": "+1d8 de dano enquanto Amaldiçoado."
     },
     "pro-retreat": {
       "name": "Retirada Profissional",
@@ -539,10 +475,6 @@
     "burning-shots": {
       "name": "Disparos Ardentes",
       "description": "Teste de INT CD 15: aplica Queimadura no disparo de Mira Livre."
-    },
-    "free-aim-inverted-shot": {
-      "name": "Disparo Livre Invertido",
-      "description": "Disparos de Mira Livre podem aplicar Invertido."
     },
     "marking-shots": {
       "name": "Disparos Marcadores",
@@ -652,10 +584,6 @@
       "name": "Lutador de Gradiente",
       "description": "+1d6 de dano com Ataques de Gradiente."
     },
-    "gradient-recovery": {
-      "name": "Recuperação de Gradiente",
-      "description": "Recupera 2d6 PV ao usar uma Carga de Gradiente."
-    },
     "energising-gradient": {
       "name": "Gradiente Energizante",
       "description": "+1 PM por Carga de Gradiente consumida."
@@ -667,14 +595,6 @@
     "gradient-breaker": {
       "name": "Quebrador de Gradiente",
       "description": "+2d6 de dano de Quebra com Ataques de Gradiente."
-    },
-    "post-gradient": {
-      "name": "Pós-Gradiente",
-      "description": "Joga imediatamente após usar um Ataque de Gradiente."
-    },
-    "charging-recovery": {
-      "name": "Recuperação Carregadora",
-      "description": "+2 pontos de Gradiente com Habilidades de Cura."
     },
     "charging-counter": {
       "name": "Contra-Ataque Carregador",
@@ -712,21 +632,9 @@
       "name": "Tintura Aceleradora",
       "description": "Tinturas Curativas também aplicam Ímpeto."
     },
-    "better-healing-tint": {
-      "name": "Tintura Curativa Melhor",
-      "description": "Tinturas Curativas curam +3d6 PV extra."
-    },
     "cleansing-tint": {
       "name": "Tintura Purificadora",
       "description": "Tinturas Curativas também removem todos os Efeitos de Status do alvo."
-    },
-    "great-healing-tint": {
-      "name": "Grande Tintura Curativa",
-      "description": "Tinturas Curativas agora afetam toda a Expedição."
-    },
-    "great-energy-tint": {
-      "name": "Grande Tintura de Energia",
-      "description": "Tinturas de Energia agora afetam toda a Expedição."
     },
     "charging-tint": {
       "name": "Tintura Carregadora",
@@ -800,10 +708,6 @@
       "name": "Escudo ao Ímpeto",
       "description": "Aplica Protegido ao aplicar Ímpeto."
     },
-    "evasive-healer": {
-      "name": "Curador Evasivo",
-      "description": "Curas fornecidas são dobradas até que qualquer dano seja recebido."
-    },
     "energising-powerful": {
       "name": "Poder Energizante",
       "description": "Dá 2 PM ao aplicar Poderoso."
@@ -824,7 +728,7 @@
       "name": "Impotência Maior",
       "description": "+1d4 à redução de dano de Impotente."
     },
-    "greater-unprotected": {
+    "greater-defenceless": {
       "name": "Desprotegido Maior",
       "description": "+2 ao bônus de dano de Desprotegido."
     },
@@ -863,14 +767,6 @@
     "the-best-defense": {
       "name": "A Melhor Defesa",
       "description": "+2d6 de dano, mas não pode Aparar ou Esquivar."
-    },
-    "passive-defense": {
-      "name": "Defesa Passiva",
-      "description": "-2d6 de dano recebido, mas não pode Aparar ou Esquivar."
-    },
-    "successive-parry": {
-      "name": "Aparar Sucessivo",
-      "description": "Não pode Esquivar. +1 de bônus no ataque e +1 de dano adicional por Aparar até receber dano."
     },
     "breaking-attack": {
       "name": "Ataque Quebrador",
@@ -3536,8 +3432,6 @@
         "Shield": "🛡️ Escudo",
         "Powerful": "💪 Poderoso",
         "Shell": "🐚 Protegido",
-
-
         "DamageReduction": "🧱 Redução de Dano",
         "SuccessiveParry": "⚔️ Aparar Sucessivo",
         "Aureole": "✨ Auréola",
@@ -3591,8 +3485,6 @@
 
         "Shield": "Cada ponto de escudo anula um ataque completamente.",
         "Powerful": "+1d6 no dano causado.",
-
-
         "DamageReduction": "-2 no dano recebido por acúmulo.",
         "SuccessiveParry": "+1 no ataque e +1 no dano por Aparar consecutivo bem-sucedido. Receber dano remove todos os acúmulos.",
         "Aureole": "Revive o personagem com 3d6 PV quando ele morre. Consumido ao ser usado.",

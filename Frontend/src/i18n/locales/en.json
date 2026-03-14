@@ -108,54 +108,6 @@
       "name": "Anti-Stun",
       "description": "Immune to Stun."
     },
-    "anti-inverted": {
-      "name": "Anti Inverted",
-      "description": "Cannot receive Inverted."
-    },
-    "anti-curse": {
-      "name": "Anti Curse",
-      "description": "Can't be Cursed."
-    },
-    "anti-bound": {
-      "name": "Anti Bound",
-      "description": "Can't be Bound."
-    },
-    "anti-dizzy": {
-      "name": "Anti Dizzy",
-      "description": "Can't be Dizzied."
-    },
-    "physical-coat": {
-      "name": "Physical Coat",
-      "description": "Resist to Physical damage."
-    },
-    "fire-coat": {
-      "name": "Fire Coat",
-      "description": "Resist to Fire damage."
-    },
-    "ice-coat": {
-      "name": "Ice Coat",
-      "description": "Resist to Ice damage."
-    },
-    "thunder-coat": {
-      "name": "Thunder Coat",
-      "description": "Resist to Lightning damage."
-    },
-    "earth-coat": {
-      "name": "Earth Coat",
-      "description": "Resist to Earth damage."
-    },
-    "light-coat": {
-      "name": "Light Coat",
-      "description": "Resist to Light damage."
-    },
-    "dark-coat": {
-      "name": "Dark Coat",
-      "description": "Resist to Dark damage."
-    },
-    "back-at-you": {
-      "name": "Back At You",
-      "description": "+2d6 Counter Attack damage."
-    },
     "dodger": {
       "name": "Dodger",
       "description": "Gain 1 MP on Perfect Dodge. Once per turn."
@@ -184,10 +136,6 @@
       "name": "Confident",
       "description": "-2d6 damage taken, but can't be Healed."
     },
-    "bloody-bullet": {
-      "name": "Bloody Bullet",
-      "description": "+1 MP on Weak Point hit."
-    },
     "energising-revive": {
       "name": "Energising Revive",
       "description": "+3 MP to all allies when revived."
@@ -195,10 +143,6 @@
     "rejuvenating-revive": {
       "name": "Rejuvenating Revive",
       "description": "Apply Regen for 3 turns when revived."
-    },
-    "revive-with-shell": {
-      "name": "Revive With Shell",
-      "description": "Apply Shell for 3 turns on revive."
     },
     "solidifying": {
       "name": "Solidifying",
@@ -208,10 +152,6 @@
       "name": "Powerful Revive",
       "description": "Apply Powerful for 3 turns when revived."
     },
-    "revive-with-rush": {
-      "name": "Revive With Rush",
-      "description": "Apply Rush for 3 turns on revive."
-    },
     "the-one": {
       "name": "The One",
       "description": "Max Health is reduced to 1."
@@ -220,25 +160,9 @@
       "name": "Dead Energy II",
       "description": "+3 MP on killing an enemy."
     },
-    "frozen-shot": {
-      "name": "Frozen Shot",
-      "description": "Free Aim shots can Freeze."
-    },
     "piercing-shot": {
       "name": "Piercing Shot",
       "description": "+1d6 Free Aim damage. Free Aim shots ignore Shields."
-    },
-    "burning-dodge": {
-      "name": "Burning Dodge",
-      "description": "Successful Dodges can Burn the attacker."
-    },
-    "defense-breaker-dodge": {
-      "name": "Defense Breaker Dodge",
-      "description": "Successful Dodges can apply Unprotected to the attacker."
-    },
-    "defense-riser-dodge": {
-      "name": "Defense Riser Dodge",
-      "description": "Successfully Dodging can apply Shell."
     },
     "healing-death": {
       "name": "Healing Death",
@@ -247,10 +171,6 @@
     "auto-death": {
       "name": "Auto Death",
       "description": "Kill self on battle start."
-    },
-    "auto-curse": {
-      "name": "Auto Curse",
-      "description": "Self apply Curse on battle start."
     },
     "death-bomb": {
       "name": "Death Bomb",
@@ -268,10 +188,6 @@
       "name": "Protecting Death",
       "description": "On death, allies gain Shell."
     },
-    "empowering-death": {
-      "name": "Empowering Death",
-      "description": "On death, allies gain Powerful."
-    },
     "burn-affinity": {
       "name": "Burn Affinity",
       "description": "+1d6 damage on Burning targets."
@@ -283,10 +199,6 @@
     "exhausting-power": {
       "name": "Exhausting Power",
       "description": "+2d6 damage if Exhausted."
-    },
-    "auto-burn": {
-      "name": "Auto Burn",
-      "description": "Self apply Burn on battle start."
     },
     "at-deaths-door": {
       "name": "At Death's Door",
@@ -316,17 +228,9 @@
       "name": "Augmented Counter III",
       "description": "+2d6 Counterattack damage."
     },
-    "anti-exhaust": {
-      "name": "Anti Exhaust",
-      "description": "Immune to Exhaust."
-    },
     "sos-rush": {
       "name": "SOS Rush",
       "description": "Apply Rush when falling below half max HP."
-    },
-    "solidifying-meditation": {
-      "name": "Solidifying Meditation",
-      "description": "+1 Shield when passing turn."
     },
     "double-burn": {
       "name": "Double Burn",
@@ -375,10 +279,6 @@
     "in-medias-res": {
       "name": "In Medias Res",
       "description": "+3 Shields on Battle Start, but max Health is halved."
-    },
-    "shield-breaker": {
-      "name": "Shield Breaker",
-      "description": "All hits break 1 more Shield."
     },
     "shield-affinity": {
       "name": "Shield Affinity",
@@ -472,10 +372,6 @@
       "name": "Weakness Gain",
       "description": "+1 MP on hitting an enemy's Weakness. Once per turn."
     },
-    "patient-fighter": {
-      "name": "Patient Fighter",
-      "description": "+2 MP on skipping a turn."
-    },
     "energetic-healer": {
       "name": "Energetic Healer",
       "description": "+2 MP on Healing an ally. Once per turn."
@@ -487,10 +383,6 @@
     "roulette": {
       "name": "Roulette",
       "description": "CHA check DC 10: success deals +5d6 damage, failure deals -2d6 damage."
-    },
-    "soul-eater": {
-      "name": "Soul Eater",
-      "description": "+1d8 damage, but lose 3d6 HP per turn."
     },
     "painter": {
       "name": "Painter",
@@ -507,10 +399,6 @@
     "first-offensive": {
       "name": "First Offensive",
       "description": "First hit dealt and taken deals +2d6 damage."
-    },
-    "cursed-power": {
-      "name": "Cursed Power",
-      "description": "+1d8 damage while Cursed."
     },
     "pro-retreat": {
       "name": "Pro Retreat",
@@ -539,10 +427,6 @@
     "burning-shots": {
       "name": "Burning Shots",
       "description": "INT check DC 15: apply Burn on Free Aim shot."
-    },
-    "free-aim-inverted-shot": {
-      "name": "Free Aim Inverted Shot",
-      "description": "Free Aim shots can apply Inverted."
     },
     "marking-shots": {
       "name": "Marking Shots",
@@ -652,10 +536,6 @@
       "name": "Gradient Fighter",
       "description": "+1d6 damage with Gradient Attacks."
     },
-    "gradient-recovery": {
-      "name": "Gradient Recovery",
-      "description": "Recover 2d6 HP on using a Gradient Charge."
-    },
     "energising-gradient": {
       "name": "Energising Gradient",
       "description": "+1 MP per Gradient Charge consumed."
@@ -667,14 +547,6 @@
     "gradient-breaker": {
       "name": "Gradient Breaker",
       "description": "+2d6 Break damage with Gradient Attacks."
-    },
-    "post-gradient": {
-      "name": "Post Gradient",
-      "description": "Play immediately after using a Gradient Attack."
-    },
-    "charging-recovery": {
-      "name": "Charging Recovery",
-      "description": "+2 Gradient points with Healing Skills."
     },
     "charging-counter": {
       "name": "Charging Counter",
@@ -712,21 +584,9 @@
       "name": "Accelerating Tint",
       "description": "Healing Tints also apply Rush."
     },
-    "better-healing-tint": {
-      "name": "Better Healing Tint",
-      "description": "Healing Tints heal +3d6 extra HP."
-    },
     "cleansing-tint": {
       "name": "Cleansing Tint",
       "description": "Healing Tints also remove all Status Effects from the target."
-    },
-    "great-healing-tint": {
-      "name": "Great Healing Tint",
-      "description": "Healing Tints now affect the whole Expedition."
-    },
-    "great-energy-tint": {
-      "name": "Great Energy Tint",
-      "description": "Energy Tints now affect the whole Expedition."
     },
     "charging-tint": {
       "name": "Charging Tint",
@@ -800,10 +660,6 @@
       "name": "Shell On Rush",
       "description": "Apply Shell on applying Rush."
     },
-    "evasive-healer": {
-      "name": "Evasive Healer",
-      "description": "Heals provided are doubled until any damage is taken."
-    },
     "energising-powerful": {
       "name": "Energising Powerful",
       "description": "Give 2 MP on applying Powerful."
@@ -824,8 +680,8 @@
       "name": "Greater Powerless",
       "description": "+1d4 to Powerless damage reduction."
     },
-    "greater-unprotected": {
-      "name": "Greater Unprotected",
+    "greater-defenceless": {
+      "name": "Greater Defenceless",
       "description": "+2 to Unprotected damage bonus."
     },
     "greater-slow": {
@@ -863,14 +719,6 @@
     "the-best-defense": {
       "name": "The Best Defense",
       "description": "+2d6 damage, but can't Parry or Dodge."
-    },
-    "passive-defense": {
-      "name": "Passive Defense",
-      "description": "-2d6 damage taken, but can't Parry or Dodge."
-    },
-    "successive-parry": {
-      "name": "Successive Parry",
-      "description": "Can't Dodge. +1 attack bonus and +1 extra damage per Parry until damage taken."
     },
     "breaking-attack": {
       "name": "Breaking Attack",
@@ -3536,8 +3384,6 @@
         "Shield": "🛡️ Shield",
         "Powerful": "💪 Powerful",
         "Shell": "🐚 Shell",
-
-
         "DamageReduction": "🧱 Damage Reduction",
         "SuccessiveParry": "⚔️ Successive Parry",
         "Aureole": "✨ Aureole",
@@ -3591,8 +3437,6 @@
 
         "Shield": "Each shield point completely negates one attack.",
         "Powerful": "+1d6 to damage dealt.",
-
-
         "DamageReduction": "-2 to damage taken per stack.",
         "SuccessiveParry": "+1 to attack and +1 to damage per consecutive successful parry. Taking damage removes all stacks.",
         "Aureole": "Revives the character with 3d6 HP when they die. Consumed on use.",
