@@ -3,7 +3,7 @@ import { FaSkull, FaChevronDown, FaChevronUp, FaFistRaised, FaShieldAlt, FaHeart
 import { GiRunningShoe } from "react-icons/gi";
 import { getAllNPCsSorted, handleNpcImgError } from "../utils/NpcUtils";
 import { getLocationById } from "../utils/LocationUtils";
-import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
+import { ELEMENT_EMOTE, getElementName, toElementArray, formatElements, hasElement } from "../utils/ElementUtils";
 import { getAbilityModifier } from "../utils/AttackCalculator";
 import { getAttackTypeLabel, getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { diceTotal } from "../utils/DiceCalculator";
@@ -14,6 +14,7 @@ import { LocationsList } from "../data/LocationsList";
 import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
 import type { Campaign } from "../api/APICampaign";
 import { crToXp, calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
+import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
 
 const ATTR_CONFIG = [
     { key: "strength", label: () => t("combatAdmin.npcDetails.str"), icon: FaFistRaised, color: "text-red-400" },
@@ -36,9 +37,11 @@ interface NpcsTabProps {
 }
 
 export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef, focusNpcId, onFocusHandled, onPictoClick, onWeaponClick, onLocationClick, campaignInfo }: NpcsTabProps) {
-    const [filterText, setFilterText] = useState("");
+    const [filterText, setFilterText] = useState(() => localStorage.getItem("npcs.filterText") ?? "");
     const [expandedId, setExpandedId] = useState<string | null>(focusNpcId ?? null);
     const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("npcs.currentLocationOnly") === "true");
+
+    useEffect(() => { localStorage.setItem("npcs.filterText", filterText); }, [filterText]);
 
     useEffect(() => {
         if (focusNpcId) {
@@ -74,9 +77,9 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
             npc.name.toLowerCase().includes(search) ||
             npc.id.toLowerCase().includes(search) ||
             npc.challengeRating?.toLowerCase().includes(search) ||
-            npc.weakTo?.toLowerCase().includes(search) ||
-            npc.resistentTo?.toLowerCase().includes(search) ||
-            npc.imuneTo?.toLowerCase().includes(search)
+            toElementArray(npc.weakTo).some(e => e.toLowerCase().includes(search)) ||
+            toElementArray(npc.resistentTo).some(e => e.toLowerCase().includes(search)) ||
+            toElementArray(npc.imuneTo).some(e => e.toLowerCase().includes(search))
         );
     }, [filterText, currentLocationNpcIds]);
 
@@ -163,19 +166,19 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                                                     </span>
                                                 ) : null;
                                             })()}
-                                            {npc.weakTo && (
+                                            {hasElement(npc.weakTo) && (
                                                 <span className="badge badge-xs badge-warning">
-                                                    {ELEMENT_EMOTE[npc.weakTo]} Fraco
+                                                    {toElementArray(npc.weakTo).map(e => ELEMENT_EMOTE[e]).join("")} Fraco
                                                 </span>
                                             )}
-                                            {npc.resistentTo && (
+                                            {hasElement(npc.resistentTo) && (
                                                 <span className="badge badge-xs badge-info">
-                                                    {ELEMENT_EMOTE[npc.resistentTo]} Resist.
+                                                    {toElementArray(npc.resistentTo).map(e => ELEMENT_EMOTE[e]).join("")} Resist.
                                                 </span>
                                             )}
-                                            {npc.imuneTo && (
+                                            {hasElement(npc.imuneTo) && (
                                                 <span className="badge badge-xs badge-error">
-                                                    {ELEMENT_EMOTE[npc.imuneTo]} Imune
+                                                    {toElementArray(npc.imuneTo).map(e => ELEMENT_EMOTE[e]).join("")} Imune
                                                 </span>
                                             )}
                                         </div>
@@ -375,30 +378,51 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
             </div>
 
             {/* Elementos */}
-            {(npc.weakTo || npc.resistentTo || npc.imuneTo || npc.absorbElement) && (
+            {hasElement(npc.weakTo) && (
                 <div>
-                    <span className="font-bold text-xs">Elementos</span>
-                    <div className="flex flex-wrap gap-2 mt-1">
-                        {npc.weakTo && (
-                            <span className="badge badge-warning gap-1">
-                                {ELEMENT_EMOTE[npc.weakTo]} {t("combatAdmin.npcDetails.vulnerability")}: {getElementName(npc.weakTo)}
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.vulnerability")}</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                        {toElementArray(npc.weakTo).map(el => (
+                            <span key={el} className="badge badge-sm badge-warning gap-1">
+                                {ELEMENT_EMOTE[el]} {getElementName(el)}
                             </span>
-                        )}
-                        {npc.resistentTo && (
-                            <span className="badge badge-info gap-1">
-                                {ELEMENT_EMOTE[npc.resistentTo]} {t("combatAdmin.npcDetails.resistance")}: {getElementName(npc.resistentTo)}
+                        ))}
+                    </div>
+                </div>
+            )}
+            {hasElement(npc.resistentTo) && (
+                <div>
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.resistance")}</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                        {toElementArray(npc.resistentTo).map(el => (
+                            <span key={el} className="badge badge-sm badge-info gap-1">
+                                {ELEMENT_EMOTE[el]} {getElementName(el)}
                             </span>
-                        )}
-                        {npc.imuneTo && (
-                            <span className="badge badge-error gap-1">
-                                {ELEMENT_EMOTE[npc.imuneTo]} {t("combatAdmin.npcDetails.immunity")}: {getElementName(npc.imuneTo)}
+                        ))}
+                    </div>
+                </div>
+            )}
+            {hasElement(npc.imuneTo) && (
+                <div>
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.immunity")}</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                        {toElementArray(npc.imuneTo).map(el => (
+                            <span key={el} className="badge badge-sm badge-error gap-1">
+                                {ELEMENT_EMOTE[el]} {getElementName(el)}
                             </span>
-                        )}
-                        {npc.absorbElement && (
-                            <span className="badge badge-success gap-1">
-                                {ELEMENT_EMOTE[npc.absorbElement]} {t("combatAdmin.npcDetails.absorb")}: {getElementName(npc.absorbElement)}
+                        ))}
+                    </div>
+                </div>
+            )}
+            {hasElement(npc.absorbElement) && (
+                <div>
+                    <span className="font-bold text-xs">{t("combatAdmin.npcDetails.absorb")}</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                        {toElementArray(npc.absorbElement).map(el => (
+                            <span key={el} className="badge badge-sm badge-success gap-1">
+                                {ELEMENT_EMOTE[el]} {getElementName(el)}
                             </span>
-                        )}
+                        ))}
                     </div>
                 </div>
             )}
@@ -509,14 +533,14 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                 <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
                                     <span>
                                         <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>{" "}
-                                        {atk.description && <span className="italic opacity-90">{t(atk.description)} </span>}
+                                        {atk.description && <span className="italic opacity-90">{renderTextWithDiceButtons(t(atk.description), `${npcName} – ${actionName}`, diceBoardRef, timeoutDiceBoardRef)} </span>}
                                         {hasDamage && (
                                             <span className="italic opacity-90">
                                                 <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                 {" "}{t("combatAdmin.actionDesc.toHit")}
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                 <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
-                                                {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                 {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                 .
                                             </span>
@@ -527,7 +551,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                                 {" "}{t("combatAdmin.actionDesc.toHit")}
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                 <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
-                                                {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                 {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                 .
                                             </span>

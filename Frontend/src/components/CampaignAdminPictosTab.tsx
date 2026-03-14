@@ -31,11 +31,13 @@ interface PictosTabProps {
 }
 
 export default function CampaignAdminPictosTab({ focusPictoId, onFocusHandled, players, campaignInfo, onLocationClick }: PictosTabProps) {
-    const [filterText, setFilterText] = useState("");
+    const [filterText, setFilterText] = useState(() => localStorage.getItem("pictos.filterText") ?? "");
     const [expandedId, setExpandedId] = useState<string | null>(focusPictoId ?? null);
     const [giveModalPicto, setGiveModalPicto] = useState<PictoInfo | null>(null);
     const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("pictos.currentLocationOnly") === "true");
     const { showToast } = useToast();
+
+    useEffect(() => { localStorage.setItem("pictos.filterText", filterText); }, [filterText]);
 
     useEffect(() => {
         if (focusPictoId) {

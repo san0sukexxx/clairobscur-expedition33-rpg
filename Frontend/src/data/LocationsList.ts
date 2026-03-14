@@ -79,7 +79,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "esquies-nest",
-        residentNpcIds: ["esquie", "mime-esquies-nest", "petank", "francois"],
+        residentNpcIds: ["esquie", "mime-esquies-nest", "petank-esquies-nest", "francois"],
         referenceNpcNames: ["Sunniso"],
         loot: [
             { type: "picto", itemId: "augmented-first-strike", level: 1 },
@@ -88,7 +88,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "stone-wave-cliffs",
-        residentNpcIds: ["jerijeri", "hexga", "reaper-cultist", "greatsword-cultist", "gold-chevaliere", "petank", "rocher", "lampmaster", "chromatic-gault"],
+        residentNpcIds: ["jerijeri", "hexga", "reaper-cultist", "greatsword-cultist", "gold-chevaliere", "petank-stone-wave-cliffs", "rocher", "lampmaster", "chromatic-gault"],
         referenceNpcNames: ["White-Haired Man"],
         loot: [
             { type: "weapon", itemId: "delaram", level: 1 },
@@ -111,7 +111,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "forgotten-battlefield",
-        residentNpcIds: ["chalier", "petank", "ramasseur", "troubadour", "cruler-battlefield", "dualliste", "chromatic-luster"],
+        residentNpcIds: ["chalier", "petank-battlefield", "ramasseur", "troubadour", "cruler-battlefield", "dualliste", "chromatic-luster"],
         referenceNpcNames: ["Fading Woman", "Kasumi"],
         loot: [
             { type: "weapon", itemId: "troubadim", level: 1 },
@@ -166,7 +166,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "sirene",
-        residentNpcIds: ["ballet-sirene", "chorale", "benisseur", "petank", "mime", "chromatic-greatsword-cultist", "tisseur", "glissando", "sirene"],
+        residentNpcIds: ["ballet-sirene", "chorale", "benisseur", "petank-sirene", "mime", "chromatic-greatsword-cultist", "tisseur", "glissando", "sirene"],
         referenceNpcNames: ["Klaudiso"],
         loot: [
             { type: "weapon", itemId: "tissenum", level: 1 },
@@ -303,7 +303,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "endless-night-sanctuary",
-        residentNpcIds: ["ranger-sakapatate", "robust-sakapatate", "catapult-sakapatate", "petank", "ultimate-sakapatate", "chromatic-cruler"],
+        residentNpcIds: ["ranger-sakapatate", "robust-sakapatate", "catapult-sakapatate", "petank-endless-night", "ultimate-sakapatate", "chromatic-cruler"],
         referenceNpcNames: ["Grandis Engineer", "Anthonypo", "Grandis Explorer"],
         loot: [
             { type: "weapon", itemId: "joyaro", level: 1 },
@@ -379,7 +379,7 @@ export const LocationsList: LocationInfo[] = [
         residentNpcIds: [
             "jar", "pelerin", "braseleur", "danseuses", "hexga", "portier", "cruler",
             "ceramic-chevaliere", "reaper-cultist", "lancer", "ramasseur", "abbest", "glaise",
-            "greatsword-cultist", "petank", "bourgeon", "steel-chevaliere", "gold-chevaliere",
+            "greatsword-cultist", "petank-flying-manor", "bourgeon", "steel-chevaliere", "gold-chevaliere",
             "mime", "sapling", "stalact", "grosse-tete",
             "gargant", "lampmaster", "flame-eveque", "frost-eveque", "thunder-eveque", "goblu", "dualliste", "clea",
         ],
@@ -416,7 +416,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "frozen-hearts",
-        residentNpcIds: ["pelerin", "danseuses", "braseleur", "stalact", "petank", "mime", "chromatic-veilleur", "gargant"],
+        residentNpcIds: ["pelerin", "danseuses", "braseleur", "stalact", "petank-frozen-hearts", "mime", "chromatic-veilleur", "gargant"],
         referenceNpcNames: ["Gestral", "Danseuse Teacher", "Verogo"],
         loot: [
             { type: "weapon", itemId: "stalum", level: 1 },
@@ -444,7 +444,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "isle-of-the-eyes",
-        residentNpcIds: ["petank", "chromatic-boucheclier"],
+        residentNpcIds: ["petank-isle-of-the-eyes", "chromatic-boucheclier"],
         loot: [
             { type: "weapon", itemId: "facesum", level: 1 },
         ],
@@ -576,7 +576,7 @@ export const LocationsList: LocationInfo[] = [
     { id: "the-meadows" },
     {
         id: "the-reacher",
-        residentNpcIds: ["orphelin", "echassier", "mime", "petank", "veilleur", "chromatic-braseleur", "alicia"],
+        residentNpcIds: ["orphelin", "echassier", "mime", "petank-the-reacher", "veilleur", "chromatic-braseleur", "alicia"],
         referenceNpcNames: ["Fading Man", "Eragol"],
         loot: [
             { type: "weapon", itemId: "tireso", level: 1 },

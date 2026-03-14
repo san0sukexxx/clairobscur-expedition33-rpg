@@ -272,10 +272,7 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
         let ids: string[];
         if (newRewardType === "weapon" && rewardCharFilter) {
             const file = WeaponsDataLoader.fileForCharacter(rewardCharFilter);
-            let weapons = WeaponsDataLoader.getByFile(file);
-            if (rewardCharFilter === "gustave") {
-                weapons = weapons.filter(w => !WeaponsDataLoader.VERSO_EXCLUSIVE_WEAPONS.has(w.name));
-            }
+            const weapons = WeaponsDataLoader.getByFile(file);
             ids = weapons.map(w => w.name.toLowerCase());
         } else {
             ids = newRewardType === "weapon" ? getAllWeaponIds() : getAllPictoIds();

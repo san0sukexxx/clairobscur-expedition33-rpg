@@ -51,10 +51,10 @@ export function calculateNPCDifficulty(npcId: string): number {
     const conMod = Math.floor((npc.constitution - 10) / 2);
     let score = strMod + dexMod + conMod;
 
-    if (npc.weakTo) score -= 1;
-    if (npc.resistentTo) score += 1;
-    if (npc.imuneTo) score += 1;
-    if (npc.absorbElement) score += 1;
+    if (npc.weakTo) score -= (Array.isArray(npc.weakTo) ? npc.weakTo.length : 1);
+    if (npc.resistentTo) score += (Array.isArray(npc.resistentTo) ? npc.resistentTo.length : 1);
+    if (npc.imuneTo) score += (Array.isArray(npc.imuneTo) ? npc.imuneTo.length : 1);
+    if (npc.absorbElement) score += (Array.isArray(npc.absorbElement) ? npc.absorbElement.length : 1);
     if (npc.freeShotWeakPoints) score -= 1;
     if (npc.attackList && npc.attackList.length > 0) score += 1;
     if (npc.isFlying) score += 1;

@@ -18,12 +18,15 @@ interface Props {
 }
 
 export default function CampaignAdminLocationsTab({ campaignInfo, onLocationChange, onNpcClick, onPictoClick, onWeaponClick, focusLocationId, onFocusHandled }: Props) {
-    const [filterText, setFilterText] = useState("");
+    const [filterText, setFilterText] = useState(() => localStorage.getItem("locations.filterText") ?? "");
     const [expandedId, setExpandedId] = useState<string | null>(focusLocationId ?? null);
+
+    useEffect(() => { localStorage.setItem("locations.filterText", filterText); }, [filterText]);
 
     useEffect(() => {
         if (focusLocationId) {
             setExpandedId(focusLocationId);
+            setFilterText("");
             setTimeout(() => {
                 document.getElementById(`location-${focusLocationId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 100);

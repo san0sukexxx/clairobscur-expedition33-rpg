@@ -4,8 +4,8 @@ import { rollWithTimeout } from "./RollUtils";
 import { diceTotal } from "./DiceCalculator";
 import { dispatchRoll } from "./rollDispatcher";
 
-/** Regex to detect dice notation like 1d4, 2d6, 8d6 etc. */
-const DICE_REGEX = /(\d+d\d+)/g;
+/** Regex to detect dice notation like 1d4, 2d6, 2d6+2, 8d6-1 etc. */
+const DICE_REGEX = /(\d+d\d+(?:[+-]\d+)?)/g;
 
 /** Split text around dice patterns and render roll buttons for each match. */
 export function renderTextWithDiceButtons(
@@ -28,7 +28,10 @@ export function renderTextWithDiceButtons(
                 onClick={(e) => {
                     e.stopPropagation();
                     if (diceBoardRef && timeoutDiceBoardRef) {
-                        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, part, (result) => {
+                        const modMatch = part.match(/([+-]\d+)$/);
+                        const modifier = modMatch ? parseInt(modMatch[1], 10) : 0;
+                        const diceOnly = modMatch ? part.slice(0, modMatch.index) : part;
+                        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, diceOnly, (result) => {
                             const rawTotal = diceTotal(result);
                             const diceValues: number[] = [];
                             for (const group of result) {
@@ -39,8 +42,8 @@ export function renderTextWithDiceButtons(
                             dispatchRoll({
                                 label: `${label} — ${part}`,
                                 diceRolled: rawTotal,
-                                modifier: 0,
-                                total: rawTotal,
+                                modifier,
+                                total: rawTotal + modifier,
                                 diceCommand: part,
                                 diceValues,
                             });

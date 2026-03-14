@@ -13,8 +13,6 @@ import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import type { DiceBoardRef } from "./DiceBoard";
 import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
 
-const VERSO_EXCLUSIVE_WEAPONS = WeaponsDataLoader.VERSO_EXCLUSIVE_WEAPONS;
-
 // Helper to find the correct weapon ID considering character variations
 function getWeaponTranslationId(weaponName: string, weaponList: WeaponDTO[]): string {
   const baseId = toKebabCase(weaponName);
@@ -147,7 +145,6 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
       const characterId = player.playerSheet?.characterId;
       const available = weaponList.filter(dto => {
         if (currentIds.has(dto.name)) return false;
-        if (characterId === "gustave" && VERSO_EXCLUSIVE_WEAPONS.has(dto.name)) return false;
         return true;
       });
 
@@ -179,7 +176,6 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
     return modalWeapons.filter(w => {
       const dto = findWeaponByName(weaponList, w.id);
       if (!dto) return false;
-      if (characterId === "gustave" && VERSO_EXCLUSIVE_WEAPONS.has(dto.name)) return false;
       if (term === "") return true;
       return dto.name.toLowerCase().includes(term);
     });

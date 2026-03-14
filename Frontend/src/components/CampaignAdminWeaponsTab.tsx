@@ -49,11 +49,6 @@ function buildWeaponList(): WeaponEntry[] {
             const key = `${char}:${w.name}`;
             if (seen.has(key)) continue;
 
-            // Gustave can't use Verso exclusives
-            if (char === "gustave" && WeaponsDataLoader.VERSO_EXCLUSIVE_WEAPONS.has(w.name)) continue;
-            // Verso can't use non-exclusive swords (shared ones are Gustave's)
-            if (char === "verso" && !WeaponsDataLoader.VERSO_EXCLUSIVE_WEAPONS.has(w.name)) continue;
-
             seen.add(key);
             entries.push({
                 weapon: w,
@@ -76,11 +71,13 @@ interface WeaponsTabProps {
 }
 
 export default function CampaignAdminWeaponsTab({ focusWeaponId, onFocusHandled, players, campaignInfo, onLocationClick }: WeaponsTabProps) {
-    const [filterText, setFilterText] = useState("");
+    const [filterText, setFilterText] = useState(() => localStorage.getItem("weapons.filterText") ?? "");
     const [expandedKey, setExpandedKey] = useState<string | null>(null);
     const [giveModalEntry, setGiveModalEntry] = useState<WeaponEntry | null>(null);
     const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("weapons.currentLocationOnly") === "true");
     const { showToast } = useToast();
+
+    useEffect(() => { localStorage.setItem("weapons.filterText", filterText); }, [filterText]);
 
     const allWeapons = useMemo(() => buildWeaponList(), []);
 

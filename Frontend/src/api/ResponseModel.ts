@@ -5,7 +5,7 @@ export type StatusType =
     "Unprotected" | "Slowed" | "Weakened" | "Cursed" |
     "Stunned" | "Confused" | "Frozen" | "Entangled" |
     "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
-    "Inverted" | "Marked" | "Plagued" | "Burning" |
+    "Inverted" | "Marked" | "Blight" | "Burning" |
     "Silenced" | "Dizzy" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Guardian" | "Foretell" | "Twilight" | "Powerless" |
     "Rush" | "Burn" | "Shield" | "Powerful" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
@@ -98,10 +98,10 @@ export interface NPCInfo {
     charisma: number;
     // Combat options
     playFirst?: boolean;
-    weakTo?: Element;
-    resistentTo?: Element;
-    imuneTo?: Element;
-    absorbElement?: Element;
+    weakTo?: Element | Element[];
+    resistentTo?: Element | Element[];
+    imuneTo?: Element | Element[];
+    absorbElement?: Element | Element[];
     freeShotWeakPoints?: number;
     passives?: string[];
     attackList?: NPCAttack[];
@@ -130,6 +130,7 @@ export interface NPCAttack {
     type: AttackType;
     statusList?: NPCStatusItem[];  // Optional list of status effects to apply
     quantity?: number;  // Number of times this attack will be used in sequence
+    quantityText?: string;  // Custom text for quantity (e.g., "2 a 3 golpes"), overrides quantity display
     name?: string;  // Custom name to display on the button (overrides default label)
     additionalDamage?: number;  // Flat damage bonus added to each attack roll
     additionalDices?: number;  // Additional dice rolled for this attack (e.g., 2 = roll 3d6 instead of 1d6)

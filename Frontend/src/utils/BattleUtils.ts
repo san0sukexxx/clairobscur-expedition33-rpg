@@ -54,7 +54,7 @@ export function getStatusLabel(status: StatusType): string {
         case "Rage": return t("battle.statusEffects.Rage");
         case "Inverted": return t("battle.statusEffects.Inverted");
         case "Marked": return t("battle.statusEffects.Marked");
-        case "Plagued": return t("battle.statusEffects.Plagued");
+        case "Blight": return t("battle.statusEffects.Blight");
         case "Burning": return t("battle.statusEffects.Burning");
         case "IntenseFlames": return t("battle.statusEffects.IntenseFlames");
         case "StormCaller": return t("battle.statusEffects.StormCaller");

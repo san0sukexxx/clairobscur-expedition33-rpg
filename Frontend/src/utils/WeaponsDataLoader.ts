@@ -76,28 +76,13 @@ export class WeaponsDataLoader {
     return this.byFile!;
   }
 
-  /** Espadas exclusivas do Verso — Gustave não pode equipar (mecânica de Perfection). */
-  static readonly VERSO_EXCLUSIVE_WEAPONS = new Set([
-    "Abysseram", "Blodam", "Chevalam", "Confuso", "Contorso", "Corpeso",
-    "Cruleram", "Cultam", "Danseso", "Delaram", "Dreameso", "Dualiso",
-    "Gaultaram", "Glaceso", "Liteso", "Nosaram", "Sakaram",
-    "Seeram", "Simoso", "Sireso", "Tireso",
-  ]);
-
   /** Verifica se um personagem pode usar determinada arma. */
   static canCharacterUseWeapon(characterId: string | undefined, weaponId: string): boolean {
     if (!characterId) return false;
     const charId = characterId.toLowerCase();
     const file = this.fileForCharacter(charId);
     const weapons = this.getByFile(file);
-    const found = weapons.some(w => w.name.toLowerCase() === weaponId.toLowerCase());
-    if (!found) return false;
-    // Gustave não pode usar espadas exclusivas do Verso
-    if (charId === "gustave") {
-      const original = weapons.find(w => w.name.toLowerCase() === weaponId.toLowerCase());
-      if (original && this.VERSO_EXCLUSIVE_WEAPONS.has(original.name)) return false;
-    }
-    return true;
+    return weapons.some(w => w.name.toLowerCase() === weaponId.toLowerCase());
   }
 
   static fileForCharacter(character?: string): string {

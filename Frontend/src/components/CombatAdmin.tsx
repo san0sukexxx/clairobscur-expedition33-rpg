@@ -10,7 +10,7 @@ import { FaArrowsDownToLine, FaArrowDown } from "react-icons/fa6";
 import { getCharacterLabelById, applyNpcNameSuffixes, CHARACTERS_LIST } from "../utils/CharacterUtils"
 import { getNPCMaxHealth, randomizeNpcInitiativeTotal, npcIsFlyingById } from "../utils/NpcCalculator"
 import { getAbilityModifier } from "../utils/AttackCalculator"
-import { getElementName, ELEMENT_EMOTE } from "../utils/ElementUtils"
+import { getElementName, ELEMENT_EMOTE, hasElement, toElementArray } from "../utils/ElementUtils"
 import { dispatchRoll } from "../utils/rollDispatcher"
 import { diceTotal } from "../utils/DiceCalculator"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP, calculateArmorClass } from "../utils/PlayerCalculator"
@@ -28,6 +28,7 @@ import { StatusConditionsModal } from "./StatusConditionsModal";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { calculateNPCDifficulty, formatCR, crToXp } from "../utils/NpcDifficulty";
+import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
 import { getAttackTypeLabel, getSpecialAttackLabel, getStatusLabel, shouldShowStatusAmmount, generateActionDescription, generateBasicAttackDescription } from "../utils/BattleUtils";
 import { t, getWeaponName, getPictoName, toKebabCase, getWeaponEnglishName, getPictoEnglishName, getLocationName, getWeaponPassive, getPictoDescription } from "../i18n";
 import type { BattleReward } from "../api/ResponseModel";
@@ -1132,7 +1133,7 @@ export default function CombatAdmin({
                             });
                         };
 
-                        const hasElementalInfo = npcInfo.weakTo || npcInfo.resistentTo || npcInfo.imuneTo || npcInfo.absorbElement;
+                        const hasElementalInfo = hasElement(npcInfo.weakTo) || hasElement(npcInfo.resistentTo) || hasElement(npcInfo.imuneTo) || hasElement(npcInfo.absorbElement);
                         const hasDndExtras = (npcInfo.damageVulnerabilities?.length ?? 0) > 0 || (npcInfo.damageImmunities?.length ?? 0) > 0 || (npcInfo.conditionImmunities?.length ?? 0) > 0;
                         const hasChallenge = npcInfo.challengeRating || npcInfo.proficiencyBonus;
                         const hasProperties = npcInfo.isFlying || npcInfo.playFirst || (currentNpc?.freeShotWeakPoints ?? 0) > 0 || npcInfo.initiativeBonus || npcInfo.maxLifeBonus;
@@ -1186,12 +1187,48 @@ export default function CombatAdmin({
                         );
                     })()}
 
-                    {npcInfo && (npcInfo.weakTo || npcInfo.resistentTo || npcInfo.imuneTo || npcInfo.absorbElement) && (
-                        <div className="flex flex-col gap-0.5 text-xs combat-elemental-row">
-                            {npcInfo.weakTo && <span>{t("combatAdmin.npcDetails.vulnerability")}: {ELEMENT_EMOTE[npcInfo.weakTo] ?? ""} {getElementName(npcInfo.weakTo)}</span>}
-                            {npcInfo.resistentTo && <span>{t("combatAdmin.npcDetails.resistance")}: {ELEMENT_EMOTE[npcInfo.resistentTo] ?? ""} {getElementName(npcInfo.resistentTo)}</span>}
-                            {npcInfo.imuneTo && <span>{t("combatAdmin.npcDetails.immunity")}: {ELEMENT_EMOTE[npcInfo.imuneTo] ?? ""} {getElementName(npcInfo.imuneTo)}</span>}
-                            {npcInfo.absorbElement && <span>{t("combatAdmin.npcDetails.absorb")}: {ELEMENT_EMOTE[npcInfo.absorbElement] ?? ""} {getElementName(npcInfo.absorbElement)}</span>}
+                    {npcInfo && (hasElement(npcInfo.weakTo) || hasElement(npcInfo.resistentTo) || hasElement(npcInfo.imuneTo) || hasElement(npcInfo.absorbElement)) && (
+                        <div className="flex flex-col gap-1 text-xs combat-elemental-row">
+                            {hasElement(npcInfo.weakTo) && (
+                                <div>
+                                    <span className="font-semibold">{t("combatAdmin.npcDetails.vulnerability")}:</span>
+                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                        {toElementArray(npcInfo.weakTo).map(el => (
+                                            <span key={el} className="badge badge-xs badge-warning gap-0.5">{ELEMENT_EMOTE[el]} {getElementName(el)}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {hasElement(npcInfo.resistentTo) && (
+                                <div>
+                                    <span className="font-semibold">{t("combatAdmin.npcDetails.resistance")}:</span>
+                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                        {toElementArray(npcInfo.resistentTo).map(el => (
+                                            <span key={el} className="badge badge-xs badge-info gap-0.5">{ELEMENT_EMOTE[el]} {getElementName(el)}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {hasElement(npcInfo.imuneTo) && (
+                                <div>
+                                    <span className="font-semibold">{t("combatAdmin.npcDetails.immunity")}:</span>
+                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                        {toElementArray(npcInfo.imuneTo).map(el => (
+                                            <span key={el} className="badge badge-xs badge-error gap-0.5">{ELEMENT_EMOTE[el]} {getElementName(el)}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            {hasElement(npcInfo.absorbElement) && (
+                                <div>
+                                    <span className="font-semibold">{t("combatAdmin.npcDetails.absorb")}:</span>
+                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                        {toElementArray(npcInfo.absorbElement).map(el => (
+                                            <span key={el} className="badge badge-xs badge-success gap-0.5">{ELEMENT_EMOTE[el]} {getElementName(el)}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -1363,14 +1400,14 @@ export default function CombatAdmin({
                                         <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
                                             <span>
                                                 <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>{" "}
-                                                {atk.description && <span className="italic opacity-90">{t(atk.description)} </span>}
+                                                {atk.description && <span className="italic opacity-90">{renderTextWithDiceButtons(t(atk.description), `${npcName} – ${actionName}`, diceBoardRef, timeoutDiceBoardRef)} </span>}
                                                 {hasDamage && (
                                                     <span className="italic opacity-90">
                                                         <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                         {" "}{t("combatAdmin.actionDesc.toHit")}
                                                         . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                         <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
-                                                        {atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                        {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                         {statusParts && statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                         .
                                                     </span>
@@ -1902,7 +1939,7 @@ export default function CombatAdmin({
                                                 });
                                             };
 
-                                            const hasElementalInfo = npc.weakTo || npc.resistentTo || npc.imuneTo || npc.absorbElement;
+                                            const hasElementalInfo = hasElement(npc.weakTo) || hasElement(npc.resistentTo) || hasElement(npc.imuneTo) || hasElement(npc.absorbElement);
                                             const hasDndExtras = (npc.damageVulnerabilities?.length ?? 0) > 0 || (npc.damageImmunities?.length ?? 0) > 0 || (npc.conditionImmunities?.length ?? 0) > 0;
                                             const hasChallenge = npc.challengeRating || npc.proficiencyBonus;
                                             const currentWeakPoints = battleChar?.freeShotWeakPoints ?? 0;
@@ -1933,18 +1970,46 @@ export default function CombatAdmin({
 
                                                     {/* Elemental Affinities */}
                                                     {hasElementalInfo && (
-                                                        <div className="flex flex-col gap-0.5 text-xs combat-elemental-row">
-                                                            {npc.weakTo && (
-                                                                <span>{t("combatAdmin.npcDetails.vulnerability")}: {ELEMENT_EMOTE[npc.weakTo] ?? ""} {getElementName(npc.weakTo)}</span>
+                                                        <div className="flex flex-col gap-1 text-xs combat-elemental-row">
+                                                            {hasElement(npc.weakTo) && (
+                                                                <div>
+                                                                    <span className="font-semibold">{t("combatAdmin.npcDetails.vulnerability")}:</span>
+                                                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                                                        {toElementArray(npc.weakTo).map(el => (
+                                                                            <span key={el} className="badge badge-xs badge-warning gap-0.5">{ELEMENT_EMOTE[el]} {getElementName(el)}</span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
                                                             )}
-                                                            {npc.resistentTo && (
-                                                                <span>{t("combatAdmin.npcDetails.resistance")}: {ELEMENT_EMOTE[npc.resistentTo] ?? ""} {getElementName(npc.resistentTo)}</span>
+                                                            {hasElement(npc.resistentTo) && (
+                                                                <div>
+                                                                    <span className="font-semibold">{t("combatAdmin.npcDetails.resistance")}:</span>
+                                                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                                                        {toElementArray(npc.resistentTo).map(el => (
+                                                                            <span key={el} className="badge badge-xs badge-info gap-0.5">{ELEMENT_EMOTE[el]} {getElementName(el)}</span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
                                                             )}
-                                                            {npc.imuneTo && (
-                                                                <span>{t("combatAdmin.npcDetails.immunity")}: {ELEMENT_EMOTE[npc.imuneTo] ?? ""} {getElementName(npc.imuneTo)}</span>
+                                                            {hasElement(npc.imuneTo) && (
+                                                                <div>
+                                                                    <span className="font-semibold">{t("combatAdmin.npcDetails.immunity")}:</span>
+                                                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                                                        {toElementArray(npc.imuneTo).map(el => (
+                                                                            <span key={el} className="badge badge-xs badge-error gap-0.5">{ELEMENT_EMOTE[el]} {getElementName(el)}</span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
                                                             )}
-                                                            {npc.absorbElement && (
-                                                                <span>{t("combatAdmin.npcDetails.absorb")}: {ELEMENT_EMOTE[npc.absorbElement] ?? ""} {getElementName(npc.absorbElement)}</span>
+                                                            {hasElement(npc.absorbElement) && (
+                                                                <div>
+                                                                    <span className="font-semibold">{t("combatAdmin.npcDetails.absorb")}:</span>
+                                                                    <div className="flex flex-wrap gap-1 mt-0.5">
+                                                                        {toElementArray(npc.absorbElement).map(el => (
+                                                                            <span key={el} className="badge badge-xs badge-success gap-0.5">{ELEMENT_EMOTE[el]} {getElementName(el)}</span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
                                                             )}
                                                         </div>
                                                     )}
@@ -2006,7 +2071,7 @@ export default function CombatAdmin({
                                                                 return (
                                                                     <div key={idx} className="leading-snug">
                                                                         <strong className="text-red-300">{actionName}.</strong>{" "}
-                                                                        <span className="italic opacity-90">{actionDesc}</span>
+                                                                        <span className="italic opacity-90">{renderTextWithDiceButtons(actionDesc, `${npc.name ?? ""} – ${actionName}`, diceBoardRef, timeoutDiceBoardRef)}</span>
                                                                     </div>
                                                                 );
                                                             })}

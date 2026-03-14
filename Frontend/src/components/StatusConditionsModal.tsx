@@ -14,7 +14,7 @@ const SELECTABLE_EFFECTS: StatusType[] = [
     "Unprotected", "Slowed", "Weakened", "Cursed",
     "Stunned", "Confused", "Frozen", "Entangled",
     "Exhausted", "Frenzy", "Rage",
-    "Inverted", "Marked", "Plagued", "Burning",
+    "Inverted", "Marked", "Blight", "Burning",
     "Silenced", "Dizzy", "Broken", "Fleeing",
     "FireVulnerability", "Guardian", "Foretell", "Twilight", "Powerless",
     "Rush", "Shield", "Powerful", "Shell",
@@ -65,8 +65,8 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
         prevOpen.current = open;
     }, [open, statuses]);
 
-    function updateStatus(index: number, changes: Partial<StatusResponse>) {
-        setEditingStatuses(prev => prev.map((s, i) => i === index ? { ...s, ...changes } : s));
+    function updateStatus(effectName: string, changes: Partial<StatusResponse>) {
+        setEditingStatuses(prev => prev.map(s => s.effectName === effectName ? { ...s, ...changes } : s));
     }
 
     function addNewEffect() {
@@ -117,10 +117,10 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                     {editingStatuses.length === 0 && (
                         <p className="text-sm opacity-60">Nenhuma condição ativa.</p>
                     )}
-                    {editingStatuses.map((st, idx) => {
+                    {[...editingStatuses].sort((a, b) => stripEmoji(getStatusLabel(a.effectName)).localeCompare(stripEmoji(getStatusLabel(b.effectName)))).map((st) => {
                         const showAmount = shouldShowStatusAmmount(st.effectName);
                         return (
-                            <div key={idx} className="rounded-lg bg-base-200 p-2 space-y-1">
+                            <div key={st.effectName} className="rounded-lg bg-base-200 p-2 space-y-1">
                                 <div className="flex items-center justify-between">
                                     <span
                                         className="text-sm font-medium cursor-pointer hover:text-primary transition-colors"
@@ -130,7 +130,7 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                                     </span>
                                     <button
                                         className="btn btn-xs btn-ghost text-error"
-                                        onClick={() => setEditingStatuses(prev => prev.filter((_, i) => i !== idx))}
+                                        onClick={() => setEditingStatuses(prev => prev.filter(s => s.effectName !== st.effectName))}
                                     >
                                         ✕
                                     </button>
@@ -150,8 +150,8 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                                                 min={1}
                                                 placeholder="1"
                                                 value={st.ammount === 0 ? "" : st.ammount}
-                                                onChange={e => updateStatus(idx, { ammount: e.target.value === "" ? 0 : (parseInt(e.target.value) || 0) })}
-                                                onBlur={e => { if (e.target.value === "" || parseInt(e.target.value) < 1) updateStatus(idx, { ammount: 1 }); }}
+                                                onChange={e => updateStatus(st.effectName, { ammount: e.target.value === "" ? 0 : (parseInt(e.target.value) || 0) })}
+                                                onBlur={e => { if (e.target.value === "" || parseInt(e.target.value) < 1) updateStatus(st.effectName, { ammount: 1 }); }}
                                             />
                                         </div>
                                     )}
@@ -164,8 +164,8 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                                             value={st.remainingTurns === null ? "" : (st.remainingTurns === 0 ? "" : st.remainingTurns)}
                                             disabled={st.remainingTurns === null}
                                             placeholder={st.remainingTurns === null ? "∞" : "1"}
-                                            onChange={e => updateStatus(idx, { remainingTurns: e.target.value === "" ? 0 : (parseInt(e.target.value) || 0) })}
-                                            onBlur={e => { if (st.remainingTurns !== null && (e.target.value === "" || parseInt(e.target.value) < 1)) updateStatus(idx, { remainingTurns: 1 }); }}
+                                            onChange={e => updateStatus(st.effectName, { remainingTurns: e.target.value === "" ? 0 : (parseInt(e.target.value) || 0) })}
+                                            onBlur={e => { if (st.remainingTurns !== null && (e.target.value === "" || parseInt(e.target.value) < 1)) updateStatus(st.effectName, { remainingTurns: 1 }); }}
                                         />
                                     </div>
                                     <label className="flex items-center gap-1 text-xs cursor-pointer">
@@ -173,7 +173,7 @@ export function StatusConditionsModal({ open, onClose, battleCharacterId, status
                                             type="checkbox"
                                             className="checkbox checkbox-xs"
                                             checked={st.remainingTurns === null}
-                                            onChange={e => updateStatus(idx, { remainingTurns: e.target.checked ? null : 3 })}
+                                            onChange={e => updateStatus(st.effectName, { remainingTurns: e.target.checked ? null : 3 })}
                                         />
                                         Sem limite
                                     </label>
