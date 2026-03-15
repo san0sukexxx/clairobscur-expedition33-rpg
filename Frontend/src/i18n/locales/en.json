@@ -174,7 +174,7 @@
     },
     "death-bomb": {
       "name": "Death Bomb",
-      "description": "On Death, deal damage to all enemies."
+      "description": "On Death, deal 3d6 damage to all enemies."
     },
     "energising-death": {
       "name": "Energising Death",
@@ -254,7 +254,7 @@
     },
     "sniper": {
       "name": "Sniper",
-      "description": "First Free Aim shot each turn deals +5d6 damage and can Break."
+      "description": "First Free Aim shot each turn deals +3d6 damage. Can pay 2 MP to attempt Break. Dexterity test vs target's Dexterity."
     },
     "energising-attack-ii": {
       "name": "Energising Attack II",
@@ -286,7 +286,7 @@
     },
     "critical-moment": {
       "name": "Critical Moment",
-      "description": "+2d6 Critical Chance bonus if Health is below half max HP."
+      "description": "-2 to Critical Hit range if Health is below half max HP."
     },
     "warming-up": {
       "name": "Warming Up",
@@ -510,7 +510,7 @@
     },
     "staggering-attack": {
       "name": "Staggering Attack",
-      "description": "+2d6 Break damage on Base Attack."
+      "description": "+4 to rolls to cause and resist Break."
     },
     "energising-break": {
       "name": "Energising Break",
@@ -606,7 +606,7 @@
     },
     "critical-burn": {
       "name": "Critical Burn",
-      "description": "Can land critical hits by rolling a 5 on the die if target is Burning."
+      "description": "-1 to Critical Hit range against Burning targets."
     },
     "burning-death": {
       "name": "Burning Death",
@@ -622,15 +622,15 @@
     },
     "critical-weakness": {
       "name": "Critical Weakness",
-      "description": "+1d6 Critical Chance bonus on Weakness."
+      "description": "-1 to Critical Hit range when hitting Weakness."
     },
     "critical-stun": {
       "name": "Critical Stun",
-      "description": "Increased critical hit chance against stunned enemies."
+      "description": "-1 to Critical Hit range against Stunned or Broken enemies."
     },
     "critical-vulnerability": {
       "name": "Critical Vulnerability",
-      "description": "+1d6 Critical Chance bonus on Unprotected enemies."
+      "description": "-1 to Critical Hit range against Unprotected enemies."
     },
     "empowering-dodge": {
       "name": "Empowering Dodge",
@@ -722,7 +722,7 @@
     },
     "breaking-attack": {
       "name": "Breaking Attack",
-      "description": "Base Attack can Break."
+      "description": "Can pay 3 MP on Basic Attack to attempt Break. Test your main attribute vs target's Constitution."
     },
     "anti-charm": {
       "name": "Anti-Charm",
@@ -1946,7 +1946,10 @@
         "summonJars": "Can summon 2 Jars as a bonus action. Can only have a maximum of 2 Jars at the same time.",
         "destroyJarsWithFreeShots": "Its Jars can be destroyed with free shots.",
         "orbitingOrbs": "Has 3 orbs orbiting around it, which are its weak points. Destroying an orb grants 2 shields to its allies.",
-        "floatingLamps": "Has 4 floating lamps that can be hit with free shots."
+        "floatingLamps": "Has 4 floating lamps that can be hit with free shots.",
+        "lampDamage": "Destroying a floating lamp deals the same damage to the Lampmaster.",
+        "noFloatingLamps": "This form does not have floating lamps.",
+        "lightSwordRitual": "Light Sword can only be used after completing Dark Ritual. Causing a break prevents the ritual from being completed."
       },
       "npcAttacks": {
         "invisibleWall": "Invisible Wall",
@@ -2137,6 +2140,8 @@
         "swordCombo": "Sword Combo",
         "swordComboDesc": "High intensity.",
         "swordComboQuantity": "2 to 3 hits",
+        "swordComboLampmasterDesc": "High intensity. Causes Dizzy for 2 turns.",
+        "swordComboLampmasterQuantity": "3 to 4 hits",
         "tripleCombo": "3-Hit Combo",
         "tripleComboDesc": "High intensity. Three consecutive strikes.",
         "flightCollision": "Flight Collision",
@@ -2200,12 +2205,23 @@
         "freezingSwordComboDesc": "Very high intensity. 3 Ice strikes that hit all enemies.",
         "blazingSwordCombo": "Blazing Sword Combo",
         "blazingSwordComboDesc": "High intensity. The sword ignites. 4 Fire strikes that hit all enemies. Applies Burning for 1 turn.",
-        "darkCombo": "Dark Combo",
-        "darkComboDesc": "High intensity. 3 Dark magic strikes that hit all enemies.",
+
         "lampBlast": "Lamp Blast",
-        "lampBlastDesc": "High intensity. 1 Light attack per floating lamp not destroyed.",
+        "lampBlastDesc": "High intensity. 1 Light attack per floating lamp not destroyed. Rekindles all 4 lamps.",
         "fourHandsDarkness": "Four Hands Darkness",
-        "fourHandsDarknessDesc": "Very high intensity. 1 Dark magic attack. Hits all enemies."
+        "fourHandsDarknessDesc": "Very high intensity. 1 Dark magic attack. Hits all enemies.",
+        "darknessPunch": "Darkness Punch",
+        "darknessPunchDesc": "High intensity. 1 Dark punch. Causes Exhaustion for 2 turns.",
+        "quickDash": "Quick Dash",
+        "quickDashDesc": "Medium intensity. 1 quick dash toward the player. Applies Unprotected for 2 turns.",
+        "giantLightBall": "Giant Light Ball",
+        "giantLightBallDesc": "Very high intensity. 1 huge Light sphere. Hits all opponents. Causes Silenced for 2 turns.",
+        "darkRitual": "Dark Ritual",
+        "darkRitualDesc": "Bonus action. Lampmaster receives the Charging status.",
+        "lightSword": "Light Sword",
+        "lightSwordDesc": "Very high intensity. 1 Light sword attack. Hits all opponents.",
+        "swordFlurry": "Sword Flurry",
+        "swordFlurryDesc": "High intensity. 4 sword strikes on a single target. The last hit causes Exhaustion for 2 turns."
       },
       "createCombat": "Create combat",
       "creating": "Creating...",
@@ -3773,6 +3789,8 @@
         "attackFormulaDetail": "= Ability Modifier + Proficiency Bonus + Weapon Power Bonus",
         "damageFormula": "Damage Bonus",
         "damageFormulaDetail": "= Ability Modifier + Weapon Power Bonus (no proficiency)",
+        "criticalHits": "Critical Hits",
+        "criticalHitsText": "A Critical Hit occurs when a player rolls a natural 20 on the d20 attack roll. The attack automatically hits regardless of the target's AC, and all damage dice are doubled (e.g., if damage is 2d6+3, roll 4d6+3). Some Pictos and weapon passives reduce the range needed for a critical (e.g., -1 makes it crit on 19 or 20, -2 on 18, 19 or 20). These effects stack. A natural 1 on the d20 is always an automatic miss regardless of bonuses.",
         "armorClass": "Armor Class (AC)",
         "armorClassText": "AC = 10 + Dexterity Modifier + Weapon Defense Bonus + Picto Defense Bonus. NPCs have fixed AC defined in their stat blocks.",
         "defenseTypes": "Defense Types",
@@ -3866,7 +3884,7 @@
           "dizzy": "Dizzy",
           "dizzyDesc": "-4 to free shot attack roll. Damage is not affected.",
           "broken": "Broken",
-          "brokenDesc": "Cannot defend or act.",
+          "brokenDesc": "Cannot defend or act. Broken enemies are considered Stunned for any effect that references the Stunned status.",
           "burning": "Burning",
           "burningDesc": "Takes 1d6 Fire damage per turn.",
           "blight": "Blight",
@@ -3936,6 +3954,8 @@
         "yourTurnText": "On your turn, you can: attack an enemy (basic attack or special ability), use an item, or perform another action. Special abilities cost MP.",
         "attacking": "Attacking",
         "attackingText": "To attack, roll 1d20 + your attack bonus. If the result equals or exceeds the target's AC, you hit. Then roll your damage dice + bonuses. Free shot attacks automatically hit when targeting weak points.",
+        "criticalHits": "Critical Hits",
+        "criticalHitsText": "A Critical Hit occurs when you roll a natural 20 on the d20 attack roll. The attack automatically hits and all damage dice are doubled (e.g., if damage is 2d6+3, roll 4d6+3). Some Pictos and weapon passives reduce the range needed for a critical (e.g., -1 makes it crit on 19 or 20, -2 on 18, 19 or 20). These effects stack. A natural 1 on the d20 is always an automatic miss.",
         "intensity": "Attack Intensity",
         "intensityText": "An attack's intensity determines how many damage dice are rolled:",
         "intensityLevel": {
@@ -4005,7 +4025,7 @@
           "burning": "Burning",
           "burningDesc": "Takes 1d6 Fire damage at the start of each turn.",
           "broken": "Broken",
-          "brokenDesc": "Cannot defend or act.",
+          "brokenDesc": "Cannot defend or act. Broken enemies are considered Stunned for any effect that references the Stunned status.",
           "blight": "Blight",
           "blightDesc": "Your max HP decreases by 5 (stacks)."
         },

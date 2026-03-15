@@ -1453,7 +1453,8 @@ const NPCsBaseData: NPCBaseData[] = [
     {
         id: "lampmaster-phase1",
         isBoss: true,
-        passives: ["combatAdmin.npcPassives.floatingLamps"],
+        playFirst: true,
+        passives: ["combatAdmin.npcPassives.floatingLamps", "combatAdmin.npcPassives.lampDamage"],
         strength:     10,
         dexterity:    13,
         constitution: 12,
@@ -1466,15 +1467,19 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 4 },
-            { type: "skill", name: "combatAdmin.npcAttacks.darkCombo", description: "combatAdmin.npcAttacks.darkComboDesc", additionalDamage: 5, additionalDices: 1, quantity: 3, element: "Dark", targetsAll: true },
+
             { type: "skill", name: "combatAdmin.npcAttacks.lampBlast", description: "combatAdmin.npcAttacks.lampBlastDesc", additionalDamage: 5, additionalDices: 1, quantity: 4, element: "Light" },
-            { type: "skill", name: "combatAdmin.npcAttacks.swordCombo", description: "combatAdmin.npcAttacks.swordComboDesc", additionalDamage: 4, additionalDices: 1, quantity: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.swordCombo", description: "combatAdmin.npcAttacks.swordComboLampmasterDesc", additionalDamage: 4, additionalDices: 1, quantityText: "combatAdmin.npcAttacks.swordComboLampmasterQuantity", statusList: [{ type: "Dizzy", ammount: 1, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.fourHandsDarkness", description: "combatAdmin.npcAttacks.fourHandsDarknessDesc", additionalDamage: 8, additionalDices: 3, element: "Dark", targetsAll: true },
+            { type: "skill", name: "combatAdmin.npcAttacks.darknessPunch", description: "combatAdmin.npcAttacks.darknessPunchDesc", additionalDamage: 6, additionalDices: 2, element: "Dark", statusList: [{ type: "Exhausted", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.quickDash", description: "combatAdmin.npcAttacks.quickDashDesc", additionalDamage: 3, additionalDices: 1, statusList: [{ type: "Unprotected", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {
         id: "lampmaster-phase2",
         isBoss: true,
+        playFirst: true,
+        passives: ["combatAdmin.npcPassives.noFloatingLamps", "combatAdmin.npcPassives.lightSwordRitual"],
         strength:     14,
         dexterity:    16,
         constitution: 16,
@@ -1488,6 +1493,10 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 3,
         attackList: [
             { type: "basic", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.giantLightBall", description: "combatAdmin.npcAttacks.giantLightBallDesc", additionalDamage: 10, additionalDices: 3, element: "Light", targetsAll: true, statusList: [{ type: "Silenced", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.darkRitual", description: "combatAdmin.npcAttacks.darkRitualDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.lightSword", description: "combatAdmin.npcAttacks.lightSwordDesc", additionalDamage: 10, additionalDices: 3, element: "Light", targetsAll: true },
+            { type: "skill", name: "combatAdmin.npcAttacks.swordFlurry", description: "combatAdmin.npcAttacks.swordFlurryDesc", additionalDamage: 6, additionalDices: 1, quantity: 4, statusList: [{ type: "Exhausted", ammount: 1, remainingTurns: 2 }] },
         ],
         drops: { pictos: ["at-deaths-door"] },
     },
