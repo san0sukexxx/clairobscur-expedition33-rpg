@@ -76,6 +76,7 @@ export interface BattleCharacterInfo {
     hitsTakenThisTurn?: number;
     foretellConsumedTotal?: number;
     freeShotWeakPoints?: number;
+    breakCount?: number;
 }
 
 export type RewardType = "weapon" | "picto";

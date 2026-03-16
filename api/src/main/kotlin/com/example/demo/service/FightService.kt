@@ -94,7 +94,8 @@ class FightService(
                                         parriesThisTurn = bc.parriesThisTurn,
                                         hitsTakenThisTurn = bc.hitsTakenThisTurn,
                                         foretellConsumedTotal = bc.foretellConsumedTotal,
-                                        freeShotWeakPoints = bc.freeShotWeakPoints
+                                        freeShotWeakPoints = bc.freeShotWeakPoints,
+                                        breakCount = bc.breakCount
                                 )
                         }
 

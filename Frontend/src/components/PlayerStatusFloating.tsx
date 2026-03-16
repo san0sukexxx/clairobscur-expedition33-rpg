@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { FaEdit, FaDice } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIBattle } from "../api/APIBattle";
@@ -54,6 +55,11 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
         setFlashSlots(changed);
         setTimeout(() => setFlashSlots([false, false, false, false]), 800);
     }
+
+
+    // Break edit modal
+    const [breakEditOpen, setBreakEditOpen] = useState(false);
+    const [editBreakValue, setEditBreakValue] = useState(0);
 
     // Conditions modal
     const [conditionsOpen, setConditionsOpen] = useState(false);
@@ -207,8 +213,17 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                             label="HP"
                             fillClass="bg-error"
                             ghostClass="bg-error/30"
+                            breakMarkers={[
+                                { position: 66, triggered: (ch.breakCount ?? 0) >= 1 },
+                                { position: 33, triggered: (ch.breakCount ?? 0) >= 2 },
+                            ]}
                         />
                     </div>
+                    <button
+                        className="btn btn-xs btn-ghost text-warning p-0"
+                        onClick={() => { setEditBreakValue(2 - (ch.breakCount ?? 0)); setBreakEditOpen(true); }}
+                        title={t("combatAdmin.labels.breakEditTitle")}
+                    >💥</button>
 
                     {ch.magicPoints !== undefined &&
                         ch.magicPoints !== null &&
@@ -441,7 +456,8 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                 })()}
             </div>
 
-            {/* ---- Modals ---- */}
+            {/* ---- Modals (portaled to body) ---- */}
+            {createPortal(<>
 
             {/* HP */}
             <HpEditModal
@@ -705,6 +721,45 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     <div className="modal-backdrop" onClick={closeEdit} />
                 </dialog>
             )}
+
+            {/* Break edit */}
+            {breakEditOpen && (() => {
+                const currentRemaining = 2 - (ch.breakCount ?? 0);
+                const newBreakCount = 2 - editBreakValue;
+                const oldBreakCount = ch.breakCount ?? 0;
+                return (
+                    <dialog className="modal modal-open" style={{ zIndex: 9999 }}>
+                        <div className="modal-box max-w-xs">
+                            <h3 className="font-bold text-lg">{t("combatAdmin.labels.breakEditTitle")}</h3>
+                            <p className="text-sm opacity-70 mb-4">{ch.name}</p>
+                            <div className="flex items-center justify-center gap-4">
+                                <button className="btn btn-circle btn-sm" disabled={editBreakValue <= 0} onClick={() => setEditBreakValue(v => Math.max(0, v - 1))}>−</button>
+                                <div className="flex gap-2">
+                                    {[0, 1].map(i => (
+                                        <div key={i} className={`w-4 h-8 rounded border-2 ${i < editBreakValue ? "bg-yellow-400 border-yellow-500 shadow-[0_0_6px_rgba(250,204,21,0.9)]" : "border-gray-500/60 bg-gray-400/15"}`} />
+                                    ))}
+                                </div>
+                                <button className="btn btn-circle btn-sm" disabled={editBreakValue >= 2} onClick={() => setEditBreakValue(v => Math.min(2, v + 1))}>+</button>
+                            </div>
+                            <p className="text-center text-xs opacity-50 mt-2">{editBreakValue}/2</p>
+                            <div className="modal-action">
+                                <button className="btn btn-ghost btn-sm" onClick={() => setBreakEditOpen(false)}>{t("common.cancel")}</button>
+                                <button className="btn btn-warning btn-sm" disabled={editBreakValue === currentRemaining} onClick={async () => {
+                                    await APIBattle.updateBreakCount(ch.battleID, newBreakCount);
+                                    if (newBreakCount > oldBreakCount) {
+                                        await APIBattle.addStatus({ battleCharacterId: ch.battleID, effectType: "Broken", ammount: 1, remainingTurns: 1 });
+                                    }
+                                    requestPlayerRefresh();
+                                    setBreakEditOpen(false);
+                                }}>{t("combatAdmin.labels.confirm")}</button>
+                            </div>
+                        </div>
+                        <div className="modal-backdrop" onClick={() => setBreakEditOpen(false)} />
+                    </dialog>
+                );
+            })()}
+
+            </>, document.body)}
         </div>
     );
 }

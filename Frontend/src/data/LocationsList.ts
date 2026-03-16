@@ -111,7 +111,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "forgotten-battlefield",
-        residentNpcIds: ["chalier", "petank-battlefield", "ramasseur", "troubadour", "cruler-battlefield", "dualliste", "chromatic-luster"],
+        residentNpcIds: ["chalier", "petank-battlefield", "ramasseur", "troubadour", "cruler-battlefield", "dualliste-phase1", "dualliste-phase2", "chromatic-luster"],
         referenceNpcNames: ["Fading Woman", "Kasumi"],
         loot: [
             { type: "weapon", itemId: "troubadim", level: 1 },
@@ -315,7 +315,7 @@ export const LocationsList: LocationInfo[] = [
     {
         id: "endless-tower",
         residentNpcIds: [
-            "gault", "luster", "ramasseur", "potier", "steel-chevaliere", "greatsword-cultist", "dualliste",
+            "gault", "luster", "ramasseur", "potier", "steel-chevaliere", "greatsword-cultist", "dualliste-phase1", "dualliste-phase2",
             "troubadour", "demineur", "benisseur", "volester", "reaper-cultist", "ballet", "chapelier",
             "lampmaster-phase1", "lampmaster-phase2", "echassier", "hexga", "cruler", "chromatic-benisseur", "boucheclier", "clair",
             "chromatic-abbest", "goblu", "chromatic-orphelin", "ceramic-chevaliere", "bourgeon", "jar",
@@ -381,7 +381,7 @@ export const LocationsList: LocationInfo[] = [
             "ceramic-chevaliere", "reaper-cultist", "lancer", "ramasseur", "abbest", "glaise",
             "greatsword-cultist", "petank-flying-manor", "bourgeon", "steel-chevaliere", "gold-chevaliere",
             "mime", "sapling", "stalact", "grosse-tete",
-            "gargant", "lampmaster-phase1", "lampmaster-phase2", "flame-eveque", "frost-eveque", "thunder-eveque", "goblu", "dualliste", "clea",
+            "gargant", "lampmaster-phase1", "lampmaster-phase2", "flame-eveque", "frost-eveque", "thunder-eveque", "goblu", "dualliste-phase1", "dualliste-phase2", "clea",
         ],
         referenceNpcNames: ["Gestral", "Young Boy", "Faceless Boy", "Fusoka"],
         loot: [

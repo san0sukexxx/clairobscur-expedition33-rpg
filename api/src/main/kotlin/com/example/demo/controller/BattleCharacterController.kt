@@ -201,6 +201,15 @@ class BattleCharacterController(private val service: BattleCharacterService) {
         return ResponseEntity.noContent().build()
     }
 
+    @PutMapping("/characters/{id}/break-count")
+    fun updateBreakCount(
+            @PathVariable id: Int,
+            @RequestBody body: com.example.demo.dto.UpdateBreakCountRequest
+    ): ResponseEntity<Void> {
+        service.updateBreakCount(id, body.breakCount)
+        return ResponseEntity.noContent().build()
+    }
+
     @PutMapping("/characters/{id}/bestial-wheel-position")
     fun updateBestialWheelPosition(
             @PathVariable id: Int,

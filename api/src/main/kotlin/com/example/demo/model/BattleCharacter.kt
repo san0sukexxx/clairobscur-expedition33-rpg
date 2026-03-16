@@ -36,5 +36,7 @@ data class BattleCharacter(
         @Column(name = "foretell_consumed_total", nullable = false)
         var foretellConsumedTotal: Int = 0,  // Total Foretell consumed since battle start (for End Slice)
         @Column(name = "free_shot_weak_points", nullable = false)
-        var freeShotWeakPoints: Int = 0
+        var freeShotWeakPoints: Int = 0,
+        @Column(name = "break_count", nullable = false)
+        var breakCount: Int = 0
 )

@@ -287,6 +287,13 @@ export class APIBattle {
         )
     }
 
+    static async updateBreakCount(id: number, breakCount: number): Promise<void> {
+        await api.put<{ breakCount: number }, void>(
+            `battles/characters/${id}/break-count`,
+            { breakCount }
+        )
+    }
+
     static async updateBestialWheelPosition(id: number, newPosition: number): Promise<void> {
         await api.put<{ newPosition: number }, void>(
             `battles/characters/${id}/bestial-wheel-position`,

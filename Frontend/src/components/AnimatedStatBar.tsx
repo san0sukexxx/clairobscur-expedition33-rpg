@@ -1,6 +1,13 @@
 // AnimatedStatBar.tsx
 import React from "react";
 
+type BreakMarker = {
+    /** Position as percentage (0-100) */
+    position: number;
+    /** Whether this break has already been triggered */
+    triggered: boolean;
+};
+
 type Props = {
     value: number;
     label?: string;
@@ -10,6 +17,7 @@ type Props = {
     fillDurationMs?: number;
     ghostDurationMs?: number;
     ghostDelayMs?: number;
+    breakMarkers?: BreakMarker[];
 };
 
 function clamp01To100(v: number) {
@@ -26,6 +34,7 @@ export default function AnimatedStatBar({
     fillDurationMs = 450,
     ghostDurationMs = 1200,
     ghostDelayMs = 250,
+    breakMarkers,
 }: Props) {
     const v = clamp01To100(value);
     const [ghost, setGhost] = React.useState<number>(v);
@@ -63,24 +72,39 @@ export default function AnimatedStatBar({
         ? { width: `${ghost}%` }
         : { width: `${ghost}%`, transition: `width ${ghostDurationMs}ms ease-in-out` };
 
+    const hasBreakMarkers = breakMarkers?.some(m => !m.triggered);
+
     return (
-        <div
-            className={`relative h-2 w-full overflow-hidden rounded-full ${trackClass}`}
-            role="progressbar"
-            aria-label={label}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(v)}
-        >
+        <div className="relative w-full" style={hasBreakMarkers ? { paddingTop: "4px", paddingBottom: "4px" } : undefined}>
             <div
-                className={`absolute left-0 top-0 h-full rounded-full ${ghostClass}`}
-                style={ghostStyle}
-                aria-hidden
-            />
-            <div
-                className={`relative h-full rounded-full ${fillClass}`}
-                style={fillStyle}
-            />
+                className={`relative h-2 w-full overflow-hidden rounded-full ${trackClass}`}
+                role="progressbar"
+                aria-label={label}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(v)}
+            >
+                <div
+                    className={`absolute left-0 top-0 h-full rounded-full ${ghostClass}`}
+                    style={ghostStyle}
+                    aria-hidden
+                />
+                <div
+                    className={`relative h-full rounded-full ${fillClass}`}
+                    style={fillStyle}
+                />
+            </div>
+            {breakMarkers?.map((marker, i) =>
+                !marker.triggered && (
+                    <div
+                        key={i}
+                        className="absolute pointer-events-none"
+                        style={{ left: `${marker.position}%`, top: 0, bottom: 0, transform: "translateX(-50%)", width: "2px", zIndex: 10 }}
+                    >
+                        <div className="w-0.5 h-full mx-auto bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.9)]" />
+                    </div>
+                )
+            )}
         </div>
     );
 }

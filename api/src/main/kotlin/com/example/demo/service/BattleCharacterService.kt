@@ -617,6 +617,21 @@ class BattleCharacterService(
         }
 
         @Transactional
+        fun updateBreakCount(id: Int, newBreakCount: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+                entity.breakCount = newBreakCount.coerceIn(0, 2)
+                repository.save(entity)
+
+                val battleId = entity.battleId
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "BREAK_COUNT_CHANGED", eventJson = """{"characterId":${entity.id},"breakCount":${entity.breakCount}}""")
+                )
+        }
+
         fun updateFreeShotWeakPoints(id: Int, newWeakPoints: Int) {
                 val opt = repository.findById(id)
                 if (opt.isEmpty) return
