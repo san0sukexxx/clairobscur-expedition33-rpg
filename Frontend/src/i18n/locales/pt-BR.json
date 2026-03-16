@@ -1928,6 +1928,9 @@
       "noStains": "Nenhuma",
       "stainOf": "Mancha de {element}",
       "emptySlot": "Slot Vazio",
+      "stainChooseElement": "Adicionar mancha do elemento",
+      "stainRandom": "Adicionar mancha aleatória",
+      "stainRandomButton": "Mancha aleatória",
       "victoryTitle": "Vitória!",
       "noRewards": "Nenhuma recompensa foi obtida nesta batalha.",
       "rewardsEarned": "Você conquistou as seguintes recompensas:",
@@ -1997,7 +2000,8 @@
         "floatingLamps": "Possui 4 lâmpadas flutuantes que podem ser atingidas com tiro livre.",
         "lampDamage": "Destruir uma lâmpada flutuante causa o mesmo dano ao Lampmaster.",
         "noFloatingLamps": "Esta forma não possui as lâmpadas flutuantes.",
-        "lightSwordRitual": "Espada de Luz só pode ser usada após concluir o Ritual Sombrio. Causar quebra impede o ritual de ser concluído."
+        "lightSwordRitual": "Espada de Luz só pode ser usada após concluir o Ritual Sombrio. Causar quebra impede o ritual de ser concluído.",
+        "weaponVariation": "Para efeitos visuais, sua arma pode variar entre espada, lança e martelo."
       },
       "npcAttacks": {
         "invisibleWall": "Parede Invisível",
@@ -2092,6 +2096,11 @@
         "divineHeal": "Cura Divina",
         "divineHealDesc": "Concede Regeneração aos aliados.",
         "blindingGlow": "Brilho Cegante",
+        "fireCharge": "Investida de Fogo",
+        "blazingCombo": "Combo Flamejante",
+        "blazingRush": "Investidas Flamejantes",
+        "absorbFlames": "Absorver Chamas",
+        "absorbFlamesDesc": "Absorve todas as queimaduras de todos os personagens na batalha. Se cura em {{dice}} por queimadura absorvida.",
         "tripleRush": "Corrida Tripla",
         "tripleRushDesc": "Intensidade alta. Avança em até 3 alvos, atacando cada um.",
         "doubleCharge": "Investida Dupla",

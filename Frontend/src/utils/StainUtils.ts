@@ -41,44 +41,39 @@ export function hasAllElementalStains(character: BattleCharacterInfo): boolean {
  * Returns the new stain slots
  *
  * Rules when all 4 slots are full:
- * - Light stains have priority: replace first non-Light stain
- * - Non-Light stains are lost if no empty slot is available
- * - Light stains are NEVER replaced automatically
- * - If all 4 slots are Light, new stains are lost
- * - Light stains are processed FIRST to ensure they get priority
+ * - Any new stain replaces a random slot
  */
+export interface AddStainsResult {
+    stains: [StainType | null, StainType | null, StainType | null, StainType | null];
+    changedSlots: boolean[];
+}
+
 export function addStains(
     currentStains: [StainType | null, StainType | null, StainType | null, StainType | null],
     stainsToAdd: StainType[]
-): [StainType | null, StainType | null, StainType | null, StainType | null] {
+): AddStainsResult {
     const stains = [...currentStains];
+    const changedSlots = [false, false, false, false];
 
-    // Separate Light and non-Light stains
-    const lightStains = stainsToAdd.filter(s => s === "Light");
-    const nonLightStains = stainsToAdd.filter(s => s !== "Light");
-
-    // Process Light stains first, then non-Light stains
-    const orderedStains = [...lightStains, ...nonLightStains];
-
-    for (const stain of orderedStains) {
+    for (const stain of stainsToAdd) {
         // First, try to find an empty slot
         const emptyIndex = stains.findIndex(s => s === null);
         if (emptyIndex !== -1) {
             stains[emptyIndex] = stain;
+            changedSlots[emptyIndex] = true;
             continue;
         }
 
-        // No empty slot: only Light has priority to replace non-Light stains
-        if (stain === "Light") {
-            const replaceableIndex = stains.findIndex(s => s !== null && s !== "Light");
-            if (replaceableIndex !== -1) {
-                stains[replaceableIndex] = stain;
-            }
-        }
-        // Non-Light stains are lost if all slots are full
+        // No empty slot: replace a random stain
+        const randomIndex = Math.floor(Math.random() * 4);
+        stains[randomIndex] = stain;
+        changedSlots[randomIndex] = true;
     }
 
-    return [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null] as [StainType | null, StainType | null, StainType | null, StainType | null];
+    return {
+        stains: [stains[0] ?? null, stains[1] ?? null, stains[2] ?? null, stains[3] ?? null] as [StainType | null, StainType | null, StainType | null, StainType | null],
+        changedSlots,
+    };
 }
 
 /**

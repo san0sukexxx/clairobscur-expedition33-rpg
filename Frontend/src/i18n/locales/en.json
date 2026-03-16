@@ -1880,6 +1880,9 @@
       "noStains": "None",
       "stainOf": "{element} Stain",
       "emptySlot": "Empty Slot",
+      "stainChooseElement": "Add element stain",
+      "stainRandom": "Add random stain",
+      "stainRandomButton": "Random stain",
       "charge": "Charge",
       "gradient": "Gradient",
       "gradientCharges": "Gradient Charges",
@@ -1949,7 +1952,8 @@
         "floatingLamps": "Has 4 floating lamps that can be hit with free shots.",
         "lampDamage": "Destroying a floating lamp deals the same damage to the Lampmaster.",
         "noFloatingLamps": "This form does not have floating lamps.",
-        "lightSwordRitual": "Light Sword can only be used after completing Dark Ritual. Causing a break prevents the ritual from being completed."
+        "lightSwordRitual": "Light Sword can only be used after completing Dark Ritual. Causing a break prevents the ritual from being completed.",
+        "weaponVariation": "For visual purposes, its weapon can vary between sword, lance, and hammer."
       },
       "npcAttacks": {
         "invisibleWall": "Invisible Wall",
@@ -2044,6 +2048,11 @@
         "divineHeal": "Divine Heal",
         "divineHealDesc": "Grants Regeneration to allies.",
         "blindingGlow": "Blinding Glow",
+        "fireCharge": "Fire Charge",
+        "blazingCombo": "Blazing Combo",
+        "blazingRush": "Blazing Rush",
+        "absorbFlames": "Absorb Flames",
+        "absorbFlamesDesc": "Absorbs all burns from all characters in battle. Heals {{dice}} per burn absorbed.",
         "tripleRush": "Triple Rush",
         "tripleRushDesc": "High intensity. Charges at up to 3 targets, attacking each one.",
         "doubleCharge": "Double Charge",

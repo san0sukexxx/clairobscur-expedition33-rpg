@@ -21,7 +21,7 @@ function CompactCard({ entry }: { entry: RollEvent }) {
     );
 }
 
-function ExpandedCard({ entry }: { entry: RollEvent }) {
+function ExpandedCard({ entry, onClose }: { entry: RollEvent; onClose: () => void }) {
     const diceStr = entry.diceValues
         ? entry.diceValues.join("+")
         : String(entry.diceRolled);
@@ -44,9 +44,18 @@ function ExpandedCard({ entry }: { entry: RollEvent }) {
                 boxShadow: `0 0 18px ${GLOW}, inset 0 0 8px rgba(34,211,238,0.04)`,
             }}
         >
-            <p className="text-[11px] font-extrabold text-success tracking-widest uppercase mb-2">
-                {entry.label}
-            </p>
+            <div className="flex items-center justify-between mb-2">
+                <p className="text-[11px] font-extrabold text-success tracking-widest uppercase">
+                    {entry.label}
+                </p>
+                <button
+                    onClick={(e) => { e.stopPropagation(); onClose(); }}
+                    className="btn btn-ghost btn-xs btn-circle opacity-50 hover:opacity-100 -mr-1 -mt-1"
+                    aria-label="Close"
+                >
+                    ✕
+                </button>
+            </div>
             <div className="flex items-center gap-2 min-w-0">
                 <GiDiceTwentyFacesTwenty className="text-3xl opacity-50 shrink-0" />
                 <span className={`${formulaSize} font-black tabular-nums break-all min-w-0`}>{formula}</span>
@@ -105,7 +114,7 @@ export function RollHistoryToast() {
                             transition={{ duration: 0.22, ease: "easeOut" }}
                         >
                             {isLatest
-                                ? <ExpandedCard entry={entry} />
+                                ? <ExpandedCard entry={entry} onClose={() => { setVisible(false); setHistory([]); }} />
                                 : <CompactCard entry={entry} />
                             }
                         </motion.div>

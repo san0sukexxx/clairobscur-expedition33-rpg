@@ -140,6 +140,13 @@ export function usePlayerPolling({
     return () => clearInterval(id);
   }, [checkPlayerLoop]);
 
+  // Listen for manual refresh requests
+  useEffect(() => {
+    const handler = () => { void checkPlayerLoop(); };
+    window.addEventListener("player-refresh", handler);
+    return () => window.removeEventListener("player-refresh", handler);
+  }, [checkPlayerLoop]);
+
   return {
     checkPlayerLoop,
     wasMasterEditing
