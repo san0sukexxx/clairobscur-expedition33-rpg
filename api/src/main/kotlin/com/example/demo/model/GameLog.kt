@@ -7,7 +7,7 @@ import jakarta.persistence.*
 data class GameLog(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int? = null,
     @Column(name = "campaign_id", nullable = false) val campaignId: Int,
-    @Column(name = "player_id", nullable = false) val playerId: Int,
+    @Column(name = "player_id") val playerId: Int? = null,
     @Column(name = "roll_type", nullable = false) val rollType: String,
     @Column(name = "ability_key") val abilityKey: String? = null,
     @Column(name = "skill_id") val skillId: String? = null,

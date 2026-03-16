@@ -13,6 +13,7 @@ import { getAbilityModifier } from "../utils/AttackCalculator"
 import { getElementName, ELEMENT_EMOTE, hasElement, toElementArray } from "../utils/ElementUtils"
 import { dispatchRoll } from "../utils/rollDispatcher"
 import { diceTotal } from "../utils/DiceCalculator"
+import { APIGameLog } from "../api/APIGameLog"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP, calculateArmorClass } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById, handleNpcImgError } from "../utils/NpcUtils"
 import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType } from "../api/ResponseModel"
@@ -1123,6 +1124,14 @@ export default function CombatAdmin({
                                     diceCommand: `1d20${mod >= 0 ? "+" : ""}${mod}`,
                                     diceValues,
                                 });
+                                APIGameLog.createForCampaign(campaignInfo.id, {
+                                    rollType: "customRoll",
+                                    abilityKey: `${npcInfo.name} - ${abilityLabel}`,
+                                    diceRolled: rawTotal,
+                                    modifier: mod,
+                                    total: rawTotal + mod,
+                                    diceCommand: `1d20${mod >= 0 ? "+" : ""}${mod}`,
+                                });
                                 if (timeoutDiceBoardRef.current != null) {
                                     clearTimeout(timeoutDiceBoardRef.current);
                                 }
@@ -1301,6 +1310,14 @@ export default function CombatAdmin({
                                     diceCommand: `${diceCmd}${modifier >= 0 ? "+" : ""}${modifier}`,
                                     diceValues,
                                 });
+                                APIGameLog.createForCampaign(campaignInfo.id, {
+                                    rollType: "customRoll",
+                                    abilityKey: label,
+                                    diceRolled: rawTotal,
+                                    modifier,
+                                    total: rawTotal + modifier,
+                                    diceCommand: `${diceCmd}${modifier >= 0 ? "+" : ""}${modifier}`,
+                                });
                                 if (timeoutDiceBoardRef.current != null) {
                                     clearTimeout(timeoutDiceBoardRef.current);
                                 }
@@ -1408,6 +1425,8 @@ export default function CombatAdmin({
                                                         . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                         <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
                                                         {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                        {(atk.targeting === "all" || atk.targetsAll) && <> ({t("combatAdmin.actionDesc.targetsAll")})</>}
+                                                        {atk.targeting === "single" && atk.quantity != null && atk.quantity > 1 && <> ({t("combatAdmin.actionDesc.targetsSingle")})</>}
                                                         {statusParts && statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                         .
                                                     </span>
@@ -1928,6 +1947,14 @@ export default function CombatAdmin({
                                                         total: rawTotal + mod,
                                                         diceCommand: `1d20${mod >= 0 ? "+" : ""}${mod}`,
                                                         diceValues,
+                                                    });
+                                                    APIGameLog.createForCampaign(campaignInfo.id, {
+                                                        rollType: "customRoll",
+                                                        abilityKey: `${npc.name} - ${abilityLabel}`,
+                                                        diceRolled: rawTotal,
+                                                        modifier: mod,
+                                                        total: rawTotal + mod,
+                                                        diceCommand: `1d20${mod >= 0 ? "+" : ""}${mod}`,
                                                     });
                                                     if (timeoutDiceBoardRef.current != null) {
                                                         clearTimeout(timeoutDiceBoardRef.current);

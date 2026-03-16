@@ -2546,9 +2546,9 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 4 },
             { type: "skill", name: "combatAdmin.npcAttacks.blindingGlow", description: "combatAdmin.npcAttacks.intensityHigh", additionalDamage: 5, additionalDices: 1, statusList: [{ type: "Dizzy", ammount: 2, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.fireCharge", additionalDamage: 5, quantity: 1, element: "Fire", targetsAll: true, statusList: [{ type: "Burning", ammount: 3, remainingTurns: 3 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.blazingCombo", additionalDamage: 4, quantity: 3, element: "Fire", statusList: [{ type: "Burning", ammount: 1, remainingTurns: 3 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.blazingRush", additionalDamage: 5, quantity: 4, element: "Fire", targetsAll: true, statusList: [{ type: "Burning", ammount: 1, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.fireCharge", additionalDamage: 5, quantity: 1, element: "Fire", targeting: "all", statusList: [{ type: "Burning", ammount: 3, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.blazingCombo", additionalDamage: 4, quantity: 3, element: "Fire", targeting: "single", statusList: [{ type: "Burning", ammount: 1, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.blazingRush", additionalDamage: 5, quantity: 4, element: "Fire", targeting: "multiple", statusList: [{ type: "Burning", ammount: 1, remainingTurns: 3 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.absorbFlames", description: "combatAdmin.npcAttacks.absorbFlamesDesc" },
         ],
     },

@@ -36,6 +36,10 @@ export class APIGameLog {
         return api.get<GameLogEntry[]>(`game-log/player/${playerId}`);
     }
 
+    static async createForCampaign(campaignId: number, input: CreateGameLogInput): Promise<GameLogEntry> {
+        return api.post<CreateGameLogInput, GameLogEntry>(`game-log/campaign/${campaignId}`, input);
+    }
+
     static async listForCampaign(campaignId: number): Promise<GameLogEntry[]> {
         return api.get<GameLogEntry[]>(`game-log/campaign/${campaignId}`);
     }

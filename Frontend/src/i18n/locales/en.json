@@ -1830,6 +1830,7 @@
       "enemies": "Enemies",
       "team": "Team",
       "attack": "Attack",
+      "hit": "Hit",
       "items": "Items",
       "specialAttacks": "Specials",
       "flee": "Try to flee",
@@ -2052,7 +2053,7 @@
         "blazingCombo": "Blazing Combo",
         "blazingRush": "Blazing Rush",
         "absorbFlames": "Absorb Flames",
-        "absorbFlamesDesc": "Absorbs all burns from all characters in battle. Heals {{dice}} per burn absorbed.",
+        "absorbFlamesDesc": "Absorbs all burns from all characters in battle. Heals 1d6 per burn absorbed.",
         "tripleRush": "Triple Rush",
         "tripleRushDesc": "High intensity. Charges at up to 3 targets, attacking each one.",
         "doubleCharge": "Double Charge",
@@ -2440,7 +2441,9 @@
         "hit": "Hit",
         "damageOfType": "damage",
         "hits": "hits",
-        "targetsAll": "Targets all enemies.",
+        "targetsAll": "all enemies",
+        "targetsMultiple": "different targets",
+        "targetsSingle": "same target",
         "targetGains": "The target gains",
         "forTurns": "for {count} turn(s)"
       }

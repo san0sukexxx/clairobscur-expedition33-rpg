@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface GameLogRepository : JpaRepository<GameLog, Int> {
     fun findAllByCampaignIdOrderByCreatedAtDesc(campaignId: Int): List<GameLog>
     fun findAllByCampaignIdOrderByCreatedAtAsc(campaignId: Int): List<GameLog>
+    fun findAllByCampaignIdOrderByIdDesc(campaignId: Int): List<GameLog>
+    fun findAllByCampaignIdOrderByIdAsc(campaignId: Int): List<GameLog>
 }

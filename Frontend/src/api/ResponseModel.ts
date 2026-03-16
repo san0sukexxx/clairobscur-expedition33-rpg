@@ -126,6 +126,8 @@ export interface NPCStatusItem {
     remainingTurns?: number;
 }
 
+export type NPCAttackTargeting = "single" | "multiple" | "all";
+
 export interface NPCAttack {
     type: AttackType;
     statusList?: NPCStatusItem[];  // Optional list of status effects to apply
@@ -136,6 +138,8 @@ export interface NPCAttack {
     additionalDices?: number;  // Additional dice rolled for this attack (e.g., 2 = roll 3d6 instead of 1d6)
     description?: string;  // Manual D&D-style description (overrides auto-generated)
     element?: Element;  // Damage element (defaults to Physical)
+    targetsAll?: boolean;  // Attack hits all enemies (legacy, same as targeting: "all")
+    targeting?: NPCAttackTargeting;  // "single" = same target, "multiple" = different targets, "all" = all enemies
 }
 
 

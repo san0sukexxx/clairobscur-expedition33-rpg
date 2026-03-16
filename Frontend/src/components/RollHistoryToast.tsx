@@ -72,10 +72,49 @@ export function RollHistoryToast() {
     const [dimmed, setDimmed] = useState(false);
     const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    const lastRollTime = useRef<number>(0);
+
     useEffect(() => {
+        /** Groups dice commands like "1d6 + 1d6 + 2d8" into "2d6 + 2d8" */
+        function groupDiceCommand(commands: string[]): string {
+            const counts: Record<string, number> = {};
+            for (const cmd of commands) {
+                const match = cmd.trim().match(/^(\d+)(d\d+(?:[+-]\d+)?)$/);
+                if (match) {
+                    const [, n, face] = match;
+                    counts[face] = (counts[face] || 0) + parseInt(n, 10);
+                } else {
+                    counts[cmd.trim()] = (counts[cmd.trim()] || 0) + 1;
+                }
+            }
+            return Object.entries(counts).map(([face, n]) => `${n}${face}`).join(" + ");
+        }
+
         function handleRoll(e: Event) {
             const roll = (e as CustomEvent<RollEvent>).detail;
-            setHistory(prev => [...prev, roll].slice(-3));
+            const now = Date.now();
+
+            setHistory(prev => {
+                const last = prev[prev.length - 1];
+                // Accumulate if same label and within 3 seconds
+                if (last && last.label === roll.label && now - lastRollTime.current < 3000) {
+                    const allCommands = [...(last._diceCommands ?? [last.diceCommand]), roll.diceCommand];
+                    const merged: RollEvent = {
+                        ...last,
+                        id: now + Math.random(),
+                        diceRolled: last.diceRolled + roll.diceRolled,
+                        total: last.total + roll.total,
+                        diceValues: [...(last.diceValues ?? []), ...(roll.diceValues ?? [])],
+                        diceCommand: groupDiceCommand(allCommands),
+                        _diceCommands: allCommands,
+                    };
+                    lastRollTime.current = now;
+                    return [...prev.slice(0, -1), merged];
+                }
+                lastRollTime.current = now;
+                return [...prev, roll].slice(-3);
+            });
+
             setVisible(true);
             setDimmed(false);
             if (hideTimer.current) clearTimeout(hideTimer.current);

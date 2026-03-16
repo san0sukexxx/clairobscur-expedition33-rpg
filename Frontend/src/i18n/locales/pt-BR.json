@@ -1854,7 +1854,7 @@
       "passivePerception": "Percepção Passiva",
       "passiveInvestigation": "Investigação Passiva",
       "passiveInsight": "Intuição Passiva",
-      "customRoll": "CUSTOM: ROLAGEM",
+      "customRoll": "ROLAGEM PERSONALIZADA",
       "rollButton": "ROLAR",
       "sendToEveryone": "Todos",
       "sendToSelf": "Só eu"
@@ -1878,6 +1878,7 @@
       "enemies": "Inimigos",
       "team": "Equipe",
       "attack": "Atacar",
+      "hit": "Acerto",
       "items": "Itens",
       "specialAttacks": "Especiais",
       "flee": "Tentar fugir",
@@ -2100,7 +2101,7 @@
         "blazingCombo": "Combo Flamejante",
         "blazingRush": "Investidas Flamejantes",
         "absorbFlames": "Absorver Chamas",
-        "absorbFlamesDesc": "Absorve todas as queimaduras de todos os personagens na batalha. Se cura em {{dice}} por queimadura absorvida.",
+        "absorbFlamesDesc": "Absorve todas as queimaduras de todos os personagens na batalha. Se cura em 1d6 por queimadura absorvida.",
         "tripleRush": "Corrida Tripla",
         "tripleRushDesc": "Intensidade alta. Avança em até 3 alvos, atacando cada um.",
         "doubleCharge": "Investida Dupla",
@@ -2488,7 +2489,9 @@
         "hit": "Acerto",
         "damageOfType": "de dano",
         "hits": "golpes",
-        "targetsAll": "Ataca todos os adversários.",
+        "targetsAll": "todos os adversários",
+        "targetsMultiple": "alvos diferentes",
+        "targetsSingle": "mesmo alvo",
         "targetGains": "O alvo fica",
         "forTurns": "por {count} turno(s)"
       }

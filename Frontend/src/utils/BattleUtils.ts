@@ -147,6 +147,12 @@ export function generateActionDescription(npc: NPCInfo, atk: NPCAttack): string 
         desc += `, ${atk.quantity} ${t("combatAdmin.actionDesc.hits")}`;
     }
 
+    if (atk.targeting === "all" || atk.targetsAll) {
+        desc += ` (${t("combatAdmin.actionDesc.targetsAll")})`;
+    } else if (atk.targeting === "single" && atk.quantity && atk.quantity > 1) {
+        desc += ` (${t("combatAdmin.actionDesc.targetsSingle")})`;
+    }
+
     if (atk.statusList && atk.statusList.length > 0) {
         const effects = atk.statusList.map(s => {
             let eff = getStatusLabel(s.type);

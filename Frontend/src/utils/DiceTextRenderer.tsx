@@ -3,6 +3,7 @@ import type { DiceBoardRef } from "../components/DiceBoard";
 import { rollWithTimeout } from "./RollUtils";
 import { diceTotal } from "./DiceCalculator";
 import { dispatchRoll } from "./rollDispatcher";
+import { APIGameLog } from "../api/APIGameLog";
 
 /** Regex to detect dice notation like 1d4, 2d6, 2d6+2, 8d6-1 etc. */
 const DICE_REGEX = /(\d+d\d+(?:[+-]\d+)?)/g;
@@ -13,6 +14,8 @@ export function renderTextWithDiceButtons(
     label: string,
     diceBoardRef?: RefObject<DiceBoardRef | null>,
     timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>,
+    playerId?: number,
+    campaignId?: number | null,
 ): React.ReactNode {
     const parts = text.split(DICE_REGEX);
     if (parts.length === 1) return text;
@@ -47,6 +50,25 @@ export function renderTextWithDiceButtons(
                                 diceCommand: part,
                                 diceValues,
                             });
+                            if (playerId) {
+                                APIGameLog.create(playerId, {
+                                    rollType: "customRoll",
+                                    abilityKey: `${label} — ${part}`,
+                                    diceRolled: rawTotal,
+                                    modifier,
+                                    total: rawTotal + modifier,
+                                    diceCommand: part,
+                                });
+                            } else if (campaignId) {
+                                APIGameLog.createForCampaign(campaignId, {
+                                    rollType: "customRoll",
+                                    abilityKey: `${label} — ${part}`,
+                                    diceRolled: rawTotal,
+                                    modifier,
+                                    total: rawTotal + modifier,
+                                    diceCommand: part,
+                                });
+                            }
                         });
                     }
                 }}

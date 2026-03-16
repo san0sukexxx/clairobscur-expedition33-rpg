@@ -46,7 +46,7 @@ class GameLogController(
         val saved = gameLogRepository.save(log)
 
         // Prune to max 50 entries per campaign
-        val allEntries = gameLogRepository.findAllByCampaignIdOrderByCreatedAtAsc(campaignId)
+        val allEntries = gameLogRepository.findAllByCampaignIdOrderByIdAsc(campaignId)
         if (allEntries.size > 50) {
             val toDelete = allEntries.take(allEntries.size - 50)
             gameLogRepository.deleteAll(toDelete)
@@ -71,19 +71,65 @@ class GameLogController(
         )
     }
 
+    @PostMapping("/campaign/{campaignId}")
+    fun createForCampaign(
+        @PathVariable campaignId: Int,
+        @RequestBody req: CreateGameLogRequest
+    ): ResponseEntity<GameLogResponse> {
+        val log = GameLog(
+            campaignId = campaignId,
+            playerId = null,
+            rollType = req.rollType,
+            abilityKey = req.abilityKey,
+            skillId = req.skillId,
+            senseKey = req.senseKey,
+            diceRolled = req.diceRolled,
+            modifier = req.modifier,
+            total = req.total,
+            diceCommand = req.diceCommand,
+            createdAt = java.time.Instant.now().toString()
+        )
+        val saved = gameLogRepository.save(log)
+
+        // Prune to max 50 entries per campaign
+        val allEntries = gameLogRepository.findAllByCampaignIdOrderByIdAsc(campaignId)
+        if (allEntries.size > 50) {
+            val toDelete = allEntries.take(allEntries.size - 50)
+            gameLogRepository.deleteAll(toDelete)
+        }
+
+        return ResponseEntity.ok(
+            GameLogResponse(
+                id = saved.id!!,
+                playerId = null,
+                playerName = "Mestre",
+                characterId = null,
+                rollType = saved.rollType,
+                abilityKey = saved.abilityKey,
+                skillId = saved.skillId,
+                senseKey = saved.senseKey,
+                diceRolled = saved.diceRolled,
+                modifier = saved.modifier,
+                total = saved.total,
+                diceCommand = saved.diceCommand,
+                createdAt = saved.createdAt
+            )
+        )
+    }
+
     @GetMapping("/campaign/{campaignId}")
     fun listForCampaign(@PathVariable campaignId: Int): ResponseEntity<List<GameLogResponse>> {
-        val entries = gameLogRepository.findAllByCampaignIdOrderByCreatedAtDesc(campaignId)
+        val entries = gameLogRepository.findAllByCampaignIdOrderByIdDesc(campaignId)
 
-        val playerIds = entries.map { it.playerId }.toSet()
+        val playerIds = entries.mapNotNull { it.playerId }.toSet()
         val players = playerRepository.findAllById(playerIds).associateBy { it.id }
 
         val responses = entries.map { entry ->
-            val p = players[entry.playerId]
+            val p = entry.playerId?.let { players[it] }
             GameLogResponse(
                 id = entry.id!!,
                 playerId = entry.playerId,
-                playerName = p?.name,
+                playerName = p?.name ?: "Mestre",
                 characterId = p?.characterId,
                 rollType = entry.rollType,
                 abilityKey = entry.abilityKey,
@@ -106,14 +152,15 @@ class GameLogController(
             ?: return ResponseEntity.ok(emptyList())
 
         val campaignId = campaignPlayer.campaignId
-        val entries = gameLogRepository.findAllByCampaignIdOrderByCreatedAtDesc(campaignId)
+        val entries = gameLogRepository.findAllByCampaignIdOrderByIdDesc(campaignId)
+            .filter { it.playerId != null }
 
         val campaignPlayers = campaignPlayerRepository.findAllByCampaignId(campaignId)
         val playerIds = campaignPlayers.map { it.playerId }.toSet()
         val players = playerRepository.findAllById(playerIds).associateBy { it.id }
 
         val responses = entries.map { entry ->
-            val p = players[entry.playerId]
+            val p = entry.playerId?.let { players[it] }
             GameLogResponse(
                 id = entry.id!!,
                 playerId = entry.playerId,

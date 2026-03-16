@@ -194,7 +194,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                         }}
                                     >
                                         <GiPerspectiveDiceSixFacesRandom size={18} />
-                                        Hit {attackBonus.total >= 0 ? "+" : ""}{attackBonus.total}
+                                        {t("combat.hit")} {attackBonus.total >= 0 ? "+" : ""}{attackBonus.total}
                                     </button>
                                 )}
                                 {damageBonus && (() => {
@@ -334,7 +334,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                     }}
                                 >
                                     <GiPerspectiveDiceSixFacesRandom size={18} />
-                                    Hit {freeShotHitMod >= 0 ? "+" : ""}{freeShotHitMod}
+                                    {t("combat.hit")} {freeShotHitMod >= 0 ? "+" : ""}{freeShotHitMod}
                                 </button>
                                 <button
                                     className="btn btn-outline btn-sm gap-2 flex-1"
@@ -440,7 +440,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                             <span className={`font-semibold ${levelColor(p.level)}`}>
                                                                 Level {p.level}
                                                             </span>
-                                                            <span className="opacity-90">{renderTextWithDiceButtons(effectText, weapon?.id ?? "", diceBoardRef, timeoutDiceBoardRef)}</span>
+                                                            <span className="opacity-90">{renderTextWithDiceButtons(effectText, weapon?.id ?? "", diceBoardRef, timeoutDiceBoardRef, player?.id)}</span>
                                                         </li>
                                                     );
                                                 })}
@@ -462,7 +462,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                             <span className="font-semibold text-primary">
                                                                 {name}
                                                             </span>
-                                                            <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef) : ""}</span>
+                                                            <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef, player?.id) : ""}</span>
                                                         </li>
                                                     );
                                                 })}
@@ -475,7 +475,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                             <span className="font-semibold text-primary">
                                                                 {name}
                                                             </span>
-                                                            <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef) : ""}</span>
+                                                            <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef, player?.id) : ""}</span>
                                                         </li>
                                                     );
                                                 })}

@@ -6,6 +6,8 @@ export interface RollEvent {
     total: number;
     diceCommand: string;
     diceValues?: number[];
+    /** Internal: individual dice commands before grouping (used for accumulation) */
+    _diceCommands?: string[];
 }
 
 export function dispatchRoll(roll: Omit<RollEvent, "id">) {

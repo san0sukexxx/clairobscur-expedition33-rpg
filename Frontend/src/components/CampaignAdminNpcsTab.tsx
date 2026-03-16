@@ -15,6 +15,7 @@ import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
 import type { Campaign } from "../api/APICampaign";
 import { crToXp, calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
 import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
+import { APIGameLog } from "../api/APIGameLog";
 
 const ATTR_CONFIG = [
     { key: "strength", label: () => t("combatAdmin.npcDetails.str"), icon: FaFistRaised, color: "text-red-400" },
@@ -201,6 +202,7 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                                         onPictoClick={onPictoClick}
                                         onWeaponClick={onWeaponClick}
                                         onLocationClick={onLocationClick}
+                                        campaignId={campaignInfo?.id}
                                     />
                                 )}
                             </div>
@@ -219,9 +221,10 @@ interface NpcDetailsProps {
     onPictoClick?: (pictoId: string) => void;
     onWeaponClick?: (weaponId: string) => void;
     onLocationClick?: (locationId: string) => void;
+    campaignId?: number | null;
 }
 
-function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWeaponClick, onLocationClick }: NpcDetailsProps) {
+function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWeaponClick, onLocationClick, campaignId }: NpcDetailsProps) {
     const [npcIntensityOffset, setNpcIntensityOffset] = useState(0);
 
     // ── dice rolling helpers ──
@@ -248,6 +251,16 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                 diceCommand: `${diceCmd}${modifier >= 0 ? "+" : ""}${modifier}`,
                 diceValues,
             });
+            if (campaignId) {
+                APIGameLog.createForCampaign(campaignId, {
+                    rollType: "customRoll",
+                    abilityKey: label,
+                    diceRolled: rawTotal,
+                    modifier,
+                    total: rawTotal + modifier,
+                    diceCommand: `${diceCmd}${modifier >= 0 ? "+" : ""}${modifier}`,
+                });
+            }
             if (timeoutDiceBoardRef.current != null) {
                 clearTimeout(timeoutDiceBoardRef.current);
             }
@@ -533,7 +546,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                 <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
                                     <span>
                                         <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>{" "}
-                                        {atk.description && <span className="italic opacity-90">{renderTextWithDiceButtons(t(atk.description), `${npcName} – ${actionName}`, diceBoardRef, timeoutDiceBoardRef)} </span>}
+                                        {atk.description && <span className="italic opacity-90">{renderTextWithDiceButtons(t(atk.description), `${npcName} – ${actionName}`, diceBoardRef, timeoutDiceBoardRef, undefined, campaignId)} </span>}
                                         {hasDamage && (
                                             <span className="italic opacity-90">
                                                 <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
@@ -541,6 +554,8 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                 <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
                                                 {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                {(atk.targeting === "all" || atk.targetsAll) && <> ({t("combatAdmin.actionDesc.targetsAll")})</>}
+                                                {atk.targeting === "single" && atk.quantity != null && atk.quantity > 1 && <> ({t("combatAdmin.actionDesc.targetsSingle")})</>}
                                                 {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                 .
                                             </span>
@@ -552,6 +567,8 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                 <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
                                                 {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                {(atk.targeting === "all" || atk.targetsAll) && <> ({t("combatAdmin.actionDesc.targetsAll")})</>}
+                                                {atk.targeting === "single" && atk.quantity != null && atk.quantity > 1 && <> ({t("combatAdmin.actionDesc.targetsSingle")})</>}
                                                 {statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
                                                 .
                                             </span>
