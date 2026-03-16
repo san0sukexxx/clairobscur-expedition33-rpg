@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, type RefObject, type MutableRefObject } from "react"
-import { type PictoResponse, type PictoInfo } from "../api/ResponseModel"
+import { type PictoResponse, type PictoInfo, type LuminaResponse } from "../api/ResponseModel"
 import { t } from "../i18n"
 import type { DiceBoardRef } from "./DiceBoard"
 import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer"
@@ -18,6 +18,7 @@ import {
 import type { GetPlayerResponse } from "../api/APIPlayer"
 import { PictosList } from "../data/PictosList"
 import { APIPicto } from "../api/APIPicto"
+import { APILumina } from "../api/APILumina"
 import { APICampaignPlayer } from "../api/APICampaignPlayer"
 import { FaChartLine, FaGift } from "react-icons/fa"
 
@@ -111,6 +112,21 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId, dice
 
   async function upsertPictoAt(slotIndex: number, picto: PictoResponse) {
     const id = picto.id
+    const pictoInfo = getPictoByName(picto.pictoId)
+
+    // Se o picto está equipado como lumina, desequipar a lumina
+    const equippedLumina = pictoInfo && (player?.luminas ?? []).find((l) => {
+      const lInfo = getPictoByName(l.pictoId)
+      return lInfo?.id === pictoInfo.id && l.isEquiped
+    }) as LuminaResponse | undefined
+
+    if (equippedLumina) {
+      try {
+        await APILumina.updatePlayerLumina(equippedLumina.id, { isEquiped: false })
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
     try {
       await APIPicto.updatePlayerPictoSlot(id, { slot: slotIndex })
@@ -131,7 +147,15 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId, dice
         return p
       })
 
-      return { ...prev, pictos: updated }
+      const updatedLuminas = equippedLumina
+        ? (prev.luminas ?? []).map((l) =>
+            (l as LuminaResponse).id === equippedLumina.id
+              ? { ...l, isEquiped: false }
+              : l
+          )
+        : prev.luminas
+
+      return { ...prev, pictos: updated, luminas: updatedLuminas }
     })
 
     setModalType(null)
@@ -514,26 +538,15 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId, dice
         <div className="px-2 sm:px-4 pb-8 overflow-y-auto max-h-[75vh] sm:max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {modalType === "slot" && activeSlot !== null && (
             <>
-              {slotFiltered.map((p) => {
-                const info = getPictoByName(p.pictoId)
-                const isEquippedAsLumina = info && (player?.luminas ?? []).some(
-                  (l) => {
-                    const lInfo = getPictoByName(l.pictoId)
-                    return lInfo?.id === info.id && l.isEquiped
-                  }
-                )
-                return (
+              {slotFiltered.map((p) => (
                   <PictoCard
                     key={p.id}
                     picto={p}
                     onPick={(pp) => upsertPictoAt(activeSlot, pp)}
-                    disabled={!!isEquippedAsLumina}
-                    disabledLabel={isEquippedAsLumina ? t("pictos.alreadyEquippedAsLumina") : undefined}
                     diceBoardRef={diceBoardRef}
                     timeoutDiceBoardRef={timeoutDiceBoardRef}
                   />
-                )
-              })}
+              ))}
               {slotFiltered.length === 0 && (
                 <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
               )}

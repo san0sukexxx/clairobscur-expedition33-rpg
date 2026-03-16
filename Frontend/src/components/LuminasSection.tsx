@@ -1,5 +1,5 @@
 import React, { useMemo, useState, type RefObject, type MutableRefObject } from "react"
-import { type PictoInfo, type LuminaResponse } from "../api/ResponseModel"
+import { type PictoInfo, type LuminaResponse, type PictoResponse } from "../api/ResponseModel"
 import { t } from "../i18n"
 import type { DiceBoardRef } from "./DiceBoard"
 import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer"
@@ -49,7 +49,19 @@ export default function LuminasSection({
         [player?.luminas],
     )
 
-    const currentLuminaCost: number = useMemo(() => {
+    const equippedPictos: PictoResponse[] = useMemo(
+        () => (player?.pictos ?? []).filter((p) => p.slot != null),
+        [player?.pictos],
+    )
+
+    const equippedPictosCost: number = useMemo(() => {
+        return equippedPictos.reduce((total, p) => {
+            const info = getPictoByName(p.pictoId)
+            return total + (info?.luminaCost ?? 0)
+        }, 0)
+    }, [equippedPictos])
+
+    const equippedLuminasCost: number = useMemo(() => {
         return luminas
             .filter((l) => l.isEquiped)
             .reduce((total, l) => {
@@ -57,6 +69,8 @@ export default function LuminasSection({
                 return total + (pictoInfo?.luminaCost ?? 0)
             }, 0)
     }, [luminas])
+
+    const currentLuminaCost: number = equippedPictosCost + equippedLuminasCost
 
     const slots: (LuminaResponse | null)[] = useMemo(() => {
         const equipped = luminas.filter((l) => l.isEquiped)
@@ -264,11 +278,11 @@ export default function LuminasSection({
 
     return (
         <div className="text-base-content">
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-3">
-                <div className="flex items-center gap-4">
-                    <div className="text-lg tracking-widest opacity-90">
-                        LUMINAS
-                    </div>
+            <div className="pb-3">
+                <div className="text-center text-lg tracking-widest opacity-90">
+                    LUMINAS
+                </div>
+                <div className="flex items-center justify-center gap-4 mt-2">
                     <div className={`rounded-lg py-1 px-3 text-sm font-semibold whitespace-nowrap ${
                         currentLuminaCost > maxCostLuminas
                             ? "bg-red-600/20 text-red-400 border border-red-600/30"
@@ -306,7 +320,7 @@ export default function LuminasSection({
                     )}
                 </div>
                 {isAdmin && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mt-2 justify-center">
                         <button
                             className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-base-300"
                             onClick={openAdminAdd}
@@ -322,6 +336,61 @@ export default function LuminasSection({
                     </div>
                 )}
             </div>
+
+            {equippedPictos.length > 0 && (
+                <div className="flex flex-col gap-4 mb-2">
+                    <div className="text-sm tracking-widest opacity-60 uppercase">
+                        {t("luminas.equippedPictos")}
+                    </div>
+                    {equippedPictos.map((picto) => {
+                        const name = picto.pictoId
+                        const pictoInfo = getPictoByName(name)
+                        const accent = pictoInfo
+                            ? pictoColorHex[pictoInfo.color]
+                            : "rgba(255,255,255,0.15)"
+                        const luminaCost = pictoInfo?.luminaCost ?? 0
+
+                        return (
+                            <div
+                                key={`picto-${picto.id}`}
+                                className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden opacity-70"
+                            >
+                                <div
+                                    className="pointer-events-none absolute inset-x-3 top-1 bottom-1 rounded-xl"
+                                    style={{
+                                        border: `1px solid ${accent}`,
+                                        clipPath:
+                                            "polygon(0% 10%, 6% 10%, 7.5% 5%, 100% 5%, 100% 95%, 7.5% 95%, 6% 90%, 0% 90%)",
+                                    }}
+                                />
+
+                                <div className="w-full text-left p-6 pl-28 rounded-2xl cursor-default">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2">
+                                        <PlusDiamond icon="" pictoName={name} isBig={true} />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <div className="text-xl font-semibold leading-tight">
+                                            {pictoInfo?.name ?? name}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {luminaCost > 0 && (
+                                                <div className="rounded-lg py-1 px-2 text-sm font-semibold bg-amber-700/10 text-amber-700 border border-amber-700/20">
+                                                    {t("luminas.cost")}: {luminaCost}
+                                                </div>
+                                            )}
+                                            <div className="px-3 py-1 text-xs rounded-md bg-base-300/50 border border-base-300 text-base-content/50">
+                                                PICTO
+                                            </div>
+                                        </div>
+                                        <div className="opacity-85">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, pictoInfo.name ?? "", diceBoardRef, timeoutDiceBoardRef) : ""}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
 
             <div className="flex flex-col gap-4">
                 {slots.map((selected, idx) => {

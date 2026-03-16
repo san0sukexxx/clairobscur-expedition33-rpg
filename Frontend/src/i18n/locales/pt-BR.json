@@ -86,7 +86,7 @@
     },
     "auto-shell": {
       "name": "Escudo Automático",
-      "description": "Aplica Protegido por 3 turnos no início da batalha."
+      "description": "Aplica Robustez por 3 turnos no início da batalha."
     },
     "auto-rush": {
       "name": "Pressa Automática",
@@ -230,7 +230,7 @@
     },
     "protecting-death": {
       "name": "Morte Defensiva",
-      "description": "Ao morrer, aliados ganham Protegido."
+      "description": "Ao morrer, aliados ganham Robustez."
     },
     "burn-affinity": {
       "name": "Afinidade com Queimadura",
@@ -258,7 +258,7 @@
     },
     "sos-shell": {
       "name": "Escudo SOS",
-      "description": "Aplica Protegido ao cair abaixo de metade do PV máximo."
+      "description": "Aplica Robustez ao cair abaixo de metade do PV máximo."
     },
     "sos-power": {
       "name": "Poder SOS",
@@ -362,7 +362,7 @@
     },
     "greater-shell": {
       "name": "Escudo Maior",
-      "description": "+1d4 à redução de dano de Protegido."
+      "description": "+1d4 à redução de dano de Robustez."
     },
     "revive-paradox": {
       "name": "Paradoxo do Reviver",
@@ -398,7 +398,7 @@
     },
     "protecting-heal": {
       "name": "Cura Protetora",
-      "description": "Curar um aliado também aplica Protegido por 1 turno."
+      "description": "Curar um aliado também aplica Robustez por 1 turno."
     },
     "confident-fighter": {
       "name": "Lutador Confiante",
@@ -486,7 +486,7 @@
     },
     "protecting-shots": {
       "name": "Disparos Protetores",
-      "description": "Teste de CON CD 15: ganha Protegido no disparo de Mira Livre."
+      "description": "Teste de CON CD 15: ganha Robustez no disparo de Mira Livre."
     },
     "accelerating-shots": {
       "name": "Disparos Aceleradores",
@@ -506,7 +506,7 @@
     },
     "protecting-attack": {
       "name": "Ataque Protetor",
-      "description": "Ganha Protegido por 1 turno no Ataque Básico."
+      "description": "Ganha Robustez por 1 turno no Ataque Básico."
     },
     "enfeebling-attack": {
       "name": "Ataque Debilitante",
@@ -530,7 +530,7 @@
     },
     "protecting-last-stand": {
       "name": "Última Resistência Protetora",
-      "description": "Ganha Protegido se estiver lutando sozinho."
+      "description": "Ganha Robustez se estiver lutando sozinho."
     },
     "energising-pain": {
       "name": "Dor Energizante",
@@ -622,7 +622,7 @@
     },
     "protecting-tint": {
       "name": "Tintura Protetora",
-      "description": "Tinturas Curativas também aplicam Protegido."
+      "description": "Tinturas Curativas também aplicam Robustez."
     },
     "shielding-tint": {
       "name": "Tintura de Escudo",
@@ -698,7 +698,7 @@
     },
     "powerful-on-shell": {
       "name": "Poder ao Escudo",
-      "description": "Aplica Poderoso ao aplicar Protegido."
+      "description": "Aplica Poderoso ao aplicar Robustez."
     },
     "rush-on-powerful": {
       "name": "Pressa ao Poder",
@@ -706,7 +706,7 @@
     },
     "shell-on-rush": {
       "name": "Escudo à Pressa",
-      "description": "Aplica Protegido ao aplicar Pressa."
+      "description": "Aplica Robustez ao aplicar Pressa."
     },
     "energising-powerful": {
       "name": "Poder Energizante",
@@ -714,7 +714,7 @@
     },
     "energising-shell": {
       "name": "Escudo Energizante",
-      "description": "Dá 2 PM ao aplicar Protegido."
+      "description": "Dá 2 PM ao aplicar Robustez."
     },
     "energising-rush": {
       "name": "Pressa Energizante",
@@ -1254,7 +1254,7 @@
       "name": "Glaisum",
       "passives": {
         "2": "Aliados recuperam 3d6 PV ao mudar para Postura Virtuosa.",
-        "3": "Ganha Protegido ao sair da Postura Virtuosa.",
+        "3": "Ganha Robustez ao sair da Postura Virtuosa.",
         "4": "Remove Efeitos de Status de si mesmo ao mudar para Postura Virtuosa."
       }
     },
@@ -1271,7 +1271,7 @@
       "passives": {
         "2": "Na Postura Virtuosa, acertar um inimigo Marcado não remove a Marca.",
         "3": "Muda para Postura Virtuosa no Contra-ataque.",
-        "4": "Ganha Protegido ao sair da Postura Virtuosa."
+        "4": "Ganha Robustez ao sair da Postura Virtuosa."
       }
     },
     "maellum": {
@@ -1290,7 +1290,7 @@
       "name": "Melarum",
       "passives": {
         "2": "Aliados recuperam 3d6 PV ao mudar para Postura Virtuosa.",
-        "3": "Aplica Protegido quando a Vida está cheia.",
+        "3": "Aplica Robustez quando a Vida está cheia.",
         "4": "Muda para Postura Virtuosa quando a Vida cai abaixo da metade."
       }
     },
@@ -1353,7 +1353,7 @@
     "yeverum": {
       "name": "Yeverum",
       "passives": {
-        "2": "Aplicar Protegido também aplica 1 Escudo.",
+        "2": "Aplicar Robustez também aplica 1 Escudo.",
         "3": "Ao aplicar Escudos, também dá 1 PM.",
         "4": "Ao mudar para Postura Virtuosa, +3 Escudos em todos os aliados."
       }
@@ -1410,7 +1410,7 @@
       "name": "Grandaro",
       "passives": {
         "2": "Começa a batalha na Máscara Pesada.",
-        "3": "Máscara Pesada aplica Protegido por 3 turnos.",
+        "3": "Máscara Pesada aplica Robustez por 3 turnos.",
         "4": "+1 PM por ataque recebido."
       }
     },
@@ -1587,7 +1587,7 @@
       "passives": {
         "2": "Durante o Eclipse, todo dano causado é convertido em dano Sombrio.",
         "3": "+1d6 de dano Sombrio com Habilidades.",
-        "4": "Aplica Protegido durante a Lua, Poderoso durante o Sol, e Pressa durante o Eclipse."
+        "4": "Aplica Robustez durante a Lua, Poderoso durante o Sol, e Pressa durante o Eclipse."
       }
     },
     "ramasson": {
@@ -2008,9 +2008,11 @@
         "charge": "Investida",
         "subterraneanTremor": "Tremor",
         "profaneScream": "Grito Profano",
+        "profaneScreamDesc": "Encanta os inimigos com um grito profano.",
         "pirouette": "Pirueta",
         "suction": "Sucção",
         "blessing": "Bênção",
+        "blessingDesc": "Concede Regeneração aos aliados.",
         "holyRay": "Raio Sagrado",
         "shieldBash": "Golpear com Escudo",
         "livingFlame": "Chama Viva",
@@ -2024,6 +2026,7 @@
         "spinningHat": "Chapéu Giratório",
         "holyChant": "Canto Sagrado",
         "healingHymn": "Hino de Cura",
+        "healingHymnDesc": "Concede Regeneração aos aliados.",
         "luminousRay": "Raio Luminoso",
         "judgment": "Julgamento",
         "twist": "Torção",
@@ -2066,6 +2069,7 @@
         "mentalExplosion": "Explosão Mental",
         "burningCurse": "Maldição Ardente",
         "hex": "Hex",
+        "hexDesc": "Enfraquece os inimigos com uma maldição.",
         "lanceStrikeDesc": "Ataca um alvo com sua lança.",
         "hiddenBladeDesc": "Ataca com uma lâmina escondida.",
         "armCannon": "Canhão de Braço",
@@ -2086,6 +2090,7 @@
         "lanceCombo": "Combo de Lança",
         "luminousHorn": "Chifre Luminoso",
         "divineHeal": "Cura Divina",
+        "divineHealDesc": "Concede Regeneração aos aliados.",
         "blindingGlow": "Brilho Cegante",
         "tripleRush": "Corrida Tripla",
         "tripleRushDesc": "Intensidade alta. Avança em até 3 alvos, atacando cada um.",
@@ -2113,12 +2118,14 @@
         "shockwave": "Onda de Choque",
         "shockwaveDesc": "Acerta todos os adversários. Só é possível pular para evitar este ataque.",
         "luminousBarrier": "Barreira Luminosa",
+        "luminousBarrierDesc": "Concede Escudo aos aliados.",
         "reap": "Ceifar",
         "darkCloak": "Manto das Trevas",
         "totalDarkness": "Escuridão Total",
         "shadowVeil": "Véu Sombrio",
         "eclipse": "Eclipse",
         "lament": "Lamento",
+        "lamentDesc": "Amaldiçoa os inimigos com um lamento.",
         "icyWind": "Vento Gélido",
         "ironBall": "Bola de Ferro",
         "ironBallCombo": "Combo Bola de Ferro",
@@ -2130,7 +2137,7 @@
         "jarBeamsDesc": "Requer ao menos 1 Jarro. Dispara lasers pelos Jarros, causando dano muito alto. Cada Jarro dá direito a um ataque.",
         "grantHaste": "Conceder Aceleração",
         "grantHasteDesc": "Concede aceleração a todos os aliados, incluindo ele mesmo.",
-        "forcedCollection": "Coleta Forçada",
+        "gradientStrike": "Golpe Gradiente",
         "preciseShot": "Tiro Certeiro",
         "swordCombo": "Combo de Espadadas",
         "reapSouls": "Ceifar Almas",
@@ -2144,16 +2151,19 @@
         "steelStrikeDesc": "Teste de Força contra a Constituição do alvo para causar quebra.",
         "darkMelody": "Melodia Sombria",
         "fortressSong": "Canção de Fortaleza",
+        "fortressSongDesc": "Concede Robustez aos aliados.",
         "eternalVigil": "Vigília Eterna",
         "aerialDive": "Mergulho Aéreo",
         "dualityStrike": "Golpe da Dualidade",
         "convergence": "Convergência",
         "radiantBurst": "Explosão Radiante",
         "inspiration": "Inspiração",
+        "inspirationDesc": "Concede Poderoso aos aliados.",
         "shapeshift": "Metamorfose",
         "dualSlash": "Corte Duplo",
         "holySmite": "Punição Sagrada",
         "divineShield": "Escudo Divino",
+        "divineShieldDesc": "Concede Escudo aos aliados.",
         "tremor": "Tremor",
         "tremorDesc": "Ataca duas vezes qualquer alvo e depois realiza um ataque em todos.",
         "summonMinions": "Invocar Minions",
@@ -2200,6 +2210,7 @@
         "lanternFlare": "Clarão da Lanterna",
         "maskSwap": "Troca de Máscara",
         "curseOfMasks": "Maldição das Máscaras",
+        "curseOfMasksDesc": "Amaldiçoa os inimigos.",
         "scavenge": "Saquear",
         "ragingShieldBash": "Escudada Furiosa",
         "venomousBite": "Mordida Venenosa",
@@ -2210,6 +2221,7 @@
         "springLeap": "Salto Elástico",
         "weave": "Tecer",
         "threadTrap": "Armadilha de Fios",
+        "threadTrapDesc": "Desacelera os inimigos com fios.",
         "faceSwap": "Troca de Rosto",
         "masquerade": "Mascarada",
         "jabAndStraight": "Jab e Direto",
@@ -2820,7 +2832,7 @@
       },
       "sciel-all-set": {
         "name": "Tudo Pronto",
-        "description": "Aplica Protegido, Poderoso e Rapidez em todos os aliados."
+        "description": "Aplica Robustez, Poderoso e Rapidez em todos os aliados."
       },
       "sciel-intervention": {
         "name": "Intervenção",
@@ -2980,7 +2992,7 @@
       },
       "monoco-boucheclier-fortify": {
         "name": "Fortificação Boucheclier",
-        "description": "Habilidade de fortificação de escudo. Efeito: Aplica Protegido em 1-3 aliados por 3 turnos. Máscara Pesada: Também aplica 1 Escudo. Usar esta habilidade move o Ponteiro da Roda Bestial em 5 posições. Quando o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 1 Escudo aos aliados afetados.",
+        "description": "Habilidade de fortificação de escudo. Efeito: Aplica Robustez em 1-3 aliados por 3 turnos. Máscara Pesada: Também aplica 1 Escudo. Usar esta habilidade move o Ponteiro da Roda Bestial em 5 posições. Quando o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 1 Escudo aos aliados afetados.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Boucheclier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-braseleur-smash": {
@@ -3344,7 +3356,8 @@
       "maximum": "Máximo:",
       "limitExceededAlert": "Custo máximo de luminas excedido! Atual: {current}, Tentando adicionar: {adding}, Máximo: {max}",
       "limitExceededDetail": "Limite excedido ({current} + {adding} > {max})",
-      "alreadyEquippedAsPicto": "Equipado como Picto"
+      "alreadyEquippedAsPicto": "Equipado como Picto",
+      "equippedPictos": "Pictos Equipados"
     },
     "modals": {
       "close": "Fechar"
@@ -3447,7 +3460,7 @@
 
         "Shield": "🛡️ Escudo",
         "Powerful": "💪 Poderoso",
-        "Shell": "🐚 Protegido",
+        "Shell": "🐚 Robustez",
         "DamageReduction": "🧱 Redução de Dano",
         "SuccessiveParry": "⚔️ Aparar Sucessivo",
         "Aureole": "✨ Auréola",
