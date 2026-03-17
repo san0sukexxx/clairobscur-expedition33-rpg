@@ -128,6 +128,7 @@ export interface NPCStatusItem {
 }
 
 export type NPCAttackTargeting = "single" | "multiple" | "all";
+export type AttackIntensity = "high" | "veryHigh" | "extreme" | "maximum";
 
 export interface NPCAttack {
     type: AttackType;
@@ -136,11 +137,22 @@ export interface NPCAttack {
     quantityText?: string;  // Custom text for quantity (e.g., "2 a 3 golpes"), overrides quantity display
     name?: string;  // Custom name to display on the button (overrides default label)
     additionalDamage?: number;  // Flat damage bonus added to each attack roll
-    additionalDices?: number;  // Additional dice rolled for this attack (e.g., 2 = roll 3d6 instead of 1d6)
+    intensity?: AttackIntensity;  // Attack intensity: normal(1 die), high(2), veryHigh(3), extreme(4), maximum(5)
     description?: string;  // Manual D&D-style description (overrides auto-generated)
     element?: Element;  // Damage element (defaults to Physical)
     targetsAll?: boolean;  // Attack hits all enemies (legacy, same as targeting: "all")
     targeting?: NPCAttackTargeting;  // "single" = same target, "multiple" = different targets, "all" = all enemies
+}
+
+/** Returns the number of damage dice for the given attack intensity (omitted = normal = 1 die) */
+export function getIntensityDiceCount(intensity?: AttackIntensity): number {
+    switch (intensity) {
+        case "high": return 2;
+        case "veryHigh": return 3;
+        case "extreme": return 4;
+        case "maximum": return 5;
+        default: return 1;
+    }
 }
 
 

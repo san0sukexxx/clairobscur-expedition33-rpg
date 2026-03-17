@@ -11,7 +11,7 @@ import { dispatchRoll } from "../utils/rollDispatcher";
 import type { DiceBoardRef } from "../components/DiceBoard";
 import { t, getPictoName, getWeaponName, getLocationName } from "../i18n";
 import { LocationsList } from "../data/LocationsList";
-import type { NPCInfo, NPCAttack } from "../api/ResponseModel";
+import { getIntensityDiceCount, type NPCInfo, type NPCAttack } from "../api/ResponseModel";
 import type { Campaign } from "../api/APICampaign";
 import { crToXp, calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
 import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
@@ -483,7 +483,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                             const explosionPlaceholder = "{{explosionDice}}";
                             if (text.includes(dicePlaceholder)) {
                                 const suicideAtk = npc.attackList?.find(a => a.name?.includes("suicideBomb"));
-                                const mineDice = 1 + (suicideAtk?.additionalDices ?? 0);
+                                const mineDice = getIntensityDiceCount(suicideAtk?.intensity);
                                 const mineMod = strMod + (suicideAtk?.additionalDamage ?? 0);
                                 const { numDice: mNumDice, flatDmg: mFlatDmg } = calcDamage(mineDice, mineMod);
                                 const parts = text.split(dicePlaceholder);
@@ -529,8 +529,8 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                         {npc.attackList!.map((atk, idx) => {
                             const actionName = atk.name ? t(atk.name) || atk.name : getAttackTypeLabel(atk.type);
 
-                            const hasDamage = atk.additionalDamage != null || atk.additionalDices != null;
-                            const baseDice = 1 + (atk.additionalDices ?? 0);
+                            const hasDamage = atk.additionalDamage != null || atk.intensity != null;
+                            const baseDice = getIntensityDiceCount(atk.intensity);
                             const baseMod = strMod + (atk.additionalDamage ?? 0);
                             const { numDice, flatDmg, avgDmg } = calcDamage(baseDice, baseMod);
 

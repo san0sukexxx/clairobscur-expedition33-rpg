@@ -1,4 +1,4 @@
-import type { StatusType, SpecialAttackType, NPCInfo, NPCAttack } from "../api/ResponseModel";
+import { getIntensityDiceCount, type StatusType, type SpecialAttackType, type NPCInfo, type NPCAttack } from "../api/ResponseModel";
 import { t } from "../i18n";
 import { getElementName } from "./ElementUtils";
 
@@ -133,7 +133,7 @@ export function generateActionDescription(npc: NPCInfo, atk: NPCAttack): string 
     const hitSign = hitBonus >= 0 ? `+${hitBonus}` : `${hitBonus}`;
 
     const dieSize = npc.damageDie ?? 6;
-    const numDice = 1 + (atk.additionalDices ?? 0);
+    const numDice = getIntensityDiceCount(atk.intensity);
     const flatDmg = strMod + (atk.additionalDamage ?? 0);
     const avgDmg = Math.floor(numDice * ((dieSize + 1) / 2) + flatDmg);
     const flatPart = flatDmg === 0 ? "" : flatDmg > 0 ? `+${flatDmg}` : `${flatDmg}`;

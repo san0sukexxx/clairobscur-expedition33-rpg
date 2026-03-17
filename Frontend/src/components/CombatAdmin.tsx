@@ -17,7 +17,7 @@ import { diceTotal } from "../utils/DiceCalculator"
 import { APIGameLog } from "../api/APIGameLog"
 import { calculateMaxHP, calculateMaxMP, calculateInitialMP, calculateArmorClass } from "../utils/PlayerCalculator"
 import { getAllNPCsSorted, getNpcById, handleNpcImgError } from "../utils/NpcUtils"
-import { type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType } from "../api/ResponseModel"
+import { getIntensityDiceCount, type BattleCharacterType, type BattleCharacterInfo, type AttackType, type WeaponInfo, type NPCAttack, type StatusResponse, type SpecialAttackType, type NPCSpecialAttack, type StainType } from "../api/ResponseModel"
 import { type Campaign } from "../api/APICampaign"
 import { type BattleWithDetailsResponse } from "../api/APIBattle"
 import InitiativesQueue from "./InitiativesQueue"
@@ -1293,7 +1293,7 @@ export default function CombatAdmin({
                                             const dicePlaceholder = "{{dice}}";
                                             if (text.includes(dicePlaceholder)) {
                                                 const suicideAtk = npcInfo?.attackList?.find(a => a.name?.includes("suicideBomb"));
-                                                const mineDice = 1 + (suicideAtk?.additionalDices ?? 0);
+                                                const mineDice = getIntensityDiceCount(suicideAtk?.intensity);
                                                 const mineMod = strMod + (suicideAtk?.additionalDamage ?? 0);
                                                 const { numDice: mNumDice, flatDmg: mFlatDmg } = calcDamage(mineDice, mineMod);
                                                 const parts = text.split(dicePlaceholder);
@@ -1325,9 +1325,9 @@ export default function CombatAdmin({
 
                                 {npcInfo?.attackList?.map((atk, idx) => {
                                     const actionName = atk.name ? t(atk.name) : getAttackTypeLabel(atk.type);
-                                    const hasDamage = atk.additionalDamage != null || atk.additionalDices != null;
+                                    const hasDamage = atk.additionalDamage != null || atk.intensity != null;
 
-                                    const baseDice = 1 + (atk.additionalDices ?? 0);
+                                    const baseDice = getIntensityDiceCount(atk.intensity);
                                     const baseMod = strMod + (atk.additionalDamage ?? 0);
                                     const { numDice, flatDmg, avgDmg } = calcDamage(baseDice, baseMod);
 
