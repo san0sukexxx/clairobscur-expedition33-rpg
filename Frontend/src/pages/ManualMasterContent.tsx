@@ -75,6 +75,9 @@ export function ManualMasterContent() {
       <SubTitle>{t("manual.master.elements")}</SubTitle>
       <p>{t("manual.master.elementsText")}</p>
 
+      <SubTitle>{t("manual.master.break")}</SubTitle>
+      <p>{t("manual.master.breakText")}</p>
+
       {/* ── NPCS ── */}
       <SectionTitle>{t("manual.master.npcs")}</SectionTitle>
       <p>{t("manual.master.npcsText")}</p>

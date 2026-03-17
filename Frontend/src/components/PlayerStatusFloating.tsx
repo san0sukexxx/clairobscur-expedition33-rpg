@@ -231,14 +231,14 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                         ch.maxMagicPoints !== null && (
                             <div className="flex-1 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openMp}>
                                 <div className="flex items-center justify-between text-[10px] uppercase">
-                                    <span className="opacity-70 flex items-center gap-1">MP <FaEdit size={10} className="opacity-40" /></span>
+                                    <span className="opacity-70 flex items-center gap-1">AP <FaEdit size={10} className="opacity-40" /></span>
                                     <span className="font-mono text-xs">
                                         {ch.magicPoints}/{ch.maxMagicPoints}
                                     </span>
                                 </div>
                                 <AnimatedStatBar
                                     value={pct(ch.magicPoints!, ch.maxMagicPoints!)}
-                                    label="MP"
+                                    label="AP"
                                     fillClass="bg-info"
                                     ghostClass="bg-info/30"
                                 />
@@ -476,7 +476,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
             {/* MP */}
             <StatEditModal
                 open={editing === "mp"}
-                title="MP"
+                title="AP"
                 currentValue={ch.magicPoints ?? 0}
                 minValue={0}
                 maxValue={ch.maxMagicPoints ?? 999}

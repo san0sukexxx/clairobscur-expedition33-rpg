@@ -67,6 +67,9 @@ export function ManualPlayerContent() {
       <SubTitle>{t("manual.player.elements")}</SubTitle>
       <p>{t("manual.player.elementsText")}</p>
 
+      <SubTitle>{t("manual.player.break")}</SubTitle>
+      <p>{t("manual.player.breakText")}</p>
+
       {/* ── EFEITOS DE STATUS ── */}
       <SectionTitle>{t("manual.player.statusEffects")}</SectionTitle>
       <p>{t("manual.player.statusEffectsText")}</p>

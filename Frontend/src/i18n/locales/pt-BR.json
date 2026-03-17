@@ -2,19 +2,19 @@
   "pictos": {
     "energy-master": {
       "name": "Mestre de Energia",
-      "description": "Cada ganho de PM é aumentado em 1."
+      "description": "Cada ganho de PA é aumentado em 1."
     },
     "energising-turn": {
       "name": "Turno Energizante",
-      "description": "+1 PM no início do turno."
+      "description": "+1 PA no início do turno."
     },
     "energising-attack-i": {
       "name": "Ataque Energizante I",
-      "description": "+1 PM no Ataque Básico."
+      "description": "+1 PA no Ataque Básico."
     },
     "energising-parry": {
       "name": "Aparar Energizante",
-      "description": "+1 PM ao Aparar com sucesso."
+      "description": "+1 PA ao Aparar com sucesso."
     },
     "augmented-first-strike": {
       "name": "Primeiro Golpe Aumentado",
@@ -34,7 +34,7 @@
     },
     "lucky-aim": {
       "name": "Mira da Sorte",
-      "description": "Teste de SAB CD 13: recupera 1 PM ao acertar um Ponto Fraco."
+      "description": "Teste de SAB CD 13: recupera 1 PA ao acertar um Ponto Fraco."
     },
     "augmented-counter-i": {
       "name": "Contra-Ataque Aumentado I",
@@ -154,27 +154,27 @@
     },
     "dodger": {
       "name": "Escapista",
-      "description": "Ganha 1 PM ao Esquivar. Uma vez por turno."
+      "description": "Ganha 1 PA ao Esquivar. Uma vez por turno."
     },
     "energising-start-i": {
       "name": "Início Energizante I",
-      "description": "+1 PM no início da batalha."
+      "description": "+1 PA no início da batalha."
     },
     "energising-start-ii": {
       "name": "Início Energizante II",
-      "description": "+1 PM no início da batalha."
+      "description": "+1 PA no início da batalha."
     },
     "energising-start-iii": {
       "name": "Início Energizante III",
-      "description": "+1 PM no início da batalha."
+      "description": "+1 PA no início da batalha."
     },
     "energising-start-iv": {
       "name": "Início Energizante IV",
-      "description": "+1 PM no início da batalha."
+      "description": "+1 PA no início da batalha."
     },
     "perilous-parry": {
       "name": "Aparar Perigoso",
-      "description": "+1 PM ao Aparar, mas +2d6 de dano recebido."
+      "description": "+1 PA ao Aparar, mas +2d6 de dano recebido."
     },
     "confident": {
       "name": "Confiante",
@@ -182,7 +182,7 @@
     },
     "energising-revive": {
       "name": "Reviver Energizante",
-      "description": "+3 PM para todos os aliados ao ser revivido."
+      "description": "+3 PA para todos os aliados ao ser revivido."
     },
     "rejuvenating-revive": {
       "name": "Reviver Rejuvenescedor",
@@ -202,7 +202,7 @@
     },
     "dead-energy-ii": {
       "name": "Energia Mortal II",
-      "description": "+3 PM ao matar um inimigo."
+      "description": "+3 PA ao matar um inimigo."
     },
     "piercing-shot": {
       "name": "Disparo Perfurante",
@@ -222,7 +222,7 @@
     },
     "energising-death": {
       "name": "Morte Energizante",
-      "description": "Ao morrer, +4 PM para aliados."
+      "description": "Ao morrer, +4 PA para aliados."
     },
     "shielding-death": {
       "name": "Morte Protetora",
@@ -290,7 +290,7 @@
     },
     "rewarding-mark": {
       "name": "Marca Recompensadora",
-      "description": "+2 PM ao causar dano a um alvo Marcado. Uma vez por turno."
+      "description": "+2 PA ao causar dano a um alvo Marcado. Uma vez por turno."
     },
     "double-mark": {
       "name": "Marca Dupla",
@@ -302,11 +302,11 @@
     },
     "sniper": {
       "name": "Atirador de Elite",
-      "description": "Primeiro disparo de Mira Livre em cada turno causa +3d6 de dano. Pode pagar 2 PM para tentar causar Quebra. Teste de Destreza x Destreza do alvo."
+      "description": "Primeiro disparo de Mira Livre em cada turno causa +2d6 de dano. Pode causar Quebra. Teste de Destreza x Destreza do alvo."
     },
     "energising-attack-ii": {
       "name": "Ataque Energizante II",
-      "description": "+1 PM no Ataque Básico."
+      "description": "+1 PA no Ataque Básico."
     },
     "cheater": {
       "name": "Trapaceiro",
@@ -354,7 +354,7 @@
     },
     "defensive-mode": {
       "name": "Modo Defensivo",
-      "description": "Ao receber dano, consome 1 PM para receber -1d8 de dano, se possível."
+      "description": "Ao receber dano, consome 1 PA para receber -1d8 de dano, se possível."
     },
     "greater-powerful": {
       "name": "Poder Maior",
@@ -394,7 +394,7 @@
     },
     "energising-heal": {
       "name": "Cura Energizante",
-      "description": "Ao Curar um aliado, também dá 2 PM."
+      "description": "Ao Curar um aliado, também dá 2 PA."
     },
     "protecting-heal": {
       "name": "Cura Protetora",
@@ -410,23 +410,23 @@
     },
     "dead-energy-i": {
       "name": "Energia Mortal I",
-      "description": "+3 PM ao matar um inimigo."
+      "description": "+3 PA ao matar um inimigo."
     },
     "effective-support": {
       "name": "Suporte Eficaz",
-      "description": "+2 PM ao usar um item."
+      "description": "+2 PA ao usar um item."
     },
     "weakness-gain": {
       "name": "Ganho de Fraqueza",
-      "description": "+1 PM ao acertar a Fraqueza de um inimigo. Uma vez por turno."
+      "description": "+1 PA ao acertar a Fraqueza de um inimigo. Uma vez por turno."
     },
     "energetic-healer": {
       "name": "Curador Energético",
-      "description": "+2 PM ao Curar um aliado. Uma vez por turno."
+      "description": "+2 PA ao Curar um aliado. Uma vez por turno."
     },
     "beneficial-contamination": {
       "name": "Contaminação Benéfica",
-      "description": "+2 PM ao aplicar um Efeito de Status. Uma vez por turno."
+      "description": "+2 PA ao aplicar um Efeito de Status. Uma vez por turno."
     },
     "roulette": {
       "name": "Roleta",
@@ -494,7 +494,7 @@
     },
     "energising-shots": {
       "name": "Disparos Energizantes",
-      "description": "Teste de SAB CD 15: ganha 1 PM no disparo de Mira Livre."
+      "description": "Teste de SAB CD 15: ganha 1 PA no disparo de Mira Livre."
     },
     "versatile": {
       "name": "Versátil",
@@ -534,15 +534,15 @@
     },
     "energising-pain": {
       "name": "Dor Energizante",
-      "description": "Não ganha mais PM ao Aparar. +1 PM ao ser atingido."
+      "description": "Não ganha mais PA ao Aparar. +1 PA ao ser atingido."
     },
     "energising-jump": {
       "name": "Salto Energizante",
-      "description": "+1 PM no Contra-Ataque de Salto."
+      "description": "+1 PA no Contra-Ataque de Salto."
     },
     "powered-attack": {
       "name": "Ataque Potencializado",
-      "description": "A cada dano causado, pode consumir 1 PM para causar +1d4 de dano."
+      "description": "A cada dano causado, pode consumir 1 PA para causar +1d4 de dano."
     },
     "combo-attack-ii": {
       "name": "Ataque em Combo II",
@@ -558,11 +558,11 @@
     },
     "staggering-attack": {
       "name": "Ataque Cambaleante",
-      "description": "+4 nos testes para causar e resistir a Quebra."
+      "description": "+4 nos testes para causar Quebra."
     },
     "energising-break": {
       "name": "Quebra Energizante",
-      "description": "+3 PM ao Quebrar um alvo."
+      "description": "+3 PA ao Quebrar um alvo."
     },
     "quick-break": {
       "name": "Quebra Rápida",
@@ -586,7 +586,7 @@
     },
     "energising-gradient": {
       "name": "Gradiente Energizante",
-      "description": "+1 PM por Carga de Gradiente consumida."
+      "description": "+1 PA por Carga de Gradiente consumida."
     },
     "charging-attack": {
       "name": "Ataque Carregador",
@@ -610,11 +610,11 @@
     },
     "revive-tint-energy": {
       "name": "Energia de Tintura de Reviver",
-      "description": "Tinturas de Reviver também dão 3 PM."
+      "description": "Tinturas de Reviver também dão 3 PA."
     },
     "healing-tint-energy": {
       "name": "Energia de Tintura Curativa",
-      "description": "Tinturas Curativas também dão 1 PM."
+      "description": "Tinturas Curativas também dão 1 PA."
     },
     "empowering-tint": {
       "name": "Tintura Fortalecedora",
@@ -646,7 +646,7 @@
     },
     "energising-burn": {
       "name": "Queimadura Energizante",
-      "description": "+1 PM ao aplicar Queimadura. Uma vez por turno."
+      "description": "+1 PA ao aplicar Queimadura. Uma vez por turno."
     },
     "breaking-burn": {
       "name": "Queimadura Quebradora",
@@ -710,15 +710,15 @@
     },
     "energising-powerful": {
       "name": "Poder Energizante",
-      "description": "Dá 2 PM ao aplicar Poderoso."
+      "description": "Dá 2 PA ao aplicar Poderoso."
     },
     "energising-shell": {
       "name": "Escudo Energizante",
-      "description": "Dá 2 PM ao aplicar Robustez."
+      "description": "Dá 2 PA ao aplicar Robustez."
     },
     "energising-rush": {
       "name": "Pressa Energizante",
-      "description": "Dá 2 PM ao aplicar Pressa."
+      "description": "Dá 2 PA ao aplicar Pressa."
     },
     "healing-boon": {
       "name": "Bênção Curativa",
@@ -738,11 +738,11 @@
     },
     "energising-cleanse": {
       "name": "Purificação Energizante",
-      "description": "Dissipa o primeiro Efeito de Status negativo recebido e ganha 2 PM."
+      "description": "Dissipa o primeiro Efeito de Status negativo recebido e ganha 2 PA."
     },
     "draining-cleanse": {
       "name": "Purificação Drenante",
-      "description": "Consome 1 PM para prevenir aplicação de Efeitos de Status, se possível."
+      "description": "Consome 1 PA para prevenir aplicação de Efeitos de Status, se possível."
     },
     "anti-blight": {
       "name": "Anti-Ruína",
@@ -770,7 +770,7 @@
     },
     "breaking-attack": {
       "name": "Ataque Quebrador",
-      "description": "Pode pagar 3 PM no Ataque Básico para tentar causar Quebra. Teste seu atributo principal x Constituição do alvo."
+      "description": "Pode tentar causar Quebra no Ataque Básico. Teste seu atributo principal x Constituição do alvo."
     },
     "anti-charm": {
       "name": "Anti-Charme",
@@ -803,7 +803,7 @@
       "passives": {
         "2": "Perfeição agora é baseada na Vida atual. Ganha 1 Rank a cada 10 PV faltantes.",
         "3": "+1d6 de dano de Luz com Habilidades.",
-        "4": "+1 PM ao subir de Rank."
+        "4": "+1 PA ao subir de Rank."
       }
     },
     "chevalam": {
@@ -834,7 +834,7 @@
       "name": "Corpeso",
       "passives": {
         "2": "Ataque Básico aplica 2 acúmulos de Queimadura por Rank.",
-        "3": "+1 PM ao subir de Rank.",
+        "3": "+1 PA ao subir de Rank.",
         "4": "+2d6 de dano de Queimadura por Rank, até +7d6 no Rank S."
       }
     },
@@ -850,7 +850,7 @@
       "name": "Cultam",
       "passives": {
         "2": "Sem perda de Perfeição ao receber dano. Perfeição é perdida ao ser Curado.",
-        "3": "Ganha 2 PM no Contra-ataque.",
+        "3": "Ganha 2 PA no Contra-ataque.",
         "4": "Ganha 1 Rank no Contra-ataque."
       }
     },
@@ -859,7 +859,7 @@
       "passives": {
         "2": "Ataque Básico dá 1 Perfeição por Queimadura no alvo.",
         "3": "Enquanto Poderoso, teste de CAR CD 13: aplica Queimadura ao acertar.",
-        "4": "+1 PM ao subir de Rank."
+        "4": "+1 PA ao subir de Rank."
       }
     },
     "delaram": {
@@ -883,7 +883,7 @@
       "passives": {
         "2": "Ganha 1 Rank no Contra-ataque.",
         "3": "+2d6 de dano no Contra-ataque.",
-        "4": "Ganha 2 PM no Contra-ataque."
+        "4": "Ganha 2 PA no Contra-ataque."
       }
     },
     "dualiso": {
@@ -907,7 +907,7 @@
       "passives": {
         "2": "Converte dano de Luz das Habilidades em dano Físico.",
         "3": "+1d4 de dano Físico com Habilidades.",
-        "4": "-1 PM de custo para Habilidades Físicas."
+        "4": "-1 PA de custo para Habilidades Físicas."
       }
     },
     "glaceso": {
@@ -975,7 +975,7 @@
       "passives": {
         "2": "Dano bônus da Perfeição se aplica a todos os aliados reduzido em 1d6. Dano bônus não se aplica mais a Verso.",
         "3": "Perfeição ganha é aumentada em 1 enquanto Poderoso.",
-        "4": "Habilidades de Suporte custam 1 PM a menos."
+        "4": "Habilidades de Suporte custam 1 PA a menos."
       }
     },
     "tireso": {
@@ -1009,7 +1009,7 @@
     "benisim": {
       "name": "Benisim",
       "passives": {
-        "2": "Habilidades de Cura custam 1 PM a menos.",
+        "2": "Habilidades de Cura custam 1 PA a menos.",
         "3": "Gera uma Mancha de Terra no início de cada turno.",
         "4": "Joga novamente instantaneamente ao consumir Manchas com uma Habilidade de Cura."
       }
@@ -1019,7 +1019,7 @@
       "passives": {
         "2": "Usar uma Habilidade que consome Manchas concede +1d6 de dano. Pode acumular até 5 vezes. Reseta ao usar uma Habilidade sem consumir Manchas.",
         "3": "No início do turno, se não houver Manchas, 2 Manchas aleatórias são geradas.",
-        "4": "+1 PM quando Manchas são consumidas."
+        "4": "+1 PA quando Manchas são consumidas."
       }
     },
     "braselim": {
@@ -1034,7 +1034,7 @@
       "name": "Chapelim",
       "passives": {
         "2": "+1d8 de dano de Quebra por Mancha de Terra.",
-        "3": "Ganha 9 PM ao Quebrar um inimigo.",
+        "3": "Ganha 9 PA ao Quebrar um inimigo.",
         "4": "Gera uma Mancha de Terra no início de cada turno."
       }
     },
@@ -1050,14 +1050,14 @@
       "name": "Colim",
       "passives": {
         "2": "Teste de INT CD 10: gera uma Mancha de Luz ao consumir Manchas.",
-        "3": "+1 PM ao consumir uma Mancha de Luz.",
+        "3": "+1 PA ao consumir uma Mancha de Luz.",
         "4": "+1d6 de dano com Habilidades por Mancha de Luz ativa."
       }
     },
     "coralim": {
       "name": "Coralim",
       "passives": {
-        "2": "Habilidades de Gelo custam 1 PM a menos.",
+        "2": "Habilidades de Gelo custam 1 PA a menos.",
         "3": "+1d6 de dano de Gelo com Habilidades.",
         "4": "Começa a batalha com 1 Mancha de Terra."
       }
@@ -1065,7 +1065,7 @@
     "deminerim": {
       "name": "Deminerim",
       "passives": {
-        "2": "Habilidades de Raio custam 1 PM a menos.",
+        "2": "Habilidades de Raio custam 1 PA a menos.",
         "3": "+1d6 de dano de Raio com Habilidades.",
         "4": "Começa a batalha com 1 Mancha de Fogo."
       }
@@ -1083,13 +1083,13 @@
       "passives": {
         "2": "Usar uma Habilidade concede +1d6 de dano de Habilidade de todos os outros elementos. Reseta ao usar uma Habilidade de um elemento anterior.",
         "3": "No início do turno, se não houver Manchas, 2 Manchas aleatórias são geradas.",
-        "4": "+1 PM quando Manchas são consumidas."
+        "4": "+1 PA quando Manchas são consumidas."
       }
     },
     "lighterim": {
       "name": "Lighterim",
       "passives": {
-        "2": "Habilidades de Fogo custam 1 PM a menos.",
+        "2": "Habilidades de Fogo custam 1 PA a menos.",
         "3": "+1d6 de dano de Fogo com Habilidades.",
         "4": "Começa a batalha com 1 Mancha de Gelo."
       }
@@ -1098,7 +1098,7 @@
       "name": "Lithelim",
       "passives": {
         "2": "Teste de INT CD 10: gera uma Mancha Sombria ou de Luz ao consumir Manchas. +2d6 de dano com Habilidades por Mancha Sombria ativa.",
-        "3": "+1 PM ao consumir uma Mancha de Luz.",
+        "3": "+1 PA ao consumir uma Mancha de Luz.",
         "4": "Ataques Base podem consumir uma Mancha Sombria para causar +5d6 de dano."
       }
     },
@@ -1109,7 +1109,7 @@
     "painerim": {
       "name": "Painerim",
       "passives": {
-        "2": "Habilidades de Terra custam 1 PM a menos.",
+        "2": "Habilidades de Terra custam 1 PA a menos.",
         "3": "+1d6 de dano de Terra com Habilidades.",
         "4": "Começa a batalha com 1 Mancha de Raio."
       }
@@ -1151,14 +1151,14 @@
       "passives": {
         "2": "Congela a si mesmo ao cair abaixo da metade da Vida. Previne a próxima instância de dano enquanto Congelado.",
         "3": "No início do turno, se Congelado, remove Congelamento e recupera 8d6 PV.",
-        "4": "Ganha 2 Manchas de Gelo e 3 PM quando Congelado."
+        "4": "Ganha 2 Manchas de Gelo e 3 PA quando Congelado."
       }
     },
     "trebuchim": {
       "name": "Trebuchim",
       "passives": {
         "2": "Gera uma Mancha aleatória em tiro de Mira Livre.",
-        "3": "+1 PM quando Manchas são consumidas.",
+        "3": "+1 PA quando Manchas são consumidas.",
         "4": "Ataque Básico gera 2 Manchas aleatórias."
       }
     },
@@ -1214,14 +1214,14 @@
       "name": "Chantenum",
       "passives": {
         "2": "No início do turno, se Sem Postura, muda para Postura Ofensiva.",
-        "3": "Habilidades de Fogo custam 1 PM a menos.",
+        "3": "Habilidades de Fogo custam 1 PA a menos.",
         "4": "+1 Escudo ao mudar para Postura Ofensiva."
       }
     },
     "clierum": {
       "name": "Clierum",
       "passives": {
-        "2": "Acertos Críticos com Habilidades dão 2 PM. Uma vez por turno.",
+        "2": "Acertos Críticos com Habilidades dão 2 PA. Uma vez por turno.",
         "3": "+1d6 de dano de Raio com Habilidades.",
         "4": "+2d6 de bônus em Chance Crítica enquanto em Postura Ofensiva."
       }
@@ -1237,9 +1237,9 @@
     "duenum": {
       "name": "Duenum",
       "passives": {
-        "2": "Na Postura Defensiva, ganhar PM também dá 1 PM aos aliados.",
+        "2": "Na Postura Defensiva, ganhar PA também dá 1 PA aos aliados.",
         "3": "Se Sem Postura, Ataque Básico muda para Postura Defensiva.",
-        "4": "+1 PM ao trocar de Postura."
+        "4": "+1 PA ao trocar de Postura."
       }
     },
     "facesum": {
@@ -1299,7 +1299,7 @@
       "passives": {
         "2": "No início do turno, se Sem Postura, muda para Postura Defensiva.",
         "3": "Na Postura Defensiva, +3d6 de dano de Quebra.",
-        "4": "Habilidades de Suporte custam 1 PM a menos."
+        "4": "Habilidades de Suporte custam 1 PA a menos."
       }
     },
     "seashelum": {
@@ -1330,7 +1330,7 @@
       "name": "Tissenum",
       "passives": {
         "2": "Na Postura Defensiva, +3d6 de dano de Quebra.",
-        "3": "Ganha 9 PM ao Quebrar um inimigo.",
+        "3": "Ganha 9 PA ao Quebrar um inimigo.",
         "4": "Quebrar um inimigo causa uma grande quantidade de dano de Terra."
       }
     },
@@ -1345,7 +1345,7 @@
     "volesterum": {
       "name": "Volesterum",
       "passives": {
-        "2": "+1 PM ao trocar de Postura.",
+        "2": "+1 PA ao trocar de Postura.",
         "3": "Se Sem Postura, Ataque Básico muda para Postura Defensiva.",
         "4": "Recupera 1d4 PV ao trocar de Postura."
       }
@@ -1354,7 +1354,7 @@
       "name": "Yeverum",
       "passives": {
         "2": "Aplicar Robustez também aplica 1 Escudo.",
-        "3": "Ao aplicar Escudos, também dá 1 PM.",
+        "3": "Ao aplicar Escudos, também dá 1 PA.",
         "4": "Ao mudar para Postura Virtuosa, +3 Escudos em todos os aliados."
       }
     },
@@ -1370,8 +1370,8 @@
       "name": "Ballaro",
       "passives": {
         "2": "Reverte a ordem da Roda Bestial.",
-        "3": "Usar uma Habilidade Aprimorada dá 1 PM a todos os outros aliados.",
-        "4": "Máscara Todo-Poderosa dá 2 PM a todos os aliados."
+        "3": "Usar uma Habilidade Aprimorada dá 1 PA a todos os outros aliados.",
+        "4": "Máscara Todo-Poderosa dá 2 PA a todos os aliados."
       }
     },
     "boucharo": {
@@ -1386,7 +1386,7 @@
       "name": "Brumaro",
       "passives": {
         "2": "Joga novamente instantaneamente quando na Máscara Todo-Poderosa.",
-        "3": "+3 PM quando na Máscara Todo-Poderosa.",
+        "3": "+3 PA quando na Máscara Todo-Poderosa.",
         "4": "Revive instantaneamente com Vida cheia se morrer enquanto na Máscara Todo-Poderosa. Uma vez por Batalha."
       }
     },
@@ -1395,7 +1395,7 @@
       "passives": {
         "2": "Começa a batalha na Máscara Conjuradora.",
         "3": "Máscara Conjuradora aplica Regeneração por 3 turnos.",
-        "4": "Habilidades custam 1 PM a menos enquanto na Máscara Conjuradora."
+        "4": "Habilidades custam 1 PA a menos enquanto na Máscara Conjuradora."
       }
     },
     "fragaro": {
@@ -1411,7 +1411,7 @@
       "passives": {
         "2": "Começa a batalha na Máscara Pesada.",
         "3": "Máscara Pesada aplica Robustez por 3 turnos.",
-        "4": "+1 PM por ataque recebido."
+        "4": "+1 PA por ataque recebido."
       }
     },
     "joyaro": {
@@ -1435,7 +1435,7 @@
       "passives": {
         "2": "Aparar aumenta a Roda Bestial em 1. Receber dano reseta a Roda Bestial.",
         "3": "Habilidades Aprimoradas causam +1d8 de dano.",
-        "4": "+1 PM ao trocar de Máscara."
+        "4": "+1 PA ao trocar de Máscara."
       }
     },
     "sidaro": {
@@ -1443,14 +1443,14 @@
       "passives": {
         "2": "+1d8 de dano por Habilidade Aprimorada usada. Reseta ao usar uma Habilidade não-Aprimorada.",
         "3": "Ataque Básico gira a Roda Bestial para um valor aleatório.",
-        "4": "Usar uma Habilidade Aprimorada dá 1 PM a todos os outros aliados."
+        "4": "Usar uma Habilidade Aprimorada dá 1 PA a todos os outros aliados."
       }
     },
     "urnaro": {
       "name": "Urnaro",
       "passives": {
         "2": "Muda para Máscara Todo-Poderosa ao Quebrar um inimigo.",
-        "3": "Máscara Todo-Poderosa dá 2 PM a todos os aliados.",
+        "3": "Máscara Todo-Poderosa dá 2 PA a todos os aliados.",
         "4": "+2d6 de dano de Quebra."
       }
     },
@@ -1513,9 +1513,9 @@
     "direton": {
       "name": "Direton",
       "passives": {
-        "2": "+1 PM por carga de Lua no início do turno.",
+        "2": "+1 PA por carga de Lua no início do turno.",
         "3": "Ataque Básico dá 1 carga de Lua.",
-        "4": "Durante o Eclipse, Ataque Básico consome todo PA. Ataque Básico aplica 1 Predição e causa +2d6 de dano por PM consumido."
+        "4": "Durante o Eclipse, Ataque Básico consome todo PA. Ataque Básico aplica 1 Predição e causa +2d6 de dano por PA consumido."
       }
     },
     "garganon": {
@@ -1546,7 +1546,7 @@
       "name": "Hevason",
       "passives": {
         "2": "Tiros de Mira Livre podem consumir uma carga de Sol para aplicar 5 Predição e consumir uma carga de Lua para causar +8d6 de dano.",
-        "3": "Consumir uma carga de Sol ou Lua dá 1 PM.",
+        "3": "Consumir uma carga de Sol ou Lua dá 1 PA.",
         "4": "Ataque Básico dá 1 carga de Lua."
       }
     },
@@ -1555,7 +1555,7 @@
       "passives": {
         "2": "Durante a Lua, todos os aliados têm Pressa Superior. Durante o Sol, todos os inimigos têm Lentidão Superior.",
         "3": "Durante o Eclipse, todos os aliados têm Pressa Superior e todos os inimigos têm Lentidão Superior.",
-        "4": "+3 PM ao aplicar um Buff ou Debuff. Uma vez por turno."
+        "4": "+3 PA ao aplicar um Buff ou Debuff. Uma vez por turno."
       }
     },
     "lusteson": {
@@ -1578,7 +1578,7 @@
       "name": "Minason",
       "passives": {
         "2": "Habilidades do Sol têm dano aumentado para cada Predição no alvo. Habilidades da Lua não geram mais cargas de Lua.",
-        "3": "Com pelo menos 1 carga de Sol ativa, ganha um PM adicional por Predição consumida.",
+        "3": "Com pelo menos 1 carga de Sol ativa, ganha um PA adicional por Predição consumida.",
         "4": "Ataque Básico pode consumir 1 carga de Sol para aplicar 5 Predição."
       }
     },
@@ -1602,7 +1602,7 @@
       "name": "Rangeson",
       "passives": {
         "2": "Recupera 1d6 PV por Predição aplicada.",
-        "3": "Habilidades de Cura custam 1 PM a menos.",
+        "3": "Habilidades de Cura custam 1 PA a menos.",
         "4": "+1d8 de Cura por carga de Lua. Ataque Básico dá 1 carga de Lua."
       }
     },
@@ -1806,7 +1806,7 @@
       "ability": "Habilidade",
       "resistance": "Resistência",
       "hp": "PV",
-      "mp": "PM",
+      "mp": "PA",
       "initial": "Inicial",
       "noCharacterSheets": "Nenhuma ficha de personagem disponível.",
       "attributesTitle": "Atributos",
@@ -1950,7 +1950,7 @@
       "intensityMaximum": "Máxima",
       "defend": "Defender",
       "defenseDescDodge": "Defesa padrão: o ataque d20 do adversário contra sua CA.",
-      "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PM (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque de mesma intensidade.",
+      "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PA (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque de mesma intensidade.",
       "defenseDescJump": "Só para ataques que permitem pular. Cada defesa bem-sucedida concede um contra-ataque de mesma intensidade. Falhar aumenta a intensidade do ataque em +1.",
       "defenseDescGradient": "Ataques Gradiente não podem ser esquivados, apenas aparados. Mesma mecânica de aparar.",
       "weaponPassives": "Passivas da arma"
@@ -1973,6 +1973,7 @@
         "startWith2Shields": "Começa a batalha com 2 escudos.",
         "startWith3Shields": "Começa a batalha com 3 escudos.",
         "doubleTurn": "Tem direito a dois turnos em sequência, podendo realizar duas ações.",
+        "tripleTurn": "Tem 3 turnos em sequência, podendo fazer até 3 ações.",
         "orphelinTrio": "Começa a rodada com 2 ajudantes, formando um trio de Chromatic Orphelin. Enquanto ele mesmo usa um martelo grande, os outros dois usam outras ferramentas.",
         "startWith4Shields": "Começa a batalha com 4 escudos.",
         "startWith5Shields": "Começa a batalha com 5 escudos.",
@@ -2004,9 +2005,41 @@
         "noFloatingLamps": "Esta forma não possui as lâmpadas flutuantes.",
         "lightSwordRitual": "Espada de Luz só pode ser usada após concluir o Ritual Sombrio. Causar quebra impede o ritual de ser concluído.",
         "weaponVariation": "Para efeitos visuais, sua arma pode variar entre espada, lança e martelo.",
-        "dualSwords": "Invoca uma espada de trevas, ficando com duas: uma de fogo e uma de trevas."
+        "dualSwords": "Invoca uma espada de trevas, ficando com duas: uma de fogo e uma de trevas.",
+        "maxShields9": "O máximo de escudos neste personagem é 9.",
+        "weakPointBreak3d6": "Ao quebrar seu ponto fraco, role 3d6 de dano."
       },
       "npcAttacks": {
+        "doubleHandSlam": "Bater com as Duas Mãos",
+        "lasers": "Lasers",
+        "lasersDesc": "4 golpes de intensidade muito alta. Alvos múltiplos.",
+        "abbestCombo": "Combo de 3 Golpes",
+        "abbestComboDesc": "3 ataques. Intensidade alta.",
+        "magicBlade": "Lâmina Mágica",
+        "magicBladeDesc": "3 golpes. Intensidade alta.",
+        "groundMagic": "Ataque Mágico pelo Chão",
+        "groundMagicDesc": "Dano extremo. Ataque mágico que percorre o chão.",
+        "crystalEmanation": "Emanação de Cristais",
+        "crystalEmanationDesc": "Ação bônus. Ganha o status Carregando sem limite de turno. Cada vez que usar essa habilidade, diga aos jogadores que ele está ficando mais forte. Cada vez que essa habilidade for usada, este personagem vai mudar a cor dos seus cristais, chegando cada vez mais perto da cor vermelha: branco → amarelo → alaranjado → vermelho. Quando chegar no vermelho, este personagem ficará invencível.",
+        "crystalCurse": "Maldição dos Cristais",
+        "crystalCurseDesc": "Realiza um ataque único a toda equipe que inflige Maldição.",
+        "grantFrenzy": "Conceder Fúria",
+        "grantFrenzyDesc": "Concede Fúria a si mesmo.",
+        "hexgaCombo": "Sequência de Cristais",
+        "hexgaComboDesc": "Sequência de 6 a 7 golpes. Alvo único.",
+        "grantShields6Desc": "Concede escudos a si mesmo. Começa concedendo 2 escudos, mas à medida que o poder aumenta com a Emanação de Cristais, concede cada vez mais escudos, até o máximo de 6 por vez.",
+        "jarBarrage": "Saraivada do Jarro",
+        "jarBarrageDesc": "Sequência de 6 ataques. Alvo único. Intensidade alta.",
+        "jarJumpStrike": "Golpe de Pular",
+        "jarJumpStrikeDesc": "Intensidade muito alta. Precisa pular. Acerta todos.",
+        "jarPoleCombo": "Sequência de Poste",
+        "jarPoleComboDesc": "5 golpes com poste que acertam toda a equipe. Nessa ordem: 1 golpe normal, 2 golpes de pular e 2 golpes normais.",
+        "fistCombo": "Sequência de Punhos",
+        "fistComboDesc": "4 golpes com os punhos. Alvo único.",
+        "chargeLaser": "Carregar Laser",
+        "chargeLaserDesc": "Não é um ataque. Ganha o status Carregando.",
+        "chargedLasers": "Lasers Carregados",
+        "chargedLasersDesc": "Após carregar, dispara 2 lasers de intensidade muito alta em todos os adversários.",
         "invisibleWall": "Parede Invisível",
         "invisibleWallDesc": "Cria uma parede invisível que o protege em segredo de vários ataques, a critério do mestre. O Mímico sempre faz isso em sua primeira rodada e passa a vez. Só pode ser usada uma vez por combate.",
         "comboHammers": "Combo Marteladas",
@@ -2611,7 +2644,7 @@
       },
       "lune-thermal-transfer": {
         "name": "Transferência Terminal",
-        "description": "Causa dano baixo de Gelo a um único alvo. 2 ataques. Ganha 4 PM se o alvo estiver Queimando. Consome 2 Manchas de Terra para jogar um segundo turno. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
+        "description": "Causa dano baixo de Gelo a um único alvo. 2 ataques. Ganha 4 PA se o alvo estiver Queimando. Consome 2 Manchas de Terra para jogar um segundo turno. Usar esta habilidade concede 1 Mancha de Gelo e 1 Mancha de Luz."
       },
       "lune-thunderfall": {
         "name": "Trovejar",
@@ -2647,7 +2680,7 @@
       },
       "lune-healing-light": {
         "name": "Luz Curativa",
-        "description": "Cura o aliado alvo e dissipa Efeitos de Status. Consome 2 Manchas de Terra para custar 0 PM. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Cura o aliado alvo e dissipa Efeitos de Status. Consome 2 Manchas de Terra para custar 0 PA. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-lightning-dance": {
         "name": "Dança Eletrizante",
@@ -2667,7 +2700,7 @@
       },
       "lune-rebirth": {
         "name": "Renascimento",
-        "description": "Revive um aliado com 2 PM adicionais. Role 1d6: 1-2 = revive com pouca Vida, 3-4 = revive com metade da Vida, 5-6 = revive com Vida cheia. Consome 3 Manchas de Raio para custar 0 PM. Usar esta habilidade concede 1 Mancha de Luz."
+        "description": "Revive um aliado com 2 PA adicionais. Role 1d6: 1-2 = revive com pouca Vida, 3-4 = revive com metade da Vida, 5-6 = revive com Vida cheia. Consome 3 Manchas de Raio para custar 0 PA. Usar esta habilidade concede 1 Mancha de Luz."
       },
       "lune-revitalization": {
         "name": "Revitalização",
@@ -2699,11 +2732,11 @@
       },
       "maelle-mezzo-forte": {
         "name": "Mezzo Forte",
-        "description": "Reaplica a postura atual e faz teste de Destreza CD 15: sucesso +4 PM, falha +2 PM."
+        "description": "Reaplica a postura atual e faz teste de Destreza CD 15: sucesso +4 PA, falha +2 PA."
       },
       "maelle-percee": {
         "name": "Investida",
-        "description": "Causa dano Físico médio em alvo único. 1 ataque. +4 de bônus no ataque e +4 de dano adicional contra alvos Marcados. Muda para Postura Defensiva. Custo reduzido para 2 PM se usado na Postura Virtuosa."
+        "description": "Causa dano Físico médio em alvo único. 1 ataque. +4 de bônus no ataque e +4 de dano adicional contra alvos Marcados. Muda para Postura Defensiva. Custo reduzido para 2 PA se usado na Postura Virtuosa."
       },
       "maelle-degagement": {
         "name": "Desengajamento",
@@ -2715,7 +2748,7 @@
       },
       "maelle-swift-stride": {
         "name": "Passo Veloz",
-        "description": "Causa dano Físico baixo em alvo único. 1 ataque. Faz teste de Destreza CD 15: sucesso +2 PM, falha 0 PM. Se o alvo estiver Queimando, muda para Postura Virtuosa."
+        "description": "Causa dano Físico baixo em alvo único. 1 ataque. Faz teste de Destreza CD 15: sucesso +2 PA, falha 0 PA. Se o alvo estiver Queimando, muda para Postura Virtuosa."
       },
       "maelle-guard-down": {
         "name": "Diminuir Guarda",
@@ -2743,7 +2776,7 @@
       },
       "maelle-breaking-rules": {
         "name": "Quebrando Regras",
-        "description": "Causa dano Físico baixo em alvo único. 2 ataques. Destrói todos os Escudos do alvo e concede 1 PM por Escudo destruído. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
+        "description": "Causa dano Físico baixo em alvo único. 2 ataques. Destrói todos os Escudos do alvo e concede 1 PA por Escudo destruído. Usar esta habilidade muda a Postura de Maelle para Ofensiva."
       },
       "maelle-fencers-flurry": {
         "name": "Rajada do Espadachim",
@@ -2767,15 +2800,15 @@
       },
       "maelle-last-chance": {
         "name": "Última Chance",
-        "description": "Reduz PV próprio para 1 mas recupera todo o PM. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
+        "description": "Reduz PV próprio para 1 mas recupera todo o PA. Usar esta habilidade muda a Postura de Maelle para Virtuosa."
       },
       "maelle-momentum-strike": {
         "name": "Golpe de Momento",
-        "description": "Causa dano Físico alto em alvo único. 1 ataque. Usa o elemento da arma. +4 de bônus no ataque e +4 de dano adicional contra alvos Marcados. Custo reduzido para 4 PM se usado na Postura Virtuosa (normalmente 7 PM). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano Físico alto em alvo único. 1 ataque. Usa o elemento da arma. +4 de bônus no ataque e +4 de dano adicional contra alvos Marcados. Custo reduzido para 4 PA se usado na Postura Virtuosa (normalmente 7 PA). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-payback": {
         "name": "Retribuição",
-        "description": "Causa dano Físico muito alto em alvo único. 1 ataque. Teste de Destreza contra a Constituição do alvo para causar quebra. Custo de PM reduzido para cada ataque aparado desde o último turno (custo base 9 PM). Usar esta habilidade muda a Postura de Maelle para Defensiva."
+        "description": "Causa dano Físico muito alto em alvo único. 1 ataque. Teste de Destreza contra a Constituição do alvo para causar quebra. Custo de PA reduzido para cada ataque aparado desde o último turno (custo base 9 PA). Usar esta habilidade muda a Postura de Maelle para Defensiva."
       },
       "maelle-stendhal": {
         "name": "Stendhal",
@@ -2867,7 +2900,7 @@
       },
       "sciel-plentiful-harvest": {
         "name": "Colheita Abundante",
-        "description": "Causa dano Físico médio em alvo único. 2 ataques. Consome todas as Predições do alvo e concede 1 PM a um aliado por Predição consumida."
+        "description": "Causa dano Físico médio em alvo único. 2 ataques. Consome todas as Predições do alvo e concede 1 PA a um aliado por Predição consumida."
       },
       "sciel-rush": {
         "name": "Investida",
@@ -2879,7 +2912,7 @@
       },
       "sciel-intervention": {
         "name": "Intervenção",
-        "description": "Um aliado alvo joga imediatamente e ganha 4 PM."
+        "description": "Um aliado alvo joga imediatamente e ganha 4 PA."
       },
       "sciel-card-weaver": {
         "name": "Tecelão de Cartas",
@@ -2911,7 +2944,7 @@
       },
       "verso-ascending-assault": {
         "name": "Assalto Ascendente",
-        "description": "Causa dano baixo em alvo único. 1 golpe. Usa elemento da arma. Aumenta dano a cada uso. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 5 para 2."
+        "description": "Causa dano baixo em alvo único. 1 golpe. Usa elemento da arma. Aumenta dano a cada uso. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PA é reduzido de 5 para 2."
       },
       "verso-assault-zero": {
         "name": "Ofensiva Zero",
@@ -2939,7 +2972,7 @@
       },
       "verso-followup": {
         "name": "Sequência",
-        "description": "Causa dano de Luz médio em alvo único. 1 golpe. Dano aumentado para cada tiro de Mira Livre neste turno, até 10 vezes. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 5 para 2."
+        "description": "Causa dano de Luz médio em alvo único. 1 golpe. Dano aumentado para cada tiro de Mira Livre neste turno, até 10 vezes. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PA é reduzido de 5 para 2."
       },
       "verso-from-fire": {
         "name": "Do Fogo",
@@ -2947,11 +2980,11 @@
       },
       "verso-leadership": {
         "name": "Liderança",
-        "description": "Reduz o Rank atual. Dá 3 PM para outros aliados. Se Verso usar esta habilidade no Rank C de Perfeição, dá +1 PM adicional para outros aliados."
+        "description": "Reduz o Rank atual. Dá 3 PA para outros aliados. Se Verso usar esta habilidade no Rank C de Perfeição, dá +1 PA adicional para outros aliados."
       },
       "verso-light-holder": {
         "name": "Portador da Luz",
-        "description": "Causa dano de Luz médio em alvo único. 5 golpes. Ao completar, ganha 1 Rank. Se Verso usar esta habilidade no Rank A de Perfeição, concede 2 PM adicionais para Verso."
+        "description": "Causa dano de Luz médio em alvo único. 5 golpes. Ao completar, ganha 1 Rank. Se Verso usar esta habilidade no Rank A de Perfeição, concede 2 PA adicionais para Verso."
       },
       "verso-marking-shot": {
         "name": "Disparo Marcado",
@@ -2959,15 +2992,15 @@
       },
       "verso-overload": {
         "name": "Sobrecarga",
-        "description": "Aumenta o Rank para S e reenche todo o PM, mas define a vida própria para 1."
+        "description": "Aumenta o Rank para S e reenche todo o PA, mas define a vida própria para 1."
       },
       "verso-paradigm-shift": {
         "name": "Mudança de Paradigma",
-        "description": "Causa dano Físico baixo em alvo único e devolve 2 PM. 3 golpes. Se Verso usar esta habilidade no Rank C de Perfeição, concede 1 PM adicional para Verso."
+        "description": "Causa dano Físico baixo em alvo único e devolve 2 PA. 3 golpes. Se Verso usar esta habilidade no Rank C de Perfeição, concede 1 PA adicional para Verso."
       },
       "verso-perfect-break": {
         "name": "Quebra Perfeita",
-        "description": "Causa dano de Luz muito alto em alvo único. 1 golpe. Teste de Força contra a Constituição do alvo para causar quebra. Se Verso usar esta habilidade no Rank B de Perfeição, o custo de PM é reduzido de 7 para 5."
+        "description": "Causa dano de Luz muito alto em alvo único. 1 golpe. Teste de Força contra a Constituição do alvo para causar quebra. Se Verso usar esta habilidade no Rank B de Perfeição, o custo de PA é reduzido de 7 para 5."
       },
       "verso-perfect-recovery": {
         "name": "Recuperação Perfeita",
@@ -2975,7 +3008,7 @@
       },
       "verso-phantom-stars": {
         "name": "Estrelas Fantasmas",
-        "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Teste de Força contra a Constituição do alvo para causar quebra. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PM é reduzido de 9 para 5."
+        "description": "Causa dano de Luz extremo em todos os inimigos. 5 golpes. Teste de Força contra a Constituição do alvo para causar quebra. Se Verso usar esta habilidade no Rank S de Perfeição, o custo de PA é reduzido de 9 para 5."
       },
       "verso-powerful": {
         "name": "Fortalecimento",
@@ -3015,12 +3048,12 @@
       },
       "monoco-abbest-wind": {
         "name": "Vento Abbest",
-        "description": "Ataque baseado em vento. Efeito: Causa dano Físico baixo em alvo único. 1 ataque. Joga um segundo turno. Normalmente custa 2 PM, mas quando o Ponteiro da Roda Bestial está posicionado em uma Máscara Ágil ou Máscara Onipotente, o custo reduz para 0 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.",
+        "description": "Ataque baseado em vento. Efeito: Causa dano Físico baixo em alvo único. 1 ataque. Joga um segundo turno. Normalmente custa 2 PA, mas quando o Ponteiro da Roda Bestial está posicionado em uma Máscara Ágil ou Máscara Onipotente, o custo reduz para 0 PA. Usar esta habilidade avança o Ponteiro da Roda Bestial em 2 posições.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Abbest enquanto Monoco estiver no grupo ativo."
       },
       "monoco-aberration-light": {
         "name": "Luz da Aberração",
-        "description": "Ataque de luz da aberração. Efeito: Causa dano de Luz alto em todos os inimigos. 2 ataques. Aplica 4 Queimaduras por ataque. Máscara Ágil: Aplica 2 Queimaduras adicionais por ataque. Custa 7 PM. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.",
+        "description": "Ataque de luz da aberração. Efeito: Causa dano de Luz alto em todos os inimigos. 2 ataques. Aplica 4 Queimaduras por ataque. Máscara Ágil: Aplica 2 Queimaduras adicionais por ataque. Custa 7 PA. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Aberração enquanto Monoco estiver no grupo ativo."
       },
       "monoco-ballet-charm": {
@@ -3095,7 +3128,7 @@
       },
       "monoco-cruler-barrier": {
         "name": "Barreira Cruler",
-        "description": "Habilidade de barreira protetora. Efeito: Aplica 1-2 Escudos no alvo. Máscara Pesada: Concede 2 PM ao alvo. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições. Quando ativado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 2 PM adicionais ao alvo.",
+        "description": "Habilidade de barreira protetora. Efeito: Aplica 1-2 Escudos no alvo. Máscara Pesada: Concede 2 PA ao alvo. Usar esta habilidade avança o Ponteiro da Roda Bestial em 4 posições. Quando ativado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, concede 2 PA adicionais ao alvo.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Crûler enquanto Monoco estiver no grupo ativo."
       },
       "monoco-cultist-blood": {
@@ -3145,7 +3178,7 @@
       },
       "monoco-hexga-crush": {
         "name": "Esmagamento Hexga",
-        "description": "Ataque de maldição esmagadora. Efeito: Causa dano de Terra médio em alvo único. 2 ataques. Aplica Exposto no alvo por 3 turnos. Modificador de Máscara Pesada aumenta o dano. Requer 5 PM para lançar e avança o Ponteiro da Roda Bestial em 6 posições. Quando usado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, a duração do debuff aumenta para 5 turnos.",
+        "description": "Ataque de maldição esmagadora. Efeito: Causa dano de Terra médio em alvo único. 2 ataques. Aplica Exposto no alvo por 3 turnos. Modificador de Máscara Pesada aumenta o dano. Requer 5 PA para lançar e avança o Ponteiro da Roda Bestial em 6 posições. Quando usado enquanto o ponteiro está em Máscara Pesada ou Máscara Onipotente, a duração do debuff aumenta para 5 turnos.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Hexga enquanto Monoco estiver no grupo ativo."
       },
       "monoco-jar-lampstorm": {
@@ -3185,7 +3218,7 @@
       },
       "monoco-orphelin-cheers": {
         "name": "Encorajamento do Órfão",
-        "description": "Bênção alegre do órfão. Efeito: Aplica Fortalecido em 1-3 aliados. Máscara de Conjurador: Também concede 3 PM aos alvos. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições. Quando o ponteiro está em Máscara de Conjurador ou Máscara Onipotente, aliados afetados recebem benefícios triplicados.",
+        "description": "Bênção alegre do órfão. Efeito: Aplica Fortalecido em 1-3 aliados. Máscara de Conjurador: Também concede 3 PA aos alvos. Usar esta habilidade avança o Ponteiro da Roda Bestial em 3 posições. Quando o ponteiro está em Máscara de Conjurador ou Máscara Onipotente, aliados afetados recebem benefícios triplicados.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Orphelin enquanto Monoco estiver no grupo ativo."
       },
       "monoco-pelerin-heal": {
@@ -3200,7 +3233,7 @@
       },
       "monoco-potier-energy": {
         "name": "Energia do Oleiro",
-        "description": "Habilidade de energia do oleiro. Efeito: Concede 1-3 PM a todos os aliados. Com aprimoramento de Máscara de Conjurador, fornece 1 PM adicional. Usar esta habilidade avança o Ponteiro da Roda Bestial em 6 posições. Quando ativado em Máscara de Conjurador ou Máscara Onipotente, aliados recebem um PM extra.",
+        "description": "Habilidade de energia do oleiro. Efeito: Concede 1-3 PA a todos os aliados. Com aprimoramento de Máscara de Conjurador, fornece 1 PA adicional. Usar esta habilidade avança o Ponteiro da Roda Bestial em 6 posições. Quando ativado em Máscara de Conjurador ou Máscara Onipotente, aliados recebem um PA extra.",
         "prerequisite": "Derrote e adquira o pé de um inimigo Potier enquanto Monoco estiver no grupo ativo."
       },
       "monoco-ramasseur-bonk": {
@@ -3522,7 +3555,7 @@
         "RedFlower": "🔴 Flor Vermelha"
       },
       "statusDescriptions": {
-        "Frozen": "Não pode realizar ações. Cada valor em 1d6 reduz em 1 o congelamento. Receber um ataque remove todo congelamento.",
+        "Frozen": "Não pode realizar ações. Faça um teste de resistência de Força CD 15 para quebrar o gelo. Receber um ataque remove todo congelamento.",
 
         "Burning": "Causa dano no início do turno. Cada queimadura causa 1d6 de dano.",
         "StormCaller": "Causa dano de Raio no início do turno. Cada stack causa 1d6 de dano de Raio.",
@@ -3538,7 +3571,7 @@
         "Stunned": "Impede o personagem de agir neste turno.",
         "Charm": "Seu personagem deve fazer o que o mestre disser. Você tem direito a um teste de resistência a cada início de turno.",
         "Entangled": "Não pode desviar ou pular, apenas aparar ou aparar gradiente.",
-        "Exhausted": "Qualquer ação que custe PM, custa 1 a mais e os personagens não podem recuperar PM de nenhuma maneira.",
+        "Exhausted": "Qualquer ação que custe PA, custa 1 a mais e os personagens não podem recuperar PA de nenhuma maneira.",
         "Frenzy": "O personagem tem +1 por frenesi em testes de ataque (exceto tiro livre).",
         "Rage": "Você tem direito a uma ação de ataque básico extra, além de suas outras ações.",
         "Inverted": "Quando receber cura de qualquer efeito, sofre dano ao invés de se curar.",
@@ -3659,8 +3692,8 @@
         "noValidEnemies": "Nenhum inimigo válido encontrado!",
         "requiresAllStains": "Requer todas as 4 manchas elementais (Raio, Terra, Fogo, Gelo)!",
         "insufficientGradientCharges": "Cargas de Gradiente insuficientes! Necessário: {required}, Disponível: {available}",
-        "insufficientMP": "PM insuficiente! Necessário: {required}, Disponível: {available}",
-        "parriesReducedCost": "{count} Aparada(s) bem sucedida(s)! Custo reduzido de {original} para {new} PM",
+        "insufficientMP": "PA insuficiente! Necessário: {required}, Disponível: {available}",
+        "parriesReducedCost": "{count} Aparada(s) bem sucedida(s)! Custo reduzido de {original} para {new} PA",
         "fireVulnerability": "Alvo vulnerável a Fogo! Dano x2!",
         "foretellConsumed": "{target}: Predição consumida! Dano x{multiplier}",
         "stainsConsumed": "{count} Mancha(s) consumida(s)! Dano +{bonus}",
@@ -3680,7 +3713,7 @@
         "revivedHalfHp": "{name} reviveu com metade da vida! ({hp} PV)",
         "noDeadAlliesToRevive": "Não há aliados mortos para reviver!",
         "revivedWithRoll": "{name} reviveu com {percent}% de vida! ({hp} PV) [Rolou {roll}]",
-        "grantedMpToRevived": "{name} recebeu +{mp} PM!",
+        "grantedMpToRevived": "{name} recebeu +{mp} PA!",
         "targetNotDead": "O alvo não está morto!",
         "scopeRollAll": "Rolou {roll}: Cura todos os aliados!",
         "scopeRollSingle": "Rolou {roll}: Cura 1 aliado!",
@@ -3691,10 +3724,10 @@
         "buffsCopied": "Buffs copiados para outros aliados!",
         "stanceChanged": "Postura alterada para {stance}!",
         "healthReduced": "Vida reduzida para {amount}!",
-        "mpRefilled": "PM recarregado para {amount}!",
+        "mpRefilled": "PA recarregado para {amount}!",
         "stanceReapplied": "Postura {stance} reaplicada!",
-        "mpGranted": "+{amount} PM concedidos! ({before} → {after})",
-        "allyReceivedMP": "{name} recebeu {amount} PM! ({before} → {after})",
+        "mpGranted": "+{amount} PA concedidos! ({before} → {after})",
+        "allyReceivedMP": "{name} recebeu {amount} PA! ({before} → {after})",
         "allyPlaysImmediately": "{name} jogará imediatamente!",
         "burningTargetHeal": "Alvo Queimando! Verso curado em {percent}% ({amount} PV)!",
         "burningTargetStance": "Alvo está Queimando! Mudou para postura Virtuosa!",
@@ -3717,7 +3750,7 @@
         "rolledDicePowerfulVerso": "Rolou {value}! Powerful afeta apenas Verso.",
         "rolledDiceReviving": "Rolou {value}! Revivendo aliados com {percent}% de PV!",
         "rolledDiceRevivingAlly": "Rolou {value}! Revivendo {name} com {percent}% de PV!",
-        "allyRevivedWithMP": "{name} revivido com 2 PM!",
+        "allyRevivedWithMP": "{name} revivido com 2 PA!",
         "twilightExtended": "Duração do Eclipse estendida! (+1 turno)",
         "sunChargeGained": "Carga de Sol obtida!",
         "moonChargeGained": "Carga de Lua obtida!",
@@ -3736,7 +3769,7 @@
         "totalEnemyForetell": "Predição total de inimigos: {amount} (Dano +{amount})",
         "foretellsConsumed": "Consumindo {count} Predições! Dano +{bonus}",
         "foretellsConsumedHeal": "Consumindo {count} Predições! Cura +{bonus}%",
-        "foretellsConsumedMP": "Consumindo {count} Predições! PM a conceder: {amount}",
+        "foretellsConsumedMP": "Consumindo {count} Predições! PA a conceder: {amount}",
         "burnsConsumed": "Consumindo {count} Queimadura(s)! Dano +{percent}%",
         "markedTarget": "Alvo Marcado! Dano +{percent}%",
         "perfectionRank": "Rank {rank} de Perfeição! Dano +{percent}%",
@@ -3752,14 +3785,14 @@
         "hitsCountAnnouncement": "{count} acerto(s)!",
         "trumpetRandomBuffs": "2 buffs aleatórios",
         "trumpetSingleBuff": "1 buff aleatório",
-        "gainedMP": "Rolou {roll}! +{amount} PM ganho!",
+        "gainedMP": "Rolou {roll}! +{amount} PA ganho!",
         "switchedToVirtuose": "Alvo queimando! Mudou para Virtuose!",
         "effectAppliesToAllAllies": "Rolou {roll}! Efeito afeta todos os aliados!",
         "effectAppliesToSingleTarget": "Rolou {roll}! Efeito afeta apenas o alvo.",
         "habilityTestSuccessAllAllies": "Sucesso! Efeito afeta todos os aliados!",
         "habilityTestFailureSingleTarget": "Falha! Efeito afeta apenas o alvo.",
-        "habilityTestSuccessMP": "Sucesso! +{mp} PM ganho!",
-        "habilityTestFailureMP": "Falha! +{mp} PM ganho.",
+        "habilityTestSuccessMP": "Sucesso! +{mp} PA ganho!",
+        "habilityTestFailureMP": "Falha! +{mp} PA ganho.",
         "hitsReceivedBonus": "{hits} ataques recebidos! Dano +{bonus}!",
         "freeAimBonus": "{stacks} tiros livres! Dano +{stacks}!",
         "burnScalingBonus": "{stacks} Queimaduras no alvo! Dano +{bonus}!",
@@ -3767,8 +3800,8 @@
         "shieldsConsumed": "{count} Escudo(s) consumido(s)!",
         "unprotectedApplied": "Exposto aplicado em si mesmo!",
         "shieldsDestroyed": "{count} Escudo(s) do inimigo destruído(s)!",
-        "mpFromShields": "+{mp} PM por escudos destruídos!",
-        "mpConceded": "{amount} PM concedidos ao aliado!",
+        "mpFromShields": "+{mp} PA por escudos destruídos!",
+        "mpConceded": "{amount} PA concedidos ao aliado!",
         "instantHeal": "Cura instantânea de {percent}% PV aplicada a todos os aliados!",
         "stainsGained": "Manchas adquiridas: {stains}",
         "stainTransformed": "Mancha transformada: {from} → {to}",
@@ -3780,31 +3813,31 @@
         "hpCost": "Custo de PV: {amount}",
         "hpCostDeducted": "Custou {amount} de Vida",
         "statusTransferred": "{count} efeito(s) de status transferido(s)!",
-        "rankGrantedMp": "+{mp} PM concedido (Bônus de Rank)!",
+        "rankGrantedMp": "+{mp} PA concedido (Bônus de Rank)!",
         "stunReapplied": "Atordoamento reaplicado em {name}!",
         "playsSecondTime": "Joga uma segunda vez! (Hits dobrados)",
         "chargingStarted": "Carregando... O ataque será executado no próximo turno!",
         "chargingReleased": "Carga liberada! Executando ataque!",
         "chargingInterrupted": "Carga interrompida! O carregamento foi cancelado.",
-        "mpReturned": "+{amount} PM retornado!",
-        "mpGrantedToAllies": "+{amount} PM concedido aos aliados!",
+        "mpReturned": "+{amount} PA retornado!",
+        "mpGrantedToAllies": "+{amount} PA concedido aos aliados!",
         "wheelAdvanced": "Roda Bestial avançou para {mask}!",
         "forcedToAlmighty": "Forçado para Máscara Onipotente!",
         "damageEscalation": "Escalação de Dano: {stacks} uso(s) (+{bonus}%)",
         "damageEscalationActive": "Bônus de Escalação ativo: +{bonus}%",
         "damageEscalationLinear": "Assalto Ascendente: +{bonus} de dano",
         "alliesHealedPerHit": "Aliados curados em {percent}% PV!",
-        "mpGainedFromBurning": "+{amount} PM ganho (alvo Queimando)!",
-        "mpGrantedAtHeavy": "+{amount} PM concedido (Máscara Pesada)!",
+        "mpGainedFromBurning": "+{amount} PA ganho (alvo Queimando)!",
+        "mpGrantedAtHeavy": "+{amount} PA concedido (Máscara Pesada)!",
         "hpSacrificed": "{amount} PV sacrificado!",
-        "mpGrantedAtCaster": "+{amount} PM concedido (Máscara Conjurador)!",
+        "mpGrantedAtCaster": "+{amount} PA concedido (Máscara Conjurador)!",
         "healedAtCaster": "+{percent}% PV curado (Máscara Conjurador)!",
         "randomBuffsApplied": "{buffs} buff(s) aplicado(s) a {count} aliado(s)!",
         "healedPerHit": "+{amount} PV curado pelos acertos!",
         "foretellConsumedCount": "{count} Presságio consumido!",
         "foretellDamageBonus": "+{bonus} de dano pelos Presságios!",
         "foretellHealBonus": "+{bonus} cura por Presságio!",
-        "foretellMpGained": "+{amount} PM pelos Presságios consumidos!",
+        "foretellMpGained": "+{amount} PA pelos Presságios consumidos!",
         "foretellConsumedTotalBonus": "+{bonus} de dano ({bonus} Presságios consumidos na batalha)!",
         "foretellConsumedFromAll": "{count} Presságio consumido de todos os inimigos!",
         "foretellRedistributed": "{count} Presságio redistribuído para {enemies} inimigo(s)!",
@@ -3812,14 +3845,14 @@
         "noOtherEnemiesToRedistribute": "Nenhum outro inimigo para redistribuir Presságio!",
         "extraTurnGranted": "{name} jogará o próximo turno!",
         "hpDrainedFromAllies": "{amount} PV drenado dos aliados!",
-        "mpGrantedToLowest": "+{amount} PM concedido a {name}!",
+        "mpGrantedToLowest": "+{amount} PA concedido a {name}!",
         "burnDamagePropagated": "{damage} dano propagado para {count} inimigo(s) queimando!",
         "buffsCopiedCount": "{count} buff(s) copiado(s) para {allies} aliado(s)!",
         "cleansedNoBufs": "{name} limpo, nenhum buff para copiar.",
         "foretellAppliedOnCrit": "+{count} Presságio aplicado (Crítico)!",
-        "mpGrantedToAlly": "+{amount} PM concedido a {name}!",
+        "mpGrantedToAlly": "+{amount} PA concedido a {name}!",
         "turnDelayedAmount": "Turno de {name} atrasado em {amount} posição(ões)!",
-        "stanceChangeMpBonus": "+1 PM por mudança de postura!",
+        "stanceChangeMpBonus": "+1 PA por mudança de postura!",
         "stanceLostBasicAttack": "Postura perdida por ataque básico!"
       },
       "defense": {
@@ -3917,6 +3950,8 @@
         },
         "elements": "Elementos",
         "elementsText": "Existem 8 elementos: Físico, Vazio, Luz, Raio, Fogo, Gelo, Trevas e Terra. NPCs podem ter fraqueza (dano dobrado), resistência (dano reduzido), imunidade (sem dano) ou absorção (cura ao invés de dano) a um elemento.",
+        "break": "Quebra",
+        "breakText": "Para causar quebra, primeiro é preciso diminuir a vida do personagem para além de um dos dois marcadores de quebra na barra de vida. Feito isso, é preciso realizar alguma ação que cause quebra para iniciar o teste de resistência do atributo principal do alvo contra a constituição do atacante. Algumas habilidades especificam quais serão os atributos utilizados. Ao causar quebra com sucesso, remova um dos marcadores na barra de vida. Depois de remover os dois marcadores, não é mais possível causar quebra.",
         "npcs": "NPCs e Inimigos",
         "npcsText": "Cada NPC possui uma ficha completa com 6 atributos, CA, Nível de Desafio (ND), ataques e possíveis drops.",
         "npcStats": "Ficha do NPC",
@@ -3980,13 +4015,13 @@
           "charm": "Charme",
           "charmDesc": "Deve seguir comandos do mestre. Pode resistir com teste de SAB CD 13.",
           "frozen": "Congelado",
-          "frozenDesc": "Não pode agir. 1d6 reduz o congelamento. Um ataque remove todo o gelo.",
+          "frozenDesc": "Não pode agir. Teste de resistência de Força CD 15 para quebrar o gelo. Um ataque remove todo o gelo.",
           "entangled": "Acorrentado",
           "entangledDesc": "Só pode bloquear, bloqueio gradiente ou pular. Não pode esquivar.",
           "silenced": "Silenciado",
           "silencedDesc": "Não pode usar habilidades especiais.",
           "exhausted": "Exausto",
-          "exhaustedDesc": "Todos os custos de PM +1. Não pode recuperar PM.",
+          "exhaustedDesc": "Todos os custos de PA +1. Não pode recuperar PA.",
           "dizzy": "Desorientado",
           "dizzyDesc": "-4 no ataque do tiro livre. O dano não é afetado.",
           "broken": "Quebrado",
@@ -4005,9 +4040,9 @@
         "negativeStatus": "Efeitos Negativos",
         "teamResources": "Recursos de Equipe",
         "gradient": "Gradiente",
-        "gradientText": "O Gradiente é um recurso compartilhado da equipe. Acumula-se com 12 pontos por carga. Pode ser usado para ataques Gradiente (habilidades especiais de equipe) ou para Bloqueio Gradiente na defesa. Algumas habilidades concedem pontos de Gradiente ao serem usadas.",
+        "gradientText": "O Gradiente é um recurso compartilhado da equipe. Acumula-se com 12 pontos por carga. Cada ponto de ação (PA) gasto em habilidades aumenta 1 ponto de Gradiente. Pode ser usado para ataques Gradiente (habilidades especiais de equipe) ou para Bloqueio Gradiente na defesa. Algumas habilidades concedem pontos de Gradiente adicionais ao serem usadas.",
         "shields": "Escudos",
-        "shieldsText": "Escudos negam ataques completamente. Cada ponto de escudo absorve um acerto. Alguns ataques destroem escudos sem causar dano, outros os ignoram completamente. Destruir escudos pode conceder PM ao atacante.",
+        "shieldsText": "Escudos negam ataques completamente. Cada ponto de escudo absorve um acerto. Alguns ataques destroem escudos sem causar dano, outros os ignoram completamente. Destruir escudos pode conceder PA ao atacante.",
         "xpRewards": "Experiência e Recompensas",
         "xpRewardsText": "Ao derrotar NPCs, os jogadores ganham XP baseado no ND dos inimigos. Encontros podem conceder XP bônus adicional. Recompensas incluem armas e pictos que são distribuídos pelo mestre. O nível do personagem afeta o bônus de proficiência, PV máximo, pontos de habilidade especial disponíveis e orçamento de Luminas.",
         "characterMechanics": "Mecânicas de Personagem",
@@ -4018,11 +4053,11 @@
           "maelle": "Maelle — Posturas",
           "maelleDesc": "Maelle alterna entre posturas Ofensiva, Defensiva e Virtuosa, cada uma alterando seus multiplicadores de dano e defesa. Também manipula Queimadura (Burn) nos inimigos e pode quebrar escudos. Atributo principal: Destreza. Dado de vida: d8.",
           "lune": "Lune — Manchas (Stains)",
-          "luneDesc": "Lune coleta Manchas elementais (Raio, Terra, Fogo, Gelo) em 4 slots. Suas habilidades consomem e transformam essas manchas. Manchas de Luz funcionam como coringas. O elemento dominante afeta certas habilidades. Atributo principal: Inteligência. Dado de vida: d8.",
+          "luneDesc": "Lune coleta Manchas elementais (Raio, Terra, Fogo, Gelo) em 4 slots. Suas habilidades consomem e transformam essas manchas. Manchas de Luz funcionam como coringas. O elemento dominante afeta certas habilidades. Importante: Lune não escolhe em qual slot as manchas vão — novas manchas substituem as antigas de forma aleatória. Não remova manchas apenas para escolher onde uma nova será colocada. Atributo principal: Inteligência. Dado de vida: d8.",
           "sciel": "Sciel — Cargas Sol/Lua",
           "scielDesc": "Sciel acumula cargas de Sol (ofensivas) e Lua (defensivas). Habilidades são classificadas por tipo e consomem a carga correspondente. Com ≥1 Sol E ≥1 Lua, pode ativar Crepúsculo: +2 ataque/dano por carga, dobra o limite de Presságio. Atributo principal: Carisma. Dado de vida: d8.",
           "verso": "Verso — Rank de Perfeição",
-          "versoDesc": "Verso evolui seu Rank de Perfeição (D→C→B→A→S) ao usar habilidades. Ranks mais altos desbloqueiam ataques mais fortes. Algumas habilidades custam PV ao invés de PM. Atributo principal: Força. Dado de vida: d10.",
+          "versoDesc": "Verso evolui seu Rank de Perfeição (D→C→B→A→S) ao usar habilidades. Ranks mais altos desbloqueiam ataques mais fortes. Algumas habilidades custam PV ao invés de PA. Atributo principal: Força. Dado de vida: d10.",
           "monoco": "Monoco — Roda Bestial",
           "monocoDesc": "Monoco usa uma Roda Bestial com 9 posições e 5 máscaras: Ouro (Onipotente/coringa), Azul (Conjuradora), Roxo (Ágil), Vermelho (Feroz), Verde (Protetora). Habilidades avançam a roda, e a máscara atual afeta bônus e efeitos. Atributo principal: Sabedoria. Dado de vida: d8."
         }
@@ -4031,7 +4066,7 @@
         "intro": "Introdução",
         "introText": "Bem-vindo ao mundo de Clair Obscur: Expedition 33! Este manual explica as regras básicas que você precisa conhecer para jogar. Seu Mestre guiará a aventura, mas entender estes conceitos ajudará você a tomar melhores decisões em combate e exploração.",
         "sheet": "Sua Ficha de Personagem",
-        "sheetText": "Sua ficha contém todas as informações sobre seu personagem: atributos, PV, PM, equipamentos, habilidades e mais.",
+        "sheetText": "Sua ficha contém todas as informações sobre seu personagem: atributos, PV, PA, equipamentos, habilidades e mais.",
         "attributes": "Atributos",
         "attributesText": "Seu personagem tem 6 atributos que definem suas capacidades. Cada atributo gera um modificador usado em rolagens:",
         "attr": {
@@ -4042,14 +4077,14 @@
           "constitution": "Constituição (CON)",
           "constitutionDesc": "Resistência física. Determina seus Pontos de Vida máximos.",
           "intelligence": "Inteligência (INT)",
-          "intelligenceDesc": "Raciocínio e memória. Afeta PM inicial e habilidades arcanas.",
+          "intelligenceDesc": "Raciocínio e memória. Afeta PA inicial e habilidades arcanas.",
           "wisdom": "Sabedoria (SAB)",
           "wisdomDesc": "Percepção e intuição. Afeta testes de percepção e salvaguardas mentais.",
           "charisma": "Carisma (CAR)",
           "charismaDesc": "Presença e força de personalidade. Afeta persuasão e certas habilidades."
         },
-        "hpMp": "PV e PM",
-        "hpMpText": "PV (Pontos de Vida) representa sua saúde. Quando chega a 0, você cai inconsciente. PM (Pontos de Magia) é usado para ativar habilidades especiais. O máximo de PM é 9. Você recupera PM por certos efeitos e Pictos.",
+        "hpMp": "PV e PA",
+        "hpMpText": "PV (Pontos de Vida) representa sua saúde. Quando chega a 0, você cai inconsciente. PA (Pontos de Ação) é usado para ativar habilidades especiais. O máximo de PA é 9. Você recupera PA por certos efeitos e Pictos.",
         "armorClass": "Classe de Armadura (CA)",
         "armorClassText": "Sua CA determina quão difícil é te acertar. CA = 10 + Mod. de Destreza + bônus de arma + bônus de Pictos. Quanto maior, melhor.",
         "combat": "Combate",
@@ -4057,7 +4092,7 @@
         "initiative": "Iniciativa",
         "initiativeText": "Role 1d20 + seu modificador de Destreza e bônus. Quem tiver o maior resultado age primeiro. Um 20 natural garante que você jogue primeiro que todos.",
         "yourTurn": "Seu Turno",
-        "yourTurnText": "Em seu turno, você pode: atacar um inimigo (ataque básico ou habilidade especial), usar um item, ou realizar outra ação. Habilidades especiais custam PM.",
+        "yourTurnText": "Em seu turno, você pode: atacar um inimigo (ataque básico ou habilidade especial), usar um item, ou realizar outra ação. Habilidades especiais custam PA.",
         "attacking": "Atacando",
         "attackingText": "Para atacar, role 1d20 + seu bônus de ataque. Se o resultado for igual ou maior que a CA do alvo, você acerta. Então role seus dados de dano + bônus. Ataques de tiro livre (free shot) acertam automaticamente ao mirar pontos fracos.",
         "criticalHits": "Acertos Críticos",
@@ -4094,6 +4129,8 @@
         },
         "elements": "Elementos",
         "elementsText": "Existem 8 elementos: Físico, Vazio, Luz, Raio, Fogo, Gelo, Trevas e Terra. Inimigos podem ser fracos, resistentes, imunes ou absorver certos elementos. Explorar fraquezas elementais causa dano dobrado!",
+        "break": "Quebra",
+        "breakText": "Para causar quebra em um inimigo, primeiro é preciso diminuir a vida dele para além de um dos dois marcadores de quebra na barra de vida. Feito isso, é preciso realizar alguma ação que cause quebra para iniciar o teste de resistência do atributo principal do alvo contra a sua constituição. Algumas habilidades especificam quais serão os atributos utilizados. Ao causar quebra com sucesso, um dos marcadores é removido da barra de vida. Depois de remover os dois marcadores, não é mais possível causar quebra.",
         "statusEffects": "Efeitos de Status",
         "statusEffectsText": "Durante o combate, você pode receber efeitos positivos (buffs) ou negativos (debuffs). Fique atento à duração de cada efeito.",
         "buffs": "Efeitos Positivos",
@@ -4123,7 +4160,7 @@
           "charm": "Charme",
           "charmDesc": "O Mestre controla suas ações. Teste SAB CD 13 para resistir.",
           "frozen": "Congelado",
-          "frozenDesc": "Não pode agir. Receber um ataque remove todo o gelo.",
+          "frozenDesc": "Não pode agir. Teste de resistência de Força CD 15 para quebrar o gelo. Receber um ataque remove todo o gelo.",
           "entangled": "Acorrentado",
           "entangledDesc": "Só pode bloquear ou pular, não esquivar.",
           "silenced": "Silenciado",
@@ -4137,7 +4174,7 @@
         },
         "debuffs": "Efeitos Negativos",
         "specialAttacks": "Habilidades Especiais",
-        "specialAttacksText": "Cada personagem possui habilidades únicas que custam PM. Algumas precisam ser desbloqueadas com pontos de habilidade ganhos ao subir de nível. Habilidades Gradiente são ataques de equipe que usam o recurso compartilhado de Gradiente. Habilidades marcadas como \"Mestre\" requerem autorização do Mestre para uso.",
+        "specialAttacksText": "Cada personagem possui habilidades únicas que custam PA. Algumas precisam ser desbloqueadas com pontos de habilidade ganhos ao subir de nível. Habilidades Gradiente são ataques de equipe que usam o recurso compartilhado de Gradiente. Habilidades marcadas como \"Mestre\" requerem autorização do Mestre para uso.",
         "weapons": "Armas",
         "weaponsText": "Sua arma define o dado de dano, elemento de ataque e bônus passivos. Armas possuem níveis (1-4) que afetam o dado de dano: nível 1 (d4), nível 2 (d6), nível 3 (d8), nível 4 (d10). Cada arma tem atributos de escalonamento (Vitalidade, Destreza, Defesa, Sorte) que podem melhorar PV, CA, defesa e proficiência.",
         "pictos": "Pictos",
@@ -4152,11 +4189,11 @@
           "maelle": "Maelle — Posturas",
           "maelleDesc": "Alterne entre posturas Ofensiva (mais dano), Defensiva (mais defesa) e Virtuosa (efeitos especiais). Cada postura muda como suas habilidades funcionam. Você também pode aplicar Queimadura nos inimigos.",
           "lune": "Lune — Manchas Elementais",
-          "luneDesc": "Colete Manchas de Raio, Terra, Fogo e Gelo em seus 4 slots. Suas habilidades consomem e transformam essas manchas. Manchas de Luz são coringas. Planeje suas combinações elementais!",
+          "luneDesc": "Colete Manchas de Raio, Terra, Fogo e Gelo em seus 4 slots. Suas habilidades consomem e transformam essas manchas. Manchas de Luz são coringas. Você não escolhe onde as manchas vão — novas manchas substituem as antigas aleatoriamente. Não remova manchas só para escolher a posição de uma nova. Planeje suas combinações elementais!",
           "sciel": "Sciel — Cargas Sol e Lua",
           "scielDesc": "Acumule cargas de Sol (habilidades ofensivas) e Lua (habilidades estratégicas). Com pelo menos 1 de cada, ative Crepúsculo para bônus massivos: +2 ataque e dano por carga, e dobra o limite de Presságio.",
           "verso": "Verso — Rank de Perfeição",
-          "versoDesc": "Seu Rank evolui de D até S conforme usa habilidades. Ranks maiores desbloqueiam ataques mais fortes. Cuidado: algumas habilidades custam PV ao invés de PM!",
+          "versoDesc": "Seu Rank evolui de D até S conforme usa habilidades. Ranks maiores desbloqueiam ataques mais fortes. Cuidado: algumas habilidades custam PV ao invés de PA!",
           "monoco": "Monoco — Roda Bestial",
           "monocoDesc": "Sua Roda tem 9 posições com 5 máscaras: Ouro (coringa), Azul (magia), Roxo (agilidade), Vermelho (força), Verde (proteção). Habilidades avançam a roda, e a máscara atual afeta seus bônus."
         }

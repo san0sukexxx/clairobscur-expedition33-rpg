@@ -315,14 +315,14 @@ export default function BattleGroupStatus({
                                                     onClick={canEdit ? () => openMp(ch) : undefined}
                                                 >
                                                     <div className="flex items-center justify-between text-xs uppercase">
-                                                        <span className="opacity-70 flex items-center gap-1">MP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
+                                                        <span className="opacity-70 flex items-center gap-1">AP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                         <span className="font-mono">
                                                             {ch.magicPoints}/{ch.maxMagicPoints}
                                                         </span>
                                                     </div>
                                                     <AnimatedStatBar
                                                         value={pct(ch.magicPoints!, ch.maxMagicPoints!)}
-                                                        label="MP"
+                                                        label="AP"
                                                         fillClass="bg-info"
                                                         ghostClass="bg-info/30"
                                                     />
@@ -567,7 +567,7 @@ export default function BattleGroupStatus({
 
                     <StatEditModal
                         open={editing === "mp"}
-                        title="MP"
+                        title="AP"
                         currentValue={playerCh.magicPoints ?? 0}
                         minValue={0}
                         maxValue={playerCh.maxMagicPoints ?? 999}

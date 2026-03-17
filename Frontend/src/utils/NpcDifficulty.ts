@@ -46,6 +46,10 @@ export function calculateNPCDifficulty(npcId: string): number {
     const npc = getNpcById(npcId);
     if (!npc) return 0;
 
+    if (npc.challengeRating != null) {
+        return Number(npc.challengeRating);
+    }
+
     const strMod = Math.floor((npc.strength - 10) / 2);
     const dexMod = Math.floor((npc.dexterity - 10) / 2);
     const conMod = Math.floor((npc.constitution - 10) / 2);

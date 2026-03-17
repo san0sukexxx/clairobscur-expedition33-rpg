@@ -10,6 +10,7 @@ export interface CreatePlayerItemRequest {
 export interface UpdatePlayerItemRequest {
     quantity?: number
     maxQuantity?: number
+    lastRecoveryPercent?: number
 }
 
 export interface UseItemRequest {

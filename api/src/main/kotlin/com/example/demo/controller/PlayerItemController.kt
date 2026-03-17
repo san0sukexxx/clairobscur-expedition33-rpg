@@ -59,8 +59,9 @@ class PlayerItemController(
         val newMaxQuantity = body.maxQuantity ?: item.maxQuantity
         val rawQuantity = body.quantity?.let { minOf(it, newMaxQuantity) } ?: item.quantity
         val newQuantity = maxOf(0, rawQuantity)
+        val newLastRecoveryPercent = body.lastRecoveryPercent ?: item.lastRecoveryPercent
 
-        val updated = item.copy(quantity = newQuantity, maxQuantity = newMaxQuantity)
+        val updated = item.copy(quantity = newQuantity, maxQuantity = newMaxQuantity, lastRecoveryPercent = newLastRecoveryPercent)
         repository.save(updated)
 
         return ResponseEntity.noContent().build()
@@ -180,7 +181,12 @@ class PlayerItemController(
             }
         }
 
-        val updatedItem = item.copy(quantity = item.quantity - 1)
+        val newLastRecoveryPercent = if (body.itemId != "chroma-elixir" && body.recoveryPercent != null) {
+            body.recoveryPercent
+        } else {
+            item.lastRecoveryPercent
+        }
+        val updatedItem = item.copy(quantity = item.quantity - 1, lastRecoveryPercent = newLastRecoveryPercent)
         repository.save(updatedItem)
 
         return ResponseEntity.ok().build()

@@ -225,6 +225,7 @@ export interface PlayerItemResponse {
     itemId: string
     quantity: number
     maxQuantity: number
+    lastRecoveryPercent: number | null
 }
 
 export interface PlayerSpecialAttackResponse {

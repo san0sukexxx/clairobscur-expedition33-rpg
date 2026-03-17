@@ -154,7 +154,8 @@ function ElixirsCard({
                         playerId: player.id,
                         itemId,
                         quantity,
-                        maxQuantity: newMaxQuantity
+                        maxQuantity: newMaxQuantity,
+                        lastRecoveryPercent: null
                     };
                     return { ...prev, items: [...(prev.items ?? []), newItem] };
                 });
@@ -196,7 +197,8 @@ function ElixirsCard({
                         playerId: player.id,
                         itemId,
                         quantity: 0,
-                        maxQuantity
+                        maxQuantity,
+                        lastRecoveryPercent: null
                     };
                     return { ...prev, items: [...(prev.items ?? []), newItem] };
                 });
@@ -206,18 +208,22 @@ function ElixirsCard({
         }
     }
 
+    function getLastRecoveryPercent(itemId: string): number {
+        const item = player?.items?.find(i => i.itemId === itemId);
+        return item?.lastRecoveryPercent ?? 30;
+    }
+
     function openRecoveryModal(itemId: string) {
         setSelectedItemId(itemId);
-        setRecoveryPercent(30);
-        setInputValue("30");
+        const last = getLastRecoveryPercent(itemId);
+        setRecoveryPercent(last);
+        setInputValue(String(last));
         setModalOpen(true);
     }
 
     function closeRecoveryModal() {
         setModalOpen(false);
         setSelectedItemId(null);
-        setRecoveryPercent(30);
-        setInputValue("30");
     }
 
     async function useItem(itemId: string, percent?: number) {
@@ -238,11 +244,15 @@ function ElixirsCard({
             });
 
             const item = player.items?.find(i => i.itemId === itemId);
+            if (item && itemId !== "chroma-elixir" && percent != null) {
+                await APIItem.updatePlayerItem(item.id, { lastRecoveryPercent: percent });
+            }
             if (item) {
                 setPlayer(prev => {
                     if (!prev || !prev.playerSheet) return prev;
+                    const newLastRecoveryPercent = (itemId !== "chroma-elixir" && percent != null) ? percent : item.lastRecoveryPercent;
                     const items = (prev.items ?? []).map(i =>
-                        i.id === item.id ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i
+                        i.id === item.id ? { ...i, quantity: Math.max(0, i.quantity - 1), lastRecoveryPercent: newLastRecoveryPercent } : i
                     );
 
                     let updatedSheet = { ...prev.playerSheet };
@@ -292,14 +302,29 @@ function ElixirsCard({
 
     async function confirmUseItem() {
         if (!selectedItemId) return;
+        const percent = recoveryPercent;
+        const itemId = selectedItemId;
         closeRecoveryModal();
 
-        if (selectedItemId === "revive-elixir") {
-            if (onReviveRequested) {
-                onReviveRequested(recoveryPercent);
+        if (itemId === "revive-elixir") {
+            const item = player?.items?.find(i => i.itemId === itemId);
+            if (item) {
+                try {
+                    await APIItem.updatePlayerItem(item.id, { lastRecoveryPercent: percent });
+                    setPlayer(prev => {
+                        if (!prev) return prev;
+                        const items = (prev.items ?? []).map(i =>
+                            i.id === item.id ? { ...i, lastRecoveryPercent: percent } : i
+                        );
+                        return { ...prev, items };
+                    });
+                } catch (e) {
+                    console.error("Erro ao salvar lastRecoveryPercent:", e);
+                }
             }
+            onReviveRequested?.(percent);
         } else {
-            await useItem(selectedItemId, recoveryPercent);
+            await useItem(itemId, percent);
         }
     }
 
@@ -545,7 +570,8 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                 playerId: player.id,
                 itemId: itemId.trim(),
                 quantity,
-                maxQuantity
+                maxQuantity,
+                lastRecoveryPercent: null
             };
 
             setPlayer(prev => {

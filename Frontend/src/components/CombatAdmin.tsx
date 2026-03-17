@@ -1818,11 +1818,11 @@ export default function CombatAdmin({
                                             {/* Parte 3: MP bar */}
                                             {m.currentMp !== undefined && m.maxMp !== undefined && (
                                                 <div className="flex items-center gap-1 min-w-0 combat-mp-section">
-                                                    <span className="text-[10px] font-mono opacity-70 shrink-0">MP {m.currentMp}/{m.maxMp}</span>
+                                                    <span className="text-[10px] font-mono opacity-70 shrink-0">AP {m.currentMp}/{m.maxMp}</span>
                                                     <div className="flex-1 min-w-0">
                                                         <AnimatedStatBar
                                                             value={Math.round((m.currentMp / m.maxMp) * 100)}
-                                                            label="MP"
+                                                            label="AP"
                                                             fillClass="bg-info"
                                                             ghostClass="bg-info/30"
                                                         />

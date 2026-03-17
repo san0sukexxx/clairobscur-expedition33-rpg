@@ -2,19 +2,19 @@
   "pictos": {
     "energy-master": {
       "name": "Energy Master",
-      "description": "Every MP gain is increased by 1."
+      "description": "Every AP gain is increased by 1."
     },
     "energising-turn": {
       "name": "Energising Turn",
-      "description": "+1 MP on turn start."
+      "description": "+1 AP on turn start."
     },
     "energising-attack-i": {
       "name": "Energising Attack I",
-      "description": "+1 MP on Base Attack."
+      "description": "+1 AP on Base Attack."
     },
     "energising-parry": {
       "name": "Energising Parry",
-      "description": "+1 MP on successful Parry."
+      "description": "+1 AP on successful Parry."
     },
     "augmented-first-strike": {
       "name": "Augmented First Strike",
@@ -34,7 +34,7 @@
     },
     "lucky-aim": {
       "name": "Lucky Aim",
-      "description": "WIS check DC 13: recover 1 MP on hitting a Weak Point."
+      "description": "WIS check DC 13: recover 1 AP on hitting a Weak Point."
     },
     "augmented-counter-i": {
       "name": "Augmented Counter I",
@@ -110,27 +110,27 @@
     },
     "dodger": {
       "name": "Dodger",
-      "description": "Gain 1 MP on Perfect Dodge. Once per turn."
+      "description": "Gain 1 AP on Perfect Dodge. Once per turn."
     },
     "energising-start-i": {
       "name": "Energising Start I",
-      "description": "+1 MP on battle start."
+      "description": "+1 AP on battle start."
     },
     "energising-start-ii": {
       "name": "Energising Start II",
-      "description": "+1 MP on battle start."
+      "description": "+1 AP on battle start."
     },
     "energising-start-iii": {
       "name": "Energising Start III",
-      "description": "+1 MP on battle start."
+      "description": "+1 AP on battle start."
     },
     "energising-start-iv": {
       "name": "Energising Start IV",
-      "description": "+1 MP on battle start."
+      "description": "+1 AP on battle start."
     },
     "perilous-parry": {
       "name": "Perilous Parry",
-      "description": "+1 MP on Parry, but +3d6 damage taken."
+      "description": "+1 AP on Parry, but +3d6 damage taken."
     },
     "confident": {
       "name": "Confident",
@@ -138,7 +138,7 @@
     },
     "energising-revive": {
       "name": "Energising Revive",
-      "description": "+3 MP to all allies when revived."
+      "description": "+3 AP to all allies when revived."
     },
     "rejuvenating-revive": {
       "name": "Rejuvenating Revive",
@@ -158,7 +158,7 @@
     },
     "dead-energy-ii": {
       "name": "Dead Energy II",
-      "description": "+3 MP on killing an enemy."
+      "description": "+3 AP on killing an enemy."
     },
     "piercing-shot": {
       "name": "Piercing Shot",
@@ -178,7 +178,7 @@
     },
     "energising-death": {
       "name": "Energising Death",
-      "description": "On death, +4 MP to allies."
+      "description": "On death, +4 AP to allies."
     },
     "shielding-death": {
       "name": "Shielding Death",
@@ -242,7 +242,7 @@
     },
     "rewarding-mark": {
       "name": "Rewarding Mark",
-      "description": "+2 MP on dealing damage to a Marked target. Once per turn."
+      "description": "+2 AP on dealing damage to a Marked target. Once per turn."
     },
     "double-mark": {
       "name": "Double Mark",
@@ -254,11 +254,11 @@
     },
     "sniper": {
       "name": "Sniper",
-      "description": "First Free Aim shot each turn deals +3d6 damage. Can pay 2 MP to attempt Break. Dexterity test vs target's Dexterity."
+      "description": "First Free Aim shot each turn deals +2d6 damage. Can cause Break. Dexterity test vs target's Dexterity."
     },
     "energising-attack-ii": {
       "name": "Energising Attack II",
-      "description": "+1 MP on Base Attack."
+      "description": "+1 AP on Base Attack."
     },
     "cheater": {
       "name": "Cheater",
@@ -306,7 +306,7 @@
     },
     "defensive-mode": {
       "name": "Defensive Mode",
-      "description": "On receiving damage, consume 1 MP to take -1d8 damage, if possible."
+      "description": "On receiving damage, consume 1 AP to take -1d8 damage, if possible."
     },
     "greater-powerful": {
       "name": "Greater Powerful",
@@ -346,7 +346,7 @@
     },
     "energising-heal": {
       "name": "Energising Heal",
-      "description": "On Healing an ally, also give 2 MP."
+      "description": "On Healing an ally, also give 2 AP."
     },
     "protecting-heal": {
       "name": "Protecting Heal",
@@ -362,23 +362,23 @@
     },
     "dead-energy-i": {
       "name": "Dead Energy I",
-      "description": "+3 MP on killing an enemy."
+      "description": "+3 AP on killing an enemy."
     },
     "effective-support": {
       "name": "Effective Support",
-      "description": "+2 MP on using an item."
+      "description": "+2 AP on using an item."
     },
     "weakness-gain": {
       "name": "Weakness Gain",
-      "description": "+1 MP on hitting an enemy's Weakness. Once per turn."
+      "description": "+1 AP on hitting an enemy's Weakness. Once per turn."
     },
     "energetic-healer": {
       "name": "Energetic Healer",
-      "description": "+2 MP on Healing an ally. Once per turn."
+      "description": "+2 AP on Healing an ally. Once per turn."
     },
     "beneficial-contamination": {
       "name": "Beneficial Contamination",
-      "description": "+2 MP on applying a Status Effect. Once per turn."
+      "description": "+2 AP on applying a Status Effect. Once per turn."
     },
     "roulette": {
       "name": "Roulette",
@@ -446,7 +446,7 @@
     },
     "energising-shots": {
       "name": "Energising Shots",
-      "description": "WIS check DC 15: gain 1 MP on Free Aim shot."
+      "description": "WIS check DC 15: gain 1 AP on Free Aim shot."
     },
     "versatile": {
       "name": "Versatile",
@@ -486,15 +486,15 @@
     },
     "energising-pain": {
       "name": "Energising Pain",
-      "description": "No longer gain MP on Parry. +1 MP on getting hit."
+      "description": "No longer gain AP on Parry. +1 AP on getting hit."
     },
     "energising-jump": {
       "name": "Energising Jump",
-      "description": "+1 MP on Jump Counterattack."
+      "description": "+1 AP on Jump Counterattack."
     },
     "powered-attack": {
       "name": "Powered Attack",
-      "description": "On every damage dealt, try to consume 1 MP. If successful, +1d4 damage."
+      "description": "On every damage dealt, try to consume 1 AP. If successful, +1d4 damage."
     },
     "combo-attack-ii": {
       "name": "Combo Attack II",
@@ -510,11 +510,11 @@
     },
     "staggering-attack": {
       "name": "Staggering Attack",
-      "description": "+4 to rolls to cause and resist Break."
+      "description": "+4 to rolls to cause Break."
     },
     "energising-break": {
       "name": "Energising Break",
-      "description": "+3 MP on Breaking a target."
+      "description": "+3 AP on Breaking a target."
     },
     "quick-break": {
       "name": "Quick Break",
@@ -538,7 +538,7 @@
     },
     "energising-gradient": {
       "name": "Energising Gradient",
-      "description": "+1 MP per Gradient Charge consumed."
+      "description": "+1 AP per Gradient Charge consumed."
     },
     "charging-attack": {
       "name": "Charging Attack",
@@ -562,11 +562,11 @@
     },
     "revive-tint-energy": {
       "name": "Revive Tint Energy",
-      "description": "Revive Tints also give 3 MP."
+      "description": "Revive Tints also give 3 AP."
     },
     "healing-tint-energy": {
       "name": "Healing Tint Energy",
-      "description": "Healing Tints also give 1 MP."
+      "description": "Healing Tints also give 1 AP."
     },
     "empowering-tint": {
       "name": "Empowering Tint",
@@ -598,7 +598,7 @@
     },
     "energising-burn": {
       "name": "Energising Burn",
-      "description": "+1 MP on applying Burn. Once per turn."
+      "description": "+1 AP on applying Burn. Once per turn."
     },
     "breaking-burn": {
       "name": "Breaking Burn",
@@ -662,15 +662,15 @@
     },
     "energising-powerful": {
       "name": "Energising Powerful",
-      "description": "Give 2 MP on applying Powerful."
+      "description": "Give 2 AP on applying Powerful."
     },
     "energising-shell": {
       "name": "Energising Shell",
-      "description": "Give 2 MP on applying Shell."
+      "description": "Give 2 AP on applying Shell."
     },
     "energising-rush": {
       "name": "Energising Rush",
-      "description": "Give 2 MP on applying Rush."
+      "description": "Give 2 AP on applying Rush."
     },
     "healing-boon": {
       "name": "Healing Boon",
@@ -690,11 +690,11 @@
     },
     "energising-cleanse": {
       "name": "Energising Cleanse",
-      "description": "Dispel the first negative Status Effect received and gain 2 MP."
+      "description": "Dispel the first negative Status Effect received and gain 2 AP."
     },
     "draining-cleanse": {
       "name": "Draining Cleanse",
-      "description": "Consume 1 MP to prevent Status Effects application, if possible."
+      "description": "Consume 1 AP to prevent Status Effects application, if possible."
     },
     "anti-blight": {
       "name": "Anti-Blight",
@@ -722,7 +722,7 @@
     },
     "breaking-attack": {
       "name": "Breaking Attack",
-      "description": "Can pay 3 MP on Basic Attack to attempt Break. Test your main attribute vs target's Constitution."
+      "description": "Can pay 3 AP on Basic Attack to attempt Break. Test your main attribute vs target's Constitution."
     },
     "anti-charm": {
       "name": "Anti-Charm",
@@ -755,7 +755,7 @@
       "passives": {
         "2": "Perfection is now based on current Health. Gain 1 Rank every 10 missing HP.",
         "3": "+1d6 Light damage with Skills.",
-        "4": "+1 MP on Rank Up."
+        "4": "+1 AP on Rank Up."
       }
     },
     "chevalam": {
@@ -786,7 +786,7 @@
       "name": "Corpeso",
       "passives": {
         "2": "Base Attack applies 2 Burn stack per Rank.",
-        "3": "+1 MP on Rank Up.",
+        "3": "+1 AP on Rank Up.",
         "4": "+2d6 Burn damage per Rank, up to +7d6 on Rank S."
       }
     },
@@ -802,7 +802,7 @@
       "name": "Cultam",
       "passives": {
         "2": "No Perfection loss on damage taken. Perfection is instead lost on being Healed.",
-        "3": "Gain 2 MP on Counterattack.",
+        "3": "Gain 2 AP on Counterattack.",
         "4": "Gain 1 Rank on Counterattack."
       }
     },
@@ -811,7 +811,7 @@
       "passives": {
         "2": "Base attack gives 1 Perfection per Burn on target.",
         "3": "While Powerful, CHA DC 13 test: apply Burn on hit.",
-        "4": "+1 MP on Rank Up."
+        "4": "+1 AP on Rank Up."
       }
     },
     "delaram": {
@@ -835,7 +835,7 @@
       "passives": {
         "2": "Gain 1 Rank on Counterattack.",
         "3": "+2d6 Counterattack damage.",
-        "4": "Gain 2 MP on Counterattack."
+        "4": "Gain 2 AP on Counterattack."
       }
     },
     "dualiso": {
@@ -859,7 +859,7 @@
       "passives": {
         "2": "Convert Light damage from Skills to Physical damage.",
         "3": "+1d4 Physical damage with Skills.",
-        "4": "-1 MP cost for Physical Skills."
+        "4": "-1 AP cost for Physical Skills."
       }
     },
     "glaceso": {
@@ -927,7 +927,7 @@
       "passives": {
         "2": "Bonus damage from Perfection applies to all allies reduced by 1d6. Bonus damage no longer applies to Verso.",
         "3": "Perfection gained is increased by 1 while Powerful.",
-        "4": "Support Skills cost 1 less MP."
+        "4": "Support Skills cost 1 less AP."
       }
     },
     "tireso": {
@@ -961,7 +961,7 @@
     "benisim": {
       "name": "Benisim",
       "passives": {
-        "2": "Healing Skills cost 1 less MP.",
+        "2": "Healing Skills cost 1 less AP.",
         "3": "Generate one Earth Stain at the beginning of each turn.",
         "4": "Replay instantly on consuming Stains with a Healing Skill."
       }
@@ -971,7 +971,7 @@
       "passives": {
         "2": "Using a Skill that consumes Stains grants +1d6 damage. Can stack up to 5 times. Resets on using a Skill without consuming Stains.",
         "3": "On turn start, if no Stains, 2 random Stains are generated.",
-        "4": "+1 MP when Stains are consumed."
+        "4": "+1 AP when Stains are consumed."
       }
     },
     "braselim": {
@@ -986,7 +986,7 @@
       "name": "Chapelim",
       "passives": {
         "2": "+1d8 Break damage per Earth Stain.",
-        "3": "Gain 9 MP on Breaking an enemy.",
+        "3": "Gain 9 AP on Breaking an enemy.",
         "4": "Generate one Earth Stain at the beginning of each turn."
       }
     },
@@ -1002,14 +1002,14 @@
       "name": "Colim",
       "passives": {
         "2": "INT DC 10 test: generate a Light Stain when consuming Stains.",
-        "3": "+1 MP on consuming a Light Stain.",
+        "3": "+1 AP on consuming a Light Stain.",
         "4": "+1d6 damage with Skills per active Light Stain."
       }
     },
     "coralim": {
       "name": "Coralim",
       "passives": {
-        "2": "Ice Skills cost 1 less MP.",
+        "2": "Ice Skills cost 1 less AP.",
         "3": "+1d6 Ice damage with Skills.",
         "4": "Start battle with 1 Earth Stain."
       }
@@ -1017,7 +1017,7 @@
     "deminerim": {
       "name": "Deminerim",
       "passives": {
-        "2": "Lightning Skills cost 1 less MP.",
+        "2": "Lightning Skills cost 1 less AP.",
         "3": "+1d6 Lightning damage with Skills.",
         "4": "Start battle with 1 Fire Stain."
       }
@@ -1035,13 +1035,13 @@
       "passives": {
         "2": "Casting a Skill grants +1d6 Skill damage of all other elements. Resets when casting a Skill of a previous element.",
         "3": "On turn start, if no Stains, 2 random Stains are generated.",
-        "4": "+1 MP when Stains are consumed."
+        "4": "+1 AP when Stains are consumed."
       }
     },
     "lighterim": {
       "name": "Lighterim",
       "passives": {
-        "2": "Fire Skills cost 1 less MP.",
+        "2": "Fire Skills cost 1 less AP.",
         "3": "+1d6 Fire damage with Skills.",
         "4": "Start battle with 1 Ice Stain."
       }
@@ -1050,7 +1050,7 @@
       "name": "Lithelim",
       "passives": {
         "2": "INT check DC 10: generate a Dark or Light Stain when consuming Stains. +2d6 damage with Skills per active Dark Stain.",
-        "3": "+1 MP on consuming a Light Stain.",
+        "3": "+1 AP on consuming a Light Stain.",
         "4": "Base Attacks can consume one Dark Stain to deal +5d6 damage."
       }
     },
@@ -1061,7 +1061,7 @@
     "painerim": {
       "name": "Painerim",
       "passives": {
-        "2": "Earth Skills cost 1 less MP.",
+        "2": "Earth Skills cost 1 less AP.",
         "3": "+1d6 Earth damage with Skills.",
         "4": "Start battle with 1 Lightning Stain."
       }
@@ -1103,14 +1103,14 @@
       "passives": {
         "2": "Freeze self when falling below half Health. Prevent the next instance of damage while Frozen.",
         "3": "On turn start, if Frozen, remove Freeze and recover 8d6 HP.",
-        "4": "Gain 2 Ice Stains and 3 MP when Frozen."
+        "4": "Gain 2 Ice Stains and 3 AP when Frozen."
       }
     },
     "trebuchim": {
       "name": "Trebuchim",
       "passives": {
         "2": "Generate a random Stain on Free Aim shot.",
-        "3": "+1 MP when Stains are consumed.",
+        "3": "+1 AP when Stains are consumed.",
         "4": "Base Attack generates 2 random Stains."
       }
     },
@@ -1166,14 +1166,14 @@
       "name": "Chantenum",
       "passives": {
         "2": "On turn start, if Stanceless, switch to Offensive Stance.",
-        "3": "Fire Skills cost 1 less MP.",
+        "3": "Fire Skills cost 1 less AP.",
         "4": "+1 Shield on switching to Offensive Stance."
       }
     },
     "clierum": {
       "name": "Clierum",
       "passives": {
-        "2": "Critical hits with Skills give 2 MP. Once per turn.",
+        "2": "Critical hits with Skills give 2 AP. Once per turn.",
         "3": "+1d6 Lightning damage with Skills.",
         "4": "+2d6 Critical Chance bonus while in Offensive Stance."
       }
@@ -1189,9 +1189,9 @@
     "duenum": {
       "name": "Duenum",
       "passives": {
-        "2": "In Defensive Stance, gaining MP also gives 1 MP to allies.",
+        "2": "In Defensive Stance, gaining AP also gives 1 AP to allies.",
         "3": "If Stanceless, Base Attack switches to Defensive Stance.",
-        "4": "+1 MP on Stance switch."
+        "4": "+1 AP on Stance switch."
       }
     },
     "facesum": {
@@ -1251,7 +1251,7 @@
       "passives": {
         "2": "On turn start, if Stanceless, switch to Defensive Stance.",
         "3": "In Defensive Stance, +3d6 Break damage.",
-        "4": "Support Skills cost 1 less MP."
+        "4": "Support Skills cost 1 less AP."
       }
     },
     "seashelum": {
@@ -1282,7 +1282,7 @@
       "name": "Tissenum",
       "passives": {
         "2": "In Defensive Stance, +3d6 Break damage.",
-        "3": "Gain 9 MP on Breaking an enemy.",
+        "3": "Gain 9 AP on Breaking an enemy.",
         "4": "Breaking an enemy deals a high amount of Earth damage."
       }
     },
@@ -1297,7 +1297,7 @@
     "volesterum": {
       "name": "Volesterum",
       "passives": {
-        "2": "+1 MP on Stance switch.",
+        "2": "+1 AP on Stance switch.",
         "3": "If Stanceless, Base Attack switches to Defensive Stance.",
         "4": "Recover 1d4 HP on Stance switch."
       }
@@ -1306,7 +1306,7 @@
       "name": "Yeverum",
       "passives": {
         "2": "Applying Shell also applies 1 Shield.",
-        "3": "On applying Shields, also give 1 MP.",
+        "3": "On applying Shields, also give 1 AP.",
         "4": "On switching to Virtuose Stance, +3 Shields on all allies."
       }
     },
@@ -1322,8 +1322,8 @@
       "name": "Ballaro",
       "passives": {
         "2": "Reverse Bestial Wheel order.",
-        "3": "Using an Upgraded Skill gives 1 MP to all other allies.",
-        "4": "Almighty Mask gives 2 MP to all allies."
+        "3": "Using an Upgraded Skill gives 1 AP to all other allies.",
+        "4": "Almighty Mask gives 2 AP to all allies."
       }
     },
     "boucharo": {
@@ -1338,7 +1338,7 @@
       "name": "Brumaro",
       "passives": {
         "2": "Replay instantly when in Almighty Mask.",
-        "3": "+3 MP when in Almighty Mask.",
+        "3": "+3 AP when in Almighty Mask.",
         "4": "Revive instantly with full Health if dead while in Almighty Mask. Once per Battle."
       }
     },
@@ -1347,7 +1347,7 @@
       "passives": {
         "2": "Start battle in Caster Mask.",
         "3": "Caster Mask applies Regen for 3 turns.",
-        "4": "Skills cost 1 less MP while in Caster Mask."
+        "4": "Skills cost 1 less AP while in Caster Mask."
       }
     },
     "fragaro": {
@@ -1363,7 +1363,7 @@
       "passives": {
         "2": "Start battle in Heavy Mask.",
         "3": "Heavy Mask applies Shell for 3 turns.",
-        "4": "+1 MP per hit taken."
+        "4": "+1 AP per hit taken."
       }
     },
     "joyaro": {
@@ -1387,7 +1387,7 @@
       "passives": {
         "2": "Parries increase the Bestial Wheel by 1. Taking damage resets the Bestial Wheel.",
         "3": "Upgraded Skills deal +1d8 damage.",
-        "4": "+1 MP on Mask change."
+        "4": "+1 AP on Mask change."
       }
     },
     "sidaro": {
@@ -1395,14 +1395,14 @@
       "passives": {
         "2": "+1d8 damage per Upgraded Skill used. Resets on using a non-Upgraded Skill.",
         "3": "Base Attack spins the Bestial Wheel to a random value.",
-        "4": "Using an Upgraded Skill gives 1 MP to all other allies."
+        "4": "Using an Upgraded Skill gives 1 AP to all other allies."
       }
     },
     "urnaro": {
       "name": "Urnaro",
       "passives": {
         "2": "Switch to Almighty Mask on Breaking an enemy.",
-        "3": "Almighty Mask gives 2 MP to all allies.",
+        "3": "Almighty Mask gives 2 AP to all allies.",
         "4": "+2d6 Break damage."
       }
     },
@@ -1465,9 +1465,9 @@
     "direton": {
       "name": "Direton",
       "passives": {
-        "2": "+1 MP per Moon charge on turn start.",
+        "2": "+1 AP per Moon charge on turn start.",
         "3": "Base Attack gives 1 Moon charge.",
-        "4": "During Twilight, Base Attack consumes all MP. Base Attack applies 1 Foretell and deals +2d6 damage per MP consumed."
+        "4": "During Twilight, Base Attack consumes all AP. Base Attack applies 1 Foretell and deals +2d6 damage per AP consumed."
       }
     },
     "garganon": {
@@ -1498,7 +1498,7 @@
       "name": "Hevason",
       "passives": {
         "2": "Free Aim shots can consume a Sun charge to apply 5 Foretell and consume a Moon charge to deal +8d6 damage.",
-        "3": "Consuming a Sun or Moon charge gives 1 MP.",
+        "3": "Consuming a Sun or Moon charge gives 1 AP.",
         "4": "Base Attack gives 1 Moon charge."
       }
     },
@@ -1507,7 +1507,7 @@
       "passives": {
         "2": "During Moon, all allies have Greater Rush. During Sun, all enemies have Greater Slow.",
         "3": "During Twilight, all allies have Greater Rush and all enemies have Greater Slow.",
-        "4": "+3 MP on applying a Buff or Debuff. Once per turn."
+        "4": "+3 AP on applying a Buff or Debuff. Once per turn."
       }
     },
     "lusteson": {
@@ -1530,7 +1530,7 @@
       "name": "Minason",
       "passives": {
         "2": "Sun Skills have increased damage for each Foretell on the target. Moon Skills don't generate Moon charges anymore.",
-        "3": "With at least 1 active Sun charge, gain one additional MP per Foretell consumed.",
+        "3": "With at least 1 active Sun charge, gain one additional AP per Foretell consumed.",
         "4": "Base attack can consume 1 Sun charge to apply 5 Foretell."
       }
     },
@@ -1554,7 +1554,7 @@
       "name": "Rangeson",
       "passives": {
         "2": "Recover 1d6 HP per Foretell applied.",
-        "3": "Healing Skills cost 1 less MP.",
+        "3": "Healing Skills cost 1 less AP.",
         "4": "+1d8 Heal per Moon charge. Base Attack gives 1 Moon charge."
       }
     },
@@ -1758,7 +1758,7 @@
       "ability": "Ability",
       "resistance": "Resistance",
       "hp": "HP",
-      "mp": "MP",
+      "mp": "AP",
       "initial": "Initial",
       "noCharacterSheets": "No character sheets available.",
       "attributesTitle": "Attributes",
@@ -1902,7 +1902,7 @@
       "intensityMaximum": "Maximum",
       "defend": "Defend",
       "defenseDescDodge": "Standard defense: the opponent's d20 attack against your AC.",
-      "defenseDescBlock": "Declare your intention to parry before defending. Failing to parry increases attack intensity by +1. A successful parry recovers 1 MP (1x per turn). Parrying all attacks in sequence grants a counter-attack of the same intensity.",
+      "defenseDescBlock": "Declare your intention to parry before defending. Failing to parry increases attack intensity by +1. A successful parry recovers 1 AP (1x per turn). Parrying all attacks in sequence grants a counter-attack of the same intensity.",
       "defenseDescJump": "Only for attacks that allow jumping. Each successful defense grants a counter-attack of the same intensity. Failing increases attack intensity by +1.",
       "defenseDescGradient": "Gradient attacks cannot be dodged, only parried. Same parry mechanics.",
       "weaponPassives": "Weapon passives"
@@ -1925,6 +1925,7 @@
         "startWith2Shields": "Starts battle with 2 shields.",
         "startWith3Shields": "Starts battle with 3 shields.",
         "doubleTurn": "Has two consecutive turns, being able to perform two actions.",
+        "tripleTurn": "Has 3 consecutive turns, being able to perform up to 3 actions.",
         "orphelinTrio": "Starts the round with 2 helpers, forming a trio of Chromatic Orphelin. While he wields a large hammer, the other two use different tools.",
         "startWith4Shields": "Starts battle with 4 shields.",
         "startWith5Shields": "Starts battle with 5 shields.",
@@ -1956,9 +1957,41 @@
         "noFloatingLamps": "This form does not have floating lamps.",
         "lightSwordRitual": "Light Sword can only be used after completing Dark Ritual. Causing a break prevents the ritual from being completed.",
         "weaponVariation": "For visual purposes, its weapon can vary between sword, lance, and hammer.",
-        "dualSwords": "Summons a darkness sword, now wielding two: one of fire and one of darkness."
+        "dualSwords": "Summons a darkness sword, now wielding two: one of fire and one of darkness.",
+        "maxShields9": "The maximum number of shields on this character is 9.",
+        "weakPointBreak3d6": "When the weak point is broken, roll 3d6 damage."
       },
       "npcAttacks": {
+        "doubleHandSlam": "Double Hand Slam",
+        "lasers": "Lasers",
+        "lasersDesc": "4 hits of very high intensity. Multiple targets.",
+        "abbestCombo": "3-Hit Combo",
+        "abbestComboDesc": "3 attacks. High intensity.",
+        "magicBlade": "Magic Blade",
+        "magicBladeDesc": "3 hits. High intensity.",
+        "groundMagic": "Ground Magic Attack",
+        "groundMagicDesc": "Extreme damage. Magic attack that travels through the ground.",
+        "crystalEmanation": "Crystal Emanation",
+        "crystalEmanationDesc": "Bonus action. Gains Charging status with no turn limit. Each time this ability is used, tell the players it is getting stronger. Each use changes the crystal color, getting closer to red: white → yellow → orange → red. When it reaches red, this character becomes invincible.",
+        "crystalCurse": "Crystal Curse",
+        "crystalCurseDesc": "Performs a single attack on the entire team that inflicts Curse.",
+        "grantFrenzy": "Grant Frenzy",
+        "grantFrenzyDesc": "Grants Frenzy to self.",
+        "hexgaCombo": "Crystal Sequence",
+        "hexgaComboDesc": "Sequence of 6 to 7 hits. Single target.",
+        "grantShields6Desc": "Grants shields to self. Starts granting 2 shields, but as power increases with Crystal Emanation, grants more shields, up to a maximum of 6 per use.",
+        "jarBarrage": "Jar Barrage",
+        "jarBarrageDesc": "Sequence of 6 attacks. Single target. High intensity.",
+        "jarJumpStrike": "Jump Strike",
+        "jarJumpStrikeDesc": "Very high intensity. Requires jumping. Hits all.",
+        "jarPoleCombo": "Pole Combo",
+        "jarPoleComboDesc": "5 pole hits that hit the entire team. In this order: 1 normal hit, 2 jumping hits and 2 normal hits.",
+        "fistCombo": "Fist Combo",
+        "fistComboDesc": "4 punches. Single target.",
+        "chargeLaser": "Charge Laser",
+        "chargeLaserDesc": "Not an attack. Gains Charging status.",
+        "chargedLasers": "Charged Lasers",
+        "chargedLasersDesc": "After charging, fires 2 very high intensity lasers at all enemies.",
         "invisibleWall": "Invisible Wall",
         "invisibleWallDesc": "Creates an invisible wall that secretly protects it from several attacks, at the master's discretion. The Mime always does this on its first turn and passes. Can only be used once per combat.",
         "comboHammers": "Hammer Combo",
@@ -2323,8 +2356,8 @@
         "errorEndingTurn": "Error ending turn",
         "hpUpdated": "HP updated",
         "errorUpdatingHp": "Error updating HP",
-        "mpUpdated": "MP updated",
-        "errorUpdatingMp": "Error updating MP",
+        "mpUpdated": "AP updated",
+        "errorUpdatingMp": "Error updating AP",
         "errorClaimingReward": "Error claiming reward",
         "gradientChargesUpdated": "Gradient charges updated to {charges}/3",
         "gustaveChargesUpdated": "Gustave charges updated to {charges}",
@@ -2339,7 +2372,7 @@
         "id": "ID",
         "name": "Name",
         "hp": "HP",
-        "mp": "MP",
+        "mp": "AP",
         "effects": "Effects",
         "actions": "Actions",
         "ready": "Ready",
@@ -2357,7 +2390,7 @@
         "attacker": "Attacker",
         "damageReceived": "Damage received",
         "changeHp": "Change HP",
-        "changeMp": "Change MP",
+        "changeMp": "Change AP",
         "editGradientCharges": "Edit Gradient Charges",
         "teamBEnemies": "Team B (Enemies)",
         "teamAAllies": "Team A (Allies)",
@@ -2409,8 +2442,8 @@
         "damage": "Damage",
         "amount": "Amount",
         "preview": "Result",
-        "currentMp": "Current MP",
-        "maxMp": "Max MP",
+        "currentMp": "Current AP",
+        "maxMp": "Max AP",
         "confirm": "Confirm",
         "chargesRange": "Charges (0-3)",
         "addAll": "Add all",
@@ -2563,7 +2596,7 @@
       },
       "lune-thermal-transfer": {
         "name": "Thermal Transfer",
-        "description": "Deals low Ice damage to a single target. 2 hits. Gains 4 MP if the target is Burning. Consumes 2 stains of Earth to play a second turn. Using this skill grants 1 Ice stain and 1 Light stain."
+        "description": "Deals low Ice damage to a single target. 2 hits. Gains 4 AP if the target is Burning. Consumes 2 stains of Earth to play a second turn. Using this skill grants 1 Ice stain and 1 Light stain."
       },
       "lune-thunderfall": {
         "name": "Thunderfall",
@@ -2599,7 +2632,7 @@
       },
       "lune-healing-light": {
         "name": "Healing Light",
-        "description": "Heals the target ally and dispels Status Effects. Consumes 2 stains of Earth to cost 0 MP. Using this skill grants 1 Light stain."
+        "description": "Heals the target ally and dispels Status Effects. Consumes 2 stains of Earth to cost 0 AP. Using this skill grants 1 Light stain."
       },
       "lune-lightning-dance": {
         "name": "Lightning Dance",
@@ -2619,7 +2652,7 @@
       },
       "lune-rebirth": {
         "name": "Rebirth",
-        "description": "Revives an ally with 2 additional MP. Roll 1d6: 1-2 = revive with low HP, 3-4 = revive with half HP, 5-6 = revive with full HP. Consumes 3 stains of Lightning to cost 0 MP. Using this skill grants 1 Light stain."
+        "description": "Revives an ally with 2 additional AP. Roll 1d6: 1-2 = revive with low HP, 3-4 = revive with half HP, 5-6 = revive with full HP. Consumes 3 stains of Lightning to cost 0 AP. Using this skill grants 1 Light stain."
       },
       "lune-revitalization": {
         "name": "Revitalization",
@@ -2651,11 +2684,11 @@
       },
       "maelle-mezzo-forte": {
         "name": "Mezzo Forte",
-        "description": "Reapplies current stance and performs a Dexterity test DC 15: success +4 MP, failure +2 MP."
+        "description": "Reapplies current stance and performs a Dexterity test DC 15: success +4 AP, failure +2 AP."
       },
       "maelle-percee": {
         "name": "Percee",
-        "description": "Deals medium Physical damage to a single target. 1 hit. +4 attack bonus and +4 extra damage against Marked targets. Changes to Defensive Stance. Cost reduced to 2 MP if used in Virtuose Stance."
+        "description": "Deals medium Physical damage to a single target. 1 hit. +4 attack bonus and +4 extra damage against Marked targets. Changes to Defensive Stance. Cost reduced to 2 AP if used in Virtuose Stance."
       },
       "maelle-degagement": {
         "name": "Degagement",
@@ -2667,7 +2700,7 @@
       },
       "maelle-swift-stride": {
         "name": "Swift Stride",
-        "description": "Deals low Physical damage to a single target. 1 hit. Dexterity test DC 15: success +2 MP, failure 0 MP. If target is Burning, switches to Virtuose Stance."
+        "description": "Deals low Physical damage to a single target. 1 hit. Dexterity test DC 15: success +2 AP, failure 0 AP. If target is Burning, switches to Virtuose Stance."
       },
       "maelle-guard-down": {
         "name": "Guard Down",
@@ -2695,7 +2728,7 @@
       },
       "maelle-breaking-rules": {
         "name": "Breaking Rules",
-        "description": "Deals low Physical damage to a single target. 2 hits. Destroys all target's Shields and grants 1 MP per Shield destroyed. Using this skill changes Maelle's Stance to Offensive."
+        "description": "Deals low Physical damage to a single target. 2 hits. Destroys all target's Shields and grants 1 AP per Shield destroyed. Using this skill changes Maelle's Stance to Offensive."
       },
       "maelle-fencers-flurry": {
         "name": "Fencer's Flurry",
@@ -2719,15 +2752,15 @@
       },
       "maelle-last-chance": {
         "name": "Last Chance",
-        "description": "Reduces own HP to 1 but refills all MP. Using this skill changes Maelle's Stance to Virtuose."
+        "description": "Reduces own HP to 1 but refills all AP. Using this skill changes Maelle's Stance to Virtuose."
       },
       "maelle-momentum-strike": {
         "name": "Momentum Strike",
-        "description": "Deals high Physical damage to a single target. 1 hit. Uses weapon's element. +4 attack bonus and +4 extra damage against Marked targets. Cost reduced to 4 MP if used in Virtuose Stance (normally 7 MP). Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals high Physical damage to a single target. 1 hit. Uses weapon's element. +4 attack bonus and +4 extra damage against Marked targets. Cost reduced to 4 AP if used in Virtuose Stance (normally 7 AP). Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-payback": {
         "name": "Payback",
-        "description": "Deals very high Physical damage to a single target. 1 hit. Dexterity test against the target's Constitution to cause Break. MP cost reduced for each attack parried since last turn (base cost 9 MP). Using this skill changes Maelle's Stance to Defensive."
+        "description": "Deals very high Physical damage to a single target. 1 hit. Dexterity test against the target's Constitution to cause Break. AP cost reduced for each attack parried since last turn (base cost 9 AP). Using this skill changes Maelle's Stance to Defensive."
       },
       "maelle-stendhal": {
         "name": "Stendhal",
@@ -2819,7 +2852,7 @@
       },
       "sciel-plentiful-harvest": {
         "name": "Plentiful Harvest",
-        "description": "Deals medium Physical damage to a single target. 2 hits. Consumes all Foretell from the target and grants 1 MP to an ally for each Foretell consumed."
+        "description": "Deals medium Physical damage to a single target. 2 hits. Consumes all Foretell from the target and grants 1 AP to an ally for each Foretell consumed."
       },
       "sciel-rush": {
         "name": "Rush",
@@ -2831,7 +2864,7 @@
       },
       "sciel-intervention": {
         "name": "Intervention",
-        "description": "Target ally plays immediately and gains 4 MP."
+        "description": "Target ally plays immediately and gains 4 AP."
       },
       "sciel-card-weaver": {
         "name": "Card Weaver",
@@ -2863,7 +2896,7 @@
       },
       "verso-ascending-assault": {
         "name": "Ascending Assault",
-        "description": "Deals low damage to a single target. 1 hit. Uses weapon element. Increases damage with each use. If Verso uses this skill at Perfection Rank S, the MP cost is reduced from 5 to 2."
+        "description": "Deals low damage to a single target. 1 hit. Uses weapon element. Increases damage with each use. If Verso uses this skill at Perfection Rank S, the AP cost is reduced from 5 to 2."
       },
       "verso-assault-zero": {
         "name": "Assault Zero",
@@ -2891,7 +2924,7 @@
       },
       "verso-followup": {
         "name": "Follow Up",
-        "description": "Deals medium Light damage to a single target. 1 hit. Damage increased for each Free Aim shot this turn, up to 10 times. If Verso uses this skill at Perfection Rank S, the MP cost is reduced from 5 to 2."
+        "description": "Deals medium Light damage to a single target. 1 hit. Damage increased for each Free Aim shot this turn, up to 10 times. If Verso uses this skill at Perfection Rank S, the AP cost is reduced from 5 to 2."
       },
       "verso-from-fire": {
         "name": "From Fire",
@@ -2899,11 +2932,11 @@
       },
       "verso-leadership": {
         "name": "Leadership",
-        "description": "Reduces current Rank. Gives 3 MP to other allies. If Verso uses this skill at Perfection Rank C, gives +1 additional MP to other allies."
+        "description": "Reduces current Rank. Gives 3 AP to other allies. If Verso uses this skill at Perfection Rank C, gives +1 additional AP to other allies."
       },
       "verso-light-holder": {
         "name": "Light Holder",
-        "description": "Deals medium Light damage to a single target. 5 hits. Upon completion, gains 1 Rank. If Verso uses this skill at Perfection Rank A, grants 2 additional MP to Verso."
+        "description": "Deals medium Light damage to a single target. 5 hits. Upon completion, gains 1 Rank. If Verso uses this skill at Perfection Rank A, grants 2 additional AP to Verso."
       },
       "verso-marking-shot": {
         "name": "Marking Shot",
@@ -2911,15 +2944,15 @@
       },
       "verso-overload": {
         "name": "Overload",
-        "description": "Increases Rank to S and refills all MP, but sets own HP to 1."
+        "description": "Increases Rank to S and refills all AP, but sets own HP to 1."
       },
       "verso-paradigm-shift": {
         "name": "Paradigm Shift",
-        "description": "Deals low Physical damage to a single target and returns 2 MP. 3 hits. If Verso uses this skill at Perfection Rank C, grants 1 additional MP to Verso."
+        "description": "Deals low Physical damage to a single target and returns 2 AP. 3 hits. If Verso uses this skill at Perfection Rank C, grants 1 additional AP to Verso."
       },
       "verso-perfect-break": {
         "name": "Perfect Break",
-        "description": "Deals very high Light damage to a single target. 1 hit. Strength test against the target's Constitution to cause Break. If Verso uses this skill at Perfection Rank B, the MP cost is reduced from 7 to 5."
+        "description": "Deals very high Light damage to a single target. 1 hit. Strength test against the target's Constitution to cause Break. If Verso uses this skill at Perfection Rank B, the AP cost is reduced from 7 to 5."
       },
       "verso-perfect-recovery": {
         "name": "Perfect Recovery",
@@ -2927,7 +2960,7 @@
       },
       "verso-phantom-stars": {
         "name": "Phantom Stars",
-        "description": "Deals extreme Light damage to all enemies. 5 hits. Strength test against the target's Constitution to cause Break. If Verso uses this skill at Perfection Rank S, the MP cost is reduced from 9 to 5."
+        "description": "Deals extreme Light damage to all enemies. 5 hits. Strength test against the target's Constitution to cause Break. If Verso uses this skill at Perfection Rank S, the AP cost is reduced from 9 to 5."
       },
       "verso-powerful": {
         "name": "Powerful",
@@ -2967,12 +3000,12 @@
       },
       "monoco-abbest-wind": {
         "name": "Abbest Wind",
-        "description": "Wind-based attack. Effect: Deals low Physical damage to a single target. 1 hit. Takes a second turn. Normally costs 2 MP, but when the Bestial Wheel Pointer is positioned on an Agile Mask or Omnipotent Mask, the cost reduces to 0 MP. Using this skill advances the Bestial Wheel Pointer by 2 positions.",
+        "description": "Wind-based attack. Effect: Deals low Physical damage to a single target. 1 hit. Takes a second turn. Normally costs 2 AP, but when the Bestial Wheel Pointer is positioned on an Agile Mask or Omnipotent Mask, the cost reduces to 0 AP. Using this skill advances the Bestial Wheel Pointer by 2 positions.",
         "prerequisite": "Defeat and acquire the foot of an Abbest enemy while Monoco is in the active group."
       },
       "monoco-aberration-light": {
         "name": "Aberration Light",
-        "description": "Aberration light attack. Effect: Deals high Light damage to all enemies. 2 hits. Applies 4 Burns per hit. Agile Mask: Applies 2 additional Burns per hit. Costs 7 MP. Using this skill advances the Bestial Wheel Pointer by 4 positions.",
+        "description": "Aberration light attack. Effect: Deals high Light damage to all enemies. 2 hits. Applies 4 Burns per hit. Agile Mask: Applies 2 additional Burns per hit. Costs 7 AP. Using this skill advances the Bestial Wheel Pointer by 4 positions.",
         "prerequisite": "Defeat and acquire the foot of an Aberration enemy while Monoco is in the active group."
       },
       "monoco-ballet-charm": {
@@ -3047,7 +3080,7 @@
       },
       "monoco-cruler-barrier": {
         "name": "Cruler Barrier",
-        "description": "Protective barrier skill. Effect: Applies 1-2 Shields to the target. Heavy Mask: Grants 2 MP to the target. Using this skill advances the Bestial Wheel Pointer by 4 positions. When activated while the pointer is on Heavy Mask or Omnipotent Mask, grants 2 additional MP to the target.",
+        "description": "Protective barrier skill. Effect: Applies 1-2 Shields to the target. Heavy Mask: Grants 2 AP to the target. Using this skill advances the Bestial Wheel Pointer by 4 positions. When activated while the pointer is on Heavy Mask or Omnipotent Mask, grants 2 additional AP to the target.",
         "prerequisite": "Defeat and acquire the foot of a Cruler enemy while Monoco is in the active group."
       },
       "monoco-cultist-blood": {
@@ -3097,7 +3130,7 @@
       },
       "monoco-hexga-crush": {
         "name": "Hexga Crush",
-        "description": "Crushing hex attack. Effect: Deals medium Earth damage to a single target. 2 hits. Applies Vulnerable to the target for 3 turns. Heavy Mask modifier increases damage. Requires 5 MP to cast and advances the Bestial Wheel Pointer by 6 positions. When used while the pointer is on Heavy Mask or Omnipotent Mask, the debuff duration increases to 5 turns.",
+        "description": "Crushing hex attack. Effect: Deals medium Earth damage to a single target. 2 hits. Applies Vulnerable to the target for 3 turns. Heavy Mask modifier increases damage. Requires 5 AP to cast and advances the Bestial Wheel Pointer by 6 positions. When used while the pointer is on Heavy Mask or Omnipotent Mask, the debuff duration increases to 5 turns.",
         "prerequisite": "Defeat and acquire the foot of a Hexga enemy while Monoco is in the active group."
       },
       "monoco-jar-lampstorm": {
@@ -3137,7 +3170,7 @@
       },
       "monoco-orphelin-cheers": {
         "name": "Orphelin Cheers",
-        "description": "Orphan's cheerful buff. Effect: Applies Empowered to 1-3 allies. Conjurer Mask: Also grants 3 MP to targets. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, affected allies receive tripled benefits.",
+        "description": "Orphan's cheerful buff. Effect: Applies Empowered to 1-3 allies. Conjurer Mask: Also grants 3 AP to targets. Using this skill advances the Bestial Wheel Pointer by 3 positions. When the pointer is on Conjurer Mask or Omnipotent Mask, affected allies receive tripled benefits.",
         "prerequisite": "Defeat and acquire the foot of an Orphelin enemy while Monoco is in the active group."
       },
       "monoco-pelerin-heal": {
@@ -3152,7 +3185,7 @@
       },
       "monoco-potier-energy": {
         "name": "Potier Energy",
-        "description": "Potter's energy skill. Effect: Grants 1-3 MP to all allies. With Conjurer Mask enhancement, provides 1 additional MP. Using this skill advances the Bestial Wheel Pointer by 6 positions. When activated on Conjurer Mask or Omnipotent Mask, allies receive an extra MP.",
+        "description": "Potter's energy skill. Effect: Grants 1-3 AP to all allies. With Conjurer Mask enhancement, provides 1 additional AP. Using this skill advances the Bestial Wheel Pointer by 6 positions. When activated on Conjurer Mask or Omnipotent Mask, allies receive an extra AP.",
         "prerequisite": "Defeat and acquire the foot of a Potier enemy while Monoco is in the active group."
       },
       "monoco-ramasseur-bonk": {
@@ -3474,7 +3507,7 @@
         "RedFlower": "🔴 Red Flower"
       },
       "statusDescriptions": {
-        "Frozen": "Cannot perform actions. Each 1d6 value reduces freezing by 1. Receiving an attack removes all freezing.",
+        "Frozen": "Cannot perform actions. Make a Strength saving throw DC 15 to break the ice. Receiving an attack removes all freezing.",
 
         "Burning": "Deals damage at the start of turn. Each burn deals 1d6 damage.",
         "StormCaller": "Deals Lightning damage at the start of turn. Each stack deals 1d6 Lightning damage.",
@@ -3490,7 +3523,7 @@
         "Stunned": "Prevents the character from acting this turn.",
         "Charm": "Your character must do what the master says. You have the right to a resistance test at the start of each turn.",
         "Entangled": "Cannot dodge or jump, only parry or gradient parry.",
-        "Exhausted": "Any action that costs MP costs 1 more and characters cannot recover MP in any way.",
+        "Exhausted": "Any action that costs AP costs 1 more and characters cannot recover AP in any way.",
         "Frenzy": "The character has +1 per frenzy in attack tests (except free shot).",
         "Rage": "You are entitled to an extra basic attack action, in addition to your other actions.",
         "Inverted": "When receiving healing from any effect, takes damage instead of healing.",
@@ -3611,8 +3644,8 @@
         "noValidEnemies": "No valid enemies found!",
         "requiresAllStains": "Requires all 4 elemental stains (Lightning, Earth, Fire, Ice)!",
         "insufficientGradientCharges": "Insufficient Gradient charges! Required: {required}, Available: {available}",
-        "insufficientMP": "Insufficient MP! Required: {required}, Available: {available}",
-        "parriesReducedCost": "{count} successful parry(s)! Cost reduced from {original} to {new} MP",
+        "insufficientMP": "Insufficient AP! Required: {required}, Available: {available}",
+        "parriesReducedCost": "{count} successful parry(s)! Cost reduced from {original} to {new} AP",
         "fireVulnerability": "Target vulnerable to Fire! Damage x2!",
         "foretellConsumed": "{target}: Foretell consumed! Damage x{multiplier}",
         "stainsConsumed": "{count} Stain(s) consumed! Damage +{bonus}",
@@ -3632,7 +3665,7 @@
         "revivedHalfHp": "{name} revived with half HP! ({hp} HP)",
         "noDeadAlliesToRevive": "No dead allies to revive!",
         "revivedWithRoll": "{name} revived with {percent}% HP! ({hp} HP) [Rolled {roll}]",
-        "grantedMpToRevived": "{name} received +{mp} MP!",
+        "grantedMpToRevived": "{name} received +{mp} AP!",
         "targetNotDead": "Target is not dead!",
         "scopeRollAll": "Rolled {roll}: Heals all allies!",
         "scopeRollSingle": "Rolled {roll}: Heals 1 ally!",
@@ -3643,10 +3676,10 @@
         "buffsCopied": "Buffs copied to other allies!",
         "stanceChanged": "Stance changed to {stance}!",
         "healthReduced": "Health reduced to {amount}!",
-        "mpRefilled": "MP recharged to {amount}!",
+        "mpRefilled": "AP recharged to {amount}!",
         "stanceReapplied": "{stance} stance reapplied!",
-        "mpGranted": "+{amount} MP granted! ({before} → {after})",
-        "allyReceivedMP": "{name} received {amount} MP! ({before} → {after})",
+        "mpGranted": "+{amount} AP granted! ({before} → {after})",
+        "allyReceivedMP": "{name} received {amount} AP! ({before} → {after})",
         "allyPlaysImmediately": "{name} will play immediately!",
         "burningTargetHeal": "Target Burning! Verso healed by {percent}% ({amount} HP)!",
         "burningTargetStance": "Target is Burning! Changed to Virtuous stance!",
@@ -3669,7 +3702,7 @@
         "rolledDicePowerfulVerso": "Rolled {value}! Powerful affects Verso only.",
         "rolledDiceReviving": "Rolled {value}! Reviving allies with {percent}% HP!",
         "rolledDiceRevivingAlly": "Rolled {value}! Reviving {name} with {percent}% HP!",
-        "allyRevivedWithMP": "{name} revived with 2 MP!",
+        "allyRevivedWithMP": "{name} revived with 2 AP!",
         "twilightExtended": "Twilight duration extended! (+1 turn)",
         "sunChargeGained": "Sun charge gained!",
         "moonChargeGained": "Moon charge gained!",
@@ -3688,7 +3721,7 @@
         "totalEnemyForetell": "Total enemy Foretell: {amount} (Damage +{amount})",
         "foretellsConsumed": "Consuming {count} Foretell(s)! Damage +{bonus}",
         "foretellsConsumedHeal": "Consuming {count} Foretell(s)! Heal +{bonus}%",
-        "foretellsConsumedMP": "Consuming {count} Foretell(s)! MP to grant: {amount}",
+        "foretellsConsumedMP": "Consuming {count} Foretell(s)! AP to grant: {amount}",
         "burnsConsumed": "Consuming {count} Burn(s)! Damage +{percent}%",
         "markedTarget": "Marked Target! Damage +{percent}%",
         "perfectionRank": "Rank {rank} of Perfection! Damage +{percent}%",
@@ -3704,14 +3737,14 @@
         "hitsCountAnnouncement": "{count} hit(s)!",
         "trumpetRandomBuffs": "2 random buffs",
         "trumpetSingleBuff": "1 random buff",
-        "gainedMP": "Rolled {roll}! +{amount} MP gained!",
+        "gainedMP": "Rolled {roll}! +{amount} AP gained!",
         "switchedToVirtuose": "Target burning! Switched to Virtuose!",
         "effectAppliesToAllAllies": "Rolled {roll}! Effect applies to all allies!",
         "effectAppliesToSingleTarget": "Rolled {roll}! Effect applies to single target only.",
         "habilityTestSuccessAllAllies": "Success! Effect applies to all allies!",
         "habilityTestFailureSingleTarget": "Failure! Effect applies to single target only.",
-        "habilityTestSuccessMP": "Success! +{mp} MP gained!",
-        "habilityTestFailureMP": "Failure! +{mp} MP gained.",
+        "habilityTestSuccessMP": "Success! +{mp} AP gained!",
+        "habilityTestFailureMP": "Failure! +{mp} AP gained.",
         "hitsReceivedBonus": "{hits} hits received! Damage +{bonus}!",
         "freeAimBonus": "{stacks} free aim shots! Damage +{stacks}!",
         "burnScalingBonus": "{stacks} Burns on target! Damage +{bonus}!",
@@ -3719,7 +3752,7 @@
         "shieldsConsumed": "{count} Shield(s) consumed!",
         "unprotectedApplied": "Unprotected applied to self!",
         "shieldsDestroyed": "{count} enemy Shield(s) destroyed!",
-        "mpFromShields": "+{mp} MP from destroyed shields!",
+        "mpFromShields": "+{mp} AP from destroyed shields!",
         "stainsGained": "Stains gained: {stains}",
         "stainTransformed": "Stain transformed: {from} → {to}",
         "insufficientStains": "Insufficient stains for this skill!",
@@ -3730,31 +3763,31 @@
         "hpCost": "HP cost: {amount}",
         "hpCostDeducted": "Cost {amount} HP",
         "statusTransferred": "{count} status effect(s) transferred!",
-        "rankGrantedMp": "+{mp} MP granted (Rank Bonus)!",
+        "rankGrantedMp": "+{mp} AP granted (Rank Bonus)!",
         "stunReapplied": "Stun reapplied to {name}!",
         "playsSecondTime": "Plays a second time! (Hits doubled)",
         "chargingStarted": "Charging... Attack will execute next turn!",
         "chargingReleased": "Charge released! Executing attack!",
         "chargingInterrupted": "Charge interrupted! The charge was cancelled.",
-        "mpReturned": "+{amount} MP returned!",
-        "mpGrantedToAllies": "+{amount} MP granted to allies!",
+        "mpReturned": "+{amount} AP returned!",
+        "mpGrantedToAllies": "+{amount} AP granted to allies!",
         "wheelAdvanced": "Bestial Wheel advanced to {mask}!",
         "forcedToAlmighty": "Forced to Almighty Mask!",
         "damageEscalation": "Damage Escalation: {stacks} use(s) (+{bonus}%)",
         "damageEscalationActive": "Escalation bonus active: +{bonus}%",
         "damageEscalationLinear": "Ascending Assault: +{bonus} damage",
         "alliesHealedPerHit": "Allies healed by {percent}% HP!",
-        "mpGainedFromBurning": "+{amount} MP gained (target Burning)!",
-        "mpGrantedAtHeavy": "+{amount} MP granted (Heavy Mask)!",
+        "mpGainedFromBurning": "+{amount} AP gained (target Burning)!",
+        "mpGrantedAtHeavy": "+{amount} AP granted (Heavy Mask)!",
         "hpSacrificed": "{amount} HP sacrificed!",
-        "mpGrantedAtCaster": "+{amount} MP granted (Caster Mask)!",
+        "mpGrantedAtCaster": "+{amount} AP granted (Caster Mask)!",
         "healedAtCaster": "+{percent}% HP healed (Caster Mask)!",
         "randomBuffsApplied": "{buffs} buff(s) applied to {count} ally(s)!",
         "healedPerHit": "+{amount} HP healed from hits!",
         "foretellConsumedCount": "{count} Foretell consumed!",
         "foretellDamageBonus": "+{bonus} damage from Foretell!",
         "foretellHealBonus": "+{bonus} heal from Foretell!",
-        "foretellMpGained": "+{amount} MP from consumed Foretell!",
+        "foretellMpGained": "+{amount} AP from consumed Foretell!",
         "foretellConsumedTotalBonus": "+{bonus} damage ({bonus} Foretell consumed in battle)!",
         "foretellConsumedFromAll": "{count} Foretell consumed from all enemies!",
         "foretellRedistributed": "{count} Foretell redistributed to {enemies} enemy(s)!",
@@ -3762,14 +3795,14 @@
         "noOtherEnemiesToRedistribute": "No other enemies to redistribute Foretell to!",
         "extraTurnGranted": "{name} will play the next turn!",
         "hpDrainedFromAllies": "{amount} HP drained from allies!",
-        "mpGrantedToLowest": "+{amount} MP granted to {name}!",
+        "mpGrantedToLowest": "+{amount} AP granted to {name}!",
         "burnDamagePropagated": "{damage} damage propagated to {count} burning enemy(s)!",
         "buffsCopiedCount": "{count} buff(s) copied to {allies} ally(s)!",
         "cleansedNoBufs": "{name} cleansed, no buffs to copy.",
         "foretellAppliedOnCrit": "+{count} Foretell applied (Critical)!",
-        "mpGrantedToAlly": "+{amount} MP granted to {name}!",
+        "mpGrantedToAlly": "+{amount} AP granted to {name}!",
         "turnDelayedAmount": "{name}'s turn delayed by {amount} position(s)!",
-        "stanceChangeMpBonus": "+1 MP from stance change!",
+        "stanceChangeMpBonus": "+1 AP from stance change!",
         "stanceLostBasicAttack": "Stance lost due to basic attack!"
       },
       "defense": {
@@ -3867,6 +3900,8 @@
         },
         "elements": "Elements",
         "elementsText": "There are 8 elements: Physical, Void, Light, Lightning, Fire, Ice, Dark, and Earth. NPCs can be weak (double damage), resistant (reduced damage), immune (no damage), or absorb (heal instead of damage) certain elements.",
+        "break": "Break",
+        "breakText": "To cause a break, the target's HP must first be reduced below one of the two break markers on their health bar. Once that condition is met, an action that causes break must be performed to initiate a resistance test of the target's main attribute against the attacker's constitution. Some abilities specify which attributes are used instead. Upon successfully causing a break, remove one of the markers from the health bar. After both markers have been removed, break can no longer be caused.",
         "npcs": "NPCs and Enemies",
         "npcsText": "Each NPC has a complete stat block with 6 attributes, AC, Challenge Rating (CR), attacks, and possible drops.",
         "npcStats": "NPC Stat Block",
@@ -3930,13 +3965,13 @@
           "charm": "Charm",
           "charmDesc": "Must follow GM's commands. Can resist with WIS check DC 13.",
           "frozen": "Frozen",
-          "frozenDesc": "Cannot act. 1d6 reduces freezing. An attack removes all ice.",
+          "frozenDesc": "Cannot act. Strength saving throw DC 15 to break the ice. An attack removes all ice.",
           "entangled": "Entangled",
           "entangledDesc": "Can only block, gradient block, or jump. Cannot dodge.",
           "silenced": "Silenced",
           "silencedDesc": "Cannot use special abilities.",
           "exhausted": "Exhausted",
-          "exhaustedDesc": "All MP costs +1. Cannot recover MP.",
+          "exhaustedDesc": "All AP costs +1. Cannot recover AP.",
           "dizzy": "Dizzy",
           "dizzyDesc": "-4 to free shot attack roll. Damage is not affected.",
           "broken": "Broken",
@@ -3955,9 +3990,9 @@
         "negativeStatus": "Negative Effects",
         "teamResources": "Team Resources",
         "gradient": "Gradient",
-        "gradientText": "Gradient is a shared team resource. It accumulates at 12 points per charge. It can be used for Gradient attacks (special team abilities) or for Gradient Block in defense. Some abilities grant Gradient points when used.",
+        "gradientText": "Gradient is a shared team resource. It accumulates at 12 points per charge. Each action point (AP) spent on abilities increases Gradient by 1 point. It can be used for Gradient attacks (special team abilities) or for Gradient Block in defense. Some abilities grant additional Gradient points when used.",
         "shields": "Shields",
-        "shieldsText": "Shields completely negate attacks. Each shield point absorbs one hit. Some attacks destroy shields without dealing damage, others ignore them completely. Destroying shields may grant MP to the attacker.",
+        "shieldsText": "Shields completely negate attacks. Each shield point absorbs one hit. Some attacks destroy shields without dealing damage, others ignore them completely. Destroying shields may grant AP to the attacker.",
         "xpRewards": "Experience and Rewards",
         "xpRewardsText": "Upon defeating NPCs, players earn XP based on enemy CR. Encounters may grant additional bonus XP. Rewards include weapons and pictos distributed by the GM. Character level affects proficiency bonus, max HP, available special ability points, and Lumina budget.",
         "characterMechanics": "Character Mechanics",
@@ -3968,11 +4003,11 @@
           "maelle": "Maelle — Stances",
           "maelleDesc": "Maelle alternates between Offensive, Defensive, and Virtuous stances, each changing her damage and defense multipliers. She also manipulates Burn on enemies and can break shields. Primary attribute: Dexterity. Hit die: d8.",
           "lune": "Lune — Stains",
-          "luneDesc": "Lune collects elemental Stains (Lightning, Earth, Fire, Ice) in 4 slots. Her abilities consume and transform these stains. Light stains act as wildcards. The dominant element affects certain abilities. Primary attribute: Intelligence. Hit die: d8.",
+          "luneDesc": "Lune collects elemental Stains (Lightning, Earth, Fire, Ice) in 4 slots. Her abilities consume and transform these stains. Light stains act as wildcards. The dominant element affects certain abilities. Important: Lune does not choose which slot stains go into — new stains randomly replace existing ones. Do not remove stains just to pick where a new one will be placed. Primary attribute: Intelligence. Hit die: d8.",
           "sciel": "Sciel — Sun/Moon Charges",
           "scielDesc": "Sciel accumulates Sun (offensive) and Moon (defensive) charges. Abilities are classified by type and consume the corresponding charge. With ≥1 Sun AND ≥1 Moon, can activate Twilight: +2 attack/damage per charge, doubles Foretell cap. Primary attribute: Charisma. Hit die: d8.",
           "verso": "Verso — Perfection Rank",
-          "versoDesc": "Verso evolves his Perfection Rank (D→C→B→A→S) by using abilities. Higher ranks unlock stronger attacks. Some abilities cost HP instead of MP. Primary attribute: Strength. Hit die: d10.",
+          "versoDesc": "Verso evolves his Perfection Rank (D→C→B→A→S) by using abilities. Higher ranks unlock stronger attacks. Some abilities cost HP instead of AP. Primary attribute: Strength. Hit die: d10.",
           "monoco": "Monoco — Bestial Wheel",
           "monocoDesc": "Monoco uses a Bestial Wheel with 9 positions and 5 masks: Gold (Almighty/wildcard), Blue (Caster), Purple (Agile), Red (Fierce), Green (Protector). Abilities advance the wheel, and the current mask affects bonuses and effects. Primary attribute: Wisdom. Hit die: d8."
         }
@@ -3981,7 +4016,7 @@
         "intro": "Introduction",
         "introText": "Welcome to the world of Clair Obscur: Expedition 33! This manual explains the basic rules you need to know to play. Your Game Master will guide the adventure, but understanding these concepts will help you make better decisions in combat and exploration.",
         "sheet": "Your Character Sheet",
-        "sheetText": "Your sheet contains all information about your character: attributes, HP, MP, equipment, abilities, and more.",
+        "sheetText": "Your sheet contains all information about your character: attributes, HP, AP, equipment, abilities, and more.",
         "attributes": "Attributes",
         "attributesText": "Your character has 6 attributes that define their capabilities. Each attribute generates a modifier used in rolls:",
         "attr": {
@@ -3992,14 +4027,14 @@
           "constitution": "Constitution (CON)",
           "constitutionDesc": "Physical endurance. Determines your maximum Hit Points.",
           "intelligence": "Intelligence (INT)",
-          "intelligenceDesc": "Reasoning and memory. Affects initial MP and arcane abilities.",
+          "intelligenceDesc": "Reasoning and memory. Affects initial AP and arcane abilities.",
           "wisdom": "Wisdom (WIS)",
           "wisdomDesc": "Perception and intuition. Affects perception checks and mental saves.",
           "charisma": "Charisma (CHA)",
           "charismaDesc": "Presence and force of personality. Affects persuasion and certain abilities."
         },
-        "hpMp": "HP and MP",
-        "hpMpText": "HP (Hit Points) represents your health. When it reaches 0, you fall unconscious. MP (Magic Points) is used to activate special abilities. Maximum MP is 9. You recover MP through certain effects and Pictos.",
+        "hpMp": "HP and AP",
+        "hpMpText": "HP (Hit Points) represents your health. When it reaches 0, you fall unconscious. AP (Action Points) is used to activate special abilities. Maximum AP is 9. You recover AP through certain effects and Pictos.",
         "armorClass": "Armor Class (AC)",
         "armorClassText": "Your AC determines how hard you are to hit. AC = 10 + DEX Modifier + weapon bonus + Picto bonuses. Higher is better.",
         "combat": "Combat",
@@ -4007,7 +4042,7 @@
         "initiative": "Initiative",
         "initiativeText": "Roll 1d20 + your Dexterity modifier and bonuses. Whoever has the highest result acts first. A natural 20 guarantees you play before everyone.",
         "yourTurn": "Your Turn",
-        "yourTurnText": "On your turn, you can: attack an enemy (basic attack or special ability), use an item, or perform another action. Special abilities cost MP.",
+        "yourTurnText": "On your turn, you can: attack an enemy (basic attack or special ability), use an item, or perform another action. Special abilities cost AP.",
         "attacking": "Attacking",
         "attackingText": "To attack, roll 1d20 + your attack bonus. If the result equals or exceeds the target's AC, you hit. Then roll your damage dice + bonuses. Free shot attacks automatically hit when targeting weak points.",
         "criticalHits": "Critical Hits",
@@ -4044,6 +4079,8 @@
         },
         "elements": "Elements",
         "elementsText": "There are 8 elements: Physical, Void, Light, Lightning, Fire, Ice, Dark, and Earth. Enemies may be weak, resistant, immune, or absorb certain elements. Exploiting elemental weaknesses deals double damage!",
+        "break": "Break",
+        "breakText": "To break an enemy, you must first reduce their HP below one of the two break markers on their health bar. Then, you need to use an action that causes break to initiate a resistance test of the target's main attribute against your constitution. Some abilities specify which attributes are used instead. When break succeeds, one marker is removed from the health bar. After both markers are removed, break can no longer be caused.",
         "statusEffects": "Status Effects",
         "statusEffectsText": "During combat, you may receive positive effects (buffs) or negative effects (debuffs). Pay attention to each effect's duration.",
         "buffs": "Positive Effects",
@@ -4073,7 +4110,7 @@
           "charm": "Charm",
           "charmDesc": "The GM controls your actions. WIS check DC 13 to resist.",
           "frozen": "Frozen",
-          "frozenDesc": "Cannot act. Being attacked removes all ice.",
+          "frozenDesc": "Cannot act. Strength saving throw DC 15 to break the ice. Being attacked removes all ice.",
           "entangled": "Entangled",
           "entangledDesc": "Can only block or jump, not dodge.",
           "silenced": "Silenced",
@@ -4087,7 +4124,7 @@
         },
         "debuffs": "Negative Effects",
         "specialAttacks": "Special Abilities",
-        "specialAttacksText": "Each character has unique abilities that cost MP. Some need to be unlocked with ability points earned by leveling up. Gradient abilities are team attacks that use the shared Gradient resource. Abilities marked as \"Master\" require GM authorization to use.",
+        "specialAttacksText": "Each character has unique abilities that cost AP. Some need to be unlocked with ability points earned by leveling up. Gradient abilities are team attacks that use the shared Gradient resource. Abilities marked as \"Master\" require GM authorization to use.",
         "weapons": "Weapons",
         "weaponsText": "Your weapon defines your damage die, attack element, and passive bonuses. Weapons have levels (1-4) that affect the damage die: level 1 (d4), level 2 (d6), level 3 (d8), level 4 (d10). Each weapon has scaling attributes (Vitality, Dexterity, Defense, Luck) that can improve HP, AC, defense, and proficiency.",
         "pictos": "Pictos",
@@ -4102,11 +4139,11 @@
           "maelle": "Maelle — Stances",
           "maelleDesc": "Alternate between Offensive (more damage), Defensive (more defense), and Virtuous (special effects) stances. Each stance changes how your abilities work. You can also apply Burn to enemies.",
           "lune": "Lune — Elemental Stains",
-          "luneDesc": "Collect Lightning, Earth, Fire, and Ice Stains in your 4 slots. Your abilities consume and transform these stains. Light stains are wildcards. Plan your elemental combinations!",
+          "luneDesc": "Collect Lightning, Earth, Fire, and Ice Stains in your 4 slots. Your abilities consume and transform these stains. Light stains are wildcards. You do not choose where stains go — new stains randomly replace existing ones. Do not remove stains just to pick where a new one will be placed. Plan your elemental combinations!",
           "sciel": "Sciel — Sun and Moon Charges",
           "scielDesc": "Accumulate Sun (offensive abilities) and Moon (strategic abilities) charges. With at least 1 of each, activate Twilight for massive bonuses: +2 attack and damage per charge, and doubles the Foretell cap.",
           "verso": "Verso — Perfection Rank",
-          "versoDesc": "Your Rank evolves from D to S as you use abilities. Higher ranks unlock stronger attacks. Beware: some abilities cost HP instead of MP!",
+          "versoDesc": "Your Rank evolves from D to S as you use abilities. Higher ranks unlock stronger attacks. Beware: some abilities cost HP instead of AP!",
           "monoco": "Monoco — Bestial Wheel",
           "monocoDesc": "Your Wheel has 9 positions with 5 masks: Gold (wildcard), Blue (magic), Purple (agility), Red (strength), Green (protection). Abilities advance the wheel, and the current mask affects your bonuses."
         }
