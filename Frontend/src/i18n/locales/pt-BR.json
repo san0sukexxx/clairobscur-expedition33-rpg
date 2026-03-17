@@ -218,7 +218,7 @@
     },
     "death-bomb": {
       "name": "Bomba da Morte",
-      "description": "Ao morrer, causa 3d6 de dano a todos os inimigos."
+      "description": "Ao morrer, realiza um teste de ataque comum contra todos os inimigos. Em acerto, causa 3d6 de dano."
     },
     "energising-death": {
       "name": "Morte Energizante",
@@ -394,7 +394,7 @@
     },
     "energising-heal": {
       "name": "Cura Energizante",
-      "description": "Ao Curar um aliado, também dá 2 PA."
+      "description": "Ao Curar um aliado, também dá 2 PA a ele."
     },
     "protecting-heal": {
       "name": "Cura Protetora",

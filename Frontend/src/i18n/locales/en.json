@@ -108,6 +108,50 @@
       "name": "Anti-Stun",
       "description": "Immune to Stun."
     },
+    "anti-inverted": {
+      "name": "Anti-Inversion",
+      "description": "Cannot receive Inverted."
+    },
+    "anti-curse": {
+      "name": "Anti-Curse",
+      "description": "Cannot be Cursed."
+    },
+    "anti-bound": {
+      "name": "Anti-Entangle",
+      "description": "Cannot be Entangled."
+    },
+    "anti-dizzy": {
+      "name": "Anti-Dizzy",
+      "description": "Cannot receive Dizzy."
+    },
+    "physical-coat": {
+      "name": "Physical Coat",
+      "description": "Resistance to Physical damage."
+    },
+    "fire-coat": {
+      "name": "Fire Coat",
+      "description": "Resistance to Fire damage."
+    },
+    "ice-coat": {
+      "name": "Ice Coat",
+      "description": "Resistance to Ice damage."
+    },
+    "thunder-coat": {
+      "name": "Thunder Coat",
+      "description": "Resistance to Lightning damage."
+    },
+    "earth-coat": {
+      "name": "Earth Coat",
+      "description": "Resistance to Earth damage."
+    },
+    "light-coat": {
+      "name": "Light Coat",
+      "description": "Resistance to Light damage."
+    },
+    "dark-coat": {
+      "name": "Dark Coat",
+      "description": "Resistance to Dark damage."
+    },
     "dodger": {
       "name": "Dodger",
       "description": "Gain 1 AP on Perfect Dodge. Once per turn."
@@ -174,7 +218,7 @@
     },
     "death-bomb": {
       "name": "Death Bomb",
-      "description": "On Death, deal 3d6 damage to all enemies."
+      "description": "On death, make a standard attack roll against all enemies. On hit, deal 3d6 damage."
     },
     "energising-death": {
       "name": "Energising Death",
@@ -227,6 +271,10 @@
     "augmented-counter-iii": {
       "name": "Augmented Counter III",
       "description": "+2d6 Counterattack damage."
+    },
+    "anti-exhaust": {
+      "name": "Anti-Exhaust",
+      "description": "Immune to Exhaustion."
     },
     "sos-rush": {
       "name": "SOS Rush",
@@ -346,7 +394,7 @@
     },
     "energising-heal": {
       "name": "Energising Heal",
-      "description": "On Healing an ally, also give 2 AP."
+      "description": "On Healing an ally, also give them 2 AP."
     },
     "protecting-heal": {
       "name": "Protecting Heal",
@@ -3753,6 +3801,8 @@
         "unprotectedApplied": "Unprotected applied to self!",
         "shieldsDestroyed": "{count} enemy Shield(s) destroyed!",
         "mpFromShields": "+{mp} AP from destroyed shields!",
+        "mpConceded": "{amount} AP granted to ally!",
+        "instantHeal": "Instant heal of {percent}% HP applied to all allies!",
         "stainsGained": "Stains gained: {stains}",
         "stainTransformed": "Stain transformed: {from} → {to}",
         "insufficientStains": "Insufficient stains for this skill!",
