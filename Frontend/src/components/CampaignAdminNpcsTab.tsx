@@ -287,11 +287,13 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
         );
     };
 
+    const dieSize = npc.damageDie ?? 6;
+
     function calcDamage(baseDice: number, baseMod: number) {
         const totalDice = Math.max(1, baseDice + npcIntensityOffset);
         const atMinDice = baseDice + npcIntensityOffset < 1;
         const mod = atMinDice ? 0 : baseMod;
-        return { numDice: totalDice, flatDmg: mod, avgDmg: Math.floor(totalDice * 3.5 + mod) };
+        return { numDice: totalDice, flatDmg: mod, avgDmg: Math.floor(totalDice * ((dieSize + 1) / 2) + mod) };
     }
 
     // ── derived values ──
@@ -490,7 +492,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                         <span className="text-cyan-300">{"▸ "}</span>
                                         <span className="italic opacity-90 text-cyan-300">
                                             {parts[0]}
-                                            <DiceBtn diceCmd={`${mNumDice}d6`} modifier={mFlatDmg} label={`${npcName} – Explosão da Mina`} />
+                                            <DiceBtn diceCmd={`${mNumDice}d${dieSize}`} modifier={mFlatDmg} label={`${npcName} – Explosão da Mina`} />
                                             {parts[1]}
                                         </span>
                                     </div>
@@ -503,7 +505,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                         <span className="text-cyan-300">{"▸ "}</span>
                                         <span className="italic opacity-90 text-cyan-300">
                                             {parts[0]}
-                                            <DiceBtn diceCmd="1d6" modifier={3} label={`${npcName} – Explosão`} />
+                                            <DiceBtn diceCmd={`1d${dieSize}`} modifier={3} label={`${npcName} – Explosão`} />
                                             {parts[1]}
                                         </span>
                                     </div>
@@ -552,7 +554,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                                 <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                 {" "}{t("combatAdmin.actionDesc.toHit")}
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
-                                                <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
                                                 {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                 {(atk.targeting === "all" || atk.targetsAll) && <> ({t("combatAdmin.actionDesc.targetsAll")})</>}
                                                 {atk.targeting === "single" && atk.quantity != null && atk.quantity > 1 && <> ({t("combatAdmin.actionDesc.targetsSingle")})</>}
@@ -565,7 +567,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                                 <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                 {" "}{t("combatAdmin.actionDesc.toHit")}
                                                 . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
-                                                <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
                                                 {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
                                                 {(atk.targeting === "all" || atk.targetsAll) && <> ({t("combatAdmin.actionDesc.targetsAll")})</>}
                                                 {atk.targeting === "single" && atk.quantity != null && atk.quantity > 1 && <> ({t("combatAdmin.actionDesc.targetsSingle")})</>}
@@ -589,7 +591,7 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                                             <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${t("combatAdmin.actionDesc.meleeAttack")} (${t("combatAdmin.actionDesc.toHit")})`} />
                                             {" "}{t("combatAdmin.actionDesc.toHit")}
                                             . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
-                                            <DiceBtn diceCmd={`${numDice}d6`} modifier={flatDmg} label={`${npcName} – ${t("combatAdmin.actionDesc.meleeAttack")} (${t("combatAdmin.actionDesc.hit")})`} />
+                                            <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${t("combatAdmin.actionDesc.meleeAttack")} (${t("combatAdmin.actionDesc.hit")})`} />
                                             .
                                         </span>
                                     </span>
