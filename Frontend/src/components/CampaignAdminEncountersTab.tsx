@@ -7,7 +7,7 @@ import { CHARACTERS_LIST } from "../utils/CharacterUtils";
 import { t, getWeaponName, getPictoName, getAllWeaponIds, getAllPictoIds, getLocationName } from "../i18n";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { getAllLocationsSorted, getMainStoryLocations } from "../utils/LocationUtils";
-import { StoryEncountersList } from "../data/StoryEncountersList";
+
 import { crToXp } from "../utils/NpcDifficulty";
 
 interface CampaignAdminEncountersTabProps {
@@ -89,7 +89,6 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
     const [locationStoryMode, setLocationStoryMode] = useState(() => localStorage.getItem("encounters.locationStoryMode") === "true");
 
     // List filters
-    const [showStoryMode, setShowStoryMode] = useState(() => localStorage.getItem("encounters.showStoryMode") === "true");
     const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("encounters.currentLocationOnly") === "true");
     const [listLocationFilter, setListLocationFilter] = useState(() => localStorage.getItem("encounters.listLocationFilter") ?? "");
 
@@ -306,16 +305,6 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
         if (!effectiveLocationFilter) return encounters;
         return encounters.filter(enc => enc.locationId === effectiveLocationFilter);
     }, [encounters, effectiveLocationFilter]);
-
-    // Filtered story encounters
-    const filteredStoryEncounters = useMemo(() => {
-        if (!showStoryMode) return [];
-        let list = StoryEncountersList;
-        if (effectiveLocationFilter) {
-            list = list.filter(enc => enc.locationId === effectiveLocationFilter);
-        }
-        return list;
-    }, [showStoryMode, effectiveLocationFilter]);
 
     // ─── EDITING VIEW ──────────────────────────────────────────────
     if (editingEncounter) {
@@ -713,30 +702,19 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
                             <FaDragon className="opacity-60" />
                             {t("encounters.title")}
                         </h2>
-                        {!showStoryMode && (
-                            <button
-                                className="btn btn-sm btn-primary gap-2"
-                                onClick={handleCreate}
-                                disabled={creating}
-                            >
-                                <FaPlus />
-                                {creating ? t("encounters.creating") : t("encounters.create")}
-                            </button>
-                        )}
+                        <button
+                            className="btn btn-sm btn-primary gap-2"
+                            onClick={handleCreate}
+                            disabled={creating}
+                        >
+                            <FaPlus />
+                            {creating ? t("encounters.creating") : t("encounters.create")}
+                        </button>
                     </div>
 
                     {/* Filters */}
                     <div className="flex flex-col gap-2 mt-3">
                         <div className="flex flex-wrap gap-x-4 gap-y-1">
-                            <label className="flex items-center gap-2 cursor-pointer select-none">
-                                <input
-                                    type="checkbox"
-                                    className="checkbox checkbox-sm checkbox-primary"
-                                    checked={showStoryMode}
-                                    onChange={(e) => { setShowStoryMode(e.target.checked); localStorage.setItem("encounters.showStoryMode", String(e.target.checked)); }}
-                                />
-                                <span className="text-sm">{t("encounters.showStoryMode")}</span>
-                            </label>
                             <label className="flex items-center gap-2 cursor-pointer select-none">
                                 <input
                                     type="checkbox"
@@ -765,104 +743,13 @@ export default function CampaignAdminEncountersTab({ campaignInfo, onNpcClick, o
                         <div className="mt-4 text-sm opacity-70">{t("encounters.loading")}</div>
                     )}
 
-                    {/* Story mode encounters */}
-                    {!loading && filteredStoryEncounters.length > 0 && (
-                        <div className="mt-4 flex flex-col divide-y divide-base-300">
-                            {filteredStoryEncounters.map((enc) => {
-                                const encCR = calculateEncounterCR(enc.npcs);
-                                return (
-                                    <div key={enc.id} className="flex flex-col gap-2 rounded-lg border border-base-300 bg-base-200 p-3">
-                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                                            <span className="font-semibold text-sm min-w-0 break-words">
-                                                {t(enc.name) || enc.id}
-                                                {enc.locationId && (
-                                                    <span className="ml-2 text-xs font-normal opacity-60">
-                                                        {getLocationName(enc.locationId)}
-                                                    </span>
-                                                )}
-                                            </span>
-                                            <div className="flex flex-wrap gap-1.5 shrink-0">
-                                                {enc.bonusXp > 0 && (
-                                                    <span className="badge badge-sm badge-ghost">
-                                                        {enc.bonusXp} {t("encounters.bonusXpReward")}
-                                                    </span>
-                                                )}
-                                                {encCR > 0 && (
-                                                    <span className="badge badge-sm badge-ghost font-mono">
-                                                        {t("encounters.challengeRating")} {formatCR(encCR)}
-                                                    </span>
-                                                )}
-                                                {enc.rewards.map((r, ri) => (
-                                                    <span
-                                                        key={ri}
-                                                        className={`badge badge-sm cursor-pointer hover:brightness-90 ${r.rewardType === "weapon" ? "badge-warning" : "badge-success"}`}
-                                                        onClick={() => r.rewardType === "weapon" ? onWeaponClick?.(r.itemId) : onPictoClick?.(r.itemId)}
-                                                    >
-                                                        {r.rewardType === "weapon" ? `⚔️ ${getWeaponName(r.itemId)}` : `🎴 ${getPictoName(r.itemId)}`}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {enc.playerCharacterIds?.map(charId => {
-                                                const char = CHARACTERS_LIST.find(c => c.id === charId);
-                                                return (
-                                                    <div
-                                                        key={charId}
-                                                        className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2 py-0.5 border border-primary/30"
-                                                    >
-                                                        <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
-                                                            <img
-                                                                src={`/characters/${charId}.webp`}
-                                                                alt={char?.label ?? charId}
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                        </div>
-                                                        <span className="text-xs font-medium">{char?.label ?? charId}</span>
-                                                    </div>
-                                                );
-                                            })}
-                                            {enc.npcs.map(n => {
-                                                const npc = getNpcById(n.npcId);
-                                                const name = npc?.name ?? n.npcId;
-                                                return (
-                                                    <div
-                                                        key={n.npcId}
-                                                        className="flex items-center gap-1.5 bg-base-100 rounded-full px-2 py-0.5 border border-base-300 cursor-pointer hover:bg-base-200 transition-colors"
-                                                        onClick={() => onNpcClick?.(n.npcId)}
-                                                    >
-                                                        <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
-                                                            <img
-                                                                src={`/enemies/${n.npcId}.png`}
-                                                                alt={name}
-                                                                className="w-full h-full object-cover"
-                                                                onError={(e) => handleNpcImgError(e, n.npcId)}
-                                                            />
-                                                        </div>
-                                                        <span className="text-xs">{n.quantity > 1 ? `${name} x${n.quantity}` : name}</span>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-
-                    {!loading && !showStoryMode && filteredEncounters.length === 0 && (
+                    {!loading && filteredEncounters.length === 0 && (
                         <div className="alert alert-info mt-4 text-sm leading-relaxed">
                             {t("encounters.noEncountersFound")}
                         </div>
                     )}
 
-                    {!loading && showStoryMode && filteredStoryEncounters.length === 0 && (
-                        <div className="alert alert-info mt-4 text-sm leading-relaxed">
-                            {t("encounters.noEncountersFound")}
-                        </div>
-                    )}
-
-                    {!loading && !showStoryMode && filteredEncounters.length > 0 && (
+                    {!loading && filteredEncounters.length > 0 && (
                         <div className="mt-4 flex flex-col divide-y divide-base-300">
                             {filteredEncounters.map((enc, index) => {
                                 const encCR = calculateEncounterCR(enc.npcs);

@@ -40,7 +40,7 @@ import { PictosList } from "../data/PictosList";
 import { pictoColorHex, calculatePictoSpeed, calculatePictoHealth, calculatePictoDefense, calculatePictoAbility } from "../utils/PictoUtils";
 import { SpecialAttacksList } from "../data/SpecialAttackList";
 import { getLocationById } from "../utils/LocationUtils";
-import { StoryEncountersList } from "../data/StoryEncountersList";
+
 
 const canCharacterUseWeapon = WeaponsDataLoader.canCharacterUseWeapon.bind(WeaponsDataLoader);
 
@@ -174,9 +174,6 @@ export default function CombatAdmin({
     const [showEncounterModal, setShowEncounterModal] = useState(false);
     const [encounterFilter, setEncounterFilter] = useState("");
     const [encounterLocationOnly, setEncounterLocationOnly] = useState(() => localStorage.getItem("combatAdmin.encounterLocationOnly") === "true");
-    const [encounterStoryMode, setEncounterStoryMode] = useState(() => localStorage.getItem("combatAdmin.encounterStoryMode") === "true");
-    const [hasStoryEncounter, setHasStoryEncounter] = useState(false);
-    const [storyEncounterName, setStoryEncounterName] = useState<string | null>(null);
     const [localPlayers, setLocalPlayers] = useState(players);
 
     const lastReloadTimeRef = useRef<number>(0)
@@ -451,24 +448,6 @@ export default function CombatAdmin({
         }
     }, [battleDetails?.encounterId]);
 
-    // Restaurar encontro de história do banco de dados ao carregar battleDetails
-    useEffect(() => {
-        const storedId = battleDetails?.idEncounterHistoryMode;
-        if (storedId && !hasStoryEncounter) {
-            const enc = StoryEncountersList.find(e => e.id === storedId);
-            if (enc) {
-                setStoryEncounterName(t(enc.name) || enc.id);
-                setHasStoryEncounter(true);
-                setBattleRewards(enc.rewards.map(r => ({
-                    type: r.rewardType as BattleReward["type"],
-                    itemId: r.itemId,
-                    level: r.level,
-                })));
-                setEncounterBonusXp(enc.bonusXp);
-            }
-        }
-    }, [battleDetails?.idEncounterHistoryMode]);
-
     useEffect(() => {
         reloadBattleDetails()
     }, [reloadBattleDetails])
@@ -583,8 +562,7 @@ export default function CombatAdmin({
             }
 
             // Se a batalha foi finalizada, buscar os dados atualizados e coletar recompensas
-            // (não sobrescrever se já temos recompensas de um encontro de história)
-            if (newStatus === "finished" && !hasStoryEncounter) {
+            if (newStatus === "finished") {
                 const updatedBattle = await APIBattle.getById(battleId);
                 if (updatedBattle?.characters) {
                     const rewards = await collectBattleRewards(updatedBattle.encounterId, updatedBattle.characters);
@@ -823,64 +801,6 @@ export default function CombatAdmin({
             }
 
             setSelectedEncounterId(encounterId);
-            await reloadBattleDetails(true);
-            showToast(t("combatAdmin.encounter.loaded"));
-        } catch (error) {
-            console.error("Erro ao carregar encontro:", error);
-            showToast("Erro ao carregar encontro");
-        } finally {
-            setLoadingEncounter(false);
-        }
-    }
-
-    async function handleLoadStoryEncounter(storyEncounter: typeof StoryEncountersList[number]) {
-        if (!battleId) return;
-        setLoadingEncounter(true);
-        try {
-            // Limpar equipe B antes de adicionar os NPCs do encontro
-            for (const member of teamB) {
-                if (member.rowId) {
-                    await APIBattle.removeCharacter(member.rowId);
-                }
-            }
-
-            for (const encounterNpc of storyEncounter.npcs) {
-                const npcInfo = getNpcById(encounterNpc.npcId);
-                if (!npcInfo) continue;
-
-                for (let i = 0; i < encounterNpc.quantity; i++) {
-                    const initiative: AddBattleCharacterInitiativeData = {
-                        initiativeValue: randomizeNpcInitiativeTotal(npcInfo),
-                        hability: Math.floor((npcInfo.dexterity - 10) / 2),
-                        playFirst: npcInfo.playFirst ?? false
-                    };
-
-                    await APIBattle.addCharacter({
-                        battleId: battleId,
-                        externalId: npcInfo.id,
-                        characterName: npcInfo.name,
-                        characterType: "npc",
-                        team: "B",
-                        healthPoints: getNPCMaxHealth(npcInfo),
-                        maxHealthPoints: getNPCMaxHealth(npcInfo),
-                        initiative,
-                        canRollInitiative: false,
-                        freeShotWeakPoints: npcInfo.freeShotWeakPoints ?? 0
-                    });
-                }
-            }
-
-            setSelectedEncounterId(null);
-            setStoryEncounterName(t(storyEncounter.name) || storyEncounter.id);
-            setHasStoryEncounter(true);
-            await APIBattle.update(battleId, { battleStatus: battleStatus, idEncounterHistoryMode: storyEncounter.id });
-            // Guardar recompensas e bônus XP do encontro de história
-            setBattleRewards(storyEncounter.rewards.map(r => ({
-                type: r.rewardType as BattleReward["type"],
-                itemId: r.itemId,
-                level: r.level,
-            })));
-            setEncounterBonusXp(storyEncounter.bonusXp);
             await reloadBattleDetails(true);
             showToast(t("combatAdmin.encounter.loaded"));
         } catch (error) {
@@ -2781,7 +2701,7 @@ export default function CombatAdmin({
                     </div>
 
                     {/* Seleção de Encontro (apenas durante setup) */}
-                    {battleStatus === 'starting' && (encounters.length > 0 || StoryEncountersList.length > 0) && (
+                    {battleStatus === 'starting' && encounters.length > 0 && (
                         <>
                             <div className="card bg-base-200 shadow-inner">
                                 <div className="p-4 flex items-center gap-3">
@@ -2794,17 +2714,15 @@ export default function CombatAdmin({
                                             <span className="loading loading-spinner loading-sm" />
                                         ) : selectedEncounterId ? (
                                             (() => { const enc = encounters.find(e => e.id === selectedEncounterId); return t("combatAdmin.encounter.selected", { name: enc?.locationId ? getLocationName(enc.locationId) : `#${enc?.id}` }); })()
-                                        ) : storyEncounterName ? (
-                                            t("combatAdmin.encounter.selected", { name: storyEncounterName })
                                         ) : (
                                             t("combatAdmin.encounter.select")
                                         )}
                                     </button>
-                                    {(selectedEncounterId || storyEncounterName) && (
+                                    {selectedEncounterId && (
                                         <button
                                             className="btn btn-sm btn-ghost btn-square text-error"
                                             title={t("combatAdmin.encounter.clear")}
-                                            onClick={() => { setSelectedEncounterId(null); setStoryEncounterName(null); setHasStoryEncounter(false); APIBattle.update(battleId, { battleStatus, idEncounterHistoryMode: "" }); }}
+                                            onClick={() => { setSelectedEncounterId(null); }}
                                         >
                                             ✕
                                         </button>
@@ -2840,96 +2758,10 @@ export default function CombatAdmin({
                                                 />
                                                 <span className="text-sm">{t("combatAdmin.labels.currentLocationOnly")}</span>
                                             </label>
-                                            <label className="flex items-center gap-2 cursor-pointer select-none">
-                                                <input
-                                                    type="checkbox"
-                                                    className="checkbox checkbox-sm checkbox-primary"
-                                                    checked={encounterStoryMode}
-                                                    onChange={(e) => { setEncounterStoryMode(e.target.checked); localStorage.setItem("combatAdmin.encounterStoryMode", String(e.target.checked)); }}
-                                                />
-                                                <span className="text-sm">{t("encounters.showStoryMode")}</span>
-                                            </label>
                                         </div>
 
                                         <div className="overflow-y-auto flex-1 space-y-2 -mx-1 px-1 py-1">
-                                            {encounterStoryMode && StoryEncountersList
-                                                .filter(enc => {
-                                                    if (encounterLocationOnly && campaignInfo.currentLocationId) {
-                                                        if (enc.locationId !== campaignInfo.currentLocationId) return false;
-                                                    }
-                                                    if (encounterFilter) {
-                                                        const displayName = t(enc.name) || enc.id;
-                                                        return displayName.toLowerCase().includes(encounterFilter.toLowerCase());
-                                                    }
-                                                    return true;
-                                                })
-                                                .map(enc => {
-                                                    const npcCount = enc.npcs.reduce((sum, n) => sum + n.quantity, 0);
-                                                    const rewardCount = enc.rewards.length;
-                                                    const totalCR = enc.npcs.reduce((sum, n) => sum + calculateNPCDifficulty(n.npcId) * n.quantity, 0);
-
-                                                    return (
-                                                        <div
-                                                            key={enc.id}
-                                                            className="card bg-base-200 cursor-pointer hover:bg-base-300 transition-colors"
-                                                            onClick={() => {
-                                                                handleLoadStoryEncounter(enc);
-                                                                setShowEncounterModal(false);
-                                                            }}
-                                                        >
-                                                            <div className="p-3">
-                                                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
-                                                                    <span className="font-bold">
-                                                                        {t(enc.name) || enc.id}
-                                                                        <span className="ml-2 text-xs font-normal opacity-60">{getLocationName(enc.locationId)}</span>
-                                                                    </span>
-                                                                    <div className="flex flex-wrap gap-1 text-xs">
-                                                                        <span className="badge badge-sm badge-ghost">{t("combatAdmin.encounter.npcs", { count: npcCount })}</span>
-                                                                        {rewardCount > 0 && <span className="badge badge-sm badge-ghost">{t("combatAdmin.encounter.rewards", { count: rewardCount })}</span>}
-                                                                        {enc.bonusXp > 0 && <span className="badge badge-sm badge-ghost">{enc.bonusXp} {t("encounters.bonusXpReward")}</span>}
-                                                                        <span className="badge badge-sm badge-warning">{t("combatAdmin.encounter.totalCR", { cr: formatCR(totalCR) })}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="flex flex-wrap gap-1.5">
-                                                                    {enc.playerCharacterIds?.map(charId => {
-                                                                        const char = CHARACTERS_LIST.find(c => c.id === charId);
-                                                                        return (
-                                                                            <div key={charId} className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2 py-0.5 border border-primary/30">
-                                                                                <div className="w-5 h-5 rounded-full bg-base-300 overflow-hidden shrink-0">
-                                                                                    <img src={`/characters/${charId}.webp`} alt={char?.label ?? charId} className="w-full h-full object-cover" />
-                                                                                </div>
-                                                                                <span className="text-xs font-medium">{char?.label ?? charId}</span>
-                                                                            </div>
-                                                                        );
-                                                                    })}
-                                                                    {enc.npcs.map((npc, idx) => {
-                                                                        const npcInfo = getNpcById(npc.npcId);
-                                                                        return (
-                                                                            <div key={idx} className="flex items-center gap-1 bg-base-300 rounded-lg px-2 py-1">
-                                                                                <div className="avatar">
-                                                                                    <div className="w-6 h-6 rounded flex items-center justify-center bg-base-300">
-                                                                                        <img
-                                                                                            src={`/enemies/${npc.npcId}.png`}
-                                                                                            alt={npcInfo?.name ?? npc.npcId}
-                                                                                            onError={(e) => handleNpcImgError(e, npc.npcId)}
-                                                                                        />
-                                                                                    </div>
-                                                                                </div>
-                                                                                <span className="text-xs">{npcInfo?.name ?? npc.npcId}</span>
-                                                                                {npc.quantity > 1 && (
-                                                                                    <span className="badge badge-xs badge-primary">×{npc.quantity}</span>
-                                                                                )}
-                                                                            </div>
-                                                                        );
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-
-                                            {!encounterStoryMode && encounters
+                                            {encounters
                                                 .filter(enc => {
                                                     if (encounterLocationOnly && campaignInfo.currentLocationId) {
                                                         if (enc.locationId !== campaignInfo.currentLocationId) return false;
@@ -3334,7 +3166,7 @@ export default function CombatAdmin({
                             </div>
 
                             {/* Drops dos NPCs — hidden if battle has an associated encounter */}
-                            {npcDrops.length > 0 && !battleDetails?.encounterId && !hasStoryEncounter && (
+                            {npcDrops.length > 0 && !battleDetails?.encounterId && (
                                 <>
                                     <div className="divider my-2">{t("combatAdmin.npcDetails.drops")}</div>
                                     <div className="space-y-4">
@@ -3659,8 +3491,7 @@ export default function CombatAdmin({
             onStatusChanged?.(battleInfo.battleStatus);
 
             // Coletar recompensas quando a batalha terminar
-            // (não sobrescrever se já temos recompensas de um encontro de história)
-            if (battleInfo.characters && !hasStoryEncounter) {
+            if (battleInfo.characters) {
                 collectBattleRewards(battleInfo.encounterId, battleInfo.characters).then(rewards => {
                     setBattleRewards(rewards);
                 });
