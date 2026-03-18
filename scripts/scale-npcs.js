@@ -42,6 +42,20 @@ const crBoss    = ["1",  "3", "4", "5", "6", "8", "9", "11", "12", "14", "16", "
 const acRegular = [10, 12, 13, 14, 14, 15, 16, 17, 17, 18, 18, 19, 20, 20, 21];
 const acBoss    = [12, 14, 15, 16, 16, 17, 18, 19, 19, 20, 20, 21, 22, 22, 23];
 
+// Target TOTAL damage per hit (die + strMod + additionalDamage)
+// additionalDamage is computed as: target - die_avg - strMod (per NPC, normalizes stat variance)
+// High tiers scale aggressively to threaten high-HP players
+//                                t0  t1  t2  t3   t4   t5   t6   t7   t8   t9  t10  t11  t12  t13  t14
+const targetBasicDmg           = [4,  5,  5,  6,   7,   8,   9,  10,  13,  15,  17,  22,  28,  30,  36];
+const targetSkillDmg           = [5,  6,  7,  8,  10,  11,  13,  14,  18,  21,  24,  32,  40,  44,  52];
+
+// Target TOTAL HP per NPC (maxLifeBonus = targetHP - scaledCON, per NPC)
+// This normalizes: high-CON NPCs get less bonus, low-CON NPCs get more
+// High tiers (8+) scale aggressively to match player weapon/picto power spikes
+//                      t0  t1  t2  t3  t4  t5  t6  t7  t8   t9  t10  t11  t12  t13  t14
+const targetHPRegular = [18, 22, 24, 28, 34, 38, 42, 46, 55,  65,  75,  90, 130, 140, 180];
+const targetHPBoss    = [32, 40, 44, 50, 62, 68, 76, 84, 100, 120, 140, 170, 240, 260, 340];
+
 function getDamageDie(tier) {
     if (tier <= 2) return 4;
     if (tier <= 6) return 6; // 6 is default, will remove
@@ -125,9 +139,18 @@ while (i < lines.length) {
 
 function transformNpcBlock(blockLines, npcId, tier, isBoss) {
     let result = [...blockLines];
+    const block = result.join('\n');
+
+    // Extract base ability scores before scaling
+    const getScore = (attr) => {
+        const m = block.match(new RegExp(`${attr}:\\s+(\\d+)`));
+        return m ? parseInt(m[1]) : 10;
+    };
+    const baseSTR = getScore('strength');
+    const baseCON = getScore('constitution');
 
     // 1. Scale attributes
-    const factor = 1.0 + (tier / 14) * 0.5;
+    const factor = 1.0 + (tier / 14) * 0.35;
     const attrs = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
     for (const attr of attrs) {
         result = result.map(line => {
@@ -135,16 +158,19 @@ function transformNpcBlock(blockLines, npcId, tier, isBoss) {
             if (match) {
                 const orig = parseInt(match[2]);
                 const scaled = Math.min(30, Math.max(4, Math.round(orig * factor)));
-                // Preserve alignment: the original value may be padded
                 const origStr = match[2];
                 let newStr = String(scaled);
-                // Preserve right-alignment padding
                 while (newStr.length < origStr.length) newStr = ' ' + newStr;
                 return match[1] + newStr + match[3];
             }
             return line;
         });
     }
+
+    // Compute scaled stats for HP/damage normalization
+    const scaledSTR = Math.min(30, Math.max(4, Math.round(baseSTR * factor)));
+    const scaledCON = Math.min(30, Math.max(4, Math.round(baseCON * factor)));
+    const strMod = Math.floor((scaledSTR - 10) / 2);
 
     // 2. Set armorClass
     const targetAC = isBoss ? acBoss[tier] : acRegular[tier];
@@ -157,7 +183,6 @@ function transformNpcBlock(blockLines, npcId, tier, isBoss) {
     // 4. Set proficiencyBonus
     const targetPB = getProficiencyBonus(tier);
     if (targetPB === 2) {
-        // Remove proficiencyBonus if present (2 is default)
         result = removeProperty(result, 'proficiencyBonus');
     } else {
         result = setOrAddNumericProperty(result, 'proficiencyBonus', targetPB);
@@ -166,16 +191,86 @@ function transformNpcBlock(blockLines, npcId, tier, isBoss) {
     // 5. Set damageDie
     const targetDD = getDamageDie(tier);
     if (targetDD === 6) {
-        // Remove damageDie if present (6 is default)
         result = removeProperty(result, 'damageDie');
     } else {
         result = setOrAddNumericProperty(result, 'damageDie', targetDD);
     }
 
-    // 6. Scale attacks (additionalDamage and additionalDices)
-    result = scaleAttacks(result, tier, isBoss);
+    // 6. Analyze attack structure for power normalization
+    const attackPower = computeAttackPower(block);
+
+    // 7. Set maxLifeBonus — NORMALIZED per NPC
+    // Adjustments: Physical resistance, attack power (high DPR NPCs need less HP)
+    const resistsPhysical = block.includes('resistentTo: "Physical"') || block.match(/resistentTo:.*"Physical"/);
+    const immuneToPhysical = block.includes('imuneTo: "Physical"') || block.match(/imuneTo:.*"Physical"/);
+    let hpFactor = 1.0;
+    if (immuneToPhysical) hpFactor *= 0.3;
+    else if (resistsPhysical) hpFactor *= 0.5;
+    // High-DPR NPCs (multi-hit, AOE) need less HP for balanced fight duration
+    // Only apply significant reduction for truly high multipliers (>2)
+    if (attackPower.avgMultiplier > 1.5) {
+        hpFactor /= Math.pow(attackPower.avgMultiplier / 1.5, 0.5);
+    }
+
+    const baseTargetHP = isBoss ? targetHPBoss[tier] : targetHPRegular[tier];
+    const targetHP = Math.max(scaledCON + 1, Math.round(baseTargetHP * hpFactor));
+    const mlb = Math.max(0, targetHP - scaledCON);
+    result = setOrAddNumericProperty(result, 'maxLifeBonus', mlb);
+
+    // 8. Scale attacks — NORMALIZED per NPC (targetDmg - dieAvg - strMod)
+    const dieAvg = targetDD / 2 + 0.5;
+    result = scaleAttacks(result, tier, isBoss, strMod, dieAvg);
 
     return result;
+}
+
+/** Analyze all attacks in an NPC block to compute effective DPR multiplier */
+function computeAttackPower(block) {
+    const lines = block.split('\n');
+    const attackLines = lines.filter(l =>
+        l.includes('type: "basic"') || l.includes('type: "skill"')
+    );
+
+    if (attackLines.length === 0) return { avgMultiplier: 1.0 };
+
+    let totalMult = 0;
+    for (const line of attackLines) {
+        // Only count attacks that deal damage (have additionalDamage or are basic)
+        const hasDamage = line.includes('additionalDamage:') || line.includes('type: "basic"');
+        if (!hasDamage) continue;
+
+        const qtyMatch = line.match(/quantity:\s*(\d+)/);
+        const quantity = qtyMatch ? parseInt(qtyMatch[1]) : 1;
+
+        const isAOE = line.includes('targetsAll: true') || line.includes('targeting: "all"');
+
+        const intMatch = line.match(/intensity:\s*"(\w+)"/);
+        const intDice = intensityToDiceFactor(intMatch ? intMatch[1] : null);
+
+        // Effective multiplier: how much more damage than a single basic hit
+        let mult = quantity * intDice;
+        if (isAOE) mult *= 2.5; // hits 3 targets (slightly less than 3x due to overkill)
+
+        totalMult += mult;
+    }
+
+    const damageAttacks = attackLines.filter(l =>
+        l.includes('additionalDamage:') || l.includes('type: "basic"')
+    ).length;
+
+    const avg = damageAttacks > 0 ? totalMult / damageAttacks : 1.0;
+    return { avgMultiplier: Math.max(1.0, avg) };
+}
+
+function intensityToDiceFactor(intensity) {
+    // Effective damage multiplier from extra dice (diminishing returns)
+    switch (intensity) {
+        case 'high': return 1.6;      // 2 dice
+        case 'veryHigh': return 2.0;   // 3 dice
+        case 'extreme': return 2.3;    // 4 dice
+        case 'maximum': return 2.5;    // 5 dice
+        default: return 1.0;           // 1 die
+    }
 }
 
 function setOrAddNumericProperty(lines, prop, value) {
@@ -233,7 +328,7 @@ function findInsertionPoint(lines, prop) {
     const order = ['id', 'isBoss', 'playFirst', 'passives', 'noBasicAttack',
         'strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma',
         'freeShotWeakPoints', 'isFlying', 'weakTo', 'resistentTo', 'absorbElement', 'imuneTo',
-        'armorClass', 'challengeRating', 'proficiencyBonus', 'damageDie',
+        'armorClass', 'challengeRating', 'proficiencyBonus', 'damageDie', 'maxLifeBonus',
         'conditionImmunities', 'attackList', 'drops'];
 
     const propIdx = order.indexOf(prop);
@@ -263,7 +358,7 @@ function findInsertionPoint(lines, prop) {
     return bestLine;
 }
 
-function scaleAttacks(lines, tier, isBoss) {
+function scaleAttacks(lines, tier, isBoss, strMod, dieAvg) {
     // Process each line that looks like an attack entry
     return lines.map(line => {
         // Check if this is an attack line
@@ -272,10 +367,9 @@ function scaleAttacks(lines, tier, isBoss) {
         }
 
         const isSkill = line.includes('type: "skill"');
-        const isBasic = line.includes('type: "basic"');
 
-        // Scale additionalDamage
-        line = scaleAdditionalDamage(line, tier, isBoss, isSkill);
+        // Scale additionalDamage (normalized per NPC)
+        line = scaleAdditionalDamage(line, tier, isBoss, isSkill, strMod, dieAvg);
 
         // Scale additionalDices
         line = scaleAdditionalDices(line, tier, isSkill);
@@ -284,28 +378,35 @@ function scaleAttacks(lines, tier, isBoss) {
     });
 }
 
-function scaleAdditionalDamage(line, tier, isBoss, isSkill) {
+function scaleAdditionalDamage(line, tier, isBoss, isSkill, strMod, dieAvg) {
     const match = line.match(/(additionalDamage:\s*)(\d+)/);
 
     if (match) {
-        const original = parseInt(match[2]);
-        let newDamage;
-        if (isSkill) {
-            newDamage = Math.round(tier * 1.3);
-        } else {
-            newDamage = Math.round(tier * 1.0);
-        }
-        newDamage = Math.max(0, newDamage);
-        if (original === 0 && tier > 0) {
-            newDamage = isSkill ? tier + 1 : tier;
-        }
+        // Normalized: additionalDamage = targetTotalDmg - die_avg - strMod
+        const targetDmg = isSkill ? targetSkillDmg[tier] : targetBasicDmg[tier];
+        let newDamage = Math.max(0, Math.round(targetDmg - dieAvg - strMod));
         if (isBoss) {
-            newDamage += 2;
+            newDamage += 3;
         }
+
+        // Compute this attack's effective multiplier and scale down proportionally
+        const qtyMatch = line.match(/quantity:\s*(\d+)/);
+        const quantity = qtyMatch ? parseInt(qtyMatch[1]) : 1;
+        const isAOE = line.includes('targetsAll: true') || line.includes('targeting: "all"');
+        const intMatch = line.match(/intensity:\s*"(\w+)"/);
+        const intFactor = intensityToDiceFactor(intMatch ? intMatch[1] : null);
+
+        // Total effective multiplier for this attack
+        let attackMult = quantity * intFactor;
+        if (isAOE) attackMult *= 2.5;
+
+        // Scale down per-hit damage so total effective output stays near target
+        // Use gentler exponent to avoid over-nerfing moderate multi-hit NPCs
+        if (attackMult > 1.5) {
+            newDamage = Math.max(0, Math.round(newDamage / Math.pow(attackMult / 1.5, 0.6)));
+        }
+
         line = line.replace(/(additionalDamage:\s*)\d+/, `$1${newDamage}`);
-    } else if (!match && tier > 0) {
-        // No additionalDamage present - for attacks with no damage, leave as-is
-        // (these are usually support skills like walls, heals, shields)
     }
 
     return line;
