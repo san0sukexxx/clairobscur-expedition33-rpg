@@ -42,6 +42,20 @@ const crBoss    = ["1",  "3", "4", "5", "6", "8", "9", "11", "12", "14", "16", "
 const acRegular = [10, 12, 13, 14, 14, 15, 16, 17, 17, 18, 18, 19, 20, 20, 21];
 const acBoss    = [12, 14, 15, 16, 16, 17, 18, 19, 19, 20, 20, 21, 22, 22, 23];
 
+/** Map a CR string to the tier index where that CR appears in crRegular.
+ *  This gives the "effective tier" — the difficulty tier matching that CR. */
+function crToEffectiveTier(crString) {
+    const crNum = crString === '1/4' ? 0.25 : crString === '1/2' ? 0.5 : parseFloat(crString);
+    const crNums = crRegular.map(c => c === '1/4' ? 0.25 : c === '1/2' ? 0.5 : parseFloat(c));
+    let best = 0;
+    let bestDiff = Infinity;
+    for (let i = 0; i < crNums.length; i++) {
+        const diff = Math.abs(crNums[i] - crNum);
+        if (diff < bestDiff) { bestDiff = diff; best = i; }
+    }
+    return best;
+}
+
 // Target TOTAL damage per hit (die + strMod + additionalDamage)
 // additionalDamage is computed as: target - die_avg - strMod (per NPC, normalizes stat variance)
 // High tiers scale aggressively to threaten high-HP players
@@ -172,54 +186,55 @@ function transformNpcBlock(blockLines, npcId, tier, isBoss) {
     const scaledCON = Math.min(30, Math.max(4, Math.round(baseCON * factor)));
     const strMod = Math.floor((scaledSTR - 10) / 2);
 
-    // 2. Set armorClass
-    const targetAC = isBoss ? acBoss[tier] : acRegular[tier];
+    // 2. Compute effective tier from CR (boss CR maps to higher effective tier)
+    const targetCR = isBoss ? crBoss[tier] : crRegular[tier];
+    const eTier = crToEffectiveTier(targetCR);
+
+    // 3. Set armorClass — use effective tier (bosses keep acBoss for +AC flavor)
+    const targetAC = isBoss ? acBoss[eTier] : acRegular[eTier];
     result = setOrAddNumericProperty(result, 'armorClass', targetAC);
 
-    // 3. Set challengeRating
-    const targetCR = isBoss ? crBoss[tier] : crRegular[tier];
+    // 4. Set challengeRating
     result = setOrAddStringProperty(result, 'challengeRating', targetCR);
 
-    // 4. Set proficiencyBonus
-    const targetPB = getProficiencyBonus(tier);
+    // 5. Set proficiencyBonus from effective tier
+    const targetPB = getProficiencyBonus(eTier);
     if (targetPB === 2) {
         result = removeProperty(result, 'proficiencyBonus');
     } else {
         result = setOrAddNumericProperty(result, 'proficiencyBonus', targetPB);
     }
 
-    // 5. Set damageDie
-    const targetDD = getDamageDie(tier);
+    // 6. Set damageDie from effective tier
+    const targetDD = getDamageDie(eTier);
     if (targetDD === 6) {
         result = removeProperty(result, 'damageDie');
     } else {
         result = setOrAddNumericProperty(result, 'damageDie', targetDD);
     }
 
-    // 6. Analyze attack structure for power normalization
+    // 7. Analyze attack structure for power normalization
     const attackPower = computeAttackPower(block);
 
-    // 7. Set maxLifeBonus — NORMALIZED per NPC
-    // Adjustments: Physical resistance, attack power (high DPR NPCs need less HP)
+    // 8. Set maxLifeBonus — NORMALIZED per NPC, using EFFECTIVE tier targets
     const resistsPhysical = block.includes('resistentTo: "Physical"') || block.match(/resistentTo:.*"Physical"/);
     const immuneToPhysical = block.includes('imuneTo: "Physical"') || block.match(/imuneTo:.*"Physical"/);
     let hpFactor = 1.0;
     if (immuneToPhysical) hpFactor *= 0.3;
     else if (resistsPhysical) hpFactor *= 0.5;
-    // High-DPR NPCs (multi-hit, AOE) need less HP for balanced fight duration
-    // Only apply significant reduction for truly high multipliers (>2)
     if (attackPower.avgMultiplier > 1.5) {
         hpFactor /= Math.pow(attackPower.avgMultiplier / 1.5, 0.5);
     }
 
-    const baseTargetHP = isBoss ? targetHPBoss[tier] : targetHPRegular[tier];
+    // Use unified targetHP from effective tier (no separate boss table)
+    const baseTargetHP = targetHPRegular[eTier];
     const targetHP = Math.max(scaledCON + 1, Math.round(baseTargetHP * hpFactor));
     const mlb = Math.max(0, targetHP - scaledCON);
     result = setOrAddNumericProperty(result, 'maxLifeBonus', mlb);
 
-    // 8. Scale attacks — NORMALIZED per NPC (targetDmg - dieAvg - strMod)
+    // 9. Scale attacks from EFFECTIVE tier (no boss damage bonus — eTier already higher)
     const dieAvg = targetDD / 2 + 0.5;
-    result = scaleAttacks(result, tier, isBoss, strMod, dieAvg);
+    result = scaleAttacks(result, eTier, false, strMod, dieAvg);
 
     return result;
 }
