@@ -209,7 +209,7 @@ export default function BattleGroupStatus({
                                         <div className="avatar">
                                             <div
                                                 className={`w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200 flex items-center justify-center bg-base-300 overflow-hidden
-                                                ${isDead ? "grayscale" : ""} ${ch.type === "npc" ? "cursor-zoom-in" : ""}`}
+                                                ${isDead ? "grayscale" : ""} ${ch.type === "npc" ? "cursor-zoom-in pointer-events-auto" : ""}`}
                                                 onClick={(e) => {
                                                     if (ch.type === "npc") {
                                                         e.stopPropagation();
