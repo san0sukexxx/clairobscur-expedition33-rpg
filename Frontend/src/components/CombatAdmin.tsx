@@ -40,6 +40,7 @@ import { PictosList } from "../data/PictosList";
 import { pictoColorHex, calculatePictoSpeed, calculatePictoHealth, calculatePictoDefense, calculatePictoAbility } from "../utils/PictoUtils";
 import { SpecialAttacksList } from "../data/SpecialAttackList";
 import { getLocationById } from "../utils/LocationUtils";
+import NpcImageModal from "./NpcImageModal";
 
 
 const canCharacterUseWeapon = WeaponsDataLoader.canCharacterUseWeapon.bind(WeaponsDataLoader);
@@ -113,6 +114,7 @@ export default function CombatAdmin({
     const [battleDetails, setBattleDetails] = useState<BattleWithDetailsResponse | null>(null)
     const [battleStatus, setBattleStatus] = useState<string>(initialStatus)
     const [updatingStatus, setUpdatingStatus] = useState<boolean>(false)
+    const [imageModalNpc, setImageModalNpc] = useState<{ id: string; name: string } | null>(null)
     const [showAddModal, setShowAddModal] = useState<boolean>(false)
     const [targetTeam, setTargetTeam] = useState<TeamKey>("A")
     const [filterText, setFilterText] = useState<string>("")
@@ -917,7 +919,10 @@ export default function CombatAdmin({
 
         return (
             <div className="avatar">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-base-300 overflow-hidden">
+                <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center bg-base-300 overflow-hidden ${isNpc ? "cursor-zoom-in" : ""}`}
+                    onClick={() => { if (isNpc) setImageModalNpc({ id: String(entity.externalId), name: entity.name }); }}
+                >
                     {isPlayerWithImage || isNpc ? (
                         <>
                             <img
@@ -2821,7 +2826,10 @@ export default function CombatAdmin({
                                                                         return (
                                                                             <div key={idx} className="flex items-center gap-1 bg-base-300 rounded-lg px-2 py-1">
                                                                                 <div className="avatar">
-                                                                                    <div className="w-6 h-6 rounded flex items-center justify-center bg-base-300">
+                                                                                    <div
+                                                                                        className="w-6 h-6 rounded flex items-center justify-center bg-base-300 cursor-zoom-in"
+                                                                                        onClick={() => setImageModalNpc({ id: npc.npcId, name: npcInfo?.name ?? npc.npcId })}
+                                                                                    >
                                                                                         <img
                                                                                             src={`/enemies/${npc.npcId}.png`}
                                                                                             alt={npcInfo?.name ?? npc.npcId}
@@ -3431,6 +3439,14 @@ export default function CombatAdmin({
             </div>
 
             {renderAddModal()}
+            {imageModalNpc && (
+                <NpcImageModal
+                    npcId={imageModalNpc.id}
+                    npcName={imageModalNpc.name}
+                    open={true}
+                    onClose={() => setImageModalNpc(null)}
+                />
+            )}
         </>
     )
 

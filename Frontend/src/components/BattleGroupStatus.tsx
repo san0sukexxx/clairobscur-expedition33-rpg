@@ -17,6 +17,7 @@ import StatEditModal from "./StatEditModal";
 import { HpEditModal } from "./HpEditModal";
 import { StatusConditionsModal } from "./StatusConditionsModal";
 import { t } from "../i18n";
+import NpcImageModal from "./NpcImageModal";
 
 interface BattleGroupStatusProps {
     player: GetPlayerResponse | null;
@@ -56,6 +57,7 @@ export default function BattleGroupStatus({
     const [editMoon, setEditMoon] = useState("");
     const [editStance, setEditStance] = useState<Stance | "">("");
     const [editRank, setEditRank] = useState("D");
+    const [imageModalNpc, setImageModalNpc] = useState<{ id: string; name: string } | null>(null);
     const [editRankProgress, setEditRankProgress] = useState("");
     const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
     const [conditionsOpen, setConditionsOpen] = useState(false);
@@ -160,7 +162,7 @@ export default function BattleGroupStatus({
 
     const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
 
-    return (
+    return (<>
         <div className="mt-5">
             <div className="card bg-base-100 shadow">
                 <div className="card-body">
@@ -205,8 +207,16 @@ export default function BattleGroupStatus({
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="avatar">
-                                            <div className={`w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200 flex items-center justify-center bg-base-300 overflow-hidden
-                                                ${isDead ? "grayscale" : ""}`}>
+                                            <div
+                                                className={`w-14 h-14 rounded-full ring ring-base-300 ring-offset-2 ring-offset-base-200 flex items-center justify-center bg-base-300 overflow-hidden
+                                                ${isDead ? "grayscale" : ""} ${ch.type === "npc" ? "cursor-zoom-in" : ""}`}
+                                                onClick={(e) => {
+                                                    if (ch.type === "npc") {
+                                                        e.stopPropagation();
+                                                        setImageModalNpc({ id: ch.id, name: ch.name });
+                                                    }
+                                                }}
+                                            >
                                                 <img
                                                     src={ch.type == "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`}
                                                     alt={ch.name}
@@ -778,5 +788,13 @@ export default function BattleGroupStatus({
                 document.body
             )}
         </div>
-    );
+        {imageModalNpc && (
+            <NpcImageModal
+                npcId={imageModalNpc.id}
+                npcName={imageModalNpc.name}
+                open={true}
+                onClose={() => setImageModalNpc(null)}
+            />
+        )}
+    </>);
 }

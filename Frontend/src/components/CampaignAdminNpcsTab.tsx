@@ -16,6 +16,7 @@ import type { Campaign } from "../api/APICampaign";
 import { crToXp, calculateNPCDifficulty, formatCR } from "../utils/NpcDifficulty";
 import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
 import { APIGameLog } from "../api/APIGameLog";
+import NpcImageModal from "./NpcImageModal";
 
 const ATTR_CONFIG = [
     { key: "strength", label: () => t("combatAdmin.npcDetails.str"), icon: FaFistRaised, color: "text-red-400" },
@@ -41,6 +42,7 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
     const [filterText, setFilterText] = useState(() => localStorage.getItem("npcs.filterText") ?? "");
     const [expandedId, setExpandedId] = useState<string | null>(focusNpcId ?? null);
     const [currentLocationOnly, setCurrentLocationOnly] = useState(() => localStorage.getItem("npcs.currentLocationOnly") === "true");
+    const [imageModalNpc, setImageModalNpc] = useState<{ id: string; name: string } | null>(null);
 
     useEffect(() => { localStorage.setItem("npcs.filterText", filterText); }, [filterText]);
 
@@ -131,7 +133,10 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                                     className="flex items-center gap-3 cursor-pointer"
                                     onClick={() => setExpandedId(isExpanded ? null : npc.id)}
                                 >
-                                    <div className="w-10 h-10 rounded-full bg-base-300 overflow-hidden flex items-center justify-center shrink-0">
+                                    <div
+                                        className="w-10 h-10 rounded-full bg-base-300 overflow-hidden flex items-center justify-center shrink-0 cursor-zoom-in"
+                                        onClick={(e) => { e.stopPropagation(); setImageModalNpc({ id: npc.id, name: npc.name }); }}
+                                    >
                                         <img
                                             src={`/enemies/${npc.id}.png`}
                                             alt={npc.name}
@@ -210,6 +215,14 @@ export default function CampaignAdminNpcsTab({ diceBoardRef, timeoutDiceBoardRef
                     })}
                 </div>
             </div>
+            {imageModalNpc && (
+                <NpcImageModal
+                    npcId={imageModalNpc.id}
+                    npcName={imageModalNpc.name}
+                    open={true}
+                    onClose={() => setImageModalNpc(null)}
+                />
+            )}
         </div>
     );
 }
