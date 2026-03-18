@@ -150,7 +150,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "visages",
-        residentNpcIds: ["boucheclier", "contortionniste-visages", "moissoneusse-visages", "chapelier", "chromatic-ramasseur", "mime", "seething-boucheclier", "jovial-moissonneuse", "sorrowful-chapelier", "visages", "mask-keeper"],
+        residentNpcIds: ["boucheclier", "contortionniste-visages", "moissoneusse-visages", "chapelier", "chromatic-ramasseur", "mime-visages", "seething-boucheclier", "jovial-moissonneuse", "sorrowful-chapelier", "visages", "mask-keeper"],
         referenceNpcNames: ["Blooraga", "Fading Man"],
         loot: [
             { type: "weapon", itemId: "clierum", level: 1 },

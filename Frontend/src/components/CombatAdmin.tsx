@@ -1346,7 +1346,7 @@ export default function CombatAdmin({
                                                 {atk.description && <span className="italic opacity-90">{renderTextWithDiceButtons(t(atk.description), `${npcName} – ${actionName}`, diceBoardRef, timeoutDiceBoardRef)} </span>}
                                                 {hasDamage && (
                                                     <span className="italic opacity-90">
-                                                        <DiceBtn diceCmd="1d20" modifier={hitBonus} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                                        <DiceBtn diceCmd="1d20" modifier={hitBonus + (atk.attackModifier ?? 0)} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                         {" "}{t("combatAdmin.actionDesc.toHit")}
                                                         . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
                                                         <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />

@@ -314,7 +314,8 @@ const NPCsBaseData: NPCBaseData[] = [
         damageDie: 10,
         attackList: [
             { type: "basic", additionalDamage: 9 },
-            { type: "skill", name: "combatAdmin.npcAttacks.ceramicStrike", additionalDamage: 12 },
+            { type: "skill", name: "combatAdmin.npcAttacks.ceramicCombo", additionalDamage: 9, quantity: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.ceramicSwordCombo", description: "combatAdmin.npcAttacks.ceramicSwordComboDesc", additionalDamage: 9, quantity: 2 },
         ],
         drops: { pictos: ["perilous-parry"] },
     },
@@ -618,11 +619,12 @@ const NPCsBaseData: NPCBaseData[] = [
         armorClass: 12,
         challengeRating: "3",
         damageDie: 6,
+        maxLifeBonus: 9999,
+        noBasicAttack: true,
         attackList: [
-            { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.psychic", additionalDamage: 5, statusList: [{ type: "Charm", ammount: 1, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.mentalExplosion", additionalDamage: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.bodySlam", description: "combatAdmin.npcAttacks.bodySlamDesc", additionalDamage: 6, attackModifier: -7, quantityText: "combatAdmin.npcAttacks.bodySlamQuantity" },
         ],
+        passives: ["combatAdmin.npcPassives.escalatingTurns", "combatAdmin.npcPassives.nearlyImmortal", "combatAdmin.npcPassives.selfDestruct"],
     },
     {
         id: "hexga",

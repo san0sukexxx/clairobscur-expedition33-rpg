@@ -142,6 +142,7 @@ export interface NPCAttack {
     element?: Element;  // Damage element (defaults to Physical)
     targetsAll?: boolean;  // Attack hits all enemies (legacy, same as targeting: "all")
     targeting?: NPCAttackTargeting;  // "single" = same target, "multiple" = different targets, "all" = all enemies
+    attackModifier?: number;  // Extra modifier added to the attack roll (can be negative to make attacks easier to dodge)
 }
 
 /** Returns the number of damage dice for the given attack intensity (omitted = normal = 1 die) */
