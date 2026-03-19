@@ -437,19 +437,22 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
             </div>
           ) : (
             <div className="card-body">
-              <div className="flex items-center justify-between">
-                <h2 className="flex-1 text-center font-bold text-sm tracking-wide uppercase">
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+                <div />
+                <h2 className="font-bold text-sm tracking-wide uppercase">
                   {t("weapons.title")}
                 </h2>
-                <button
-                  type="button"
-                  onClick={handleUnequip}
-                  className="btn btn-sm btn-ghost btn-circle"
-                  title={t("weapons.changeWeapon")}
-                  aria-label={t("weapons.changeWeapon")}
-                >
-                  ✕
-                </button>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleUnequip}
+                    className="btn btn-xs btn-ghost text-error"
+                    title={t("weapons.changeWeapon")}
+                    aria-label={t("weapons.changeWeapon")}
+                  >
+                    Desequipar
+                  </button>
+                </div>
               </div>
 
               <div className="mt-2 flex flex-col items-center gap-3">

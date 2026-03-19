@@ -1,10 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { type MutableRefObject, type RefObject, useCallback, useMemo, useState } from "react";
 import { type PlayerItemResponse } from "../api/ResponseModel";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIItem } from "../api/APIItem";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { type WeaponInfo } from "../api/ResponseModel";
-import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator";
+import { type DiceBoardRef } from "./DiceBoard";
+import { rollWithTimeout } from "../utils/RollUtils";
+import { dispatchRoll } from "../utils/rollDispatcher";
 import { t } from "../i18n";
 
 const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", "revive-elixir"]);
@@ -12,10 +13,9 @@ const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", 
 interface ItemsSectionProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
-    isInventoryActiveInCombat?: boolean;
-    weaponInfo: WeaponInfo;
-    onReviveRequested?: (percent: number) => void;
-    onPotionUsed?: () => void;
+    diceBoardRef: RefObject<DiceBoardRef | null>;
+    timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    onItemUsed?: () => void;
 }
 
 function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
@@ -51,67 +51,25 @@ function buildVisible(items?: PlayerItemResponse[]) {
 function ElixirsCard({
     player,
     setPlayer,
-    inCombat = false,
-    canUsePotion = false,
-    weaponInfo,
-    onReviveRequested,
-    onPotionUsed
+    diceBoardRef,
+    timeoutDiceBoardRef,
+    onItemUsed,
 }: {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
-    inCombat?: boolean;
-    canUsePotion?: boolean;
-    weaponInfo: WeaponInfo;
-    onReviveRequested?: (percent: number) => void;
-    onPotionUsed?: () => void;
+    diceBoardRef: RefObject<DiceBoardRef | null>;
+    timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    onItemUsed?: () => void;
 }) {
     const [usingItem, setUsingItem] = useState<string | null>(null);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-    const [recoveryPercent, setRecoveryPercent] = useState(30);
-    const [inputValue, setInputValue] = useState("30");
     const [editQtyModal, setEditQtyModal] = useState<{ elixirId: string; field: "quantity" | "max"; currentValue: number } | null>(null);
     const [editQtyValue, setEditQtyValue] = useState("");
+    const [diceModal, setDiceModal] = useState<{ elixirId: string; label: string } | null>(null);
+    const [diceCount, setDiceCount] = useState(1);
+    const [diceSize, setDiceSize] = useState(6);
     const focusRef = useCallback((node: HTMLInputElement | null) => {
         if (node) setTimeout(() => node.focus(), 50);
     }, []);
-
-    const hasDeadTeammate = useMemo(() => {
-        if (!player?.fightInfo?.characters) return false;
-        return player.fightInfo.characters.some(char =>
-            !char.isEnemy && char.healthPoints === 0
-        );
-    }, [player?.fightInfo?.characters]);
-
-    const isHpFull = useMemo(() => {
-        if (inCombat && player?.fightInfo) {
-            const currentChar = player.fightInfo.characters?.find(
-                c => c.battleID === player.fightInfo?.playerBattleID
-            );
-            if (currentChar) {
-                return currentChar.healthPoints >= currentChar.maxHealthPoints;
-            }
-        }
-        if (!player?.playerSheet) return true;
-        const currentHp = player.playerSheet.hpCurrent ?? 0;
-        const maxHp = calculateMaxHP(player, weaponInfo);
-        return currentHp >= maxHp;
-    }, [player, weaponInfo, inCombat]);
-
-    const isMpFull = useMemo(() => {
-        if (inCombat && player?.fightInfo) {
-            const currentChar = player.fightInfo.characters?.find(
-                c => c.battleID === player.fightInfo?.playerBattleID
-            );
-            if (currentChar && currentChar.magicPoints !== undefined && currentChar.maxMagicPoints !== undefined) {
-                return currentChar.magicPoints >= currentChar.maxMagicPoints;
-            }
-        }
-        if (!player?.playerSheet) return true;
-        const currentMp = player.playerSheet.mpCurrent ?? 0;
-        const maxMp = calculateMaxMP(player);
-        return currentMp >= maxMp;
-    }, [player, inCombat]);
 
     const ELIXIRS = [
         { id: "chroma-elixir", label: t("items.chroma"), src: "/items/Chroma Elixir.png" },
@@ -155,7 +113,9 @@ function ElixirsCard({
                         itemId,
                         quantity,
                         maxQuantity: newMaxQuantity,
-                        lastRecoveryPercent: null
+                        lastRecoveryPercent: null,
+                        diceCount: null,
+                        diceSize: null
                     };
                     return { ...prev, items: [...(prev.items ?? []), newItem] };
                 });
@@ -198,7 +158,9 @@ function ElixirsCard({
                         itemId,
                         quantity: 0,
                         maxQuantity,
-                        lastRecoveryPercent: null
+                        lastRecoveryPercent: null,
+                        diceCount: null,
+                        diceSize: null
                     };
                     return { ...prev, items: [...(prev.items ?? []), newItem] };
                 });
@@ -208,76 +170,49 @@ function ElixirsCard({
         }
     }
 
-    function getLastRecoveryPercent(itemId: string): number {
-        const item = player?.items?.find(i => i.itemId === itemId);
-        return item?.lastRecoveryPercent ?? 30;
+    function openDiceModal(elixirId: string, label: string) {
+        const item = player?.items?.find(i => i.itemId === elixirId);
+        setDiceCount(item?.diceCount ?? 1);
+        setDiceSize(item?.diceSize ?? 6);
+        setDiceModal({ elixirId, label });
     }
 
-    function openRecoveryModal(itemId: string) {
-        setSelectedItemId(itemId);
-        const last = getLastRecoveryPercent(itemId);
-        setRecoveryPercent(last);
-        setInputValue(String(last));
-        setModalOpen(true);
-    }
-
-    function closeRecoveryModal() {
-        setModalOpen(false);
-        setSelectedItemId(null);
-    }
-
-    async function useItem(itemId: string, percent?: number) {
-        if (!player || !player.playerSheet) return;
-
-        setUsingItem(itemId);
+    async function confirmDiceRoll() {
+        if (!diceModal || !player) return;
+        const { elixirId, label } = diceModal;
+        setDiceModal(null);
+        setUsingItem(elixirId);
 
         try {
-            const maxHp = calculateMaxHP(player, weaponInfo);
-            const maxMp = calculateMaxMP(player);
+            const item = player.items?.find(i => i.itemId === elixirId);
+            if (!item) return;
 
-            await APIItem.useItem({
-                playerId: player.id,
-                itemId,
-                maxHp,
-                maxMp,
-                recoveryPercent: percent
+            // Salvar config de dados e decrementar quantidade
+            const newQty = Math.max(0, item.quantity - 1);
+            await APIItem.updatePlayerItem(item.id, { quantity: newQty, diceCount, diceSize });
+            setPlayer(prev => {
+                if (!prev) return prev;
+                const items = (prev.items ?? []).map(i =>
+                    i.id === item.id ? { ...i, quantity: newQty, diceCount, diceSize } : i
+                );
+                return { ...prev, items };
             });
 
-            const item = player.items?.find(i => i.itemId === itemId);
-            if (item && itemId !== "chroma-elixir" && percent != null) {
-                await APIItem.updatePlayerItem(item.id, { lastRecoveryPercent: percent });
-            }
-            if (item) {
-                setPlayer(prev => {
-                    if (!prev || !prev.playerSheet) return prev;
-                    const newLastRecoveryPercent = (itemId !== "chroma-elixir" && percent != null) ? percent : item.lastRecoveryPercent;
-                    const items = (prev.items ?? []).map(i =>
-                        i.id === item.id ? { ...i, quantity: Math.max(0, i.quantity - 1), lastRecoveryPercent: newLastRecoveryPercent } : i
-                    );
-
-                    let updatedSheet = { ...prev.playerSheet };
-
-                    if (itemId === "chroma-elixir") {
-                        updatedSheet.hpCurrent = maxHp;
-                    } else if (itemId === "healing-elixir") {
-                        const recoveryAmount = Math.floor((maxHp * (percent ?? 30)) / 100);
-                        updatedSheet.hpCurrent = Math.min((prev.playerSheet?.hpCurrent ?? 0) + recoveryAmount, maxHp);
-                    } else if (itemId === "energy-elixir") {
-                        const recoveryAmount = Math.floor((maxMp * (percent ?? 30)) / 100);
-                        updatedSheet.mpCurrent = Math.min((prev.playerSheet?.mpCurrent ?? 0) + recoveryAmount, maxMp);
-                    }
-
-                    return {
-                        ...prev,
-                        items,
-                        playerSheet: updatedSheet
-                    };
+            // Rolar dados
+            const command = `${diceCount}d${diceSize}`;
+            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, command, (result) => {
+                const values: number[] = result?.[0]?.rolls?.map((r: any) => r.value) ?? [];
+                const total = values.reduce((a: number, b: number) => a + b, 0);
+                dispatchRoll({
+                    label,
+                    diceRolled: total,
+                    modifier: 0,
+                    total,
+                    diceCommand: command,
+                    diceValues: values,
                 });
-            }
-
-            if (itemId === "healing-elixir" || itemId === "energy-elixir") {
-                onPotionUsed?.();
-            }
+            });
+            onItemUsed?.();
         } catch (e) {
             console.error("Erro ao usar item:", e);
             alert(t("items.errorUsing"));
@@ -300,74 +235,8 @@ function ElixirsCard({
         setEditQtyModal(null);
     }
 
-    async function confirmUseItem() {
-        if (!selectedItemId) return;
-        const percent = recoveryPercent;
-        const itemId = selectedItemId;
-        closeRecoveryModal();
-
-        if (itemId === "revive-elixir") {
-            const item = player?.items?.find(i => i.itemId === itemId);
-            if (item) {
-                try {
-                    await APIItem.updatePlayerItem(item.id, { lastRecoveryPercent: percent });
-                    setPlayer(prev => {
-                        if (!prev) return prev;
-                        const items = (prev.items ?? []).map(i =>
-                            i.id === item.id ? { ...i, lastRecoveryPercent: percent } : i
-                        );
-                        return { ...prev, items };
-                    });
-                } catch (e) {
-                    console.error("Erro ao salvar lastRecoveryPercent:", e);
-                }
-            }
-            onReviveRequested?.(percent);
-        } else {
-            await useItem(itemId, percent);
-        }
-    }
-
     return (
         <>
-            <Modal open={modalOpen} onClose={closeRecoveryModal} title={t("items.recovery")}>
-                <div className="p-4 flex flex-col gap-4">
-                    <div>
-                        <label className="block text-sm opacity-80 mb-2">
-                            {t("items.recoveryPercent")}
-                        </label>
-                        <input
-                            type="number"
-                            min={1}
-                            max={100}
-                            className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
-                            value={inputValue}
-                            onChange={(e) => {
-                                setInputValue(e.target.value);
-                            }}
-                            onBlur={() => {
-                                const num = Number(inputValue);
-                                if (isNaN(num) || num < 1) {
-                                    setInputValue("1");
-                                    setRecoveryPercent(1);
-                                } else if (num > 100) {
-                                    setInputValue("100");
-                                    setRecoveryPercent(100);
-                                } else {
-                                    setRecoveryPercent(num);
-                                }
-                            }}
-                        />
-                    </div>
-                    <button
-                        className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
-                        onClick={confirmUseItem}
-                    >
-                        {t("common.confirm")}
-                    </button>
-                </div>
-            </Modal>
-
             <Modal
                 open={editQtyModal !== null}
                 onClose={() => setEditQtyModal(null)}
@@ -393,6 +262,44 @@ function ElixirsCard({
                     <button
                         className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                         onClick={confirmEditQty}
+                    >
+                        {t("common.confirm")}
+                    </button>
+                </div>
+            </Modal>
+
+            <Modal
+                open={diceModal !== null}
+                onClose={() => setDiceModal(null)}
+                title={diceModal?.label ?? ""}
+            >
+                <div className="p-4 flex flex-col gap-4">
+                    <div className="flex gap-4">
+                        <div className="flex-1">
+                            <label className="block text-sm opacity-80 mb-1">{t("items.diceCount")}</label>
+                            <input
+                                type="number"
+                                min={1}
+                                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+                                value={diceCount}
+                                onChange={(e) => setDiceCount(Math.max(1, Number(e.target.value) || 1))}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-sm opacity-80 mb-1">{t("items.diceSize")}</label>
+                            <input
+                                type="number"
+                                min={2}
+                                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+                                value={diceSize}
+                                onChange={(e) => setDiceSize(Math.max(2, Number(e.target.value) || 2))}
+                            />
+                        </div>
+                    </div>
+                    <div className="text-center text-lg opacity-70">{diceCount}d{diceSize}</div>
+                    <button
+                        className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
+                        onClick={confirmDiceRoll}
                     >
                         {t("common.confirm")}
                     </button>
@@ -469,32 +376,13 @@ function ElixirsCard({
                                 </button>
                             </div>
 
-                            {(e.id === "chroma-elixir" || inCombat) && (
-                                <button
-                                    className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300 disabled:opacity-50 disabled:cursor-not-allowed w-full"
-                                    disabled={
-                                        usingItem === e.id ||
-                                        (e.id === "chroma-elixir"
-                                            ? (inCombat || qty === 0 || (player?.playerSheet?.hpCurrent ?? 0) <= 0)
-                                            : e.id === "revive-elixir"
-                                            ? (!canUsePotion || qty === 0 || !hasDeadTeammate)
-                                            : e.id === "healing-elixir"
-                                            ? (!canUsePotion || qty === 0 || isHpFull)
-                                            : e.id === "energy-elixir"
-                                            ? (!canUsePotion || qty === 0 || isMpFull)
-                                            : (!canUsePotion || qty === 0))
-                                    }
-                                    onClick={() => {
-                                        if (e.id === "healing-elixir" || e.id === "energy-elixir" || e.id === "revive-elixir") {
-                                            openRecoveryModal(e.id);
-                                        } else {
-                                            useItem(e.id);
-                                        }
-                                    }}
-                                >
-                                    {usingItem === e.id ? t("common.using") : t("common.use")}
-                                </button>
-                            )}
+                            <button
+                                className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300 disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                                disabled={usingItem === e.id || qty === 0}
+                                onClick={() => openDiceModal(e.id, e.label)}
+                            >
+                                {usingItem === e.id ? t("common.using") : t("common.use")}
+                            </button>
                         </div>
                     );
                 })}
@@ -505,23 +393,13 @@ function ElixirsCard({
 }
 
 
-export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false, weaponInfo, onReviveRequested, onPotionUsed }: ItemsSectionProps) {
+export default function ItemsSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef, onItemUsed }: ItemsSectionProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [editingItem, setEditingItem] = useState<PlayerItemResponse | null>(null);
 
     const [itemId, setItemId] = useState("");
     const [quantity, setQuantity] = useState<number>(1);
     const [maxQuantity, setMaxQuantity] = useState<number>(99);
-
-    const inCombat = player?.fightInfo != null;
-
-    const isYourTurn = useMemo(() => {
-        const firstTurn = player?.fightInfo?.turns?.[0];
-        if (!firstTurn) return false;
-        return firstTurn.battleCharacterId === player?.fightInfo?.playerBattleID;
-    }, [player?.fightInfo]);
-
-    const canUsePotion = isYourTurn && isInventoryActiveInCombat;
 
     const { result: visibleItems } = useMemo(
         () => buildVisible(player?.items),
@@ -660,7 +538,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
             <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("items.title").toUpperCase()}</div>
 
             <div className="mb-4">
-                <ElixirsCard player={player} setPlayer={setPlayer} inCombat={inCombat} canUsePotion={canUsePotion} weaponInfo={weaponInfo} onReviveRequested={onReviveRequested} onPotionUsed={onPotionUsed} />
+                <ElixirsCard player={player} setPlayer={setPlayer} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} onItemUsed={onItemUsed} />
             </div>
 
             <div className="flex flex-col gap-4">

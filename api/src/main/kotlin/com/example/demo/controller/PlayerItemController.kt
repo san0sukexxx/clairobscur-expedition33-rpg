@@ -60,8 +60,10 @@ class PlayerItemController(
         val rawQuantity = body.quantity?.let { minOf(it, newMaxQuantity) } ?: item.quantity
         val newQuantity = maxOf(0, rawQuantity)
         val newLastRecoveryPercent = body.lastRecoveryPercent ?: item.lastRecoveryPercent
+        val newDiceCount = body.diceCount ?: item.diceCount
+        val newDiceSize = body.diceSize ?: item.diceSize
 
-        val updated = item.copy(quantity = newQuantity, maxQuantity = newMaxQuantity, lastRecoveryPercent = newLastRecoveryPercent)
+        val updated = item.copy(quantity = newQuantity, maxQuantity = newMaxQuantity, lastRecoveryPercent = newLastRecoveryPercent, diceCount = newDiceCount, diceSize = newDiceSize)
         repository.save(updated)
 
         return ResponseEntity.noContent().build()

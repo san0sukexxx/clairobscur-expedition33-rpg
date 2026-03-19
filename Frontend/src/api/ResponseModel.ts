@@ -239,6 +239,8 @@ export interface PlayerItemResponse {
     quantity: number
     maxQuantity: number
     lastRecoveryPercent: number | null
+    diceCount: number | null
+    diceSize: number | null
 }
 
 export interface PlayerSpecialAttackResponse {

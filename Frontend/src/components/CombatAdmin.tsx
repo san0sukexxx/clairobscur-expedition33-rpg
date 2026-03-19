@@ -28,6 +28,7 @@ import { RollHistoryToast } from "../components/RollHistoryToast";
 import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
 import { StatusConditionsModal } from "./StatusConditionsModal";
 import { HpEditModal } from "./HpEditModal";
+import { ApEditModal } from "./ApEditModal";
 import { useToast } from "../components/Toast";
 import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 import { calculateNPCDifficulty, formatCR, crToXp } from "../utils/NpcDifficulty";
@@ -136,7 +137,6 @@ export default function CombatAdmin({
     const { showToast } = useToast();
     const [editingHp, setEditingHp] = useState<CombatEntity | null>(null);
     const [editingMp, setEditingMp] = useState<CombatEntity | null>(null);
-    const [newMpValue, setNewMpValue] = useState("");
     const [sortColumn, setSortColumn] = useState<"name" | "difficulty" | null>(null);
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
     const [battleRewards, setBattleRewards] = useState<BattleReward[]>([]);
@@ -521,6 +521,7 @@ export default function CombatAdmin({
 
         setTeamA(aTeam)
         setTeamB(bTeam)
+
     }, [battleDetails])
 
     // Map real battleIDs to sequential display indices (#1, #2, ...)
@@ -681,7 +682,8 @@ export default function CombatAdmin({
             rankProgress: isVerso ? 0 : undefined,
             bestialWheelPosition: randomBestialPosition,
             initiative,
-            canRollInitiative: entity.type == "player"
+            canRollInitiative: entity.type == "player",
+            freeShotWeakPoints: entity.type === "npc" ? (getNpcById(String(entity.externalId))?.freeShotWeakPoints ?? 0) : undefined
         })
 
         setJustAddedId(entity.externalId)
@@ -727,7 +729,8 @@ export default function CombatAdmin({
                 perfectionRank: isVerso ? "D" : undefined,
                 rankProgress: isVerso ? 0 : undefined,
                 bestialWheelPosition: randomBestialPosition,
-                canRollInitiative: ent.type == "player"
+                canRollInitiative: ent.type == "player",
+                freeShotWeakPoints: ent.type === "npc" ? (getNpcById(String(ent.externalId))?.freeShotWeakPoints ?? 0) : undefined
             })
         }
 
@@ -1182,35 +1185,38 @@ export default function CombatAdmin({
                     )}
 
                     {/* Weak Points +/- */}
-                    {currentNpc && (
-                        <div className="flex items-center gap-2 text-xs">
-                            <span className="font-semibold opacity-70">{t("combatAdmin.npcDetails.weakPoints")}:</span>
-                            <button
-                                className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
-                                onClick={async () => {
-                                    if (currentNpc.battleID && (currentNpc.freeShotWeakPoints ?? 0) > 0) {
-                                        await APIBattle.updateWeakPoints(currentNpc.battleID, (currentNpc.freeShotWeakPoints ?? 0) - 1);
-                                        await reloadBattleDetails(true);
-                                    }
-                                }}
-                                disabled={(currentNpc.freeShotWeakPoints ?? 0) <= 0}
-                            >
-                                <FaMinus size={8} />
-                            </button>
-                            <span className="font-mono font-bold">{currentNpc.freeShotWeakPoints ?? 0}</span>
-                            <button
-                                className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
-                                onClick={async () => {
-                                    if (currentNpc.battleID) {
-                                        await APIBattle.updateWeakPoints(currentNpc.battleID, (currentNpc.freeShotWeakPoints ?? 0) + 1);
-                                        await reloadBattleDetails(true);
-                                    }
-                                }}
-                            >
-                                <FaPlus size={8} />
-                            </button>
-                        </div>
-                    )}
+                    {currentNpc && (() => {
+                        const wpVal = currentNpc.freeShotWeakPoints ?? 0;
+                        return (
+                            <div className="flex items-center gap-2 text-xs">
+                                <span className="font-semibold opacity-70">{t("combatAdmin.npcDetails.weakPoints")}:</span>
+                                <button
+                                    className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
+                                    onClick={async () => {
+                                        if (currentNpc.battleID && wpVal > 0) {
+                                            await APIBattle.updateWeakPoints(currentNpc.battleID, wpVal - 1);
+                                            await reloadBattleDetails(true);
+                                        }
+                                    }}
+                                    disabled={wpVal <= 0}
+                                >
+                                    <FaMinus size={8} />
+                                </button>
+                                <span className="font-mono font-bold">{wpVal}</span>
+                                <button
+                                    className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
+                                    onClick={async () => {
+                                        if (currentNpc.battleID) {
+                                            await APIBattle.updateWeakPoints(currentNpc.battleID, wpVal + 1);
+                                            await reloadBattleDetails(true);
+                                        }
+                                    }}
+                                >
+                                    <FaPlus size={8} />
+                                </button>
+                            </div>
+                        );
+                    })()}
 
                     {/* ━━━ D&D-style Actions Section ━━━ */}
                     {(() => {
@@ -1328,9 +1334,11 @@ export default function CombatAdmin({
                                     <div className="flex-1 border-t border-red-700/60" />
                                 </div>
 
-                                {npcInfo?.attackList?.map((atk, idx) => {
+                                {npcInfo?.attackList?.map((atk, idx, arr) => {
                                     const actionName = atk.name ? t(atk.name) : getAttackTypeLabel(atk.type);
                                     const hasDamage = atk.additionalDamage != null || atk.intensity != null;
+                                    const prevName = idx > 0 ? (arr[idx - 1].name ?? arr[idx - 1].type) : null;
+                                    const isContinuation = atk.name && prevName === atk.name;
 
                                     const baseDice = getIntensityDiceCount(atk.intensity);
                                     const baseMod = strMod + (atk.additionalDamage ?? 0);
@@ -1345,11 +1353,27 @@ export default function CombatAdmin({
                                     });
 
                                     return (
-                                        <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                        <div key={idx} className={`rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent ${isContinuation ? "pl-7 -mt-1" : ""}`}>
                                             <span>
-                                                <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>{" "}
+                                                {isContinuation
+                                                    ? <span className="text-red-300 opacity-60">{"↳ "}</span>
+                                                    : <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>
+                                                }{" "}
                                                 {atk.description && <span className="italic opacity-90">{renderTextWithDiceButtons(t(atk.description), `${npcName} – ${actionName}`, diceBoardRef, timeoutDiceBoardRef)} </span>}
                                                 {hasDamage && (
+                                                    <span className="italic opacity-90">
+                                                        <DiceBtn diceCmd="1d20" modifier={hitBonus + (atk.attackModifier ?? 0)} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
+                                                        {" "}{t("combatAdmin.actionDesc.toHit")}
+                                                        . {t("combatAdmin.actionDesc.hit")}: {avgDmg}{" "}
+                                                        <DiceBtn diceCmd={`${numDice}d${dieSize}`} modifier={flatDmg} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.hit")})`} />
+                                                        {atk.quantityText ? <>, {t(atk.quantityText)}</> : atk.quantity != null && atk.quantity > 1 && <>, {atk.quantity} {t("combatAdmin.actionDesc.hits")}</>}
+                                                        {(atk.targeting === "all" || atk.targetsAll) && <> ({t("combatAdmin.actionDesc.targetsAll")})</>}
+                                                        {atk.targeting === "single" && atk.quantity != null && atk.quantity > 1 && <> ({t("combatAdmin.actionDesc.targetsSingle")})</>}
+                                                        {statusParts && statusParts.length > 0 && <>. {t("combatAdmin.actionDesc.targetGains")} {statusParts.join(", ")}</>}
+                                                        .
+                                                    </span>
+                                                )}
+                                                {!hasDamage && !atk.description && (
                                                     <span className="italic opacity-90">
                                                         <DiceBtn diceCmd="1d20" modifier={hitBonus + (atk.attackModifier ?? 0)} label={`${npcName} – ${actionName} (${t("combatAdmin.actionDesc.toHit")})`} />
                                                         {" "}{t("combatAdmin.actionDesc.toHit")}
@@ -1712,18 +1736,20 @@ export default function CombatAdmin({
 
                                             {/* Parte 2: HP bar */}
                                             <div className="flex items-center gap-1 min-w-0 combat-hp-section">
-                                                <span className="text-[10px] font-mono opacity-70 shrink-0">HP {m.currentHp}/{m.maxHp}</span>
-                                                <div className="flex-1 min-w-0">
-                                                    <AnimatedStatBar
-                                                        value={Math.round((m.currentHp / m.maxHp) * 100)}
-                                                        label="HP"
-                                                        fillClass="bg-error"
-                                                        ghostClass="bg-error/30"
-                                                        breakMarkers={[
-                                                            { position: 66, triggered: (m.breakCount ?? 0) >= 1 },
-                                                            { position: 33, triggered: (m.breakCount ?? 0) >= 2 },
-                                                        ]}
-                                                    />
+                                                <div className="flex items-center gap-1 flex-1 min-w-0 cursor-pointer rounded hover:bg-base-300/40 transition-colors" onClick={(e) => { e.stopPropagation(); openHpEditModal(m); }}>
+                                                    <span className="text-[10px] font-mono opacity-70 shrink-0">HP {m.currentHp}/{m.maxHp}</span>
+                                                    <div className="flex-1 min-w-0">
+                                                        <AnimatedStatBar
+                                                            value={Math.round((m.currentHp / m.maxHp) * 100)}
+                                                            label="HP"
+                                                            fillClass="bg-error"
+                                                            ghostClass="bg-error/30"
+                                                            breakMarkers={[
+                                                                { position: 66, triggered: (m.breakCount ?? 0) >= 1 },
+                                                                { position: 33, triggered: (m.breakCount ?? 0) >= 2 },
+                                                            ]}
+                                                        />
+                                                    </div>
                                                 </div>
                                                 <button
                                                     className="btn btn-xs btn-ghost text-warning p-0"
@@ -1743,14 +1769,16 @@ export default function CombatAdmin({
                                             {/* Parte 3: MP bar */}
                                             {m.currentMp !== undefined && m.maxMp !== undefined && (
                                                 <div className="flex items-center gap-1 min-w-0 combat-mp-section">
-                                                    <span className="text-[10px] font-mono opacity-70 shrink-0">AP {m.currentMp}/{m.maxMp}</span>
-                                                    <div className="flex-1 min-w-0">
-                                                        <AnimatedStatBar
-                                                            value={Math.round((m.currentMp / m.maxMp) * 100)}
-                                                            label="AP"
-                                                            fillClass="bg-info"
-                                                            ghostClass="bg-info/30"
-                                                        />
+                                                    <div className="flex items-center gap-1 flex-1 min-w-0 cursor-pointer rounded hover:bg-base-300/40 transition-colors" onClick={(e) => { e.stopPropagation(); openMpEditModal(m); }}>
+                                                        <span className="text-[10px] font-mono opacity-70 shrink-0">AP {m.currentMp}/{m.maxMp}</span>
+                                                        <div className="flex-1 min-w-0">
+                                                            <AnimatedStatBar
+                                                                value={Math.round((m.currentMp / m.maxMp) * 100)}
+                                                                label="AP"
+                                                                fillClass="bg-info"
+                                                                ghostClass="bg-info/30"
+                                                            />
+                                                        </div>
                                                     </div>
                                                     <button
                                                         className="btn btn-xs btn-ghost text-info p-0"
@@ -1844,6 +1872,44 @@ export default function CombatAdmin({
                                         )}
 
                                         <div className="mt-2">{renderCharacterPanel(m)}</div>
+
+                                        {/* Weak Points - sempre visível para NPCs */}
+                                        {m.type === "npc" && (() => {
+                                            const bc = battleDetails?.characters.find(c => c.battleID === m.rowId);
+                                            const npcStatic = getNpcById(m.characterId ?? "");
+                                            const wp = bc?.freeShotWeakPoints ?? 0;
+                                            return (
+                                                <div className="flex items-center gap-2 text-xs mt-1">
+                                                    <span className="font-semibold opacity-70">{t("combatAdmin.npcDetails.weakPoints")}:</span>
+                                                    <button
+                                                        className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
+                                                        onClick={async (e) => {
+                                                            e.stopPropagation();
+                                                            if (m.rowId && wp > 0) {
+                                                                await APIBattle.updateWeakPoints(m.rowId, wp - 1);
+                                                                await reloadBattleDetails(true);
+                                                            }
+                                                        }}
+                                                        disabled={wp <= 0}
+                                                    >
+                                                        <FaMinus size={8} />
+                                                    </button>
+                                                    <span className="font-mono font-bold">{wp}</span>
+                                                    <button
+                                                        className="btn btn-xs btn-ghost px-1 min-h-0 h-5"
+                                                        onClick={async (e) => {
+                                                            e.stopPropagation();
+                                                            if (m.rowId) {
+                                                                await APIBattle.updateWeakPoints(m.rowId, wp + 1);
+                                                                await reloadBattleDetails(true);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <FaPlus size={8} />
+                                                    </button>
+                                                </div>
+                                            );
+                                        })()}
 
                                         {/* NPC Stat Block colapsável */}
                                         {m.type === "npc" && (() => {
@@ -2159,21 +2225,23 @@ export default function CombatAdmin({
 
     function renderEditEntityModal() {
         if (!editingHp) return null;
+        // Look up live entity data instead of using stale snapshot
+        const liveHp = [...teamA, ...teamB].find(e => e.rowId === editingHp.rowId) ?? editingHp;
         return (
             <HpEditModal
                 open
-                name={editingHp.name}
-                currentHp={editingHp.currentHp}
-                maxHp={editingHp.maxHp}
+                name={liveHp.name}
+                currentHp={liveHp.currentHp}
+                maxHp={liveHp.maxHp}
                 onClose={() => setEditingHp(null)}
                 onConfirm={async (newHp, newMaxHp) => {
                     if (!editingHp) return;
-                    if (newHp !== editingHp.currentHp) {
-                        handleHpSet(editingHp, newHp);
+                    if (newHp !== liveHp.currentHp) {
+                        handleHpSet(liveHp, newHp);
                     }
-                    if (newMaxHp !== editingHp.maxHp) {
+                    if (newMaxHp !== liveHp.maxHp) {
                         try {
-                            await APIBattle.updateCharacterMaxHp(editingHp.rowId ?? 0, newMaxHp);
+                            await APIBattle.updateCharacterMaxHp(liveHp.rowId ?? 0, newMaxHp);
                         } catch (e) {
                             console.error(e);
                             showToast(t("combatAdmin.toasts.errorUpdatingHp"));
@@ -2243,58 +2311,23 @@ export default function CombatAdmin({
 
     function renderEditMpModal() {
         if (!editingMp) return null;
-
-        function handleMpSign(sign: "+" | "-") {
-            const delta = newMpValue === "" ? 0 : Math.abs(parseInt(newMpValue, 10)) || 0;
-            if (delta > 0 && editingMp) {
-                const applied = sign === "+" ? delta : -delta;
-                const value = Math.max(0, Math.min(editingMp.maxMp ?? 999, (editingMp.currentMp ?? 0) + applied));
-                handleMpSet(editingMp, value);
-                setEditingMp(null);
-            }
-        }
-
+        // Look up live entity data instead of using stale snapshot
+        const liveMp = [...teamA, ...teamB].find(e => e.rowId === editingMp.rowId) ?? editingMp;
         return (
-            <dialog className="modal modal-open">
-                <div className="modal-box space-y-4">
-                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.changeMp")}</h3>
-
-                    <div className="text-center text-sm opacity-70">
-                        {t("combatAdmin.labels.currentMp")}: <span className="font-bold text-base font-mono">{editingMp.currentMp}</span> / {editingMp.maxMp}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            className="btn btn-sm btn-circle btn-success"
-                            onClick={() => handleMpSign("+")}
-                        >
-                            +
-                        </button>
-                        <input
-                            type="number"
-                            className="input input-bordered w-full text-center"
-                            value={newMpValue}
-                            placeholder="0"
-                            min={0}
-                            onChange={(e) => setNewMpValue(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === "Escape") setEditingMp(null); }}
-                            ref={focusRef}
-                        />
-                        <button
-                            className="btn btn-sm btn-circle btn-error"
-                            onClick={() => handleMpSign("-")}
-                        >
-                            −
-                        </button>
-                    </div>
-
-                    <div className="modal-action">
-                        <button className="btn" onClick={() => setEditingMp(null)}>
-                            {t("combatAdmin.labels.cancel")}
-                        </button>
-                    </div>
-                </div>
-            </dialog>
+            <ApEditModal
+                open
+                name={liveMp.name}
+                currentAp={liveMp.currentMp ?? 0}
+                maxAp={liveMp.maxMp ?? 0}
+                onClose={() => setEditingMp(null)}
+                onConfirm={(newAp) => {
+                    if (!editingMp) return;
+                    if (newAp !== (liveMp.currentMp ?? 0)) {
+                        handleMpSet(liveMp, newAp);
+                    }
+                    setEditingMp(null);
+                }}
+            />
         );
     }
 
@@ -3675,7 +3708,6 @@ export default function CombatAdmin({
 
     function openMpEditModal(entity: CombatEntity) {
         setEditingMp(entity);
-        setNewMpValue("");
     }
 
     async function handleMpSet(entity: CombatEntity, value: number) {

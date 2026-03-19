@@ -11,6 +11,8 @@ export interface UpdatePlayerItemRequest {
     quantity?: number
     maxQuantity?: number
     lastRecoveryPercent?: number
+    diceCount?: number
+    diceSize?: number
 }
 
 export interface UseItemRequest {

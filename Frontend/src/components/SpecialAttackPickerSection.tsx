@@ -251,13 +251,13 @@ export default function SpecialAttackPickerSection({ player, setPlayer, inBattle
             <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("specialAttackPicker.title")}</div>
 
             {inBattle && !isUsingSpecialAttackMode && (
-                <div className="mb-4 rounded-lg border border-warning/40 bg-warning/25 p-3 text-center text-sm text-amber-700">
+                <div className="mb-4 rounded-lg bg-primary/15 p-3 text-center text-sm text-primary">
                     {t("specialAttackPicker.cannotEquipInBattle")}
                 </div>
             )}
 
             {isUsingSpecialAttackMode && inBattle && (
-                <div className="mb-4 rounded-lg border border-info/30 bg-info/10 p-3 text-center text-sm text-info">
+                <div className="mb-4 rounded-lg bg-primary/15 p-3 text-center text-sm text-primary">
                     {t("specialAttackPicker.selectEquippedToCombat")}
                 </div>
             )}

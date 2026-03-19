@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaEdit } from "react-icons/fa";
 import { t } from "../i18n";
 
@@ -16,6 +16,11 @@ export function HpEditModal({ open, name, currentHp, maxHp, onConfirm, onClose }
     const [hpValue, setHpValue] = useState("");
     const [maxHpValue, setMaxHpValue] = useState(String(maxHp));
     const [showMaxHp, setShowMaxHp] = useState(false);
+
+    // Sync maxHpValue when prop changes (unless user is manually editing)
+    useEffect(() => {
+        if (!showMaxHp) setMaxHpValue(String(maxHp));
+    }, [maxHp, showMaxHp]);
 
     const focusRef = useCallback((node: HTMLInputElement | null) => {
         if (node) setTimeout(() => node.focus(), 50);

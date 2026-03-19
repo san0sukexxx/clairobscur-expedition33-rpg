@@ -291,9 +291,6 @@ export default function PlayerPage() {
           isExecutingSkill={isExecutingSkill}
           excludeSelfFromTargeting={false}
           hitCharacters={new Set()}
-          isInventoryActiveInCombat={isInventoryActiveInCombat}
-          onReviveRequested={handleReviveRequested}
-          onPotionUsed={handlePotionUsed}
           specialAttacksInitialTab={specialAttacksInitialTab}
           isUsingSpecialAttackMode={isUsingSpecialAttackMode}
           onUseSpecialAttack={handleUseSpecialAttack}

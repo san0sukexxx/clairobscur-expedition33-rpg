@@ -2526,6 +2526,8 @@
         "preview": "Resultado",
         "currentMp": "Mana atual",
         "maxMp": "Mana máxima",
+        "spendAp": "Gastar",
+        "recoverAp": "Recuperar",
         "confirm": "Confirmar",
         "chargesRange": "Cargas (0-3)",
         "addAll": "Adicionar todos",
@@ -3375,7 +3377,9 @@
       "errorDeleting": "Erro ao deletar item:",
       "editQuantity": "Editar Quantidade",
       "editMaxQuantity": "Editar Máximo",
-      "newValue": "Novo valor"
+      "newValue": "Novo valor",
+      "diceCount": "Quantidade de dados",
+      "diceSize": "Tamanho do dado"
     },
     "weapons": {
       "title": "Arma",

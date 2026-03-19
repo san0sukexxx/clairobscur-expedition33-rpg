@@ -539,8 +539,10 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                 <div>
                     <span className="font-bold text-xs">{t("combatAdmin.npcDetails.actions")}</span>
                     <div className="flex flex-col gap-1 mt-1">
-                        {npc.attackList!.map((atk, idx) => {
+                        {npc.attackList!.map((atk, idx, arr) => {
                             const actionName = atk.name ? t(atk.name) || atk.name : getAttackTypeLabel(atk.type);
+                            const prevName = idx > 0 ? (arr[idx - 1].name ?? arr[idx - 1].type) : null;
+                            const isContinuation = atk.name && prevName === atk.name;
 
                             const hasDamage = atk.additionalDamage != null || atk.intensity != null;
                             const baseDice = getIntensityDiceCount(atk.intensity);
@@ -558,9 +560,12 @@ function NpcDetails({ npc, diceBoardRef, timeoutDiceBoardRef, onPictoClick, onWe
                             }
 
                             return (
-                                <div key={idx} className="rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent">
+                                <div key={idx} className={`rounded-md px-3 py-2 text-sm leading-relaxed border border-transparent ${isContinuation ? "pl-7 -mt-1" : ""}`}>
                                     <span>
-                                        <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>{" "}
+                                        {isContinuation
+                                            ? <span className="text-red-300 opacity-60">{"↳ "}</span>
+                                            : <strong className={atk.description && !hasDamage ? "text-amber-300" : "text-red-300"}>{"▸ "}{actionName}.</strong>
+                                        }{" "}
                                         {atk.description && <span className="italic opacity-90">{renderTextWithDiceButtons(t(atk.description), `${npcName} – ${actionName}`, diceBoardRef, timeoutDiceBoardRef, undefined, campaignId)} </span>}
                                         {hasDamage && (
                                             <span className="italic opacity-90">

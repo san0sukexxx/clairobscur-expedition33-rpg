@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { handleNpcImgError } from "../utils/NpcUtils";
 
 interface NpcImageModalProps {
@@ -20,7 +21,7 @@ export default function NpcImageModal({ npcId, npcName, open, onClose }: NpcImag
 
     if (!open) return null;
 
-    return (
+    return createPortal(
         <div
             className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/80 cursor-pointer"
             onClick={onClose}
@@ -32,6 +33,7 @@ export default function NpcImageModal({ npcId, npcName, open, onClose }: NpcImag
                 onError={(e) => handleNpcImgError(e, npcId)}
                 onClick={(e) => e.stopPropagation()}
             />
-        </div>
+        </div>,
+        document.body
     );
 }

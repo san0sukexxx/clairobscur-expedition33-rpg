@@ -123,6 +123,15 @@ class BattleTurnController(
         @PutMapping("/reorder")
         @Transactional
         fun reorderTurns(@RequestBody body: ReorderTurnsRequest): ResponseEntity<Void> {
+                // Remember who was first before reordering
+                val previousFirstTurnId = body.turns.firstOrNull()?.let { firstNewId ->
+                        val turn = battleTurnRepository.findById(firstNewId).orElse(null)
+                        if (turn != null) {
+                                val allTurns = battleTurnRepository.findByBattleIdOrderByPlayOrderAsc(turn.battleId)
+                                allTurns.firstOrNull()?.battleCharacterId
+                        } else null
+                }
+
                 body.turns.forEachIndexed { index, turnId ->
                         val turn = battleTurnRepository.findById(turnId).orElse(null)
                         if (turn != null) {
@@ -131,11 +140,20 @@ class BattleTurnController(
                         }
                 }
 
+                // Grant +1 AP if a different player moved to first position
                 if (body.turns.isNotEmpty()) {
-                        val firstTurn = battleTurnRepository.findById(body.turns.first()).orElse(null)
-                        if (firstTurn != null) {
+                        val newFirstTurn = battleTurnRepository.findById(body.turns.first()).orElse(null)
+                        if (newFirstTurn != null) {
+                                val newFirstCharId = newFirstTurn.battleCharacterId
+                                if (newFirstCharId != previousFirstTurnId) {
+                                        val nextChar = battleCharacterRepository.findById(newFirstCharId).orElse(null)
+                                        if (nextChar != null && nextChar.characterType.equals("player", ignoreCase = true)) {
+                                                battleCharacterService.updateCharacterAP(newFirstCharId, 1)
+                                        }
+                                }
+
                                 battleLogRepository.save(
-                                        BattleLog(battleId = firstTurn.battleId, eventType = "TURNS_REORDERED", eventJson = null)
+                                        BattleLog(battleId = newFirstTurn.battleId, eventType = "TURNS_REORDERED", eventJson = null)
                                 )
                         }
                 }

@@ -11,6 +11,7 @@ import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
 import StatEditModal from "./StatEditModal";
 import { HpEditModal } from "./HpEditModal";
+import { ApEditModal } from "./ApEditModal";
 import { StatusConditionsModal } from "./StatusConditionsModal";
 import { t } from "../i18n";
 
@@ -474,14 +475,13 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
             />
 
             {/* MP */}
-            <StatEditModal
+            <ApEditModal
                 open={editing === "mp"}
-                title="AP"
-                currentValue={ch.magicPoints ?? 0}
-                minValue={0}
-                maxValue={ch.maxMagicPoints ?? 999}
+                name={ch.name}
+                currentAp={ch.magicPoints ?? 0}
+                maxAp={ch.maxMagicPoints ?? 0}
+                onClose={closeEdit}
                 onConfirm={v => confirmNumericEdit("mp", v)}
-                onCancel={closeEdit}
             />
 
             {/* Charge */}

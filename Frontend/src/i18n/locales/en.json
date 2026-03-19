@@ -2526,6 +2526,8 @@
         "preview": "Result",
         "currentMp": "Current AP",
         "maxMp": "Max AP",
+        "spendAp": "Spend",
+        "recoverAp": "Recover",
         "confirm": "Confirm",
         "chargesRange": "Charges (0-3)",
         "addAll": "Add all",
@@ -3375,7 +3377,9 @@
       "errorDeleting": "Error deleting item:",
       "editQuantity": "Edit Quantity",
       "editMaxQuantity": "Edit Max Quantity",
-      "newValue": "New value"
+      "newValue": "New value",
+      "diceCount": "Dice count",
+      "diceSize": "Dice size"
     },
     "weapons": {
       "title": "Weapon",

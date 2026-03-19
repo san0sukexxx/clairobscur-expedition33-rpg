@@ -47,7 +47,7 @@ export function calculateNPCDifficulty(npcId: string): number {
     if (!npc) return 0;
 
     if (npc.challengeRating != null) {
-        return Number(npc.challengeRating);
+        return parseCR(npc.challengeRating);
     }
 
     const strMod = Math.floor((npc.strength - 10) / 2);
@@ -72,6 +72,13 @@ export function calculateNPCDifficulty(npcId: string): number {
     if (score <= 11) return 4;
     if (score <= 13) return 5;
     return Math.min(30, 6 + Math.floor((score - 14) / 2));
+}
+
+function parseCR(cr: string): number {
+    if (cr === "1/8") return 0.125;
+    if (cr === "1/4") return 0.25;
+    if (cr === "1/2") return 0.5;
+    return Number(cr);
 }
 
 export function formatCR(cr: number): string {

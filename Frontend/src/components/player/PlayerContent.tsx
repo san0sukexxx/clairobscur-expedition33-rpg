@@ -49,11 +49,6 @@ interface PlayerContentProps {
   excludeSelfFromTargeting: boolean;
   hitCharacters: Set<number>;
 
-  // Inventory props
-  isInventoryActiveInCombat: boolean;
-  onReviveRequested: (percent: number) => void;
-  onPotionUsed: () => void;
-
   // Skills props
   specialAttacksInitialTab: SpecialAttacksTabType;
   isUsingSpecialAttackMode: boolean;
@@ -95,9 +90,6 @@ export function PlayerContent({
   isExecutingSkill,
   excludeSelfFromTargeting,
   hitCharacters,
-  isInventoryActiveInCombat,
-  onReviveRequested,
-  onPotionUsed,
   specialAttacksInitialTab,
   isUsingSpecialAttackMode,
   onUseSpecialAttack,
@@ -284,10 +276,9 @@ export function PlayerContent({
         <ItemsSection
           player={player}
           setPlayer={setPlayer}
-          isInventoryActiveInCombat={isInventoryActiveInCombat}
-          weaponInfo={weaponInfo}
-          onReviveRequested={onReviveRequested}
-          onPotionUsed={onPotionUsed}
+          diceBoardRef={diceBoardRef}
+          timeoutDiceBoardRef={timeoutDiceBoardRef}
+          onItemUsed={player?.fightInfo ? () => setTab("combate") : undefined}
         />
       )}
 

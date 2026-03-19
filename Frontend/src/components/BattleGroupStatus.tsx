@@ -15,6 +15,7 @@ import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
 import StatEditModal from "./StatEditModal";
 import { HpEditModal } from "./HpEditModal";
+import { ApEditModal } from "./ApEditModal";
 import { StatusConditionsModal } from "./StatusConditionsModal";
 import { t } from "../i18n";
 import NpcImageModal from "./NpcImageModal";
@@ -575,14 +576,13 @@ export default function BattleGroupStatus({
                         }}
                     />
 
-                    <StatEditModal
+                    <ApEditModal
                         open={editing === "mp"}
-                        title="AP"
-                        currentValue={playerCh.magicPoints ?? 0}
-                        minValue={0}
-                        maxValue={playerCh.maxMagicPoints ?? 999}
+                        name={playerCh.name}
+                        currentAp={playerCh.magicPoints ?? 0}
+                        maxAp={playerCh.maxMagicPoints ?? 0}
+                        onClose={closeEdit}
                         onConfirm={v => confirmNumericEdit("mp", v)}
-                        onCancel={closeEdit}
                     />
 
                     <StatEditModal

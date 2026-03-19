@@ -72,7 +72,7 @@ export function ASIPickerSetup({ player, setPlayer, asiLevel }: Props) {
             {/* Attribute selectors */}
             <div className={`grid gap-3 ${mode === "two" ? "grid-cols-2" : "grid-cols-1"}`}>
                 <label className="form-control">
-                    <span className="label-text text-xs opacity-60">
+                    <span className="label-text text-xs opacity-60 mr-2">
                         {mode === "one" ? "+2" : "+1"}
                     </span>
                     <select
@@ -91,7 +91,7 @@ export function ASIPickerSetup({ player, setPlayer, asiLevel }: Props) {
 
                 {mode === "two" && (
                     <label className="form-control">
-                        <span className="label-text text-xs opacity-60">+1</span>
+                        <span className="label-text text-xs opacity-60 mr-2">+1</span>
                         <select
                             className="select select-bordered select-sm"
                             value={attr2}
