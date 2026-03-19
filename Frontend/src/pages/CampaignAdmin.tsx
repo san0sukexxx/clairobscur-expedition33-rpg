@@ -162,7 +162,7 @@ export default function CampaignAdmin() {
             </div>
 
             {/* Conteúdo */}
-            <main className="p-4 lg:p-6 flex flex-col gap-6 flex-1 max-w-[1200px] mx-auto w-full">
+            <main className="p-4 lg:p-6 pb-24 flex flex-col gap-6 flex-1 max-w-[1200px] mx-auto w-full">
                 <div>
                     <h1 className="text-3xl font-bold">
                         {campaignInfo?.name ?? t("common.loading")}
