@@ -1,4 +1,4 @@
-import { type MutableRefObject, type RefObject, useCallback, useMemo, useState } from "react";
+import { type MutableRefObject, type RefObject, useMemo, useState } from "react";
 import { type PlayerItemResponse } from "../api/ResponseModel";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIItem } from "../api/APIItem";
@@ -67,9 +67,6 @@ function ElixirsCard({
     const [diceModal, setDiceModal] = useState<{ elixirId: string; label: string } | null>(null);
     const [diceCount, setDiceCount] = useState(1);
     const [diceSize, setDiceSize] = useState(6);
-    const focusRef = useCallback((node: HTMLInputElement | null) => {
-        if (node) setTimeout(() => node.focus(), 50);
-    }, []);
 
     const ELIXIRS = [
         { id: "chroma-elixir", label: t("items.chroma"), src: "/items/Chroma Elixir.png" },
@@ -253,7 +250,6 @@ function ElixirsCard({
                             className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                             value={editQtyValue}
                             onChange={(e) => setEditQtyValue(e.target.value)}
-                            ref={focusRef}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") confirmEditQty();
                             }}

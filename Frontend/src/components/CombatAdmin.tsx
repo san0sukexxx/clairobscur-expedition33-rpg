@@ -108,9 +108,6 @@ export default function CombatAdmin({
     players,
     onStatusChanged
 }: CombatAdminProps) {
-    const focusRef = useCallback((node: HTMLInputElement | null) => {
-        if (node) setTimeout(() => node.focus(), 50);
-    }, []);
 
     const [battleDetails, setBattleDetails] = useState<BattleWithDetailsResponse | null>(null)
     const [battleStatus, setBattleStatus] = useState<string>(initialStatus)
@@ -2356,7 +2353,6 @@ export default function CombatAdmin({
                             max={3}
                             onChange={(e) => setGradientCharges(e.target.value)}
                             onKeyDown={(e) => { if (e.key === "Enter") handleConfirmGradient(); }}
-                            ref={focusRef}
                         />
                     </div>
 
@@ -2398,7 +2394,6 @@ export default function CombatAdmin({
                             max={maxCharges}
                             onChange={(e) => setGustaveChargePoints(e.target.value)}
                             onKeyDown={(e) => { if (e.key === "Enter") handleConfirmGustaveCharge(); }}
-                            ref={focusRef}
                         />
                     </div>
 
@@ -2437,7 +2432,6 @@ export default function CombatAdmin({
                             max={20}
                             onChange={(e) => setScielSunCharges(e.target.value)}
                             onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
-                            ref={focusRef}
                         />
                     </div>
 
@@ -2572,7 +2566,7 @@ export default function CombatAdmin({
         if (!showAddModal) return null
         return (
             <div className="modal modal-open">
-                <div className="modal-box max-w-5xl w-full max-h-[90vh] sm:max-h-[80vh] overflow-y-auto flex flex-col gap-4 sm:gap-6 p-4 sm:p-6">
+                <div className="modal-box max-w-5xl w-full max-h-[90vh] sm:max-h-[80vh] overflow-y-auto flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 py-8 sm:py-10">
                     <div className="flex items-start justify-between">
                         <div>
                             <h3 className="font-bold text-lg">{t("combatAdmin.labels.addToTeam", { team: targetTeam })}</h3>
@@ -2783,7 +2777,6 @@ export default function CombatAdmin({
                                             placeholder={t("combatAdmin.encounter.filterPlaceholder")}
                                             value={encounterFilter}
                                             onChange={(e) => setEncounterFilter(e.target.value)}
-                                            autoFocus
                                         />
                                         <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
                                             <label className={`flex items-center gap-2 select-none ${campaignInfo.currentLocationId ? "cursor-pointer" : "opacity-40 cursor-not-allowed"}`}>

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { t } from "../i18n";
 
 export interface ApEditModalProps {
@@ -14,9 +14,6 @@ export function ApEditModal({ open, name, currentAp, maxAp, onConfirm, onClose }
     const [apMode, setApMode] = useState<"recover" | "spend">("spend");
     const [apValue, setApValue] = useState("");
 
-    const focusRef = useCallback((node: HTMLInputElement | null) => {
-        if (node) setTimeout(() => node.focus(), 50);
-    }, []);
 
     if (!open) return null;
 
@@ -98,13 +95,11 @@ export function ApEditModal({ open, name, currentAp, maxAp, onConfirm, onClose }
                         value={apValue}
                         placeholder="0"
                         min={0}
-                        autoFocus
                         onChange={(e) => setApValue(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === "Escape") onClose();
                             if (e.key === "Enter") handleConfirm();
                         }}
-                        ref={focusRef}
                     />
                 </div>
 

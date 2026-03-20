@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
 import { t } from "../i18n";
 
@@ -22,9 +22,6 @@ export function HpEditModal({ open, name, currentHp, maxHp, onConfirm, onClose }
         if (!showMaxHp) setMaxHpValue(String(maxHp));
     }, [maxHp, showMaxHp]);
 
-    const focusRef = useCallback((node: HTMLInputElement | null) => {
-        if (node) setTimeout(() => node.focus(), 50);
-    }, []);
 
     if (!open) return null;
 
@@ -111,13 +108,11 @@ export function HpEditModal({ open, name, currentHp, maxHp, onConfirm, onClose }
                         value={hpValue}
                         placeholder="0"
                         min={0}
-                        autoFocus
                         onChange={(e) => setHpValue(e.target.value)}
                         onKeyDown={(e) => {
                             if (e.key === "Escape") onClose();
                             if (e.key === "Enter") handleConfirm();
                         }}
-                        ref={focusRef}
                     />
                 </div>
 

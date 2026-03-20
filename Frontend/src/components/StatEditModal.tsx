@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 interface StatEditModalProps {
     open: boolean;
@@ -48,9 +48,6 @@ export default function StatEditModal({
         }
     }
 
-    const inputRef = useCallback((node: HTMLInputElement | null) => {
-        if (node) setTimeout(() => node.focus(), 50);
-    }, [open]);
 
     if (!open) return null;
 
@@ -79,7 +76,6 @@ export default function StatEditModal({
                         onKeyDown={e => {
                             if (e.key === "Escape") onCancel();
                         }}
-                        ref={inputRef}
                     />
                     <button
                         className="btn btn-sm btn-circle btn-error"
