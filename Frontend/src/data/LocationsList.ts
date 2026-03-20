@@ -133,7 +133,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "old-lumiere",
-        residentNpcIds: ["steel-chevaliere", "ceramic-chevaliere", "gold-chevaliere", "renoir", "chromatic-danseuses"],
+        residentNpcIds: ["steel-chevaliere", "ceramic-chevaliere", "gold-chevaliere", "mime-old-lumiere", "renoir", "chromatic-danseuses"],
         referenceNpcNames: ["Mandelgo"],
         loot: [
             { type: "weapon", itemId: "nusaro", level: 1 },
@@ -150,7 +150,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "visages",
-        residentNpcIds: ["boucheclier", "contortionniste-visages", "moissoneusse-visages", "chapelier", "chromatic-ramasseur", "mime-visages", "seething-boucheclier", "jovial-moissonneuse", "sorrowful-chapelier", "visages", "mask-keeper"],
+        residentNpcIds: ["boucheclier", "contortionniste-visages", "moissoneuse-visages", "chapelier", "chromatic-ramasseur", "mime-visages", "seething-boucheclier", "jovial-moissoneuse", "sorrowful-chapelier", "visages", "mask-keeper"],
         referenceNpcNames: ["Blooraga", "Fading Man"],
         loot: [
             { type: "weapon", itemId: "clierum", level: 1 },
@@ -212,7 +212,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "lumiere-act-3",
-        residentNpcIds: ["aberration-act3", "contortionniste-act3", "moissoneusse-act3", "orphelin-act3", "ballet-act3", "mime-act3", "lumiere-citizen-act3", "renoir-act3", "creation-act3", "chromatic-echassier"],
+        residentNpcIds: ["aberration-act3", "contortionniste-act3", "moissoneuse-act3", "orphelin-act3", "ballet-act3", "mime-act3", "lumiere-citizen-act3", "renoir-act3", "creation-act3", "chromatic-echassier"],
         loot: [
             { type: "weapon", itemId: "liteso", level: 1 },
             { type: "weapon", itemId: "litheson", level: 1 },
@@ -319,7 +319,7 @@ export const LocationsList: LocationInfo[] = [
             "troubadour", "demineur", "benisseur", "volester", "reaper-cultist", "ballet", "chapelier",
             "lampmaster-phase1", "lampmaster-phase2", "echassier", "hexga", "cruler", "chromatic-benisseur", "boucheclier", "clair",
             "chromatic-abbest", "goblu", "chromatic-orphelin", "ceramic-chevaliere", "bourgeon", "jar",
-            "rocher", "chromatic-echassier", "moissoneusse", "catapult-sakapatate", "chromatic-veilleur",
+            "rocher", "chromatic-echassier", "moissoneuse", "catapult-sakapatate", "chromatic-veilleur",
             "bruler", "orphelin", "chromatic-greatsword-cultist", "sapling", "chromatic-troubadour",
             "chromatic-aberration", "danseuses", "stalact", "portier", "chromatic-braseleur", "glaise",
             "pelerin", "gargant", "noir", "flame-eveque", "chromatic-gold-chevaliere", "chromatic-bruler",
@@ -327,7 +327,7 @@ export const LocationsList: LocationInfo[] = [
             "chromatic-boucheclier", "chromatic-glaise", "obscur", "chromatic-eveque", "chromatic-ballet",
             "thunder-eveque", "chromatic-demineur", "frost-eveque", "chromatic-danseuses", "chromatic-portier",
             "chromatic-steel-chevaliere", "chromatic-ceramic-chevaliere", "chromatic-chalier", "chromatic-jar",
-            "chromatic-moissonneuse", "mask-keeper", "creation", "chromatic-clair-obscur",
+            "chromatic-moissoneuse", "mask-keeper", "creation", "chromatic-clair-obscur",
             "painted-love", "chromatic-lampmaster", "chromatic-rocher", "duollistes", "clea-unleashed", "simon-the-divergent-star",
         ],
         referenceNpcNames: ["Fading Woman"],
@@ -468,7 +468,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "renoirs-drafts",
-        residentNpcIds: ["benisseur", "ballet", "aberration", "pelerin", "veilleur", "orphelin", "boucheclier", "echassier", "moissoneusse", "contortionniste", "chromatic-creation", "creation"],
+        residentNpcIds: ["benisseur", "ballet", "aberration", "pelerin", "veilleur", "orphelin", "boucheclier", "echassier", "moissoneuse", "contortionniste", "chromatic-creation", "creation"],
         referenceNpcNames: ["Fading Man", "Grour"],
         loot: [
             { type: "picto", itemId: "rush-on-powerful", level: 1 },

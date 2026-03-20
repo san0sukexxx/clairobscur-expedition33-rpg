@@ -940,7 +940,29 @@ const NPCsBaseData: NPCBaseData[] = [
         ],
     },
     {
-        id: "moissoneusse",
+        id: "mime-old-lumiere",
+        strength:     22,
+        dexterity:    28,
+        constitution: 24,
+        intelligence: 20,
+        wisdom:       20,
+        charisma:     24,
+        playFirst:    true,
+        armorClass: 17,
+        challengeRating: "11",
+        proficiencyBonus: 5,
+        damageDie: 8,
+        maxLifeBonus: 20,
+        passives: ["combatAdmin.npcPassives.startWith4Shields", "combatAdmin.npcPassives.breakRemovesWall"],
+        attackList: [
+            { type: "skill", name: "combatAdmin.npcAttacks.invisibleWall", description: "combatAdmin.npcAttacks.invisibleWallDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboHammers", description: "combatAdmin.npcAttacks.comboHammersDesc", additionalDamage: 8, additionalDices: 1, quantity: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboHammers", description: "combatAdmin.npcAttacks.intensityHigh", intensity: "high", additionalDamage: 9, additionalDices: 1, statusList: [{ ammount: 1, remainingTurns: 1, type: "Silenced" }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboSlaps", additionalDamage: 8, additionalDices: 1, quantity: 3 },
+        ],
+    },
+    {
+        id: "moissoneuse",
         strength:     12,
         dexterity:    10,
         constitution: 10,
@@ -952,9 +974,10 @@ const NPCsBaseData: NPCBaseData[] = [
         armorClass: 11,
         challengeRating: "1",
         damageDie: 4,
+        passives: ["combatAdmin.npcPassives.startWithRage", "combatAdmin.npcPassives.rageEscalation"],
         attackList: [
             { type: "basic" },
-            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualSwordCombo", description: "combatAdmin.npcAttacks.dualSwordComboDesc", additionalDamage: 2, quantity: 4 },
         ],
     },
     {
@@ -1615,7 +1638,7 @@ const NPCsBaseData: NPCBaseData[] = [
         ],
     },
     {
-        id: "jovial-moissonneuse",
+        id: "jovial-moissoneuse",
         isBoss: true,
         strength:     30,
         dexterity:    30,
@@ -2867,7 +2890,7 @@ const NPCsBaseData: NPCBaseData[] = [
         ],
     },
     {
-        id: "chromatic-moissonneuse",
+        id: "chromatic-moissoneuse",
         isBoss: true,
         strength:     18,
         dexterity:    16,
@@ -3269,7 +3292,7 @@ const NPCsBaseData: NPCBaseData[] = [
         ],
     },
     {
-        id: "moissoneusse-visages",
+        id: "moissoneuse-visages",
         strength:     30,
         dexterity:    30,
         constitution: 30,
@@ -3283,9 +3306,10 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 5,
         damageDie: 8,
         maxLifeBonus: 45,
+        passives: ["combatAdmin.npcPassives.startWithRage", "combatAdmin.npcPassives.rageEscalation"],
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 10, additionalDices: 1 },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualSwordCombo", description: "combatAdmin.npcAttacks.dualSwordComboDesc", additionalDamage: 10, additionalDices: 1, quantity: 4 },
         ],
     },
 
@@ -4104,7 +4128,7 @@ const NPCsBaseData: NPCBaseData[] = [
         ],
     },
     {
-        id: "moissoneusse-act3",
+        id: "moissoneuse-act3",
         strength:     30,
         dexterity:    30,
         constitution: 30,
@@ -4118,9 +4142,10 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 7,
         damageDie: 10,
         maxLifeBonus: 150,
+        passives: ["combatAdmin.npcPassives.startWithRage", "combatAdmin.npcPassives.rageEscalation"],
         attackList: [
             { type: "basic", additionalDamage: 21 },
-            { type: "skill", name: "combatAdmin.npcAttacks.reap", additionalDamage: 37, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualSwordCombo", description: "combatAdmin.npcAttacks.dualSwordComboDesc", additionalDamage: 37, additionalDices: 2, quantity: 4 },
         ],
     },
     {

@@ -1217,7 +1217,7 @@ const SpecialAttacksBaseData = [
     image: "Monoco_MightyStrike.webp"
   },
   {
-    id: "monoco-moissonneuse-vendange",
+    id: "monoco-moissoneuse-vendange",
     character: "monoco",
     cost: 3,
     unlockCost: 0,
