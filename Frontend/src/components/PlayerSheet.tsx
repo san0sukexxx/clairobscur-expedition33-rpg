@@ -132,11 +132,12 @@ export default function PlayerSheet({ player, setPlayer, campaignInfo }: PlayerS
                         const pct = needed > 0 ? Math.min(100, (currentXp / needed) * 100) : 100;
                         return (
                             <div
-                                className="w-full cursor-pointer -mt-1"
+                                className="w-full cursor-pointer -mt-1 flex items-center gap-1"
                                 onClick={() => { setXpOpen(true); setXpInput(""); }}
                                 title={`${currentXp} / ${needed} XP`}
                             >
-                                <div className="w-full h-1.5 rounded-full bg-base-300 overflow-hidden">
+                                <span className="text-[9px] font-bold text-base-content/50 leading-none">XP</span>
+                                <div className="flex-1 h-1.5 rounded-full bg-base-300 overflow-hidden">
                                     <div
                                         className="h-full rounded-full bg-amber-500 transition-all duration-300"
                                         style={{ width: `${pct}%` }}

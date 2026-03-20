@@ -1950,8 +1950,8 @@
       "intensityMaximum": "Máxima",
       "defend": "Defender",
       "defenseDescDodge": "Defesa padrão: o ataque d20 do adversário contra sua CA.",
-      "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PA (1x por turno). Aparar todos os ataques em sequência concede um contra-ataque de mesma intensidade.",
-      "defenseDescJump": "Só para ataques que permitem pular. Cada defesa bem-sucedida concede um contra-ataque de mesma intensidade. Falhar aumenta a intensidade do ataque em +1.",
+      "defenseDescBlock": "Declare sua intenção de aparar antes de realizar a defesa. Falhar em aparar aumenta a intensidade do ataque em +1. Aparar com sucesso recupera 1 PA (1x por turno). Aparar todos os ataques em sequência concede o direito de rolar o dano com intensidade aumentada em +1 para cada aparada bem-sucedida, não podendo exceder a intensidade máxima.",
+      "defenseDescJump": "Só para ataques que permitem pular. Cada defesa bem-sucedida concede o direito de rolar o dano com intensidade aumentada em +1. Falhar aumenta a intensidade do ataque em +1. Não pode exceder a intensidade máxima.",
       "defenseDescGradient": "Ataques Gradiente não podem ser esquivados, apenas aparados. Mesma mecânica de aparar.",
       "weaponPassives": "Passivas da arma"
     },
@@ -1974,6 +1974,7 @@
         "startWith3Shields": "Começa a batalha com 3 escudos.",
         "doubleTurn": "Tem direito a dois turnos em sequência, podendo realizar duas ações.",
         "fireIceMode": "Alterna entre modo de Fogo e modo de Gelo. No modo de Fogo, é vulnerável a Gelo e absorve Fogo. No modo de Gelo, é vulnerável a Fogo e absorve Gelo.",
+        "modeSwitchOnThirdHp": "Ao perder um terço de sua vida, troca de modo automaticamente assim que recebe o dano.",
         "escalatingTurns": "Na primeira rodada tem 1 turno, na segunda tem 2 turnos, na terceira tem 3, e assim por diante.",
         "nearlyImmortal": "Tem vida praticamente infinita. Só morre quando explode ao final de vários turnos.",
         "chargingOnSpawn": "Ao surgir, receba o status Carregando sem limite de turno. A cada turno que se passar, aumente 1 acúmulo desse status.",
@@ -2015,6 +2016,10 @@
         "weakPointBreak3d6": "Ao quebrar seu ponto fraco, role 3d6 de dano."
       },
       "npcAttacks": {
+        "switchFireIce": "Trocar de Modo",
+        "switchFireIceDesc": "Troca de modo de Gelo para Fogo ou de Fogo para Gelo. Quando uma Danseuse da batalha troca de modo, todas as outras devem realizar a mesma troca quando chegar a vez delas.",
+        "summonDanseuses": "Invocar Danseuses",
+        "summonDanseusesDesc": "Invoca duas Danseuses comuns.",
         "doubleHandSlam": "Bater com as Duas Mãos",
         "lasers": "Lasers",
         "lasersDesc": "4 golpes de intensidade muito alta. Alvos múltiplos.",
@@ -2084,7 +2089,7 @@
         "flamingDanceComboDesc": "3 golpes de Fogo em alvo único. Após o combo, troca para o modo de Gelo.",
         "icyDance": "Dança Gélida",
         "icyDanceCombo": "Combo Gélido",
-        "icyDanceComboDesc": "3 golpes de Gelo em alvo único. Após o combo, troca para o modo de Fogo.",
+        "icyDanceComboDesc": "3 golpes de Gelo em alvo único. Intensidade normal. Pode causar Congelamento. Após o combo, troca para o modo de Fogo.",
         "explosiveMine": "Mina Explosiva",
         "lightningBolt": "Raio",
         "aerialStrike": "Golpe Aéreo",
@@ -2261,6 +2266,7 @@
         "intensityHighHitsAll": "Intensidade alta. Acerta todos os adversários.",
         "intensityExtremeHitsAll": "Intensidade extrema. Acerta todos os adversários.",
         "intensityVeryHigh": "Intensidade muito alta.",
+        "intensityVeryHighDanseuse": "Intensidade muito alta. No modo de Fogo, causa Queimadura. No modo de Gelo, causa Congelamento.",
         "intensityExtreme": "Intensidade extrema.",
         "supremeAttack": "Ataque Supremo",
         "supremeAttackDesc": "Após carregar por dois turnos, desfere dois ataques de intensidade extrema em até dois alvos.",
@@ -3075,7 +3081,7 @@
         "description": "Após 1 turno, causa dano Físico extremo em alvo único. 13 golpes. Interrompido se receber qualquer dano. Se Verso usar esta habilidade no Rank S de Perfeição, o dano é aumentado."
       },
       "verso-striker": {
-        "name": "Estocada",
+        "name": "Batedor",
         "description": "Não consome turno. Causa dano Físico alto em alvo único. 1 golpe. Teste de Força contra a Constituição do alvo para causar quebra."
       },
       "verso-strike-storm": {
@@ -4434,6 +4440,7 @@
       "contortionniste": "Contortionniste",
       "cruler": "Crûler",
       "danseuses": "Danseuses",
+      "danseuses-summoned": "Danseuses (Invocação da Chromatic)",
       "demineur": "Démineur",
       "echassier": "Échassier",
       "franctale": "Franctale",

@@ -1299,7 +1299,7 @@ export default function CombatAdmin({
                                             <span className="text-sm font-bold tracking-wide text-cyan-400 uppercase">{t("combatAdmin.npcDetails.passives")}</span>
                                             <div className="flex-1 border-t border-cyan-700/60" />
                                         </div>
-                                        {npcInfo!.passives!.map((passive, idx) => {
+                                        {npcInfo?.passives?.map((passive, idx) => {
                                             const text = t(passive);
                                             const dicePlaceholder = "{{dice}}";
                                             if (text.includes(dicePlaceholder)) {
@@ -2084,7 +2084,7 @@ export default function CombatAdmin({
                                                                 <span className="font-bold text-sm text-cyan-400 uppercase tracking-wide">{t("combatAdmin.npcDetails.passives")}</span>
                                                                 <div className="flex-1 border-t border-cyan-700/40" />
                                                             </div>
-                                                            {npc.passives!.map((passive, idx) => (
+                                                            {npc.passives?.map((passive, idx) => (
                                                                 <div key={idx} className="leading-snug">
                                                                     <span className="text-cyan-300">{"▸ "}</span><span className="italic opacity-90">{t(passive).replace("{{dice}}", "")}</span>
                                                                 </div>
