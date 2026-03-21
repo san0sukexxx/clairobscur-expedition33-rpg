@@ -1787,6 +1787,7 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 6,
         damageDie: 10,
         maxLifeBonus: 60,
+        passives: ["combatAdmin.npcPassives.startsWith4Shields"],
         attackList: [
             { type: "basic", additionalDamage: 7 },
             { type: "skill", name: "combatAdmin.npcAttacks.ragingShieldBash", additionalDamage: 17, additionalDices: 2, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
@@ -1854,11 +1855,10 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 6,
         damageDie: 10,
         maxLifeBonus: 60,
-        passives: ["combatAdmin.npcPassives.hatDestroyable", "combatAdmin.npcPassives.sorrowfulDeathExhaustion"],
+        passives: ["combatAdmin.npcPassives.hatDestroyable", "combatAdmin.npcPassives.maskBonusExhaustion"],
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.sorrowfulSpin", additionalDamage: 17, additionalDices: 2, statusList: [{ type: "Charm", ammount: 2, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.devastatingStrike", description: "combatAdmin.npcAttacks.devastatingStrikeDesc", additionalDamage: 24, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.devastatingStrike", description: "combatAdmin.npcAttacks.devastatingStrikeDesc", additionalDamage: 24, additionalDices: 2, quantity: 3, statusList: [{ type: "Inverted", ammount: 1, remainingTurns: 2 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.summonHats", description: "combatAdmin.npcAttacks.summonHatsDesc" },
             { type: "skill", name: "combatAdmin.npcAttacks.hatThrow", description: "combatAdmin.npcAttacks.hatThrowDesc", additionalDamage: 17, additionalDices: 2, statusList: [{ type: "Silenced", ammount: 1, remainingTurns: 1 }] },
             { type: "skill", name: "combatAdmin.npcAttacks.hatSweepCombo", description: "combatAdmin.npcAttacks.hatSweepComboDesc", additionalDamage: 14, additionalDices: 2, quantity: 3, targetsAll: true },

@@ -14,6 +14,7 @@ import {
   displayPictoSpeed,
   getPictoByName,
   pictoColorHex,
+  getDisabledPictoIds,
 } from "../utils/PictoUtils"
 import type { GetPlayerResponse } from "../api/APIPlayer"
 import { PictosList } from "../data/PictosList"
@@ -60,6 +61,8 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId, dice
       })
     return arr
   }, [player?.pictos])
+
+  const disabledPictoIds = useMemo(() => getDisabledPictoIds(player), [player])
 
   const inventory: PictoResponse[] = useMemo(() => {
     return (player?.pictos ?? [])
@@ -517,7 +520,7 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId, dice
 
                     <div className="h-px w-full bg-base-300 my-1" />
 
-                    <div className="opacity-85">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, pictoInfo.name ?? "", diceBoardRef, timeoutDiceBoardRef) : ""}</div>
+                    <div className={selected && disabledPictoIds.has(selected.id) ? "opacity-30 line-through" : "opacity-85"}>{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, pictoInfo.name ?? "", diceBoardRef, timeoutDiceBoardRef) : ""}</div>
                   </div>
                 ) : (
                   <div className="text-center w-full opacity-60 tracking-wide text-lg">
@@ -535,7 +538,7 @@ export default function PictosTab({ player, setPlayer, isAdmin, campaignId, dice
           <SearchBox value={query} onChange={setQuery} />
         )}
 
-        <div className="px-2 sm:px-4 pb-8 overflow-y-auto max-h-[75vh] sm:max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+        <div className="px-2 sm:px-4 pb-8 overflow-y-auto flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {modalType === "slot" && activeSlot !== null && (
             <>
               {slotFiltered.map((p) => (
@@ -747,14 +750,16 @@ function Modal({
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
       <div className="absolute inset-0 flex items-end sm:items-center justify-center sm:p-4">
-        <div className="w-full sm:max-w-5xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden rounded-t-2xl sm:rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
+        <div className="w-full sm:max-w-5xl max-h-[85dvh] sm:max-h-[85vh] overflow-hidden rounded-t-2xl sm:rounded-2xl bg-base-100 border border-base-300 shadow-2xl flex flex-col">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-base-300 shrink-0">
             <div className="text-lg tracking-wide">{title}</div>
             <button onClick={onClose} className="text-2xl leading-none px-2">
               ×
             </button>
           </div>
-          {children}
+          <div className="flex-1 overflow-hidden flex flex-col">
+            {children}
+          </div>
         </div>
       </div>
     </div>

@@ -17,7 +17,7 @@ import { APIBattle } from "../api/APIBattle";
 import { getPlayerCharacter } from "../utils/CharacterUtils";
 import { getWeaponPassive, toKebabCase, hasWeapon, t, getPictoName, getPictoDescription } from "../i18n";
 import { isGustave } from "../constants/player/characterIds";
-import { getPictoByName } from "../utils/PictoUtils";
+import { getPictoByName, getDisabledPictoIds } from "../utils/PictoUtils";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
 import type { WeaponDTO } from "../types/WeaponDTO";
 
@@ -434,7 +434,8 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
 
                         {/* Passives sections */}
                         {(() => {
-                            const equippedPictos = (player?.pictos ?? []).filter(p => typeof p.slot === "number");
+                            const disabledIds = getDisabledPictoIds(player);
+                            const equippedPictos = (player?.pictos ?? []).filter(p => typeof p.slot === "number" && !disabledIds.has(p.id));
                             const equippedLuminas = (player?.luminas ?? []).filter(l => l.isEquiped);
                             const hasPictoLumina = equippedPictos.length > 0 || equippedLuminas.length > 0;
 

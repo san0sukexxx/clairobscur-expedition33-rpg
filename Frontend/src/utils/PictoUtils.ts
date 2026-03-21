@@ -1,5 +1,7 @@
 import { PictosList } from "../data/PictosList";
-import type { PictoColor, PictoInfo } from "../api/ResponseModel";
+import type { PictoColor, PictoInfo, PictoResponse, LuminaResponse } from "../api/ResponseModel";
+import type { GetPlayerResponse } from "../api/APIPlayer";
+import { calculateMaxLuminas } from "./PlayerCalculator";
 
 export function calculatePictoSpeed(value: number, level: number): number {
     return Math.floor((value / 200) * level);
@@ -83,4 +85,38 @@ export const pictoColorHex: Record<PictoColor, string> = {
   red: "rgb(227, 30, 25)",
   blue: "rgb(140, 255, 255)",
   yellow: "rgb(235, 220, 170)",
+}
+
+/**
+ * Returns a Set of picto IDs (PictoResponse.id) that should be disabled
+ * because the total lumina cost of equipped pictos + luminas exceeds the max.
+ * Disables pictos with the highest luminaCost first.
+ */
+export function getDisabledPictoIds(player: GetPlayerResponse | null): Set<number> {
+  const disabled = new Set<number>();
+  if (!player) return disabled;
+
+  const maxLumina = calculateMaxLuminas(player);
+  const equippedPictos = (player.pictos ?? []).filter(p => typeof p.slot === "number");
+  const equippedLuminas = (player.luminas ?? []).filter((l): l is LuminaResponse => l.isEquiped);
+
+  const luminasCost = equippedLuminas.reduce((sum, l) => {
+    const info = getPictoByName(l.pictoId);
+    return sum + (info?.luminaCost ?? 0);
+  }, 0);
+
+  const pictosWithCost = equippedPictos.map(p => ({
+    picto: p,
+    cost: getPictoByName(p.pictoId)?.luminaCost ?? 0,
+  })).sort((a, b) => b.cost - a.cost); // most expensive first
+
+  let totalCost = luminasCost + pictosWithCost.reduce((sum, p) => sum + p.cost, 0);
+
+  for (const { picto, cost } of pictosWithCost) {
+    if (totalCost <= maxLumina) break;
+    disabled.add(picto.id);
+    totalCost -= cost;
+  }
+
+  return disabled;
 }
