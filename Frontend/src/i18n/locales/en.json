@@ -2004,6 +2004,7 @@
         "freeShotResistant": "Due to its large shield, it is resistant to free shots, taking -4 damage per free shot. Its weak point cannot be hit while its shield is not destroyed.",
         "startsWithShields": "Starts with 3 shields.",
         "startsWith4Shields": "Starts the battle with 4 shields.",
+        "maskExtraTurn": "The mask can grant an extra turn.",
         "mayFlee": "At the game master's discretion, this NPC will try to flee. At a certain point during the fight, add the Fleeing condition and tell the players it will flee in a few turns. If it flees before being defeated, the players receive no reward.",
         "shieldedWeakPoint": "When broken, its shield is destroyed, losing its free shot resistance.",
         "shoulderWeakPoint": "Its weak point is the shoulder. When broken, it loses its cannon arm and is unable to use the Arm Cannon for the rest of the combat.",

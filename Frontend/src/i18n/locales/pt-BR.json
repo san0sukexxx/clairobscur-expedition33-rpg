@@ -2004,6 +2004,7 @@
         "freeShotResistant": "Devido ao seu grande escudo, ele é resistente a tiros livres, recebendo -4 de dano por tiro livre. Seu ponto fraco não pode ser atingido enquanto seu escudo não for destruído.",
         "startsWithShields": "Começa com 3 escudos.",
         "startsWith4Shields": "Começa a batalha com 4 escudos.",
+        "maskExtraTurn": "A máscara pode conceder um turno extra.",
         "mayFlee": "A critério do mestre, este NPC vai tentar fugir. Em um determinado momento da luta, adicione a condição Fugindo e diga aos jogadores que ele vai fugir em alguns turnos. Se ele fugir antes de ser derrotado, os jogadores não ganham recompensa.",
         "shieldedWeakPoint": "Ao sofrer uma quebra, seu escudo é destruído, perdendo sua resistência a tiros livres.",
         "shoulderWeakPoint": "Seu ponto fraco é o ombro. Ao sofrer uma quebra, ele perde o braço do canhão e fica impedido de usar o Canhão de Braço pelo resto do combate.",
