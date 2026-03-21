@@ -264,7 +264,10 @@ const NPCsBaseData: NPCBaseData[] = [
         maxLifeBonus: 45,
         attackList: [
             { type: "basic", additionalDamage: 3 },
-            { type: "skill", name: "combatAdmin.npcAttacks.shieldBash", additionalDamage: 10, additionalDices: 1, statusList: [{ type: "Stunned", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.shieldCombo", description: "combatAdmin.npcAttacks.shieldComboDesc", additionalDamage: 5, additionalDices: 1, quantity: 3, statusList: [{ type: "Shield", ammount: 1, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.prepareCounterattack", description: "combatAdmin.npcAttacks.prepareCounterattackDesc", statusList: [{ type: "Shield", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.counterattackStrike", description: "combatAdmin.npcAttacks.counterattackStrikeDesc", additionalDamage: 25, additionalDices: 3 },
+            { type: "skill", name: "combatAdmin.npcAttacks.gradientStrike", description: "combatAdmin.npcAttacks.intensityVeryHigh", intensity: "veryHigh", additionalDamage: 15, additionalDices: 2 },
         ],
     },
     {
@@ -380,14 +383,20 @@ const NPCsBaseData: NPCBaseData[] = [
         charisma:     30,
         weakTo: ["Fire", "Dark"],
         resistentTo: "Ice",
+        isFlying: true,
         armorClass: 18,
         challengeRating: "13",
         proficiencyBonus: 5,
         damageDie: 8,
         maxLifeBonus: 45,
+        passives: ["combatAdmin.npcPassives.hatDestroyable"],
         attackList: [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.spinningHat", additionalDamage: 10, additionalDices: 1, statusList: [{ type: "Charm", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.devastatingStrike", description: "combatAdmin.npcAttacks.devastatingStrikeDesc", additionalDamage: 16, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.summonHats", description: "combatAdmin.npcAttacks.summonHatsDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.hatThrow", description: "combatAdmin.npcAttacks.hatThrowDesc", additionalDamage: 10, additionalDices: 1, statusList: [{ type: "Silenced", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.hatSweepCombo", description: "combatAdmin.npcAttacks.hatSweepComboDesc", additionalDamage: 8, additionalDices: 1, quantity: 3, targetsAll: true },
         ],
     },
     {
@@ -450,6 +459,9 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", quantity: 2 },
             { type: "skill", name: "combatAdmin.npcAttacks.twist", additionalDamage: 1, statusList: [{ type: "Entangled", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.gradientStrike", description: "combatAdmin.npcAttacks.intensityVeryHigh", intensity: "veryHigh", additionalDamage: 1, additionalDices: 1, statusList: [{ type: "Entangled", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboSlaps", quantity: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.lifeDrain", description: "combatAdmin.npcAttacks.lifeDrainDesc", additionalDamage: 1, additionalDices: 1, targetsAll: true },
         ],
     },
     {
@@ -978,6 +990,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic" },
             { type: "skill", name: "combatAdmin.npcAttacks.dualSwordCombo", description: "combatAdmin.npcAttacks.dualSwordComboDesc", additionalDamage: 2, quantity: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.grantRushAll", description: "combatAdmin.npcAttacks.grantRushAllDesc", targetsAll: true, statusList: [{ type: "Rush", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {
@@ -1655,7 +1668,9 @@ const NPCsBaseData: NPCBaseData[] = [
         maxLifeBonus: 60,
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.joyfulReap", additionalDamage: 17, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.dualSwordCombo", description: "combatAdmin.npcAttacks.dualSwordComboJovialDesc", additionalDamage: 17, additionalDices: 2, quantityText: "combatAdmin.npcAttacks.dualSwordComboJovialQuantity" },
+            { type: "skill", name: "combatAdmin.npcAttacks.happinessMask", description: "combatAdmin.npcAttacks.happinessMaskDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.grantRushAll", description: "combatAdmin.npcAttacks.grantRushAllDesc", targetsAll: true, statusList: [{ type: "Rush", ammount: 1, remainingTurns: 2 }] },
         ],
         drops: { weapons: ["chapelim"] },
     },
@@ -1833,14 +1848,20 @@ const NPCsBaseData: NPCBaseData[] = [
         charisma:     30,
         weakTo: ["Dark", "Fire"],
         resistentTo: "Ice",
+        isFlying: true,
         armorClass: 21,
         challengeRating: "16",
         proficiencyBonus: 6,
         damageDie: 10,
         maxLifeBonus: 60,
+        passives: ["combatAdmin.npcPassives.hatDestroyable", "combatAdmin.npcPassives.sorrowfulDeathExhaustion"],
         attackList: [
             { type: "basic", additionalDamage: 7 },
             { type: "skill", name: "combatAdmin.npcAttacks.sorrowfulSpin", additionalDamage: 17, additionalDices: 2, statusList: [{ type: "Charm", ammount: 2, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.devastatingStrike", description: "combatAdmin.npcAttacks.devastatingStrikeDesc", additionalDamage: 24, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.summonHats", description: "combatAdmin.npcAttacks.summonHatsDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.hatThrow", description: "combatAdmin.npcAttacks.hatThrowDesc", additionalDamage: 17, additionalDices: 2, statusList: [{ type: "Silenced", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.hatSweepCombo", description: "combatAdmin.npcAttacks.hatSweepComboDesc", additionalDamage: 14, additionalDices: 2, quantity: 3, targetsAll: true },
         ],
         drops: { weapons: ["boucharo"] },
     },
@@ -2980,9 +3001,12 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 6,
         damageDie: 10,
         maxLifeBonus: 60,
+        passives: ["combatAdmin.npcPassives.unlimitedActions", "combatAdmin.npcPassives.breakAtTwoThirds"],
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.gradientStrike", description: "combatAdmin.npcAttacks.intensityVeryHigh", intensity: "veryHigh", additionalDamage: 14, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.handCombo8", description: "combatAdmin.npcAttacks.handCombo8Desc", additionalDamage: 10, additionalDices: 2, quantity: 8, targeting: "single" },
+            { type: "skill", name: "combatAdmin.npcAttacks.handCombo4", description: "combatAdmin.npcAttacks.handCombo4Desc", additionalDamage: 14, additionalDices: 2, quantity: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.lethalStrike", description: "combatAdmin.npcAttacks.lethalStrikeDesc", additionalDamage: 30, additionalDices: 3 },
         ],
     },
     {
@@ -3289,6 +3313,9 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", quantity: 2, additionalDamage: 5 },
             { type: "skill", name: "combatAdmin.npcAttacks.twist", additionalDamage: 13, additionalDices: 1, statusList: [{ type: "Entangled", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.gradientStrike", description: "combatAdmin.npcAttacks.intensityVeryHigh", intensity: "veryHigh", additionalDamage: 13, additionalDices: 1, statusList: [{ type: "Entangled", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboSlaps", additionalDamage: 10, additionalDices: 1, quantity: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.lifeDrain", description: "combatAdmin.npcAttacks.lifeDrainDesc", additionalDamage: 13, additionalDices: 1, targetsAll: true },
         ],
     },
     {
@@ -3310,6 +3337,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 3 },
             { type: "skill", name: "combatAdmin.npcAttacks.dualSwordCombo", description: "combatAdmin.npcAttacks.dualSwordComboDesc", additionalDamage: 10, additionalDices: 1, quantity: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.grantRushAll", description: "combatAdmin.npcAttacks.grantRushAllDesc", targetsAll: true, statusList: [{ type: "Rush", ammount: 1, remainingTurns: 2 }] },
         ],
     },
 
@@ -4125,6 +4153,9 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", quantity: 2, additionalDamage: 18 },
             { type: "skill", name: "combatAdmin.npcAttacks.twist", additionalDamage: 37, additionalDices: 2, statusList: [{ type: "Entangled", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.gradientStrike", description: "combatAdmin.npcAttacks.intensityVeryHigh", intensity: "veryHigh", additionalDamage: 37, additionalDices: 2, statusList: [{ type: "Entangled", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.comboSlaps", additionalDamage: 30, additionalDices: 2, quantity: 6 },
+            { type: "skill", name: "combatAdmin.npcAttacks.lifeDrain", description: "combatAdmin.npcAttacks.lifeDrainDesc", additionalDamage: 37, additionalDices: 2, targetsAll: true },
         ],
     },
     {
@@ -4146,6 +4177,7 @@ const NPCsBaseData: NPCBaseData[] = [
         attackList: [
             { type: "basic", additionalDamage: 21 },
             { type: "skill", name: "combatAdmin.npcAttacks.dualSwordCombo", description: "combatAdmin.npcAttacks.dualSwordComboDesc", additionalDamage: 37, additionalDices: 2, quantity: 4 },
+            { type: "skill", name: "combatAdmin.npcAttacks.grantRushAll", description: "combatAdmin.npcAttacks.grantRushAllDesc", targetsAll: true, statusList: [{ type: "Rush", ammount: 1, remainingTurns: 2 }] },
         ],
     },
     {
