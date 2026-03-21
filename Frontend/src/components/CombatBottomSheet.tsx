@@ -47,9 +47,10 @@ interface CombatBottomSheetProps {
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
     activeSkillId?: string | null;
+    onHighlightStatus?: () => void;
 }
 
-export default function CombatBottomSheet({ player, open, onOpen, onClose, diceBoardRef, timeoutDiceBoardRef, activeSkillId }: CombatBottomSheetProps) {
+export default function CombatBottomSheet({ player, open, onOpen, onClose, diceBoardRef, timeoutDiceBoardRef, activeSkillId, onHighlightStatus }: CombatBottomSheetProps) {
     const { weaponInfo, weaponList } = useWeaponInfo(player);
     const { weapon, details } = weaponInfo;
     const battleChar = getPlayerCharacter(player);
@@ -135,7 +136,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                     </button>
 
                     {/* Content */}
-                    <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
+                    <div className="flex-1 overflow-y-auto p-4 pb-40 space-y-4">
                         {/* Weapon header */}
                         <div className="flex items-center gap-3">
                             <div className="relative w-16 h-12 shrink-0">
@@ -307,6 +308,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                         const current = battleChar.magicPoints ?? 0;
                                         if (current <= 0) return;
                                         await APIBattle.updateCharacterMp(battleChar.battleID, current - 1);
+                                        onHighlightStatus?.();
                                     }}
                                 >
                                     -1 PA

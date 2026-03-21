@@ -17,6 +17,7 @@ import { t } from "../i18n";
 
 interface PlayerStatusFloatingProps {
     player: GetPlayerResponse | null;
+    highlighted?: boolean;
 }
 
 function pct(cur: number, max: number) {
@@ -29,7 +30,7 @@ function requestPlayerRefresh() {
     window.dispatchEvent(new Event("player-refresh"));
 }
 
-export default function PlayerStatusFloating({ player }: PlayerStatusFloatingProps) {
+export default function PlayerStatusFloating({ player, highlighted }: PlayerStatusFloatingProps) {
     const characters = player?.fightInfo?.characters ?? [];
     const playerBattleID = player?.fightInfo?.playerBattleID;
 
@@ -165,7 +166,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice", "Light"];
 
     return (
-        <div className="fixed bottom-14 left-4 z-40">
+        <div className={`fixed bottom-14 left-4 transition-all duration-300 ${highlighted ? "z-50 scale-105" : "z-40"}`}>
             <div
                 className="
                     rounded-xl bg-base-100/95 shadow-lg border border-base-300

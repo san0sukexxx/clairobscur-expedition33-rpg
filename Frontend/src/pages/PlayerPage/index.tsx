@@ -231,7 +231,7 @@ export default function PlayerPage() {
           tab === "combate"
             ? (!player?.fightInfo || player?.fightInfo?.battleStatus === "finished")
               ? "bottom-16 right-4"
-              : combatBottomSheetOpen ? "bottom-16 right-4" : "bottom-28 right-4"
+              : combatBottomSheetOpen ? "bottom-8 right-4" : "bottom-28 right-4"
             : tab === "habilidades" ? "bottom-24 right-4"
             : "bottom-4 right-4"
         }

@@ -38,6 +38,14 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
     const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
     const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+    const [statusHighlighted, setStatusHighlighted] = useState(false);
+    const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleHighlightStatus = () => {
+        if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+        setStatusHighlighted(true);
+        highlightTimerRef.current = setTimeout(() => setStatusHighlighted(false), 3000);
+    };
 
     useEffect(() => {
         onBottomSheetChange?.(bottomSheetOpen);
@@ -150,6 +158,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             <PlayerStatusFloating
                 player={player}
+                highlighted={statusHighlighted}
             />
 
             <InitiativesQueue
@@ -220,7 +229,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 hidden={bottomSheetOpen}
             />
 
-            <CombatBottomSheet player={player} open={bottomSheetOpen} onOpen={() => setBottomSheetOpen(true)} onClose={() => setBottomSheetOpen(false)} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} activeSkillId={activeSkillId} />
+            <CombatBottomSheet player={player} open={bottomSheetOpen} onOpen={() => setBottomSheetOpen(true)} onClose={() => setBottomSheetOpen(false)} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} activeSkillId={activeSkillId} onHighlightStatus={handleHighlightStatus} />
 
             <div className="h-52" />
         </div>
