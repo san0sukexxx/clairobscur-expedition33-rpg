@@ -5,7 +5,7 @@ import { APIBattle, type AddBattleCharacterInitiativeData } from "../api/APIBatt
 import { APIEncounter, type EncounterResponse } from "../api/APIEncounter"
 import { APIPicto } from "../api/APIPicto"
 import { type GetPlayerResponse } from "../api/APIPlayer"
-import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp, FaCheck } from "react-icons/fa"
+import { FaUser, FaSkull, FaEdit, FaSort, FaSortUp, FaSortDown, FaChevronDown, FaChevronUp, FaCheck, FaEye, FaEyeSlash } from "react-icons/fa"
 import { FaFistRaised, FaArrowUp, FaFireAlt, FaHourglassHalf, FaShieldAlt, FaUndo, FaMinus, FaPlus } from "react-icons/fa";
 import { FaArrowsDownToLine, FaArrowDown } from "react-icons/fa6";
 import { getCharacterLabelById, applyNpcNameSuffixes, CHARACTERS_LIST } from "../utils/CharacterUtils"
@@ -60,6 +60,7 @@ export interface CombatEntity {
     isReadyToStart: boolean
     status?: StatusResponse[]
     breakCount?: number
+    nameHidden?: boolean
 }
 
 export interface CombatAdminProps {
@@ -490,7 +491,8 @@ export default function CombatAdmin({
                     avatarUrl,
                     isReadyToStart: !bc.canRollInitiative,
                     status: bc.status,
-                    breakCount: bc.breakCount ?? 0
+                    breakCount: bc.breakCount ?? 0,
+                    nameHidden: bc.nameHidden ?? false
                 }
             } else {
                 return {
@@ -504,7 +506,8 @@ export default function CombatAdmin({
                     avatarUrl: `/enemies/${bc.id}.png`,
                     isReadyToStart: true,
                     status: bc.status,
-                    breakCount: bc.breakCount ?? 0
+                    breakCount: bc.breakCount ?? 0,
+                    nameHidden: bc.nameHidden ?? false
                 }
             }
         })
@@ -1721,6 +1724,24 @@ export default function CombatAdmin({
                                                     <span className={`font-semibold text-sm truncate ${m.currentHp === 0 ? "text-base-content/40 line-through" : ""}`}>
                                                         {m.name}
                                                     </span>
+                                                )}
+                                                {m.type === "npc" && (
+                                                    <button
+                                                        className={`btn btn-xs btn-ghost p-0 ${m.nameHidden ? "text-warning" : "opacity-40"}`}
+                                                        title={m.nameHidden ? "Nome oculto para jogadores" : "Ocultar nome para jogadores"}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            const newValue = !m.nameHidden;
+                                                            m.nameHidden = newValue;
+                                                            const updateTeam = (prev: CombatEntity[]) =>
+                                                                prev.map(e => e.rowId === m.rowId ? { ...e, nameHidden: newValue } : e);
+                                                            setTeamA(updateTeam);
+                                                            setTeamB(updateTeam);
+                                                            void APIBattle.toggleNameHidden(m.rowId!, newValue);
+                                                        }}
+                                                    >
+                                                        {m.nameHidden ? <FaEyeSlash className="w-3.5 h-3.5" /> : <FaEye className="w-3.5 h-3.5" />}
+                                                    </button>
                                                 )}
                                                 {m.currentHp === 0 && (
                                                     <FaSkull className="text-red-600 w-3.5 h-3.5 shrink-0" title={t("combatAdmin.labels.dead")} />

@@ -13,6 +13,8 @@ import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer";
 import { APIGameLog } from "../api/APIGameLog";
+import { APIBattle } from "../api/APIBattle";
+import { getPlayerCharacter } from "../utils/CharacterUtils";
 import { getWeaponPassive, toKebabCase, hasWeapon, t, getPictoName, getPictoDescription } from "../i18n";
 import { isGustave } from "../constants/player/characterIds";
 import { getPictoByName } from "../utils/PictoUtils";
@@ -50,6 +52,7 @@ interface CombatBottomSheetProps {
 export default function CombatBottomSheet({ player, open, onOpen, onClose, diceBoardRef, timeoutDiceBoardRef, activeSkillId }: CombatBottomSheetProps) {
     const { weaponInfo, weaponList } = useWeaponInfo(player);
     const { weapon, details } = weaponInfo;
+    const battleChar = getPlayerCharacter(player);
 
     const effectiveAbilityKey = useMemo(() => {
         return activeSkillId
@@ -297,7 +300,17 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                 <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
                                     {t("combat.freeShot")} ({t("setup.abilityAbbr.dexterity")})
                                 </span>
-                                <span className="badge badge-xs badge-warning">1 PM</span>
+                                <button
+                                    className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
+                                    onClick={async () => {
+                                        if (!battleChar) return;
+                                        const current = battleChar.magicPoints ?? 0;
+                                        if (current <= 0) return;
+                                        await APIBattle.updateCharacterMp(battleChar.battleID, current - 1);
+                                    }}
+                                >
+                                    -1 PA
+                                </button>
                             </div>
                             <div className="flex gap-2 mt-2">
                                 <button

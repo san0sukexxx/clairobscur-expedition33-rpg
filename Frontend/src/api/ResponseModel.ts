@@ -77,6 +77,7 @@ export interface BattleCharacterInfo {
     foretellConsumedTotal?: number;
     freeShotWeakPoints?: number;
     breakCount?: number;
+    nameHidden?: boolean;
 }
 
 export type RewardType = "weapon" | "picto";

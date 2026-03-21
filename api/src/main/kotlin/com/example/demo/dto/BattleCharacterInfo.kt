@@ -29,5 +29,6 @@ data class BattleCharacterInfo(
     val hitsTakenThisTurn: Int,
     val foretellConsumedTotal: Int,
     val freeShotWeakPoints: Int,
-    val breakCount: Int
+    val breakCount: Int,
+    val nameHidden: Boolean
 )

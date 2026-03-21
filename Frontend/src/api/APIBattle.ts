@@ -487,6 +487,13 @@ export class APIBattle {
         })
     }
 
+    static async toggleNameHidden(id: number, nameHidden: boolean): Promise<void> {
+        await api.put<{ nameHidden: boolean }, void>(
+            `battles/characters/${id}/name-hidden`,
+            { nameHidden }
+        )
+    }
+
     static async reorderTurns(turnIds: number[]): Promise<void> {
         await api.put<{ turns: number[] }, void>('battle-turns/reorder', {
             turns: turnIds

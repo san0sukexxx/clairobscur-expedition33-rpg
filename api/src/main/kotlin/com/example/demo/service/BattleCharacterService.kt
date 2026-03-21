@@ -648,6 +648,16 @@ class BattleCharacterService(
         }
 
         @Transactional
+        fun updateNameHidden(id: Int, nameHidden: Boolean) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+                entity.nameHidden = nameHidden
+                repository.save(entity)
+        }
+
+        @Transactional
         fun updateCharacterSunMoonCharges(id: Int, sunCharges: Int?, moonCharges: Int?) {
                 val opt = repository.findById(id)
                 if (opt.isEmpty) return

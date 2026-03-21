@@ -210,6 +210,16 @@ class BattleCharacterController(private val service: BattleCharacterService) {
         return ResponseEntity.noContent().build()
     }
 
+    @PutMapping("/characters/{id}/name-hidden")
+    fun toggleNameHidden(
+            @PathVariable id: Int,
+            @RequestBody body: Map<String, Boolean>
+    ): ResponseEntity<Void> {
+        val nameHidden = body["nameHidden"] ?: return ResponseEntity.badRequest().build()
+        service.updateNameHidden(id, nameHidden)
+        return ResponseEntity.noContent().build()
+    }
+
     @PutMapping("/characters/{id}/bestial-wheel-position")
     fun updateBestialWheelPosition(
             @PathVariable id: Int,

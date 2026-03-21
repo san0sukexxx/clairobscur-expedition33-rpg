@@ -220,11 +220,11 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                                 } ${
                                     isDragOver ? 'border-primary scale-105' : ''
                                 }`}
-                                title={ch.name}
+                                title={!isAdmin && ch.nameHidden ? "???" : ch.name}
                             >
                                 <img
                                     src={ch.type === "npc" ? `/enemies/${ch.id}.png` : `/characters/${ch.id}.webp`}
-                                    alt={ch.name}
+                                    alt={!isAdmin && ch.nameHidden ? "???" : ch.name}
                                     className="w-full h-full object-cover"
                                     onError={(e) => ch.type === "npc"
                                         ? handleNpcImgError(e, ch.id)

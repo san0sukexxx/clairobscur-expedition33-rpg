@@ -92,7 +92,8 @@ class BattleController(
                             hitsTakenThisTurn = bc.hitsTakenThisTurn,
                             foretellConsumedTotal = bc.foretellConsumedTotal,
                             freeShotWeakPoints = bc.freeShotWeakPoints,
-                            breakCount = bc.breakCount
+                            breakCount = bc.breakCount,
+                            nameHidden = bc.nameHidden
                     )
                 }
 

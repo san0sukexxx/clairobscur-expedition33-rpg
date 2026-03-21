@@ -235,7 +235,7 @@ export default function BattleGroupStatus({
 
                                         <div className="flex items-center gap-2 justify-between w-full">
                                             <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
-                                                {ch.name}
+                                                {!isAdmin && ch.nameHidden ? "???" : ch.name}
                                             </p>
 
                                             <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80 justify-end">

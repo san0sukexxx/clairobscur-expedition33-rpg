@@ -38,5 +38,7 @@ data class BattleCharacter(
         @Column(name = "free_shot_weak_points", nullable = false)
         var freeShotWeakPoints: Int = 0,
         @Column(name = "break_count", nullable = false)
-        var breakCount: Int = 0
+        var breakCount: Int = 0,
+        @Column(name = "name_hidden", nullable = false)
+        var nameHidden: Boolean = false
 )
