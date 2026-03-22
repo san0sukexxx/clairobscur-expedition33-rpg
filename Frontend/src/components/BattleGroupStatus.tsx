@@ -11,6 +11,7 @@ import { APIBattle } from "../api/APIBattle";
 import { type BattleCharacterInfo, type Stance, type StainType } from "../api/ResponseModel";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
+import BestialWheelModal from "./BestialWheelModal";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
 import StatEditModal from "./StatEditModal";
@@ -601,23 +602,13 @@ export default function BattleGroupStatus({
                         onCancel={closeEdit}
                     />
 
-                    <StatEditModal
+                    <BestialWheelModal
                         open={editing === "bestialWheel"}
-                        title="Bestial Wheel"
-                        currentValue={playerCh.bestialWheelPosition ?? 0}
-                        minValue={0}
-                        maxValue={8}
-                        wrapAround
+                        position={playerCh.bestialWheelPosition ?? 0}
+                        reversed={playerCh.bestialWheelReversed ?? false}
                         onConfirm={v => confirmNumericEdit("bestialWheel", v)}
+                        onToggleReversed={toggleBestialWheelReversed}
                         onCancel={closeEdit}
-                        extraAction={
-                            <button
-                                className={`btn btn-sm w-full ${playerCh.bestialWheelReversed ? "btn-warning" : "btn-outline"}`}
-                                onClick={toggleBestialWheelReversed}
-                            >
-                                ⟲ {t("combat.reverseWheel")} {playerCh.bestialWheelReversed ? "✓" : ""}
-                            </button>
-                        }
                     />
 
                     {/* Sun/Moon modal */}

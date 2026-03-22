@@ -10,7 +10,6 @@ interface StatEditModalProps {
     wrapAround?: boolean;
     onConfirm: (value: number) => void;
     onCancel: () => void;
-    extraAction?: React.ReactNode;
 }
 
 export default function StatEditModal({
@@ -21,8 +20,7 @@ export default function StatEditModal({
     minValue = 0,
     wrapAround = false,
     onConfirm,
-    onCancel,
-    extraAction
+    onCancel
 }: StatEditModalProps) {
     const [mode, setMode] = useState<"add" | "remove">("add");
     const [raw, setRaw] = useState("");
@@ -122,8 +120,6 @@ export default function StatEditModal({
                         }}
                     />
                 </div>
-
-                {extraAction}
 
                 {/* Actions */}
                 <div className="modal-action">

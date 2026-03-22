@@ -2612,6 +2612,7 @@
         "damage": "Dano",
         "current": "Atual",
         "amount": "Quantidade",
+        "advance": "Avançar posições",
         "preview": "Resultado",
         "currentMp": "Mana atual",
         "maxMp": "Mana máxima",

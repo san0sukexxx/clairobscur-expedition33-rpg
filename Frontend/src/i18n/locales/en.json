@@ -2612,6 +2612,7 @@
         "damage": "Damage",
         "current": "Current",
         "amount": "Amount",
+        "advance": "Advance positions",
         "preview": "Result",
         "currentMp": "Current AP",
         "maxMp": "Max AP",

@@ -9,6 +9,7 @@ import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
+import BestialWheelModal from "./BestialWheelModal";
 import StatEditModal from "./StatEditModal";
 import { HpEditModal } from "./HpEditModal";
 import { ApEditModal } from "./ApEditModal";
@@ -513,23 +514,13 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
             />
 
             {/* Bestial Wheel */}
-            <StatEditModal
+            <BestialWheelModal
                 open={editing === "bestialWheel"}
-                title="Bestial Wheel"
-                currentValue={ch.bestialWheelPosition ?? 0}
-                minValue={0}
-                maxValue={8}
-                wrapAround
+                position={ch.bestialWheelPosition ?? 0}
+                reversed={ch.bestialWheelReversed ?? false}
                 onConfirm={v => confirmNumericEdit("bestialWheel", v)}
+                onToggleReversed={toggleBestialWheelReversed}
                 onCancel={closeEdit}
-                extraAction={
-                    <button
-                        className={`btn btn-sm w-full ${ch.bestialWheelReversed ? "btn-warning" : "btn-outline"}`}
-                        onClick={toggleBestialWheelReversed}
-                    >
-                        ⟲ {t("combat.reverseWheel")} {ch.bestialWheelReversed ? "✓" : ""}
-                    </button>
-                }
             />
 
             {/* Sun/Moon modal */}
