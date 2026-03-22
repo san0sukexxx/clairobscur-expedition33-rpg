@@ -27,6 +27,7 @@ export interface PlayerSheetResponse {
     notes?: string;
     savingThrowProficiencies?: string[];
     luminaBonusPoints?: number;
+    bestialWheelReversed?: boolean;
 }
 
 export interface CreatePlayerInput {

@@ -60,6 +60,7 @@ class BattleCharacterService(
                                 perfectionRank = request.perfectionRank,
                                 rankProgress = request.rankProgress,
                                 bestialWheelPosition = request.bestialWheelPosition ?: 0,
+                                bestialWheelReversed = request.bestialWheelReversed,
                                 canRollInitiative = request.canRollInitiative,
                                 freeShotWeakPoints = request.freeShotWeakPoints
                         )
@@ -624,6 +625,15 @@ class BattleCharacterService(
                 val entity = opt.get()
                 entity.bestialWheelReversed = reversed
                 repository.save(entity)
+
+                // Persist on the player so it survives across battles
+                if (!entity.isEnemy) {
+                        val player = playerRepository.findById(entity.externalId.toIntOrNull() ?: -1)
+                        if (player.isPresent) {
+                                player.get().bestialWheelReversed = reversed
+                                playerRepository.save(player.get())
+                        }
+                }
 
                 val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
                 battleLogRepository.save(

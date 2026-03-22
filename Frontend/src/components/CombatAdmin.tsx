@@ -656,6 +656,7 @@ export default function CombatAdmin({
 
         // Random initial position for Bestial Wheel (0-8)
         const randomBestialPosition = isMonoco ? Math.floor(Math.random() * 9) : undefined
+        const playerForWheel = isMonoco ? players.find(p => p.id === Number(entity.externalId)) : undefined
 
         await APIBattle.addCharacter({
             battleId: battleId,
@@ -679,6 +680,7 @@ export default function CombatAdmin({
             perfectionRank: isVerso ? "D" : undefined,
             rankProgress: isVerso ? 0 : undefined,
             bestialWheelPosition: randomBestialPosition,
+            bestialWheelReversed: playerForWheel?.playerSheet?.bestialWheelReversed ?? false,
             initiative,
             canRollInitiative: entity.type == "player",
             freeShotWeakPoints: entity.type === "npc" ? (getNpcById(String(entity.externalId))?.freeShotWeakPoints ?? 0) : undefined
@@ -704,6 +706,7 @@ export default function CombatAdmin({
             const isVerso = charId === "verso" || charId.includes("verso")
             const isMonoco = charId === "monoco" || charId.includes("monoco")
             const randomBestialPosition = isMonoco ? Math.floor(Math.random() * 9) : undefined
+            const playerForWheel = isMonoco ? players.find(p => p.id === Number(ent.externalId)) : undefined
 
             await APIBattle.addCharacter({
                 battleId: battleId,
@@ -727,6 +730,7 @@ export default function CombatAdmin({
                 perfectionRank: isVerso ? "D" : undefined,
                 rankProgress: isVerso ? 0 : undefined,
                 bestialWheelPosition: randomBestialPosition,
+                bestialWheelReversed: playerForWheel?.playerSheet?.bestialWheelReversed ?? false,
                 canRollInitiative: ent.type == "player",
                 freeShotWeakPoints: ent.type === "npc" ? (getNpcById(String(ent.externalId))?.freeShotWeakPoints ?? 0) : undefined
             })

@@ -51,6 +51,7 @@ export interface AddBattleCharacterRequest {
     perfectionRank?: string | null
     rankProgress?: number | null
     bestialWheelPosition?: number | null
+    bestialWheelReversed?: boolean
     initiative?: AddBattleCharacterInitiativeData,
     canRollInitiative: boolean,
     freeShotWeakPoints?: number

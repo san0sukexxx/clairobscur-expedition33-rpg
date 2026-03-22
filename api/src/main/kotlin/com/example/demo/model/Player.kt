@@ -24,5 +24,6 @@ data class Player(
         var intelligence: Int = 10,
         var wisdom: Int = 10,
         var charisma: Int = 10,
-        @Column(name = "lumina_bonus_points") var luminaBonusPoints: Int = 0
+        @Column(name = "lumina_bonus_points") var luminaBonusPoints: Int = 0,
+        @Column(name = "bestial_wheel_reversed", nullable = false) var bestialWheelReversed: Boolean = false
 )

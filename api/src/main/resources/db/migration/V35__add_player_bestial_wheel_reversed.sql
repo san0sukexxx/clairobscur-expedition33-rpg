@@ -1,0 +1,1 @@
+ALTER TABLE player ADD COLUMN bestial_wheel_reversed BOOLEAN NOT NULL DEFAULT FALSE;
