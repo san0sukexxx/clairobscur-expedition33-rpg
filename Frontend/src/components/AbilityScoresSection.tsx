@@ -182,7 +182,7 @@ export function AbilityScoresSection({ player, setPlayer: _, weaponInfo, diceBoa
                         </p>
                         {descModal === primaryAbility && (
                             <p className="text-sm font-semibold text-primary">
-                                {t("characterSheet.descPrimaryAbility", { characterName: characterId.charAt(0).toUpperCase() + characterId.slice(1) })}
+                                {t("characterSheet.descPrimaryAbility", { characterName: characterId.charAt(0).toUpperCase() + characterId.slice(1), abilityName: t(`characterSheet.${primaryAbility}`) })}
                             </p>
                         )}
                     </div>

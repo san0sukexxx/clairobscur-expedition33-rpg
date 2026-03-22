@@ -64,7 +64,7 @@ function useActiveWeapon(weaponList: WeaponDTO[], player?: GetPlayerResponse | n
     if (equippedId == null) return null;
     const playerWeapon = player?.weapons?.find(w => w.id === equippedId) ?? null;
     if (playerWeapon == null) return null;
-    const weaponData = weaponList.find(w => w.name === playerWeapon.id);
+    const weaponData = weaponList.find(w => w.name.toLowerCase() === playerWeapon.id.toLowerCase());
     if (weaponData == null) return null;
     const rawElement = weaponData.attributes.element;
     const elementEmote = ELEMENT_EMOTE[rawElement] ?? "❓";
@@ -91,7 +91,7 @@ function useActiveWeapon(weaponList: WeaponDTO[], player?: GetPlayerResponse | n
 type ModalMode = "add" | "change" | "remove";
 
 function findWeaponByName(weaponList: WeaponDTO[], name: string): WeaponDTO | undefined {
-  return weaponList.find(w => w.name === name);
+  return weaponList.find(w => w.name.toLowerCase() === name.toLowerCase());
 }
 
 const levelColor = (lvl: number) =>
@@ -121,7 +121,7 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
   function clampHpToMax(p: GetPlayerResponse): GetPlayerResponse {
     const weaponId = p.playerSheet?.weaponId;
     const weapon = weaponId ? p.weapons?.find(w => w.id === weaponId) ?? null : null;
-    const details = weaponId ? weaponList.find(w => w.name === weaponId) ?? null : null;
+    const details = weaponId ? weaponList.find(w => w.name.toLowerCase() === weaponId.toLowerCase()) ?? null : null;
     const wi: WeaponInfo = { weapon, details };
     const maxHp = calculateMaxHP(p, wi);
     const currentHp = p.playerSheet?.hpCurrent ?? 0;
@@ -142,10 +142,10 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
     setWeaponFilter("");
 
     if (mode === "add") {
-      const currentIds = new Set((player.weapons ?? []).map(w => w.id));
+      const currentIds = new Set((player.weapons ?? []).map(w => w.id.toLowerCase()));
       const characterId = player.playerSheet?.characterId;
       const available = weaponList.filter(dto => {
-        if (currentIds.has(dto.name)) return false;
+        if (currentIds.has(dto.name.toLowerCase())) return false;
         return true;
       });
 

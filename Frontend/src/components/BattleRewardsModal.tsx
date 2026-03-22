@@ -114,7 +114,7 @@ export default function BattleRewardsModal({ rewards, players, onClose, onClaimR
                                         const canUseWeapon = !isWeapon || canCharacterUseWeapon(player.playerSheet?.characterId, kebabId);
 
                                         // Determine if button should be disabled
-                                        const isDisabled = isClaimingThis || playerAlreadyHasItem || !canUseWeapon;
+                                        const isDisabled = isClaimingThis || !!playerAlreadyHasItem || !canUseWeapon;
 
                                         // Determine tooltip
                                         let tooltipText: string | undefined;

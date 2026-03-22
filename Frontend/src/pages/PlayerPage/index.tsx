@@ -82,12 +82,12 @@ export default function PlayerPage() {
   // Weapon info
   const { weaponInfo, weaponList } = useWeaponInfo(player);
 
-  // Set HP to max when setup completes
+  // Set HP to max when setup completes for the first time (hpMax still at default 0)
   const prevSetupComplete = useRef(false);
   useEffect(() => {
     if (setupComplete && !prevSetupComplete.current && player) {
       const maxHp = calculateMaxHP(player, weaponInfo);
-      if (player.playerSheet?.hpCurrent !== maxHp) {
+      if ((player.playerSheet?.hpMax ?? 0) === 0) {
         APIPlayer.update(player.id, {
           playerSheet: { ...player.playerSheet, hpCurrent: maxHp, hpMax: maxHp },
         });

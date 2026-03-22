@@ -1958,8 +1958,8 @@ const NPCsBaseData: NPCBaseData[] = [
         maxLifeBonus: 60,
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.faceSwap", additionalDamage: 17, additionalDices: 2, statusList: [{ type: "Charm", ammount: 2, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.masquerade", additionalDamage: 17, additionalDices: 2, statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.determination", description: "combatAdmin.npcAttacks.determinationDesc", intensity: "high", additionalDamage: 17, additionalDices: 2, quantity: 3, targetsAll: true },
+            { type: "skill", name: "combatAdmin.npcAttacks.peaceMask", description: "combatAdmin.npcAttacks.peaceMaskDesc", additionalDamage: 17, additionalDices: 2, quantity: 4, targetsAll: true, statusList: [{ type: "Shield", ammount: 1, remainingTurns: 3 }] },
         ],
     },
     {

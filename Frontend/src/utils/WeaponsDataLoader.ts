@@ -1,5 +1,6 @@
 // src/utils/WeaponsDataLoader.ts
 import type { WeaponDTO } from "../types/WeaponDTO";
+import { getWeaponEnglishName } from "../i18n";
 
 // Carrega todos os JSONs em build time, sem fetch.
 const modules = import.meta.glob<true, string, WeaponDTO[] | WeaponDTO>(
@@ -82,7 +83,11 @@ export class WeaponsDataLoader {
     const charId = characterId.toLowerCase();
     const file = this.fileForCharacter(charId);
     const weapons = this.getByFile(file);
-    return weapons.some(w => w.name.toLowerCase() === weaponId.toLowerCase());
+    // Direct match (e.g., "melarum" === "Melarum")
+    if (weapons.some(w => w.name.toLowerCase() === weaponId.toLowerCase())) return true;
+    // Match via English name from translations (e.g., "baguette-verso" → "Baguette")
+    const englishName = getWeaponEnglishName(weaponId);
+    return weapons.some(w => w.name.toLowerCase() === englishName.toLowerCase());
   }
 
   static fileForCharacter(character?: string): string {

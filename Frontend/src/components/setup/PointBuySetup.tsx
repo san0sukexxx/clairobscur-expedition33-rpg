@@ -56,7 +56,7 @@ export function PointBuySetup({ onConfirm }: PointBuySetupProps) {
 
                     return (
                         <div key={key} className="flex flex-col items-center gap-2">
-                            <span className="text-xs font-bold uppercase tracking-wide">{t(`setup.abilityAbbr.${key}`)}</span>
+                            <span className="text-xs font-bold uppercase tracking-wide">{t(`characterSheet.${key}`)}</span>
 
                             <select
                                 className="select select-bordered select-sm w-full"

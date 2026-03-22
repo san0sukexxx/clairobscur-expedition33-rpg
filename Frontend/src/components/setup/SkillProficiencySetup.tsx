@@ -2,6 +2,7 @@ import { useState } from "react";
 import { APIPlayer, type GetPlayerResponse, type AbilityScores } from "../../api/APIPlayer";
 import { useToast } from "../Toast";
 import { t } from "../../i18n";
+import PanelModal from "../PanelModal";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -38,6 +39,27 @@ const ABILITY_I18N_KEY: Record<AbilityKey, string> = {
     wisdom: "characterSheet.wisdom", charisma: "characterSheet.charisma",
 };
 
+const SKILL_DESC_KEY: Record<string, string> = {
+    acrobatics:     "skills.descAcrobatics",
+    animalHandling: "skills.descAnimalHandling",
+    arcana:         "skills.descArcana",
+    athletics:      "skills.descAthletics",
+    deception:      "skills.descDeception",
+    history:        "skills.descHistory",
+    insight:        "skills.descInsight",
+    intimidation:   "skills.descIntimidation",
+    investigation:  "skills.descInvestigation",
+    medicine:       "skills.descMedicine",
+    nature:         "skills.descNature",
+    perception:     "skills.descPerception",
+    performance:    "skills.descPerformance",
+    persuasion:     "skills.descPersuasion",
+    religion:       "skills.descReligion",
+    sleightOfHand:  "skills.descSleightOfHand",
+    stealth:        "skills.descStealth",
+    survival:       "skills.descSurvival",
+};
+
 const MAX_SELECTIONS = 5;
 
 const CLASS_SKILLS: Record<string, string[]> = {
@@ -58,6 +80,7 @@ export function SkillProficiencySetup({ player, setPlayer }: Props) {
     const { showToast } = useToast();
     const [selected, setSelected] = useState<Set<string>>(new Set());
     const [saving, setSaving] = useState(false);
+    const [descModal, setDescModal] = useState<{ id: string; labelKey: string } | null>(null);
 
     function toggle(id: string) {
         setSelected(prev => {
@@ -127,28 +150,37 @@ export function SkillProficiencySetup({ player, setPlayer }: Props) {
                     const isSelected = selected.has(id);
                     const isDisabled = !isSelected && selected.size >= MAX_SELECTIONS;
                     return (
-                        <button
+                        <div
                             key={id}
-                            onClick={() => toggle(id)}
-                            disabled={isDisabled || saving}
                             className={`
-                                flex items-center gap-3 py-2.5 px-2 rounded transition text-left
-                                ${isSelected ? "text-primary" : isDisabled ? "opacity-35 cursor-not-allowed" : "hover:bg-base-200"}
+                                flex items-center gap-3 py-2.5 px-2 rounded transition
+                                ${isSelected ? "text-primary" : isDisabled ? "opacity-35" : ""}
                             `}
                         >
-                            {/* Proficiency dot */}
-                            <span className={`w-3.5 h-3.5 rounded-full border-2 shrink-0 transition-colors ${
-                                isSelected ? "bg-primary border-primary" : "border-base-content/40"
-                            }`} />
+                            {/* Proficiency dot + toggle */}
+                            <button
+                                onClick={() => toggle(id)}
+                                disabled={isDisabled || saving}
+                                className={`flex items-center gap-3 shrink-0 ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+                            >
+                                <span className={`w-3.5 h-3.5 rounded-full border-2 shrink-0 transition-colors ${
+                                    isSelected ? "bg-primary border-primary" : "border-base-content/40"
+                                }`} />
 
-                            {/* Ability badge */}
-                            <span className="text-[9px] font-black tracking-widest uppercase opacity-50 w-7 shrink-0">
-                                {t(ABILITY_I18N_KEY[ability]).slice(0, 3)}
-                            </span>
+                                {/* Ability badge */}
+                                <span className="text-[9px] font-black tracking-widest uppercase opacity-50 w-7 shrink-0">
+                                    {t(ABILITY_I18N_KEY[ability]).slice(0, 3)}
+                                </span>
+                            </button>
 
-                            {/* Skill name */}
-                            <span className="text-sm font-semibold flex-1">{t(labelKey)}</span>
-                        </button>
+                            {/* Skill name — click to show description */}
+                            <button
+                                onClick={() => setDescModal({ id, labelKey })}
+                                className="text-sm font-semibold flex-1 text-left hover:text-primary transition-colors cursor-pointer"
+                            >
+                                {t(labelKey)}
+                            </button>
+                        </div>
                     );
                 })}
             </div>
@@ -167,6 +199,19 @@ export function SkillProficiencySetup({ player, setPlayer }: Props) {
                         : t("skills.proficiencySetupConfirm")}
                 </button>
             </div>
+
+            <PanelModal
+                open={descModal !== null}
+                onClose={() => setDescModal(null)}
+                title={descModal ? t(descModal.labelKey) : ""}
+                size="sm"
+            >
+                {descModal && (
+                    <p className="text-sm leading-relaxed text-neutral-300">
+                        {t(SKILL_DESC_KEY[descModal.id] ?? "")}
+                    </p>
+                )}
+            </PanelModal>
         </div>
     );
 }

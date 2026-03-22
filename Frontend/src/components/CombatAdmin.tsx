@@ -219,8 +219,6 @@ export default function CombatAdmin({
     // Drops dos NPCs que estavam na batalha
     const npcDrops = useMemo(() => {
         if (battleStatus !== 'finished' || !battleDetails?.characters) return [];
-        const hasAlivePlayer = battleDetails.characters.some(ch => ch.type === "player" && ch.healthPoints > 0);
-        if (!hasAlivePlayer) return [];
 
         const drops: BattleReward[] = [];
         const seenIds = new Set<string>();
@@ -3099,7 +3097,6 @@ export default function CombatAdmin({
                                                         : `${characterName} (${playerName})`;
 
                                                     if (isWeapon) {
-                                                        // Arma: manter lógica original (desabilitado se já possui)
                                                         const alreadyHas = player.weapons?.some(w => w.id.toLowerCase() === kebabId.toLowerCase());
                                                         const canUse = canCharacterUseWeapon(player.playerSheet?.characterId, kebabId);
                                                         const isDisabled = alreadyHas || !canUse;
@@ -3111,6 +3108,17 @@ export default function CombatAdmin({
                                                                 onClick={async () => {
                                                                     try {
                                                                         await APIRewards.claimReward(player.id, reward);
+                                                                        setLocalPlayers(prev => prev.map(p =>
+                                                                            p.id === player.id
+                                                                                ? {
+                                                                                    ...p,
+                                                                                    weapons: [...(p.weapons ?? []), {
+                                                                                        id: kebabId,
+                                                                                        level: reward.level
+                                                                                    }]
+                                                                                }
+                                                                                : p
+                                                                        ));
                                                                         showToast(`${displayName} ${t("rewards.level")} ${reward.level} → ${characterName}!`);
                                                                     } catch (error) {
                                                                         console.error("Erro ao reivindicar recompensa:", error);
@@ -3220,8 +3228,8 @@ export default function CombatAdmin({
                                 })}
                             </div>
 
-                            {/* Drops dos NPCs — hidden if battle has an associated encounter */}
-                            {npcDrops.length > 0 && !battleDetails?.encounterId && (
+                            {/* Drops dos NPCs */}
+                            {npcDrops.length > 0 && (
                                 <>
                                     <div className="divider my-2">{t("combatAdmin.npcDetails.drops")}</div>
                                     <div className="space-y-4">
@@ -3325,6 +3333,17 @@ export default function CombatAdmin({
                                                                         onClick={async () => {
                                                                             try {
                                                                                 await APIRewards.claimReward(player.id, reward);
+                                                                                setLocalPlayers(prev => prev.map(p =>
+                                                                                    p.id === player.id
+                                                                                        ? {
+                                                                                            ...p,
+                                                                                            weapons: [...(p.weapons ?? []), {
+                                                                                                id: kebabId,
+                                                                                                level: reward.level
+                                                                                            }]
+                                                                                        }
+                                                                                        : p
+                                                                                ));
                                                                                 showToast(`${displayName} ${t("rewards.level")} ${reward.level} → ${characterName}!`);
                                                                             } catch (error) {
                                                                                 console.error("Erro ao reivindicar recompensa:", error);

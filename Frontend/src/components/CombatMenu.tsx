@@ -194,9 +194,6 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
                           {t("combat.attack")}
                         </button>
                       )}
-                      <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Defend)}>
-                        {t("combat.defend")}
-                      </button>
                       <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
                         {t("combat.endTurn")}
                       </button>

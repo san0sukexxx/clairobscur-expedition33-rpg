@@ -2,11 +2,12 @@ import { type MutableRefObject, type RefObject, useMemo, useState } from "react"
 import { type PlayerItemResponse } from "../api/ResponseModel";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIItem } from "../api/APIItem";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaInfoCircle } from "react-icons/fa";
 import { type DiceBoardRef } from "./DiceBoard";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { dispatchRoll } from "../utils/rollDispatcher";
 import { t } from "../i18n";
+import PanelModal from "./PanelModal";
 
 const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", "revive-elixir"]);
 
@@ -67,6 +68,7 @@ function ElixirsCard({
     const [diceModal, setDiceModal] = useState<{ elixirId: string; label: string } | null>(null);
     const [diceCount, setDiceCount] = useState(1);
     const [diceSize, setDiceSize] = useState(6);
+    const [showElixirInfo, setShowElixirInfo] = useState(false);
 
     const ELIXIRS = [
         { id: "chroma-elixir", label: t("items.chroma"), src: "/items/Chroma Elixir.png" },
@@ -164,6 +166,37 @@ function ElixirsCard({
             }
         } catch (e) {
             console.error("Erro ao atualizar max quantity:", e);
+        }
+    }
+
+    async function useChromaDirectly() {
+        if (!player) return;
+        const item = player.items?.find(i => i.itemId === "chroma-elixir");
+        if (!item || item.quantity <= 0) return;
+        setUsingItem("chroma-elixir");
+        try {
+            const newQty = Math.max(0, item.quantity - 1);
+            await APIItem.updatePlayerItem(item.id, { quantity: newQty });
+            setPlayer(prev => {
+                if (!prev) return prev;
+                const items = (prev.items ?? []).map(i =>
+                    i.id === item.id ? { ...i, quantity: newQty } : i
+                );
+                return { ...prev, items };
+            });
+            onItemUsed?.();
+        } catch (e) {
+            console.error("Erro ao usar chroma:", e);
+        } finally {
+            setUsingItem(null);
+        }
+    }
+
+    function handleUseElixir(elixirId: string, label: string) {
+        if (elixirId === "chroma-elixir") {
+            useChromaDirectly();
+        } else {
+            openDiceModal(elixirId, label);
         }
     }
 
@@ -303,8 +336,17 @@ function ElixirsCard({
             </Modal>
 
             <div className="rounded-2xl bg-base-100 border border-base-300 overflow-hidden">
-                <div className="px-6 py-3 border-b border-base-300 text-lg tracking-widest text-center opacity-90">
-                    {t("items.elixirs").toUpperCase()}
+                <div className="px-6 py-3 border-b border-base-300 flex items-center justify-center gap-2">
+                    <span className="text-lg tracking-widest opacity-90">
+                        {t("items.elixirs").toUpperCase()}
+                    </span>
+                    <button
+                        onClick={() => setShowElixirInfo(true)}
+                        className="text-base-content/50 hover:text-primary transition-colors"
+                        aria-label={t("items.elixirInfoTitle")}
+                    >
+                        <FaInfoCircle className="h-4 w-4" />
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4">
@@ -375,7 +417,7 @@ function ElixirsCard({
                             <button
                                 className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300 disabled:opacity-50 disabled:cursor-not-allowed w-full"
                                 disabled={usingItem === e.id || qty === 0}
-                                onClick={() => openDiceModal(e.id, e.label)}
+                                onClick={() => handleUseElixir(e.id, e.label)}
                             >
                                 {usingItem === e.id ? t("common.using") : t("common.use")}
                             </button>
@@ -384,6 +426,20 @@ function ElixirsCard({
                 })}
             </div>
         </div>
+
+            <PanelModal
+                open={showElixirInfo}
+                onClose={() => setShowElixirInfo(false)}
+                title={t("items.elixirInfoTitle")}
+                size="sm"
+            >
+                <ul className="flex flex-col gap-4 text-sm leading-relaxed text-neutral-300">
+                    <li><strong className="text-neutral-100">{t("items.chroma")}</strong> — {t("items.descChroma")}</li>
+                    <li><strong className="text-neutral-100">{t("items.healing")}</strong> — {t("items.descHealing")}</li>
+                    <li><strong className="text-neutral-100">{t("items.energy")}</strong> — {t("items.descEnergy")}</li>
+                    <li><strong className="text-neutral-100">{t("items.revive")}</strong> — {t("items.descRevive")}</li>
+                </ul>
+            </PanelModal>
         </>
     );
 }

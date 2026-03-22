@@ -1,8 +1,23 @@
 import type { BattleReward } from "./ResponseModel";
 import { APIPlayerWeapons } from "./APIPlayerWeapons";
 import { APIPicto } from "./APIPicto";
+import { toKebabCase } from "../i18n";
+import { WeaponsDataLoader } from "../utils/WeaponsDataLoader";
 
 export class APIRewards {
+    /**
+     * Resolve the canonical weapon name (as stored in JSON) from a kebab-case or display name.
+     * The weapon system uses the JSON "name" field as the ID (e.g., "Lanceram", not "lanceram").
+     */
+    private static resolveWeaponName(itemId: string): string {
+        const lower = itemId.toLowerCase();
+        for (const [, weapons] of WeaponsDataLoader.getAllSeparated()) {
+            const match = weapons.find(w => w.name.toLowerCase() === lower);
+            if (match) return match.name;
+        }
+        return itemId;
+    }
+
     /**
      * Distribui uma recompensa (arma ou picto) para um jogador
      * @param playerId ID do jogador que receberá a recompensa
@@ -10,20 +25,18 @@ export class APIRewards {
      */
     static async claimReward(playerId: number, reward: BattleReward): Promise<void> {
         if (reward.type === "weapon") {
-            // Adicionar arma ao jogador
+            // Resolver o nome canônico da arma (case do JSON)
+            const weaponName = this.resolveWeaponName(reward.itemId);
             await APIPlayerWeapons.add({
                 playerId,
-                weaponId: reward.itemId,
+                weaponId: weaponName,
                 level: reward.level
             });
         } else if (reward.type === "picto") {
-            // Adicionar picto ao jogador
-            // Garantir que o pictoId está em minúsculas (kebab-case)
-            const pictoId = reward.itemId.toLowerCase();
-            console.log("Adicionando picto:", { playerId, pictoId, level: reward.level });
+            const kebabId = toKebabCase(reward.itemId);
             await APIPicto.createPlayerPicto({
                 playerId,
-                pictoId,
+                pictoId: kebabId,
                 level: reward.level
             });
         }

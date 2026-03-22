@@ -138,12 +138,12 @@ export function ManualRolledSetup({ diceBoardRef, timeoutDiceBoardRef, onConfirm
                                         {ABILITY_KEYS
                                             .filter(key => !taken.has(key))
                                             .map(key => (
-                                                <option key={key} value={key}>{t(`setup.abilityAbbr.${key}`)}</option>
+                                                <option key={key} value={key}>{t(`characterSheet.${key}`)}</option>
                                             ))
                                         }
                                         {current !== "" && taken.has(current as AbilityKey) && (
                                             <option value={current}>
-                                                {t(`setup.abilityAbbr.${current}`)}
+                                                {t(`characterSheet.${current}`)}
                                             </option>
                                         )}
                                     </select>

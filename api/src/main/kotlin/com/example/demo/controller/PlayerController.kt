@@ -276,11 +276,11 @@ class PlayerController(
 
                 p.name = sheet.name
                 p.characterId = sheet.characterId
-                p.totalPoints = sheet.totalPoints ?: 0
-                p.xp = sheet.xp ?: 0
-                p.apCurrent = sheet.apCurrent ?: 0
-                p.mpCurrent = sheet.mpCurrent ?: 0
-                p.hpCurrent = sheet.hpCurrent ?: 0
+                sheet.totalPoints?.let { p.totalPoints = it }
+                sheet.xp?.let { p.xp = it }
+                sheet.apCurrent?.let { p.apCurrent = it }
+                sheet.mpCurrent?.let { p.mpCurrent = it }
+                sheet.hpCurrent?.let { p.hpCurrent = it }
                 p.notes = sheet.notes
                 if (sheet.skillsData != null) p.skillsData = sheet.skillsData
                 sheet.savingThrowProficiencies?.let { p.savingThrowProficiencies = it.joinToString(",") }

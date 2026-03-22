@@ -1826,10 +1826,10 @@
       "descStrength": "Measures raw physical power, athletic ability, and the force with which you can strike. Determines how much weight you carry, how far you jump, and how hard you push.",
       "descDexterity": "Measures agility, reflexes, and balance. Influences Armor Class, initiative, and attacks with finesse weapons.",
       "descConstitution": "Measures physical endurance, stamina, and vitality. Determines your hit points and the ability to withstand extreme conditions such as poison, disease, and exhaustion.",
-      "descIntelligence": "Measures mental acuity, memory precision, and reasoning ability. Arcane knowledge, logical deduction, and fact recall depend on this attribute.",
+      "descIntelligence": "Measures mental acuity, memory precision, and reasoning ability. Arcane knowledge, logical deduction, and fact recall depend on this attribute. Also influences the starting amount of Action Points (AP), which is your capacity to perform free shots and special abilities in each battle.",
       "descWisdom": "Measures perception, intuition, and attunement to the world around you. Determines your ability to notice details, read intentions, and resist mind-affecting effects.",
       "descCharisma": "Measures force of personality, presence, and leadership. Governs your ability to influence, deceive, intimidate, and inspire other creatures.",
-      "descPrimaryAbility": "This is {characterName}'s primary attribute. Its modifier is added to attack and damage rolls for special abilities.",
+      "descPrimaryAbility": "{abilityName} is {characterName}'s primary attribute. Its modifier is added to attack and damage rolls.",
       "proficiencyBonus": "Proficiency Bonus",
       "armorClassTop": "Armor",
       "armorClassBottom": "Class",
@@ -3442,7 +3442,12 @@
       "editMaxQuantity": "Edit Max Quantity",
       "newValue": "New value",
       "diceCount": "Dice count",
-      "diceSize": "Dice size"
+      "diceSize": "Dice size",
+      "elixirInfoTitle": "Elixirs",
+      "descChroma": "Recovers HP for all party members. Cannot be used during combat.",
+      "descHealing": "Recovers HP (based on dice rolled) for one party member. Can be used on any living team member, not just yourself. Cannot be used on dead members.",
+      "descEnergy": "Recovers Action Points (AP) based on the dice rolled.",
+      "descRevive": "Revives a dead character with HP equal to the dice rolled."
     },
     "weapons": {
       "title": "Weapon",

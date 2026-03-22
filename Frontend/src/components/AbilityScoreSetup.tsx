@@ -146,8 +146,7 @@ export function AbilityScoreSetup({ player, setPlayer, diceBoardRef, timeoutDice
                     <div>
                         <h4 className="text-base font-semibold text-neutral-100 mb-2">{t("setup.infoPrimaryTitle")}</h4>
                         <p className="text-primary font-semibold">
-                            {t("characterSheet.descPrimaryAbility", { characterName })}
-                            {" "}{t(`characterSheet.${primaryAbility}`)}!
+                            {t("characterSheet.descPrimaryAbility", { characterName, abilityName: t(`characterSheet.${primaryAbility}`) })}
                         </p>
                     </div>
                 </div>
