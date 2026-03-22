@@ -1,5 +1,5 @@
 import { useRef, useMemo, useState, type RefObject, type MutableRefObject } from "react";
-import { FaChevronLeft, FaChevronRight, FaList, FaChartLine, FaLock } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaList, FaChartLine, FaLock, FaEdit } from "react-icons/fa";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APIPlayerWeapons } from "../api/APIPlayerWeapons";
 import { type WeaponResponse } from "../api/ResponseModel";
@@ -481,7 +481,18 @@ export default function WeaponSection({ player, setPlayer, weaponList, isAdmin, 
                   />
                 </button>
 
-                <span className="text-3xl font-light text-center">{activeWeapon.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl font-light text-center">{activeWeapon.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => openSelector("change")}
+                    className="text-base-content/40 hover:text-primary transition-colors"
+                    aria-label={t("weapons.changeWeapon")}
+                    title={t("weapons.changeWeapon")}
+                  >
+                    <FaEdit className="h-4 w-4" />
+                  </button>
+                </div>
 
                 <div className="mt-1">
                   <div className="flex items-center justify-center gap-4">
