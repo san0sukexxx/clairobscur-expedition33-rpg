@@ -75,7 +75,7 @@ export default function BestialWheelModal({
 
                 <div className="modal-action flex items-center">
                     <button
-                        className="text-xs opacity-40 hover:opacity-70 transition-opacity mr-auto"
+                        className={`btn btn-xs mr-auto ${reversed ? "btn-primary" : "btn-ghost"}`}
                         onClick={onToggleReversed}
                     >
                         ⟲ {t("combat.reverseWheel")}{reversed ? " ✓" : ""}
