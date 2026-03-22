@@ -27,6 +27,7 @@ data class BattleCharacter(
         @Column(name = "perfection_rank") var perfectionRank: String? = null,
         @Column(name = "rank_progress") var rankProgress: Int? = null,
         @Column(name = "bestial_wheel_position") var bestialWheelPosition: Int? = null,
+        @Column(name = "bestial_wheel_reversed", nullable = false) var bestialWheelReversed: Boolean = false,
         @Column(name = "can_roll_initiative", nullable = false)
         var canRollInitiative: Boolean = false,
         @Column(name = "parries_this_turn", nullable = false)

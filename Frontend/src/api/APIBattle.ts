@@ -301,6 +301,13 @@ export class APIBattle {
         )
     }
 
+    static async updateBestialWheelReversed(id: number, reversed: boolean): Promise<void> {
+        await api.put<{ reversed: boolean }, void>(
+            `battles/characters/${id}/bestial-wheel-reversed`,
+            { reversed }
+        )
+    }
+
     static async updateSunMoonCharges(id: number, sunCharges: number, moonCharges: number): Promise<void> {
         await api.put<{ sunCharges: number; moonCharges: number }, void>(
             `battles/characters/${id}/sun-moon-charges`,

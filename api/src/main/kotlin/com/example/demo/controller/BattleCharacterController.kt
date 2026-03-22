@@ -229,4 +229,14 @@ class BattleCharacterController(private val service: BattleCharacterService) {
         service.updateBestialWheelPosition(id, newPosition)
         return ResponseEntity.noContent().build()
     }
+
+    @PutMapping("/characters/{id}/bestial-wheel-reversed")
+    fun updateBestialWheelReversed(
+            @PathVariable id: Int,
+            @RequestBody body: Map<String, Boolean>
+    ): ResponseEntity<Void> {
+        val reversed = body["reversed"] ?: return ResponseEntity.badRequest().build()
+        service.updateBestialWheelReversed(id, reversed)
+        return ResponseEntity.noContent().build()
+    }
 }

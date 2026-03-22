@@ -68,6 +68,7 @@ export interface BattleCharacterInfo {
     perfectionRank?: string | null;
     rankProgress?: number | null;
     bestialWheelPosition?: number | null;
+    bestialWheelReversed?: boolean | null;
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;

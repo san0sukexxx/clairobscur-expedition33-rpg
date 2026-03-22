@@ -96,8 +96,8 @@ export function RollHistoryToast() {
 
             setHistory(prev => {
                 const last = prev[prev.length - 1];
-                // Accumulate if same label and within 3 seconds
-                if (last && last.label === roll.label && now - lastRollTime.current < 3000) {
+                // Accumulate only if explicitly allowed, same label, and within 3 seconds
+                if (last && roll.accumulate && last.label === roll.label && now - lastRollTime.current < 3000) {
                     const allCommands = [...(last._diceCommands ?? [last.diceCommand]), roll.diceCommand];
                     const merged: RollEvent = {
                         ...last,

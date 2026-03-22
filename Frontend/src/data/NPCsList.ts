@@ -1744,10 +1744,14 @@ const NPCsBaseData: NPCBaseData[] = [
         proficiencyBonus: 6,
         damageDie: 10,
         maxLifeBonus: 60,
+        passives: ["combatAdmin.npcPassives.maxShields9"],
         attackList: [
             { type: "basic", additionalDamage: 7 },
-            { type: "skill", name: "combatAdmin.npcAttacks.maskSwap", additionalDamage: 17, additionalDices: 2, statusList: [{ type: "Charm", ammount: 1, remainingTurns: 2 }] },
-            { type: "skill", name: "combatAdmin.npcAttacks.curseOfMasks", description: "combatAdmin.npcAttacks.curseOfMasksDesc", statusList: [{ type: "Cursed", ammount: 2, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.swordCombo4", description: "combatAdmin.npcAttacks.swordCombo4Desc", additionalDamage: 17, additionalDices: 2, quantity: 8},
+            { type: "skill", name: "combatAdmin.npcAttacks.swordShockwave", description: "combatAdmin.npcAttacks.swordShockwaveDesc", intensity: "high", additionalDamage: 17, additionalDices: 2, quantity: 3, targetsAll: true, statusList: [{ type: "Entangled", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.fireSwords", description: "combatAdmin.npcAttacks.fireSwordsDesc", additionalDamage: 17, additionalDices: 2, quantity: 4, element: "Fire", targeting: "single", statusList: [{ type: "Burning", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.defensiveAura", description: "combatAdmin.npcAttacks.defensiveAuraDesc" },
+            { type: "skill", name: "combatAdmin.npcAttacks.grantBuffsSelf", description: "combatAdmin.npcAttacks.grantBuffsSelfDesc", statusList: [{ type: "Empowered", ammount: 1, remainingTurns: 3 }, { type: "Shell", ammount: 1, remainingTurns: 3 }, { type: "Rush", ammount: 1, remainingTurns: 3 }] },
         ],
         drops: { pictos: ["immaculate"] },
     },
@@ -1960,6 +1964,9 @@ const NPCsBaseData: NPCBaseData[] = [
             { type: "basic", additionalDamage: 7 },
             { type: "skill", name: "combatAdmin.npcAttacks.determination", description: "combatAdmin.npcAttacks.determinationDesc", intensity: "high", additionalDamage: 17, additionalDices: 2, quantity: 3, targetsAll: true },
             { type: "skill", name: "combatAdmin.npcAttacks.peaceMask", description: "combatAdmin.npcAttacks.peaceMaskDesc", additionalDamage: 17, additionalDices: 2, quantity: 4, targetsAll: true, statusList: [{ type: "Shield", ammount: 1, remainingTurns: 3 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.anxietyMask", description: "combatAdmin.npcAttacks.anxietyMaskDesc", intensity: "veryHigh", additionalDamage: 20, additionalDices: 3, quantity: 2, targetsAll: true, statusList: [{ type: "Exhausted", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.doubtMask", description: "combatAdmin.npcAttacks.doubtMaskDesc", additionalDamage: 17, additionalDices: 2, quantity: 5, targetsAll: true },
+            { type: "skill", name: "combatAdmin.npcAttacks.confidenceMask", description: "combatAdmin.npcAttacks.confidenceMaskDesc", intensity: "high", additionalDamage: 17, additionalDices: 2, targetsAll: true },
         ],
     },
     {
@@ -3385,7 +3392,9 @@ const NPCsBaseData: NPCBaseData[] = [
         maxLifeBonus: 61,
         attackList: [
             { type: "basic", quantity: 2, additionalDamage: 8 },
-            { type: "skill", name: "combatAdmin.npcAttacks.pirouette", additionalDamage: 20, additionalDices: 2, statusList: [{ type: "Dizzy", ammount: 1, remainingTurns: 1 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.chromaMagic", description: "combatAdmin.npcAttacks.chromaMagicDesc", intensity: "high", additionalDamage: 20, additionalDices: 2 },
+            { type: "skill", name: "combatAdmin.npcAttacks.enchant", description: "combatAdmin.npcAttacks.enchantDesc", statusList: [{ type: "Charm", ammount: 1, remainingTurns: 2 }] },
+            { type: "skill", name: "combatAdmin.npcAttacks.swoopAttack", description: "combatAdmin.npcAttacks.swoopAttackDesc", additionalDamage: 20, additionalDices: 2, targetsAll: true, statusList: [{ type: "Charm", ammount: 1, remainingTurns: 1 }] },
         ],
     },
 

@@ -21,6 +21,7 @@ data class BattleCharacterInfo(
     val perfectionRank: String?,
     val rankProgress: Int?,
     val bestialWheelPosition: Int?,
+    val bestialWheelReversed: Boolean?,
     val status: List<BattleStatusResponse>?,
     val type: String,
     val isEnemy: Boolean,

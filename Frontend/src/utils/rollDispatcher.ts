@@ -6,6 +6,8 @@ export interface RollEvent {
     total: number;
     diceCommand: string;
     diceValues?: number[];
+    /** When true, this roll can be merged with the previous roll of the same label */
+    accumulate?: boolean;
     /** Internal: individual dice commands before grouping (used for accumulation) */
     _diceCommands?: string[];
 }

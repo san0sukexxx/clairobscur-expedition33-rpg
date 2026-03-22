@@ -87,6 +87,7 @@ class FightService(
                                         perfectionRank = bc.perfectionRank,
                                         rankProgress = bc.rankProgress,
                                         bestialWheelPosition = bc.bestialWheelPosition,
+                                        bestialWheelReversed = bc.bestialWheelReversed,
                                         status = status,
                                         type = bc.characterType,
                                         isEnemy = bc.isEnemy,

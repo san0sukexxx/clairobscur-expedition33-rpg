@@ -617,6 +617,21 @@ class BattleCharacterService(
         }
 
         @Transactional
+        fun updateBestialWheelReversed(id: Int, reversed: Boolean) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+                entity.bestialWheelReversed = reversed
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "BESTIAL_WHEEL_REVERSED", eventJson = """{"characterId":${entity.id},"reversed":${entity.bestialWheelReversed}}""")
+                )
+        }
+
+        @Transactional
         fun updateBreakCount(id: Int, newBreakCount: Int) {
                 val opt = repository.findById(id)
                 if (opt.isEmpty) return

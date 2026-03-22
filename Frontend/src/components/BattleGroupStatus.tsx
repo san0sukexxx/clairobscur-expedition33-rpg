@@ -160,6 +160,12 @@ export default function BattleGroupStatus({
         setEditValue(ch.bestialWheelPosition ?? 0);
         setEditing("bestialWheel");
     }
+    async function toggleBestialWheelReversed() {
+        if (!playerCh) return;
+        const newVal = !(playerCh.bestialWheelReversed ?? false);
+        await APIBattle.updateBestialWheelReversed(playerCh.battleID, newVal);
+        closeEdit();
+    }
 
     const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
 
@@ -353,7 +359,7 @@ export default function BattleGroupStatus({
                                                             Bestial Wheel <FaEdit size={10} className="opacity-40" />
                                                         </div>
                                                     )}
-                                                    <BestialWheel position={ch.bestialWheelPosition} />
+                                                    <BestialWheel position={ch.bestialWheelPosition} reversed={ch.bestialWheelReversed ?? false} />
                                                 </div>
                                             )}
 
@@ -604,6 +610,14 @@ export default function BattleGroupStatus({
                         wrapAround
                         onConfirm={v => confirmNumericEdit("bestialWheel", v)}
                         onCancel={closeEdit}
+                        extraAction={
+                            <button
+                                className={`btn btn-sm w-full ${playerCh.bestialWheelReversed ? "btn-warning" : "btn-outline"}`}
+                                onClick={toggleBestialWheelReversed}
+                            >
+                                ⟲ {t("combat.reverseWheel")} {playerCh.bestialWheelReversed ? "✓" : ""}
+                            </button>
+                        }
                     />
 
                     {/* Sun/Moon modal */}

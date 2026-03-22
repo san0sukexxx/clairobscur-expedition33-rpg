@@ -139,6 +139,11 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
     function openCharge() { setEditValue(ch!.chargePoints ?? 0); setEditing("charge"); }
     function openGradient() { setEditValue(ch!.gradientPoints ?? 0); setEditing("gradient"); }
     function openBestialWheel() { setEditValue(ch!.bestialWheelPosition ?? 0); setEditing("bestialWheel"); }
+    async function toggleBestialWheelReversed() {
+        const newVal = !(ch!.bestialWheelReversed ?? false);
+        await APIBattle.updateBestialWheelReversed(ch!.battleID, newVal);
+        closeEdit();
+    }
     function openSunMoon() {
         setEditSun(String(ch!.sunCharges ?? 0));
         setEditMoon(String(ch!.moonCharges ?? 0));
@@ -322,7 +327,7 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
                             <div className="flex items-center gap-1 mb-1 text-[10px] opacity-70 uppercase">
                                 Bestial Wheel <FaEdit size={10} className="opacity-40" />
                             </div>
-                            <BestialWheel position={ch.bestialWheelPosition} />
+                            <BestialWheel position={ch.bestialWheelPosition} reversed={ch.bestialWheelReversed ?? false} />
                         </div>
                     )}
 
@@ -517,6 +522,14 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
                 wrapAround
                 onConfirm={v => confirmNumericEdit("bestialWheel", v)}
                 onCancel={closeEdit}
+                extraAction={
+                    <button
+                        className={`btn btn-sm w-full ${ch.bestialWheelReversed ? "btn-warning" : "btn-outline"}`}
+                        onClick={toggleBestialWheelReversed}
+                    >
+                        ⟲ {t("combat.reverseWheel")} {ch.bestialWheelReversed ? "✓" : ""}
+                    </button>
+                }
             />
 
             {/* Sun/Moon modal */}
