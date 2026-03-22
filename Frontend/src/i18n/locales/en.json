@@ -1748,6 +1748,13 @@
         "wisdom": "WIS",
         "charisma": "CHA"
       },
+      "infoTitle": "Attribute Guide",
+      "infoMethodsTitle": "Generation Methods",
+      "infoStandardArray": "Standard Array: Distribute the values 15, 14, 13, 12, 10, and 8 among the 6 attributes. Balanced with no randomness.",
+      "infoManualRolled": "Manual / Rolled: Roll 4d6 and drop the lowest die for each attribute. Riskier, but can produce high values.",
+      "infoPointBuy": "Point Buy: You have 27 points to spend. Each attribute starts at 8 and can go up to 15. The higher the value, the more expensive each additional point.",
+      "infoAttributesTitle": "The 6 Attributes",
+      "infoPrimaryTitle": "Primary Attribute",
       "savingThrowProficiencyTitle": "Saving Throw Proficiencies",
       "savingThrowProficiencyDesc": "Choose 2 ability scores your character will be proficient in for Saving Throws.",
       "savingThrowProficiencyConfirm": "Confirm Proficiencies",

@@ -1748,6 +1748,13 @@
         "wisdom": "SAB",
         "charisma": "CAR"
       },
+      "infoTitle": "Guia de Atributos",
+      "infoMethodsTitle": "Métodos de Geração",
+      "infoStandardArray": "Array Padrão: Distribua os valores 15, 14, 13, 12, 10 e 8 entre os 6 atributos. Equilibrado e sem aleatoriedade.",
+      "infoManualRolled": "Manual / Rolado: Role 4d6 e descarte o menor dado para cada atributo. Mais arriscado, mas pode gerar valores altos.",
+      "infoPointBuy": "Compra de Pontos: Você tem 27 pontos para distribuir. Cada atributo começa em 8 e pode ir até 15. Quanto maior o valor, mais caro cada ponto adicional.",
+      "infoAttributesTitle": "Os 6 Atributos",
+      "infoPrimaryTitle": "Atributo Principal",
       "savingThrowProficiencyTitle": "Proficiências em Testes de Resistência",
       "savingThrowProficiencyDesc": "Escolha 2 atributos nos quais seu personagem terá proficiência em Testes de Resistência.",
       "savingThrowProficiencyConfirm": "Confirmar Proficiências",
