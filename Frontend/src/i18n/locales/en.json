@@ -1822,7 +1822,7 @@
       "descIntelligence": "Measures mental acuity, memory precision, and reasoning ability. Arcane knowledge, logical deduction, and fact recall depend on this attribute.",
       "descWisdom": "Measures perception, intuition, and attunement to the world around you. Determines your ability to notice details, read intentions, and resist mind-affecting effects.",
       "descCharisma": "Measures force of personality, presence, and leadership. Governs your ability to influence, deceive, intimidate, and inspire other creatures.",
-      "descPrimaryAbility": "This is {{characterName}}'s primary attribute. Its modifier is added to attack and damage rolls for special abilities.",
+      "descPrimaryAbility": "This is {characterName}'s primary attribute. Its modifier is added to attack and damage rolls for special abilities.",
       "proficiencyBonus": "Proficiency Bonus",
       "armorClassTop": "Armor",
       "armorClassBottom": "Class",

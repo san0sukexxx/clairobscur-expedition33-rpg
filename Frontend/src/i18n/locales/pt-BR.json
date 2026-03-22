@@ -1822,7 +1822,7 @@
       "descIntelligence": "Mede acuidade mental, precisão da memória e capacidade de raciocínio. Conhecimento arcano, dedução lógica e lembrança de fatos dependem deste atributo.",
       "descWisdom": "Mede percepção, intuição e sintonia com o mundo ao redor. Determina sua capacidade de notar detalhes, ler intenções e resistir a efeitos que afetam a mente.",
       "descCharisma": "Mede força de personalidade, presença e liderança. Governa sua capacidade de influenciar, enganar, intimidar e inspirar outras criaturas.",
-      "descPrimaryAbility": "Este é o atributo principal de {{characterName}}. Seu modificador é somado às rolagens de ataque e dano das habilidades especiais.",
+      "descPrimaryAbility": "Este é o atributo principal de {characterName}. Seu modificador é somado às rolagens de ataque e dano das habilidades especiais.",
       "proficiencyBonus": "Bônus de Proficiência",
       "armorClassTop": "Classe de",
       "armorClassBottom": "Armadura",

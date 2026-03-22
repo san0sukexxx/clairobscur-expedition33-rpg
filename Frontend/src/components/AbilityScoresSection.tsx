@@ -105,7 +105,7 @@ interface AbilityScoresSectionProps {
 
 export function AbilityScoresSection({ player, setPlayer: _, weaponInfo, diceBoardRef, timeoutDiceBoardRef }: AbilityScoresSectionProps) {
     const [descModal, setDescModal] = useState<AbilityKey | null>(null);
-    const characterId = player?.characterId ?? "";
+    const characterId = player?.playerSheet?.characterId ?? "";
     const primaryAbility = getAttackAttribute(characterId);
 
     function handleRoll(key: AbilityKey, label: string, score: number) {
