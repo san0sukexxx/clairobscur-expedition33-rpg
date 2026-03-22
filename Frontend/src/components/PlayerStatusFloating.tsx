@@ -143,6 +143,7 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
     async function toggleBestialWheelReversed() {
         const newVal = !(ch!.bestialWheelReversed ?? false);
         await APIBattle.updateBestialWheelReversed(ch!.battleID, newVal);
+        requestPlayerRefresh();
     }
     function openSunMoon() {
         setEditSun(String(ch!.sunCharges ?? 0));

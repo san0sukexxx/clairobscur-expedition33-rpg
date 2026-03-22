@@ -165,6 +165,7 @@ export default function BattleGroupStatus({
         if (!playerCh) return;
         const newVal = !(playerCh.bestialWheelReversed ?? false);
         await APIBattle.updateBestialWheelReversed(playerCh.battleID, newVal);
+        requestPlayerRefresh();
     }
 
     const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
