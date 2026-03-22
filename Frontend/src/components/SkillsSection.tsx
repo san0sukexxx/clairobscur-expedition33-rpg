@@ -1,4 +1,4 @@
-import { useCallback, type RefObject, type MutableRefObject } from "react";
+import { useCallback, useState, type RefObject, type MutableRefObject } from "react";
 import { motion } from "framer-motion";
 import { FaThumbtack } from "react-icons/fa";
 import { APIPlayer, type GetPlayerResponse, type AbilityScores } from "../api/APIPlayer";
@@ -12,6 +12,7 @@ import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponProficiencyBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
 import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma, abilityScoreCap } from "../utils/PlayerCalculator";
+import PanelModal from "./PanelModal";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -41,6 +42,27 @@ const SKILLS: SkillDef[] = [
     { id: "stealth",       ability: "dexterity",    labelKey: "skills.stealth"        },
     { id: "survival",      ability: "wisdom",       labelKey: "skills.survival"       },
 ];
+
+const SKILL_DESC_KEY: Record<string, string> = {
+    acrobatics:     "skills.descAcrobatics",
+    animalHandling: "skills.descAnimalHandling",
+    arcana:         "skills.descArcana",
+    athletics:      "skills.descAthletics",
+    deception:      "skills.descDeception",
+    history:        "skills.descHistory",
+    insight:        "skills.descInsight",
+    intimidation:   "skills.descIntimidation",
+    investigation:  "skills.descInvestigation",
+    medicine:       "skills.descMedicine",
+    nature:         "skills.descNature",
+    perception:     "skills.descPerception",
+    performance:    "skills.descPerformance",
+    persuasion:     "skills.descPersuasion",
+    religion:       "skills.descReligion",
+    sleightOfHand:  "skills.descSleightOfHand",
+    stealth:        "skills.descStealth",
+    survival:       "skills.descSurvival",
+};
 
 const ABILITY_I18N_KEY: Record<AbilityKey, string> = {
     strength:     "characterSheet.strength",
@@ -102,6 +124,7 @@ interface Props {
 
 export default function SkillsSection({ player, setPlayer, weaponInfo, isAdmin, diceBoardRef, timeoutDiceBoardRef }: Props) {
     const { showToast } = useToast();
+    const [descModal, setDescModal] = useState<{ id: string; labelKey: string } | null>(null);
     const scores   = player?.playerSheet?.abilityScores ?? {};
     const totalPts = player?.playerSheet?.totalPoints ?? 1;
     const pb       = profBonus(totalPts) + calculateWeaponProficiencyBonus(weaponInfo);
@@ -245,14 +268,17 @@ export default function SkillsSection({ player, setPlayer, weaponInfo, isAdmin, 
                                 }`} />
                             </button>
 
-                            {/* MOD */}
-                            <span className="text-[10px] font-bold uppercase text-base-content/50 text-center">
-                                {t(ABILITY_I18N_KEY[ability]).slice(0, 3)}
-                            </span>
-
-                            {/* SKILL name — click to roll */}
+                            {/* MOD — click to roll */}
                             <button
                                 onClick={() => handleRoll(id, ability, labelKey, bonus)}
+                                className="text-[10px] font-bold uppercase text-base-content/50 text-center hover:text-primary transition-colors cursor-pointer"
+                            >
+                                {t(ABILITY_I18N_KEY[ability]).slice(0, 3)}
+                            </button>
+
+                            {/* SKILL name — click to show description */}
+                            <button
+                                onClick={() => setDescModal({ id, labelKey })}
                                 className="text-sm text-left hover:text-primary transition-colors cursor-pointer"
                             >
                                 {t(labelKey)}
@@ -271,6 +297,19 @@ export default function SkillsSection({ player, setPlayer, weaponInfo, isAdmin, 
                     );
                 })}
             </div>
+
+            <PanelModal
+                open={descModal !== null}
+                onClose={() => setDescModal(null)}
+                title={descModal ? t(descModal.labelKey) : ""}
+                size="sm"
+            >
+                {descModal && (
+                    <p className="text-sm leading-relaxed text-neutral-300">
+                        {t(SKILL_DESC_KEY[descModal.id] ?? "")}
+                    </p>
+                )}
+            </PanelModal>
         </div>
     );
 }
