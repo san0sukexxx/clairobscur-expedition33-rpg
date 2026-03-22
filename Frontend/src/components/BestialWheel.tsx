@@ -34,7 +34,7 @@ export const BestialWheel: React.FC<BestialWheelProps> = ({ position, reversed =
         <div className="flex flex-col gap-1 w-full">
             <div className="flex items-center gap-1 text-xs uppercase opacity-70 font-semibold">
                 {t("combat.bestialWheel")}
-                {reversed && <span className="text-warning text-[10px]">⟲ {t("combat.bestialWheelReversed")}</span>}
+                {reversed && <span className="text-[10px]">⟲ {t("combat.bestialWheelReversed")}</span>}
             </div>
             <div className="flex gap-1 w-full">
                 {visibleSlots.map((color, index) => (
