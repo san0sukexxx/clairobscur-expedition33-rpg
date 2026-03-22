@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { FaEdit, FaDice } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
@@ -68,6 +68,12 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
     const [conditionsOpen, setConditionsOpen] = useState(false);
     // Status description
     const [expandedStatusBadge, setExpandedStatusBadge] = useState<string | null>(null);
+
+    // Local bestial wheel reversed state for immediate feedback
+    const [localWheelReversed, setLocalWheelReversed] = useState(false);
+    useEffect(() => {
+        if (ch) setLocalWheelReversed(ch.bestialWheelReversed ?? false);
+    }, [ch?.bestialWheelReversed]);
 
     if (!ch) return null;
 
@@ -141,7 +147,8 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
     function openGradient() { setEditValue(ch!.gradientPoints ?? 0); setEditing("gradient"); }
     function openBestialWheel() { setEditValue(ch!.bestialWheelPosition ?? 0); setEditing("bestialWheel"); }
     async function toggleBestialWheelReversed() {
-        const newVal = !(ch!.bestialWheelReversed ?? false);
+        const newVal = !localWheelReversed;
+        setLocalWheelReversed(newVal);
         await APIBattle.updateBestialWheelReversed(ch!.battleID, newVal);
         requestPlayerRefresh();
     }
@@ -328,7 +335,7 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
                             <div className="flex items-center gap-1 mb-1 text-[10px] opacity-70 uppercase">
                                 Bestial Wheel <FaEdit size={10} className="opacity-40" />
                             </div>
-                            <BestialWheel position={ch.bestialWheelPosition} reversed={ch.bestialWheelReversed ?? false} />
+                            <BestialWheel position={ch.bestialWheelPosition} reversed={localWheelReversed} />
                         </div>
                     )}
 
@@ -517,7 +524,7 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
             <BestialWheelModal
                 open={editing === "bestialWheel"}
                 position={ch.bestialWheelPosition ?? 0}
-                reversed={ch.bestialWheelReversed ?? false}
+                reversed={localWheelReversed}
                 onConfirm={v => confirmNumericEdit("bestialWheel", v)}
                 onToggleReversed={toggleBestialWheelReversed}
                 onCancel={closeEdit}
