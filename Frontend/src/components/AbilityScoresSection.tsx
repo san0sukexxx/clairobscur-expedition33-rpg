@@ -1,4 +1,4 @@
-import { type RefObject, type MutableRefObject } from "react";
+import { useState, type RefObject, type MutableRefObject } from "react";
 import { type GetPlayerResponse, type AbilityScores } from "../api/APIPlayer";
 import { t } from "../i18n";
 import { rollWithTimeout } from "../utils/RollUtils";
@@ -9,6 +9,8 @@ import { dispatchRoll } from "../utils/rollDispatcher";
 import type { WeaponInfo } from "../api/ResponseModel";
 import { calculateWeaponVitalityBonus, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
 import { playerPictosTotalSpeed, playerPictosTotalHealth, playerPictosTotalStrength, playerPictosTotalIntelligence, playerPictosTotalWisdom, playerPictosTotalCharisma, abilityScoreCap } from "../utils/PlayerCalculator";
+import { getAttackAttribute } from "../utils/AttackCalculator";
+import PanelModal from "./PanelModal";
 
 type AbilityKey = keyof AbilityScores;
 
@@ -21,6 +23,15 @@ const ABILITIES: { key: AbilityKey; labelKey: string }[] = [
     { key: "charisma",     labelKey: "characterSheet.charisma"     },
 ];
 
+const ABILITY_DESC_KEY: Record<AbilityKey, string> = {
+    strength:     "characterSheet.descStrength",
+    dexterity:    "characterSheet.descDexterity",
+    constitution: "characterSheet.descConstitution",
+    intelligence: "characterSheet.descIntelligence",
+    wisdom:       "characterSheet.descWisdom",
+    charisma:     "characterSheet.descCharisma",
+};
+
 function calcMod(score: number): string {
     const mod = Math.floor((score - 10) / 2);
     return mod >= 0 ? `+${mod}` : String(mod);
@@ -30,9 +41,10 @@ interface StatCardProps {
     label: string;
     score: number;
     onRoll: () => void;
+    onNameClick: () => void;
 }
 
-function StatCard({ label, score, onRoll }: StatCardProps) {
+function StatCard({ label, score, onRoll, onNameClick }: StatCardProps) {
     return (
         <div
             className="relative flex flex-col items-center gap-1 pt-2 pb-3 px-1 text-base-content bg-base-200"
@@ -55,10 +67,13 @@ function StatCard({ label, score, onRoll }: StatCardProps) {
                 />
             </svg>
 
-            {/* Attribute name */}
-            <span className="relative z-10 text-[9px] font-extrabold tracking-[0.12em] opacity-80 uppercase text-center leading-tight">
+            {/* Attribute name — click to show description */}
+            <button
+                onClick={onNameClick}
+                className="relative z-10 text-[9px] font-extrabold tracking-[0.12em] opacity-80 uppercase text-center leading-tight hover:opacity-100 hover:text-primary transition-colors cursor-pointer"
+            >
                 {label}
-            </span>
+            </button>
 
             {/* Modifier box — clicável */}
             <button
@@ -89,6 +104,10 @@ interface AbilityScoresSectionProps {
 }
 
 export function AbilityScoresSection({ player, setPlayer: _, weaponInfo, diceBoardRef, timeoutDiceBoardRef }: AbilityScoresSectionProps) {
+    const [descModal, setDescModal] = useState<AbilityKey | null>(null);
+    const characterId = player?.characterId ?? "";
+    const primaryAbility = getAttackAttribute(characterId);
+
     function handleRoll(key: AbilityKey, label: string, score: number) {
         const mod = Math.floor((score - 10) / 2);
         const modStr = calcMod(score);
@@ -144,10 +163,31 @@ export function AbilityScoresSection({ player, setPlayer: _, weaponInfo, diceBoa
                             label={label}
                             score={score}
                             onRoll={() => handleRoll(key, label, score)}
+                            onNameClick={() => setDescModal(key)}
                         />
                     );
                 })}
             </div>
+
+            <PanelModal
+                open={descModal !== null}
+                onClose={() => setDescModal(null)}
+                title={descModal ? t(`characterSheet.${descModal}`) : ""}
+                size="sm"
+            >
+                {descModal && (
+                    <div className="flex flex-col gap-3">
+                        <p className="text-sm leading-relaxed text-neutral-300">
+                            {t(ABILITY_DESC_KEY[descModal])}
+                        </p>
+                        {descModal === primaryAbility && (
+                            <p className="text-sm font-semibold text-primary">
+                                {t("characterSheet.descPrimaryAbility", { characterName: characterId.charAt(0).toUpperCase() + characterId.slice(1) })}
+                            </p>
+                        )}
+                    </div>
+                )}
+            </PanelModal>
         </div>
     );
 }
