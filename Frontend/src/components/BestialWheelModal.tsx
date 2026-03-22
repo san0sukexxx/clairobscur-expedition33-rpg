@@ -12,6 +12,14 @@ interface BestialWheelModalProps {
 }
 
 const WHEEL_SIZE = 9;
+const WHEEL_PATTERN = ["gold", "blue", "blue", "purple", "purple", "red", "red", "green", "green"];
+const TEXT_COLOR: Record<string, string> = {
+    gold: "text-warning",
+    blue: "text-info",
+    purple: "text-purple-500",
+    red: "text-error",
+    green: "text-success",
+};
 
 export default function BestialWheelModal({
     open,
@@ -44,7 +52,7 @@ export default function BestialWheelModal({
                 {hasChange && (
                     <div className="text-center text-sm font-mono">
                         <span className="opacity-50">{position}</span>
-                        <span className="text-success"> → {preview}</span>
+                        <span className={`${TEXT_COLOR[WHEEL_PATTERN[preview]] ?? "text-success"} font-bold`}> → {preview}</span>
                     </div>
                 )}
 
