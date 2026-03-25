@@ -166,7 +166,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "sirene",
-        residentNpcIds: ["ballet-sirene", "chorale", "benisseur", "petank-sirene", "mime", "chromatic-greatsword-cultist", "tisseur", "glissando", "sirene"],
+        residentNpcIds: ["ballet-sirene", "chorale", "benisseur", "petank-sirene", "mime", "chromatic-greatsword-cultist", "tisseur", "glissando", "sirene-phase1", "sirene-phase2", "sirene-phase3"],
         referenceNpcNames: ["Klaudiso"],
         loot: [
             { type: "weapon", itemId: "tissenum", level: 1 },
@@ -187,7 +187,7 @@ export const LocationsList: LocationInfo[] = [
     },
     {
         id: "the-monolith",
-        residentNpcIds: ["lancer-monolith", "abbest-monolith", "portier-monolith", "clair", "bruler-monolith", "cruler-monolith", "demineur-monolith", "ranger-sakapatate-monolith", "robust-sakapatate-monolith", "catapult-sakapatate-monolith", "reaper-cultist-monolith", "greatsword-cultist-monolith", "petank-monolith", "mime-monolith", "obscur", "hexga-monolith", "chalier-monolith", "troubadour-monolith", "ramasseur-monolith", "danseuses", "ceramic-chevaliere-monolith", "gold-chevaliere-monolith", "pelerin", "braseleur", "the-paintress", "eveque-monolith", "chromatic-bourgeon", "ultimate-sakapatate-monolith", "gargant", "clair-obscur", "renoir-monolith", "chromatic-clair-obscur"],
+        residentNpcIds: ["lancer-monolith", "abbest-monolith", "portier-monolith", "clair", "bruler-monolith", "cruler-monolith", "demineur-monolith", "ranger-sakapatate-monolith", "robust-sakapatate-monolith", "catapult-sakapatate-monolith", "reaper-cultist-monolith", "greatsword-cultist-monolith", "petank-monolith", "mime-monolith", "obscur", "hexga-monolith", "chalier-monolith", "troubadour-monolith", "ramasseur-monolith", "danseuses", "ceramic-chevaliere-monolith", "gold-chevaliere-monolith", "pelerin", "braseleur", "the-paintress", "the-paintress-giant", "eveque-monolith", "chromatic-bourgeon", "ultimate-sakapatate-monolith", "gargant", "clair-obscur", "renoir-monolith", "renoir-monolith-phase2", "chromatic-clair-obscur"],
         referenceNpcNames: ["Mistra", "Melosh"],
         loot: [
             { type: "weapon", itemId: "braselim", level: 1 },

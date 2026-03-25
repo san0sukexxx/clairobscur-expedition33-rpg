@@ -23,7 +23,7 @@ export function handleNpcImgError(e: { currentTarget: HTMLImageElement }, npcId:
     const img = e.currentTarget;
     const step = img.dataset.imgStep ?? "0";
 
-    const locationSuffixes = ["-summoned", "-monolith", "-visages", "-sirene", "-flying-manor", "-manor", "-battlefield", "-act3", "-flying-waters", "-ancient-sanctuary", "-esquies-nest", "-yellow-harvest", "-old-lumiere", "-stone-wave-cliffs", "-endless-night", "-frozen-hearts", "-isle-of-the-eyes", "-the-reacher", "-phase1", "-phase2"];
+    const locationSuffixes = ["-summoned", "-monolith-phase2", "-monolith", "-visages", "-sirene", "-flying-manor", "-manor", "-battlefield", "-act3", "-flying-waters", "-ancient-sanctuary", "-esquies-nest", "-yellow-harvest", "-old-lumiere", "-stone-wave-cliffs", "-endless-night", "-frozen-hearts", "-isle-of-the-eyes", "-the-reacher", "-phase1", "-phase2", "-phase3"];
     let baseId: string | null = null;
     const prefixes = ["chromatic-", "jovial-", "seething-", "sorrowful-"];
     const matchedPrefix = prefixes.find(p => npcId.startsWith(p));

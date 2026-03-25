@@ -1211,8 +1211,9 @@ const SpecialAttacksBaseData = [
   {
     id: "monoco-mighty-strike",
     character: "monoco",
-    cost: 3,
+    cost: 1,
     unlockCost: 0,
+    isGradient: true,
     masterUnlock: true,
     image: "Monoco_MightyStrike.webp"
   },
@@ -1317,6 +1318,7 @@ const SpecialAttacksBaseData = [
     character: "monoco",
     cost: 3,
     unlockCost: 0,
+    isGradient: true,
     masterUnlock: true,
     image: "Monoco_Sanctuary.webp"
   },
