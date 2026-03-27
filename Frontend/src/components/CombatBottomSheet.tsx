@@ -7,7 +7,7 @@ import type { DiceBoardRef } from "./DiceBoard";
 import { useWeaponInfo } from "../hooks/player/useWeaponInfo";
 import { calculateAttackBonus, calculateDamageBonus, calculateProficiencyBonus, getAbilityModifier, getBasicAttackAttribute } from "../utils/AttackCalculator";
 import { getWeaponDamageDice, calculateWeaponDexterityBonus } from "../utils/WeaponCalculator";
-import { playerPictosTotalSpeed, calculateArmorClass, abilityScoreCap } from "../utils/PlayerCalculator";
+import { playerPictosTotalSpeed, abilityScoreCap } from "../utils/PlayerCalculator";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { diceTotal } from "../utils/DiceCalculator";
 import { dispatchRoll } from "../utils/rollDispatcher";
@@ -82,14 +82,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
         return dexMod + calculateProficiencyBonus(level);
     }, [dexMod, player?.playerSheet?.totalPoints]);
 
-    const armorClass = useMemo(() => {
-        return calculateArmorClass(player, weaponInfo);
-    }, [player, weaponInfo]);
-
     const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
     const INTENSITY_DICE_MULTIPLIER = [1, 1, 2, 3, 4, 5];
     const [intensityIndex, setIntensityIndex] = useState(1); // starts at "Médio"
-    const [defenseExpanded, setDefenseExpanded] = useState(false);
     const [freeShotHintExpanded, setFreeShotHintExpanded] = useState(false);
 
     // Local optimistic MP state — resets when parent finally syncs the value
@@ -420,42 +415,6 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                     {freeShotHintExpanded ? t("common.readLess") : t("common.readMore")}
                                 </button>
                             </p>
-                        </div>
-
-                        {/* Defense section */}
-                        <div className="border border-base-300 rounded-lg p-3">
-                            <div className="flex items-start gap-3">
-                                <div className="flex flex-col items-center gap-1 shrink-0">
-                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("characterSheet.armorClassTop")}</span>
-                                    <div
-                                        className="relative flex flex-col items-center justify-start pt-1.5 bg-base-200 w-14 h-[4.2rem] text-base-content shrink-0"
-                                        style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%)" }}
-                                    >
-                                        <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 120" preserveAspectRatio="none" fill="none">
-                                            <path d="M1.5 1.5 L98.5 1.5 L98.5 84 L50 118.5 L1.5 84 Z"
-                                                stroke="currentColor" strokeOpacity="0.45" strokeWidth="2" />
-                                            <path d="M5 5 L95 5 L95 81 L50 113 L5 81 Z"
-                                                stroke="currentColor" strokeOpacity="0.2" strokeWidth="0.75" />
-                                        </svg>
-                                        <span className="relative z-10 text-[6px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.armorClassBottom")}</span>
-                                        <span className="relative z-10 text-2xl font-black leading-tight">{armorClass}</span>
-                                    </div>
-                                </div>
-                                <div className="text-xs opacity-70 flex-1">
-                                    <div className={`space-y-1.5 ${defenseExpanded ? "" : "line-clamp-4"}`}>
-                                        <p><span className="font-semibold text-sky-400">{t("combat.dodge")}</span> — {t("combat.defenseDescDodge")}</p>
-                                        <p><span className="font-semibold text-amber-400">{t("combat.block")}</span> — {t("combat.defenseDescBlock")}</p>
-                                        <p><span className="font-semibold text-emerald-400">{t("combat.jump")}</span> — {t("combat.defenseDescJump")}</p>
-                                        <p><span className="font-semibold text-red-400">{t("combat.gradient")}</span> — {t("combat.defenseDescGradient")}</p>
-                                    </div>
-                                    <button
-                                        onClick={() => setDefenseExpanded(prev => !prev)}
-                                        className="text-xs text-primary mt-1 cursor-pointer hover:underline"
-                                    >
-                                        {defenseExpanded ? t("common.readLess") : t("common.readMore")}
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
                         {/* Passives sections */}

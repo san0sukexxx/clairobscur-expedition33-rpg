@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { FaEdit, FaDice, FaShieldAlt } from "react-icons/fa";
+import { ArmorClassModal } from "./ArmorClassModal";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIBattle } from "../api/APIBattle";
 import { type BattleCharacterInfo, type Stance, type StainType, type WeaponInfo } from "../api/ResponseModel";
@@ -55,6 +56,7 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
     const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
     // Stain change animation
     const [flashSlots, setFlashSlots] = useState<boolean[]>([false, false, false, false]);
+    const [armorClassModalOpen, setArmorClassModalOpen] = useState(false);
 
     function triggerFlash(changed: boolean[]) {
         setFlashSlots(changed);
@@ -264,11 +266,14 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
                 </div>
 
                 {/* AC */}
-                <div className="mt-1 flex items-center gap-1 text-[10px] uppercase opacity-80">
+                <button
+                    className="mt-1 flex items-center gap-1 text-[10px] uppercase opacity-80 cursor-pointer hover:opacity-100 transition-opacity rounded px-0.5 hover:bg-base-200/80"
+                    onClick={() => setArmorClassModalOpen(true)}
+                >
                     <FaShieldAlt size={10} className="opacity-70" />
                     <span className="opacity-70">{t("combatAdmin.npcDetails.armorClass")}</span>
                     <span className="font-mono font-bold text-xs">{calculateArmorClass(player, weaponInfo ?? null)}</span>
-                </div>
+                </button>
 
                 {/* Charge bar for Gustave - below HP/MP */}
                 {(() => {
@@ -781,6 +786,12 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
             })()}
 
             </>, document.body)}
+
+            <ArmorClassModal
+                open={armorClassModalOpen}
+                onClose={() => setArmorClassModalOpen(false)}
+                armorClass={calculateArmorClass(player, weaponInfo ?? null)}
+            />
         </div>
     );
 }
