@@ -1,5 +1,5 @@
 import type { RefObject, MutableRefObject } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import type { GetPlayerResponse } from "../api/APIPlayer";
@@ -92,6 +92,11 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
     const [defenseExpanded, setDefenseExpanded] = useState(false);
     const [freeShotHintExpanded, setFreeShotHintExpanded] = useState(false);
 
+    // Local optimistic MP state — resets when parent finally syncs the value
+    const [localMp, setLocalMp] = useState<number | null>(null);
+    useEffect(() => { setLocalMp(null); }, [battleChar?.magicPoints]);
+    const currentMp = localMp ?? (battleChar?.magicPoints ?? 0);
+
     const hasWeapon = !!(weapon && details);
     const baseDamageDice = hasWeapon ? getWeaponDamageDice(weapon!.level) : "";
     const multiplier = INTENSITY_DICE_MULTIPLIER[intensityIndex];
@@ -173,8 +178,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                         className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
                                         onClick={async () => {
                                             if (!battleChar) return;
-                                            const current = battleChar.magicPoints ?? 0;
-                                            await APIBattle.updateCharacterMp(battleChar.battleID, current + 1);
+                                            const newMp = currentMp + 1;
+                                            setLocalMp(newMp);
+                                            await APIBattle.updateCharacterMp(battleChar.battleID, newMp);
                                             onHighlightStatus?.();
                                         }}
                                     >
@@ -324,9 +330,10 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                     className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
                                     onClick={async () => {
                                         if (!battleChar) return;
-                                        const current = battleChar.magicPoints ?? 0;
-                                        if (current <= 0) return;
-                                        await APIBattle.updateCharacterMp(battleChar.battleID, current - 1);
+                                        if (currentMp <= 0) return;
+                                        const newMp = currentMp - 1;
+                                        setLocalMp(newMp);
+                                        await APIBattle.updateCharacterMp(battleChar.battleID, newMp);
                                         onHighlightStatus?.();
                                     }}
                                 >
