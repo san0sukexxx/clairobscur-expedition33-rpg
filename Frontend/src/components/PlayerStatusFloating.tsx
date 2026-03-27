@@ -267,12 +267,11 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
 
                 {/* AC */}
                 <button
-                    className="mt-1 flex items-center gap-1 text-[10px] uppercase opacity-80 cursor-pointer hover:opacity-100 transition-opacity rounded px-0.5 hover:bg-base-200/80"
+                    className="mt-1 btn btn-xs btn-outline gap-1 font-mono"
                     onClick={() => setArmorClassModalOpen(true)}
                 >
-                    <FaShieldAlt size={10} className="opacity-70" />
-                    <span className="opacity-70">{t("combatAdmin.npcDetails.armorClass")}</span>
-                    <span className="font-mono font-bold text-xs">{calculateArmorClass(player, weaponInfo ?? null)}</span>
+                    <FaShieldAlt size={10} />
+                    {t("combatAdmin.npcDetails.armorClass")} {calculateArmorClass(player, weaponInfo ?? null)}
                 </button>
 
                 {/* Charge bar for Gustave - below HP/MP */}
