@@ -8,7 +8,7 @@ import InitiativesQueue from "./InitiativesQueue";
 import GradientBar from "./GradientBar";
 import { CgSandClock } from "react-icons/cg";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import type { BattleCharacterInfo } from "../api/ResponseModel";
+import type { BattleCharacterInfo, WeaponInfo } from "../api/ResponseModel";
 import type { DiceBoardRef } from "./DiceBoard";
 import PlayerStatusFloating from "./PlayerStatusFloating";
 import CombatBottomSheet from "./CombatBottomSheet";
@@ -32,9 +32,10 @@ interface CombatsSectionProps {
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
     onBottomSheetChange?: (open: boolean) => void;
+    weaponInfo?: WeaponInfo | null;
 }
 
-export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters, activeSkillId, onDismissSkillCard, diceBoardRef, timeoutDiceBoardRef, onBottomSheetChange }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters, activeSkillId, onDismissSkillCard, diceBoardRef, timeoutDiceBoardRef, onBottomSheetChange, weaponInfo }: CombatsSectionProps) {
     const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
     const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
@@ -159,6 +160,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
             <PlayerStatusFloating
                 player={player}
                 highlighted={statusHighlighted}
+                weaponInfo={weaponInfo}
             />
 
             <InitiativesQueue
@@ -173,7 +175,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             {activeSkillId && onDismissSkillCard && (
                 <div className="mt-4">
-                    <SkillInfoCard skillId={activeSkillId} onDismiss={onDismissSkillCard} player={player} />
+                    <SkillInfoCard skillId={activeSkillId} onDismiss={onDismissSkillCard} player={player} onHighlightStatus={handleHighlightStatus} />
                 </div>
             )}
 
