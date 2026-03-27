@@ -279,6 +279,7 @@ export function PlayerContent({
           diceBoardRef={diceBoardRef}
           timeoutDiceBoardRef={timeoutDiceBoardRef}
           onItemUsed={player?.fightInfo ? () => setTab("combate") : undefined}
+          onGoToCombat={() => setTab("combate")}
         />
       )}
 
@@ -312,6 +313,7 @@ export function PlayerContent({
           initialTab={specialAttacksInitialTab}
           isUsingSpecialAttackMode={isUsingSpecialAttackMode}
           onUseSpecialAttack={onUseSpecialAttack}
+          onGoToCombat={() => setTab("combate")}
         />
       )}
 

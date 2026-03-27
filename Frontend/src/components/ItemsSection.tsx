@@ -3,6 +3,7 @@ import { type PlayerItemResponse } from "../api/ResponseModel";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIItem } from "../api/APIItem";
 import { FaChevronLeft, FaChevronRight, FaInfoCircle } from "react-icons/fa";
+import { TiArrowBack } from "react-icons/ti";
 import { type DiceBoardRef } from "./DiceBoard";
 import { rollWithTimeout } from "../utils/RollUtils";
 import { dispatchRoll } from "../utils/rollDispatcher";
@@ -17,6 +18,7 @@ interface ItemsSectionProps {
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
     onItemUsed?: () => void;
+    onGoToCombat?: () => void;
 }
 
 function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
@@ -55,12 +57,14 @@ function ElixirsCard({
     diceBoardRef,
     timeoutDiceBoardRef,
     onItemUsed,
+    inBattle,
 }: {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
     diceBoardRef: RefObject<DiceBoardRef | null>;
     timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
     onItemUsed?: () => void;
+    inBattle?: boolean;
 }) {
     const [usingItem, setUsingItem] = useState<string | null>(null);
     const [editQtyModal, setEditQtyModal] = useState<{ elixirId: string; field: "quantity" | "max"; currentValue: number } | null>(null);
@@ -184,7 +188,6 @@ function ElixirsCard({
                 );
                 return { ...prev, items };
             });
-            onItemUsed?.();
         } catch (e) {
             console.error("Erro ao usar chroma:", e);
         } finally {
@@ -416,7 +419,7 @@ function ElixirsCard({
 
                             <button
                                 className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300 disabled:opacity-50 disabled:cursor-not-allowed w-full"
-                                disabled={usingItem === e.id || qty === 0}
+                                disabled={usingItem === e.id || qty === 0 || (e.id === "chroma-elixir" && inBattle)}
                                 onClick={() => handleUseElixir(e.id, e.label)}
                             >
                                 {usingItem === e.id ? t("common.using") : t("common.use")}
@@ -445,7 +448,7 @@ function ElixirsCard({
 }
 
 
-export default function ItemsSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef, onItemUsed }: ItemsSectionProps) {
+export default function ItemsSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef, onItemUsed, onGoToCombat }: ItemsSectionProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [editingItem, setEditingItem] = useState<PlayerItemResponse | null>(null);
 
@@ -585,12 +588,16 @@ export default function ItemsSection({ player, setPlayer, diceBoardRef, timeoutD
         }
     }
 
+    const inBattle = !!player?.fightInfo?.turns?.some(
+        turn => turn.battleCharacterId === player.fightInfo?.playerBattleID
+    ) && player?.fightInfo?.battleStatus !== "finished";
+
     return (
         <div className="text-base-content">
             <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("items.title").toUpperCase()}</div>
 
             <div className="mb-4">
-                <ElixirsCard player={player} setPlayer={setPlayer} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} onItemUsed={onItemUsed} />
+                <ElixirsCard player={player} setPlayer={setPlayer} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} onItemUsed={onItemUsed} inBattle={inBattle} />
             </div>
 
             <div className="flex flex-col gap-4">
@@ -654,6 +661,18 @@ export default function ItemsSection({ player, setPlayer, diceBoardRef, timeoutD
                     );
                 })}
             </div>
+
+            {inBattle && onGoToCombat && (
+                <div className="fixed bottom-9 right-4">
+                    <button
+                        className="btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg"
+                        onClick={onGoToCombat}
+                        aria-label="Voltar para o combate"
+                    >
+                        <TiArrowBack size={18} />
+                    </button>
+                </div>
+            )}
 
             <Modal
                 open={openSlot !== null || editingItem !== null}

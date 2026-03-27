@@ -4,6 +4,7 @@ import { type GetPlayerResponse } from "../api/APIPlayer";
 import SpecialAttackPickerSection from "./SpecialAttackPickerSection";
 import SpecialAttacksListSection from "./SpecialAttacksListSection";
 import { FaExchangeAlt } from "react-icons/fa";
+import { TiArrowBack } from "react-icons/ti";
 import { calculateSpecialAttackPoints } from "../utils/PlayerCalculator";
 import { calculateUsedSpecialAttackPoints } from "../utils/SpecialAttackUtils";
 import { t } from "../i18n";
@@ -15,9 +16,10 @@ interface SpecialAttacksSectionProps {
     initialTab?: "list" | "picker";
     isUsingSpecialAttackMode?: boolean;
     onUseSpecialAttack?: (specialAttackId: string) => void;
+    onGoToCombat?: () => void;
 }
 
-export default function SpecialAttacksSection({ player, setPlayer, isAdmin, initialTab = "list", isUsingSpecialAttackMode = false, onUseSpecialAttack }: SpecialAttacksSectionProps) {
+export default function SpecialAttacksSection({ player, setPlayer, isAdmin, initialTab = "list", isUsingSpecialAttackMode = false, onUseSpecialAttack, onGoToCombat }: SpecialAttacksSectionProps) {
     const [tab, setTab] = useState<"list" | "picker">(initialTab);
     const prefersReduced = useReducedMotion();
     const prev = useRef<"list" | "picker">("list");
@@ -94,13 +96,23 @@ export default function SpecialAttacksSection({ player, setPlayer, isAdmin, init
             </div>
 
             <div className="fixed bottom-9 right-4">
-                <button
-                    className="btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg"
-                    onClick={handleMenuAction}
-                    aria-label={tab === "list" ? "Ir para seleção de ataques especiais" : "Voltar para lista de ataques especiais"}
-                >
-                    <FaExchangeAlt size={18} />
-                </button>
+                {inBattle && onGoToCombat ? (
+                    <button
+                        className="btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg"
+                        onClick={onGoToCombat}
+                        aria-label="Voltar para o combate"
+                    >
+                        <TiArrowBack size={18} />
+                    </button>
+                ) : (
+                    <button
+                        className="btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg"
+                        onClick={handleMenuAction}
+                        aria-label={tab === "list" ? "Ir para seleção de ataques especiais" : "Voltar para lista de ataques especiais"}
+                    >
+                        <FaExchangeAlt size={18} />
+                    </button>
+                )}
             </div>
         </div>
     );

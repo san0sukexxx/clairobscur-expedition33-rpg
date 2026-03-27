@@ -243,6 +243,7 @@ export default function PlayerPage() {
               ? "bottom-16 right-4"
               : combatBottomSheetOpen ? "bottom-8 right-4" : "bottom-28 right-4"
             : tab === "habilidades" ? "bottom-24 right-4"
+            : tab === "inventario" && player?.fightInfo?.battleStatus !== "finished" && player?.fightInfo ? "bottom-24 right-4"
             : "bottom-4 right-4"
         }
       />
