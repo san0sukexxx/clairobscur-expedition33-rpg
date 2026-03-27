@@ -94,7 +94,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
   }, [player?.fightInfo?.battleStatus]);
 
   const canRollInitiative = !!player?.fightInfo?.canRollInitiative && !isAttacking;
-  const isFlipOnly = !isYourTurn && !isAttacking && !isSelectingSkillTarget && !canRollInitiative && !isExecutingSkill;
+  const isFlipOnly = canRollInitiative || (!isYourTurn && !isAttacking && !isSelectingSkillTarget && !isExecutingSkill);
 
   // Blink the menu button when it's the player's turn until first click
   const [hasOpenedThisTurn, setHasOpenedThisTurn] = useState(false);
@@ -149,13 +149,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
                 </button>
               )}
 
-              {player?.fightInfo?.battleStatus == "starting" && !isAttacking && player?.fightInfo?.canRollInitiative && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Initiative)}>
-                  {t("combat.rollInitiative")}
-                </button>
-              )}
-
-              {player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
+{player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
                 <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
                   {t("combat.joinBattle")}
                 </button>

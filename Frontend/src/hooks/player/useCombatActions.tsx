@@ -121,6 +121,7 @@ export function useCombatActions({
               fightInfo: {
                 ...fi,
                 initiatives: [...current, savedInitiative],
+                canRollInitiative: false,
               },
             };
           });
