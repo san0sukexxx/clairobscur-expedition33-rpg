@@ -2,15 +2,19 @@ import { getSpecialAttackById } from "../utils/SpecialAttackUtils";
 import { DiamondThumb, highlightSkillDescription, getSkillAbilityModifier } from "../utils/SpecialAttackDisplayUtils";
 import { t } from "../i18n";
 import type { GetPlayerResponse } from "../api/APIPlayer";
+import { APIBattle } from "../api/APIBattle";
+import { getPlayerCharacter } from "../utils/CharacterUtils";
 
 interface SkillInfoCardProps {
     skillId: string;
     onDismiss: () => void;
     player?: GetPlayerResponse | null;
+    onHighlightStatus?: () => void;
 }
 
-export default function SkillInfoCard({ skillId, onDismiss, player }: SkillInfoCardProps) {
+export default function SkillInfoCard({ skillId, onDismiss, player, onHighlightStatus }: SkillInfoCardProps) {
     const skill = getSpecialAttackById(skillId);
+    const battleChar = getPlayerCharacter(player ?? null);
     if (!skill) return null;
 
     return (
@@ -30,12 +34,23 @@ export default function SkillInfoCard({ skillId, onDismiss, player }: SkillInfoC
                 <div className="flex flex-col gap-1 min-w-0">
                     <div className="flex items-start gap-2 flex-wrap">
                         <span className="text-base font-semibold leading-tight">{skill.name}</span>
-                        <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md ${skill.isGradient ? 'bg-purple-600' : 'bg-blue-600'}`}>
-                            {skill.isGradient
-                                ? `${skill.cost} ${skill.cost === 1 ? t("specialAttackPicker.charge") : t("specialAttackPicker.charges")}`
-                                : skill.cost
-                            }
-                        </span>
+                        {skill.isGradient ? (
+                            <span className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold leading-none text-base-100 shadow-md bg-purple-600">
+                                {skill.cost} {skill.cost === 1 ? t("specialAttackPicker.charge") : t("specialAttackPicker.charges")}
+                            </span>
+                        ) : (
+                            <button
+                                className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
+                                onClick={async () => {
+                                    if (!battleChar) return;
+                                    const current = battleChar.magicPoints ?? 0;
+                                    await APIBattle.updateCharacterMp(battleChar.battleID, current - skill.cost);
+                                    onHighlightStatus?.();
+                                }}
+                            >
+                                -{skill.cost} PA
+                            </button>
+                        )}
                     </div>
                     <div className="flex items-center gap-2 text-xs">
                         {skill.type && (
