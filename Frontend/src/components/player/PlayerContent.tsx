@@ -300,6 +300,7 @@ export function PlayerContent({
           diceBoardRef={diceBoardRef}
           timeoutDiceBoardRef={timeoutDiceBoardRef}
           onBottomSheetChange={onBottomSheetChange}
+          weaponInfo={weaponInfo}
         />
       )}
 

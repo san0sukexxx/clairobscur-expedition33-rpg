@@ -43,6 +43,16 @@ export function handleNpcImgError(e: { currentTarget: HTMLImageElement }, npcId:
         img.src = `/enemies/${npcId}.jpg`;
         return;
     }
+    let baseBaseId: string | null = null;
+    if (baseId) {
+        for (const suffix of locationSuffixes) {
+            if (baseId.endsWith(suffix)) {
+                baseBaseId = baseId.slice(0, -suffix.length);
+                break;
+            }
+        }
+    }
+
     if (step === "1" && baseId) {
         img.dataset.imgStep = "2";
         img.src = `/enemies/${baseId}.png`;
@@ -51,6 +61,16 @@ export function handleNpcImgError(e: { currentTarget: HTMLImageElement }, npcId:
     if (step === "2" && baseId) {
         img.dataset.imgStep = "3";
         img.src = `/enemies/${baseId}.jpg`;
+        return;
+    }
+    if (step === "3" && baseBaseId) {
+        img.dataset.imgStep = "4";
+        img.src = `/enemies/${baseBaseId}.png`;
+        return;
+    }
+    if (step === "4" && baseBaseId) {
+        img.dataset.imgStep = "5";
+        img.src = `/enemies/${baseBaseId}.jpg`;
         return;
     }
     img.style.display = "none";

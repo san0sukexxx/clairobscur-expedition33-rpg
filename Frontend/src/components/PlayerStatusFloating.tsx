@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaEdit, FaDice } from "react-icons/fa";
+import { FaEdit, FaDice, FaShieldAlt } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIBattle } from "../api/APIBattle";
-import { type BattleCharacterInfo, type Stance, type StainType } from "../api/ResponseModel";
+import { type BattleCharacterInfo, type Stance, type StainType, type WeaponInfo } from "../api/ResponseModel";
+import { calculateArmorClass } from "../utils/PlayerCalculator";
 import { addStains, updateCharacterStains } from "../utils/StainUtils";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils";
@@ -19,6 +20,7 @@ import { t } from "../i18n";
 interface PlayerStatusFloatingProps {
     player: GetPlayerResponse | null;
     highlighted?: boolean;
+    weaponInfo?: WeaponInfo | null;
 }
 
 function pct(cur: number, max: number) {
@@ -31,7 +33,7 @@ function requestPlayerRefresh() {
     window.dispatchEvent(new Event("player-refresh"));
 }
 
-export default function PlayerStatusFloating({ player, highlighted }: PlayerStatusFloatingProps) {
+export default function PlayerStatusFloating({ player, highlighted, weaponInfo }: PlayerStatusFloatingProps) {
     const characters = player?.fightInfo?.characters ?? [];
     const playerBattleID = player?.fightInfo?.playerBattleID;
 
@@ -259,6 +261,13 @@ export default function PlayerStatusFloating({ player, highlighted }: PlayerStat
                                 />
                             </div>
                         )}
+                </div>
+
+                {/* AC */}
+                <div className="mt-1 flex items-center gap-1 text-[10px] uppercase opacity-80">
+                    <FaShieldAlt size={10} className="opacity-70" />
+                    <span className="opacity-70">{t("combatAdmin.npcDetails.armorClass")}</span>
+                    <span className="font-mono font-bold text-xs">{calculateArmorClass(player, weaponInfo ?? null)}</span>
                 </div>
 
                 {/* Charge bar for Gustave - below HP/MP */}
