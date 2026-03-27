@@ -1,6 +1,7 @@
 import type { RefObject, MutableRefObject } from "react";
 import { useEffect, useMemo, useState } from "react";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import { Drawer } from "vaul";
+import { FaChevronUp } from "react-icons/fa";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { DiceBoardRef } from "./DiceBoard";
@@ -57,8 +58,8 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
 
     const effectiveAbilityKey = useMemo(() => {
         return activeSkillId
-            ? undefined // skill selecionada: usa atributo principal (INT/SAB)
-            : getBasicAttackAttribute(player?.playerSheet?.characterId); // ataque básico: FOR
+            ? undefined
+            : getBasicAttackAttribute(player?.playerSheet?.characterId);
     }, [activeSkillId, player?.playerSheet?.characterId]);
 
     const attackBonus = useMemo(() => {
@@ -84,24 +85,23 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
 
     const INTENSITY_KEYS = ["intensityLow", "intensityMedium", "intensityHigh", "intensityVeryHigh", "intensityExtreme", "intensityMaximum"] as const;
     const INTENSITY_DICE_MULTIPLIER = [1, 1, 2, 3, 4, 5];
-    const [intensityIndex, setIntensityIndex] = useState(1); // starts at "Médio"
+    const [intensityIndex, setIntensityIndex] = useState(1);
     const [freeShotHintExpanded, setFreeShotHintExpanded] = useState(false);
 
-    // Local optimistic MP state — resets when parent finally syncs the value
     const [localMp, setLocalMp] = useState<number | null>(null);
     useEffect(() => { setLocalMp(null); }, [battleChar?.magicPoints]);
     const currentMp = localMp ?? (battleChar?.magicPoints ?? 0);
 
-    const hasWeapon = !!(weapon && details);
-    const baseDamageDice = hasWeapon ? getWeaponDamageDice(weapon!.level) : "";
+    const hasWeaponEquipped = !!(weapon && details);
+    const baseDamageDice = hasWeaponEquipped ? getWeaponDamageDice(weapon!.level) : "";
     const multiplier = INTENSITY_DICE_MULTIPLIER[intensityIndex];
     const damageDice = baseDamageDice.replace(/^(\d+)/, (_, n) => String(Number(n) * multiplier));
-    const weaponId = hasWeapon ? getWeaponTranslationId(details!.name, weaponList) : "";
-    const unlockedPassives = hasWeapon ? details!.passives.filter(p => p.level <= weapon!.level) : [];
+    const weaponId = hasWeaponEquipped ? getWeaponTranslationId(details!.name, weaponList) : "";
+    const unlockedPassives = hasWeaponEquipped ? details!.passives.filter(p => p.level <= weapon!.level) : [];
 
     return (
         <>
-            {/* Toggle button */}
+            {/* Trigger button */}
             {!open && (
                 <button
                     onClick={onOpen}
@@ -111,86 +111,229 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                 </button>
             )}
 
-            {/* Backdrop */}
-            {open && (
-                <div
-                    className="fixed inset-0 z-[41] bg-black/30"
-                    onClick={onClose}
-                />
-            )}
-
-            {/* Bottom sheet panel */}
-            <div
-                className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-[42] transition-transform duration-300 ease-in-out ${
-                    open ? "translate-y-0" : "translate-y-full"
-                }`}
-                style={{ height: "85vh" }}
+            <Drawer.Root
+                open={open}
+                onOpenChange={(v) => v ? onOpen() : onClose()}
+                noBodyStyles
             >
-                <div className="h-full bg-base-100/95 backdrop-blur-sm border-t border-base-300 shadow-lg flex flex-col">
-                    {/* Header with close button */}
-                    <button
-                        onClick={onClose}
-                        className="flex justify-center py-2 border-b border-base-300 cursor-pointer hover:bg-base-200/80 transition-colors"
+                <Drawer.Portal>
+                    <Drawer.Overlay className="fixed inset-0 bg-black/40 z-[41]" />
+                    <Drawer.Content
+                        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-[42] flex flex-col bg-base-100 rounded-t-2xl outline-none"
+                        style={{ height: "85dvh" }}
                     >
-                        <FaChevronDown className="text-base-content/60" size={16} />
-                    </button>
-
-                    {/* Content */}
-                    <div className="flex-1 overflow-y-auto p-4 pb-40 space-y-4">
-                        {!hasWeapon && (
-                            <p className="text-sm opacity-50 text-center py-8">{t("combat.noWeaponEquipped")}</p>
-                        )}
-                        {hasWeapon && <>
-                        {/* Weapon header */}
-                        <div className="flex items-center gap-3">
-                            <div className="relative w-16 h-12 shrink-0">
-                                <img
-                                    src={`/weapons/${details!.name}.webp`}
-                                    alt={details.name}
-                                    className="absolute inset-0 m-auto object-contain w-full h-full"
-                                    style={{ rotate: `${details.rotation}deg` }}
-                                />
-                            </div>
-                            <div>
-                                <div>
-                                    <span className="font-bold text-base">{weapon.id}</span>
-                                    <span className="ml-2 text-sm opacity-60">Lv.{weapon.level}</span>
-                                </div>
-                                <div className="text-sm opacity-70">
-                                    {getElementName(details.attributes.element)} {ELEMENT_EMOTE[details.attributes.element] ?? "❓"}
-                                </div>
-                            </div>
+                        {/* Drag handle */}
+                        <div className="flex justify-center pt-3 pb-2 shrink-0">
+                            <div className="w-10 h-1.5 rounded-full bg-base-300" />
                         </div>
 
-                        {/* Weapon attack buttons */}
-                        <div className="border border-base-300 rounded-lg p-3 space-y-2">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
-                                    {t("combat.attack")} ({attackBonus ? t(`setup.abilityAbbr.${attackBonus.abilityKey}`) : ""})
-                                </span>
-                                {!activeSkillId && (
+                        {/* Content */}
+                        <div className="flex-1 overflow-y-auto px-4 pb-40 space-y-4">
+                            {!hasWeaponEquipped && (
+                                <p className="text-sm opacity-50 text-center py-8">{t("combat.noWeaponEquipped")}</p>
+                            )}
+                            {hasWeaponEquipped && <>
+                            {/* Weapon header */}
+                            <div className="flex items-center gap-3">
+                                <div className="relative w-16 h-12 shrink-0">
+                                    <img
+                                        src={`/weapons/${details!.name}.webp`}
+                                        alt={details.name}
+                                        className="absolute inset-0 m-auto object-contain w-full h-full"
+                                        style={{ rotate: `${details.rotation}deg` }}
+                                    />
+                                </div>
+                                <div>
+                                    <div>
+                                        <span className="font-bold text-base">{weapon.id}</span>
+                                        <span className="ml-2 text-sm opacity-60">Lv.{weapon.level}</span>
+                                    </div>
+                                    <div className="text-sm opacity-70">
+                                        {getElementName(details.attributes.element)} {ELEMENT_EMOTE[details.attributes.element] ?? "❓"}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Weapon attack buttons */}
+                            <div className="border border-base-300 rounded-lg p-3 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
+                                        {t("combat.attack")} ({attackBonus ? t(`setup.abilityAbbr.${attackBonus.abilityKey}`) : ""})
+                                    </span>
+                                    {!activeSkillId && (
+                                        <button
+                                            className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
+                                            onClick={async () => {
+                                                if (!battleChar) return;
+                                                const newMp = currentMp + 1;
+                                                setLocalMp(newMp);
+                                                await APIBattle.updateCharacterMp(battleChar.battleID, newMp);
+                                                onHighlightStatus?.();
+                                            }}
+                                        >
+                                            +1 PA
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="flex gap-2 mt-2">
+                                    {attackBonus && (
+                                        <button
+                                            className="btn btn-outline btn-sm gap-2 flex-1"
+                                            onClick={() => {
+                                                rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
+                                                    const d20Roll = diceTotal(result);
+                                                    const total = d20Roll + attackBonus.total;
+                                                    const diceValues: number[] = [];
+                                                    for (const group of result) {
+                                                        if (Array.isArray(group.rolls)) {
+                                                            for (const roll of group.rolls) diceValues.push(roll.value);
+                                                        }
+                                                    }
+                                                    dispatchRoll({
+                                                        label: t("combat.attack"),
+                                                        diceRolled: d20Roll,
+                                                        modifier: attackBonus.total,
+                                                        total,
+                                                        diceCommand: "1d20",
+                                                        diceValues,
+                                                    });
+                                                    if (player?.id) {
+                                                        APIGameLog.create(player.id, {
+                                                            rollType: "attack",
+                                                            diceRolled: d20Roll,
+                                                            modifier: attackBonus.total,
+                                                            total,
+                                                            diceCommand: "1d20",
+                                                        });
+                                                    }
+                                                });
+                                            }}
+                                        >
+                                            <GiPerspectiveDiceSixFacesRandom size={18} />
+                                            {t("combat.hit")} {attackBonus.total >= 0 ? "+" : ""}{attackBonus.total}
+                                        </button>
+                                    )}
+                                    {damageBonus && (() => {
+                                        const isLowIntensity = intensityIndex === 0;
+                                        const effectiveBonus = isLowIntensity ? Math.min(damageBonus.total, 0) : damageBonus.total;
+                                        return (
+                                        <button
+                                            className="btn btn-outline btn-sm gap-2 flex-1"
+                                            onClick={() => {
+                                                rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, damageDice, (result) => {
+                                                    const diceRoll = diceTotal(result);
+                                                    const total = diceRoll + effectiveBonus;
+                                                    const diceValues: number[] = [];
+                                                    for (const group of result) {
+                                                        if (Array.isArray(group.rolls)) {
+                                                            for (const roll of group.rolls) diceValues.push(roll.value);
+                                                        }
+                                                    }
+                                                    dispatchRoll({
+                                                        label: t("playerPage.basicAttack.damage"),
+                                                        diceRolled: diceRoll,
+                                                        modifier: effectiveBonus,
+                                                        total,
+                                                        diceCommand: damageDice,
+                                                        diceValues,
+                                                    });
+                                                    if (player?.id) {
+                                                        APIGameLog.create(player.id, {
+                                                            rollType: "attack",
+                                                            abilityKey: "damage",
+                                                            diceRolled: diceRoll,
+                                                            modifier: effectiveBonus,
+                                                            total,
+                                                            diceCommand: damageDice,
+                                                        });
+                                                    }
+                                                });
+                                            }}
+                                        >
+                                            <GiPerspectiveDiceSixFacesRandom size={18} />
+                                            {damageDice}{effectiveBonus !== 0 ? ` ${effectiveBonus >= 0 ? "+" : ""}${effectiveBonus}` : ""}
+                                        </button>
+                                        );
+                                    })()}
+                                </div>
+
+                                {/* Intensity slider */}
+                                <div className="pt-1 space-y-1">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.intensity")}</span>
+                                        <span className={`text-xs font-bold ${
+                                            intensityIndex === 0 ? "text-sky-400"
+                                            : intensityIndex === 1 ? "text-emerald-400"
+                                            : intensityIndex === 2 ? "text-amber-400"
+                                            : intensityIndex === 3 ? "text-orange-400"
+                                            : intensityIndex === 4 ? "text-red-400"
+                                            : "text-fuchsia-400"
+                                        }`}>
+                                            {t(`combat.${INTENSITY_KEYS[intensityIndex]}`)}
+                                        </span>
+                                    </div>
+                                    <div className="relative flex items-center gap-2">
+                                        <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[0]}`)}</span>
+                                        <input
+                                            type="range"
+                                            min={0}
+                                            max={INTENSITY_KEYS.length - 1}
+                                            step={1}
+                                            value={intensityIndex}
+                                            onChange={(e) => setIntensityIndex(Number(e.target.value))}
+                                            className="range range-xs flex-1"
+                                            style={{
+                                                accentColor:
+                                                    intensityIndex === 0 ? "#38bdf8"
+                                                    : intensityIndex === 1 ? "#34d399"
+                                                    : intensityIndex === 2 ? "#fbbf24"
+                                                    : intensityIndex === 3 ? "#fb923c"
+                                                    : intensityIndex === 4 ? "#f87171"
+                                                    : "#e879f9"
+                                            }}
+                                        />
+                                        <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[INTENSITY_KEYS.length - 1]}`)}</span>
+                                    </div>
+                                    <div className="flex justify-between px-8">
+                                        {INTENSITY_KEYS.map((_, i) => (
+                                            <div
+                                                key={i}
+                                                className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                                                    i === intensityIndex ? "bg-base-content" : "bg-base-content/20"
+                                                }`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Free shot section */}
+                            <div className="border border-base-300 rounded-lg p-3 space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
+                                        {t("combat.freeShot")} ({t("setup.abilityAbbr.dexterity")})
+                                    </span>
                                     <button
                                         className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
                                         onClick={async () => {
                                             if (!battleChar) return;
-                                            const newMp = currentMp + 1;
+                                            if (currentMp <= 0) return;
+                                            const newMp = currentMp - 1;
                                             setLocalMp(newMp);
                                             await APIBattle.updateCharacterMp(battleChar.battleID, newMp);
                                             onHighlightStatus?.();
                                         }}
                                     >
-                                        +1 PA
+                                        -1 PA
                                     </button>
-                                )}
-                            </div>
-                            <div className="flex gap-2 mt-2">
-                                {attackBonus && (
+                                </div>
+                                <div className="flex gap-2 mt-2">
                                     <button
                                         className="btn btn-outline btn-sm gap-2 flex-1"
                                         onClick={() => {
                                             rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
                                                 const d20Roll = diceTotal(result);
-                                                const total = d20Roll + attackBonus.total;
+                                                const total = d20Roll + freeShotHitMod;
                                                 const diceValues: number[] = [];
                                                 for (const group of result) {
                                                     if (Array.isArray(group.rolls)) {
@@ -198,9 +341,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                     }
                                                 }
                                                 dispatchRoll({
-                                                    label: t("combat.attack"),
+                                                    label: `${t("combat.freeShot")} - ${t("combat.attack")}`,
                                                     diceRolled: d20Roll,
-                                                    modifier: attackBonus.total,
+                                                    modifier: freeShotHitMod,
                                                     total,
                                                     diceCommand: "1d20",
                                                     diceValues,
@@ -208,8 +351,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                 if (player?.id) {
                                                     APIGameLog.create(player.id, {
                                                         rollType: "attack",
+                                                        abilityKey: "freeShot",
                                                         diceRolled: d20Roll,
-                                                        modifier: attackBonus.total,
+                                                        modifier: freeShotHitMod,
                                                         total,
                                                         diceCommand: "1d20",
                                                     });
@@ -218,19 +362,14 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                         }}
                                     >
                                         <GiPerspectiveDiceSixFacesRandom size={18} />
-                                        {t("combat.hit")} {attackBonus.total >= 0 ? "+" : ""}{attackBonus.total}
+                                        {t("combat.hit")} {freeShotHitMod >= 0 ? "+" : ""}{freeShotHitMod}
                                     </button>
-                                )}
-                                {damageBonus && (() => {
-                                    const isLowIntensity = intensityIndex === 0;
-                                    const effectiveBonus = isLowIntensity ? Math.min(damageBonus.total, 0) : damageBonus.total;
-                                    return (
                                     <button
                                         className="btn btn-outline btn-sm gap-2 flex-1"
                                         onClick={() => {
-                                            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, damageDice, (result) => {
+                                            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d4", (result) => {
                                                 const diceRoll = diceTotal(result);
-                                                const total = diceRoll + effectiveBonus;
+                                                const total = diceRoll + dexMod;
                                                 const diceValues: number[] = [];
                                                 for (const group of result) {
                                                     if (Array.isArray(group.rolls)) {
@@ -238,258 +377,108 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                                     }
                                                 }
                                                 dispatchRoll({
-                                                    label: t("playerPage.basicAttack.damage"),
+                                                    label: `${t("combat.freeShot")} - ${t("playerPage.basicAttack.damage")}`,
                                                     diceRolled: diceRoll,
-                                                    modifier: effectiveBonus,
+                                                    modifier: dexMod,
                                                     total,
-                                                    diceCommand: damageDice,
+                                                    diceCommand: "1d4",
                                                     diceValues,
                                                 });
                                                 if (player?.id) {
                                                     APIGameLog.create(player.id, {
                                                         rollType: "attack",
-                                                        abilityKey: "damage",
+                                                        abilityKey: "freeShotDamage",
                                                         diceRolled: diceRoll,
-                                                        modifier: effectiveBonus,
+                                                        modifier: dexMod,
                                                         total,
-                                                        diceCommand: damageDice,
+                                                        diceCommand: "1d4",
                                                     });
                                                 }
                                             });
                                         }}
                                     >
                                         <GiPerspectiveDiceSixFacesRandom size={18} />
-                                        {damageDice}{effectiveBonus !== 0 ? ` ${effectiveBonus >= 0 ? "+" : ""}${effectiveBonus}` : ""}
+                                        1d4{dexMod !== 0 ? ` ${dexMod >= 0 ? "+" : ""}${dexMod}` : ""}
                                     </button>
-                                    );
-                                })()}
+                                </div>
+                                <p className="text-xs opacity-40 mt-1">
+                                    {freeShotHintExpanded ? t("combat.freeShotHint") : t("combat.freeShotHintShort")}{" "}
+                                    <button className="underline text-info" onClick={() => setFreeShotHintExpanded(e => !e)}>
+                                        {freeShotHintExpanded ? t("common.readLess") : t("common.readMore")}
+                                    </button>
+                                </p>
                             </div>
 
-                            {/* Intensity slider */}
-                            <div className="pt-1 space-y-1">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.intensity")}</span>
-                                    <span className={`text-xs font-bold ${
-                                        intensityIndex === 0 ? "text-sky-400"
-                                        : intensityIndex === 1 ? "text-emerald-400"
-                                        : intensityIndex === 2 ? "text-amber-400"
-                                        : intensityIndex === 3 ? "text-orange-400"
-                                        : intensityIndex === 4 ? "text-red-400"
-                                        : "text-fuchsia-400"
-                                    }`}>
-                                        {t(`combat.${INTENSITY_KEYS[intensityIndex]}`)}
-                                    </span>
-                                </div>
-                                <div className="relative flex items-center gap-2">
-                                    <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[0]}`)}</span>
-                                    <input
-                                        type="range"
-                                        min={0}
-                                        max={INTENSITY_KEYS.length - 1}
-                                        step={1}
-                                        value={intensityIndex}
-                                        onChange={(e) => setIntensityIndex(Number(e.target.value))}
-                                        className="range range-xs flex-1"
-                                        style={{
-                                            accentColor:
-                                                intensityIndex === 0 ? "#38bdf8"
-                                                : intensityIndex === 1 ? "#34d399"
-                                                : intensityIndex === 2 ? "#fbbf24"
-                                                : intensityIndex === 3 ? "#fb923c"
-                                                : intensityIndex === 4 ? "#f87171"
-                                                : "#e879f9"
-                                        }}
-                                    />
-                                    <span className="text-[10px] opacity-40 shrink-0">{t(`combat.${INTENSITY_KEYS[INTENSITY_KEYS.length - 1]}`)}</span>
-                                </div>
-                                <div className="flex justify-between px-8">
-                                    {INTENSITY_KEYS.map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                                                i === intensityIndex ? "bg-base-content" : "bg-base-content/20"
-                                            }`}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
+                            {/* Passives sections */}
+                            {(() => {
+                                const disabledIds = getDisabledPictoIds(player);
+                                const equippedPictos = (player?.pictos ?? []).filter(p => typeof p.slot === "number" && !disabledIds.has(p.id));
+                                const equippedLuminas = (player?.luminas ?? []).filter(l => l.isEquiped);
+                                const hasPictoLumina = equippedPictos.length > 0 || equippedLuminas.length > 0;
+
+                                return (
+                                    <div className="space-y-4">
+                                        {/* Weapon passives */}
+                                        {unlockedPassives.length > 0 && !isGustave(player?.playerSheet?.characterId) && (
+                                            <div>
+                                                {hasPictoLumina && (
+                                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.weaponPassives")}</span>
+                                                )}
+                                                <ul className="space-y-2 text-sm mt-1">
+                                                    {unlockedPassives.map(p => {
+                                                        const translatedEffect = getWeaponPassive(weaponId, p.level);
+                                                        const effectText = translatedEffect || p.effect;
+                                                        return (
+                                                            <li key={p.level} className="flex flex-col">
+                                                                <span className={`font-semibold ${levelColor(p.level)}`}>
+                                                                    Level {p.level}
+                                                                </span>
+                                                                <span className="opacity-90">{renderTextWithDiceButtons(effectText, weapon?.id ?? "", diceBoardRef, timeoutDiceBoardRef, player?.id)}</span>
+                                                            </li>
+                                                        );
+                                                    })}
+                                                </ul>
+                                            </div>
+                                        )}
+
+                                        {/* Pictos & Luminas passives */}
+                                        {hasPictoLumina && (
+                                            <div>
+                                                <span className="text-xs font-semibold uppercase tracking-wide opacity-50">Pictos / Luminas</span>
+                                                <ul className="space-y-2 text-sm mt-1">
+                                                    {equippedPictos.map(picto => {
+                                                        const info = getPictoByName(picto.pictoId);
+                                                        const name = info?.name ?? picto.pictoId;
+                                                        const description = info?.description ?? "";
+                                                        return (
+                                                            <li key={`picto-${picto.id}`} className="flex flex-col">
+                                                                <span className="font-semibold text-primary">{name}</span>
+                                                                <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef, player?.id) : ""}</span>
+                                                            </li>
+                                                        );
+                                                    })}
+                                                    {equippedLuminas.map(lumina => {
+                                                        const info = getPictoByName(lumina.pictoId);
+                                                        const name = info?.name ?? lumina.pictoId;
+                                                        const description = info?.description ?? "";
+                                                        return (
+                                                            <li key={`lumina-${lumina.id}`} className="flex flex-col">
+                                                                <span className="font-semibold text-primary">{name}</span>
+                                                                <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef, player?.id) : ""}</span>
+                                                            </li>
+                                                        );
+                                                    })}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
+                            </>}
                         </div>
-
-                        {/* Free shot section */}
-                        <div className="border border-base-300 rounded-lg p-3 space-y-2">
-                            <div className="flex items-center justify-between">
-                                <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
-                                    {t("combat.freeShot")} ({t("setup.abilityAbbr.dexterity")})
-                                </span>
-                                <button
-                                    className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
-                                    onClick={async () => {
-                                        if (!battleChar) return;
-                                        if (currentMp <= 0) return;
-                                        const newMp = currentMp - 1;
-                                        setLocalMp(newMp);
-                                        await APIBattle.updateCharacterMp(battleChar.battleID, newMp);
-                                        onHighlightStatus?.();
-                                    }}
-                                >
-                                    -1 PA
-                                </button>
-                            </div>
-                            <div className="flex gap-2 mt-2">
-                                <button
-                                    className="btn btn-outline btn-sm gap-2 flex-1"
-                                    onClick={() => {
-                                        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d20", (result) => {
-                                            const d20Roll = diceTotal(result);
-                                            const total = d20Roll + freeShotHitMod;
-                                            const diceValues: number[] = [];
-                                            for (const group of result) {
-                                                if (Array.isArray(group.rolls)) {
-                                                    for (const roll of group.rolls) diceValues.push(roll.value);
-                                                }
-                                            }
-                                            dispatchRoll({
-                                                label: `${t("combat.freeShot")} - ${t("combat.attack")}`,
-                                                diceRolled: d20Roll,
-                                                modifier: freeShotHitMod,
-                                                total,
-                                                diceCommand: "1d20",
-                                                diceValues,
-                                            });
-                                            if (player?.id) {
-                                                APIGameLog.create(player.id, {
-                                                    rollType: "attack",
-                                                    abilityKey: "freeShot",
-                                                    diceRolled: d20Roll,
-                                                    modifier: freeShotHitMod,
-                                                    total,
-                                                    diceCommand: "1d20",
-                                                });
-                                            }
-                                        });
-                                    }}
-                                >
-                                    <GiPerspectiveDiceSixFacesRandom size={18} />
-                                    {t("combat.hit")} {freeShotHitMod >= 0 ? "+" : ""}{freeShotHitMod}
-                                </button>
-                                <button
-                                    className="btn btn-outline btn-sm gap-2 flex-1"
-                                    onClick={() => {
-                                        rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, "1d4", (result) => {
-                                            const diceRoll = diceTotal(result);
-                                            const total = diceRoll + dexMod;
-                                            const diceValues: number[] = [];
-                                            for (const group of result) {
-                                                if (Array.isArray(group.rolls)) {
-                                                    for (const roll of group.rolls) diceValues.push(roll.value);
-                                                }
-                                            }
-                                            dispatchRoll({
-                                                label: `${t("combat.freeShot")} - ${t("playerPage.basicAttack.damage")}`,
-                                                diceRolled: diceRoll,
-                                                modifier: dexMod,
-                                                total,
-                                                diceCommand: "1d4",
-                                                diceValues,
-                                            });
-                                            if (player?.id) {
-                                                APIGameLog.create(player.id, {
-                                                    rollType: "attack",
-                                                    abilityKey: "freeShotDamage",
-                                                    diceRolled: diceRoll,
-                                                    modifier: dexMod,
-                                                    total,
-                                                    diceCommand: "1d4",
-                                                });
-                                            }
-                                        });
-                                    }}
-                                >
-                                    <GiPerspectiveDiceSixFacesRandom size={18} />
-                                    1d4{dexMod !== 0 ? ` ${dexMod >= 0 ? "+" : ""}${dexMod}` : ""}
-                                </button>
-                            </div>
-                            <p className="text-xs opacity-40 mt-1">
-                                {freeShotHintExpanded ? t("combat.freeShotHint") : t("combat.freeShotHintShort")}{" "}
-                                <button className="underline text-info" onClick={() => setFreeShotHintExpanded(e => !e)}>
-                                    {freeShotHintExpanded ? t("common.readLess") : t("common.readMore")}
-                                </button>
-                            </p>
-                        </div>
-
-                        {/* Passives sections */}
-                        {(() => {
-                            const disabledIds = getDisabledPictoIds(player);
-                            const equippedPictos = (player?.pictos ?? []).filter(p => typeof p.slot === "number" && !disabledIds.has(p.id));
-                            const equippedLuminas = (player?.luminas ?? []).filter(l => l.isEquiped);
-                            const hasPictoLumina = equippedPictos.length > 0 || equippedLuminas.length > 0;
-
-                            return (
-                                <div className="space-y-4">
-                                    {/* Weapon passives */}
-                                    {unlockedPassives.length > 0 && !isGustave(player?.playerSheet?.characterId) && (
-                                        <div>
-                                            {hasPictoLumina && (
-                                                <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("combat.weaponPassives")}</span>
-                                            )}
-                                            <ul className="space-y-2 text-sm mt-1">
-                                                {unlockedPassives.map(p => {
-                                                    const translatedEffect = getWeaponPassive(weaponId, p.level);
-                                                    const effectText = translatedEffect || p.effect;
-                                                    return (
-                                                        <li key={p.level} className="flex flex-col">
-                                                            <span className={`font-semibold ${levelColor(p.level)}`}>
-                                                                Level {p.level}
-                                                            </span>
-                                                            <span className="opacity-90">{renderTextWithDiceButtons(effectText, weapon?.id ?? "", diceBoardRef, timeoutDiceBoardRef, player?.id)}</span>
-                                                        </li>
-                                                    );
-                                                })}
-                                            </ul>
-                                        </div>
-                                    )}
-
-                                    {/* Pictos & Luminas passives */}
-                                    {hasPictoLumina && (
-                                        <div>
-                                            <span className="text-xs font-semibold uppercase tracking-wide opacity-50">Pictos / Luminas</span>
-                                            <ul className="space-y-2 text-sm mt-1">
-                                                {equippedPictos.map(picto => {
-                                                    const info = getPictoByName(picto.pictoId);
-                                                    const name = info?.name ?? picto.pictoId;
-                                                    const description = info?.description ?? "";
-                                                    return (
-                                                        <li key={`picto-${picto.id}`} className="flex flex-col">
-                                                            <span className="font-semibold text-primary">
-                                                                {name}
-                                                            </span>
-                                                            <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef, player?.id) : ""}</span>
-                                                        </li>
-                                                    );
-                                                })}
-                                                {equippedLuminas.map(lumina => {
-                                                    const info = getPictoByName(lumina.pictoId);
-                                                    const name = info?.name ?? lumina.pictoId;
-                                                    const description = info?.description ?? "";
-                                                    return (
-                                                        <li key={`lumina-${lumina.id}`} className="flex flex-col">
-                                                            <span className="font-semibold text-primary">
-                                                                {name}
-                                                            </span>
-                                                            <span className="opacity-90">{description ? renderTextWithDiceButtons(description, name, diceBoardRef, timeoutDiceBoardRef, player?.id) : ""}</span>
-                                                        </li>
-                                                    );
-                                                })}
-                                            </ul>
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })()}
-                        </>}
-                    </div>
-                </div>
-            </div>
+                    </Drawer.Content>
+                </Drawer.Portal>
+            </Drawer.Root>
         </>
     );
 }
