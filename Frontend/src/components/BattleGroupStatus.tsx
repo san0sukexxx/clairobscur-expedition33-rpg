@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 function requestPlayerRefresh() {
     window.dispatchEvent(new Event("player-refresh"));
 }
-import { FaSkull, FaEdit } from "react-icons/fa";
+import { FaSkull, FaEdit, FaShieldAlt } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { handleNpcImgError } from "../utils/NpcUtils";
 import { APIBattle } from "../api/APIBattle";
@@ -18,6 +18,9 @@ import StatEditModal from "./StatEditModal";
 import { HpEditModal } from "./HpEditModal";
 import { ApEditModal } from "./ApEditModal";
 import { StatusConditionsModal } from "./StatusConditionsModal";
+import { ArmorClassModal } from "./ArmorClassModal";
+import { useWeaponInfo } from "../hooks/player/useWeaponInfo";
+import { calculateArmorClass } from "../utils/PlayerCalculator";
 import { t } from "../i18n";
 import NpcImageModal from "./NpcImageModal";
 
@@ -66,6 +69,8 @@ export default function BattleGroupStatus({
     const [breakEditOpen, setBreakEditOpen] = useState(false);
     const [editBreakValue, setEditBreakValue] = useState(0);
     const [expandedStatusBadge, setExpandedStatusBadge] = useState<string | null>(null);
+    const [armorClassModalOpen, setArmorClassModalOpen] = useState(false);
+    const { weaponInfo } = useWeaponInfo(player);
 
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -173,7 +178,7 @@ export default function BattleGroupStatus({
     return (<>
         <div className="mt-5">
             <div className="card bg-base-100 shadow">
-                <div className="card-body">
+                <div className="card-body p-3">
                     <h2 className="card-title justify-center">
                         {currentCharacter?.isEnemy != isEnemies ? t("combat.enemies") : t("combat.team")}
                     </h2>
@@ -549,6 +554,16 @@ export default function BattleGroupStatus({
                                                 </div>
                                             </div>
                                         )}
+
+                                        {canEdit && (
+                                            <button
+                                                className="mt-2 btn btn-xs btn-outline gap-1 font-mono pointer-events-auto"
+                                                onClick={(e) => { e.stopPropagation(); setArmorClassModalOpen(true); }}
+                                            >
+                                                <FaShieldAlt size={10} />
+                                                {t("combatAdmin.npcDetails.armorClass")} {calculateArmorClass(player, weaponInfo)}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             );
@@ -566,6 +581,12 @@ export default function BattleGroupStatus({
                     statuses={playerCh.status ?? []}
                 />
             )}
+
+            <ArmorClassModal
+                open={armorClassModalOpen}
+                onClose={() => setArmorClassModalOpen(false)}
+                armorClass={calculateArmorClass(player, weaponInfo)}
+            />
 
             {/* ---- Modals (portaled to body) ---- */}
             {playerCh && createPortal(
