@@ -12,7 +12,7 @@ export function ArmorClassModal({ open, onClose, armorClass }: ArmorClassModalPr
 
     return createPortal(
         <dialog className="modal modal-open" style={{ zIndex: 10001 }}>
-            <div className="modal-box max-w-sm space-y-4">
+            <div className="modal-box max-w-sm max-h-[80vh] overflow-y-auto space-y-4">
                 <div className="flex items-center gap-4">
                     <div className="flex flex-col items-center gap-1 shrink-0">
                         <span className="text-xs font-semibold uppercase tracking-wide opacity-50">{t("characterSheet.armorClassTop")}</span>
