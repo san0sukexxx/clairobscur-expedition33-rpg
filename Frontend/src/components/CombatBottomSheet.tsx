@@ -92,12 +92,12 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
     const [defenseExpanded, setDefenseExpanded] = useState(false);
     const [freeShotHintExpanded, setFreeShotHintExpanded] = useState(false);
 
-    if (!weapon || !details) return null;
-    const baseDamageDice = getWeaponDamageDice(weapon.level);
+    const hasWeapon = !!(weapon && details);
+    const baseDamageDice = hasWeapon ? getWeaponDamageDice(weapon!.level) : "";
     const multiplier = INTENSITY_DICE_MULTIPLIER[intensityIndex];
     const damageDice = baseDamageDice.replace(/^(\d+)/, (_, n) => String(Number(n) * multiplier));
-    const weaponId = getWeaponTranslationId(details.name, weaponList);
-    const unlockedPassives = details.passives.filter(p => p.level <= weapon.level);
+    const weaponId = hasWeapon ? getWeaponTranslationId(details!.name, weaponList) : "";
+    const unlockedPassives = hasWeapon ? details!.passives.filter(p => p.level <= weapon!.level) : [];
 
     return (
         <>
@@ -105,7 +105,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
             {!open && (
                 <button
                     onClick={onOpen}
-                    className="fixed bottom-0 left-0 right-0 z-42 flex justify-center py-2 bg-neutral/50 border-t border-neutral-content/10 cursor-pointer hover:bg-neutral/60 transition-colors"
+                    className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-[42] flex justify-center py-2 bg-neutral/50 border-t border-neutral-content/10 cursor-pointer hover:bg-neutral/60 transition-colors"
                 >
                     <FaChevronUp className="text-neutral-content/60" size={16} />
                 </button>
@@ -114,14 +114,14 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
             {/* Backdrop */}
             {open && (
                 <div
-                    className="fixed inset-0 z-41 bg-black/30"
+                    className="fixed inset-0 z-[41] bg-black/30"
                     onClick={onClose}
                 />
             )}
 
             {/* Bottom sheet panel */}
             <div
-                className={`fixed bottom-0 left-0 right-0 z-42 transition-transform duration-300 ease-in-out ${
+                className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-[42] transition-transform duration-300 ease-in-out ${
                     open ? "translate-y-0" : "translate-y-full"
                 }`}
                 style={{ height: "85vh" }}
@@ -137,11 +137,15 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
 
                     {/* Content */}
                     <div className="flex-1 overflow-y-auto p-4 pb-40 space-y-4">
+                        {!hasWeapon && (
+                            <p className="text-sm opacity-50 text-center py-8">{t("combat.noWeaponEquipped")}</p>
+                        )}
+                        {hasWeapon && <>
                         {/* Weapon header */}
                         <div className="flex items-center gap-3">
                             <div className="relative w-16 h-12 shrink-0">
                                 <img
-                                    src={`/weapons/${details.name}.webp`}
+                                    src={`/weapons/${details!.name}.webp`}
                                     alt={details.name}
                                     className="absolute inset-0 m-auto object-contain w-full h-full"
                                     style={{ rotate: `${details.rotation}deg` }}
@@ -160,9 +164,24 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
 
                         {/* Weapon attack buttons */}
                         <div className="border border-base-300 rounded-lg p-3 space-y-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
-                                {t("combat.attack")} ({attackBonus ? t(`setup.abilityAbbr.${attackBonus.abilityKey}`) : ""})
-                            </span>
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
+                                    {t("combat.attack")} ({attackBonus ? t(`setup.abilityAbbr.${attackBonus.abilityKey}`) : ""})
+                                </span>
+                                {!activeSkillId && (
+                                    <button
+                                        className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
+                                        onClick={async () => {
+                                            if (!battleChar) return;
+                                            const current = battleChar.magicPoints ?? 0;
+                                            await APIBattle.updateCharacterMp(battleChar.battleID, current + 1);
+                                            onHighlightStatus?.();
+                                        }}
+                                    >
+                                        +1 PA
+                                    </button>
+                                )}
+                            </div>
                             <div className="flex gap-2 mt-2">
                                 {attackBonus && (
                                     <button
@@ -501,6 +520,7 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                 </div>
                             );
                         })()}
+                        </>}
                     </div>
                 </div>
             </div>
