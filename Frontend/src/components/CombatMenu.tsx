@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { FaBars, FaExchangeAlt, FaTimes, FaUsers, FaSkull, FaFlask, FaStar, FaCheckCircle, FaCrosshairs } from "react-icons/fa";
-import { GiSwordWound, GiRunningNinja, GiJoinIn } from "react-icons/gi";
+import { GiSwordWound, GiRunningNinja, GiJoin } from "react-icons/gi";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
@@ -152,7 +152,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
 
               {player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
                 <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
-                  <GiJoinIn size={16} /> {t("combat.joinBattle")}
+                  <GiJoin size={16} /> {t("combat.joinBattle")}
                 </button>
               )}
 
