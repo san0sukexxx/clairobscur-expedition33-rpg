@@ -1751,11 +1751,11 @@ export default function CombatAdmin({
             return (
                 <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
                     <BestialWheel position={char.bestialWheelPosition} />
-                    <div className="flex gap-1 mt-2">
+                    <div className="flex gap-0.5 mt-2">
                         {[-5, -1, +1, +5].map(delta => (
                             <button
                                 key={delta}
-                                className={`btn btn-xs flex-1 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20 border-0" : "text-success bg-success/10 hover:bg-success/20 border-0"}`}
+                                className={`btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20" : "text-success bg-success/10 hover:bg-success/20"}`}
                                 onClick={async () => {
                                     const newPos = ((char.bestialWheelPosition! + delta) % 9 + 9) % 9;
                                     await APIBattle.updateBestialWheelPosition(char.battleID, newPos);
