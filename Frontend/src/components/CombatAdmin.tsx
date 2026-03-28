@@ -1543,38 +1543,96 @@ export default function CombatAdmin({
             );
         }
 
-        // Sciel – Sun/Moon Charges
+        // Sciel – Sun/Moon/Eclipse Charges
         if (charId === "sciel" || charId.includes("sciel")) {
             const sunCharges = char.sunCharges ?? 0;
             const moonCharges = char.moonCharges ?? 0;
             const twilightStatus = char.status?.find(s => s.effectName === "Twilight");
+            const isEclipse = !!twilightStatus;
+            const eclipseCharges = twilightStatus?.ammount ?? 0;
+            const eclipseTurns = twilightStatus?.remainingTurns ?? 2;
+
+            const refreshSciel = async () => {
+                if (battleId) {
+                    const freshData = await APIBattle.getById(battleId);
+                    setBattleDetails(freshData);
+                }
+            };
+
+            const handleSunDelta = async (delta: number) => {
+                const newSun = Math.max(0, sunCharges + delta);
+                if (delta > 0 && moonCharges > 0) {
+                    await APIBattle.updateSunMoonCharges(char.battleID, 0, 0);
+                    await APIBattle.addStatus({ battleCharacterId: char.battleID, effectType: "Twilight", ammount: newSun + moonCharges, remainingTurns: 2 });
+                } else {
+                    await APIBattle.updateSunMoonCharges(char.battleID, newSun, moonCharges);
+                }
+                await refreshSciel();
+            };
+
+            const handleMoonDelta = async (delta: number) => {
+                const newMoon = Math.max(0, moonCharges + delta);
+                if (delta > 0 && sunCharges > 0) {
+                    await APIBattle.updateSunMoonCharges(char.battleID, 0, 0);
+                    await APIBattle.addStatus({ battleCharacterId: char.battleID, effectType: "Twilight", ammount: sunCharges + newMoon, remainingTurns: 2 });
+                } else {
+                    await APIBattle.updateSunMoonCharges(char.battleID, sunCharges, newMoon);
+                }
+                await refreshSciel();
+            };
+
+            const handleEclipseDelta = async (delta: number) => {
+                const newEclipse = Math.max(0, eclipseCharges + delta);
+                await APIBattle.removeStatus(char.battleID, "Twilight");
+                if (newEclipse > 0) {
+                    await APIBattle.addStatus({ battleCharacterId: char.battleID, effectType: "Twilight", ammount: newEclipse, remainingTurns: eclipseTurns });
+                }
+                await refreshSciel();
+            };
 
             return (
                 <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
-                    <div className="flex items-center justify-between text-sm mb-1">
-                        <span>{t("combatAdmin.labels.scielCharges")}</span>
-                        <button
-                            onClick={() => handleOpenScielChargesModal(char)}
-                            className="btn btn-xs btn-ghost"
-                            title={t("combatAdmin.labels.editScielCharges")}
-                        >
-                            <FaEdit />
-                        </button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                        <AnimatedStatBar
-                            value={Math.min(100, sunCharges * 5)}
-                            label={`☀️ ${sunCharges}`}
-                            fillClass="bg-amber-400"
-                            ghostClass="bg-amber-400/30"
-                        />
-                        <AnimatedStatBar
-                            value={Math.min(100, moonCharges * 5)}
-                            label={`🌙 ${moonCharges}`}
-                            fillClass="bg-indigo-400"
-                            ghostClass="bg-indigo-400/30"
-                        />
-                    </div>
+                    <div className="text-sm mb-2">{t("combatAdmin.labels.scielCharges")}</div>
+                    {isEclipse ? (<>
+                        <div className="flex items-center gap-1">
+                            <span className="font-mono font-semibold text-orange-400 w-6 shrink-0 text-right">{eclipseCharges}</span>
+                            <span className="text-orange-400 w-5 shrink-0 text-center">🌕</span>
+                            {[-5, -1, +1, +5].map(delta => (
+                                <button key={delta}
+                                    className={`btn btn-xs flex-1 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20 border-0" : "text-success bg-success/10 hover:bg-success/20 border-0"}`}
+                                    onClick={() => handleEclipseDelta(delta)}
+                                >{delta > 0 ? `+${delta}` : delta}</button>
+                            ))}
+                            <button
+                                className="btn btn-xs flex-1 text-error bg-error/10 hover:bg-error/20 border-0"
+                                onClick={async () => {
+                                    await APIBattle.removeStatus(char.battleID, "Twilight");
+                                    await refreshSciel();
+                                }}
+                            >✕</button>
+                        </div>
+                    </>) : (<>
+                        <div className="flex items-center gap-1 mb-1">
+                            <span className="font-mono text-amber-300 text-xs w-6 shrink-0 text-right">{sunCharges}</span>
+                            <span className="text-amber-400 w-5 shrink-0 text-center">☀</span>
+                            {[-5, -1, +1, +5].map(delta => (
+                                <button key={delta}
+                                    className={`btn btn-xs flex-1 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20 border-0" : "text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 border-0"}`}
+                                    onClick={() => handleSunDelta(delta)}
+                                >{delta > 0 ? `+${delta}` : delta}</button>
+                            ))}
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <span className="font-mono text-purple-300 text-xs w-6 shrink-0 text-right">{moonCharges}</span>
+                            <span className="text-purple-400 w-5 shrink-0 text-center">☾</span>
+                            {[-5, -1, +1, +5].map(delta => (
+                                <button key={delta}
+                                    className={`btn btn-xs flex-1 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20 border-0" : "text-purple-400 bg-purple-400/10 hover:bg-purple-400/20 border-0"}`}
+                                    onClick={() => handleMoonDelta(delta)}
+                                >{delta > 0 ? `+${delta}` : delta}</button>
+                            ))}
+                        </div>
+                    </>)}
                 </div>
             );
         }
@@ -1648,7 +1706,13 @@ export default function CombatAdmin({
                             {currentStance ? stanceLabels[currentStance] : t("combatAdmin.stances.none")}
                         </span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-1 sm:flex sm:gap-2">
+                        <button
+                            className={`btn btn-xs flex-1 ${!currentStance ? "bg-gray-500 text-white border-gray-500 hover:bg-gray-600" : "btn-outline border-gray-500 text-gray-400 hover:bg-gray-500 hover:text-white"}`}
+                            onClick={async () => { await APIBattle.updateCharacterStance(char.battleID, null); showToast(t("combatAdmin.toasts.stanceChanged", { stance: t("combatAdmin.stances.none") })); reloadBattleDetails(); }}
+                        >
+                            {t("combatAdmin.stances.none")}
+                        </button>
                         <button
                             className={`btn btn-xs flex-1 ${currentStance === "Offensive" ? "btn-error" : "btn-outline btn-error"}`}
                             onClick={() => handleStanceChange("Offensive")}
@@ -2434,93 +2498,6 @@ export default function CombatAdmin({
         );
     }
 
-    function renderScielChargesModal() {
-        if (!showScielChargesModal) return null;
-
-        return (
-            <dialog className="modal modal-open">
-                <div className="modal-box space-y-4">
-                    <h3 className="font-bold text-lg">{t("combatAdmin.labels.editScielCharges")}</h3>
-
-                    <div>
-                        <label className="label">
-                            <span className="label-text">{t("combatAdmin.labels.sunCharges")} (0-20)</span>
-                        </label>
-                        <input
-                            type="number"
-                            className="input input-bordered w-full"
-                            value={scielSunCharges}
-                            placeholder={String(scielCurrentSun)}
-                            min={0}
-                            max={20}
-                            onChange={(e) => setScielSunCharges(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="label">
-                            <span className="label-text">{t("combatAdmin.labels.moonCharges")} (0-20)</span>
-                        </label>
-                        <input
-                            type="number"
-                            className="input input-bordered w-full"
-                            value={scielMoonCharges}
-                            placeholder={String(scielCurrentMoon)}
-                            min={0}
-                            max={20}
-                            onChange={(e) => setScielMoonCharges(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="label">
-                            <span className="label-text">{t("combatAdmin.labels.twilightEclipse")} (0 = inativo)</span>
-                        </label>
-                        <input
-                            type="number"
-                            className="input input-bordered w-full"
-                            value={scielTwilight}
-                            placeholder={String(scielCurrentTwilight)}
-                            min={0}
-                            max={40}
-                            onChange={(e) => setScielTwilight(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
-                        />
-                    </div>
-
-                    {((scielTwilight !== "" && (parseInt(scielTwilight) || 0) > 0) || (scielTwilight === "" && scielCurrentTwilight > 0)) && (
-                        <div>
-                            <label className="label">
-                                <span className="label-text">{t("combatAdmin.labels.twilightTurns")}</span>
-                            </label>
-                            <input
-                                type="number"
-                                className="input input-bordered w-full"
-                                value={scielTwilightTurns}
-                                placeholder={String(scielCurrentTwilightTurns)}
-                                min={1}
-                                max={99}
-                                onChange={(e) => setScielTwilightTurns(e.target.value)}
-                                onKeyDown={(e) => { if (e.key === "Enter") handleConfirmScielCharges(); }}
-                            />
-                        </div>
-                    )}
-
-                    <div className="modal-action">
-                        <button className="btn" onClick={() => setShowScielChargesModal(false)}>
-                            {t("combatAdmin.labels.cancel")}
-                        </button>
-
-                        <button className="btn btn-primary" onClick={handleConfirmScielCharges}>
-                            {t("combatAdmin.labels.confirm")}
-                        </button>
-                    </div>
-                </div>
-            </dialog>
-        );
-    }
 
     function renderLuneStainsModal() {
         if (!showLuneStainsModal) return null;
@@ -3504,7 +3481,6 @@ export default function CombatAdmin({
                     />
                     {renderGradientModal()}
                     {renderGustaveChargeModal()}
-                    {renderScielChargesModal()}
                     {renderLuneStainsModal()}
             </div>
 

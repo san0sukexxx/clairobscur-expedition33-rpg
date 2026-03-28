@@ -246,9 +246,20 @@ export default function BattleGroupStatus({
                                         {canEdit || isAdmin ? (
                                             /* Self / admin: name + status badges lado a lado */
                                             <div className="flex items-center gap-2 justify-between w-full">
-                                                <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
-                                                    {!isAdmin && ch.nameHidden ? "???" : ch.name}
-                                                </p>
+                                                <div className="flex flex-col gap-0.5">
+                                                    <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
+                                                        {!isAdmin && ch.nameHidden ? "???" : ch.name}
+                                                    </p>
+                                                    {canEdit && (
+                                                        <button
+                                                            className="btn btn-xs btn-outline gap-1 font-mono pointer-events-auto w-fit"
+                                                            onClick={(e) => { e.stopPropagation(); setArmorClassModalOpen(true); }}
+                                                        >
+                                                            <FaShieldAlt size={10} />
+                                                            {t("combatAdmin.npcDetails.armorClass")} {calculateArmorClass(player, weaponInfo)}
+                                                        </button>
+                                                    )}
+                                                </div>
 
                                                 <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80 justify-end">
                                                     {ch.status
@@ -661,62 +672,119 @@ export default function BattleGroupStatus({
                                             );
                                         })()}
 
-                                        {/* Sun/Moon charges for Sciel */}
-                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("sciel") && (
-                                            <div
-                                                className={`mt-2 flex items-center gap-3 text-sm ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
-                                                onClick={canEdit ? () => openSunMoon(ch) : undefined}
-                                            >
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-amber-400">☀</span>
-                                                    <span className="font-mono font-semibold text-amber-300">
-                                                        {ch.sunCharges ?? 0}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-purple-400">☾</span>
-                                                    <span className="font-mono font-semibold text-purple-300">
-                                                        {ch.moonCharges ?? 0}
-                                                    </span>
-                                                </div>
-                                                {canEdit && <FaEdit size={10} className="opacity-40" />}
-                                            </div>
-                                        )}
+                                        {/* Sun/Moon/Eclipse charges for Sciel */}
+                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("sciel") && (() => {
+                                            const sunCharges = ch.sunCharges ?? 0;
+                                            const moonCharges = ch.moonCharges ?? 0;
+                                            const twilightStatus = ch.status?.find(s => s.effectName === "Twilight");
+                                            const isEclipse = !!twilightStatus;
+                                            const eclipseCharges = twilightStatus?.ammount ?? 0;
+                                            const eclipseTurns = twilightStatus?.remainingTurns ?? 2;
 
-                                        {/* Stance indicator for Maelle only */}
+                                            const handleSunDelta = async (delta: number) => {
+                                                const newSun = Math.max(0, sunCharges + delta);
+                                                if (delta > 0 && moonCharges > 0) {
+                                                    await APIBattle.updateSunMoonCharges(ch.battleID, 0, 0);
+                                                    await APIBattle.addStatus({ battleCharacterId: ch.battleID, effectType: "Twilight", ammount: newSun + moonCharges, remainingTurns: 2 });
+                                                } else {
+                                                    await APIBattle.updateSunMoonCharges(ch.battleID, newSun, moonCharges);
+                                                }
+                                                requestPlayerRefresh();
+                                            };
+
+                                            const handleMoonDelta = async (delta: number) => {
+                                                const newMoon = Math.max(0, moonCharges + delta);
+                                                if (delta > 0 && sunCharges > 0) {
+                                                    await APIBattle.updateSunMoonCharges(ch.battleID, 0, 0);
+                                                    await APIBattle.addStatus({ battleCharacterId: ch.battleID, effectType: "Twilight", ammount: sunCharges + newMoon, remainingTurns: 2 });
+                                                } else {
+                                                    await APIBattle.updateSunMoonCharges(ch.battleID, sunCharges, newMoon);
+                                                }
+                                                requestPlayerRefresh();
+                                            };
+
+                                            const handleEclipseDelta = async (delta: number) => {
+                                                const newEclipse = Math.max(0, eclipseCharges + delta);
+                                                await APIBattle.removeStatus(ch.battleID, "Twilight");
+                                                if (newEclipse > 0) {
+                                                    await APIBattle.addStatus({ battleCharacterId: ch.battleID, effectType: "Twilight", ammount: newEclipse, remainingTurns: eclipseTurns });
+                                                }
+                                                requestPlayerRefresh();
+                                            };
+
+                                            return (
+                                                <div className="mt-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
+                                                    {isEclipse ? (<>
+                                                        {canEdit && (
+                                                            <div className="flex items-center gap-0.5">
+                                                                <span className="font-mono font-semibold text-orange-400 text-xs w-5 shrink-0 text-right">{eclipseCharges}</span>
+                                                                <span className="text-orange-400 text-xs w-4 shrink-0 text-center">🌕</span>
+                                                                {[-1, +1].map(delta => (
+                                                                    <button key={delta}
+                                                                        className={`btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20" : "text-success bg-success/10 hover:bg-success/20"}`}
+                                                                        onClick={() => handleEclipseDelta(delta)}
+                                                                    >{delta > 0 ? `+${delta}` : delta}</button>
+                                                                ))}
+                                                                <button
+                                                                    className="btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 text-error bg-error/10 hover:bg-error/20"
+                                                                    onClick={() => handleEclipseDelta(-eclipseCharges)}
+                                                                >✕</button>
+                                                            </div>
+                                                        )}
+                                                    </>) : (<>
+                                                        {canEdit && (<>
+                                                            <div className="flex items-center gap-0.5 mb-0.5">
+                                                                <span className="font-mono font-semibold text-amber-300 text-xs w-5 shrink-0 text-right">{sunCharges}</span>
+                                                                <span className="text-amber-400 text-xs w-4 shrink-0 text-center">☀</span>
+                                                                {[-1, +1].map(delta => (
+                                                                    <button key={delta}
+                                                                        className={`btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20" : "text-amber-400 bg-amber-400/10 hover:bg-amber-400/20"}`}
+                                                                        onClick={() => handleSunDelta(delta)}
+                                                                    >{delta > 0 ? `+${delta}` : delta}</button>
+                                                                ))}
+                                                            </div>
+                                                            <div className="flex items-center gap-0.5">
+                                                                <span className="font-mono font-semibold text-purple-300 text-xs w-5 shrink-0 text-right">{moonCharges}</span>
+                                                                <span className="text-purple-400 text-xs w-4 shrink-0 text-center">☾</span>
+                                                                {[-1, +1].map(delta => (
+                                                                    <button key={delta}
+                                                                        className={`btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20" : "text-purple-400 bg-purple-400/10 hover:bg-purple-400/20"}`}
+                                                                        onClick={() => handleMoonDelta(delta)}
+                                                                    >{delta > 0 ? `+${delta}` : delta}</button>
+                                                                ))}
+                                                            </div>
+                                                        </>)}
+                                                    </>)}
+                                                </div>
+                                            );
+                                        })()}
+
+                                        {/* Stance buttons for Maelle only */}
                                         {(canEdit || isAdmin) && ch.stance !== undefined &&
                                          ch.id.toLowerCase().includes("maelle") && (
-                                            <div
-                                                className={`mt-2 ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
-                                                onClick={canEdit ? () => openStance(ch) : undefined}
-                                            >
-                                                <div className="flex items-center gap-2 text-xs">
-                                                    <span className="opacity-70 flex items-center gap-1">{t("combat.stance")} {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
-                                                    {ch.stance === "Defensive" && (
-                                                        <div className="badge badge-info badge-sm">{t("combat.defensive")}</div>
-                                                    )}
-                                                    {ch.stance === "Offensive" && (
-                                                        <div className="badge badge-error badge-sm">{t("combat.offensive")}</div>
-                                                    )}
-                                                    {ch.stance === "Virtuous" && (
-                                                        <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">{t("combat.virtuous")}</div>
-                                                    )}
-                                                    {!ch.stance && (
-                                                        <div className="badge badge-ghost badge-sm">{t("combat.noStance")}</div>
-                                                    )}
+                                            <div className="mt-2">
+                                                <span className="text-xs opacity-70 uppercase">{t("combat.stance")}</span>
+                                                <div className="flex gap-1 mt-1 pointer-events-auto">
+                                                    <button
+                                                        className={`btn btn-xs flex-1 px-0 ${!ch.stance ? "bg-gray-500 text-white border-gray-500 hover:bg-gray-600" : "btn-outline border-gray-500 text-gray-400 opacity-40 hover:opacity-80"}`}
+                                                        onClick={canEdit ? () => APIBattle.updateCharacterStance(ch.battleID, null).then(requestPlayerRefresh) : undefined}
+                                                    >{t("combat.noStance")}</button>
+                                                    <button
+                                                        className={`btn btn-xs flex-1 px-0 ${ch.stance === "Offensive" ? "btn-error" : "btn-outline btn-error opacity-40 hover:opacity-80"}`}
+                                                        onClick={canEdit ? () => APIBattle.updateCharacterStance(ch.battleID, "Offensive").then(requestPlayerRefresh) : undefined}
+                                                    >{t("combat.offensive")}</button>
+                                                    <button
+                                                        className={`btn btn-xs flex-1 px-0 ${ch.stance === "Defensive" ? "btn-info" : "btn-outline btn-info opacity-40 hover:opacity-80"}`}
+                                                        onClick={canEdit ? () => APIBattle.updateCharacterStance(ch.battleID, "Defensive").then(requestPlayerRefresh) : undefined}
+                                                    >{t("combat.defensive")}</button>
+                                                    <button
+                                                        className={`btn btn-xs flex-1 px-0 ${ch.stance === "Virtuous" ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600" : "btn-outline border-purple-500 text-purple-500 opacity-40 hover:opacity-80"}`}
+                                                        onClick={canEdit ? () => APIBattle.updateCharacterStance(ch.battleID, "Virtuous").then(requestPlayerRefresh) : undefined}
+                                                    >{t("combat.virtuous")}</button>
                                                 </div>
                                             </div>
                                         )}
 
-                                        {canEdit && (
-                                            <button
-                                                className="mt-2 btn btn-xs btn-outline gap-1 font-mono pointer-events-auto"
-                                                onClick={(e) => { e.stopPropagation(); setArmorClassModalOpen(true); }}
-                                            >
-                                                <FaShieldAlt size={10} />
-                                                {t("combatAdmin.npcDetails.armorClass")} {calculateArmorClass(player, weaponInfo)}
-                                            </button>
-                                        )}
                                     </div>}
                                 </div>
                             );
@@ -786,64 +854,7 @@ export default function BattleGroupStatus({
                     />
 
                     {/* Sun/Moon modal */}
-                    {editing === "sunMoon" && (
-                        <dialog className="modal modal-open">
-                            <div className="modal-box max-w-xs space-y-4">
-                                <h3 className="font-bold text-lg">☀ / ☾</h3>
-                                <div className="flex gap-4">
-                                    <div className="flex-1">
-                                        <label className="label label-text text-xs">☀ Sun</label>
-                                        <input
-                                            type="number"
-                                            className="input input-bordered w-full"
-                                            value={editSun}
-                                            min={0}
-                                            onChange={e => setEditSun(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="flex-1">
-                                        <label className="label label-text text-xs">☾ Moon</label>
-                                        <input
-                                            type="number"
-                                            className="input input-bordered w-full"
-                                            value={editMoon}
-                                            min={0}
-                                            onChange={e => setEditMoon(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="modal-action">
-                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
-                                    <button className="btn btn-primary btn-sm" onClick={confirmSunMoon}>Confirmar</button>
-                                </div>
-                            </div>
-                            <div className="modal-backdrop" onClick={closeEdit} />
-                        </dialog>
-                    )}
 
-                    {/* Stance modal */}
-                    {editing === "stance" && (
-                        <dialog className="modal modal-open">
-                            <div className="modal-box max-w-xs space-y-4">
-                                <h3 className="font-bold text-lg">{t("combat.stance")}</h3>
-                                <select
-                                    className="select select-bordered w-full"
-                                    value={editStance}
-                                    onChange={e => setEditStance(e.target.value as Stance | "")}
-                                >
-                                    <option value="">{t("combat.noStance")}</option>
-                                    <option value="Defensive">{t("combat.defensive")}</option>
-                                    <option value="Offensive">{t("combat.offensive")}</option>
-                                    <option value="Virtuous">{t("combat.virtuous")}</option>
-                                </select>
-                                <div className="modal-action">
-                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
-                                    <button className="btn btn-primary btn-sm" onClick={confirmStance}>Confirmar</button>
-                                </div>
-                            </div>
-                            <div className="modal-backdrop" onClick={closeEdit} />
-                        </dialog>
-                    )}
 
                     {/* Rank modal */}
                     {editing === "rank" && (

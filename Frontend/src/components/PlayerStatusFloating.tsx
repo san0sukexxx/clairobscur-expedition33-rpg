@@ -332,24 +332,28 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
                         </div>
                     )}
 
-                {/* Stance indicator for Maelle only */}
+                {/* Stance buttons for Maelle only */}
                 {ch.stance !== undefined &&
                  ch.id.toLowerCase().includes("maelle") && (
-                    <div className="mt-2 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openStance}>
-                        <div className="flex items-center gap-2 text-[10px]">
-                            <span className="opacity-70 flex items-center gap-1">{t("combat.stance")} <FaEdit size={10} className="opacity-40" /></span>
-                            {ch.stance === "Defensive" && (
-                                <div className="badge badge-info badge-sm">{t("combat.defensive")}</div>
-                            )}
-                            {ch.stance === "Offensive" && (
-                                <div className="badge badge-error badge-sm">{t("combat.offensive")}</div>
-                            )}
-                            {ch.stance === "Virtuous" && (
-                                <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">{t("combat.virtuous")}</div>
-                            )}
-                            {!ch.stance && (
-                                <div className="badge badge-ghost badge-sm">{t("combat.noStance")}</div>
-                            )}
+                    <div className="mt-2">
+                        <span className="text-[10px] opacity-70 uppercase">{t("combat.stance")}</span>
+                        <div className="flex gap-1 mt-1">
+                            <button
+                                className={`btn btn-xs flex-1 px-0 ${!ch.stance ? "bg-gray-500 text-white border-gray-500 hover:bg-gray-600" : "btn-outline border-gray-500 text-gray-400 opacity-40 hover:opacity-80"}`}
+                                onClick={() => APIBattle.updateCharacterStance(ch.battleID, null).then(requestPlayerRefresh)}
+                            >{t("combat.noStance")}</button>
+                            <button
+                                className={`btn btn-xs flex-1 px-0 ${ch.stance === "Offensive" ? "btn-error" : "btn-outline btn-error opacity-40 hover:opacity-80"}`}
+                                onClick={() => APIBattle.updateCharacterStance(ch.battleID, "Offensive").then(requestPlayerRefresh)}
+                            >{t("combat.offensive")}</button>
+                            <button
+                                className={`btn btn-xs flex-1 px-0 ${ch.stance === "Defensive" ? "btn-info" : "btn-outline btn-info opacity-40 hover:opacity-80"}`}
+                                onClick={() => APIBattle.updateCharacterStance(ch.battleID, "Defensive").then(requestPlayerRefresh)}
+                            >{t("combat.defensive")}</button>
+                            <button
+                                className={`btn btn-xs flex-1 px-0 ${ch.stance === "Virtuous" ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600" : "btn-outline border-purple-500 text-purple-500 opacity-40 hover:opacity-80"}`}
+                                onClick={() => APIBattle.updateCharacterStance(ch.battleID, "Virtuous").then(requestPlayerRefresh)}
+                            >{t("combat.virtuous")}</button>
                         </div>
                     </div>
                 )}
@@ -569,29 +573,6 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
                 </dialog>
             )}
 
-            {/* Stance modal */}
-            {editing === "stance" && (
-                <dialog className="modal modal-open">
-                    <div className="modal-box max-w-xs space-y-4">
-                        <h3 className="font-bold text-lg">{t("combat.stance")}</h3>
-                        <select
-                            className="select select-bordered w-full"
-                            value={editStance}
-                            onChange={e => setEditStance(e.target.value as Stance | "")}
-                        >
-                            <option value="">{t("combat.noStance")}</option>
-                            <option value="Defensive">{t("combat.defensive")}</option>
-                            <option value="Offensive">{t("combat.offensive")}</option>
-                            <option value="Virtuous">{t("combat.virtuous")}</option>
-                        </select>
-                        <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
-                            <button className="btn btn-primary btn-sm" onClick={confirmStance}>Confirmar</button>
-                        </div>
-                    </div>
-                    <div className="modal-backdrop" onClick={closeEdit} />
-                </dialog>
-            )}
 
             {/* Rank modal */}
             {editing === "rank" && (
