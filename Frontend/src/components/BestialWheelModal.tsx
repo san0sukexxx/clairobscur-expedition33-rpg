@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { t } from "../i18n";
 import { BestialWheel } from "./BestialWheel";
 
 interface BestialWheelModalProps {
     open: boolean;
     position: number;
-    reversed: boolean;
     onConfirm: (newPosition: number) => void;
-    onToggleReversed: () => void;
     onCancel: () => void;
 }
 
@@ -24,32 +22,19 @@ const TEXT_COLOR: Record<string, string> = {
 export default function BestialWheelModal({
     open,
     position,
-    reversed,
     onConfirm,
-    onToggleReversed,
     onCancel,
 }: BestialWheelModalProps) {
     const [advance, setAdvance] = useState("");
-    const [localReversed, setLocalReversed] = useState(reversed);
-
-    useEffect(() => {
-        setLocalReversed(reversed);
-    }, [reversed]);
 
     if (!open) return null;
 
     const delta = advance === "" ? 0 : Math.abs(Number(advance)) || 0;
-    const direction = localReversed ? -1 : 1;
-    const preview = ((position + delta * direction) % WHEEL_SIZE + WHEEL_SIZE) % WHEEL_SIZE;
+    const preview = ((position + delta) % WHEEL_SIZE + WHEEL_SIZE) % WHEEL_SIZE;
     const hasChange = delta > 0;
 
     function handleConfirm() {
         onConfirm(hasChange ? preview : position);
-    }
-
-    function handleToggleReversed() {
-        setLocalReversed(prev => !prev);
-        onToggleReversed();
     }
 
     return (
@@ -57,7 +42,7 @@ export default function BestialWheelModal({
             <div className="modal-box max-w-xs space-y-4">
                 <h3 className="font-bold text-lg">{t("combat.bestialWheel")}</h3>
 
-                <BestialWheel position={position} reversed={localReversed} />
+                <BestialWheel position={position} />
 
                 {hasChange && (
                     <div className="text-center text-sm font-mono">
@@ -83,13 +68,7 @@ export default function BestialWheelModal({
                     />
                 </div>
 
-                <div className="modal-action flex items-center">
-                    <button
-                        className={`btn btn-xs mr-auto ${localReversed ? "btn-primary" : "btn-ghost"}`}
-                        onClick={handleToggleReversed}
-                    >
-                        ⟲ {t("combat.reverseWheel")}{localReversed ? " ✓" : ""}
-                    </button>
+                <div className="modal-action">
                     <button className="btn btn-sm" onClick={onCancel}>
                         {t("combatAdmin.labels.cancel")}
                     </button>

@@ -1750,7 +1750,7 @@ export default function CombatAdmin({
 
             return (
                 <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
-                    <BestialWheel position={char.bestialWheelPosition} reversed={char.bestialWheelReversed ?? false} />
+                    <BestialWheel position={char.bestialWheelPosition} />
                     <div className="flex gap-1 mt-2">
                         {[-5, -1, +1, +5].map(delta => (
                             <button

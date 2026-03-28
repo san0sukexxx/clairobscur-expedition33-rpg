@@ -71,12 +71,6 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
     // Status description
     const [expandedStatusBadge, setExpandedStatusBadge] = useState<string | null>(null);
 
-    // Local bestial wheel reversed state for immediate feedback
-    const [localWheelReversed, setLocalWheelReversed] = useState(false);
-    useEffect(() => {
-        if (ch) setLocalWheelReversed(ch.bestialWheelReversed ?? false);
-    }, [ch?.bestialWheelReversed]);
-
     if (!ch) return null;
 
     // Don't show if player can still roll initiative (hasn't joined battle yet)
@@ -138,12 +132,6 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
     function openCharge() { setEditValue(ch!.chargePoints ?? 0); setEditing("charge"); }
     function openGradient() { setEditValue(ch!.gradientPoints ?? 0); setEditing("gradient"); }
     function openBestialWheel() { setEditValue(ch!.bestialWheelPosition ?? 0); setEditing("bestialWheel"); }
-    async function toggleBestialWheelReversed() {
-        const newVal = !localWheelReversed;
-        setLocalWheelReversed(newVal);
-        await APIBattle.updateBestialWheelReversed(ch!.battleID, newVal);
-        requestPlayerRefresh();
-    }
     function openSunMoon() {
         setEditSun(String(ch!.sunCharges ?? 0));
         setEditMoon(String(ch!.moonCharges ?? 0));
@@ -328,7 +316,7 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
                             <div className="flex items-center gap-1 mb-1 text-[10px] opacity-70 uppercase">
                                 Bestial Wheel <FaEdit size={10} className="opacity-40" />
                             </div>
-                            <BestialWheel position={ch.bestialWheelPosition} reversed={localWheelReversed} />
+                            <BestialWheel position={ch.bestialWheelPosition} />
                         </div>
                     )}
 
@@ -531,9 +519,7 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
             <BestialWheelModal
                 open={editing === "bestialWheel"}
                 position={ch.bestialWheelPosition ?? 0}
-                reversed={localWheelReversed}
                 onConfirm={v => confirmNumericEdit("bestialWheel", v)}
-                onToggleReversed={toggleBestialWheelReversed}
                 onCancel={closeEdit}
             />
 

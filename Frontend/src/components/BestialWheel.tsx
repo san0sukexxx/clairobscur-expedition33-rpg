@@ -7,7 +7,6 @@ const VISIBLE_SLOTS = 9;
 
 interface BestialWheelProps {
     position: number; // Current position in the infinite wheel
-    reversed?: boolean; // Whether the wheel direction is reversed
 }
 
 const COLOR_CLASSES: Record<string, string> = {
@@ -18,23 +17,21 @@ const COLOR_CLASSES: Record<string, string> = {
     green: "bg-success border-success/50"
 };
 
-export const BestialWheel: React.FC<BestialWheelProps> = ({ position, reversed = false }) => {
+export const BestialWheel: React.FC<BestialWheelProps> = ({ position }) => {
     // Generate the visible slots based on current position
     const visibleSlots = useMemo(() => {
         const slots: string[] = [];
         for (let i = 0; i < VISIBLE_SLOTS; i++) {
-            const offset = reversed ? -i : i;
-            const index = ((position + offset) % WHEEL_PATTERN.length + WHEEL_PATTERN.length) % WHEEL_PATTERN.length;
+            const index = ((position + i) % WHEEL_PATTERN.length + WHEEL_PATTERN.length) % WHEEL_PATTERN.length;
             slots.push(WHEEL_PATTERN[index]);
         }
         return slots;
-    }, [position, reversed]);
+    }, [position]);
 
     return (
         <div className="flex flex-col gap-1 w-full">
             <div className="flex items-center gap-1 text-xs uppercase opacity-70 font-semibold">
                 {t("combat.bestialWheel")}
-                {reversed && <span className="text-[10px]">⟲ {t("combat.bestialWheelReversed")}</span>}
             </div>
             <div className="flex gap-1 w-full">
                 {visibleSlots.map((color, index) => (

@@ -454,7 +454,7 @@ export default function BattleGroupStatus({
                                             ch.bestialWheelPosition !== undefined &&
                                             ch.bestialWheelPosition !== null && (
                                                 <div className="w-full">
-                                                    <BestialWheel position={ch.bestialWheelPosition} reversed={ch.bestialWheelReversed ?? false} />
+                                                    <BestialWheel position={ch.bestialWheelPosition} />
                                                     {canEdit && (
                                                         <div className="flex gap-1 mt-1 pointer-events-auto">
                                                             {[-5, -1, +1, +5].map(delta => (
