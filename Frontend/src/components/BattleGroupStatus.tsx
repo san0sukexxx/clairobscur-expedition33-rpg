@@ -321,15 +321,17 @@ export default function BattleGroupStatus({
                                     </div>
 
                                     {/* Status badges para outros jogadores: abaixo, à esquerda */}
-                                    {!canEdit && !isAdmin && (
-                                        <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80 justify-start mt-2">
-                                            {ch.status
-                                                ?.filter(s => {
-                                                    if (s.effectName === "free-shot") return false;
-                                                    if (s.effectName === "invisible-barrier") return false;
-                                                    return true;
-                                                })
-                                                .map((st, idx) => {
+                                    {!canEdit && !isAdmin && (() => {
+                                        const visibleStatuses = ch.status?.filter(s => {
+                                            if (s.effectName === "free-shot") return false;
+                                            if (s.effectName === "invisible-barrier") return false;
+                                            return true;
+                                        }) ?? [];
+                                        const hasItems = visibleStatuses.length > 0 || npcIsFlying(ch);
+                                        if (!hasItems) return null;
+                                        return (
+                                            <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80 justify-start mt-2">
+                                                {visibleStatuses.map((st, idx) => {
                                                     const showAmmount = shouldShowStatusAmmount(st.effectName);
                                                     const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
                                                     return (
@@ -344,14 +346,14 @@ export default function BattleGroupStatus({
                                                         </span>
                                                     );
                                                 })}
-
-                                            {npcIsFlying(ch) && (
-                                                <span key="flying" className="px-1 py-0.5 rounded bg-base-300">
-                                                    {t("combat.flying")}
-                                                </span>
-                                            )}
-                                        </div>
-                                    )}
+                                                {npcIsFlying(ch) && (
+                                                    <span key="flying" className="px-1 py-0.5 rounded bg-base-300">
+                                                        {t("combat.flying")}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        );
+                                    })()}
 
                                     {expandedStatusBadge?.startsWith(`${ch.battleID}-`) && (
                                         <p className="text-[10px] opacity-70 leading-relaxed mt-1 px-1">
