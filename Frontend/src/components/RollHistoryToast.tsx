@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { createPortal, flushSync } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { GiDiceTwentyFacesTwenty } from "react-icons/gi";
 import type { RollEvent } from "../utils/rollDispatcher";
@@ -73,6 +73,7 @@ export function RollHistoryToast() {
     const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const lastRollTime = useRef<number>(0);
+    const pendingCountRef = useRef(1);
 
     useEffect(() => {
         /** Groups dice commands like "1d6 + 1d6 + 2d8" into "2d6 + 2d8" */
@@ -94,31 +95,38 @@ export function RollHistoryToast() {
             const roll = (e as CustomEvent<RollEvent>).detail;
             const now = Date.now();
 
-            setHistory(prev => {
-                const last = prev[prev.length - 1];
-                // Accumulate only if explicitly allowed, same label, and within 3 seconds
-                if (last && roll.accumulate && last.label === roll.label && now - lastRollTime.current < 3000) {
-                    const allCommands = [...(last._diceCommands ?? [last.diceCommand]), roll.diceCommand];
-                    const merged: RollEvent = {
-                        ...last,
-                        id: now + Math.random(),
-                        diceRolled: last.diceRolled + roll.diceRolled,
-                        total: last.total + roll.total,
-                        diceValues: [...(last.diceValues ?? []), ...(roll.diceValues ?? [])],
-                        diceCommand: groupDiceCommand(allCommands),
-                        _diceCommands: allCommands,
-                    };
+            flushSync(() => {
+                setHistory(prev => {
+                    const last = prev[prev.length - 1];
+                    // Accumulate only if explicitly allowed, same label, and within 3 seconds
+                    if (last && roll.accumulate && last.label === roll.label && now - lastRollTime.current < 3000) {
+                        const allCommands = [...(last._diceCommands ?? [last.diceCommand]), roll.diceCommand];
+                        const merged: RollEvent = {
+                            ...last,
+                            id: now + Math.random(),
+                            diceRolled: last.diceRolled + roll.diceRolled,
+                            total: last.total + roll.total,
+                            diceValues: [...(last.diceValues ?? []), ...(roll.diceValues ?? [])],
+                            diceCommand: groupDiceCommand(allCommands),
+                            _diceCommands: allCommands,
+                        };
+                        lastRollTime.current = now;
+                        const next = [...prev.slice(0, -1), merged];
+                        pendingCountRef.current = next.length;
+                        return next;
+                    }
                     lastRollTime.current = now;
-                    return [...prev.slice(0, -1), merged];
-                }
-                lastRollTime.current = now;
-                return [...prev, roll].slice(-10);
+                    const next = [...prev, roll].slice(-10);
+                    pendingCountRef.current = next.length;
+                    return next;
+                });
             });
 
             setVisible(true);
             setDimmed(false);
             if (hideTimer.current) clearTimeout(hideTimer.current);
-            hideTimer.current = setTimeout(() => setVisible(false), 7000);
+            const delay = 7000 + Math.min((pendingCountRef.current - 1) * 1000, 9000);
+            hideTimer.current = setTimeout(() => setVisible(false), delay);
         }
         window.addEventListener("roll-result", handleRoll);
         return () => {
