@@ -185,22 +185,9 @@ export default function BattleGroupStatus({
 
     const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
 
-    return (<>
-        <div className={selfOnly ? "" : "mt-5"}>
-            <div className={selfOnly ? "" : "card bg-base-100 shadow"}>
-                <div className={selfOnly ? "" : "card-body p-3"}>
-                    {!selfOnly && <h2 className="card-title justify-center">
-                        {currentCharacter?.isEnemy != isEnemies ? t("combat.enemies") : t("combat.team")}
-                    </h2>}
-
-                    {!selfOnly && characters.length == 0 && (
-                        <div className="text-sm text-neutral-500 italic text-center">
-                            {t("combat.noOneHere")}
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-                        {characters.map((ch) => {
+    const cardGrid = (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+            {characters.map((ch) => {
                             const isDead = ch.healthPoints === 0;
                             const isSelf = excludeSelf && currentCharacter && ch.battleID === currentCharacter.battleID;
                             const isSelectable = !isExecutingSkill && !isSelf && (
@@ -642,11 +629,11 @@ export default function BattleGroupStatus({
                                 </div>
                             );
                         })}
-                    </div>
-                </div>
-            </div>
+        </div>
+    );
 
-            {/* Conditions modal */}
+    const modals = (<>
+        {/* Conditions modal */}
             {playerCh && (
                 <StatusConditionsModal
                     open={conditionsOpen}
@@ -887,7 +874,6 @@ export default function BattleGroupStatus({
                 </>,
                 document.body
             )}
-        </div>
         {imageModalNpc && (
             <NpcImageModal
                 npcId={imageModalNpc.id}
@@ -897,4 +883,27 @@ export default function BattleGroupStatus({
             />
         )}
     </>);
+
+    if (selfOnly) {
+        return <>{cardGrid}{modals}</>;
+    }
+
+    return (
+        <div className="mt-5">
+            <div className="card bg-base-100 shadow">
+                <div className="card-body p-3">
+                    <h2 className="card-title justify-center">
+                        {currentCharacter?.isEnemy != isEnemies ? t("combat.enemies") : t("combat.team")}
+                    </h2>
+                    {characters.length === 0 && (
+                        <div className="text-sm text-neutral-500 italic text-center">
+                            {t("combat.noOneHere")}
+                        </div>
+                    )}
+                    {cardGrid}
+                </div>
+            </div>
+            {modals}
+        </div>
+    );
 }
