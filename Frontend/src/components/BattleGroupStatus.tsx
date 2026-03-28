@@ -208,7 +208,7 @@ export default function BattleGroupStatus({
                                         if (isSelectable && onSelectTarget) onSelectTarget(ch);
                                     }}
                                     className={`
-                rounded-xl bg-base-200/60 p-3 shadow-sm transition-all duration-200
+                rounded-xl bg-base-200/60 px-3 pt-3 pb-2 shadow-sm transition-all duration-200
                 ${isDead && !isReviveMode ? "pointer-events-none opacity-60" : ""}
                 ${isSelectable
                                             ? "cursor-pointer hover:shadow-lg target-glow"
