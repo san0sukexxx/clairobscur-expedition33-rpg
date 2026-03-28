@@ -12,7 +12,6 @@ import { type BattleCharacterInfo, type Stance } from "../api/ResponseModel";
 import { LuneStainsModal } from "./LuneStainsModal";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
-import BestialWheelModal from "./BestialWheelModal";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { npcIsFlying } from "../utils/NpcCalculator";
 import StatEditModal from "./StatEditModal";
@@ -171,16 +170,6 @@ export default function BattleGroupStatus({
     function openStainsEdit(ch: BattleCharacterInfo) {
         setStainsEditChId(ch.battleID);
         setEditing("stains");
-    }
-    function openBestialWheel(ch: BattleCharacterInfo) {
-        setEditValue(ch.bestialWheelPosition ?? 0);
-        setEditing("bestialWheel");
-    }
-    async function toggleBestialWheelReversed() {
-        if (!playerCh) return;
-        const newVal = !(playerCh.bestialWheelReversed ?? false);
-        await APIBattle.updateBestialWheelReversed(playerCh.battleID, newVal);
-        requestPlayerRefresh();
     }
 
     const cardGrid = (
@@ -464,16 +453,23 @@ export default function BattleGroupStatus({
                                         {(canEdit || isAdmin) && ch.id.toLowerCase().includes("monoco") &&
                                             ch.bestialWheelPosition !== undefined &&
                                             ch.bestialWheelPosition !== null && (
-                                                <div
-                                                    className={`w-full ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
-                                                    onClick={canEdit ? () => openBestialWheel(ch) : undefined}
-                                                >
+                                                <div className="w-full">
+                                                    <BestialWheel position={ch.bestialWheelPosition} reversed={ch.bestialWheelReversed ?? false} />
                                                     {canEdit && (
-                                                        <div className="flex items-center gap-1 mb-1 text-[10px] opacity-70 uppercase">
-                                                            Bestial Wheel <FaEdit size={10} className="opacity-40" />
+                                                        <div className="flex gap-1 mt-1 pointer-events-auto">
+                                                            {[-5, -1, +1, +5].map(delta => (
+                                                                <button
+                                                                    key={delta}
+                                                                    className={`btn btn-xs flex-1 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20 border-0" : "text-success bg-success/10 hover:bg-success/20 border-0"}`}
+                                                                    onClick={async () => {
+                                                                        const newPos = Math.max(0, Math.min(8, (ch.bestialWheelPosition ?? 0) + delta));
+                                                                        await APIBattle.updateBestialWheelPosition(ch.battleID, newPos);
+                                                                        requestPlayerRefresh();
+                                                                    }}
+                                                                >{delta > 0 ? `+${delta}` : delta}</button>
+                                                            ))}
                                                         </div>
                                                     )}
-                                                    <BestialWheel position={ch.bestialWheelPosition} reversed={ch.bestialWheelReversed ?? false} />
                                                 </div>
                                             )}
 
@@ -841,15 +837,6 @@ export default function BattleGroupStatus({
                         minValue={0}
                         maxValue={playerCh.maxChargePoints ?? 10}
                         onConfirm={v => confirmNumericEdit("charge", v)}
-                        onCancel={closeEdit}
-                    />
-
-                    <BestialWheelModal
-                        open={editing === "bestialWheel"}
-                        position={playerCh.bestialWheelPosition ?? 0}
-                        reversed={playerCh.bestialWheelReversed ?? false}
-                        onConfirm={v => confirmNumericEdit("bestialWheel", v)}
-                        onToggleReversed={toggleBestialWheelReversed}
                         onCancel={closeEdit}
                     />
 

@@ -42,6 +42,7 @@ import { pictoColorHex, calculatePictoSpeed, calculatePictoHealth, calculatePict
 import { SpecialAttacksList } from "../data/SpecialAttackList";
 import { getLocationById } from "../utils/LocationUtils";
 import NpcImageModal from "./NpcImageModal";
+import { BestialWheel } from "./BestialWheel";
 
 
 const canCharacterUseWeapon = WeaponsDataLoader.canCharacterUseWeapon.bind(WeaponsDataLoader);
@@ -1731,6 +1732,37 @@ export default function CombatAdmin({
                         >
                             {t("combatAdmin.stances.virtuous")}
                         </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Monoco – Bestial Wheel
+        if (charId === "monoco" || charId.includes("monoco")) {
+            if (char.bestialWheelPosition === undefined || char.bestialWheelPosition === null) return null;
+
+            const refreshMonoco = async () => {
+                if (battleId) {
+                    const freshData = await APIBattle.getById(battleId);
+                    setBattleDetails(freshData);
+                }
+            };
+
+            return (
+                <div className="rounded-lg bg-base-100/50 p-2 combat-sub-card">
+                    <BestialWheel position={char.bestialWheelPosition} reversed={char.bestialWheelReversed ?? false} />
+                    <div className="flex gap-1 mt-2">
+                        {[-5, -1, +1, +5].map(delta => (
+                            <button
+                                key={delta}
+                                className={`btn btn-xs flex-1 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20 border-0" : "text-success bg-success/10 hover:bg-success/20 border-0"}`}
+                                onClick={async () => {
+                                    const newPos = Math.max(0, Math.min(8, char.bestialWheelPosition! + delta));
+                                    await APIBattle.updateBestialWheelPosition(char.battleID, newPos);
+                                    await refreshMonoco();
+                                }}
+                            >{delta > 0 ? `+${delta}` : delta}</button>
+                        ))}
                     </div>
                 </div>
             );
