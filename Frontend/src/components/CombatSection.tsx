@@ -157,11 +157,11 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 </div>
             )}
 
-            {/* <PlayerStatusFloating
+            <PlayerStatusFloating
                 player={player}
                 highlighted={statusHighlighted}
                 weaponInfo={weaponInfo}
-            /> */}
+            />
 
             <InitiativesQueue
                 characters={player?.fightInfo?.characters}
