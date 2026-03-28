@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { FaBars, FaExchangeAlt } from "react-icons/fa";
+import { FaBars, FaExchangeAlt, FaTimes, FaUsers, FaSkull, FaFlask, FaStar, FaCheckCircle, FaCrosshairs } from "react-icons/fa";
+import { GiSwordWound, GiRunningNinja, GiJoinIn } from "react-icons/gi";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
@@ -132,64 +133,64 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
         >
           {/* Quando selecionando alvo de habilidade, mostrar apenas Cancelar */}
           {isSelectingSkillTarget ? (
-            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
-              {t("common.cancel")}
+            <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
+              <FaTimes size={14} /> {t("common.cancel")}
             </button>
           ) : (
             <>
               {tab == opositeTeamTab && !isAttacking && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
-                  {t("combat.team")}
+                <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
+                  <FaUsers size={14} /> {t("combat.team")}
                 </button>
               )}
 
               {tab == currentTeamTab && !isAttacking && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
-                  {t("combat.enemies")}
+                <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
+                  <FaSkull size={14} /> {t("combat.enemies")}
                 </button>
               )}
 
-{player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
-                  {t("combat.joinBattle")}
+              {player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
+                <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
+                  <GiJoinIn size={16} /> {t("combat.joinBattle")}
                 </button>
               )}
 
               {isYourTurn && !isAttacking && (
                 <>
                   {isFleeing ? (
-                    <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
-                      {t("combat.endTurn")}
+                    <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
+                      <FaCheckCircle size={14} /> {t("combat.endTurn")}
                     </button>
                   ) : (
                     <>
                       {canUseItems && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
-                          {t("combat.items")}
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
+                          <FaFlask size={14} /> {t("combat.items")}
                         </button>
                       )}
                       {canUseHabilities && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
-                          {t("combat.specialAttacks")}
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
+                          <FaStar size={14} /> {t("combat.specialAttacks")}
                         </button>
                       )}
                       {canUseFlee && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Flee)}>
-                          {t("combat.flee")}
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Flee)}>
+                          <GiRunningNinja size={16} /> {t("combat.flee")}
                         </button>
                       )}
                       {canUseFreeShot && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
-                          {t("combat.freeShot")}
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
+                          <FaCrosshairs size={14} /> {t("combat.freeShot")}
                         </button>
                       )}
                       {canAttack && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
-                          {t("combat.attack")}
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
+                          <GiSwordWound size={16} /> {t("combat.attack")}
                         </button>
                       )}
-                      <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
-                        {t("combat.endTurn")}
+                      <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
+                        <FaCheckCircle size={14} /> {t("combat.endTurn")}
                       </button>
                     </>
                   )}
@@ -197,8 +198,8 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
               )}
 
               {isAttacking && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
-                  {t("common.cancel")}
+                <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
+                  <FaTimes size={14} /> {t("common.cancel")}
                 </button>
               )}
             </>
