@@ -1,25 +1,75 @@
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { FaEdit, FaShieldAlt } from "react-icons/fa";
+import { ArmorClassModal } from "./ArmorClassModal";
 import { type GetPlayerResponse } from "../api/APIPlayer";
-import { type BattleCharacterInfo } from "../api/ResponseModel";
+import { APIBattle } from "../api/APIBattle";
+import { type BattleCharacterInfo, type Stance, type WeaponInfo } from "../api/ResponseModel";
+import { calculateArmorClass } from "../utils/PlayerCalculator";
+import { LuneStainsModal } from "./LuneStainsModal";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
-import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
+import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
+import BestialWheelModal from "./BestialWheelModal";
+import StatEditModal from "./StatEditModal";
+import { HpEditModal } from "./HpEditModal";
+import { ApEditModal } from "./ApEditModal";
+import { StatusConditionsModal } from "./StatusConditionsModal";
 import { t } from "../i18n";
 
 interface PlayerStatusFloatingProps {
     player: GetPlayerResponse | null;
+    highlighted?: boolean;
+    weaponInfo?: WeaponInfo | null;
 }
 
 function pct(cur: number, max: number) {
     return Math.max(0, Math.min(100, Math.round((cur / max) * 100)));
 }
 
-export default function PlayerStatusFloating({ player }: PlayerStatusFloatingProps) {
+type EditField = "hp" | "mp" | "charge" | "gradient" | "bestialWheel" | "sunMoon" | "stance" | "rank" | "stains" | null;
+
+function requestPlayerRefresh() {
+    window.dispatchEvent(new Event("player-refresh"));
+}
+
+export default function PlayerStatusFloating({ player, highlighted, weaponInfo }: PlayerStatusFloatingProps) {
     const characters = player?.fightInfo?.characters ?? [];
     const playerBattleID = player?.fightInfo?.playerBattleID;
 
     const ch: BattleCharacterInfo | undefined =
         characters.find(c => c.battleID === playerBattleID) ?? characters.find(c => !c.isEnemy);
+
+    // Edit state
+    const [editing, setEditing] = useState<EditField>(null);
+    const [editValue, setEditValue] = useState(0);
+    // Sun/Moon
+    const [editSun, setEditSun] = useState("");
+    const [editMoon, setEditMoon] = useState("");
+    // Stance
+    const [editStance, setEditStance] = useState<Stance | "">("");
+    // Rank
+    const [editRank, setEditRank] = useState("D");
+    const [editRankProgress, setEditRankProgress] = useState("");
+    // Stain change animation
+    const [flashSlots, setFlashSlots] = useState<boolean[]>([false, false, false, false]);
+    const [armorClassModalOpen, setArmorClassModalOpen] = useState(false);
+
+    function triggerFlash(changed: boolean[]) {
+        setFlashSlots(changed);
+        setTimeout(() => setFlashSlots([false, false, false, false]), 800);
+    }
+
+
+    // Break edit modal
+    const [breakEditOpen, setBreakEditOpen] = useState(false);
+    const [editBreakValue, setEditBreakValue] = useState(0);
+
+    // Conditions modal
+    const [conditionsOpen, setConditionsOpen] = useState(false);
+    // Status description
+    const [expandedStatusBadge, setExpandedStatusBadge] = useState<string | null>(null);
 
     if (!ch) return null;
 
@@ -32,43 +82,115 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
     ) ?? false;
 
     // Check if player has any gradient skills equipped in slots
-    const hasGradientSkills = player?.skills?.some(playerSkill => {
-        if (playerSkill.slot === null || playerSkill.slot === undefined) return false;
-        const skillData = getEnrichedCharacterSkills(player).find(s => s.id === playerSkill.skillId);
-        return skillData?.isGradient ?? false;
+    const hasGradientSkills = player?.specialAttacks?.some(playerSA => {
+        if (playerSA.slot === null || playerSA.slot === undefined) return false;
+        const saData = getEnrichedCharacterSpecialAttacks(player).find(s => s.id === playerSA.specialAttackId);
+        return saData?.isGradient ?? false;
     }) ?? false;
 
+    const closeEdit = () => setEditing(null);
+
+    async function confirmNumericEdit(field: "hp" | "mp" | "charge" | "gradient" | "bestialWheel", value: number) {
+        switch (field) {
+            case "hp":
+                await APIBattle.updateCharacterHp(ch!.battleID, value);
+                break;
+            case "mp":
+                await APIBattle.updateCharacterMp(ch!.battleID, value);
+                break;
+            case "charge":
+                await APIBattle.updateCharacterChargePoints(ch!.battleID, value);
+                break;
+            case "gradient":
+                await APIBattle.updateTeamGradient(ch!.battleID, value);
+                break;
+            case "bestialWheel":
+                await APIBattle.updateBestialWheelPosition(ch!.battleID, value);
+                break;
+        }
+        closeEdit();
+    }
+
+    async function confirmSunMoon() {
+        await APIBattle.updateSunMoonCharges(ch!.battleID, Number(editSun) || 0, Number(editMoon) || 0);
+        closeEdit();
+    }
+
+    async function confirmStance() {
+        await APIBattle.updateCharacterStance(ch!.battleID, editStance === "" ? null : editStance as Stance);
+        closeEdit();
+    }
+
+    async function confirmRank() {
+        await APIBattle.updateCharacterRank(ch!.battleID, editRank, Number(editRankProgress) || 0);
+        closeEdit();
+    }
+
+    // Helpers to open edits
+    function openHp() { setEditValue(ch!.healthPoints); setEditing("hp"); }
+    function openMp() { setEditValue(ch!.magicPoints ?? 0); setEditing("mp"); }
+    function openCharge() { setEditValue(ch!.chargePoints ?? 0); setEditing("charge"); }
+    function openGradient() { setEditValue(ch!.gradientPoints ?? 0); setEditing("gradient"); }
+    function openBestialWheel() { setEditValue(ch!.bestialWheelPosition ?? 0); setEditing("bestialWheel"); }
+    function openSunMoon() {
+        setEditSun(String(ch!.sunCharges ?? 0));
+        setEditMoon(String(ch!.moonCharges ?? 0));
+        setEditing("sunMoon");
+    }
+    function openStance() {
+        setEditStance(ch!.stance ?? "");
+        setEditing("stance");
+    }
+    function openRank() {
+        setEditRank(ch!.perfectionRank ?? "D");
+        setEditRankProgress(String(ch!.rankProgress ?? 0));
+        setEditing("rank");
+    }
+    function openStainsEdit() {
+        setEditing("stains");
+    }
+
     return (
-        <div className="fixed bottom-20 left-4 z-40">
+        <div className={`fixed bottom-14 left-4 transition-all duration-300 ${highlighted ? "z-50 scale-105" : "z-40"}`}>
             <div
                 className="
                     rounded-xl bg-base-100/95 shadow-lg border border-base-300
                     p-3 w-64
                 "
             >
-                {ch.status && ch.status.length > 0 && (
-                    <div className="mb-2 flex flex-row flex-wrap gap-1">
-                        {ch.status.map((st, idx) => {
-                            const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns != null;
+                <div className="mb-2 flex flex-row flex-wrap gap-1">
+                    {ch.status?.map((st, idx) => {
+                        const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns != null;
 
-                            return (
-                                <span
-                                    key={idx}
-                                    className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-90"
-                                >
-                                    {getStatusLabel(st.effectName)}{" "}
-                                    {shouldShowStatusAmmount(st.effectName) && st.ammount}
-                                    {showTurns ? ` (${st.remainingTurns})` : ""}
-                                </span>
-                            );
-                        })}
-                    </div>
+                        return (
+                            <span
+                                key={idx}
+                                className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-90 cursor-pointer hover:opacity-100 transition-opacity"
+                                onClick={() => setExpandedStatusBadge(prev => prev === st.effectName ? null : st.effectName)}
+                            >
+                                {getStatusLabel(st.effectName)}{" "}
+                                {shouldShowStatusAmmount(st.effectName) && st.ammount}
+                                {showTurns ? ` (${st.remainingTurns})` : ""}
+                            </span>
+                        );
+                    })}
+                    <button
+                        className="px-1.5 py-0.5 rounded bg-base-300 text-[10px] opacity-70 hover:opacity-100 transition-opacity cursor-pointer flex items-center gap-1"
+                        onClick={() => setConditionsOpen(true)}
+                    >
+                        <FaEdit size={8} /> Condições
+                    </button>
+                </div>
+                {expandedStatusBadge && (
+                    <p className="text-[10px] opacity-70 leading-relaxed mb-1 px-1">
+                        {t(`battle.statusDescriptions.${expandedStatusBadge}`) || t("battle.statusDescriptions.default")}
+                    </p>
                 )}
 
                 <div className="flex flex-row gap-3 items-center justify-between">
-                    <div className="flex-1">
+                    <div className="flex-1 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openHp}>
                         <div className="flex items-center justify-between text-[10px] uppercase">
-                            <span className="opacity-70">HP</span>
+                            <span className="opacity-70 flex items-center gap-1">HP <FaEdit size={10} className="opacity-40" /></span>
                             <span className="font-mono text-xs">
                                 {ch.healthPoints}/{ch.maxHealthPoints}
                             </span>
@@ -78,23 +200,32 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                             label="HP"
                             fillClass="bg-error"
                             ghostClass="bg-error/30"
+                            breakMarkers={[
+                                { position: 66, triggered: (ch.breakCount ?? 0) >= 1 },
+                                { position: 33, triggered: (ch.breakCount ?? 0) >= 2 },
+                            ]}
                         />
                     </div>
+                    <button
+                        className="btn btn-xs btn-ghost text-warning p-0"
+                        onClick={() => { setEditBreakValue(2 - (ch.breakCount ?? 0)); setBreakEditOpen(true); }}
+                        title={t("combatAdmin.labels.breakEditTitle")}
+                    >💥</button>
 
                     {ch.magicPoints !== undefined &&
                         ch.magicPoints !== null &&
                         ch.maxMagicPoints !== undefined &&
                         ch.maxMagicPoints !== null && (
-                            <div className="flex-1">
+                            <div className="flex-1 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openMp}>
                                 <div className="flex items-center justify-between text-[10px] uppercase">
-                                    <span className="opacity-70">MP</span>
+                                    <span className="opacity-70 flex items-center gap-1">AP <FaEdit size={10} className="opacity-40" /></span>
                                     <span className="font-mono text-xs">
                                         {ch.magicPoints}/{ch.maxMagicPoints}
                                     </span>
                                 </div>
                                 <AnimatedStatBar
                                     value={pct(ch.magicPoints!, ch.maxMagicPoints!)}
-                                    label="MP"
+                                    label="AP"
                                     fillClass="bg-info"
                                     ghostClass="bg-info/30"
                                 />
@@ -102,25 +233,37 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                         )}
                 </div>
 
+                {/* AC */}
+                <button
+                    className="mt-1 btn btn-xs btn-outline gap-1 font-mono"
+                    onClick={() => setArmorClassModalOpen(true)}
+                >
+                    <FaShieldAlt size={10} />
+                    {t("combatAdmin.npcDetails.armorClass")} {calculateArmorClass(player, weaponInfo ?? null)}
+                </button>
+
                 {/* Charge bar for Gustave - below HP/MP */}
-                {ch.maxChargePoints !== undefined &&
-                    ch.maxChargePoints !== null &&
-                    ch.maxChargePoints > 0 && (
-                        <div className="mt-2">
+                {(() => {
+                    const isGustave = ch.id.toLowerCase().includes("gustave");
+                    const maxCharge = ch.maxChargePoints ?? (isGustave ? 10 : 0);
+                    if (maxCharge <= 0) return null;
+                    return (
+                        <div className="mt-2 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openCharge}>
                             <div className="flex items-center justify-between text-[10px] uppercase">
-                                <span className="opacity-70">Carga</span>
+                                <span className="opacity-70 flex items-center gap-1">{t("combat.charge")} <FaEdit size={10} className="opacity-40" /></span>
                                 <span className="font-mono text-xs">
-                                    {ch.chargePoints ?? 0}/{ch.maxChargePoints}
+                                    {ch.chargePoints ?? 0}/{maxCharge}
                                 </span>
                             </div>
                             <AnimatedStatBar
-                                value={pct(ch.chargePoints ?? 0, ch.maxChargePoints!)}
-                                label="Carga"
+                                value={pct(ch.chargePoints ?? 0, maxCharge)}
+                                label={t("combat.charge")}
                                 fillClass="bg-warning"
                                 ghostClass="bg-warning/30"
                             />
                         </div>
-                    )}
+                    );
+                })()}
 
                 {/* Gradient bar - only if player has gradient skills equipped and is in turns */}
                 {hasGradientSkills && playerInTurns && (() => {
@@ -129,16 +272,16 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     const progressValue = charges >= 3 ? 100 : pct(gradientPoints % 12, 12);
 
                     return (
-                        <div className="mt-2">
+                        <div className="mt-2 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openGradient}>
                             <div className="flex items-center justify-between text-[10px] uppercase">
-                                <span className="opacity-70">Gradiente</span>
+                                <span className="opacity-70 flex items-center gap-1">{t("combat.gradient")} <FaEdit size={10} className="opacity-40" /></span>
                                 <span className="font-mono text-xs">
                                     {charges}/3
                                 </span>
                             </div>
                             <AnimatedStatBar
                                 value={progressValue}
-                                label="Gradiente"
+                                label={t("combat.gradient")}
                                 fillClass="bg-purple-500"
                                 ghostClass="bg-purple-500/30"
                             />
@@ -148,7 +291,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
 
                 {/* Sun/Moon charges for Sciel */}
                 {ch.id.toLowerCase().includes("sciel") && (
-                    <div className="mt-2 flex items-center gap-3 text-sm">
+                    <div className="mt-2 flex items-center gap-3 text-sm cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openSunMoon}>
                         <div className="flex items-center gap-1.5">
                             <span className="text-amber-400">☀</span>
                             <span className="font-mono font-semibold text-amber-300">
@@ -161,6 +304,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                 {ch.moonCharges ?? 0}
                             </span>
                         </div>
+                        <FaEdit size={10} className="opacity-40" />
                     </div>
                 )}
 
@@ -168,36 +312,43 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                 {ch.id.toLowerCase().includes("monoco") &&
                     ch.bestialWheelPosition !== undefined &&
                     ch.bestialWheelPosition !== null && (
-                        <div className="mt-2">
+                        <div className="mt-2 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openBestialWheel}>
+                            <div className="flex items-center gap-1 mb-1 text-[10px] opacity-70 uppercase">
+                                Bestial Wheel <FaEdit size={10} className="opacity-40" />
+                            </div>
                             <BestialWheel position={ch.bestialWheelPosition} />
                         </div>
                     )}
 
-                {/* Stance indicator for Maelle only */}
+                {/* Stance buttons for Maelle only */}
                 {ch.stance !== undefined &&
                  ch.id.toLowerCase().includes("maelle") && (
                     <div className="mt-2">
-                        <div className="flex items-center gap-2 text-[10px]">
-                            <span className="opacity-70">Postura</span>
-                            {ch.stance === "Defensive" && (
-                                <div className="badge badge-info badge-sm">Defensiva</div>
-                            )}
-                            {ch.stance === "Offensive" && (
-                                <div className="badge badge-error badge-sm">Ofensiva</div>
-                            )}
-                            {ch.stance === "Virtuous" && (
-                                <div className="badge bg-purple-500 text-white border-purple-500 badge-sm">Virtuosa</div>
-                            )}
-                            {!ch.stance && (
-                                <div className="badge badge-ghost badge-sm">Sem postura</div>
-                            )}
+                        <span className="text-[10px] opacity-70 uppercase">{t("combat.stance")}</span>
+                        <div className="flex gap-1 mt-1">
+                            <button
+                                className={`btn btn-xs flex-1 px-0 ${!ch.stance ? "bg-gray-500 text-white border-gray-500 hover:bg-gray-600" : "btn-outline border-gray-500 text-gray-400 opacity-40 hover:opacity-80"}`}
+                                onClick={() => APIBattle.updateCharacterStance(ch.battleID, null).then(requestPlayerRefresh)}
+                            >{t("combat.noStance")}</button>
+                            <button
+                                className={`btn btn-xs flex-1 px-0 ${ch.stance === "Offensive" ? "btn-error" : "btn-outline btn-error opacity-40 hover:opacity-80"}`}
+                                onClick={() => APIBattle.updateCharacterStance(ch.battleID, "Offensive").then(requestPlayerRefresh)}
+                            >{t("combat.offensive")}</button>
+                            <button
+                                className={`btn btn-xs flex-1 px-0 ${ch.stance === "Defensive" ? "btn-info" : "btn-outline btn-info opacity-40 hover:opacity-80"}`}
+                                onClick={() => APIBattle.updateCharacterStance(ch.battleID, "Defensive").then(requestPlayerRefresh)}
+                            >{t("combat.defensive")}</button>
+                            <button
+                                className={`btn btn-xs flex-1 px-0 ${ch.stance === "Virtuous" ? "bg-purple-500 text-white border-purple-500 hover:bg-purple-600" : "btn-outline border-purple-500 text-purple-500 opacity-40 hover:opacity-80"}`}
+                                onClick={() => APIBattle.updateCharacterStance(ch.battleID, "Virtuous").then(requestPlayerRefresh)}
+                            >{t("combat.virtuous")}</button>
                         </div>
                     </div>
                 )}
 
                 {/* Verso's Perfection Rank System */}
-                {ch.id.toLowerCase().includes("verso") && ch.perfectionRank && (() => {
-                    const currentRank = ch.perfectionRank; // D, C, B, A, S
+                {ch.id.toLowerCase().includes("verso") && (() => {
+                    const currentRank = ch.perfectionRank ?? "D"; // D, C, B, A, S (default to D)
                     const rankProgress = ch.rankProgress ?? 0; // Current progress
                     const rankMax = 10; // Points needed for next rank (always 10)
 
@@ -207,7 +358,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                             case "A": return "text-purple-400 border-purple-400";
                             case "B": return "text-blue-400 border-blue-400";
                             case "C": return "text-amber-200 border-amber-200";
-                            case "D": return "text-gray-400 border-gray-400";
+                            case "D": return "text-gray-300 border-gray-300";
                             default: return "text-gray-400 border-gray-400";
                         }
                     };
@@ -218,7 +369,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                             case "A": return "bg-purple-500";
                             case "B": return "bg-blue-500";
                             case "C": return "bg-amber-200";
-                            case "D": return "bg-gray-500";
+                            case "D": return "bg-gray-300";
                             default: return "bg-gray-500";
                         }
                     };
@@ -229,7 +380,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                             case "A": return "bg-purple-500/30";
                             case "B": return "bg-blue-500/30";
                             case "C": return "bg-amber-200/30";
-                            case "D": return "bg-gray-500/30";
+                            case "D": return "bg-gray-300/30";
                             default: return "bg-gray-500/30";
                         }
                     };
@@ -237,26 +388,38 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     return (
                         <div className="mt-2">
                             <div className="flex items-center justify-between mb-1">
-                                <span className="text-[10px] opacity-70 uppercase">Perfeição</span>
-                                <div className={`
-                                    px-2 py-0.5 rounded border-2 font-bold text-sm
-                                    ${getRankColor(currentRank)}
-                                `}>
-                                    Rank {currentRank}
+                                <span className="text-[10px] opacity-70 uppercase">
+                                    {t("combat.perfection")}
+                                </span>
+                                <div className="flex items-center gap-1">
+                                    {["D","C","B","A","S"].map(rank => (
+                                        <button
+                                            key={rank}
+                                            className={`px-3 py-0.5 rounded border-2 font-bold text-xs transition-opacity cursor-pointer
+                                                ${currentRank === rank
+                                                    ? `${getRankFillClass(rank)} text-base-100 border-transparent opacity-100`
+                                                    : `${getRankColor(rank)} opacity-30 hover:opacity-60`}
+                                            `}
+                                            onClick={() => APIBattle.updateCharacterRank(ch.battleID, rank, rankProgress).then(requestPlayerRefresh)}
+                                        >
+                                            {rank}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between text-[10px] mb-0.5">
-                                <span className="opacity-50">Progresso</span>
-                                <span className="font-mono text-xs">
-                                    {currentRank === "S" ? t("playerPage.skills.perfectionMax") : `${rankProgress}/${rankMax}`}
+                            <div className="flex items-center gap-2">
+                                <div className="flex-1">
+                                    <AnimatedStatBar
+                                        value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
+                                        label="Rank Progress"
+                                        fillClass={getRankFillClass(currentRank)}
+                                        ghostClass={getRankGhostClass(currentRank)}
+                                    />
+                                </div>
+                                <span className="font-mono text-[10px] shrink-0">
+                                    {currentRank === "S" ? t("playerPage.specialAttacks.perfectionMax") : `${rankProgress}/${rankMax}`}
                                 </span>
                             </div>
-                            <AnimatedStatBar
-                                value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
-                                label="Rank Progress"
-                                fillClass={getRankFillClass(currentRank)}
-                                ghostClass={getRankGhostClass(currentRank)}
-                            />
                         </div>
                     );
                 })()}
@@ -267,18 +430,19 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     const hasAnyStain = stains.some(s => s !== null && s !== undefined);
 
                     return (
-                        <div className="mt-2 flex items-center gap-2 text-xs">
-                            <span className="opacity-70 uppercase">Manchas</span>
+                        <div className="mt-2 flex items-center gap-2 text-xs cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openStainsEdit}>
+                            <span className="opacity-70 uppercase flex items-center gap-1">{t("combat.stains")} <FaEdit size={10} className="opacity-40" /></span>
                             {!hasAnyStain ? (
-                                <div className="badge badge-ghost badge-sm opacity-60">Nenhuma</div>
+                                <div className="badge badge-ghost badge-sm opacity-60">{t("combat.noStains")}</div>
                             ) : (
                                 <div className="flex items-center gap-1.5">
                                     {stains.map((stain, idx) => {
+                                        const flash = flashSlots[idx] ? "animate-stain-flash" : "";
                                         if (!stain) {
                                             return (
                                                 <div
                                                     key={idx}
-                                                    className="w-5 h-5 rounded-full border-2 border-gray-500/60 bg-gray-400/15"
+                                                    className={`w-5 h-5 rounded-full border-2 border-gray-500/60 bg-gray-400/15 ${flash}`}
                                                     title="Empty Slot"
                                                 />
                                             );
@@ -291,7 +455,7 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                                                 src={`/stains/${stainLower}-stain.png`}
                                                 alt={stain}
                                                 title={`${stain} Stain`}
-                                                className="w-5 h-5 object-contain"
+                                                className={`w-5 h-5 object-contain ${flash}`}
                                             />
                                         );
                                     })}
@@ -301,6 +465,199 @@ export default function PlayerStatusFloating({ player }: PlayerStatusFloatingPro
                     );
                 })()}
             </div>
+
+            {/* ---- Modals (portaled to body) ---- */}
+            {createPortal(<>
+
+            {/* HP */}
+            <HpEditModal
+                open={editing === "hp"}
+                name={ch.name}
+                currentHp={ch.healthPoints}
+                maxHp={ch.maxHealthPoints}
+                onClose={closeEdit}
+                onConfirm={async (newHp, newMaxHp) => {
+                    if (newHp !== ch.healthPoints) await APIBattle.updateCharacterHp(ch.battleID, newHp);
+                    if (newMaxHp !== ch.maxHealthPoints) await APIBattle.updateCharacterMaxHp(ch.battleID, newMaxHp);
+                    closeEdit();
+                }}
+            />
+
+            {/* MP */}
+            <ApEditModal
+                open={editing === "mp"}
+                name={ch.name}
+                currentAp={ch.magicPoints ?? 0}
+                maxAp={ch.maxMagicPoints ?? 0}
+                onClose={closeEdit}
+                onConfirm={v => confirmNumericEdit("mp", v)}
+            />
+
+            {/* Charge */}
+            <StatEditModal
+                open={editing === "charge"}
+                title={t("combat.charge")}
+                currentValue={ch.chargePoints ?? 0}
+                minValue={0}
+                maxValue={ch.maxChargePoints ?? 10}
+                onConfirm={v => confirmNumericEdit("charge", v)}
+                onCancel={closeEdit}
+            />
+
+            {/* Gradient */}
+            <StatEditModal
+                open={editing === "gradient"}
+                title={t("combat.gradient")}
+                currentValue={ch.gradientPoints ?? 0}
+                minValue={0}
+                maxValue={36}
+                onConfirm={v => confirmNumericEdit("gradient", v)}
+                onCancel={closeEdit}
+            />
+
+            {/* Bestial Wheel */}
+            <BestialWheelModal
+                open={editing === "bestialWheel"}
+                position={ch.bestialWheelPosition ?? 0}
+                onConfirm={v => confirmNumericEdit("bestialWheel", v)}
+                onCancel={closeEdit}
+            />
+
+            {/* Sun/Moon modal */}
+            {editing === "sunMoon" && (
+                <dialog className="modal modal-open">
+                    <div className="modal-box max-w-xs space-y-4">
+                        <h3 className="font-bold text-lg">☀ / ☾</h3>
+                        <div className="flex gap-4">
+                            <div className="flex-1">
+                                <label className="label label-text text-xs">☀ Sun</label>
+                                <input
+                                    type="number"
+                                    className="input input-bordered w-full"
+                                    value={editSun}
+                                    min={0}
+                                    onChange={e => setEditSun(e.target.value)}
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <label className="label label-text text-xs">☾ Moon</label>
+                                <input
+                                    type="number"
+                                    className="input input-bordered w-full"
+                                    value={editMoon}
+                                    min={0}
+                                    onChange={e => setEditMoon(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="modal-action">
+                            <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
+                            <button className="btn btn-primary btn-sm" onClick={confirmSunMoon}>Confirmar</button>
+                        </div>
+                    </div>
+                    <div className="modal-backdrop" onClick={closeEdit} />
+                </dialog>
+            )}
+
+
+            {/* Rank modal */}
+            {editing === "rank" && (
+                <dialog className="modal modal-open">
+                    <div className="modal-box max-w-xs space-y-4">
+                        <h3 className="font-bold text-lg">{t("combat.perfection")}</h3>
+                        <div>
+                            <label className="label label-text text-xs">{t("combat.rank")}</label>
+                            <select
+                                className="select select-bordered w-full"
+                                value={editRank}
+                                onChange={e => setEditRank(e.target.value)}
+                            >
+                                {["D", "C", "B", "A", "S"].map(r => (
+                                    <option key={r} value={r}>{r}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="label label-text text-xs">{t("combat.progress")}</label>
+                            <input
+                                type="number"
+                                className="input input-bordered w-full"
+                                value={editRankProgress}
+                                min={0}
+                                max={10}
+                                onChange={e => setEditRankProgress(e.target.value)}
+                            />
+                        </div>
+                        <div className="modal-action">
+                            <button className="btn btn-ghost btn-sm" onClick={closeEdit}>Cancelar</button>
+                            <button className="btn btn-primary btn-sm" onClick={confirmRank}>Confirmar</button>
+                        </div>
+                    </div>
+                    <div className="modal-backdrop" onClick={closeEdit} />
+                </dialog>
+            )}
+
+            {/* Conditions modal */}
+            <StatusConditionsModal
+                open={conditionsOpen}
+                onClose={() => setConditionsOpen(false)}
+                battleCharacterId={ch.battleID}
+                statuses={ch.status ?? []}
+            />
+
+            {/* Stains modal (player) */}
+            <LuneStainsModal
+                open={editing === "stains"}
+                ch={ch}
+                onClose={closeEdit}
+                onRefresh={requestPlayerRefresh}
+                onStainAdded={triggerFlash}
+            />
+
+            {/* Break edit */}
+            {breakEditOpen && (() => {
+                const currentRemaining = 2 - (ch.breakCount ?? 0);
+                const newBreakCount = 2 - editBreakValue;
+                const oldBreakCount = ch.breakCount ?? 0;
+                return (
+                    <dialog className="modal modal-open" style={{ zIndex: 9999 }}>
+                        <div className="modal-box max-w-xs">
+                            <h3 className="font-bold text-lg">{t("combatAdmin.labels.breakEditTitle")}</h3>
+                            <p className="text-sm opacity-70 mb-4">{ch.name}</p>
+                            <div className="flex items-center justify-center gap-4">
+                                <button className="btn btn-circle btn-sm" disabled={editBreakValue <= 0} onClick={() => setEditBreakValue(v => Math.max(0, v - 1))}>−</button>
+                                <div className="flex gap-2">
+                                    {[0, 1].map(i => (
+                                        <div key={i} className={`w-4 h-8 rounded border-2 ${i < editBreakValue ? "bg-yellow-400 border-yellow-500 shadow-[0_0_6px_rgba(250,204,21,0.9)]" : "border-gray-500/60 bg-gray-400/15"}`} />
+                                    ))}
+                                </div>
+                                <button className="btn btn-circle btn-sm" disabled={editBreakValue >= 2} onClick={() => setEditBreakValue(v => Math.min(2, v + 1))}>+</button>
+                            </div>
+                            <p className="text-center text-xs opacity-50 mt-2">{editBreakValue}/2</p>
+                            <div className="modal-action">
+                                <button className="btn btn-ghost btn-sm" onClick={() => setBreakEditOpen(false)}>{t("common.cancel")}</button>
+                                <button className="btn btn-warning btn-sm" disabled={editBreakValue === currentRemaining} onClick={async () => {
+                                    await APIBattle.updateBreakCount(ch.battleID, newBreakCount);
+                                    if (newBreakCount > oldBreakCount) {
+                                        await APIBattle.addStatus({ battleCharacterId: ch.battleID, effectType: "Broken", ammount: 1, remainingTurns: 1 });
+                                    }
+                                    requestPlayerRefresh();
+                                    setBreakEditOpen(false);
+                                }}>{t("combatAdmin.labels.confirm")}</button>
+                            </div>
+                        </div>
+                        <div className="modal-backdrop" onClick={() => setBreakEditOpen(false)} />
+                    </dialog>
+                );
+            })()}
+
+            </>, document.body)}
+
+            <ArmorClassModal
+                open={armorClassModalOpen}
+                onClose={() => setArmorClassModalOpen(false)}
+                armorClass={calculateArmorClass(player, weaponInfo ?? null)}
+            />
         </div>
     );
 }

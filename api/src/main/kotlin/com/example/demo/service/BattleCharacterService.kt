@@ -25,8 +25,7 @@ class BattleCharacterService(
         private val objectMapper: ObjectMapper,
         private val playerPictoRepository: com.example.demo.repository.PlayerPictoRepository,
         private val damageModifierService: DamageModifierService,
-        private val playerRepository: com.example.demo.repository.PlayerRepository,
-        private val battleStatusEffectRepository: com.example.demo.repository.BattleStatusEffectRepository
+        private val playerRepository: com.example.demo.repository.PlayerRepository
 ) {
         @Transactional
         fun addCharacter(battleId: Int, request: AddBattleCharacterRequest): Int {
@@ -61,7 +60,9 @@ class BattleCharacterService(
                                 perfectionRank = request.perfectionRank,
                                 rankProgress = request.rankProgress,
                                 bestialWheelPosition = request.bestialWheelPosition ?: 0,
-                                canRollInitiative = request.canRollInitiative
+                                bestialWheelReversed = request.bestialWheelReversed,
+                                canRollInitiative = request.canRollInitiative,
+                                freeShotWeakPoints = request.freeShotWeakPoints
                         )
 
                 val savedCharacter = repository.save(entity)
@@ -190,7 +191,6 @@ class BattleCharacterService(
 
                 val entity = opt.get()
 
-                val oldHp = entity.healthPoints
                 val finalHp = newHp.coerceAtLeast(0)
 
                 entity.healthPoints = finalHp
@@ -210,48 +210,7 @@ class BattleCharacterService(
                         }
                 }
 
-                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
-
-                // IntenseFlames mechanic: If character takes damage, remove IntenseFlames effects they caused
-                val tookDamage = finalHp < oldHp && finalHp > 0
-                if (tookDamage) {
-                        removeIntenseFlamesFromSource(entity)
-                }
-
-                // Check if character died or revived
-                val wasDead = oldHp == 0
-                val isDead = finalHp == 0
-                val wasAlive = oldHp > 0
-                val isAlive = finalHp > 0
-
-                // Get battle to check if it's started
-                val battle = battleRepository.findById(battleId).orElse(null)
-                val isBattleStarted = battle?.battleStatus.equals("started", ignoreCase = true)
-
-                if (isBattleStarted) {
-                        // Character died: remove from turn queue
-                        if (wasAlive && isDead) {
-                                battleTurnRepository.deleteByBattleCharacterId(id)
-                                battleTurnService.recalculatePlayOrder(battleId)
-                        }
-
-                        // Character revived: add back to turn queue
-                        if (wasDead && isAlive) {
-                                // Set canRollInitiative to false since they're joining the battle automatically
-                                entity.canRollInitiative = false
-                                repository.save(entity)
-
-                                // Add character to the end of the turn queue
-                                val lastTurn = battleTurnRepository.findTopByBattleIdOrderByPlayOrderDesc(battleId)
-                                val nextOrder = (lastTurn?.playOrder ?: 0) + 1
-                                val turn = BattleTurn(
-                                        battleId = battleId,
-                                        battleCharacterId = id,
-                                        playOrder = nextOrder
-                                )
-                                battleTurnRepository.save(turn)
-                        }
-                }
+                val battleId = entity.battleId
 
                 battleLogRepository.save(
                         BattleLog(battleId = battleId, eventType = "HP_CHANGED", eventJson = null)
@@ -324,8 +283,6 @@ class BattleCharacterService(
                 val entity = opt.get()
 
                 entity.stance = newStance
-                // Mark that stance was changed this turn (for Maelle's auto-reset mechanic)
-                entity.stanceChangedThisTurn = true
 
                 repository.save(entity)
 
@@ -621,6 +578,179 @@ class BattleCharacterService(
                 )
         }
 
+        @Transactional
+        fun updateCharacterChargePoints(id: Int, newChargePoints: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                val maxCharges = entity.maxChargePoints ?: 10
+                val finalChargePoints = newChargePoints.coerceIn(0, maxCharges)
+
+                entity.chargePoints = finalChargePoints
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "CHARGE_POINTS_CHANGED", eventJson = null)
+                )
+        }
+
+        @Transactional
+        fun updateBestialWheelPosition(id: Int, newPosition: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                entity.bestialWheelPosition = newPosition.coerceIn(0, 8)
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "BESTIAL_WHEEL_CHANGED", eventJson = """{"characterId":${entity.id},"position":${entity.bestialWheelPosition}}""")
+                )
+        }
+
+        @Transactional
+        fun updateBestialWheelReversed(id: Int, reversed: Boolean) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+                entity.bestialWheelReversed = reversed
+                repository.save(entity)
+
+                // Persist on the player so it survives across battles
+                if (!entity.isEnemy) {
+                        val player = playerRepository.findById(entity.externalId.toIntOrNull() ?: -1)
+                        if (player.isPresent) {
+                                player.get().bestialWheelReversed = reversed
+                                playerRepository.save(player.get())
+                        }
+                }
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "BESTIAL_WHEEL_REVERSED", eventJson = """{"characterId":${entity.id},"reversed":${entity.bestialWheelReversed}}""")
+                )
+        }
+
+        @Transactional
+        fun updateBreakCount(id: Int, newBreakCount: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+                entity.breakCount = newBreakCount.coerceIn(0, 2)
+                repository.save(entity)
+
+                val battleId = entity.battleId
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "BREAK_COUNT_CHANGED", eventJson = """{"characterId":${entity.id},"breakCount":${entity.breakCount}}""")
+                )
+        }
+
+        fun updateFreeShotWeakPoints(id: Int, newWeakPoints: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+                entity.freeShotWeakPoints = newWeakPoints.coerceAtLeast(0)
+                repository.save(entity)
+
+                val battleId = entity.battleId
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "WEAK_POINTS_CHANGED", eventJson = """{"characterId":${entity.id},"weakPoints":${entity.freeShotWeakPoints}}""")
+                )
+        }
+
+        @Transactional
+        fun updateNameHidden(id: Int, nameHidden: Boolean) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+                entity.nameHidden = nameHidden
+                repository.save(entity)
+        }
+
+        @Transactional
+        fun updateCharacterSunMoonCharges(id: Int, sunCharges: Int?, moonCharges: Int?) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+
+                val entity = opt.get()
+
+                if (sunCharges != null) {
+                        entity.sunCharges = sunCharges.coerceIn(0, 20)
+                }
+                if (moonCharges != null) {
+                        entity.moonCharges = moonCharges.coerceIn(0, 20)
+                }
+
+                repository.save(entity)
+
+                val battleId = entity.battleId ?: error("BattleCharacter $id não possui battleId")
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "CHARGE_POINTS_CHANGED", eventJson = null)
+                )
+        }
+
+        /**
+         * Increments Sun or Moon charge for a character (Sciel's charge system).
+         * Also checks for Twilight activation (needs at least 1 Sun AND 1 Moon charge).
+         * Returns true if Twilight was activated.
+         */
+        @Transactional
+        fun incrementForetellConsumed(id: Int, amount: Int) {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return
+                val entity = opt.get()
+                entity.foretellConsumedTotal += amount
+                repository.save(entity)
+        }
+
+        data class TwilightResult(val activated: Boolean, val charges: Int = 0)
+
+        @Transactional
+        fun incrementSunMoonCharge(id: Int, skillType: String): TwilightResult {
+                val opt = repository.findById(id)
+                if (opt.isEmpty) return TwilightResult(false)
+
+                val entity = opt.get()
+
+                when (skillType.lowercase()) {
+                        "sun" -> {
+                                val current = entity.sunCharges ?: 0
+                                entity.sunCharges = (current + 1).coerceAtMost(20)
+                        }
+                        "moon" -> {
+                                val current = entity.moonCharges ?: 0
+                                entity.moonCharges = (current + 1).coerceAtMost(20)
+                        }
+                        else -> return TwilightResult(false)
+                }
+
+                repository.save(entity)
+
+                val battleId = entity.battleId
+
+                battleLogRepository.save(
+                        BattleLog(battleId = battleId, eventType = "CHARGE_POINTS_CHANGED", eventJson = null)
+                )
+
+                return TwilightResult(false)
+        }
+
         /**
          * Checks if character has Solo Fighter picto and adds the damage modifier.
          * Solo Fighter: "Deal 50% more damage if fighting alone."
@@ -820,7 +950,7 @@ class BattleCharacterService(
         }
 
         /**
-         * Breaking Shots: Deals 50% more damage with Free Aim shots if target has Fragile or Broken
+         * Breaking Shots: Deals 50% more damage with Free Aim shots if target has Broken
          */
         private fun checkAndApplyBreakingShotsModifier(battleCharacter: BattleCharacter) {
                 if (battleCharacter.characterType != "player") {
@@ -842,7 +972,7 @@ class BattleCharacterService(
                                 type = "free-shot",  // Only applies to free-aim shots
                                 multiplier = 1.5,  // 50% more damage (1 + 0.5)
                                 flatBonus = 0,
-                                condition = "enemy-fragile-or-broken"  // Only when target has Fragile or Broken
+                                condition = "enemy-broken"  // Only when target has Broken
                         )
                 }
         }
@@ -965,41 +1095,4 @@ class BattleCharacterService(
                 }
         }
 
-        /**
-         * Removes IntenseFlames status effects caused by a character when they take damage
-         */
-        private fun removeIntenseFlamesFromSource(sourceCharacter: BattleCharacter) {
-                val sourceId = sourceCharacter.id ?: return
-                val battleId = sourceCharacter.battleId ?: return
-
-                // Find all IntenseFlames effects caused by this character
-                val intenseFlamesEffects = battleStatusEffectRepository.findByEffectTypeAndSourceCharacterId(
-                        "IntenseFlames",
-                        sourceId
-                )
-
-                // Remove all IntenseFlames effects caused by this character
-                intenseFlamesEffects.forEach { effect ->
-                        battleStatusEffectRepository.delete(effect)
-
-                        // Log the removal
-                        val eventJson = objectMapper.writeValueAsString(
-                                mapOf(
-                                        "sourceCharacterId" to sourceId,
-                                        "sourceName" to sourceCharacter.characterName,
-                                        "targetCharacterId" to effect.battleCharacterId,
-                                        "effectRemoved" to "IntenseFlames",
-                                        "reason" to "source_took_damage"
-                                )
-                        )
-
-                        battleLogRepository.save(
-                                BattleLog(
-                                        battleId = battleId,
-                                        eventType = "INTENSE_FLAMES_REMOVED",
-                                        eventJson = eventJson
-                                )
-                        )
-                }
-        }
 }

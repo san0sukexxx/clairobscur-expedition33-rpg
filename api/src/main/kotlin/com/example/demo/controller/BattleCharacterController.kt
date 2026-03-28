@@ -10,6 +10,9 @@ import com.example.demo.dto.UpdateRankRequest
 import com.example.demo.dto.UpdateAPRequest
 import com.example.demo.dto.UpdateNewAPRequest
 import com.example.demo.dto.UpdateGradientRequest
+import com.example.demo.dto.UpdateChargePointsRequest
+import com.example.demo.dto.IncrementSunMoonRequest
+import com.example.demo.dto.UpdateSunMoonChargesRequest
 import com.example.demo.model.BattleCharacter
 import com.example.demo.service.BattleCharacterService
 import jakarta.validation.Valid
@@ -95,6 +98,45 @@ class BattleCharacterController(private val service: BattleCharacterService) {
         return ResponseEntity.noContent().build()
     }
 
+    @PutMapping("/characters/{id}/charge-points")
+    fun updateCharacterChargePoints(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateChargePointsRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterChargePoints(id, body.newChargePoints)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/characters/{id}/increment-sun-moon")
+    fun incrementSunMoonCharge(
+            @PathVariable id: Int,
+            @RequestBody body: IncrementSunMoonRequest
+    ): ResponseEntity<Map<String, Any>> {
+        val result = service.incrementSunMoonCharge(id, body.skillType)
+        return ResponseEntity.ok(mapOf("twilightActivated" to result.activated, "twilightCharges" to result.charges))
+    }
+
+    @PostMapping("/characters/{id}/increment-foretell-consumed")
+    fun incrementForetellConsumed(
+            @PathVariable id: Int,
+            @RequestBody body: Map<String, Int>
+    ): ResponseEntity<Void> {
+        val amount = body["amount"] ?: 0
+        if (amount > 0) {
+            service.incrementForetellConsumed(id, amount)
+        }
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/sun-moon-charges")
+    fun updateSunMoonCharges(
+            @PathVariable id: Int,
+            @RequestBody body: UpdateSunMoonChargesRequest
+    ): ResponseEntity<Void> {
+        service.updateCharacterSunMoonCharges(id, body.sunCharges, body.moonCharges)
+        return ResponseEntity.noContent().build()
+    }
+
     @PutMapping("/characters/{id}/stains")
     fun updateCharacterStains(
             @PathVariable id: Int,
@@ -147,5 +189,54 @@ class BattleCharacterController(private val service: BattleCharacterService) {
     fun getMP(@PathVariable id: Int): ResponseEntity<Map<String, Int?>> {
         val ap = service.getCharacterAP(id)
         return ResponseEntity.ok(ap)
+    }
+
+    @PutMapping("/characters/{id}/weak-points")
+    fun updateWeakPoints(
+            @PathVariable id: Int,
+            @RequestBody body: Map<String, Int>
+    ): ResponseEntity<Void> {
+        val newWeakPoints = body["newWeakPoints"] ?: return ResponseEntity.badRequest().build()
+        service.updateFreeShotWeakPoints(id, newWeakPoints)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/break-count")
+    fun updateBreakCount(
+            @PathVariable id: Int,
+            @RequestBody body: com.example.demo.dto.UpdateBreakCountRequest
+    ): ResponseEntity<Void> {
+        service.updateBreakCount(id, body.breakCount)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/name-hidden")
+    fun toggleNameHidden(
+            @PathVariable id: Int,
+            @RequestBody body: Map<String, Boolean>
+    ): ResponseEntity<Void> {
+        val nameHidden = body["nameHidden"] ?: return ResponseEntity.badRequest().build()
+        service.updateNameHidden(id, nameHidden)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/bestial-wheel-position")
+    fun updateBestialWheelPosition(
+            @PathVariable id: Int,
+            @RequestBody body: Map<String, Int>
+    ): ResponseEntity<Void> {
+        val newPosition = body["newPosition"] ?: return ResponseEntity.badRequest().build()
+        service.updateBestialWheelPosition(id, newPosition)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/characters/{id}/bestial-wheel-reversed")
+    fun updateBestialWheelReversed(
+            @PathVariable id: Int,
+            @RequestBody body: Map<String, Boolean>
+    ): ResponseEntity<Void> {
+        val reversed = body["reversed"] ?: return ResponseEntity.badRequest().build()
+        service.updateBestialWheelReversed(id, reversed)
+        return ResponseEntity.noContent().build()
     }
 }

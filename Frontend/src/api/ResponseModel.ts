@@ -1,22 +1,21 @@
 import type { WeaponDTO } from "../types/WeaponDTO";
 
 export type StatusType =
-    "Hastened" | "Empowered" | "Protected" | "Regeneration" |
+    "Empowered" | "Regeneration" |
     "Unprotected" | "Slowed" | "Weakened" | "Cursed" |
-    "Stunned" | "Confused" | "Frozen" | "Entangled" |
-    "Shielded" | "Exhausted" | "Frenzy" | "Rage" |
-    "Inverted" | "Marked" | "Plagued" | "Burning" |
-    "Silenced" | "Dizzy" | "Fragile" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
+    "Stunned" | "Charm" | "Frozen" | "Entangled" |
+    "Exhausted" | "Frenzy" | "Rage" |
+    "Inverted" | "Marked" | "Blight" | "Burning" |
+    "Silenced" | "Dizzy" | "Broken" | "free-shot" | "jump" | "gradient" | "Fleeing" |
     "FireVulnerability" | "Guardian" | "Foretell" | "Twilight" | "Powerless" |
-    "Rush" | "Burn" | "Shield" | "Powerful" | "Mark" | "Shell" | "Slow" | "Freeze" | "GreaterRush" | "GreaterSlow" | "invisible-barrier" |
-    "EnfeeblingMark" | "DamageReduction" | "SuccessiveParry" | "Aureole" | "Vulnerable" | "DoubleDamage" | "Defenceless" | "Regen" | "Curse" | "IntenseFlames" | "Earthquake" | "StormCaller";
+    "Rush" | "Shield" | "Powerful" | "Shell" | "invisible-barrier" |
+    "DamageReduction" | "SuccessiveParry" | "Aureole" | "FortunesFury" | "IntenseFlames" | "Earthquake" | "StormCaller" | "Typhoon" | "Charging" | "DamageEscalation" |
+    "BlueFlower" | "RedFlower";
 
-export const ignoreEffects = ["free-shot", "jump", "gradient"];
 export type Element = "Physical" | "Void" | "Light" | "Lightning" | "Fire" | "Ice" | "Dark" | "Earth";
 export type ElementModifierType = "imune" | "weak" | "resistent" | "absorb";
-export type DefenseOption = "block" | "dodge" | "jump" | "gradient-block" | "take" | "counter" | "cancel-counter";
-export type AttackType = "basic" | "jump" | "jump-all" | "gradient" | "free-shot" | "skill";
-export type SkillType = "give-status";
+export type AttackType = "basic" | "gradient" | "free-shot" | "skill";
+export type SpecialAttackType = "give-status";
 export type PictoColor = "green" | "red" | "blue" | "yellow";
 export type BattleCharacterType = "player" | "npc";
 export type BattleStatus = "starting" | "started" | "finished";
@@ -69,12 +68,17 @@ export interface BattleCharacterInfo {
     perfectionRank?: string | null;
     rankProgress?: number | null;
     bestialWheelPosition?: number | null;
+    bestialWheelReversed?: boolean | null;
     status?: StatusResponse[];
     type: BattleCharacterType;
     isEnemy: boolean;
     canRollInitiative?: boolean;
     parriesThisTurn?: number;
     hitsTakenThisTurn?: number;
+    foretellConsumedTotal?: number;
+    freeShotWeakPoints?: number;
+    breakCount?: number;
+    nameHidden?: boolean;
 }
 
 export type RewardType = "weapon" | "picto";
@@ -88,21 +92,35 @@ export interface BattleReward {
 export interface NPCInfo {
     id: string;
     name: string;
-    power: number;
-    hability: number;
-    resistance: number;
+    // D&D 5e ability scores
+    strength: number;
+    dexterity: number;
+    constitution: number;
+    intelligence: number;
+    wisdom: number;
+    charisma: number;
+    // Combat options
     playFirst?: boolean;
-    weakTo?: Element;
-    resistentTo?: Element;
-    imuneTo?: Element;
-    absorbElement?: Element;  // Heals instead of taking damage from this element
+    weakTo?: Element | Element[];
+    resistentTo?: Element | Element[];
+    imuneTo?: Element | Element[];
+    absorbElement?: Element | Element[];
     freeShotWeakPoints?: number;
+    passives?: string[];
     attackList?: NPCAttack[];
-    skillList?: NPCSkill[];
     isFlying?: boolean;
-    initiativeBonus?: number;  // Flat bonus added to initiative roll
-    maxLifeBonus?: number;  // Flat bonus added to max HP calculation (resistance * 5 + bonus)
-    reward?: BattleReward;  // Optional reward for defeating this NPC
+    initiativeBonus?: number;
+    maxLifeBonus?: number;
+    armorClass?: number;
+    challengeRating?: string;
+    proficiencyBonus?: number;
+    damageDie?: number;  // Die size for damage rolls (default 6 = d6)
+    conditionImmunities?: StatusType[];
+    damageVulnerabilities?: string[];
+    damageImmunities?: string[];
+    drops?: { pictos?: string[]; weapons?: string[] };
+    isBoss?: boolean;
+    noBasicAttack?: boolean;
 }
 
 export interface NPCStatusItem {
@@ -111,18 +129,57 @@ export interface NPCStatusItem {
     remainingTurns?: number;
 }
 
+export type NPCAttackTargeting = "single" | "multiple" | "all";
+export type AttackIntensity = "high" | "veryHigh" | "extreme" | "maximum";
+
 export interface NPCAttack {
     type: AttackType;
     statusList?: NPCStatusItem[];  // Optional list of status effects to apply
     quantity?: number;  // Number of times this attack will be used in sequence
+    quantityText?: string;  // Custom text for quantity (e.g., "2 a 3 golpes"), overrides quantity display
     name?: string;  // Custom name to display on the button (overrides default label)
     additionalDamage?: number;  // Flat damage bonus added to each attack roll
-    additionalDices?: number;  // Additional dice rolled for this attack (e.g., 2 = roll 3d6 instead of 1d6)
+    intensity?: AttackIntensity;  // Attack intensity: normal(1 die), high(2), veryHigh(3), extreme(4), maximum(5)
+    description?: string;  // Manual D&D-style description (overrides auto-generated)
+    element?: Element;  // Damage element (defaults to Physical)
+    targetsAll?: boolean;  // Attack hits all enemies (legacy, same as targeting: "all")
+    targeting?: NPCAttackTargeting;  // "single" = same target, "multiple" = different targets, "all" = all enemies
+    attackModifier?: number;  // Extra modifier added to the attack roll (can be negative to make attacks easier to dodge)
 }
 
-export interface NPCSkill {
-    type: SkillType;
-    statusList: NPCStatusItem[];
+/** Returns the number of damage dice for the given attack intensity (omitted = normal = 1 die) */
+export function getIntensityDiceCount(intensity?: AttackIntensity): number {
+    switch (intensity) {
+        case "high": return 2;
+        case "veryHigh": return 3;
+        case "extreme": return 4;
+        case "maximum": return 5;
+        default: return 1;
+    }
+}
+
+
+export type TerrainType = "forest" | "mountain" | "desert" | "swamp" | "cave" | "ruins" | "city" | "plains" | "coast" | "underground" | "volcano" | "tundra";
+export type DangerLevel = "safe" | "low" | "medium" | "high" | "deadly";
+
+export interface LocationEncounter {
+    npcIds: string[];           // NPCs que aparecem neste encontro
+    description?: string;       // Descrição do encontro
+    probability?: string;       // Ex.: "comum", "raro"
+}
+
+export interface LocationInfo {
+    id: string;
+    description?: string;
+    imageUrl?: string;
+    terrain?: TerrainType;
+    dangerLevel?: DangerLevel;
+    encounters?: LocationEncounter[];
+    loot?: BattleReward[];      // Recompensas possíveis nesta localização
+    residentNpcIds?: string[];        // NPCs vinculados ao sistema (combate)
+    referenceNpcNames?: string[];     // NPCs de referência (apenas nome)
+    connectedLocationIds?: string[];  // Locais conectados/acessíveis
+    notes?: string;             // Notas livres do mestre
 }
 
 export interface PictoResponse {
@@ -162,9 +219,12 @@ export interface PictoInfo {
 
 export interface PictoStatusResponse {
     speed?: number;
-    criticalRate?: number;
     health?: number;
     defense?: number;
+    strength?: number;
+    intelligence?: number;
+    wisdom?: number;
+    charisma?: number;
 }
 
 export interface LuminaResponse {
@@ -180,15 +240,18 @@ export interface PlayerItemResponse {
     itemId: string
     quantity: number
     maxQuantity: number
+    lastRecoveryPercent: number | null
+    diceCount: number | null
+    diceSize: number | null
 }
 
-export interface PlayerSkillResponse {
+export interface PlayerSpecialAttackResponse {
     id: string;
-    skillId: string;
+    specialAttackId: string;
     slot?: number | null;
 }
 
-export interface SkillResponse {
+export interface SpecialAttackResponse {
     id: string;
     character: string;
     name: string;
@@ -216,21 +279,6 @@ export interface FightInfoResponse {
     turns?: BattleTurnResponse[];
     battleStatus: BattleStatus;
     canRollInitiative: boolean;
-    pendingAttacks?: AttackResponse[];
-}
-
-export interface AttackResponse {
-    id: number;
-    battleId: number;
-    totalPower: number;
-    targetBattleId: number;
-    sourceBattleId: number;
-    totalDefended?: number;
-    isResolved: boolean;
-    allowCounter?: boolean;
-    isCounterResolved?: boolean;
-    defenseType?: string;
-    effects?: AttackStatusEffectResponse[];
 }
 
 export interface BattleLogResponse {
@@ -249,7 +297,7 @@ export interface AttackStatusEffectResponse {
 
 export interface ElementModifier {
     type: ElementModifierType
-    multiplier: number
+    flatBonus: number
 }
 
 export interface WeaponInfo {

@@ -1,8 +1,8 @@
-import { useState, useMemo, useEffect } from "react";
-import { FaBars } from "react-icons/fa";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { FaBars, FaTimes, FaFlask, FaStar, FaCheckCircle, FaCrosshairs } from "react-icons/fa";
+import { GiSwordWound, GiRunningNinja } from "react-icons/gi";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import { getCurrentPlayerStatus } from "../utils/StatusCalculator";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
 import { t } from "../i18n";
 
@@ -15,9 +15,10 @@ interface CombatMenuProps {
   isAttacking: Boolean;
   isExecutingSkill?: boolean;
   isSelectingSkillTarget?: boolean;
+  hidden?: boolean;
 }
 
-export default function CombatMenu({ player, onAction, tab, currentTeamTab, opositeTeamTab, isAttacking, isExecutingSkill = false, isSelectingSkillTarget = false }: CombatMenuProps) {
+export default function CombatMenu({ player, onAction, tab, currentTeamTab, opositeTeamTab, isAttacking, isExecutingSkill = false, isSelectingSkillTarget = false, hidden = false }: CombatMenuProps) {
   const [open, setOpen] = useState(false);
 
   const currentCharacter = useMemo(() => {
@@ -25,7 +26,8 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
   }, [player?.fightInfo?.characters])
 
   const playerStatus = useMemo(() => {
-    return getCurrentPlayerStatus(player)
+    const currentChar = player?.fightInfo?.characters?.find(c => c.battleID === player.fightInfo?.playerBattleID);
+    return currentChar?.status ?? [];
   }, [player?.fightInfo?.characters])
 
   const isFrozen = useMemo(() => {
@@ -62,14 +64,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
 
   const canUseFreeShot = useMemo(() => {
     if (isFleeing) return false
-
-    const mp = currentCharacter?.magicPoints ?? 0
-
-    if (isExhausted) {
-      return !isFrozen && !isStunned && mp >= 2
-    }
-
-    return !isFrozen && !isStunned && mp > 0
+    return !isFrozen && !isStunned
   }, [player?.fightInfo?.characters])
 
   const canAttack = useMemo(() => {
@@ -99,96 +94,77 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
     return battleStatus === "starting" || battleStatus === "started";
   }, [player?.fightInfo?.battleStatus]);
 
-  if (!hasBattle) {
+  const canRollInitiative = !!player?.fightInfo?.canRollInitiative && !isAttacking;
+  const isFlipOnly = canRollInitiative || (!isYourTurn && !isAttacking && !isSelectingSkillTarget && !isExecutingSkill);
+
+  // Blink the menu button when it's the player's turn until first click
+  const [hasOpenedThisTurn, setHasOpenedThisTurn] = useState(false);
+  const prevIsYourTurn = useRef(isYourTurn);
+  useEffect(() => {
+    if (isYourTurn && !prevIsYourTurn.current) {
+      setHasOpenedThisTurn(false);
+    }
+    prevIsYourTurn.current = isYourTurn;
+  }, [isYourTurn]);
+
+  const shouldBlink = isYourTurn && !hasOpenedThisTurn && !isFlipOnly && !isExecutingSkill;
+
+  if (!hasBattle || hidden || isFlipOnly) {
     return null;
   }
 
   return (
-    <div className="fixed bottom-20 right-4 z-41">
-      {/* Botão principal */}
-      <button
-        className={`btn btn-primary btn-circle shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""}`}
-        onClick={() => !isExecutingSkill && setOpen((prev) => !prev)}
-        disabled={isExecutingSkill}
-      >
-        <FaBars size={20} />
-      </button>
-
+    <div className="fixed bottom-14 right-4 z-[44] flex flex-col items-end gap-2">
       {/* Menu flutuante */}
-      {open && (
+      {open && !isFlipOnly && (
         <div
           className="
-            absolute bottom-16 right-0
             bg-base-100 shadow-lg rounded-xl p-2
             flex flex-col gap-2
           "
         >
           {/* Quando selecionando alvo de habilidade, mostrar apenas Cancelar */}
           {isSelectingSkillTarget ? (
-            <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
-              Cancelar
+            <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
+              <FaTimes size={14} /> {t("common.cancel")}
             </button>
           ) : (
             <>
-              {tab == opositeTeamTab && !isAttacking && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Team)}>
-                  Equipe
-                </button>
-              )}
-
-              {tab == currentTeamTab && !isAttacking && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Enemies)}>
-                  Inimigos
-                </button>
-              )}
-
-              {player?.fightInfo?.battleStatus == "starting" && !isAttacking && player?.fightInfo?.canRollInitiative && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Initiative)}>
-                  Rolar Iniciativa
-                </button>
-              )}
-
-              {player?.fightInfo?.battleStatus == "started" && !isAttacking && player?.fightInfo?.canRollInitiative && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.JoinBattle)}>
-                  Entrar na batalha
-                </button>
-              )}
-
               {isYourTurn && !isAttacking && (
                 <>
                   {isFleeing ? (
-                    <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
-                      Encerrar o turno
+                    <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
+                      <FaCheckCircle size={14} /> {t("combat.endTurn")}
                     </button>
                   ) : (
                     <>
                       {canUseItems && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
-                          Itens
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Inventory)}>
+                          <FaFlask size={14} /> {t("combat.items")}
                         </button>
                       )}
                       {canUseHabilities && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
-                          Habilidades
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Skills)}>
+                          <FaStar size={14} /> {t("combat.specialAttacks")}
                         </button>
                       )}
                       {canUseFlee && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Flee)}>
-                          Tentar fugir
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Flee)}>
+                          <GiRunningNinja size={16} /> {t("combat.flee")}
                         </button>
                       )}
                       {canUseFreeShot && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
-                          Tiro livre
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.FreeShot)}>
+                          <FaCrosshairs size={14} /> {t("combat.freeShot")}
                         </button>
                       )}
                       {canAttack && (
-                        <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
-                          Atacar
+                        <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Attack)}>
+                          <GiSwordWound size={16} /> {t("combat.attack")}
                         </button>
                       )}
-                      <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
-                        Encerrar o turno
+                      <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.EndTurn)}>
+                        <FaCheckCircle size={14} /> {t("combat.endTurn")}
                       </button>
                     </>
                   )}
@@ -196,14 +172,23 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
               )}
 
               {isAttacking && (
-                <button className="btn btn-sm w-32" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
-                  Cancelar
+                <button className="btn btn-sm w-36 justify-start gap-2" onClick={() => handleAction(COMBAT_MENU_ACTIONS.Cancel)}>
+                  <FaTimes size={14} /> {t("common.cancel")}
                 </button>
               )}
             </>
           )}
         </div>
       )}
+
+      {/* Botão principal */}
+      <button
+        className={`btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""} ${shouldBlink ? "animate-combat-menu-blink" : ""}`}
+        onClick={() => { setHasOpenedThisTurn(true); setOpen((prev) => !prev); }}
+        disabled={isExecutingSkill}
+      >
+        <FaBars size={20} />
+      </button>
     </div>
   );
 }

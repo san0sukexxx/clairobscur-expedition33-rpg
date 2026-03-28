@@ -1,4 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from "react";
+import type { RefObject, MutableRefObject } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import BattleGroupStatus from "./BattleGroupStatus";
 import CombatMenu from "./CombatMenu";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
@@ -6,8 +8,11 @@ import InitiativesQueue from "./InitiativesQueue";
 import GradientBar from "./GradientBar";
 import { CgSandClock } from "react-icons/cg";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import type { BattleCharacterInfo } from "../api/ResponseModel";
+import type { BattleCharacterInfo, WeaponInfo } from "../api/ResponseModel";
+import type { DiceBoardRef } from "./DiceBoard";
 import PlayerStatusFloating from "./PlayerStatusFloating";
+import CombatBottomSheet from "./CombatBottomSheet";
+import SkillInfoCard from "./SkillInfoCard";
 import { t } from "../i18n";
 
 interface CombatsSectionProps {
@@ -22,11 +27,30 @@ interface CombatsSectionProps {
     isAdmin: boolean;
     excludeSelfFromTargeting?: boolean;
     hitCharacters?: Set<number>;
+    activeSkillId?: string | null;
+    onDismissSkillCard?: () => void;
+    diceBoardRef: RefObject<DiceBoardRef | null>;
+    timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    onBottomSheetChange?: (open: boolean) => void;
+    weaponInfo?: WeaponInfo | null;
 }
 
-export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters }: CombatsSectionProps) {
+export default function CombatSection({ onMenuAction, player, onSelectTarget, isReviveMode = false, isSelectingSkillTarget = false, forcedTab, onTabChange, isExecutingSkill = false, isAdmin, excludeSelfFromTargeting = false, hitCharacters, activeSkillId, onDismissSkillCard, diceBoardRef, timeoutDiceBoardRef, onBottomSheetChange, weaponInfo }: CombatsSectionProps) {
     const [internalTab, setInternalTab] = useState<"enemies" | "team">("enemies");
     const [isAttacking, setIsAttacking] = useState<Boolean>(false);
+    const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+    const [statusHighlighted, setStatusHighlighted] = useState(false);
+    const highlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleHighlightStatus = () => {
+        if (highlightTimerRef.current) clearTimeout(highlightTimerRef.current);
+        setStatusHighlighted(true);
+        highlightTimerRef.current = setTimeout(() => setStatusHighlighted(false), 3000);
+    };
+
+    useEffect(() => {
+        onBottomSheetChange?.(bottomSheetOpen);
+    }, [bottomSheetOpen, onBottomSheetChange]);
 
     const tab = forcedTab ?? internalTab;
     const setTab = (newTab: "enemies" | "team") => {
@@ -99,15 +123,9 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 break;
 
             case COMBAT_MENU_ACTIONS.FreeShot:
-                setTab(opositeTeamTab);
-                setIsAttacking(true);
-                onMenuAction(COMBAT_MENU_ACTIONS.FreeShot);
-                break;
-
             case COMBAT_MENU_ACTIONS.Attack:
-                setIsAttacking(true);
-                setTab(opositeTeamTab);
-                onMenuAction(COMBAT_MENU_ACTIONS.Attack);
+            case COMBAT_MENU_ACTIONS.Defend:
+                setBottomSheetOpen(true);
                 break;
 
             case COMBAT_MENU_ACTIONS.Cancel:
@@ -119,6 +137,9 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 console.log("Ação desconhecida:", action);
         }
     }
+
+    const prefersReduced = useReducedMotion();
+    const rotateY = tab === "team" ? 180 : 0;
 
     return (
         <div>
@@ -136,9 +157,11 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 </div>
             )}
 
-            <PlayerStatusFloating
+            {/* <PlayerStatusFloating
                 player={player}
-            />
+                highlighted={statusHighlighted}
+                weaponInfo={weaponInfo}
+            /> */}
 
             <InitiativesQueue
                 characters={player?.fightInfo?.characters}
@@ -150,13 +173,30 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             <GradientBar characters={player?.fightInfo?.characters} player={player} turns={player?.fightInfo?.turns} />
 
-            {tab === "enemies" && (
-                <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
+            {activeSkillId && onDismissSkillCard && (
+                <div className="mt-4">
+                    <SkillInfoCard skillId={activeSkillId} onDismiss={onDismissSkillCard} player={player} onHighlightStatus={handleHighlightStatus} />
+                </div>
             )}
 
-            {tab === "team" && (
-                <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
+            {/* Card do próprio jogador — sempre visível */}
+            {currentCharacter && !currentCharacter.isEnemy && (
+                <div className="mt-5 px-1 py-1">
+                    <BattleGroupStatus
+                        player={player}
+                        isEnemies={false}
+                        currentCharacter={currentCharacter}
+                        isAttacking={false}
+                        isExecutingSkill={isExecutingSkill}
+                        isAdmin={isAdmin}
+                        hitCharacters={hitCharacters}
+                        selfOnly={true}
+                    />
+                </div>
             )}
+
+            <BattleGroupStatus player={player} isEnemies={true} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
+            <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} hideSelf={true} />
 
             <CombatMenu
                 player={player}
@@ -167,9 +207,12 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 isAttacking={isAttacking}
                 isExecutingSkill={isExecutingSkill}
                 isSelectingSkillTarget={isSelectingSkillTarget}
+                hidden={bottomSheetOpen}
             />
 
-            <div className="h-[100px]" />
+            <CombatBottomSheet player={player} open={bottomSheetOpen} onOpen={() => setBottomSheetOpen(true)} onClose={() => setBottomSheetOpen(false)} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} activeSkillId={activeSkillId} onHighlightStatus={handleHighlightStatus} />
+
+            <div className="h-52" />
         </div>
     );
 }

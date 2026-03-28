@@ -9,14 +9,14 @@ import { t } from "../i18n";
 
 interface CampaignAdminCombatsTabProps {
     campaignInfo: Campaign;
-    setCampaignInfo: React.Dispatch<React.SetStateAction<Campaign | null>>;
     players: GetPlayerResponse[];
 }
 
-export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo, players }: CampaignAdminCombatsTabProps) {
+export default function CampaignAdminCombatsTab({ campaignInfo, players }: CampaignAdminCombatsTabProps) {
     const [battles, setBattles] = useState<Battle[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [selectedBattleId, setSelectedBattleId] = useState<number | null>(null);
 
     const [creating, setCreating] = useState(false);
     const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -29,15 +29,14 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
         try {
             const data = await APIBattle.listByCampaign(campaignInfo.id);
             setBattles(data);
+            if (data.length === 1) {
+                setSelectedBattleId(data[0].id);
+            }
         } catch {
             setError(t("combatAdmin.errorLoadingCombats"));
         } finally {
             setLoading(false);
         }
-    }
-
-    function handleSelectBattle(newId: number | null) {
-        setCampaignInfo(prev => prev ? { ...prev, battleId: newId } : prev)
     }
 
     async function handleCreateBattle() {
@@ -50,7 +49,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
             });
 
             await loadBattles();
-            handleSelectBattle(newId);
+            setSelectedBattleId(newId);
         } catch {
             setError(t("combatAdmin.errorCreating"));
         } finally {
@@ -58,22 +57,12 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
         }
     }
 
-    async function handleOpenBattle(battleId: number) {
-        try {
-            handleSelectBattle(battleId)
-            await APIBattle.useBattle(battleId, campaignInfo.id)
-        } catch (error) {
-            console.error("Erro ao ativar batalha:", error)
-            alert(t("combatAdmin.errorActivating"))
-        }
-    }
-
     function handleBattleStatusChanged(newStatus: string) {
-        if (campaignInfo.battleId == null) return;
+        if (selectedBattleId == null) return;
 
         setBattles((oldBattles) =>
             oldBattles.map((b) =>
-                b.id === campaignInfo.battleId
+                b.id === selectedBattleId
                     ? { ...b, battleStatus: newStatus }
                     : b
             )
@@ -89,8 +78,8 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
 
             await loadBattles();
 
-            if (campaignInfo.battleId === confirmId) {
-                handleSelectBattle(null);
+            if (selectedBattleId === confirmId) {
+                setSelectedBattleId(null);
             }
         } catch {
             setError(t("combatAdmin.errorDeleting"));
@@ -104,8 +93,8 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
     }, [campaignInfo.id]);
 
     const selectedBattle =
-        campaignInfo.battleId != null
-            ? battles.find((b) => b.id === campaignInfo.battleId) ?? null
+        selectedBattleId != null
+            ? battles.find((b) => b.id === selectedBattleId) ?? null
             : null;
 
     return (
@@ -177,66 +166,49 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                     )}
 
                     {!loading && !error && battles.length > 0 && (
-                        <div className="mt-6 overflow-x-auto">
-                            <table className="table table-zebra w-full">
-                                <thead>
-                                    <tr>
-                                        <th className="text-left">{t("combatAdmin.combat")}</th>
-                                        <th className="text-left">{t("combatAdmin.status")}</th>
-                                        <th className="text-left w-1/6">{t("common.actions")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {battles.map((battle) => (
-                                        <tr key={battle.id}>
-                                            <td>#{battle.id}</td>
-                                            <td>{getBattleStatusLabel(battle.battleStatus)}</td>
-                                            <td className="flex gap-2">
-                                                {battle.id !== campaignInfo.battleId ? (
-                                                    <button
-                                                        className="btn btn-xs btn-outline"
-                                                        onClick={() => handleOpenBattle(battle.id)}
-                                                    >
-                                                        {t("combatAdmin.use")}
-                                                    </button>
-                                                ) : (
-                                                    <button
-                                                        className="btn btn-xs btn-warning"
-                                                        onClick={async () => {
-                                                            try {
-                                                                await APIBattle.clearBattle(campaignInfo.id)
-                                                                handleSelectBattle(null)
-                                                            } catch (error) {
-                                                                console.error("Erro ao pausar batalha:", error)
-                                                                alert(t("combatAdmin.errorPausing"))
-                                                            }
-                                                        }}
-                                                    >
-                                                        {t("combatAdmin.pause")}
-                                                    </button>
-                                                )}
-
-                                                <button
-                                                    className="btn btn-xs btn-error"
-                                                    onClick={() => setConfirmId(battle.id)}
-                                                    disabled={deletingId === battle.id}
-                                                >
-                                                    {t("combatAdmin.delete")}
-                                                </button>
-                                            </td>
-
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <div className="mt-4 flex flex-col divide-y divide-base-300">
+                            {battles.map((battle) => (
+                                <div key={battle.id} className="flex items-center gap-3 py-3 px-1">
+                                    <div className="flex flex-col min-w-0 flex-1">
+                                        <span className="font-semibold text-sm">#{battle.id}</span>
+                                        <span className="text-xs opacity-60">{getBattleStatusLabel(battle.battleStatus)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 shrink-0">
+                                        {battle.id !== selectedBattleId ? (
+                                            <button
+                                                className="btn btn-xs btn-outline"
+                                                onClick={() => setSelectedBattleId(battle.id)}
+                                            >
+                                                {t("combatAdmin.use")}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="btn btn-xs btn-warning"
+                                                onClick={() => setSelectedBattleId(null)}
+                                            >
+                                                {t("combatAdmin.pause")}
+                                            </button>
+                                        )}
+                                        <button
+                                            className="btn btn-xs btn-error"
+                                            onClick={() => setConfirmId(battle.id)}
+                                            disabled={deletingId === battle.id}
+                                        >
+                                            {t("combatAdmin.delete")}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     )}
 
                     {selectedBattle && (
                         <div className="mt-8">
                             <CombatAdmin
+                                key={selectedBattle.id}
                                 players={players}
                                 campaignInfo={campaignInfo}
+                                battleId={selectedBattle.id}
                                 initialStatus={selectedBattle.battleStatus}
                                 onStatusChanged={handleBattleStatusChanged}
                             />
@@ -244,6 +216,7 @@ export default function CampaignAdminCombatsTab({ campaignInfo, setCampaignInfo,
                     )}
                 </div>
             </div>
+            <div className="h-24" />
         </>
     );
 }

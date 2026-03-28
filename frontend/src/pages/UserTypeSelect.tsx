@@ -1,15 +1,25 @@
 import { AiOutlineBook } from "react-icons/ai";
 import { FaUser } from "react-icons/fa";
+import { MdSettings } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { t } from "../i18n";
 
 export default function UserTypeSelect() {
   return (
-    <div className="min-h-dvh grid place-items-center bg-base-200">
+    <div className="min-h-dvh grid place-items-center bg-base-200 relative">
+      <div className="absolute top-3 right-3">
+        <FullscreenButton />
+      </div>
       <div className="w-full max-w-xs px-4 flex flex-col gap-6">
-        <h1 className="text-3xl font-bold text-center text-primary">
-          {t("userTypeSelect.title")}
-        </h1>
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-primary">
+            {t("userTypeSelect.title")}
+          </h1>
+          <p className="text-sm opacity-60 italic mt-1">
+            {t("userTypeSelect.subtitle")}
+          </p>
+        </div>
 
         <Link to="/master" className="btn btn-primary btn-lg w-full flex items-center justify-center gap-3">
           <AiOutlineBook size={24} />
@@ -20,6 +30,12 @@ export default function UserTypeSelect() {
         <Link to="/campaign-list" className="btn btn-secondary btn-lg w-full flex items-center justify-center gap-3">
           <FaUser size={22} />
           {t("userTypeSelect.player")}
+          <span className="opacity-0 w-1">.</span>
+        </Link>
+
+        <Link to="/settings" className="btn btn-ghost btn-lg w-full flex items-center justify-center gap-3">
+          <MdSettings size={24} />
+          {t("settings.title")}
           <span className="opacity-0 w-1">.</span>
         </Link>
       </div>

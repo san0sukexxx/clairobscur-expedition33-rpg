@@ -2,7 +2,7 @@ import React from "react";
 import AnimatedStatBar from "./AnimatedStatBar";
 import type { BattleCharacterInfo, BattleTurnResponse } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
-import { getEnrichedCharacterSkills } from "../utils/SkillUtils";
+import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils";
 import { t } from "../i18n";
 import { FaEdit } from "react-icons/fa";
 
@@ -32,7 +32,7 @@ export default function GradientBar({ characters, player, turns, forceShowTeamIs
         const progressValue = charges >= 3 ? 100 : pct(teamGradientPoints % 12, 12);
 
         return (
-            <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+            <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
                 <div>
                     <div className="flex items-center justify-between text-sm mb-2">
                         <span>{t("combat.gradientCharges")} ({forceShowTeamIsEnemy ? "Time B" : "Time A"})</span>
@@ -75,10 +75,10 @@ export default function GradientBar({ characters, player, turns, forceShowTeamIs
     if (!playerInTurns) return null;
 
     // Check if player has any gradient skills equipped in slots
-    const hasGradientSkills = player?.skills?.some(playerSkill => {
-        if (playerSkill.slot === null || playerSkill.slot === undefined) return false;
-        const skillData = getEnrichedCharacterSkills(player).find(s => s.id === playerSkill.skillId);
-        return skillData?.isGradient ?? false;
+    const hasGradientSkills = player?.specialAttacks?.some(playerSA => {
+        if (playerSA.slot === null || playerSA.slot === undefined) return false;
+        const saData = getEnrichedCharacterSpecialAttacks(player).find(s => s.id === playerSA.specialAttackId);
+        return saData?.isGradient ?? false;
     }) ?? false;
 
     if (!hasGradientSkills) return null;
@@ -94,7 +94,7 @@ export default function GradientBar({ characters, player, turns, forceShowTeamIs
     const progressValue = charges >= 3 ? 100 : pct(teamGradientPoints % 12, 12);
 
     return (
-        <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-neutral-700 bg-neutral-900 shadow-md p-4 mt-4">
+        <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4 mt-4">
             <div>
                 <div className="flex items-center justify-between text-sm mb-2">
                     <span>{t("combat.gradientCharges")}</span>

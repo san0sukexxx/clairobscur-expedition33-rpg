@@ -36,6 +36,7 @@ type UITexts = Record<string, any>;  // Nested structure for UI texts
 interface Translations {
   pictos: Record<string, PictoTranslation>;
   weapons: Record<string, WeaponTranslation>;
+  locations: Record<string, string>;
   ui: UITexts;
 }
 
@@ -44,15 +45,25 @@ const translations: Record<Locale, Translations> = {
   "pt-BR": ptBRTranslations as Translations,
 };
 
-// Default locale (can be changed based on user preference)
-let currentLocale: Locale = "pt-BR";
+// Default locale — restored from localStorage if previously saved
+const LOCALE_KEY = "app-locale";
+const savedLocale = localStorage.getItem(LOCALE_KEY) as Locale | null;
+let currentLocale: Locale = (savedLocale === "en" || savedLocale === "pt-BR") ? savedLocale : "pt-BR";
 
 /**
- * Set the current locale for translations
+ * Check if the user has already selected a language (app-locale is set in localStorage)
+ */
+export function isLanguageSelected(): boolean {
+  return localStorage.getItem(LOCALE_KEY) !== null;
+}
+
+/**
+ * Set the current locale for translations and persist to localStorage
  * @param locale The locale to use ("en" or "pt-BR")
  */
 export function setLocale(locale: Locale): void {
   currentLocale = locale;
+  localStorage.setItem(LOCALE_KEY, locale);
 }
 
 /**
@@ -284,6 +295,33 @@ export function hasWeapon(weaponId: string): boolean {
  */
 export function getAllWeaponIds(): string[] {
   return Object.keys(translations.en.weapons);
+}
+
+// ==================== LOCATION TRANSLATIONS ====================
+
+/**
+ * Get a location's translated name by its kebab-case ID
+ * @param locationId The kebab-case ID (e.g., "spring-meadows")
+ * @param locale The locale to use (defaults to current locale)
+ * @returns The translated location name
+ */
+export function getLocationName(locationId: string, locale?: Locale): string {
+  const targetLocale = locale || currentLocale;
+  const name = translations[targetLocale]?.locations[locationId];
+
+  if (!name) {
+    return locationId;
+  }
+
+  return name;
+}
+
+/**
+ * Get all available location IDs
+ * @returns Array of all location kebab-case IDs
+ */
+export function getAllLocationIds(): string[] {
+  return Object.keys(translations.en.locations);
 }
 
 // ==================== UI TEXT TRANSLATIONS ====================

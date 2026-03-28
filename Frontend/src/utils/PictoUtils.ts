@@ -1,9 +1,11 @@
-import { roundDownOneDecimal } from "./MathUtils";
 import { PictosList } from "../data/PictosList";
-import type { PictoColor, PictoInfo } from "../api/ResponseModel";
+import type { PictoColor, PictoInfo, PictoResponse, LuminaResponse } from "../api/ResponseModel";
+import type { GetPlayerResponse } from "../api/APIPlayer";
+import { calculateMaxLuminas } from "./PlayerCalculator";
+import { getPictoName } from "../i18n";
 
 export function calculatePictoSpeed(value: number, level: number): number {
-    return Math.floor((value / 1400) * level);
+    return Math.floor((value / 200) * level);
 }
 
 export function calculatePictoDefense(value: number, level: number): number {
@@ -11,11 +13,11 @@ export function calculatePictoDefense(value: number, level: number): number {
 }
 
 export function calculatePictoHealth(value: number, level: number): number {
-    return Math.floor((value / 2500) * level);
+    return Math.floor((value / 1000) * level);
 }
 
-export function calculatePictoCritical(value: number, level: number): number {
-    return roundDownOneDecimal((value / 8) * level / 10);
+export function calculatePictoAbility(value: number, level: number): number {
+    return Math.floor((value / 450) * level);
 }
 
 export function displayPictoSpeed(value: number, level: number): number {
@@ -30,7 +32,7 @@ export function displayPictoHealth(value: number, level: number): number {
     return value;
 }
 
-export function displayPictoCritical(value: number, level: number): number {
+export function displayPictoAbility(value: number, level: number): number {
     return value;
 }
 
@@ -46,8 +48,8 @@ export function displayPictoAttributeHealth(value: number, level: number): strin
     return "+" + calculatePictoHealth(value, level);
 }
 
-export function displayPictoAttributeCritical(value: number, level: number): string {
-    return "x" + calculatePictoCritical(value, level);
+export function displayPictoAttributeAbility(value: number, level: number): string {
+    return "+" + calculatePictoAbility(value, level);
 }
 
 export function getPictoByName(name: string): PictoInfo | undefined {
@@ -68,9 +70,16 @@ export function getPictoByName(name: string): PictoInfo | undefined {
     if (byName) return byName;
 
     // Fallback: try to find by imageId (English name)
-    return PictosList.find(
+    const byImageId = PictosList.find(
         (picto) => picto.imageId?.toLowerCase() === nameLower
     );
+    if (byImageId) return byImageId;
+
+    // Fallback: try pt-BR name (for backward compat with data stored with Portuguese names)
+    const byPtBR = PictosList.find(
+        (picto) => picto.id && getPictoName(picto.id, "pt-BR").toLowerCase() === nameLower
+    );
+    return byPtBR;
 }
 
 export function getAllPictosSorted(): PictoInfo[] {
@@ -84,4 +93,38 @@ export const pictoColorHex: Record<PictoColor, string> = {
   red: "rgb(227, 30, 25)",
   blue: "rgb(140, 255, 255)",
   yellow: "rgb(235, 220, 170)",
+}
+
+/**
+ * Returns a Set of picto IDs (PictoResponse.id) that should be disabled
+ * because the total lumina cost of equipped pictos + luminas exceeds the max.
+ * Disables pictos with the highest luminaCost first.
+ */
+export function getDisabledPictoIds(player: GetPlayerResponse | null): Set<number> {
+  const disabled = new Set<number>();
+  if (!player) return disabled;
+
+  const maxLumina = calculateMaxLuminas(player);
+  const equippedPictos = (player.pictos ?? []).filter(p => typeof p.slot === "number");
+  const equippedLuminas = (player.luminas ?? []).filter((l): l is LuminaResponse => l.isEquiped);
+
+  const luminasCost = equippedLuminas.reduce((sum, l) => {
+    const info = getPictoByName(l.pictoId);
+    return sum + (info?.luminaCost ?? 0);
+  }, 0);
+
+  const pictosWithCost = equippedPictos.map(p => ({
+    picto: p,
+    cost: getPictoByName(p.pictoId)?.luminaCost ?? 0,
+  })).sort((a, b) => b.cost - a.cost); // most expensive first
+
+  let totalCost = luminasCost + pictosWithCost.reduce((sum, p) => sum + p.cost, 0);
+
+  for (const { picto, cost } of pictosWithCost) {
+    if (totalCost <= maxLumina) break;
+    disabled.add(picto.id);
+    totalCost -= cost;
+  }
+
+  return disabled;
 }

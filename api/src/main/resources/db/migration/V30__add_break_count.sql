@@ -1,0 +1,1 @@
+ALTER TABLE battle_character ADD COLUMN break_count INTEGER NOT NULL DEFAULT 0;

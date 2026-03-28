@@ -11,15 +11,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "50% increased damage on Rank D. No damage increase on other ranks."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "50% increased Base Attack damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "On Rank D, recover 20% Health with Base Attack."
       }
     ],
@@ -31,21 +31,21 @@
       "power": 1200,
       "element": "Void",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "defense": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Kill self on battle start."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Revive with 100% Health. Once per battle."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Play first."
       }
     ],
@@ -58,20 +58,20 @@
       "element": "Light",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Perfection is now based on current Health. Gain 1 Rank every 20% missing Health."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Light damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+1 AP on Rank Up."
       }
     ],
@@ -83,21 +83,21 @@
       "power": 1140,
       "element": "Physical",
       "scaling": {
-        "agility": "A",
+        "dexterity": "A",
         "luck": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Start battle at Rank S, but can't be Healed or gain Shields."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Apply Rush on Rank S."
       }
     ],
@@ -109,21 +109,21 @@
       "power": 1140,
       "element": "Light",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Light damage can Burn on Critical hits."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Apply 3 Burn instead of Mark."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
       }
     ],
@@ -136,20 +136,20 @@
       "element": "Lightning",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Switch to Rank S on Break. Base Attack can Break."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "100% Critical Chance on Rank S."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Triggers a lightning strike on Critical hits."
       }
     ],
@@ -162,20 +162,20 @@
       "element": "Fire",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Base Attack applies 2 Burn stack per Rank."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+1 AP on Rank Up."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Increase Burn damage by 50% per Rank, up to 300% on Rank S."
       }
     ],
@@ -193,15 +193,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Don't lose Rank when taking damage from Powerless enemies."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+1 Perfection on hitting a Powerless enemy."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Apply Powerless on Counterattack."
       }
     ],
@@ -214,20 +214,20 @@
       "element": "Dark",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "No Perfection loss on damage taken. Perfection is instead lost on being Healed."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Gain 2 AP on Counterattack."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Gain 1 Rank on Counterattack."
       }
     ],
@@ -239,21 +239,21 @@
       "power": 1104,
       "element": "Fire",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Base attack gives 1 Perfection per Burn on target."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "While Powerful, 20% chance to Burn on hit."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+1 AP on Rank Up."
       }
     ],
@@ -271,15 +271,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Start battle on Rank B, but 50% Health."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Recover 15% Health on Base Attack."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Apply Powerful on Rank B."
       }
     ],
@@ -292,20 +292,20 @@
       "element": "Light",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Casting a Light Skill increases damage of next Physical Skill cast by 50% and vice versa."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Physical damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Dealing Light damage with a Skill recovers 3% Health."
       }
     ],
@@ -317,21 +317,21 @@
       "power": 1140,
       "element": "Physical",
       "scaling": {
-        "agility": "A",
+        "dexterity": "A",
         "luck": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Gain 1 Rank on Counterattack."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "50% increased Counterattack damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Gain 2 AP on Counterattack."
       }
     ],
@@ -349,15 +349,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Play again after a Base Attack."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "50% increased Base Attack damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack gives 4 Perfection."
       }
     ],
@@ -369,21 +369,21 @@
       "power": 1212,
       "element": "Earth",
       "scaling": {
-        "agility": "A",
+        "dexterity": "A",
         "luck": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "When hit, lose 1 Perfection instead of 1 Rank."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Apply Rush on Rank S."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Gain 2 Perfection on turn start."
       }
     ],
@@ -396,20 +396,20 @@
       "element": "Physical",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Convert Light damage from Skills to Physical damage."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Physical damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "-1 AP cost for Physical Skills."
       }
     ],
@@ -427,15 +427,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "+1 Perfection on Critical hit."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Self-Heal by 2% Health on dealing a Critical hit."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Counterattack is always a Critical hit."
       }
     ],
@@ -448,20 +448,20 @@
       "element": "Physical",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Rank can't be lower than C."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack gives 4 Perfection."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Parrying gives 2 Perfection instead of 1."
       }
     ],
@@ -474,20 +474,20 @@
       "element": "Physical",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Base Attack consumes all Shields to deal 100% increased damage per Shield."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+1 Shield on Counterattack."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack gives 4 Perfection."
       }
     ],
@@ -511,21 +511,21 @@
       "power": 1320,
       "element": "Physical",
       "scaling": {
-        "agility": "A",
+        "dexterity": "A",
         "luck": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Double Perfection gained on Free Aim shots."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Free Aim shots break 2 Shields."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "50% increased Free Aim damage."
       }
     ],
@@ -537,21 +537,21 @@
       "power": 1092,
       "element": "Physical",
       "scaling": {
-        "agility": "A",
+        "dexterity": "A",
         "luck": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Can't lose Perfection. No damage increase from Rank."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "50% increased Base Attack damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack gives 4 Perfection."
       }
     ],
@@ -564,20 +564,20 @@
       "element": "Light",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "+1 to all Perfection gain but can't reach Rank S."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack gives 4 Perfection."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "20% increased Light damage with Skills."
       }
     ],
@@ -590,20 +590,20 @@
       "element": "Light",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "An ethereal Sword deals Light damage on any damage dealt with Skills."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% chance to apply Burn on dealing Light damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Can't die if at least Rank A."
       }
     ],
@@ -616,20 +616,20 @@
       "element": "Physical",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Bonus damage from Perfection applies to all allies at half value. Bonus damage no longer applies to Verso."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Perfection gained is increased by 1 while Powerful."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Support Skills cost 1 less AP."
       }
     ],
@@ -647,15 +647,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Gain 1 Rank on applying Mark."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Mark an enemy on Base Attack."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Apply Powerless on Marking an enemy."
       }
     ],

@@ -1,0 +1,1 @@
+ALTER TABLE encounter ADD COLUMN story_order INTEGER NOT NULL DEFAULT 0;

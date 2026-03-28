@@ -9,5 +9,7 @@ data class Battle(
         @Column(name = "campaign_id", nullable = false) val campaignId: Int,
         @Column(name = "battle_status", nullable = false) var battleStatus: String,
         @Column(name = "team_a_gradient_points", nullable = false) var teamAGradientPoints: Int = 0,
-        @Column(name = "team_b_gradient_points", nullable = false) var teamBGradientPoints: Int = 0
+        @Column(name = "team_b_gradient_points", nullable = false) var teamBGradientPoints: Int = 0,
+        @Column(name = "encounter_id") val encounterId: Int? = null,
+        @Column(name = "id_encounter_history_mode") var idEncounterHistoryMode: String? = null
 )

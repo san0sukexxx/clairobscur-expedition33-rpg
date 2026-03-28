@@ -1,5 +1,5 @@
 import type { BattleWithDetailsResponse } from "../api/APIBattle";
-import type { GetPlayerResponse } from "../api/APIPlayer";
+import type { AbilityScores, GetPlayerResponse } from "../api/APIPlayer";
 import type { BattleCharacterInfo } from "../api/ResponseModel";
 
 export const CHARACTERS_LIST = [
@@ -10,6 +10,42 @@ export const CHARACTERS_LIST = [
     { id: "verso", label: "Verso" },
     { id: "monoco", label: "Monoco" },
 ];
+
+// Hit die (max face value) per character based on D&D 5e class
+// Maelle/Sciel → Rogue (d8), Lune → Wizard (d6),
+// Verso/Gustave → Fighter (d10), Monoco → Druid (d8)
+const CHARACTER_HIT_DIE: Record<string, number> = {
+    maelle:  8,
+    sciel:   8,
+    lune:    6,
+    verso:   10,
+    gustave: 10,
+    monoco:  8,
+};
+
+const CHARACTER_MAIN_ATTRIBUTE: Record<string, keyof AbilityScores> = {
+    verso:   "strength",
+    gustave: "strength",
+    maelle:  "dexterity",
+    sciel:   "charisma",
+    monoco:  "wisdom",
+    lune:    "intelligence",
+};
+
+export function getMainAttributeKey(characterId?: string | null): keyof AbilityScores {
+    return CHARACTER_MAIN_ATTRIBUTE[characterId ?? ""] ?? "strength";
+}
+
+export function getHitDie(characterId?: string | null): number {
+    return CHARACTER_HIT_DIE[characterId ?? ""] ?? 8;
+}
+
+/** Level 1 HP = hit die max + CON modifier */
+export function calcStartingHp(characterId: string | undefined | null, conScore: number): number {
+    const hitDie = getHitDie(characterId);
+    const conMod = Math.floor((conScore - 10) / 2);
+    return hitDie + conMod;
+}
 
 export function getCharacterLabelById(id?: string | null): string | null {
     if (!id) return null;
@@ -33,6 +69,30 @@ export function getPlayerCharacter(player: GetPlayerResponse | null): BattleChar
     if (playerBattleId == null) return undefined;
 
     return player.fightInfo.characters?.find(c => c.battleID === playerBattleId);
+}
+
+/**
+ * Applies alphabetic suffixes (A, B, C...) to NPC names when there are duplicates.
+ * Mutates the characters array in place.
+ */
+export function applyNpcNameSuffixes(characters: BattleCharacterInfo[]): void {
+    const npcCountById: Record<string, number> = {};
+    for (const ch of characters) {
+        if (ch.type === "npc") {
+            npcCountById[ch.id] = (npcCountById[ch.id] ?? 0) + 1;
+        }
+    }
+
+    const npcLetterIndex: Record<string, number> = {};
+    for (const ch of characters) {
+        if (ch.type === "npc" && npcCountById[ch.id] > 1) {
+            // Strip any existing suffix before reapplying
+            const baseName = ch.name.replace(/\s[A-Z]$/, "");
+            const idx = npcLetterIndex[ch.id] ?? 0;
+            npcLetterIndex[ch.id] = idx + 1;
+            ch.name = `${baseName} ${String.fromCharCode(65 + idx)}`;
+        }
+    }
 }
 
 export function getActiveTurnCharacterFromBattle(battleDetails: BattleWithDetailsResponse): BattleCharacterInfo | undefined {

@@ -6,20 +6,20 @@
       "element": "Dark",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Kill self on battle start."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Revive with 100% Health. Once per battle."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Play first."
       }
     ],
@@ -32,20 +32,20 @@
       "element": "Light",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Reverse Bestial Wheel order."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Using an Upgraded Skill gives 1 AP to all other allies."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Almighty Mask gives 2 AP to all allies."
       }
     ],
@@ -57,21 +57,21 @@
       "power": 1200,
       "element": "Fire",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Start battle in Agile Mask."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Agile Mask applies Rush for 3 turns."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+50% Critical Chance while in Agile Mask."
       }
     ],
@@ -84,20 +84,20 @@
       "element": "Physical",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Replay instantly when in Almighty Mask."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+3 AP when in Almighty Mask."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Revive instantly with full Health if dead while in Almighty Mask. Once per Battle."
       }
     ],
@@ -110,20 +110,20 @@
       "element": "Ice",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Start battle in Caster Mask."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Caster Mask applies Regen for 3 turns."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Skills cost 1 less AP while in Caster Mask."
       }
     ],
@@ -141,15 +141,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Free Aim shots spin the Bestial Wheel to a random value."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Free Aim shots deal 100% more damage with all Masks except Almighty."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "100% Critical Chance while in Almighty Mask."
       }
     ],
@@ -167,15 +167,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Start battle in Heavy Mask."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Heavy Mask applies Shell for 3 turns."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+1 AP per hit taken."
       }
     ],
@@ -188,20 +188,20 @@
       "element": "Lightning",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Start battle in Almighty Mask."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Break damage is doubled while in Almighty Mask."
       }
     ],
@@ -213,21 +213,21 @@
       "power": 1020,
       "element": "Physical",
       "scaling": {
-        "agility": "A",
+        "dexterity": "A",
         "luck": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Start battle in Balanced Mask."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Balanced Mask applies Powerful for 3 turns."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Critical hits deal 30% more damage while in Balanced Mask."
       }
     ],
@@ -240,20 +240,20 @@
       "element": "Dark",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Parries increase the Bestial Wheel by 1. Taking damage resets the Bestial Wheel."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Upgraded Skills deal 30% more damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+1 AP on Mask change."
       }
     ],
@@ -271,15 +271,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "30% increased damage per Upgraded Skill used. Resets on using a non-Upgraded Skill."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack spins the Bestial Wheel to a random value."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Using an Upgraded Skill gives 1 AP to all other allies."
       }
     ],
@@ -297,15 +297,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Switch to Almighty Mask on Breaking an enemy."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Almighty Mask gives 2 AP to all allies."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "50% increased Break damage."
       }
     ],

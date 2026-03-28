@@ -1,20 +1,14 @@
-import React, { useMemo, useState } from "react"
-import { type PictoInfo, type LuminaResponse } from "../api/ResponseModel"
+import React, { useMemo, useState, type RefObject, type MutableRefObject } from "react"
+import { type PictoInfo, type LuminaResponse, type PictoResponse } from "../api/ResponseModel"
 import { t } from "../i18n"
+import type { DiceBoardRef } from "./DiceBoard"
+import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer"
 import {
-    displayPictoAttributeCritical,
-    displayPictoAttributeDefense,
-    displayPictoAttributeHealth,
-    displayPictoAttributeSpeed,
-    displayPictoCritical,
-    displayPictoDefense,
-    displayPictoHealth,
-    displayPictoSpeed,
     getPictoByName,
     getAllPictosSorted,
     pictoColorHex,
 } from "../utils/PictoUtils"
-import type { GetPlayerResponse } from "../api/APIPlayer"
+import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer"
 import { APILumina } from "../api/APILumina"
 import { FaChartLine } from "react-icons/fa"
 import { calculateMaxLuminas } from "../utils/PlayerCalculator"
@@ -23,6 +17,8 @@ interface LuminasSectionProps {
     player: GetPlayerResponse | null
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>
     isAdmin: boolean
+    diceBoardRef?: RefObject<DiceBoardRef | null>
+    timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }
 
 type ModalType = "slot" | "admin-add" | "admin-remove" | null
@@ -36,6 +32,8 @@ export default function LuminasSection({
     player,
     setPlayer,
     isAdmin,
+    diceBoardRef,
+    timeoutDiceBoardRef,
 }: LuminasSectionProps) {
     const [modalType, setModalType] = useState<ModalType>(null)
     const [activeSlot, setActiveSlot] = useState<number | null>(null)
@@ -51,7 +49,19 @@ export default function LuminasSection({
         [player?.luminas],
     )
 
-    const currentLuminaCost: number = useMemo(() => {
+    const equippedPictos: PictoResponse[] = useMemo(
+        () => (player?.pictos ?? []).filter((p) => p.slot != null),
+        [player?.pictos],
+    )
+
+    const equippedPictosCost: number = useMemo(() => {
+        return equippedPictos.reduce((total, p) => {
+            const info = getPictoByName(p.pictoId)
+            return total + (info?.luminaCost ?? 0)
+        }, 0)
+    }, [equippedPictos])
+
+    const equippedLuminasCost: number = useMemo(() => {
         return luminas
             .filter((l) => l.isEquiped)
             .reduce((total, l) => {
@@ -59,6 +69,8 @@ export default function LuminasSection({
                 return total + (pictoInfo?.luminaCost ?? 0)
             }, 0)
     }, [luminas])
+
+    const currentLuminaCost: number = equippedPictosCost + equippedLuminasCost
 
     const slots: (LuminaResponse | null)[] = useMemo(() => {
         const equipped = luminas.filter((l) => l.isEquiped)
@@ -127,7 +139,7 @@ export default function LuminasSection({
 
         // Verificar se equipar essa lumina excederia o limite de custo
         if (currentLuminaCost + luminaCost > maxCostLuminas) {
-            alert(`Custo máximo de luminas excedido! Atual: ${currentLuminaCost}, Tentando adicionar: ${luminaCost}, Máximo: ${maxCostLuminas}`)
+            alert(t("luminas.limitExceededAlert", { current: currentLuminaCost, adding: luminaCost, max: maxCostLuminas }))
             return
         }
 
@@ -205,7 +217,7 @@ export default function LuminasSection({
         try {
             newId = await APILumina.createPlayerLumina({
                 playerId: player.id,
-                pictoId: info.name,
+                pictoId: info.id,
             })
         } catch (e) {
             console.error(e)
@@ -223,7 +235,7 @@ export default function LuminasSection({
             const added: LuminaResponse = {
                 id: newId ?? 0,
                 playerId: player.id,
-                pictoId: info.name,
+                pictoId: info.id,
                 isEquiped: false,
             }
 
@@ -265,39 +277,120 @@ export default function LuminasSection({
                 : t("luminas.selectLumina")
 
     return (
-        <div className="text-white">
-            <div className="flex items-center justify-between pb-3">
-                <div className="flex items-center gap-4 flex-1">
-                    <div className="text-lg tracking-widest opacity-90">
-                        LUMINAS
-                    </div>
-                    <div className={`rounded-lg py-1 px-3 text-sm font-semibold ${
+        <div className="text-base-content">
+            <div className="pb-3">
+                <div className="text-center text-lg tracking-widest opacity-90">
+                    LUMINAS
+                </div>
+                <div className="flex items-center justify-center gap-4 mt-2">
+                    <div className={`rounded-lg py-1 px-3 text-sm font-semibold whitespace-nowrap ${
                         currentLuminaCost > maxCostLuminas
                             ? "bg-red-600/20 text-red-400 border border-red-600/30"
                             : currentLuminaCost === maxCostLuminas
                                 ? "bg-amber-700/10 text-amber-700 border border-amber-700/20"
                                 : "bg-green-600/10 text-green-400 border border-green-600/20"
                     }`}>
-                        Custo: {currentLuminaCost}/{maxCostLuminas}
+                        {t("luminas.cost")}: {currentLuminaCost}/{maxCostLuminas}
                     </div>
+                    {isAdmin && (
+                        <div className="flex items-center gap-1 text-sm opacity-70">
+                            <span>Bônus:</span>
+                            <input
+                                type="number"
+                                className="w-16 rounded-md bg-base-200 border border-base-300 px-2 py-1 text-center text-sm outline-none focus:border-base-content/30"
+                                placeholder="0"
+                                value={player?.playerSheet?.luminaBonusPoints || ""}
+                                onChange={(e) => {
+                                    if (!player) return
+                                    const val = e.target.value === "" ? 0 : Number(e.target.value)
+                                    setPlayer({
+                                        ...player,
+                                        playerSheet: { ...player.playerSheet, luminaBonusPoints: val },
+                                    })
+                                }}
+                                onBlur={async () => {
+                                    if (!player) return
+                                    const val = player.playerSheet?.luminaBonusPoints ?? 0
+                                    await APIPlayer.update(player.id, {
+                                        playerSheet: { ...player.playerSheet, luminaBonusPoints: val },
+                                    })
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
                 {isAdmin && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 mt-2 justify-center">
                         <button
-                            className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-white/20"
+                            className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-base-300"
                             onClick={openAdminAdd}
                         >
-                            Adicionar
+                            {t("common.add")}
                         </button>
                         <button
-                            className="px-3 py-1 text-sm rounded-md bg-red-600/70 hover:bg-red-600 transition border border-white/20"
+                            className="px-3 py-1 text-sm rounded-md bg-red-600/70 hover:bg-red-600 transition border border-base-300"
                             onClick={openAdminRemove}
                         >
-                            Remover
+                            {t("common.remove")}
                         </button>
                     </div>
                 )}
             </div>
+
+            {equippedPictos.length > 0 && (
+                <div className="flex flex-col gap-4 mb-2">
+                    <div className="text-sm tracking-widest opacity-60 uppercase">
+                        {t("luminas.equippedPictos")}
+                    </div>
+                    {equippedPictos.map((picto) => {
+                        const name = picto.pictoId
+                        const pictoInfo = getPictoByName(name)
+                        const accent = pictoInfo
+                            ? pictoColorHex[pictoInfo.color]
+                            : "rgba(255,255,255,0.15)"
+                        const luminaCost = pictoInfo?.luminaCost ?? 0
+
+                        return (
+                            <div
+                                key={`picto-${picto.id}`}
+                                className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden opacity-70"
+                            >
+                                <div
+                                    className="pointer-events-none absolute inset-x-3 top-1 bottom-1 rounded-xl"
+                                    style={{
+                                        border: `1px solid ${accent}`,
+                                        clipPath:
+                                            "polygon(0% 10%, 6% 10%, 7.5% 5%, 100% 5%, 100% 95%, 7.5% 95%, 6% 90%, 0% 90%)",
+                                    }}
+                                />
+
+                                <div className="w-full text-left p-6 pl-28 rounded-2xl cursor-default">
+                                    <div className="absolute left-5 top-1/2 -translate-y-1/2">
+                                        <PlusDiamond icon="" pictoName={name} isBig={true} />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <div className="text-xl font-semibold leading-tight">
+                                            {pictoInfo?.name ?? name}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {luminaCost > 0 && (
+                                                <div className="rounded-lg py-1 px-2 text-sm font-semibold bg-amber-700/10 text-amber-700 border border-amber-700/20">
+                                                    {t("luminas.cost")}: {luminaCost}
+                                                </div>
+                                            )}
+                                            <div className="px-3 py-1 text-xs rounded-md bg-base-300/50 border border-base-300 text-base-content/50">
+                                                PICTO
+                                            </div>
+                                        </div>
+                                        <div className="opacity-85">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, pictoInfo.name ?? "", diceBoardRef, timeoutDiceBoardRef) : ""}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
 
             <div className="flex flex-col gap-4">
                 {slots.map((selected, idx) => {
@@ -311,7 +404,7 @@ export default function LuminasSection({
                     return (
                         <div
                             key={selected ? `lumina-${selected.id}` : "empty-slot"}
-                            className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden"
+                            className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden"
                         >
                             <div
                                 className="pointer-events-none absolute inset-x-3 top-1 bottom-1 rounded-xl"
@@ -329,8 +422,8 @@ export default function LuminasSection({
                                 onClick={() => handleSlotActivate(idx)}
                                 className={`w-full text-left p-6 pl-28 rounded-2xl transition-colors ${
                                     selected
-                                        ? "hover:bg.white/5 cursor-pointer"
-                                        : "h-30 grid place-items-center hover:bg-white/5"
+                                        ? "hover:bg-base-300/30 cursor-pointer"
+                                        : "h-30 grid place-items-center hover:bg-base-300/30"
                                 }`}
                             >
                                 <div className="absolute left-5 top-1/2 -translate-y-1/2">
@@ -345,10 +438,10 @@ export default function LuminasSection({
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-start justify-between">
                                             <div className="text-xl font-semibold leading-tight mr-2">
-                                                {name}
+                                                {pictoInfo?.name ?? name}
                                             </div>
                                             <button
-                                                className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                                                className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                                                 onClick={(e) => {
                                                     e.stopPropagation()
                                                     unequipLumina(selected)
@@ -358,11 +451,11 @@ export default function LuminasSection({
                                             </button>
                                         </div>
 
-                                        <div className="opacity-85">{pictoInfo?.description}</div>
+                                        <div className="opacity-85">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, pictoInfo.name ?? "", diceBoardRef, timeoutDiceBoardRef) : ""}</div>
                                     </div>
                                 ) : (
                                     <div className="text-center w-full opacity-60 tracking-wide text-lg">
-                                        Selecione uma Lumina
+                                        {t("luminas.selectLumina")}
                                     </div>
                                 )}
                             </div>
@@ -379,28 +472,38 @@ export default function LuminasSection({
             >
                 <SearchBox value={query} onChange={setQuery} />
 
-                <div className="px-4 pb-4 overflow-y-auto max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="px-2 sm:px-4 pb-8 overflow-y-auto max-h-[75vh] sm:max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {modalType === "slot" && activeSlot !== null && (
                         <>
                             {slotFiltered.map((l) => {
-                                const pictoInfo = getPictoByName(l.pictoId)
-                                const luminaCost = pictoInfo?.luminaCost ?? 0
+                                const lInfo = getPictoByName(l.pictoId)
+                                const luminaCost = lInfo?.luminaCost ?? 0
                                 const wouldExceedLimit = currentLuminaCost + luminaCost > maxCostLuminas
+                                const isEquippedAsPicto = lInfo && (player?.pictos ?? []).some(
+                                    (p) => {
+                                        const pInfo = getPictoByName(p.pictoId)
+                                        return pInfo?.id === lInfo.id && p.slot != null
+                                    }
+                                )
+                                const isDisabled = wouldExceedLimit || !!isEquippedAsPicto
 
                                 return (
                                     <LuminaCard
                                         key={l.id}
                                         lumina={l}
                                         onPick={(lum) => equipLumina(lum)}
-                                        disabled={wouldExceedLimit}
+                                        disabled={isDisabled}
+                                        disabledLabel={isEquippedAsPicto ? t("luminas.alreadyEquippedAsPicto") : undefined}
                                         currentCost={currentLuminaCost}
                                         maxCost={maxCostLuminas}
+                                        diceBoardRef={diceBoardRef}
+                                        timeoutDiceBoardRef={timeoutDiceBoardRef}
                                     />
                                 )
                             })}
                             {slotFiltered.length === 0 && (
                                 <div className="opacity-70 p-8 text-center">
-                                    Nenhuma Lumina encontrada.
+                                    {t("luminas.noLuminas")}
                                 </div>
                             )}
                         </>
@@ -413,11 +516,13 @@ export default function LuminasSection({
                                     key={p.name}
                                     info={p}
                                     onPick={handleAdminAddPick}
+                                    diceBoardRef={diceBoardRef}
+                                    timeoutDiceBoardRef={timeoutDiceBoardRef}
                                 />
                             ))}
                             {addFiltered.length === 0 && (
                                 <div className="opacity-70 p-8 text-center">
-                                    Nenhum Picto encontrado.
+                                    {t("pictos.noPictos")}
                                 </div>
                             )}
                         </>
@@ -430,11 +535,13 @@ export default function LuminasSection({
                                     key={`${l.id}-${l.isEquiped ? "on" : "off"}`}
                                     lumina={l}
                                     onPick={handleAdminRemovePick}
+                                    diceBoardRef={diceBoardRef}
+                                    timeoutDiceBoardRef={timeoutDiceBoardRef}
                                 />
                             ))}
                             {removeFiltered.length === 0 && (
                                 <div className="opacity-70 p-8 text-center">
-                                    Nenhuma Lumina encontrada.
+                                    {t("luminas.noLuminas")}
                                 </div>
                             )}
                         </>
@@ -467,8 +574,9 @@ function PlusDiamond({
 
     return (
         <div
-            className={`relative ${wrapperSize} rotate-45 border border-white/20 rounded-sm grid place-items-center bg-black/30 ml-2`}
-            aria-label={name || "Adicionar lumina"}
+            className={`relative ${wrapperSize} rotate-45 border border-base-300 rounded-sm grid place-items-center ml-2`}
+            style={{ backgroundColor: "#1a1a2e" }}
+            aria-label={name || t("luminas.addLumina")}
         >
             {maskBase ? (
                 <div
@@ -510,9 +618,9 @@ function Modal({
     return (
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-            <div className="absolute inset-0 flex items-center justify-center p-4">
-                <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-[#121212] border border-white/10 shadow-2xl">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+            <div className="absolute inset-0 flex items-end sm:items-center justify-center sm:p-4">
+                <div className="w-full sm:max-w-5xl max-h-[90vh] sm:max-h-[85vh] overflow-hidden rounded-t-2xl sm:rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
                         <div className="text-lg tracking-wide">{title}</div>
                         <button className="text-2xl leading-none px-2" onClick={onClose}>
                             ×
@@ -533,10 +641,10 @@ function SearchBox({
     onChange: (v: string) => void
 }) {
     return (
-        <div className="p-4">
+        <div className="px-2 sm:px-4 py-4">
             <input
-                className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
-                placeholder="Buscar..."
+                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+                placeholder={t("common.search")}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
             />
@@ -593,14 +701,20 @@ function LuminaCard({
     lumina,
     onPick,
     disabled = false,
+    disabledLabel,
     currentCost,
     maxCost,
+    diceBoardRef,
+    timeoutDiceBoardRef,
 }: {
     lumina: LuminaResponse
     onPick?: (l: LuminaResponse) => void
     disabled?: boolean
+    disabledLabel?: string
     currentCost?: number
     maxCost?: number
+    diceBoardRef?: RefObject<DiceBoardRef | null>
+    timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }) {
     const name = getLuminaName(lumina)
     const pictoInfo = getPictoByName(name)
@@ -610,10 +724,10 @@ function LuminaCard({
         <button
             onClick={() => !disabled && onPick && onPick(lumina)}
             disabled={disabled}
-            className={`w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 transition-colors border rounded-xl ${
+            className={`w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-6 p-3 sm:p-4 transition-colors border rounded-xl ${
                 disabled
-                    ? "bg-black/40 opacity-50 cursor-not-allowed border-red-500/30"
-                    : "bg-black/25 hover:bg-white/5 border-white/10"
+                    ? "bg-base-200 opacity-50 cursor-not-allowed border-red-500/30"
+                    : "bg-base-200 hover:bg-base-300 border-base-300"
             }`}
         >
             <PlusDiamond icon="" pictoName={name} isBig={true} />
@@ -626,14 +740,17 @@ function LuminaCard({
                                 ? "bg-red-600/20 text-red-400 border border-red-600/30"
                                 : "bg-amber-700/10 text-amber-700 border border-amber-700/20"
                         }`}>
-                            Custo: {luminaCost}
+                            {t("luminas.cost")}: {luminaCost}
                         </div>
                     )}
                 </div>
-                <div className="opacity-80">{pictoInfo?.description}</div>
-                {disabled && currentCost !== undefined && maxCost !== undefined && (
+                <div className="opacity-80">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, name, diceBoardRef, timeoutDiceBoardRef) : ""}</div>
+                {disabled && disabledLabel && (
+                    <div className="text-xs text-red-400 mt-1">{disabledLabel}</div>
+                )}
+                {disabled && !disabledLabel && currentCost !== undefined && maxCost !== undefined && (
                     <div className="text-xs text-red-400 mt-1">
-                        Limite excedido ({currentCost} + {luminaCost} {'>'} {maxCost})
+                        {t("luminas.limitExceededDetail", { current: currentCost, adding: luminaCost, max: maxCost })}
                     </div>
                 )}
             </div>
@@ -644,14 +761,18 @@ function LuminaCard({
 function PictoInfoCard({
     info,
     onPick,
+    diceBoardRef,
+    timeoutDiceBoardRef,
 }: {
     info: PictoInfo
     onPick?: (p: PictoInfo) => void
+    diceBoardRef?: RefObject<DiceBoardRef | null>
+    timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }) {
     return (
         <button
             onClick={() => onPick && onPick(info)}
-            className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
+            className="w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-6 p-3 sm:p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
         >
             <PlusDiamond icon="" pictoName={info.name} isBig={true} />
             <div className="flex flex-col gap-2">
@@ -660,7 +781,7 @@ function PictoInfoCard({
                         {info.name}
                     </div>
                 </div>
-                <div className="opacity-80">{info.description}</div>
+                <div className="opacity-80">{info.description ? renderTextWithDiceButtons(info.description, info.name, diceBoardRef, timeoutDiceBoardRef) : ""}</div>
             </div>
         </button>
     )

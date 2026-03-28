@@ -2,6 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* === CombatAdmin: layout mobile (default) === */
+.combat-main-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+/* === CombatAdmin: layout wide em telas >= 800px === */
+@media (min-width: 800px) {
+  .combat-main-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+  }
+  .combat-info-section {
+    flex-wrap: nowrap !important;
+    flex-shrink: 0;
+  }
+  .combat-hp-section,
+  .combat-mp-section {
+    flex: 1;
+    min-width: 100px;
+  }
+  .combat-abilities-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  }
+  .combat-elemental-row {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 0 1rem !important;
+  }
+  .combat-member-separator { display: none !important; }
+  .combat-members-list { gap: 0.5rem; }
+  .combat-member-card {
+    background-color: var(--color-base-100);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+  }
+  .combat-sub-card {
+    background-color: var(--color-base-200) !important;
+  }
+}
+
 /* === Overrides globais === */
 @media (orientation: landscape) {
   .mobile-dialog {
@@ -30,8 +76,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   z-index: 9999;
   pointer-events: none;
   opacity: 0;
@@ -231,3 +277,110 @@
 .animate-half-turn {
   animation: half-turn 4s linear infinite;
 }
+
+@keyframes combat-menu-blink {
+  0%, 100% {
+    box-shadow: 0 0 0 0 oklch(var(--p) / 0.7);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 12px 6px oklch(var(--p) / 0.35);
+    transform: scale(1.12);
+  }
+}
+
+.animate-combat-menu-blink {
+  animation: combat-menu-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.animate-pulse-scale {
+  animation: pulse-scale 1.5s ease-in-out infinite;
+}
+
+@keyframes stain-flash {
+  0% { transform: scale(1); filter: brightness(1); }
+  25% { transform: scale(1.5); filter: brightness(1.8); }
+  50% { transform: scale(1.3); filter: brightness(1.4); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.animate-stain-flash {
+  animation: stain-flash 0.8s ease-out;
+}
+
+/* ====== TipTap rich text editor ====== */
+.ProseMirror {
+  outline: none;
+  min-height: 16rem;
+  line-height: 1.6;
+}
+
+/* Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: oklch(var(--bc) / 0.35);
+  pointer-events: none;
+  height: 0;
+}
+
+/* Headings */
+.ProseMirror h2 {
+  font-size: 1.4em;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+}
+.ProseMirror h3 {
+  font-size: 1.15em;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 0.85em;
+  margin-bottom: 0.25em;
+}
+
+/* Lists */
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin: 0.4em 0;
+}
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin: 0.4em 0;
+}
+.ProseMirror li {
+  margin: 0.15em 0;
+}
+
+/* Blockquote */
+.ProseMirror blockquote {
+  border-left: 3px solid oklch(var(--bc) / 0.3);
+  padding-left: 1em;
+  margin: 0.75em 0;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+/* Horizontal rule */
+.ProseMirror hr {
+  all: unset;
+  display: block;
+  height: 1px;
+  background-color: currentColor;
+  opacity: 0.25;
+  margin: 1.25em 0;
+}
+
+/* Inline marks */
+.ProseMirror strong { font-weight: 700; }
+.ProseMirror em     { font-style: italic; }
+.ProseMirror u      { text-decoration: underline; }
+.ProseMirror s      { text-decoration: line-through; }

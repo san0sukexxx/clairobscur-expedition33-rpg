@@ -18,5 +18,8 @@ data class PlayerItem(
         @Column(name = "player_id", nullable = false) val playerId: Int,
         @Column(name = "item_id", nullable = false) val itemId: String,
         @Column(nullable = false) val quantity: Int = 1,
-        @Column(name = "max_quantity", nullable = false) val maxQuantity: Int = 99
+        @Column(name = "max_quantity", nullable = false) val maxQuantity: Int = 99,
+        @Column(name = "last_recovery_percent", nullable = true) val lastRecoveryPercent: Int? = null,
+        @Column(name = "dice_count", nullable = true) val diceCount: Int? = null,
+        @Column(name = "dice_size", nullable = true) val diceSize: Int? = null
 )

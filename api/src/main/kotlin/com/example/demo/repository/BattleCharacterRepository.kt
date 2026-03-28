@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 interface BattleCharacterRepository : JpaRepository<BattleCharacter, Int> {
     fun findByBattleIdAndIsEnemy(battleId: Int, isEnemy: Boolean): List<BattleCharacter>
     fun findByBattleId(battleId: Int): List<BattleCharacter>
-    
+    fun findByExternalIdAndCharacterType(externalId: String, characterType: String): List<BattleCharacter>
 }

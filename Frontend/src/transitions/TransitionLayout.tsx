@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { ToastProvider } from "../components/Toast";
+import { isLanguageSelected } from "../i18n";
 
 const variants = {
   initial: { opacity: 0, y: 16 },
@@ -8,8 +9,14 @@ const variants = {
   exit:    { opacity: 0, y: -16 },
 };
 
+const LANGUAGE_SELECT_PATH = "/select-language";
+
 export default function TransitionLayout() {
   const location = useLocation();
+
+  if (!isLanguageSelected() && location.pathname !== LANGUAGE_SELECT_PATH) {
+    return <Navigate to={LANGUAGE_SELECT_PATH} replace />;
+  }
 
   return (
     <ToastProvider>

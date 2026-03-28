@@ -3,13 +3,14 @@ import { api } from "./api";
 export interface Campaign {
   id: number;
   name: string;
-  battleId?: number | null;
   characters: string[];
+  currentLocationId?: string | null;
 }
 
 export interface CreateCampaignInput {
   name: string;
   characters: string[];
+  currentLocationId?: string | null;
 }
 
 export interface CreateCampaignResponse {

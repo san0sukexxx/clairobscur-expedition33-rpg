@@ -6,12 +6,18 @@ import './index.css'
 import App from './App.tsx'
 import TransitionLayout from "./transitions/TransitionLayout.tsx";
 import MasterPage from "./pages/MasterPage.tsx";
-import PlayerPage from "./pages/PlayerPage.tsx";
+import PlayerPage from "./pages/PlayerPage";
 import CreateCampaign from "./pages/CreateCampaign.tsx";
 import CampaignAdmin from "./pages/CampaignAdmin.tsx";
 import CampaignList from "./pages/CampaignList.tsx";
 import CharacterSheetList from "./pages/CharacterSheetList.tsx";
 import DiceExample from "./pages/DiceExample.tsx";
+import SettingsPage from "./pages/SettingsPage.tsx";
+import LanguageSelectPage from "./pages/LanguageSelectPage.tsx";
+import ManualPage from "./pages/ManualPage.tsx";
+import { applyTheme } from "./utils/theme.ts";
+
+applyTheme();
 
 const router = createBrowserRouter([
   {
@@ -29,6 +35,9 @@ const router = createBrowserRouter([
       { path: "/load-campaign", element: <CampaignList /> },
       { path: "/character-sheet-list/:campaign", element: <CharacterSheetList /> },
       { path: "/dice-test", element: <DiceExample /> },
+      { path: "/settings", element: <SettingsPage /> },
+      { path: "/select-language", element: <LanguageSelectPage /> },
+      { path: "/manual/:type", element: <ManualPage /> },
     ],
   },
 ]);

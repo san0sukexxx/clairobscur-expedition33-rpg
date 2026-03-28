@@ -1,0 +1,1 @@
+ALTER TABLE battle_character ADD COLUMN name_hidden BOOLEAN NOT NULL DEFAULT FALSE;

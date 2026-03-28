@@ -1,21 +1,24 @@
-import { useMemo, useState } from "react";
+import { type MutableRefObject, type RefObject, useMemo, useState } from "react";
 import { type PlayerItemResponse } from "../api/ResponseModel";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIItem } from "../api/APIItem";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { type WeaponInfo } from "../api/ResponseModel";
-import { calculateMaxHP, calculateMaxMP } from "../utils/PlayerCalculator";
+import { FaChevronLeft, FaChevronRight, FaInfoCircle } from "react-icons/fa";
+import { TiArrowBack } from "react-icons/ti";
+import { type DiceBoardRef } from "./DiceBoard";
+import { rollWithTimeout } from "../utils/RollUtils";
+import { dispatchRoll } from "../utils/rollDispatcher";
 import { t } from "../i18n";
+import PanelModal from "./PanelModal";
 
 const ELIXIR_IDS = new Set(["chroma-elixir", "healing-elixir", "energy-elixir", "revive-elixir"]);
 
 interface ItemsSectionProps {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
-    isInventoryActiveInCombat?: boolean;
-    weaponInfo: WeaponInfo;
-    onReviveRequested?: (percent: number) => void;
-    onPotionUsed?: () => void;
+    diceBoardRef: RefObject<DiceBoardRef | null>;
+    timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    onItemUsed?: () => void;
+    onGoToCombat?: () => void;
 }
 
 function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
@@ -24,8 +27,8 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
         <div className="fixed inset-0 z-50">
             <div className="absolute inset-0 bg-black/70" onClick={onClose} />
             <div className="absolute inset-0 flex items-center justify-center p-4">
-                <div className="w-full max-w-md max-h-[85vh] overflow-hidden rounded-2xl bg-[#121212] border border-white/10 shadow-2xl">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <div className="w-full max-w-md max-h-[85vh] overflow-hidden rounded-2xl bg-base-100 border border-base-300 shadow-2xl">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
                         <div className="text-lg tracking-wide">{title}</div>
                         <button onClick={onClose} className="text-2xl leading-none px-2">×</button>
                     </div>
@@ -51,62 +54,25 @@ function buildVisible(items?: PlayerItemResponse[]) {
 function ElixirsCard({
     player,
     setPlayer,
-    inCombat = false,
-    canUsePotion = false,
-    weaponInfo,
-    onReviveRequested,
-    onPotionUsed
+    diceBoardRef,
+    timeoutDiceBoardRef,
+    onItemUsed,
+    inBattle,
 }: {
     player: GetPlayerResponse | null;
     setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>;
-    inCombat?: boolean;
-    canUsePotion?: boolean;
-    weaponInfo: WeaponInfo;
-    onReviveRequested?: (percent: number) => void;
-    onPotionUsed?: () => void;
+    diceBoardRef: RefObject<DiceBoardRef | null>;
+    timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null>;
+    onItemUsed?: () => void;
+    inBattle?: boolean;
 }) {
     const [usingItem, setUsingItem] = useState<string | null>(null);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-    const [recoveryPercent, setRecoveryPercent] = useState(30);
-    const [inputValue, setInputValue] = useState("30");
-
-    const hasDeadTeammate = useMemo(() => {
-        if (!player?.fightInfo?.characters) return false;
-        return player.fightInfo.characters.some(char =>
-            !char.isEnemy && char.healthPoints === 0
-        );
-    }, [player?.fightInfo?.characters]);
-
-    const isHpFull = useMemo(() => {
-        if (inCombat && player?.fightInfo) {
-            const currentChar = player.fightInfo.characters?.find(
-                c => c.battleID === player.fightInfo?.playerBattleID
-            );
-            if (currentChar) {
-                return currentChar.healthPoints >= currentChar.maxHealthPoints;
-            }
-        }
-        if (!player?.playerSheet) return true;
-        const currentHp = player.playerSheet.hpCurrent ?? 0;
-        const maxHp = calculateMaxHP(player, weaponInfo);
-        return currentHp >= maxHp;
-    }, [player, weaponInfo, inCombat]);
-
-    const isMpFull = useMemo(() => {
-        if (inCombat && player?.fightInfo) {
-            const currentChar = player.fightInfo.characters?.find(
-                c => c.battleID === player.fightInfo?.playerBattleID
-            );
-            if (currentChar && currentChar.magicPoints !== undefined && currentChar.maxMagicPoints !== undefined) {
-                return currentChar.magicPoints >= currentChar.maxMagicPoints;
-            }
-        }
-        if (!player?.playerSheet) return true;
-        const currentMp = player.playerSheet.mpCurrent ?? 0;
-        const maxMp = calculateMaxMP(player);
-        return currentMp >= maxMp;
-    }, [player, inCombat]);
+    const [editQtyModal, setEditQtyModal] = useState<{ elixirId: string; field: "quantity" | "max"; currentValue: number } | null>(null);
+    const [editQtyValue, setEditQtyValue] = useState("");
+    const [diceModal, setDiceModal] = useState<{ elixirId: string; label: string } | null>(null);
+    const [diceCount, setDiceCount] = useState("1");
+    const [diceSize, setDiceSize] = useState("6");
+    const [showElixirInfo, setShowElixirInfo] = useState(false);
 
     const ELIXIRS = [
         { id: "chroma-elixir", label: t("items.chroma"), src: "/items/Chroma Elixir.png" },
@@ -149,7 +115,10 @@ function ElixirsCard({
                         playerId: player.id,
                         itemId,
                         quantity,
-                        maxQuantity: newMaxQuantity
+                        maxQuantity: newMaxQuantity,
+                        lastRecoveryPercent: null,
+                        diceCount: null,
+                        diceSize: null
                     };
                     return { ...prev, items: [...(prev.items ?? []), newItem] };
                 });
@@ -191,7 +160,10 @@ function ElixirsCard({
                         playerId: player.id,
                         itemId,
                         quantity: 0,
-                        maxQuantity
+                        maxQuantity,
+                        lastRecoveryPercent: null,
+                        diceCount: null,
+                        diceSize: null
                     };
                     return { ...prev, items: [...(prev.items ?? []), newItem] };
                 });
@@ -201,135 +173,185 @@ function ElixirsCard({
         }
     }
 
-    function openRecoveryModal(itemId: string) {
-        setSelectedItemId(itemId);
-        // TODO: uncomment
-        // setRecoveryPercent(30);
-        // setInputValue("30");
-        setRecoveryPercent(100);
-        setInputValue("100");
-        setModalOpen(true);
-    }
-
-    function closeRecoveryModal() {
-        setModalOpen(false);
-        setSelectedItemId(null);
-        setRecoveryPercent(30);
-        setInputValue("30");
-    }
-
-    async function useItem(itemId: string, percent?: number) {
-        if (!player || !player.playerSheet) return;
-
-        setUsingItem(itemId);
-
+    async function useChromaDirectly() {
+        if (!player) return;
+        const item = player.items?.find(i => i.itemId === "chroma-elixir");
+        if (!item || item.quantity <= 0) return;
+        setUsingItem("chroma-elixir");
         try {
-            const maxHp = calculateMaxHP(player, weaponInfo);
-            const maxMp = calculateMaxMP(player);
-
-            await APIItem.useItem({
-                playerId: player.id,
-                itemId,
-                maxHp,
-                maxMp,
-                recoveryPercent: percent
+            const newQty = Math.max(0, item.quantity - 1);
+            await APIItem.updatePlayerItem(item.id, { quantity: newQty });
+            setPlayer(prev => {
+                if (!prev) return prev;
+                const items = (prev.items ?? []).map(i =>
+                    i.id === item.id ? { ...i, quantity: newQty } : i
+                );
+                return { ...prev, items };
             });
-
-            const item = player.items?.find(i => i.itemId === itemId);
-            if (item) {
-                setPlayer(prev => {
-                    if (!prev || !prev.playerSheet) return prev;
-                    const items = (prev.items ?? []).map(i =>
-                        i.id === item.id ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i
-                    );
-
-                    let updatedSheet = { ...prev.playerSheet };
-
-                    if (itemId === "chroma-elixir") {
-                        updatedSheet.hpCurrent = maxHp;
-                    } else if (itemId === "healing-elixir") {
-                        const recoveryAmount = Math.floor((maxHp * (percent ?? 30)) / 100);
-                        updatedSheet.hpCurrent = Math.min((prev.playerSheet?.hpCurrent ?? 0) + recoveryAmount, maxHp);
-                    } else if (itemId === "energy-elixir") {
-                        const recoveryAmount = Math.floor((maxMp * (percent ?? 30)) / 100);
-                        updatedSheet.mpCurrent = Math.min((prev.playerSheet?.mpCurrent ?? 0) + recoveryAmount, maxMp);
-                    }
-
-                    return {
-                        ...prev,
-                        items,
-                        playerSheet: updatedSheet
-                    };
-                });
-            }
-
-            if (itemId === "healing-elixir" || itemId === "energy-elixir") {
-                onPotionUsed?.();
-            }
         } catch (e) {
-            console.error("Erro ao usar item:", e);
-            alert("Erro ao usar o item");
+            console.error("Erro ao usar chroma:", e);
         } finally {
             setUsingItem(null);
         }
     }
 
-    async function confirmUseItem() {
-        if (!selectedItemId) return;
-        closeRecoveryModal();
-
-        if (selectedItemId === "revive-elixir") {
-            if (onReviveRequested) {
-                onReviveRequested(recoveryPercent);
-            }
+    function handleUseElixir(elixirId: string, label: string) {
+        if (elixirId === "chroma-elixir") {
+            useChromaDirectly();
         } else {
-            await useItem(selectedItemId, recoveryPercent);
+            openDiceModal(elixirId, label);
         }
+    }
+
+    function openDiceModal(elixirId: string, label: string) {
+        const item = player?.items?.find(i => i.itemId === elixirId);
+        setDiceCount(String(item?.diceCount ?? 1));
+        setDiceSize(String(item?.diceSize ?? 6));
+        setDiceModal({ elixirId, label });
+    }
+
+    async function confirmDiceRoll() {
+        if (!diceModal || !player) return;
+        const { elixirId, label } = diceModal;
+        setDiceModal(null);
+        setUsingItem(elixirId);
+
+        try {
+            const item = player.items?.find(i => i.itemId === elixirId);
+            if (!item) return;
+
+            // Salvar config de dados e decrementar quantidade
+            const parsedDiceCount = Math.max(1, parseInt(diceCount, 10) || 1);
+            const parsedDiceSize = Math.max(2, parseInt(diceSize, 10) || 2);
+            const newQty = Math.max(0, item.quantity - 1);
+            await APIItem.updatePlayerItem(item.id, { quantity: newQty, diceCount: parsedDiceCount, diceSize: parsedDiceSize });
+            setPlayer(prev => {
+                if (!prev) return prev;
+                const items = (prev.items ?? []).map(i =>
+                    i.id === item.id ? { ...i, quantity: newQty, diceCount: parsedDiceCount, diceSize: parsedDiceSize } : i
+                );
+                return { ...prev, items };
+            });
+
+            // Rolar dados
+            const command = `${parsedDiceCount}d${parsedDiceSize}`;
+            rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, command, (result) => {
+                const values: number[] = result?.[0]?.rolls?.map((r: any) => r.value) ?? [];
+                const total = values.reduce((a: number, b: number) => a + b, 0);
+                dispatchRoll({
+                    label,
+                    diceRolled: total,
+                    modifier: 0,
+                    total,
+                    diceCommand: command,
+                    diceValues: values,
+                });
+            });
+            onItemUsed?.();
+        } catch (e) {
+            console.error("Erro ao usar item:", e);
+            alert(t("items.errorUsing"));
+        } finally {
+            setUsingItem(null);
+        }
+    }
+
+    function confirmEditQty() {
+        if (!editQtyModal) return;
+        let num = Math.max(0, Number(editQtyValue) || 0);
+        if (editQtyModal.field === "quantity") {
+            const item = player?.items?.find(i => i.itemId === editQtyModal.elixirId);
+            const max = item?.maxQuantity ?? 0;
+            if (max > 0) num = Math.min(num, max);
+            updateElixir(editQtyModal.elixirId, num);
+        } else {
+            updateElixirMaxQuantity(editQtyModal.elixirId, num);
+        }
+        setEditQtyModal(null);
     }
 
     return (
         <>
-            <Modal open={modalOpen} onClose={closeRecoveryModal} title={t("items.recovery")}>
+            <Modal
+                open={editQtyModal !== null}
+                onClose={() => setEditQtyModal(null)}
+                title={editQtyModal?.field === "max" ? t("items.editMaxQuantity") : t("items.editQuantity")}
+            >
                 <div className="p-4 flex flex-col gap-4">
                     <div>
                         <label className="block text-sm opacity-80 mb-2">
-                            {t("items.recoveryPercent")}
+                            {t("items.newValue")}
                         </label>
                         <input
                             type="number"
-                            min={1}
-                            max={100}
-                            className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
-                            value={inputValue}
-                            onChange={(e) => {
-                                setInputValue(e.target.value);
-                            }}
-                            onBlur={() => {
-                                const num = Number(inputValue);
-                                if (isNaN(num) || num < 1) {
-                                    setInputValue("1");
-                                    setRecoveryPercent(1);
-                                } else if (num > 100) {
-                                    setInputValue("100");
-                                    setRecoveryPercent(100);
-                                } else {
-                                    setRecoveryPercent(num);
-                                }
+                            min={0}
+                            className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+                            value={editQtyValue}
+                            onChange={(e) => setEditQtyValue(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") confirmEditQty();
                             }}
                         />
                     </div>
                     <button
-                        className="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
-                        onClick={confirmUseItem}
+                        className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
+                        onClick={confirmEditQty}
                     >
                         {t("common.confirm")}
                     </button>
                 </div>
             </Modal>
 
-            <div className="rounded-2xl bg-[#141414] border border-white/10 overflow-hidden">
-                <div className="px-6 py-3 border-b border-white/10 text-lg tracking-widest text-center opacity-90">
-                    {t("items.elixirs").toUpperCase()}
+            <Modal
+                open={diceModal !== null}
+                onClose={() => setDiceModal(null)}
+                title={diceModal?.label ?? ""}
+            >
+                <div className="p-4 flex flex-col gap-4">
+                    <div className="flex gap-4">
+                        <div className="flex-1">
+                            <label className="block text-sm opacity-80 mb-1">{t("items.diceCount")}</label>
+                            <input
+                                type="number"
+                                min={1}
+                                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+                                value={diceCount}
+                                onChange={(e) => setDiceCount(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-sm opacity-80 mb-1">{t("items.diceSize")}</label>
+                            <input
+                                type="number"
+                                min={2}
+                                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+                                value={diceSize}
+                                onChange={(e) => setDiceSize(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="text-center text-lg opacity-70">{diceCount}d{diceSize}</div>
+                    <button
+                        className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
+                        onClick={confirmDiceRoll}
+                    >
+                        {t("common.confirm")}
+                    </button>
+                </div>
+            </Modal>
+
+            <div className="rounded-2xl bg-base-100 border border-base-300 overflow-hidden">
+                <div className="px-6 py-3 border-b border-base-300 flex items-center justify-center gap-2">
+                    <span className="text-lg tracking-widest opacity-90">
+                        {t("items.elixirs").toUpperCase()}
+                    </span>
+                    <button
+                        onClick={() => setShowElixirInfo(true)}
+                        className="text-base-content/50 hover:text-primary transition-colors"
+                        aria-label={t("items.elixirInfoTitle")}
+                    >
+                        <FaInfoCircle className="h-4 w-4" />
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4">
@@ -341,7 +363,7 @@ function ElixirsCard({
                     return (
                         <div
                             key={e.id}
-                            className="flex flex-col items-center gap-2 rounded-xl bg-black/20 border border-white/10 p-3"
+                            className="flex flex-col items-center gap-2 rounded-xl bg-base-200 border border-base-300 p-3"
                         >
                             <div className="w-20 h-20 rounded-full bg-black flex items-center justify-center overflow-hidden">
                                 <img
@@ -356,14 +378,17 @@ function ElixirsCard({
 
                             <div className="flex items-center gap-2">
                                 <button
-                                    className="p-1 rounded bg-white/10 hover:bg-white/20"
+                                    className="p-1 rounded bg-base-300 hover:bg-base-300/70"
                                     onClick={() => updateElixir(e.id, Math.max(0, qty - 1))}
                                 >
                                     <FaChevronLeft size={14} />
                                 </button>
-                                <div className="text-lg font-semibold w-10 text-center">{qty}</div>
+                                <div
+                                    className="text-lg font-semibold w-10 text-center cursor-pointer hover:text-blue-400 transition-colors"
+                                    onClick={() => { setEditQtyModal({ elixirId: e.id, field: "quantity", currentValue: qty }); setEditQtyValue(String(qty)); }}
+                                >{qty}</div>
                                 <button
-                                    className="p-1 rounded bg-white/10 hover:bg-white/20"
+                                    className="p-1 rounded bg-base-300 hover:bg-base-300/70"
                                     onClick={() => {
                                         // Se item não existe (max=0), criar com qty=1
                                         const newQty = max === 0 ? 1 : Math.min(max, qty + 1);
@@ -375,75 +400,63 @@ function ElixirsCard({
                             </div>
 
                             <div className="flex items-center gap-2 text-sm opacity-80">
-                                <span>Max:</span>
+                                <span>{t("common.max")}:</span>
                                 <button
-                                    className="p-1 rounded bg-white/10 hover:bg-white/20"
+                                    className="p-1 rounded bg-base-300 hover:bg-base-300/70"
                                     onClick={() => updateElixirMaxQuantity(e.id, Math.max(0, max - 1))}
                                 >
                                     <FaChevronLeft size={12} />
                                 </button>
-                                <div className="w-8 text-center">{max}</div>
+                                <div
+                                    className="w-8 text-center cursor-pointer hover:text-blue-400 transition-colors"
+                                    onClick={() => { setEditQtyModal({ elixirId: e.id, field: "max", currentValue: max }); setEditQtyValue(String(max)); }}
+                                >{max}</div>
                                 <button
-                                    className="p-1 rounded bg-white/10 hover:bg-white/20"
+                                    className="p-1 rounded bg-base-300 hover:bg-base-300/70"
                                     onClick={() => updateElixirMaxQuantity(e.id, max + 1)}
                                 >
                                     <FaChevronRight size={12} />
                                 </button>
                             </div>
 
-                            {(e.id === "chroma-elixir" || inCombat) && (
-                                <button
-                                    className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15 disabled:opacity-50 disabled:cursor-not-allowed w-full"
-                                    disabled={
-                                        usingItem === e.id ||
-                                        (e.id === "chroma-elixir"
-                                            ? (inCombat || qty === 0 || (player?.playerSheet?.hpCurrent ?? 0) <= 0)
-                                            : e.id === "revive-elixir"
-                                            ? (!canUsePotion || qty === 0 || !hasDeadTeammate)
-                                            : e.id === "healing-elixir"
-                                            ? (!canUsePotion || qty === 0 || isHpFull)
-                                            : e.id === "energy-elixir"
-                                            ? (!canUsePotion || qty === 0 || isMpFull)
-                                            : (!canUsePotion || qty === 0))
-                                    }
-                                    onClick={() => {
-                                        if (e.id === "healing-elixir" || e.id === "energy-elixir" || e.id === "revive-elixir") {
-                                            openRecoveryModal(e.id);
-                                        } else {
-                                            useItem(e.id);
-                                        }
-                                    }}
-                                >
-                                    {usingItem === e.id ? "Usando..." : "Usar"}
-                                </button>
-                            )}
+                            <button
+                                className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300 disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                                disabled={usingItem === e.id || qty === 0 || (e.id === "chroma-elixir" && inBattle)}
+                                onClick={() => handleUseElixir(e.id, e.label)}
+                            >
+                                {usingItem === e.id ? t("common.using") : t("common.use")}
+                            </button>
                         </div>
                     );
                 })}
             </div>
         </div>
+
+            <PanelModal
+                open={showElixirInfo}
+                onClose={() => setShowElixirInfo(false)}
+                title={t("items.elixirInfoTitle")}
+                size="sm"
+            >
+                <ul className="flex flex-col gap-4 text-sm leading-relaxed text-neutral-300">
+                    <li><strong className="text-neutral-100">{t("items.chroma")}</strong> — {t("items.descChroma")}</li>
+                    <li><strong className="text-neutral-100">{t("items.healing")}</strong> — {t("items.descHealing")}</li>
+                    <li><strong className="text-neutral-100">{t("items.energy")}</strong> — {t("items.descEnergy")}</li>
+                    <li><strong className="text-neutral-100">{t("items.revive")}</strong> — {t("items.descRevive")}</li>
+                </ul>
+            </PanelModal>
         </>
     );
 }
 
 
-export default function ItemsSection({ player, setPlayer, isInventoryActiveInCombat = false, weaponInfo, onReviveRequested, onPotionUsed }: ItemsSectionProps) {
+export default function ItemsSection({ player, setPlayer, diceBoardRef, timeoutDiceBoardRef, onItemUsed, onGoToCombat }: ItemsSectionProps) {
     const [openSlot, setOpenSlot] = useState<number | null>(null);
     const [editingItem, setEditingItem] = useState<PlayerItemResponse | null>(null);
 
     const [itemId, setItemId] = useState("");
     const [quantity, setQuantity] = useState<number>(1);
     const [maxQuantity, setMaxQuantity] = useState<number>(99);
-
-    const inCombat = player?.fightInfo != null;
-
-    const isYourTurn = useMemo(() => {
-        const firstTurn = player?.fightInfo?.turns?.[0];
-        if (!firstTurn) return false;
-        return firstTurn.battleCharacterId === player?.fightInfo?.playerBattleID;
-    }, [player?.fightInfo]);
-
-    const canUsePotion = isYourTurn && isInventoryActiveInCombat;
 
     const { result: visibleItems } = useMemo(
         () => buildVisible(player?.items),
@@ -475,7 +488,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
 
         const itemExists = player.items?.some(item => item.itemId === itemId.trim());
         if (itemExists) {
-            alert("Já existe um item com este nome.");
+            alert(t("items.itemExists"));
             return;
         }
 
@@ -492,7 +505,8 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                 playerId: player.id,
                 itemId: itemId.trim(),
                 quantity,
-                maxQuantity
+                maxQuantity,
+                lastRecoveryPercent: null
             };
 
             setPlayer(prev => {
@@ -513,7 +527,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
             item => item.itemId === itemId.trim() && item.id !== editingItem.id
         );
         if (itemExists) {
-            alert("Já existe um item com este nome.");
+            alert(t("items.itemExists"));
             return;
         }
 
@@ -576,12 +590,16 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
         }
     }
 
+    const inBattle = !!player?.fightInfo?.turns?.some(
+        turn => turn.battleCharacterId === player.fightInfo?.playerBattleID
+    ) && player?.fightInfo?.battleStatus !== "finished";
+
     return (
-        <div className="text-white">
-            <div className="text-center text-lg tracking-widest pb-3 opacity-90">ITENS</div>
+        <div className="text-base-content">
+            <div className="text-center text-lg tracking-widest pb-3 opacity-90">{t("items.title").toUpperCase()}</div>
 
             <div className="mb-4">
-                <ElixirsCard player={player} setPlayer={setPlayer} inCombat={inCombat} canUsePotion={canUsePotion} weaponInfo={weaponInfo} onReviveRequested={onReviveRequested} onPotionUsed={onPotionUsed} />
+                <ElixirsCard player={player} setPlayer={setPlayer} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} onItemUsed={onItemUsed} inBattle={inBattle} />
             </div>
 
             <div className="flex flex-col gap-4">
@@ -591,15 +609,15 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                     return (
                         <div
                             key={selected ? `${selected.itemId}-${idx}` : `empty-${idx}`}
-                            className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden"
+                            className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden"
                         >
                             <div
                                 role="button"
                                 onClick={() => !selected && setOpenSlot(idx)}
                                 className={`w-full text-left py-4 px-6 rounded-2xl transition-colors ${
                                     isAddSlot
-                                        ? "h-28 grid place-items-center hover:bg-white/5 cursor-pointer"
-                                        : "hover:bg-white/5"
+                                        ? "h-28 grid place-items-center hover:bg-base-300/30 cursor-pointer"
+                                        : "hover:bg-base-300/30"
                                 }`}
                             >
                                 {selected ? (
@@ -610,17 +628,17 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                                             </div>
                                             <div className="flex gap-2">
                                                 <button
-                                                    className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                                                    className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         openEditModal(selected);
                                                     }}
-                                                    aria-label={`Editar ${selected.itemId}`}
+                                                    aria-label={`${t("common.edit")} ${selected.itemId}`}
                                                 >
-                                                    Editar
+                                                    {t("common.edit")}
                                                 </button>
                                                 <button
-                                                    className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                                                    className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         deleteItem(selected);
@@ -637,7 +655,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                                     </div>
                                 ) : (
                                     <div className="text-center w-full opacity-60 tracking-wide text-lg">
-                                        Adicionar Item
+                                        {t("items.addItem")}
                                     </div>
                                 )}
                             </div>
@@ -646,6 +664,18 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                 })}
             </div>
 
+            {inBattle && onGoToCombat && (
+                <div className="fixed bottom-9 right-4">
+                    <button
+                        className="btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg"
+                        onClick={onGoToCombat}
+                        aria-label="Voltar para o combate"
+                    >
+                        <TiArrowBack size={18} />
+                    </button>
+                </div>
+            )}
+
             <Modal
                 open={openSlot !== null || editingItem !== null}
                 onClose={closeModal}
@@ -653,7 +683,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
             >
                 <div className="p-4 flex flex-col gap-4">
                     <input
-                        className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                        className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                         placeholder={t("items.itemId")}
                         value={itemId}
                         onChange={(e) => setItemId(e.target.value)}
@@ -664,7 +694,7 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                             <input
                                 type="number"
                                 min={0}
-                                className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                                 value={quantity}
                                 onChange={(e) => setQuantity(Number(e.target.value))}
                             />
@@ -674,14 +704,14 @@ export default function ItemsSection({ player, setPlayer, isInventoryActiveInCom
                             <input
                                 type="number"
                                 min={1}
-                                className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
+                                className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                                 value={maxQuantity}
                                 onChange={(e) => setMaxQuantity(Number(e.target.value))}
                             />
                         </div>
                     </div>
                     <button
-                        className="w-full px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/15 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={!itemId.trim()}
                         onClick={editingItem ? updateItem : createItem}
                     >

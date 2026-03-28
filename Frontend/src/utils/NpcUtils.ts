@@ -12,3 +12,67 @@ export function getAllNPCsSorted(): NPCInfo[] {
         a.name.localeCompare(b.name, "pt-BR")
     );
 }
+
+/**
+ * Handles NPC image load errors with fallback chain:
+ * 1. Try .jpg instead of .png
+ * 2. For chromatic variants, try base enemy .png then .jpg
+ * 3. If all fail, hide img and reveal the next sibling fallback icon.
+ */
+export function handleNpcImgError(e: { currentTarget: HTMLImageElement }, npcId: string) {
+    const img = e.currentTarget;
+    const step = img.dataset.imgStep ?? "0";
+
+    const locationSuffixes = ["-summoned", "-monolith-phase2", "-monolith", "-visages", "-sirene", "-flying-manor", "-manor", "-battlefield", "-act3", "-flying-waters", "-ancient-sanctuary", "-esquies-nest", "-yellow-harvest", "-old-lumiere", "-stone-wave-cliffs", "-endless-night", "-frozen-hearts", "-isle-of-the-eyes", "-the-reacher", "-giant", "-phase1", "-phase2", "-phase3"];
+    let baseId: string | null = null;
+    const prefixes = ["chromatic-", "jovial-", "seething-", "sorrowful-"];
+    const matchedPrefix = prefixes.find(p => npcId.startsWith(p));
+    if (matchedPrefix) {
+        baseId = npcId.slice(matchedPrefix.length);
+    } else {
+        for (const suffix of locationSuffixes) {
+            if (npcId.endsWith(suffix)) {
+                baseId = npcId.slice(0, -suffix.length);
+                break;
+            }
+        }
+    }
+
+    if (step === "0") {
+        img.dataset.imgStep = "1";
+        img.src = `/enemies/${npcId}.jpg`;
+        return;
+    }
+    let baseBaseId: string | null = null;
+    if (baseId) {
+        for (const suffix of locationSuffixes) {
+            if (baseId.endsWith(suffix)) {
+                baseBaseId = baseId.slice(0, -suffix.length);
+                break;
+            }
+        }
+    }
+
+    if (step === "1" && baseId) {
+        img.dataset.imgStep = "2";
+        img.src = `/enemies/${baseId}.png`;
+        return;
+    }
+    if (step === "2" && baseId) {
+        img.dataset.imgStep = "3";
+        img.src = `/enemies/${baseId}.jpg`;
+        return;
+    }
+    if (step === "3" && baseBaseId) {
+        img.dataset.imgStep = "4";
+        img.src = `/enemies/${baseBaseId}.png`;
+        return;
+    }
+    if (step === "4" && baseBaseId) {
+        img.dataset.imgStep = "5";
+        img.src = `/enemies/${baseBaseId}.jpg`;
+        return;
+    }
+    img.style.display = "none";
+    (img.nextElementSibling as HTMLElement)?.classList.remove("hidden");
+}

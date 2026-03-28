@@ -1,8 +1,10 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { MdOutlineKeyboardBackspace, MdSettings } from "react-icons/md";
 import FloatingButton from "../components/FloatingButton";
+import { FullscreenButton } from "../components/FullscreenButton";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { useApiListRaw } from "../api/UseApiListRaw";
@@ -20,6 +22,11 @@ export default function CharacterSheetList() {
     });
 
 
+  useEffect(() => {
+    const id = setInterval(reload, 2000);
+    return () => clearInterval(id);
+  }, [reload]);
+
   function handleAddCharacter() {
     navigate(`/campaign-player/${campaign}`);
   }
@@ -34,10 +41,16 @@ export default function CharacterSheetList() {
             <span className="text-lg font-bold">{t("navigation.characterSheets")}</span>
           </Link>
         </div>
+        <div className="flex-none flex items-center">
+          <FullscreenButton />
+          <Link to="/settings" className="btn btn-ghost btn-sm btn-circle">
+            <MdSettings className="text-2xl" />
+          </Link>
+        </div>
       </div>
 
       {/* Conteúdo */}
-      <main className="p-4 space-y-4 max-w-md mx-auto">
+      <main className="p-4 pb-28 space-y-4 max-w-md mx-auto">
         {loading && <div className="text-center opacity-70 py-16">{t("common.loading")}</div>}
 
         {error && !loading && (

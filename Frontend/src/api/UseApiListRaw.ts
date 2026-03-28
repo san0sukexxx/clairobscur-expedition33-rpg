@@ -1,5 +1,5 @@
 // useApiListRaw.ts
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type React from "react";
 
 export function useApiListRaw<T>(
@@ -10,17 +10,20 @@ export function useApiListRaw<T>(
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [tick, setTick] = useState(0);
+    const hasLoaded = useRef(false);
 
     useEffect(() => {
         let alive = true;
 
         (async () => {
-            setLoading(true);
+            // Only show the loading spinner on the very first fetch
+            if (!hasLoaded.current) setLoading(true);
             setError(null);
             try {
                 const list = await loader();
                 if (!alive) return;
                 setItems(list ?? []);
+                hasLoaded.current = true;
             } catch (e: any) {
                 if (!alive) return;
                 setError(e?.message ?? "Erro ao carregar dados.");

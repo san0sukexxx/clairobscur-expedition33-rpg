@@ -6,6 +6,7 @@ import com.example.demo.model.CampaignPlayer
 import com.example.demo.model.Player
 import com.example.demo.model.PlayerPicto
 import com.example.demo.model.PlayerLumina
+import com.example.demo.model.PlayerAsiHistory
 import com.example.demo.repository.*
 import com.example.demo.service.FightService
 import org.springframework.http.ResponseEntity
@@ -23,7 +24,9 @@ class PlayerController(
         private val playerPictoRepository: PlayerPictoRepository,
         private val playerLuminaRepository: PlayerLuminaRepository,
         private val playerItemRepository: PlayerItemRepository,
-        private val playerSkillRepository: PlayerSkillRepository,
+        private val playerSpecialAttackRepository: PlayerSpecialAttackRepository,
+        private val playerSetupProgressRepository: PlayerSetupProgressRepository,
+        private val playerAsiHistoryRepository: PlayerAsiHistoryRepository,
         private val fightService: FightService
 ) {
 
@@ -34,11 +37,8 @@ class PlayerController(
                                 Player(
                                         name = null,
                                         characterId = null,
-                                        totalPoints = 5,  // Start at level 5
+                                        totalPoints = 1,
                                         xp = 0,
-                                        power = 0,
-                                        hability = 0,
-                                        resistance = 0,
                                         apCurrent = 0,
                                         mpCurrent = 0,
                                         hpCurrent = 0,
@@ -92,7 +92,9 @@ class PlayerController(
                                         pictos = null,
                                         luminas = null,
                                         items = null,
-                                        skills = null
+                                        specialAttacks = null,
+                                        setupProgress = null,
+                                        asiHistory = null
                                 )
                         }
 
@@ -138,7 +140,10 @@ class PlayerController(
                 val pictos: List<PlayerPicto> = playerPictoRepository.findByPlayerId(id)
                 val luminas: List<PlayerLumina> = playerLuminaRepository.findByPlayerId(id)
                 val items = playerItemRepository.findByPlayerId(id)
-                val skills = playerSkillRepository.findByPlayerId(id)
+                val specialAttacks = playerSpecialAttackRepository.findByPlayerId(id)
+                val setupProgress = playerSetupProgressRepository.findByPlayerId(id)
+                        .map { PlayerSetupProgressDto(section = it.section, done = it.done) }
+                val asiHistory = playerAsiHistoryRepository.findByPlayerId(id)
 
                 val response =
                         GetPlayerResponse(
@@ -151,13 +156,16 @@ class PlayerController(
                                 pictos = pictos,
                                 luminas = luminas,
                                 items = items,
-                                skills = skills
+                                specialAttacks = specialAttacks,
+                                setupProgress = setupProgress,
+                                asiHistory = asiHistory
                         )
 
                 return ResponseEntity.ok(response)
         }
 
         @PutMapping("/{id}")
+        @org.springframework.transaction.annotation.Transactional
         fun update(
                 @PathVariable id: Int,
                 @RequestBody req: UpdatePlayerRequest
@@ -176,9 +184,23 @@ class PlayerController(
 
                 // If changing character, reset skills and unequip weapon
                 if (isChangingCharacter) {
+                        // Auto-set saving throw proficiencies based on character class
+                        val savingThrowsByCharacter = mapOf(
+                                "verso"   to listOf("strength", "constitution"),
+                                "gustave" to listOf("strength", "constitution"),
+                                "maelle"  to listOf("dexterity", "intelligence"),
+                                "sciel"   to listOf("wisdom", "charisma"),
+                                "monoco"  to listOf("intelligence", "wisdom"),
+                                "lune"    to listOf("intelligence", "wisdom")
+                        )
+                        val profs = savingThrowsByCharacter[newCharacterId?.lowercase()]
+                        if (profs != null) {
+                                p.savingThrowProficiencies = profs.joinToString(",")
+                        }
+
                         // Delete all skills (this clears the purchased/unlocked skills list)
-                        val skills = playerSkillRepository.findByPlayerId(id)
-                        playerSkillRepository.deleteAll(skills)
+                        val specialAttacks = playerSpecialAttackRepository.findByPlayerId(id)
+                        playerSpecialAttackRepository.deleteAll(specialAttacks)
 
                         // Grant starting weapon for the new character
                         val startingWeaponId = getStartingWeaponForCharacter(newCharacterId)
@@ -231,21 +253,65 @@ class PlayerController(
                         }
                 }
 
+                // Revert ASIs if level decreased
+                val oldLevel = p.totalPoints
+                val newLevel = sheet.totalPoints ?: 0
+                var asiReverted = false
+                if (newLevel < oldLevel) {
+                        val toRevert = playerAsiHistoryRepository.findByPlayerId(id)
+                                .filter { it.level > newLevel }
+                        if (toRevert.isNotEmpty()) {
+                                for (h in toRevert) {
+                                        applyAttributeDelta(p, h.attribute1, -h.amount1)
+                                        val attr2 = h.attribute2
+                                        val amt2 = h.amount2
+                                        if (attr2 != null && amt2 != null) {
+                                                applyAttributeDelta(p, attr2, -amt2)
+                                        }
+                                }
+                                playerAsiHistoryRepository.deleteByPlayerIdAndLevelGreaterThan(id, newLevel)
+                                asiReverted = true
+                        }
+                }
+
                 p.name = sheet.name
                 p.characterId = sheet.characterId
-                p.totalPoints = sheet.totalPoints ?: 0
-                p.xp = sheet.xp ?: 0
-                p.power = sheet.power ?: 0
-                p.hability = sheet.hability ?: 0
-                p.resistance = sheet.resistance ?: 0
-                p.apCurrent = sheet.apCurrent ?: 0
-                p.mpCurrent = sheet.mpCurrent ?: 0
-                p.hpCurrent = sheet.hpCurrent ?: 0
+                sheet.totalPoints?.let { p.totalPoints = it }
+                sheet.xp?.let { p.xp = it }
+                sheet.apCurrent?.let { p.apCurrent = it }
+                sheet.mpCurrent?.let { p.mpCurrent = it }
+                sheet.hpCurrent?.let { p.hpCurrent = it }
                 p.notes = sheet.notes
+                if (sheet.skillsData != null) p.skillsData = sheet.skillsData
+                sheet.savingThrowProficiencies?.let { p.savingThrowProficiencies = it.joinToString(",") }
+                // Skip abilityScores from sheet when ASI was reverted — revert already computed correct values
+                if (!asiReverted) {
+                        sheet.abilityScores?.let { scores ->
+                                scores.strength?.let { p.strength = it }
+                                scores.dexterity?.let { p.dexterity = it }
+                                scores.constitution?.let { p.constitution = it }
+                                scores.intelligence?.let { p.intelligence = it }
+                                scores.wisdom?.let { p.wisdom = it }
+                                scores.charisma?.let { p.charisma = it }
+                        }
+                }
+
+                sheet.luminaBonusPoints?.let { p.luminaBonusPoints = it }
 
                 // Only update weaponId if not changing character (already set to null above)
                 if (!isChangingCharacter) {
                         p.weaponId = sheet.weaponId
+                }
+
+                // Recalculate hpMax when level changed (uses updated totalPoints and constitution)
+                if (newLevel != oldLevel) {
+                        val oldHpMax = p.hpMax
+                        val newHpMax = calculateBaseHpMax(p)
+                        val hpDelta = newHpMax - oldHpMax
+                        p.hpMax = newHpMax
+                        p.hpCurrent = maxOf(0, p.hpCurrent + hpDelta)
+                } else if (sheet.hpMax != null) {
+                        p.hpMax = sheet.hpMax
                 }
 
                 playerRepository.save(p)
@@ -266,6 +332,93 @@ class PlayerController(
                 playerRepository.save(player)
 
                 return ResponseEntity.ok().build()
+        }
+
+        @PostMapping("/{id}/master-editing-off")
+        fun clearMasterEditing(@PathVariable id: Int): ResponseEntity<Void> {
+                val opt = playerRepository.findById(id)
+                if (opt.isEmpty) return ResponseEntity.notFound().build()
+
+                val player = opt.get()
+                player.isMasterEditing = false
+                playerRepository.save(player)
+
+                return ResponseEntity.ok().build()
+        }
+
+        @PutMapping("/{id}/setup-progress")
+        fun updateSetupProgress(
+                @PathVariable id: Int,
+                @RequestBody body: UpdateSetupProgressRequest
+        ): ResponseEntity<Void> {
+                if (playerRepository.findById(id).isEmpty) return ResponseEntity.notFound().build()
+
+                val existing = playerSetupProgressRepository.findByPlayerIdAndSection(id, body.section)
+                if (existing != null) {
+                        existing.done = body.done
+                        playerSetupProgressRepository.save(existing)
+                } else {
+                        playerSetupProgressRepository.save(
+                                com.example.demo.model.PlayerSetupProgress(
+                                        playerId = id,
+                                        section = body.section,
+                                        done = body.done
+                                )
+                        )
+                }
+
+                return ResponseEntity.ok().build()
+        }
+
+        @PostMapping("/{id}/asi")
+        fun applyAsi(
+                @PathVariable id: Int,
+                @RequestBody req: ApplyAsiRequest
+        ): ResponseEntity<Void> {
+                val opt = playerRepository.findById(id)
+                if (opt.isEmpty) return ResponseEntity.notFound().build()
+
+                val p = opt.get()
+                applyAttributeDelta(p, req.attribute1, req.amount1)
+                if (req.attribute2 != null && req.amount2 != null) {
+                        applyAttributeDelta(p, req.attribute2, req.amount2)
+                }
+                playerRepository.save(p)
+
+                playerAsiHistoryRepository.save(
+                        PlayerAsiHistory(
+                                playerId = id,
+                                level = req.level,
+                                attribute1 = req.attribute1,
+                                amount1 = req.amount1,
+                                attribute2 = req.attribute2,
+                                amount2 = req.amount2
+                        )
+                )
+
+                return ResponseEntity.ok().build()
+        }
+
+        private fun calculateBaseHpMax(p: Player): Int {
+                val hitDie = when (p.characterId?.lowercase()) {
+                        "verso", "gustave" -> 10
+                        else -> 8
+                }
+                val level = p.totalPoints.coerceAtLeast(1)
+                val conMod = (p.constitution - 10) / 2
+                val avgPerLevel = hitDie / 2 + 1
+                return hitDie + conMod + (level - 1) * (avgPerLevel + conMod)
+        }
+
+        private fun applyAttributeDelta(p: Player, attr: String, delta: Int) {
+                when (attr.lowercase()) {
+                        "strength"     -> p.strength     = maxOf(1, p.strength     + delta)
+                        "dexterity"    -> p.dexterity    = maxOf(1, p.dexterity    + delta)
+                        "constitution" -> p.constitution = maxOf(1, p.constitution + delta)
+                        "intelligence" -> p.intelligence = maxOf(1, p.intelligence + delta)
+                        "wisdom"       -> p.wisdom       = maxOf(1, p.wisdom       + delta)
+                        "charisma"     -> p.charisma     = maxOf(1, p.charisma     + delta)
+                }
         }
 
         private fun getStartingWeaponForCharacter(characterId: String?): String? {

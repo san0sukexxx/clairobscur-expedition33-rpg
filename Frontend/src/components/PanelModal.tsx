@@ -77,7 +77,7 @@ export default function PanelModal({
                 ref={dialogRef}
                 tabIndex={-1}
                 className={[
-                    "relative mx-4 w-full",
+                    "relative mx-4 w-full max-h-[80vh] flex flex-col",
                     sizeClasses[size],
                     "rounded-2xl border border-neutral-800 bg-neutral-900 text-neutral-100",
                     "shadow-2xl",
@@ -88,7 +88,7 @@ export default function PanelModal({
             >
                 {/* Cabeçalho */}
                 {(title || showClose) && (
-                    <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800 shrink-0">
                         <h3 className="text-lg font-semibold truncate">{title ?? ""}</h3>
                         {showClose && (
                             <button
@@ -103,7 +103,7 @@ export default function PanelModal({
                 )}
 
                 {/* Corpo */}
-                <div className="px-5 py-4">
+                <div className="px-5 py-4 overflow-y-auto">
                     {children}
                 </div>
 

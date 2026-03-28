@@ -13,15 +13,20 @@ export interface BattleWithDetailsResponse extends Battle {
     turns: BattleTurnResponse[]
     battleLogs?: BattleLogResponse[];
     attacks?: AttackResponse[];
+    encounterId?: number;
+    idEncounterHistoryMode?: string;
 }
 
 export interface CreateBattleInput {
     campaignId: number
     battleStatus: string
+    encounterId?: number
 }
 
 export interface UpdateBattleInput {
     battleStatus: string
+    encounterId?: number
+    idEncounterHistoryMode?: string | null
 }
 
 export interface AddBattleCharacterRequest {
@@ -46,8 +51,10 @@ export interface AddBattleCharacterRequest {
     perfectionRank?: string | null
     rankProgress?: number | null
     bestialWheelPosition?: number | null
+    bestialWheelReversed?: boolean
     initiative?: AddBattleCharacterInitiativeData,
-    canRollInitiative: boolean
+    canRollInitiative: boolean,
+    freeShotWeakPoints?: number
 }
 
 export interface AddBattleCharacterInitiativeData {
@@ -88,6 +95,8 @@ export interface CreateAttackRequest {
     isLastHit?: boolean  // Indicates if this is the last hit of the skill (for Twilight activation)
     shouldRemoveMarked?: boolean  // If false, don't remove Marked status (e.g., for Gustave's Homage)
     element?: string  // Element type for elemental resistances (e.g., 'Physical', 'Fire', 'Ice')
+    chargeIncrease?: number  // Amount to increase charge (Gustave's Lumiere Assault: 1 normal, 2 on crit)
+    grantsGradientPoints?: number  // Grants gradient points to team (12 = 1 charge) (Phantom Strike)
 }
 
 export interface AttackStatusEffectRequest {
@@ -110,12 +119,6 @@ export interface CreateDefenseRequest {
     attackId: number
     totalDamage: number
     defenseType?: string  // "block", "dodge", "jump", "gradient-block", "take"
-}
-
-export interface ResolveStatusRequest {
-    battleCharacterId: number
-    effectType: string
-    totalValue?: number
 }
 
 export interface AddStatusRequest {
@@ -162,14 +165,6 @@ export class APIBattle {
         await api.delete<void>(`battles/characters/${id}`)
     }
 
-    static async useBattle(battleId: number, campaignId: number): Promise<void> {
-        await api.put<{ campaignId: number }, void>(`battles/${battleId}/use`, { campaignId })
-    }
-
-    static async clearBattle(campaignId: number): Promise<void> {
-        await api.put<{ campaignId: number }, void>("battles/clear", { campaignId })
-    }
-
     static async addInitiative(input: CreateBattleInitiativeRequest): Promise<InitiativeResponse> {
         return api.post<CreateBattleInitiativeRequest, InitiativeResponse>("battle-initiatives", input)
     }
@@ -209,10 +204,6 @@ export class APIBattle {
         )
     }
 
-    static async resolveStatus(input: ResolveStatusRequest): Promise<void> {
-        await api.post<ResolveStatusRequest, void>("battle-status/resolve", input)
-    }
-
     static async addStatus(body: AddStatusRequest): Promise<void> {
         // Block "Heal" and "Cleanse" - these should NEVER be added as status
         if ((body.effectType as string) === "Heal" || (body.effectType as string) === "Cleanse") {
@@ -221,20 +212,12 @@ export class APIBattle {
         await api.post("battle-status/add", body);
     }
 
-    static async cleanse(battleCharacterId: number): Promise<void> {
-        await api.post(`battle-status/cleanse/${battleCharacterId}`, {});
-    }
-
     static async removeStatus(battleCharacterId: number, effectType: string): Promise<void> {
         await api.delete(`battle-status/${battleCharacterId}/status/${effectType}`);
     }
 
     static async heal(battleCharacterId: number, amount: number): Promise<void> {
         await api.post(`battle-status/heal/${battleCharacterId}`, { amount });
-    }
-
-    static async breakTarget(battleCharacterId: number): Promise<void> {
-        await api.post(`battle-status/break/${battleCharacterId}`, {});
     }
 
     static async extendStatusDuration(battleCharacterId: number, effectType: string, additionalTurns: number): Promise<void> {
@@ -288,6 +271,67 @@ export class APIBattle {
         await api.put<{ newGradient: number }, void>(
             `battles/characters/${characterId}/team-gradient`,
             { newGradient }
+        )
+    }
+
+    static async updateCharacterChargePoints(id: number, newChargePoints: number): Promise<void> {
+        await api.put<{ newChargePoints: number }, void>(
+            `battles/characters/${id}/charge-points`,
+            { newChargePoints }
+        )
+    }
+
+    static async updateWeakPoints(id: number, newWeakPoints: number): Promise<void> {
+        await api.put<{ newWeakPoints: number }, void>(
+            `battles/characters/${id}/weak-points`,
+            { newWeakPoints }
+        )
+    }
+
+    static async updateBreakCount(id: number, breakCount: number): Promise<void> {
+        await api.put<{ breakCount: number }, void>(
+            `battles/characters/${id}/break-count`,
+            { breakCount }
+        )
+    }
+
+    static async updateBestialWheelPosition(id: number, newPosition: number): Promise<void> {
+        await api.put<{ newPosition: number }, void>(
+            `battles/characters/${id}/bestial-wheel-position`,
+            { newPosition }
+        )
+    }
+
+    static async updateBestialWheelReversed(id: number, reversed: boolean): Promise<void> {
+        await api.put<{ reversed: boolean }, void>(
+            `battles/characters/${id}/bestial-wheel-reversed`,
+            { reversed }
+        )
+    }
+
+    static async updateSunMoonCharges(id: number, sunCharges: number, moonCharges: number): Promise<void> {
+        await api.put<{ sunCharges: number; moonCharges: number }, void>(
+            `battles/characters/${id}/sun-moon-charges`,
+            { sunCharges, moonCharges }
+        )
+    }
+
+    static async incrementSunMoonCharge(id: number, skillType: string): Promise<{ twilightActivated: boolean; twilightCharges: number }> {
+        const response = await api.post<{ skillType: string }, { twilightActivated: boolean; twilightCharges: number }>(
+            `battles/characters/${id}/increment-sun-moon`,
+            { skillType }
+        );
+        return response;
+    }
+
+    static async incrementForetellConsumed(battleCharacterId: number, amount: number): Promise<void> {
+        await api.post(`battles/characters/${battleCharacterId}/increment-foretell-consumed`, { amount });
+    }
+
+    static async updateCharacterRank(id: number, perfectionRank: string, rankProgress: number): Promise<void> {
+        await api.put<{ perfectionRank: string; rankProgress: number }, void>(
+            `battles/characters/${id}/rank`,
+            { perfectionRank, rankProgress }
         )
     }
 
@@ -449,6 +493,13 @@ export class APIBattle {
             resistanceType,
             multiplier
         })
+    }
+
+    static async toggleNameHidden(id: number, nameHidden: boolean): Promise<void> {
+        await api.put<{ nameHidden: boolean }, void>(
+            `battles/characters/${id}/name-hidden`,
+            { nameHidden }
+        )
     }
 
     static async reorderTurns(turnIds: number[]): Promise<void> {

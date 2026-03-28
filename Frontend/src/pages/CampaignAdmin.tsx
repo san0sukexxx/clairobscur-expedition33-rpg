@@ -1,25 +1,57 @@
-import { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { FiLogOut, FiShare2 } from "react-icons/fi";
-import { FaUserFriends, FaFileAlt, FaShieldAlt } from "react-icons/fa";
+import { useState, useRef, useEffect, type MutableRefObject } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { AdminMenuDrawer } from "../components/AdminMenuDrawer";
+import { FullscreenButton } from "../components/FullscreenButton";
+import { FaUserFriends, FaFileAlt, FaShieldAlt, FaScroll, FaDragon, FaMapMarkerAlt, FaSkull } from "react-icons/fa";
+import { GiStoneTablet, GiCrossedSwords } from "react-icons/gi";
 import { useApiListRaw } from "../api/UseApiListRaw";
 import { APIPlayer, type GetPlayerResponse } from "../api/APIPlayer";
 import { APICampaignPlayer } from "../api/APICampaignPlayer";
 import { APICampaign, type Campaign } from "../api/APICampaign";
 import CampaignAdminSheets from "../components/CampaignAdminSheets";
 import CampaignAdminCombatsTab from "../components/CampaignAdminCombatsTab";
+import CampaignAdminEncountersTab from "../components/CampaignAdminEncountersTab";
+import CampaignAdminLocationsTab from "../components/CampaignAdminLocationsTab";
+import CampaignAdminNpcsTab from "../components/CampaignAdminNpcsTab";
+import CampaignAdminPictosTab from "../components/CampaignAdminPictosTab";
+import CampaignAdminWeaponsTab from "../components/CampaignAdminWeaponsTab";
+import { GameLogSection } from "../components/GameLogSection";
+import DiceBoard, { type DiceBoardRef } from "../components/DiceBoard";
+import { FloatingDiceRoller } from "../components/FloatingDiceRoller";
+import { RollHistoryToast } from "../components/RollHistoryToast";
 import { t } from "../i18n";
 import { useToast } from "../components/Toast";
 
+type AdminTab = "players" | "combats" | "encounters" | "locations" | "npcs" | "pictos-list" | "weapons-list" | "logs";
+const validTabs: AdminTab[] = ["players", "combats", "encounters", "locations", "npcs", "pictos-list", "weapons-list", "logs"];
+
 export default function CampaignAdmin() {
     const [campaignInfo, setCampaignInfo] = useState<Campaign | null>(null);
-    const [activeTab, setActiveTab] = useState<"players" | "combats">("players");
-    const alreadyRan = useRef(false);
-
     const { campaign } = useParams<{ campaign?: string }>();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabFromUrl = searchParams.get("tab") as AdminTab | null;
+    const activeTab: AdminTab = tabFromUrl && validTabs.includes(tabFromUrl) ? tabFromUrl : "players";
+    const changeTab = (tab: AdminTab) => {
+        setSearchParams({ tab }, { replace: false });
+    };
+
+    useEffect(() => {
+        if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+    }, [activeTab]);
+
+    const alreadyRan = useRef(false);
     const campaignId = campaign ? parseInt(campaign, 10) : null;
     const navigate = useNavigate();
     const { showToast } = useToast();
+    const [focusNpcId, setFocusNpcId] = useState<string | null>(null);
+    const [focusPictoId, setFocusPictoId] = useState<string | null>(null);
+    const [focusWeaponId, setFocusWeaponId] = useState<string | null>(null);
+    const [focusLocationId, setFocusLocationId] = useState<string | null>(null);
+    const diceBoardRef = useRef<DiceBoardRef>(null);
+    const timeoutDiceBoardRef: MutableRefObject<ReturnType<typeof setTimeout> | null> = useRef(null);
+
 
     const { items, loading, error, reload } = useApiListRaw<GetPlayerResponse>(
         () => (campaignId !== null ? APICampaignPlayer.list(campaignId) : Promise.resolve([])),
@@ -123,27 +155,14 @@ export default function CampaignAdmin() {
                     <span className="text-xl font-bold text-primary">{t("campaigns.campaignPanel")}</span>
                 </div>
 
-                <div className="flex-none flex gap-2">
-                    <button
-                        onClick={handleShareCampaign}
-                        className="btn btn-ghost gap-2"
-                        title="Compartilhar campanha"
-                    >
-                        <FiShare2 />
-                        {t("campaigns.share") || "Compartilhar"}
-                    </button>
-                    <button
-                        onClick={() => navigate("/")}
-                        className="btn btn-ghost gap-2"
-                    >
-                        <FiLogOut />
-                        {t("navigation.logout")}
-                    </button>
+                <div className="flex-none flex items-center">
+                    <FullscreenButton />
+                    <AdminMenuDrawer onShare={handleShareCampaign} />
                 </div>
             </div>
 
             {/* Conteúdo */}
-            <main className="p-4 lg:p-6 flex flex-col gap-6 flex-1">
+            <main className="p-4 lg:p-6 pb-24 flex flex-col gap-6 flex-1 max-w-[1200px] mx-auto w-full">
                 <div>
                     <h1 className="text-3xl font-bold">
                         {campaignInfo?.name ?? t("common.loading")}
@@ -153,33 +172,32 @@ export default function CampaignAdmin() {
 
                 {/* Tabs */}
                 <div className="w-full">
-                    <div role="tablist" className="tabs tabs-bordered">
+                    <div role="tablist" className="flex flex-wrap gap-1">
+                        {([
+                            { id: "players" as const, icon: <FaUserFriends />, label: t("tabs.players") },
+                            { id: "combats" as const, icon: <FaShieldAlt />, label: t("tabs.combats") },
+                            { id: "encounters" as const, icon: <FaDragon />, label: t("tabs.encounters") },
+                            { id: "locations" as const, icon: <FaMapMarkerAlt />, label: t("tabs.locations") },
+                            { id: "npcs" as const, icon: <FaSkull />, label: "NPCs" },
+                            { id: "pictos-list" as const, icon: <GiStoneTablet />, label: t("tabs.pictos") },
+                            { id: "weapons-list" as const, icon: <GiCrossedSwords />, label: t("tabs.weapons") },
+                            { id: "logs" as const, icon: <FaScroll />, label: t("tabs.logs") },
+                        ]).map(({ id, icon, label }) => (
+                            <button
+                                key={id}
+                                role="tab"
+                                className={`px-4 py-2 text-sm rounded-lg outline-none ${activeTab === id ? "bg-primary/10 text-primary font-semibold" : "text-base-content/50 hover:text-base-content"}`}
+                                onClick={() => changeTab(id)}
+                            >
+                                <span className="flex items-center gap-2">
+                                    {icon}
+                                    {label}
+                                </span>
+                            </button>
+                        ))}
                         <button
                             role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "players" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => setActiveTab("players")}
-                        >
-                            <span className="flex items-center gap-2">
-                                <FaUserFriends />
-                                {t("tabs.players")}
-                            </span>
-                        </button>
-
-                        <button
-                            role="tab"
-                            className={`tab text-sm px-4 ${activeTab === "combats" ? "tab-active font-semibold" : ""}`}
-                            onClick={() => setActiveTab("combats")}
-                        >
-                            <span className="flex items-center gap-2">
-                                <FaShieldAlt />
-                                {t("tabs.combats")}
-                            </span>
-                        </button>
-
-                        {/* Nova aba de detalhes da campanha */}
-                        <button
-                            role="tab"
-                            className="tab text-sm px-4"
+                            className="px-4 py-2 text-sm rounded-lg outline-none text-base-content/50 hover:text-base-content"
                             onClick={() => {
                                 if (campaignId != null) {
                                     navigate(`/edit-campaign-details/${campaignId}`);
@@ -206,14 +224,104 @@ export default function CampaignAdmin() {
                     />
                 )}
 
-                {activeTab === "combats" && campaignId !== null && campaignInfo !== null && setCampaignInfo !== null && (
-                    <CampaignAdminCombatsTab
+                {campaignId !== null && campaignInfo !== null && (
+                    <div className={activeTab !== "combats" ? "hidden" : undefined}>
+                        <CampaignAdminCombatsTab
+                            campaignInfo={campaignInfo}
+                            players={items}
+                        />
+                    </div>
+                )}
+
+                {activeTab === "encounters" && campaignId !== null && campaignInfo !== null && (
+                    <CampaignAdminEncountersTab
                         campaignInfo={campaignInfo}
-                        setCampaignInfo={setCampaignInfo}
-                        players={items}
+                        onNpcClick={(npcId) => {
+                            setFocusNpcId(npcId);
+                            changeTab("npcs");
+                        }}
+                        onPictoClick={(pictoId) => {
+                            setFocusPictoId(pictoId);
+                            changeTab("pictos-list");
+                        }}
+                        onWeaponClick={(weaponId) => {
+                            setFocusWeaponId(weaponId);
+                            changeTab("weapons-list");
+                        }}
                     />
                 )}
+
+                {activeTab === "locations" && campaignInfo !== null && (
+                    <CampaignAdminLocationsTab
+                        campaignInfo={campaignInfo}
+                        focusLocationId={focusLocationId}
+                        onFocusHandled={() => setFocusLocationId(null)}
+                        onLocationChange={async (locationId) => {
+                            if (campaignId === null || !campaignInfo) return;
+                            await APICampaign.update(campaignId, {
+                                name: campaignInfo.name,
+                                characters: campaignInfo.characters,
+                                currentLocationId: locationId,
+                            });
+                            setCampaignInfo({ ...campaignInfo, currentLocationId: locationId });
+                        }}
+                        onNpcClick={(npcId) => {
+                            setFocusNpcId(npcId);
+                            changeTab("npcs");
+                        }}
+                        onPictoClick={(pictoId) => {
+                            setFocusPictoId(pictoId);
+                            changeTab("pictos-list");
+                        }}
+                        onWeaponClick={(weaponId) => {
+                            setFocusWeaponId(weaponId);
+                            changeTab("weapons-list");
+                        }}
+                    />
+                )}
+
+                {activeTab === "npcs" && (
+                    <CampaignAdminNpcsTab
+                        diceBoardRef={diceBoardRef}
+                        timeoutDiceBoardRef={timeoutDiceBoardRef}
+                        focusNpcId={focusNpcId}
+                        onFocusHandled={() => setFocusNpcId(null)}
+                        campaignInfo={campaignInfo}
+                        onPictoClick={(pictoId) => {
+                            setFocusPictoId(pictoId);
+                            changeTab("pictos-list");
+                        }}
+                        onWeaponClick={(weaponId) => {
+                            setFocusWeaponId(weaponId);
+                            changeTab("weapons-list");
+                        }}
+                        onLocationClick={(locationId) => {
+                            setFocusLocationId(locationId);
+                            changeTab("locations");
+                        }}
+                    />
+                )}
+
+                {activeTab === "pictos-list" && (
+                    <CampaignAdminPictosTab focusPictoId={focusPictoId} onFocusHandled={() => setFocusPictoId(null)} players={items} campaignInfo={campaignInfo} onLocationClick={(locationId) => { setFocusLocationId(locationId); changeTab("locations"); }} />
+                )}
+
+                {activeTab === "weapons-list" && (
+                    <CampaignAdminWeaponsTab focusWeaponId={focusWeaponId} onFocusHandled={() => setFocusWeaponId(null)} players={items} campaignInfo={campaignInfo} onLocationClick={(locationId) => { setFocusLocationId(locationId); changeTab("locations"); }} />
+                )}
+
+                {activeTab === "logs" && campaignId !== null && (
+                    <GameLogSection campaignId={campaignId} />
+                )}
             </main>
+
+            {activeTab !== "combats" && (
+                <>
+                    <DiceBoard ref={diceBoardRef} />
+                    <RollHistoryToast />
+                    <FloatingDiceRoller diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} className="bottom-4 right-4" />
+                </>
+            )}
         </div>
     );
 }

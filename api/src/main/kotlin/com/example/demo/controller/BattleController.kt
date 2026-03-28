@@ -6,7 +6,6 @@ import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.BattleWithDetailsResponse
 import com.example.demo.dto.InitiativeResponse
 import com.example.demo.dto.UpdateBattleStatusRequest
-import com.example.demo.dto.UseBattleRequest
 import com.example.demo.model.Battle
 import com.example.demo.model.BattleLog
 import com.example.demo.model.BattleTurn
@@ -19,14 +18,12 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/battles")
 class BattleController(
         private val battleRepository: BattleRepository,
-        private val campaignRepository: CampaignRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
         private val playerRepository: PlayerRepository,
         private val battleInitiativeRepository: BattleInitiativeRepository,
         private val battleLogRepository: BattleLogRepository,
         private val battleTurnRepository: BattleTurnRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository,
-        private val attackRepository: AttackRepository,
         private val playerPictoRepository: PlayerPictoRepository,
         private val playerLuminaRepository: PlayerLuminaRepository
 ) {
@@ -87,12 +84,17 @@ class BattleController(
                             perfectionRank = bc.perfectionRank,
                             rankProgress = bc.rankProgress,
                             bestialWheelPosition = bc.bestialWheelPosition,
+                            bestialWheelReversed = bc.bestialWheelReversed,
                             status = status,
                             type = bc.characterType,
                             isEnemy = bc.isEnemy,
                             canRollInitiative = bc.canRollInitiative,
                             parriesThisTurn = bc.parriesThisTurn,
-                            hitsTakenThisTurn = bc.hitsTakenThisTurn
+                            hitsTakenThisTurn = bc.hitsTakenThisTurn,
+                            foretellConsumedTotal = bc.foretellConsumedTotal,
+                            freeShotWeakPoints = bc.freeShotWeakPoints,
+                            breakCount = bc.breakCount,
+                            nameHidden = bc.nameHidden
                     )
                 }
 
@@ -125,8 +127,6 @@ class BattleController(
                     if (last != null) listOf(last) else emptyList()
                 }
 
-        val attacks = attackRepository.findByBattleId(battleId)
-
         val response =
                 BattleWithDetailsResponse(
                         id = battle.id!!,
@@ -136,7 +136,8 @@ class BattleController(
                         initiatives = initiatives,
                         turns = turns,
                         battleLogs = battleLogs,
-                        attacks = attacks
+                        encounterId = battle.encounterId,
+                        idEncounterHistoryMode = battle.idEncounterHistoryMode
                 )
 
         return ResponseEntity.ok(response)
@@ -151,15 +152,6 @@ class BattleController(
     @PostMapping
     fun create(@RequestBody battle: Battle): ResponseEntity<Int> {
         val saved = battleRepository.save(battle)
-
-        val campaign =
-                campaignRepository.findById(battle.campaignId).orElseThrow {
-                    IllegalArgumentException("Campaign not found with id: ${battle.campaignId}")
-                }
-
-        campaign.battleId = battle.id
-        campaignRepository.save(campaign)
-
         return ResponseEntity.ok(saved.id!!)
     }
 
@@ -169,7 +161,15 @@ class BattleController(
         val opt = battleRepository.findById(id)
         return if (opt.isPresent) {
             val existing = opt.get()
-            val newBattle = existing.copy(battleStatus = updated.battleStatus)
+            val newBattle = existing.copy(
+                    battleStatus = updated.battleStatus,
+                    encounterId = updated.encounterId ?: existing.encounterId,
+                    idEncounterHistoryMode = when {
+                        updated.idEncounterHistoryMode == "" -> null
+                        updated.idEncounterHistoryMode != null -> updated.idEncounterHistoryMode
+                        else -> existing.idEncounterHistoryMode
+                    }
+            )
             battleRepository.save(newBattle)
 
             // Incrementar battle_count dos pictos quando a batalha termina
@@ -234,39 +234,6 @@ class BattleController(
         battleRepository.deleteById(id)
 
         return ResponseEntity.noContent().build()
-    }
-
-    @PutMapping("/{battleId}/use")
-    fun useBattle(
-            @PathVariable battleId: Int,
-            @RequestBody body: UseBattleRequest
-    ): ResponseEntity<Void> {
-        val campaignId = body.campaignId
-
-        val campaign =
-                campaignRepository.findById(campaignId).orElseThrow {
-                    IllegalArgumentException("Campaign not found with id: $campaignId")
-                }
-
-        campaign.battleId = battleId
-        campaignRepository.save(campaign)
-
-        return ResponseEntity.ok().build()
-    }
-
-    @PutMapping("/clear")
-    fun clearBattle(@RequestBody body: UseBattleRequest): ResponseEntity<Void> {
-        val campaignId = body.campaignId
-
-        val campaign =
-                campaignRepository.findById(campaignId).orElseThrow {
-                    IllegalArgumentException("Campaign not found with id: $campaignId")
-                }
-
-        campaign.battleId = null
-        campaignRepository.save(campaign)
-
-        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/{battleId}/start")

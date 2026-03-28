@@ -1,11 +1,5 @@
-import { type NPCInfo, type ElementModifier, type WeaponInfo, type BattleCharacterInfo, type StatusType, type StatusResponse } from "../api/ResponseModel"
+import { type NPCInfo, type BattleCharacterInfo, type StatusType, type StatusResponse } from "../api/ResponseModel"
 import { getNpcById } from "../utils/NpcUtils"
-
-import {
-    calculateCriticalMulti,
-    calculateFailureDiv,
-    diceTotal
-} from "./DiceCalculator";
 
 export function randomizeNpcInitiativeTotal(npc: NPCInfo) {
     const diceResult = Math.floor(Math.random() * 6) + 1
@@ -14,40 +8,16 @@ export function randomizeNpcInitiativeTotal(npc: NPCInfo) {
         return 1;
     }
 
-    const criticalMulti = diceResult == 6 ? 2 : 1;
-    const failureDiv = diceResult == 1 ? 2 : 1;
+    const criticalBonus = diceResult == 6 ? 4 : 0;
+    const failurePenalty = diceResult == 1 ? 2 : 0;
     const initiativeBonus = npc.initiativeBonus ?? 0;
 
-    return diceResult + (npc.hability * criticalMulti / failureDiv) + initiativeBonus;
-}
-
-export function randomizeNpcDefenseTotal(npc: NPCInfo, target: BattleCharacterInfo) {
-    let diceResult = Math.floor(Math.random() * 6) + 1
-
-    const criticalMulti = diceResult == 6 ? 2 : 1;
-    const failureDiv = diceResult == 1 ? 2 : 1;
-    let hability = 0
-
-    if (hasSlowed(target)) {
-        diceResult = Math.floor(diceResult / 2);
-    }
-    if (hasHastened(target)) {
-        hability = npc.hability;
-    }
-
-    let resistance = npc.resistance
-    if (hasUnprotected(target)) {
-        resistance = Math.floor(resistance / 2);
-    }
-    if (hasProtected(target)) {
-        resistance *= 2;
-    }
-
-    return diceResult + (resistance * criticalMulti / failureDiv) + hability;
+    const dexMod = Math.floor((npc.dexterity - 10) / 2);
+    return diceResult + dexMod + criticalBonus - failurePenalty + initiativeBonus;
 }
 
 export function getNPCMaxHealth(npc: NPCInfo) {
-    const baseHealth = npc.resistance * 5;
+    const baseHealth = npc.constitution;
     const maxLifeBonus = npc.maxLifeBonus ?? 0;
     return Math.max(1, baseHealth + maxLifeBonus);
 }
@@ -64,84 +34,6 @@ export function npcIsFlyingById(id: string | undefined) {
     return getNpcById(id ?? "")?.isFlying ?? false
 }
 
-export function calculateNpcAttackReceivedDamage(target: BattleCharacterInfo, damage: number) {
-    const npcInfo = getNpcById(target.id)
-
-    if (npcInfo == undefined) { return 1 }
-
-    if (hasShield(target)) {
-        return 0;
-    }
-
-    let totalDefense = randomizeNpcDefenseTotal(npcInfo, target);
-    totalDefense = hasMarked(target) ? Math.floor(totalDefense * 0.5) : totalDefense 
-    return Math.max(1, damage - totalDefense)
-}
-
-export function checkForFragile(target: BattleCharacterInfo, damage: number): boolean {
-    const npcInfo = getNpcById(target.id)
-
-    if (npcInfo == undefined || hasBroken(target)) { return false }
-
-    return npcInfo.resistance * 2 < damage
-}
-
-export function calculateNpcAttackPower(character: BattleCharacterInfo, diceResult: any): number {
-    const npcInfo = getNpcById(character.id)
-    const total = diceTotal(diceResult);
-    const failures = calculateFailureDiv(diceResult)
-    var npcPower = (npcInfo?.power ?? 0) * calculateCriticalMulti(diceResult);
-
-    if (failures > 0) {
-        npcPower = Math.floor(npcPower / failures);
-    }
-    return npcPower + total + (getFrenzyStatus(character)?.ammount ?? 0);
-}
-
-export function rollCommandForNpcInitiative(id: string) {
-    return "1d6";
-}
-
-export function rollCommandForNpcAttack(id: string, npcAttack?: any) {
-    const baseDice = 1;
-    const additionalDices = npcAttack?.additionalDices ?? 0;
-    const totalDices = baseDice + additionalDices;
-    return `${totalDices}d6`;
-}
-
-export function getWeaponElementModifier(id: string, weaponInfo: WeaponInfo | null): ElementModifier | undefined {
-    const npcInfo = getNpcById(id)
-
-    if (npcInfo?.imuneTo != undefined || npcInfo?.resistentTo != undefined || npcInfo?.weakTo != undefined || npcInfo?.absorbElement != undefined) {
-        if (weaponInfo != undefined && weaponInfo.details != null) {
-            if (npcInfo?.absorbElement == weaponInfo.details?.attributes.element) {
-                return {
-                    multiplier: -1,  // Negative multiplier = healing
-                    type: "absorb"
-                };
-            }
-            if (npcInfo?.imuneTo == weaponInfo.details?.attributes.element) {
-                return {
-                    multiplier: 0,
-                    type: "imune"
-                };
-            }
-            if (npcInfo?.resistentTo == weaponInfo.details?.attributes.element) {
-                return {
-                    multiplier: 0.5,
-                    type: "resistent"
-                };
-            }
-            if (npcInfo?.weakTo == weaponInfo.details?.attributes.element) {
-                return {
-                    multiplier: 1.5,
-                    type: "weak"
-                };
-            }
-        }
-    }
-}
-
 export function getStatus(target: BattleCharacterInfo, status: StatusType): StatusResponse | undefined {
     return target.status?.find(s => s.effectName === status);
 }
@@ -150,14 +42,13 @@ export function hasStatus(target: BattleCharacterInfo, status: StatusType): bool
     return target.status?.some(s => s.effectName === status) ?? false;
 }
 
-export const hasShield = (t: BattleCharacterInfo) => hasStatus(t, "Shielded");
-export const hasHastened = (t: BattleCharacterInfo) => hasStatus(t, "Hastened");
+export const hasShield = (t: BattleCharacterInfo) => hasStatus(t, "Shield");
+export const hasHastened = (t: BattleCharacterInfo) => hasStatus(t, "Rush");
 export const hasSlowed = (t: BattleCharacterInfo) => hasStatus(t, "Slowed");
 export const hasWeakened = (t: BattleCharacterInfo) => hasStatus(t, "Weakened");
 export const hasEmpowered = (t: BattleCharacterInfo) => hasStatus(t, "Empowered");
-export const hasProtected = (t: BattleCharacterInfo) => hasStatus(t, "Protected");
+export const hasShell = (t: BattleCharacterInfo) => hasStatus(t, "Shell");
 export const hasUnprotected = (t: BattleCharacterInfo) => hasStatus(t, "Unprotected");
 export const getFrenzyStatus = (t: BattleCharacterInfo) => getStatus(t, "Frenzy");
 export const hasMarked = (t: BattleCharacterInfo) => hasStatus(t, "Marked");
-export const hasFragile = (t: BattleCharacterInfo) => hasStatus(t, "Fragile");
 export const hasBroken = (t: BattleCharacterInfo) => hasStatus(t, "Broken");

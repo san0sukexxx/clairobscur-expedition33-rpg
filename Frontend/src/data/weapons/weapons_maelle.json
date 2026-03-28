@@ -11,15 +11,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Kill self on battle start."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Revive with 100% Health. Once per battle."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Play first."
       }
     ],
@@ -32,20 +32,20 @@
       "element": "Void",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Steal Shields removed by hitting enemies."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Switch to Virtuose Stance on breaking any Shield."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Hitting a Marked enemy breaks all its Shields."
       }
     ],
@@ -63,15 +63,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Double Gradient generation while in Defensive Stance."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "If Stanceless, Base Attack switches to Defensive Stance."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+5% of a Gradient Charge on Parry."
       }
     ],
@@ -83,21 +83,21 @@
       "power": 1020,
       "element": "Fire",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Critical hits apply Burn."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack applies 2 Burn."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "100% Critical Chance while Stanceless."
       }
     ],
@@ -110,20 +110,20 @@
       "element": "Light",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "On Defensive Stance, gain 1 Shield per Parry. Lose all Shields on turn start."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Light damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "50% increased Counter damage per Shield."
       }
     ],
@@ -135,21 +135,21 @@
       "power": 1056,
       "element": "Fire",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "On turn start, if Stanceless, switch to Offensive Stance."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Fire Skills cost 1 less AP."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+1 Shield on switching to Offensive Stance."
       }
     ],
@@ -162,20 +162,20 @@
       "element": "Lightning",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Critical hits with Skills give 2 AP. Once per turn."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Lightning damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+50% Critical Chance while in Offensive Stance."
       }
     ],
@@ -193,15 +193,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Self-Heal by 2% Health on dealing a Critical hit."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+50% Critical Chance while in Defensive Stance."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "If Stanceless, Base Attack switches to Defensive Stance."
       }
     ],
@@ -214,20 +214,20 @@
       "element": "Physical",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "In Defensive Stance, gaining AP also gives 1 AP to allies."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "If Stanceless, Base Attack switches to Defensive Stance."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+1 AP on Stance switch."
       }
     ],
@@ -245,15 +245,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "In Offensive Stance, double the amount of Burn applied."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "50% increased Burn damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack propagates Burn."
       }
     ],
@@ -266,20 +266,20 @@
       "element": "Physical",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Allies recover 20% Health on switching to Virtuose Stance."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Gain Shell when switching out of Virtuose Stance."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Cleanse self Status Effects when switching to Virtuose Stance."
       }
     ],
@@ -297,15 +297,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Switch to Virtuose Stance on Counterattack."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Apply 5 Burn on Counterattack."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "50% increased Counter damage per Shield."
       }
     ],
@@ -317,21 +317,21 @@
       "power": 1200,
       "element": "Void",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "In Virtuose Stance, hitting a Marked enemy doesn't remove Mark."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Switch to Virtuose Stance on Counterattack."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Gain Shell when switching out of Virtuose Stance."
       }
     ],
@@ -356,20 +356,20 @@
       "element": "Physical",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Start in Virtuose Stance."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "In Virtuose Stance, every Burn applied is doubled."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "In Virtuose Stance, Burn deals double damage."
       }
     ],
@@ -387,15 +387,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Allies recover 20% Health on switching to Virtuose Stance."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Applies Shell when Health is above 80%."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Switch to Virtuose Stance when Health falls below 50%."
       }
     ],
@@ -413,15 +413,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "On turn start, if Stanceless, switch to Defensive Stance."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "In Defensive Stance, double Break damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Support Skills cost 1 less AP."
       }
     ],
@@ -434,20 +434,20 @@
       "element": "Fire",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "+1 Shield on switching to Offensive Stance."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "If Stanceless, Base Attack switches to Offensive Stance."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+50% Critical Chance while in Offensive Stance."
       }
     ],
@@ -460,20 +460,20 @@
       "element": "Physical",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Switch to Virtuose Stance on breaking any Shield."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Free Aim shots break 2 Shields."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "In Virtuose Stance, all damage pierce Shields."
       }
     ],
@@ -491,15 +491,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Apply Burn on self on turn start. 10% increased damage for each self Burn stack."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attack applies 2 Burn."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "While in Defensive Stance, receive Heal instead of Burn damage."
       }
     ],
@@ -512,20 +512,20 @@
       "element": "Earth",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "In Defensive Stance, double Break damage."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Gain 9 AP on Breaking an enemy."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Breaking an enemy deals a high amount of Earth damage."
       }
     ],
@@ -538,20 +538,20 @@
       "element": "Physical",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "If Stanceless, Base Attack switches to Offensive Stance."
       },
       {
-        "level": 10,
-        "effect": "Counterattacks apply Defenceless."
+        "level": 3,
+        "effect": "Counterattacks apply Unprotected."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+50% Critical Chance while in Offensive Stance."
       }
     ],
@@ -564,20 +564,20 @@
       "element": "Physical",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "+1 AP on Stance switch."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "If Stanceless, Base Attack switches to Defensive Stance."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Recover 5% Health on Stance switch."
       }
     ],
@@ -590,20 +590,20 @@
       "element": "Physical",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Applying Shell also applies 1 Shield."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "On applying Shields, also give 1 AP."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "On switching to Virtuose Stance, double all Shields on allies."
       }
     ],

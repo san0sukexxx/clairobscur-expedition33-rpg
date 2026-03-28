@@ -11,15 +11,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Base Attack applies 2 Burn per Fire Stain."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Generate one Fire Stain at the beginning of each turn."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "30% increased Burn damage per Fire Stain."
       }
     ],
@@ -37,15 +37,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Kill self on battle start."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Revive with 100% Health. Once per battle."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Play first."
       }
     ],
@@ -63,15 +63,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Healing Skills cost 1 less AP."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Generate one Earth Stain at the beginning of each turn."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Replay instantly on consuming Stains with a Healing Skill."
       }
     ],
@@ -84,20 +84,20 @@
       "element": "Earth",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Using a Skill that consumes Stains increases damage by 20%. Can stack up to 5 times. Resets on using a Skill without consuming Stains."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "On turn start, if no Stains, 2 random Stains are generated."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+1 AP when Stains are consumed."
       }
     ],
@@ -115,15 +115,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "30% increased Critical Chance per Ice Stain."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+5% of a Gradient Charge on Critical hit."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "20% increased Fire damage with Skills."
       }
     ],
@@ -136,20 +136,20 @@
       "element": "Earth",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "30% increased Break damage per Earth Stain."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Gain 9 AP on Breaking an enemy."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Generate one Earth Stain at the beginning of each turn."
       }
     ],
@@ -162,20 +162,20 @@
       "element": "Fire",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "100% Critical Chance when 4 Stains are simultaneously active."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased damage for each consecutive turn without taking damage. Can stack up to 5 times."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Critical hits apply Burn."
       }
     ],
@@ -188,20 +188,20 @@
       "element": "Light",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "50% chance to generate a Light Stain when consuming Stains."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+1 AP on consuming a Light Stain."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "20% increased damage with Skills per active Light Stain."
       }
     ],
@@ -219,15 +219,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Ice Skills cost 1 less AP."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Ice damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Start battle with 1 Earth Stain."
       }
     ],
@@ -239,21 +239,21 @@
       "power": 1020,
       "element": "Lightning",
       "scaling": {
-        "agility": "B",
+        "dexterity": "B",
         "luck": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Lightning Skills cost 1 less AP."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Lightning damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Start battle with 1 Fire Stain."
       }
     ],
@@ -271,15 +271,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Consuming an Earth Stain applies 1 Shield to self."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Earth damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack generates an Earth Stain."
       }
     ],
@@ -292,20 +292,20 @@
       "element": "Lightning",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Casting a Skill increases the Skill damage of all other elements by 20%. Resets when casting a Skill of a previous element."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "On turn start, if no Stains, 2 random Stains are generated."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "+1 AP when Stains are consumed."
       }
     ],
@@ -318,20 +318,20 @@
       "element": "Fire",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Fire Skills cost 1 less AP."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Fire damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Start battle with 1 Ice Stain."
       }
     ],
@@ -349,15 +349,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "50% chance to generate a Dark or Light Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+1 AP on consuming a Light Stain."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attacks can consume one Dark Stain to deal 200% more damage."
       }
     ],
@@ -388,15 +388,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Earth Skills cost 1 less AP."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "20% increased Earth damage with Skills."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Start battle with 1 Lightning Stain."
       }
     ],
@@ -409,20 +409,20 @@
       "element": "Ice",
       "scaling": {
         "defense": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Healing Skills generate one additional Light Stain."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Consuming a Light Stain applies Slow to a random enemy."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack generates a Light Stain."
       }
     ],
@@ -435,20 +435,20 @@
       "element": "Ice",
       "scaling": {
         "defense": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Healing Skills generate one additional Light Stain."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Generate one Ice Stain at the beginning of each turn."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Replay instantly on consuming Stains with a Healing Skill."
       }
     ],
@@ -466,15 +466,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Using a Gradient Attack generates 1 additional Light Stain."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "When a Fire Stain is generated, a Lightning Stain is also generated. Once per turn."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Gradient Attacks and Gradient Counters deal 50% more damage."
       }
     ],
@@ -487,20 +487,20 @@
       "element": "Dark",
       "scaling": {
         "vitality": "A",
-        "agility": "B"
+        "dexterity": "B"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "50% chance to generate a Dark Stain when consuming Stains. Deal 50% more damage with Skills per active Dark Stain."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "Base Attacks can consume one Dark Stain to deal 200% more damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "With 4 active Dark Stains, any Skill can consume them to deal 300% more damage."
       }
     ],
@@ -513,20 +513,20 @@
       "element": "Ice",
       "scaling": {
         "vitality": "B",
-        "agility": "A"
+        "dexterity": "A"
       }
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Freeze self when falling below 30% health. Prevent the next instance of damage while Frozen."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "On turn start, if Frozen, remove Freeze and recover 60% Health."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Gain 2 Ice Stains and 3 AP when Frozen."
       }
     ],
@@ -544,15 +544,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Generate a random Stain on Free Aim shot."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "+1 AP when Stains are consumed."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Base Attack generates 2 random Stains."
       }
     ],
@@ -570,15 +570,15 @@
     },
     "passives": [
       {
-        "level": 4,
+        "level": 2,
         "effect": "Free Aim Shots deal damage to an additional random target."
       },
       {
-        "level": 10,
+        "level": 3,
         "effect": "50% increased Free Aim damage."
       },
       {
-        "level": 20,
+        "level": 4,
         "effect": "Generate a random Stain on Free Aim shot."
       }
     ],

@@ -1,8 +1,7 @@
 CREATE TABLE
     IF NOT EXISTS campaign (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        battle_id INTEGER
+        name TEXT NOT NULL
     );
 
 CREATE TABLE

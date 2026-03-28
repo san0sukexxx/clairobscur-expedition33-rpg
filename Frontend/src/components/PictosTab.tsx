@@ -1,30 +1,38 @@
-import React, { useMemo, useState } from "react"
-import { type PictoResponse, type PictoInfo } from "../api/ResponseModel"
+import React, { useMemo, useState, useCallback, type RefObject, type MutableRefObject } from "react"
+import { type PictoResponse, type PictoInfo, type LuminaResponse } from "../api/ResponseModel"
 import { t } from "../i18n"
+import type { DiceBoardRef } from "./DiceBoard"
+import { renderTextWithDiceButtons } from "../utils/DiceTextRenderer"
 import {
-  displayPictoAttributeCritical,
+  displayPictoAttributeAbility,
   displayPictoAttributeDefense,
   displayPictoAttributeHealth,
   displayPictoAttributeSpeed,
-  displayPictoCritical,
+  displayPictoAbility,
   displayPictoDefense,
   displayPictoHealth,
   displayPictoSpeed,
   getPictoByName,
   pictoColorHex,
+  getDisabledPictoIds,
 } from "../utils/PictoUtils"
 import type { GetPlayerResponse } from "../api/APIPlayer"
 import { PictosList } from "../data/PictosList"
 import { APIPicto } from "../api/APIPicto"
-import { FaChartLine } from "react-icons/fa"
+import { APILumina } from "../api/APILumina"
+import { APICampaignPlayer } from "../api/APICampaignPlayer"
+import { FaChartLine, FaGift } from "react-icons/fa"
 
 interface PictosTabProps {
   player: GetPlayerResponse | null
   setPlayer: React.Dispatch<React.SetStateAction<GetPlayerResponse | null>>
   isAdmin: boolean
+  campaignId?: number
+  diceBoardRef?: RefObject<DiceBoardRef | null>
+  timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }
 
-type ModalType = "slot" | "admin-add" | "admin-add-level" | "admin-remove" | null
+type ModalType = "slot" | "admin-add" | "admin-add-level" | "admin-remove" | "gift-pick" | "gift-target" | null
 
 function getPictoName(p: PictoResponse | null | undefined): string {
   if (!p) return ""
@@ -33,12 +41,15 @@ function getPictoName(p: PictoResponse | null | undefined): string {
   return pictoInfo?.name ?? p.pictoId ?? ""
 }
 
-export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps) {
+export default function PictosTab({ player, setPlayer, isAdmin, campaignId, diceBoardRef, timeoutDiceBoardRef }: PictosTabProps) {
   const [modalType, setModalType] = useState<ModalType>(null)
   const [activeSlot, setActiveSlot] = useState<number | null>(null)
   const [query, setQuery] = useState("")
   const [pendingAddPicto, setPendingAddPicto] = useState<PictoInfo | null>(null)
   const [pendingLevel, setPendingLevel] = useState<string>("1")
+  const [pendingGiftPicto, setPendingGiftPicto] = useState<PictoResponse | null>(null)
+  const [campaignPlayers, setCampaignPlayers] = useState<GetPlayerResponse[]>([])
+  const [giftLoading, setGiftLoading] = useState(false)
 
   const slots: (PictoResponse | null)[] = useMemo(() => {
     const arr: (PictoResponse | null)[] = [null, null, null]
@@ -50,6 +61,8 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
       })
     return arr
   }, [player?.pictos])
+
+  const disabledPictoIds = useMemo(() => getDisabledPictoIds(player), [player])
 
   const inventory: PictoResponse[] = useMemo(() => {
     return (player?.pictos ?? [])
@@ -102,6 +115,21 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
 
   async function upsertPictoAt(slotIndex: number, picto: PictoResponse) {
     const id = picto.id
+    const pictoInfo = getPictoByName(picto.pictoId)
+
+    // Se o picto está equipado como lumina, desequipar a lumina
+    const equippedLumina = pictoInfo && (player?.luminas ?? []).find((l) => {
+      const lInfo = getPictoByName(l.pictoId)
+      return lInfo?.id === pictoInfo.id && l.isEquiped
+    }) as LuminaResponse | undefined
+
+    if (equippedLumina) {
+      try {
+        await APILumina.updatePlayerLumina(equippedLumina.id, { isEquiped: false })
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
     try {
       await APIPicto.updatePlayerPictoSlot(id, { slot: slotIndex })
@@ -122,7 +150,15 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
         return p
       })
 
-      return { ...prev, pictos: updated }
+      const updatedLuminas = equippedLumina
+        ? (prev.luminas ?? []).map((l) =>
+            (l as LuminaResponse).id === equippedLumina.id
+              ? { ...l, isEquiped: false }
+              : l
+          )
+        : prev.luminas
+
+      return { ...prev, pictos: updated, luminas: updatedLuminas }
     })
 
     setModalType(null)
@@ -142,7 +178,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
     if (!targetPicto) return
 
     const currentLevel = targetPicto.level ?? 1
-    const newLevel = Math.max(1, Math.min(33, currentLevel + delta))
+    const newLevel = Math.max(1, Math.min(4, currentLevel + delta))
 
     try {
       await APIPicto.updatePlayerPicto(targetPicto.id, { level: newLevel })
@@ -222,7 +258,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
 
     let lvl = parseInt(pendingLevel, 10)
     if (isNaN(lvl)) lvl = 1
-    lvl = Math.max(1, Math.min(33, lvl))
+    lvl = Math.max(1, Math.min(4, lvl))
 
     let newId: number | null = null
 
@@ -266,9 +302,59 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
     setModalType(null)
     setActiveSlot(null)
     setPendingAddPicto(null)
+    setPendingGiftPicto(null)
     setPendingLevel("1")
     setQuery("")
   }
+
+  function openGiftPick() {
+    setPendingGiftPicto(null)
+    setQuery("")
+    setModalType("gift-pick")
+  }
+
+  const handleGiftPickPicto = useCallback(async (picto: PictoResponse) => {
+    if (!campaignId || !player) return
+    setPendingGiftPicto(picto)
+    setQuery("")
+    setGiftLoading(true)
+    try {
+      const players = await APICampaignPlayer.list(campaignId)
+      setCampaignPlayers(players.filter(p => p.id !== player.id))
+    } catch (e) {
+      console.error(e)
+    }
+    setGiftLoading(false)
+    setModalType("gift-target")
+  }, [campaignId, player])
+
+  const handleGiftToPlayer = useCallback(async (targetPlayer: GetPlayerResponse) => {
+    if (!pendingGiftPicto || !player) return
+    setGiftLoading(true)
+    try {
+      // Unequip if equipped in a slot
+      if (typeof pendingGiftPicto.slot === "number") {
+        await APIPicto.updatePlayerPictoSlot(pendingGiftPicto.id, { slot: null })
+      }
+      // Delete from current player
+      await APIPicto.deletePlayerPicto(pendingGiftPicto.id)
+      // Create on target player
+      await APIPicto.createPlayerPicto({
+        playerId: targetPlayer.id,
+        pictoId: pendingGiftPicto.pictoId,
+        level: pendingGiftPicto.level ?? 1
+      })
+      // Update local state
+      setPlayer(prev => {
+        if (!prev) return prev
+        return { ...prev, pictos: (prev.pictos ?? []).filter(p => p.id !== pendingGiftPicto.id) }
+      })
+    } catch (e) {
+      console.error(e)
+    }
+    setGiftLoading(false)
+    closeModal()
+  }, [pendingGiftPicto, player, setPlayer])
 
   const modalTitle =
     modalType === "admin-add"
@@ -277,25 +363,40 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
         ? t("common.level")
         : modalType === "admin-remove"
           ? t("pictos.removePicto")
-          : t("pictos.selectPicto")
+          : modalType === "gift-pick"
+            ? t("pictos.giftPickPicto")
+            : modalType === "gift-target"
+              ? t("pictos.giftPickPlayer")
+              : t("pictos.selectPicto")
 
   return (
-    <div className="text-white">
-      <div className="flex items-center justify-between pb-3">
-        <div className="text-center flex-1 text-lg tracking-widest opacity-90">PICTOS</div>
-        {isAdmin && (
-          <div className="flex gap-2">
+    <div className="text-base-content">
+      <div className="pb-3">
+        <div className="relative flex items-center justify-center">
+          <div className="text-center text-lg tracking-widest opacity-90">PICTOS</div>
+          {campaignId && (player?.pictos ?? []).length > 0 && (
             <button
-              className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-white/20"
+              className="absolute right-0 px-3 py-1 text-sm rounded-md bg-purple-600/70 hover:bg-purple-600 transition border border-base-300 flex items-center gap-1.5"
+              onClick={openGiftPick}
+            >
+              <FaGift size={12} />
+              {t("pictos.gift")}
+            </button>
+          )}
+        </div>
+        {isAdmin && (
+          <div className="flex gap-2 mt-2 justify-center">
+            <button
+              className="px-3 py-1 text-sm rounded-md bg-green-600/70 hover:bg-green-600 transition border border-base-300"
               onClick={openAdminAdd}
             >
-              Adicionar
+              {t("common.add")}
             </button>
             <button
-              className="px-3 py-1 text-sm rounded-md bg-red-600/70 hover:bg-red-600 transition border border-white/20"
+              className="px-3 py-1 text-sm rounded-md bg-red-600/70 hover:bg-red-600 transition border border-base-300"
               onClick={openAdminRemove}
             >
-              Remover
+              {t("common.remove")}
             </button>
           </div>
         )}
@@ -306,13 +407,14 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           const selected = slots[idx]
           const name = getPictoName(selected)
           const pictoInfo = getPictoByName(name)
+          const isLumina = (selected?.battleCount ?? 0) >= 3
           const accent =
-            selected && pictoInfo ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.15)"
+            selected && pictoInfo && isLumina ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.15)"
 
           return (
             <div
               key={idx}
-              className="relative rounded-2xl bg-[#141414] border border-white/10 overflow-hidden"
+              className="relative rounded-2xl bg-base-100 border border-base-300 overflow-hidden"
             >
               <div
                 className="pointer-events-none absolute inset-x-3 top-4 bottom-4 rounded-xl"
@@ -329,8 +431,8 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                 onKeyDown={(e) => onKeyActivate(e, idx)}
                 onClick={() => handleSlotActivate(idx)}
                 className={`w-full text-left p-6 pl-28 rounded-2xl transition-colors ${selected
-                  ? "hover:bg-white/5 cursor-default"
-                  : "h-48 grid place-items-center hover:bg-white/5"
+                  ? "hover:bg-base-300/30 cursor-default"
+                  : "h-48 grid place-items-center hover:bg-base-300/30"
                   }`}
               >
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 flex flex-col items-center gap-3">
@@ -350,7 +452,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                         {name}
                       </div>
                       <button
-                        className="px-3 py-1 text-sm rounded-md bg-white/10 hover:bg-white/20 border border-white/15"
+                        className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                         onClick={async (e) => {
                           e.stopPropagation()
 
@@ -390,10 +492,10 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                     </div>
 
                     <div className="flex items-center gap-1 text-sm">
-                      <span className="opacity-70 mr-2">Nível</span>
+                      <span className="opacity-70 mr-2">{t("common.level")}</span>
                       <div className="flex items-center gap-2">
                         <button
-                          className="w-7 h-7 grid place-items-center rounded-md border border-white/15 bg-white/5 hover:bg-white/10"
+                          className="w-7 h-7 grid place-items-center rounded-md border border-base-300 bg-base-300/30 hover:bg-base-300"
                           onClick={(e) => {
                             e.stopPropagation()
                             bumpLevel(idx, -1)
@@ -405,7 +507,7 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                           {getLevel(selected)}
                         </span>
                         <button
-                          className="w-7 h-7 grid place-items-center rounded-md border border-white/15 bg-white/5 hover:bg-white/10"
+                          className="w-7 h-7 grid place-items-center rounded-md border border-base-300 bg-base-300/30 hover:bg-base-300"
                           onClick={(e) => {
                             e.stopPropagation()
                             bumpLevel(idx, +1)
@@ -416,13 +518,13 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                       </div>
                     </div>
 
-                    <div className="h-px w-full bg-white/10 my-1" />
+                    <div className="h-px w-full bg-base-300 my-1" />
 
-                    <div className="opacity-85">{pictoInfo?.description}</div>
+                    <div className={selected && disabledPictoIds.has(selected.id) ? "opacity-30 line-through" : "opacity-85"}>{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, pictoInfo.name ?? "", diceBoardRef, timeoutDiceBoardRef) : ""}</div>
                   </div>
                 ) : (
                   <div className="text-center w-full opacity-60 tracking-wide text-lg">
-                    Selecione um Picto
+                    {t("pictos.selectPicto")}
                   </div>
                 )}
               </div>
@@ -436,18 +538,20 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           <SearchBox value={query} onChange={setQuery} />
         )}
 
-        <div className="px-4 pb-4 overflow-y-auto max-h-[65vh] grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="px-2 sm:px-4 pb-8 overflow-y-auto flex-1 min-h-0 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
           {modalType === "slot" && activeSlot !== null && (
             <>
               {slotFiltered.map((p) => (
-                <PictoCard
-                  key={p.id}
-                  picto={p}
-                  onPick={(pp) => upsertPictoAt(activeSlot, pp)}
-                />
+                  <PictoCard
+                    key={p.id}
+                    picto={p}
+                    onPick={(pp) => upsertPictoAt(activeSlot, pp)}
+                    diceBoardRef={diceBoardRef}
+                    timeoutDiceBoardRef={timeoutDiceBoardRef}
+                  />
               ))}
               {slotFiltered.length === 0 && (
-                <div className="opacity-70 p-8 text-center">Nenhum Picto encontrado.</div>
+                <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
               )}
             </>
           )}
@@ -455,10 +559,10 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           {modalType === "admin-add" && (
             <>
               {addFiltered.map((p) => (
-                <PictoInfoCard key={p.name} info={p} onPick={handleAdminAddPick} />
+                <PictoInfoCard key={p.name} info={p} onPick={handleAdminAddPick} diceBoardRef={diceBoardRef} timeoutDiceBoardRef={timeoutDiceBoardRef} />
               ))}
               {addFiltered.length === 0 && (
-                <div className="opacity-70 p-8 text-center">Nenhum Picto encontrado.</div>
+                <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
               )}
             </>
           )}
@@ -466,32 +570,31 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
           {modalType === "admin-add-level" && pendingAddPicto && (
             <div className="col-span-full flex flex-col items-center gap-4 py-6">
               <div className="text-lg">
-                Definir nível para{" "}
-                <span className="font-semibold">{pendingAddPicto.name}</span>
+                {t("pictos.setLevelFor", { name: pendingAddPicto.name })}
               </div>
               <div className="flex items-center gap-3">
-                <span className="opacity-80">Nível</span>
+                <span className="opacity-80">{t("common.level")}</span>
                 <input
                   type="number"
                   min={1}
-                  max={33}
+                  max={4}
                   value={pendingLevel}
                   onChange={(e) => setPendingLevel(e.target.value)}
-                  className="w-24 text-center rounded-md bg-black/40 border border-white/20 px-2 py-1 outline-none focus:border-white/40"
+                  className="w-24 text-center rounded-md bg-base-200 border border-base-300 px-2 py-1 outline-none focus:border-base-content/30"
                 />
               </div>
               <div className="flex gap-3 mt-2">
                 <button
-                  className="px-4 py-2 rounded-md bg-white/10 hover:bg-white/20 border border-white/20"
+                  className="px-4 py-2 rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"
                   onClick={confirmAdminAddLevel}
                 >
-                  Confirmar
+                  {t("common.confirm")}
                 </button>
                 <button
-                  className="px-4 py-2 rounded-md bg-black/40 hover:bg-black/60 border border-white/20"
+                  className="px-4 py-2 rounded-md bg-base-200 hover:bg-base-300 border border-base-300"
                   onClick={closeModal}
                 >
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
               </div>
             </div>
@@ -504,10 +607,74 @@ export default function PictosTab({ player, setPlayer, isAdmin }: PictosTabProps
                   key={`${p.id}-${p.slot ?? "none"}-${p.level ?? 1}`}
                   picto={p}
                   onPick={handleAdminRemovePick}
+                  diceBoardRef={diceBoardRef}
+                  timeoutDiceBoardRef={timeoutDiceBoardRef}
                 />
               ))}
               {removeFiltered.length === 0 && (
-                <div className="opacity-70 p-8 text-center">Nenhum Picto encontrado.</div>
+                <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
+              )}
+            </>
+          )}
+
+          {modalType === "gift-pick" && (() => {
+            const allPictos = (player?.pictos ?? []).sort((a, b) => getPictoName(a).localeCompare(getPictoName(b), "pt-BR"))
+            const q = query.trim().toLowerCase()
+            const filtered = q ? allPictos.filter(p => getPictoName(p).toLowerCase().includes(q)) : allPictos
+            return (
+              <>
+                {filtered.map((p) => (
+                  <PictoCard
+                    key={p.id}
+                    picto={p}
+                    onPick={handleGiftPickPicto}
+                    diceBoardRef={diceBoardRef}
+                    timeoutDiceBoardRef={timeoutDiceBoardRef}
+                  />
+                ))}
+                {filtered.length === 0 && (
+                  <div className="opacity-70 p-8 text-center">{t("pictos.noPictos")}</div>
+                )}
+              </>
+            )
+          })()}
+
+          {modalType === "gift-target" && pendingGiftPicto && (
+            <>
+              {giftLoading ? (
+                <div className="col-span-full opacity-70 p-8 text-center">{t("common.loading")}</div>
+              ) : (
+                <>
+                  <div className="col-span-full text-center opacity-70 text-sm mb-2">
+                    {t("pictos.giftSending", { name: getPictoName(pendingGiftPicto) })}
+                  </div>
+                  {campaignPlayers.map(p => {
+                    const charId = p.playerSheet?.characterId ?? ""
+                    const charName = charId.charAt(0).toUpperCase() + charId.slice(1)
+                    const playerName = p.playerSheet?.name ?? `Player #${p.id}`
+                    return (
+                      <button
+                        key={p.id}
+                        className="w-full text-left flex items-center gap-4 p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
+                        onClick={() => handleGiftToPlayer(p)}
+                        disabled={giftLoading}
+                      >
+                        {charId && (
+                          <div className="w-12 h-12 rounded-full overflow-hidden bg-base-300 shrink-0">
+                            <img src={`/characters/${charId}.webp`} alt={charName} className="w-full h-full object-cover" onError={e => { e.currentTarget.style.display = "none" }} />
+                          </div>
+                        )}
+                        <div>
+                          <div className="font-semibold text-lg">{charName}</div>
+                          <div className="text-sm opacity-70">{playerName}</div>
+                        </div>
+                      </button>
+                    )
+                  })}
+                  {campaignPlayers.length === 0 && (
+                    <div className="col-span-full opacity-70 p-8 text-center">{t("pictos.noPlayersAvailable")}</div>
+                  )}
+                </>
               )}
             </>
           )}
@@ -533,12 +700,16 @@ function PlusDiamond({
   const wrapperSize = isBig ? "w-14 h-14" : "w-9 h-9"
   const innerSize = isBig ? "w-11 h-11" : "w-7 h-7"
   const iconSize = isBig ? "text-x2" : "text-lg"
-  const bgColor = pictoInfo ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.3)"
+  const isLumina = (picto?.battleCount ?? 0) >= 3
+  const bgColor = pictoInfo
+    ? isLumina ? pictoColorHex[pictoInfo.color] : "rgba(255,255,255,0.3)"
+    : "rgba(255,255,255,0.3)"
 
   return (
     <div
-      className={`relative ${wrapperSize} rotate-45 border border-white/20 rounded-sm grid place-items-center bg-black/30 ml-2`}
-      aria-label={name || "Adicionar picto"}
+      className={`relative ${wrapperSize} rotate-45 border border-base-300 rounded-sm grid place-items-center ml-2`}
+      style={{ backgroundColor: "#1a1a2e" }}
+      aria-label={name || t("pictos.addPicto")}
     >
       {maskBase ? (
         <div
@@ -578,15 +749,17 @@ function Modal({
   return (
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="w-full max-w-5xl max-h-[85vh] overflow-hidden rounded-2xl bg-[#121212] border border-white/10 shadow-2xl">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+      <div className="absolute inset-0 flex items-end sm:items-center justify-center sm:p-4">
+        <div className="w-full sm:max-w-5xl max-h-[85dvh] sm:max-h-[85vh] overflow-hidden rounded-t-2xl sm:rounded-2xl bg-base-100 border border-base-300 shadow-2xl flex flex-col">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-base-300 shrink-0">
             <div className="text-lg tracking-wide">{title}</div>
             <button onClick={onClose} className="text-2xl leading-none px-2">
               ×
             </button>
           </div>
-          {children}
+          <div className="flex-1 overflow-hidden flex flex-col">
+            {children}
+          </div>
         </div>
       </div>
     </div>
@@ -595,10 +768,10 @@ function Modal({
 
 function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <div className="p-4">
+    <div className="px-2 sm:px-4 py-4">
       <input
-        className="w-full rounded-md bg-black/40 border border-white/15 px-3 py-2 outline-none focus:border-white/30"
-        placeholder="Buscar..."
+        className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
+        placeholder={t("common.search")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
@@ -622,7 +795,7 @@ function Stat({
   const hasDisplay = displayValue !== undefined
 
   return (
-    <div className="text-sm flex items-baseline gap-2">
+    <div className="text-sm flex items-baseline gap-2 flex-wrap">
       <span className="opacity-70">{label}</span>
 
       {hasDisplay ? (
@@ -632,8 +805,7 @@ function Stat({
           </span>
 
           <span className="text-xs opacity-60 leading-none flex items-center gap-1">
-            ({" "}
-            {displayValue}
+            ({displayValue}
             <FaChartLine className="inline-block text-[10px]" aria-hidden="true" />
             )
           </span>
@@ -659,19 +831,6 @@ function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse; l
         displayAttributedValue={displayPictoAttributeSpeed(picto.status.speed ?? 0, level)}
       />
       <Stat
-        label={t("pictos.critical")}
-        value={
-          picto.status.criticalRate !== undefined
-            ? `${picto.status.criticalRate}%`
-            : undefined
-        }
-        displayValue={displayPictoCritical(picto.status.criticalRate ?? 0, level)}
-        displayAttributedValue={displayPictoAttributeCritical(
-          picto.status.criticalRate ?? 0,
-          level
-        )}
-      />
-      <Stat
         label={t("pictos.health")}
         value={picto.status.health}
         displayValue={displayPictoHealth(picto.status.health ?? 0, level)}
@@ -681,10 +840,31 @@ function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse; l
         label={t("pictos.defense")}
         value={picto.status.defense}
         displayValue={displayPictoDefense(picto.status.defense ?? 0, level)}
-        displayAttributedValue={displayPictoAttributeDefense(
-          picto.status.defense ?? 0,
-          level
-        )}
+        displayAttributedValue={displayPictoAttributeDefense(picto.status.defense ?? 0, level)}
+      />
+      <Stat
+        label={t("pictos.strength")}
+        value={picto.status.strength}
+        displayValue={displayPictoAbility(picto.status.strength ?? 0, level)}
+        displayAttributedValue={displayPictoAttributeAbility(picto.status.strength ?? 0, level)}
+      />
+      <Stat
+        label={t("pictos.intelligence")}
+        value={picto.status.intelligence}
+        displayValue={displayPictoAbility(picto.status.intelligence ?? 0, level)}
+        displayAttributedValue={displayPictoAttributeAbility(picto.status.intelligence ?? 0, level)}
+      />
+      <Stat
+        label={t("pictos.wisdom")}
+        value={picto.status.wisdom}
+        displayValue={displayPictoAbility(picto.status.wisdom ?? 0, level)}
+        displayAttributedValue={displayPictoAttributeAbility(picto.status.wisdom ?? 0, level)}
+      />
+      <Stat
+        label={t("pictos.charisma")}
+        value={picto.status.charisma}
+        displayValue={displayPictoAbility(picto.status.charisma ?? 0, level)}
+        displayAttributedValue={displayPictoAttributeAbility(picto.status.charisma ?? 0, level)}
       />
     </>
   )
@@ -693,9 +873,17 @@ function StatusTexts({ pictoResponse, level }: { pictoResponse: PictoResponse; l
 function PictoCard({
   picto,
   onPick,
+  disabled = false,
+  disabledLabel,
+  diceBoardRef,
+  timeoutDiceBoardRef,
 }: {
   picto: PictoResponse
   onPick?: (p: PictoResponse) => void
+  disabled?: boolean
+  disabledLabel?: string
+  diceBoardRef?: RefObject<DiceBoardRef | null>
+  timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }) {
   const level = picto.level ?? 1
   const name = getPictoName(picto)
@@ -703,25 +891,31 @@ function PictoCard({
 
   return (
     <button
-      onClick={() => onPick && onPick(picto)}
-      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg:white/5 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
+      onClick={() => !disabled && onPick && onPick(picto)}
+      disabled={disabled}
+      className={`w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-6 p-3 sm:p-4 transition-colors border rounded-xl ${
+        disabled
+          ? "bg-base-200 opacity-50 cursor-not-allowed border-red-500/30"
+          : "bg-base-200 hover:bg-base-300 border-base-300"
+      }`}
     >
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-2 sm:gap-3">
         <PlusDiamond icon="" picto={picto} isBig={true} />
         <div className="flex items-end justify-center">
-          <span className="text-xl font-extrabold leading-none">{picto.battleCount ?? 0}</span>
+          <span className="text-lg sm:text-xl font-extrabold leading-none">{picto.battleCount ?? 0}</span>
           <span className="text-xs opacity-60 leading-none">/3</span>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-start justify-between">
-          <div className="text-xl font-semibold leading-tight">{name}</div>
-        </div>
-        <div className="grid grid-cols-1 gap-2">
+      <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+        <div className="text-base sm:text-xl font-semibold leading-tight truncate">{name}</div>
+        <div className="grid grid-cols-1 gap-1 sm:gap-2">
           <StatusTexts pictoResponse={picto} level={level} />
-          <Stat label="Nível" value={picto.level ?? 1} />
+          <Stat label={t("common.level")} value={picto.level ?? 1} />
         </div>
-        <div className="opacity-80">{pictoInfo?.description}</div>
+        <div className="opacity-80 text-sm sm:text-base line-clamp-3">{pictoInfo?.description ? renderTextWithDiceButtons(pictoInfo.description, name, diceBoardRef, timeoutDiceBoardRef) : ""}</div>
+        {disabled && disabledLabel && (
+          <div className="text-xs text-red-400 mt-1">{disabledLabel}</div>
+        )}
       </div>
     </button>
   )
@@ -730,9 +924,13 @@ function PictoCard({
 function PictoInfoCard({
   info,
   onPick,
+  diceBoardRef,
+  timeoutDiceBoardRef,
 }: {
   info: PictoInfo
   onPick?: (p: PictoInfo) => void
+  diceBoardRef?: RefObject<DiceBoardRef | null>
+  timeoutDiceBoardRef?: MutableRefObject<ReturnType<typeof setTimeout> | null>
 }) {
   const picto = getPictoByName(info.name)
   const level = 1
@@ -740,14 +938,12 @@ function PictoInfoCard({
   return (
     <button
       onClick={() => onPick && onPick(info)}
-      className="w-full text-left grid grid-cols-[80px_1fr] items-center gap-4 p-4 bg-black/25 hover:bg-white/5 transition-colors border border-white/10 rounded-xl"
+      className="w-full text-left grid grid-cols-[60px_1fr] sm:grid-cols-[80px_1fr] items-center gap-6 p-3 sm:p-4 bg-base-200 hover:bg-base-300 transition-colors border border-base-300 rounded-xl"
     >
       <PlusDiamond icon="" picto={{ pictoId: info.id } as unknown as PictoResponse} isBig={true} />
-      <div className="flex flex-col gap-2">
-        <div className="flex items-start justify-between">
-          <div className="text-xl font-semibold leading-tight">{info.name}</div>
-        </div>
-        <div className="grid grid-cols-1 gap-2">
+      <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0">
+        <div className="text-base sm:text-xl font-semibold leading-tight truncate">{info.name}</div>
+        <div className="grid grid-cols-1 gap-1 sm:gap-2">
           {picto && (
             <StatusTexts
               pictoResponse={{ pictoId: info.id } as unknown as PictoResponse}
@@ -755,7 +951,7 @@ function PictoInfoCard({
             />
           )}
         </div>
-        <div className="opacity-80">{info.description}</div>
+        <div className="opacity-80 text-sm sm:text-base line-clamp-3">{info.description ? renderTextWithDiceButtons(info.description, info.name, diceBoardRef, timeoutDiceBoardRef) : ""}</div>
       </div>
     </button>
   )

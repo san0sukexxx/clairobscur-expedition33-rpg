@@ -21,10 +21,15 @@ data class BattleCharacterInfo(
     val perfectionRank: String?,
     val rankProgress: Int?,
     val bestialWheelPosition: Int?,
+    val bestialWheelReversed: Boolean?,
     val status: List<BattleStatusResponse>?,
     val type: String,
     val isEnemy: Boolean,
     val canRollInitiative: Boolean,
     val parriesThisTurn: Int,
-    val hitsTakenThisTurn: Int
+    val hitsTakenThisTurn: Int,
+    val foretellConsumedTotal: Int,
+    val freeShotWeakPoints: Int,
+    val breakCount: Int,
+    val nameHidden: Boolean
 )

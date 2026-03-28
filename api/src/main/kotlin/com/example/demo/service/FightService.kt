@@ -1,20 +1,15 @@
 package com.example.demo.service
 
-import com.example.demo.dto.AttackResponse
-import com.example.demo.dto.AttackStatusEffectResponse
 import com.example.demo.dto.BattleCharacterInfo
 import com.example.demo.dto.BattleStatusResponse
 import com.example.demo.dto.BattleTurnResponse
 import com.example.demo.dto.FightInfoResponse
 import com.example.demo.dto.InitiativeResponse
-import com.example.demo.repository.AttackRepository
-import com.example.demo.repository.AttackStatusEffectRepository
 import com.example.demo.repository.BattleCharacterRepository
 import com.example.demo.repository.BattleRepository
 import com.example.demo.repository.BattleStatusEffectRepository
 import com.example.demo.repository.BattleTurnRepository
 import com.example.demo.repository.CampaignPlayerRepository
-import com.example.demo.repository.CampaignRepository
 import com.example.demo.repository.InitiativeRepository
 import com.example.demo.repository.PlayerRepository
 import org.springframework.stereotype.Service
@@ -23,29 +18,21 @@ import org.springframework.stereotype.Service
 class FightService(
         private val battleRepository: BattleRepository,
         private val battleCharacterRepository: BattleCharacterRepository,
-        private val campaignRepository: CampaignRepository,
         private val campaignPlayerRepository: CampaignPlayerRepository,
         private val playerRepository: PlayerRepository,
         private val initiativeRepository: InitiativeRepository,
         private val battleTurnRepository: BattleTurnRepository,
-        private val attackRepository: AttackRepository,
-        private val attackStatusEffectRepository: AttackStatusEffectRepository,
         private val battleStatusEffectRepository: BattleStatusEffectRepository
 ) {
         fun buildFightInfoForPlayer(playerId: Int): FightInfoResponse? {
-                val campaignPlayer =
-                        campaignPlayerRepository.findByPlayerId(playerId)
-                                ?: throw IllegalArgumentException(
-                                        "Player not linked to any campaign"
-                                )
+                campaignPlayerRepository.findByPlayerId(playerId)
+                        ?: throw IllegalArgumentException("Player not linked to any campaign")
 
-                val campaignId = campaignPlayer.campaignId
-                val campaign =
-                        campaignRepository.findById(campaignId).orElseThrow {
-                                IllegalArgumentException("Campaign not found with id: $campaignId")
-                        }
+                val playerBattleChar = battleCharacterRepository
+                        .findByExternalIdAndCharacterType(playerId.toString(), "player")
+                        .firstOrNull() ?: return null
 
-                val battleId = campaign.battleId ?: return null
+                val battleId = playerBattleChar.battleId ?: return null
                 val battle = battleRepository.findById(battleId).orElse(null) ?: return null
 
                 val characterEntities = battleCharacterRepository.findByBattleId(battleId)
@@ -100,12 +87,17 @@ class FightService(
                                         perfectionRank = bc.perfectionRank,
                                         rankProgress = bc.rankProgress,
                                         bestialWheelPosition = bc.bestialWheelPosition,
+                                        bestialWheelReversed = bc.bestialWheelReversed,
                                         status = status,
                                         type = bc.characterType,
                                         isEnemy = bc.isEnemy,
                                         canRollInitiative = bc.canRollInitiative,
                                         parriesThisTurn = bc.parriesThisTurn,
-                                        hitsTakenThisTurn = bc.hitsTakenThisTurn
+                                        hitsTakenThisTurn = bc.hitsTakenThisTurn,
+                                        foretellConsumedTotal = bc.foretellConsumedTotal,
+                                        freeShotWeakPoints = bc.freeShotWeakPoints,
+                                        breakCount = bc.breakCount,
+                                        nameHidden = bc.nameHidden
                                 )
                         }
 
@@ -139,41 +131,6 @@ class FightService(
 
                 val canRollInitiative = playerBattleEntity?.canRollInitiative ?: false
 
-                val pendingAttacks =
-                        if (playerBattleID != null) {
-                                attackRepository.findPendingOrCounter(battleId, playerBattleID)
-                                        .map { a ->
-                                                val effects =
-                                                        attackStatusEffectRepository.findByAttackId(
-                                                                        a.id!!
-                                                                )
-                                                                .map { e ->
-                                                                        AttackStatusEffectResponse(
-                                                                                id = e.id!!,
-                                                                                effectType =
-                                                                                        e.effectType,
-                                                                                ammount = e.ammount,
-                                                                                remainingTurns = e.remainingTurns
-                                                                        )
-                                                                }
-
-                                                AttackResponse(
-                                                        id = a.id!!,
-                                                        battleId = a.battleId,
-                                                        totalPower = a.totalPower,
-                                                        targetBattleId = a.targetBattleId,
-                                                        sourceBattleId = a.sourceBattleId,
-                                                        totalDefended = a.totalDefended,
-                                                        allowCounter = a.allowCounter,
-                                                        isResolved = a.isResolved,
-                                                        isCounterResolved = a.isCounterResolved,
-                                                        effects = effects
-                                                )
-                                        }
-                        } else {
-                                emptyList()
-                        }
-
                 return FightInfoResponse(
                         battleId = battleId,
                         playerBattleID = playerBattleID,
@@ -181,8 +138,7 @@ class FightService(
                         characters = characters,
                         battleStatus = battle.battleStatus,
                         canRollInitiative = canRollInitiative,
-                        turns = turns,
-                        pendingAttacks = pendingAttacks
+                        turns = turns
                 )
         }
 }
