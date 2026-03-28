@@ -232,12 +232,12 @@ export default function BattleGroupStatus({
                                             </div>
                                         </div>
 
-                                        {canEdit || isAdmin ? (
+                                        {canEdit ? (
                                             /* Self / admin: name + status badges lado a lado */
                                             <div className="flex items-center gap-2 justify-between w-full">
                                                 <div className="flex flex-col gap-0.5">
                                                     <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
-                                                        {!isAdmin && ch.nameHidden ? "???" : ch.name}
+                                                        {ch.nameHidden ? "???" : ch.name}
                                                     </p>
                                                     {canEdit && (
                                                         <button
@@ -254,7 +254,7 @@ export default function BattleGroupStatus({
                                                     {ch.status
                                                         ?.filter(s => {
                                                             if (s.effectName === "free-shot") return false;
-                                                            if (s.effectName === "invisible-barrier" && !isAdmin) return false;
+                                                            if (s.effectName === "invisible-barrier") return false;
                                                             return true;
                                                         })
                                                         .map((st, idx) => {
@@ -296,10 +296,10 @@ export default function BattleGroupStatus({
                                             <div className="flex flex-col w-full gap-1">
                                                 <div className="flex items-center justify-between">
                                                     <p className={`font-semibold text-sm ${isDead ? "text-neutral-500 line-through" : ""}`}>
-                                                        {!isAdmin && ch.nameHidden ? "???" : ch.name}
+                                                        {ch.nameHidden ? "???" : ch.name}
                                                     </p>
                                                     <div className="flex items-center gap-1">
-                                                        <span className="font-mono text-xs">{ch.healthPoints}/{ch.maxHealthPoints}</span>
+                                                        {ch.type !== "npc" && <span className="font-mono text-xs">{ch.healthPoints}/{ch.maxHealthPoints}</span>}
                                                         {isDead && <FaSkull className="text-error text-xs" title={t("combat.dead")} />}
                                                     </div>
                                                 </div>
@@ -318,7 +318,7 @@ export default function BattleGroupStatus({
                                     </div>
 
                                     {/* Status badges para outros jogadores: abaixo, à esquerda */}
-                                    {!canEdit && !isAdmin && (() => {
+                                    {!canEdit && (() => {
                                         const visibleStatuses = ch.status?.filter(s => {
                                             if (s.effectName === "free-shot") return false;
                                             if (s.effectName === "invisible-barrier") return false;
@@ -358,10 +358,10 @@ export default function BattleGroupStatus({
                                         </p>
                                     )}
 
-                                    {(canEdit || isAdmin) && <div className="mt-3 space-y-0">
+                                    {canEdit && <div className="mt-3 space-y-0">
 
                                         {/* HP block: apenas para self/admin (outros já têm HP no header) */}
-                                        {(canEdit || isAdmin) && <div
+                                        {canEdit && <div
                                             className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
                                             onClick={canEdit ? () => openHp(ch) : undefined}
                                         >
@@ -408,7 +408,7 @@ export default function BattleGroupStatus({
                                             )}
                                         </div>}
 
-                                        {(canEdit || isAdmin) && ch.magicPoints !== undefined &&
+                                        {canEdit && ch.magicPoints !== undefined &&
                                             ch.magicPoints !== null &&
                                             ch.maxMagicPoints !== undefined &&
                                             ch.maxMagicPoints !== null && (
@@ -450,7 +450,7 @@ export default function BattleGroupStatus({
                                             )}
 
                                         {/* Monoco's Bestial Wheel */}
-                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("monoco") &&
+                                        {canEdit && ch.id.toLowerCase().includes("monoco") &&
                                             ch.bestialWheelPosition !== undefined &&
                                             ch.bestialWheelPosition !== null && (
                                                 <div className="w-full">
@@ -474,7 +474,7 @@ export default function BattleGroupStatus({
                                             )}
 
                                         {/* Lune's Stain System */}
-                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("lune") && (() => {
+                                        {canEdit && ch.id.toLowerCase().includes("lune") && (() => {
                                             const stains = [ch.stainSlot1, ch.stainSlot2, ch.stainSlot3, ch.stainSlot4];
                                             const hasAnyStain = stains.some(s => s !== null && s !== undefined);
 
@@ -517,7 +517,7 @@ export default function BattleGroupStatus({
                                         })()}
 
                                         {/* Verso's Perfection Rank System */}
-                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("verso") && (() => {
+                                        {canEdit && ch.id.toLowerCase().includes("verso") && (() => {
                                             const currentRank = ch.perfectionRank ?? "D";
                                             const rankProgress = rankProgressOptimistic ?? ch.rankProgress ?? 0;
                                             const rankMax = 10;
@@ -625,7 +625,7 @@ export default function BattleGroupStatus({
                                             );
                                         })()}
 
-                                        {(canEdit || isAdmin) && (() => {
+                                        {canEdit && (() => {
                                             const isGustave = ch.id.toLowerCase().includes("gustave");
                                             const maxCharge = ch.maxChargePoints ?? (isGustave ? 10 : 0);
                                             if (maxCharge <= 0) return null;
@@ -669,7 +669,7 @@ export default function BattleGroupStatus({
                                         })()}
 
                                         {/* Sun/Moon/Eclipse charges for Sciel */}
-                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("sciel") && (() => {
+                                        {canEdit && ch.id.toLowerCase().includes("sciel") && (() => {
                                             const sunCharges = ch.sunCharges ?? 0;
                                             const moonCharges = ch.moonCharges ?? 0;
                                             const twilightStatus = ch.status?.find(s => s.effectName === "Twilight");
@@ -756,7 +756,7 @@ export default function BattleGroupStatus({
                                         })()}
 
                                         {/* Stance buttons for Maelle only */}
-                                        {(canEdit || isAdmin) && ch.stance !== undefined &&
+                                        {canEdit && ch.stance !== undefined &&
                                          ch.id.toLowerCase().includes("maelle") && (
                                             <div className="mt-2">
                                                 <span className="text-xs opacity-70 uppercase">{t("combat.stance")}</span>

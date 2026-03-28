@@ -1,7 +1,7 @@
 import type { RefObject, MutableRefObject } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Drawer } from "vaul";
-import { FaChevronUp } from "react-icons/fa";
+import { FaChevronUp, FaInfoCircle } from "react-icons/fa";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import type { DiceBoardRef } from "./DiceBoard";
@@ -326,9 +326,17 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                             {/* Free shot section */}
                             <div className="border border-base-300 rounded-lg p-3 space-y-2">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
-                                        {t("combat.freeShot")} ({t("setup.abilityAbbr.dexterity")})
-                                    </span>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-xs font-semibold uppercase tracking-wide opacity-50">
+                                            {t("combat.freeShot")} ({t("setup.abilityAbbr.dexterity")})
+                                        </span>
+                                        <button
+                                            className="opacity-40 hover:opacity-70 transition-opacity"
+                                            onClick={() => setFreeShotHintExpanded(e => !e)}
+                                        >
+                                            <FaInfoCircle size={12} />
+                                        </button>
+                                    </div>
                                     <button
                                         className="badge badge-xs badge-warning cursor-pointer hover:brightness-90 active:scale-95"
                                         onClick={async () => {
@@ -417,12 +425,9 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                         1d4{dexMod !== 0 ? ` ${dexMod >= 0 ? "+" : ""}${dexMod}` : ""}
                                     </button>
                                 </div>
-                                <p className="text-xs opacity-40 mt-1">
-                                    {freeShotHintExpanded ? t("combat.freeShotHint") : t("combat.freeShotHintShort")}{" "}
-                                    <button className="underline text-info" onClick={() => setFreeShotHintExpanded(e => !e)}>
-                                        {freeShotHintExpanded ? t("common.readLess") : t("common.readMore")}
-                                    </button>
-                                </p>
+                                {freeShotHintExpanded && (
+                                    <p className="text-xs opacity-50 mt-1">{t("combat.freeShotHint")}</p>
+                                )}
                             </div>
 
                             {/* Passives sections */}
