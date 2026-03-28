@@ -51,6 +51,7 @@ function ExpandedCard({ entry, onClose }: { entry: RollEvent; onClose: () => voi
                 <button
                     onClick={(e) => { e.stopPropagation(); onClose(); }}
                     className="btn btn-ghost btn-xs btn-circle opacity-50 hover:opacity-100 -mr-1 -mt-1"
+                    style={{ pointerEvents: "auto" }}
                     aria-label="Close"
                 >
                     ✕
