@@ -112,7 +112,7 @@ export function RollHistoryToast() {
                     return [...prev.slice(0, -1), merged];
                 }
                 lastRollTime.current = now;
-                return [...prev, roll].slice(-3);
+                return [...prev, roll].slice(-10);
             });
 
             setVisible(true);
@@ -142,13 +142,12 @@ export function RollHistoryToast() {
             <AnimatePresence initial={false} mode="popLayout">
                 {history.map((entry, i) => {
                     const isLatest = i === history.length - 1;
-                    const opacity = isLatest ? 1 : i === history.length - 2 ? 0.65 : 0.4;
                     return (
                         <motion.div
                             key={entry.id}
                             layout
                             initial={{ opacity: 0, y: 24, scale: 0.93 }}
-                            animate={{ opacity, y: 0, scale: 1 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: -8, scale: 0.95 }}
                             transition={{ duration: 0.22, ease: "easeOut" }}
                         >
