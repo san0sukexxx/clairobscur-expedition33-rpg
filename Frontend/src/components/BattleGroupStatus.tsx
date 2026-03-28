@@ -69,7 +69,7 @@ export default function BattleGroupStatus({
     const [editRank, setEditRank] = useState("D");
     const [imageModalNpc, setImageModalNpc] = useState<{ id: string; name: string } | null>(null);
     const [editRankProgress, setEditRankProgress] = useState("");
-    const [stainsEditCh, setStainsEditCh] = useState<BattleCharacterInfo | null>(null);
+    const [stainsEditChId, setStainsEditChId] = useState<number | null>(null);
     const [conditionsOpen, setConditionsOpen] = useState(false);
     const [breakEditOpen, setBreakEditOpen] = useState(false);
     const [editBreakValue, setEditBreakValue] = useState(0);
@@ -166,7 +166,7 @@ export default function BattleGroupStatus({
         setEditing("rank");
     }
     function openStainsEdit(ch: BattleCharacterInfo) {
-        setStainsEditCh(ch);
+        setStainsEditChId(ch.battleID);
         setEditing("stains");
     }
     function openBestialWheel(ch: BattleCharacterInfo) {
@@ -844,7 +844,7 @@ export default function BattleGroupStatus({
                     {/* Stains modal */}
                     <LuneStainsModal
                         open={editing === "stains"}
-                        ch={stainsEditCh}
+                        ch={allTeamCharacters.find(c => c.battleID === stainsEditChId) ?? null}
                         onClose={closeEdit}
                         onRefresh={requestPlayerRefresh}
                     />

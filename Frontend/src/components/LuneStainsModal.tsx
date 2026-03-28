@@ -71,7 +71,6 @@ export function LuneStainsModal({ open, ch, onClose, onRefresh, onStainAdded }: 
                                     await updateCharacterStains(ch.battleID, newStains);
                                     onRefresh();
                                     onStainAdded?.(changedSlots);
-                                    onClose();
                                 }}
                                 title={t(`combatAdmin.labels.stain${s}`)}
                             >
@@ -97,7 +96,6 @@ export function LuneStainsModal({ open, ch, onClose, onRefresh, onStainAdded }: 
                                 await updateCharacterStains(ch.battleID, newStains);
                                 onRefresh();
                                 onStainAdded?.(changedSlots);
-                                onClose();
                             }}
                         >
                             <FaDice size={16} />
