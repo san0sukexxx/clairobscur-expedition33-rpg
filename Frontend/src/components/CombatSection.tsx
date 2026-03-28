@@ -181,16 +181,20 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
 
             {/* Card do próprio jogador — sempre visível */}
             {currentCharacter && !currentCharacter.isEnemy && (
-                <BattleGroupStatus
-                    player={player}
-                    isEnemies={false}
-                    currentCharacter={currentCharacter}
-                    isAttacking={false}
-                    isExecutingSkill={isExecutingSkill}
-                    isAdmin={isAdmin}
-                    hitCharacters={hitCharacters}
-                    selfOnly={true}
-                />
+                <div className="mt-5 card bg-base-100 shadow">
+                    <div className="card-body p-3">
+                        <BattleGroupStatus
+                            player={player}
+                            isEnemies={false}
+                            currentCharacter={currentCharacter}
+                            isAttacking={false}
+                            isExecutingSkill={isExecutingSkill}
+                            isAdmin={isAdmin}
+                            hitCharacters={hitCharacters}
+                            selfOnly={true}
+                        />
+                    </div>
+                </div>
             )}
 
             <div className="relative w-full" style={{ perspective: 1200 }}>
