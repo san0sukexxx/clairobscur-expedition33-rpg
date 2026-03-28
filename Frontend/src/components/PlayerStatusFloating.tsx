@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaEdit, FaDice, FaShieldAlt } from "react-icons/fa";
+import { FaEdit, FaShieldAlt } from "react-icons/fa";
 import { ArmorClassModal } from "./ArmorClassModal";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { APIBattle } from "../api/APIBattle";
-import { type BattleCharacterInfo, type Stance, type StainType, type WeaponInfo } from "../api/ResponseModel";
+import { type BattleCharacterInfo, type Stance, type WeaponInfo } from "../api/ResponseModel";
 import { calculateArmorClass } from "../utils/PlayerCalculator";
-import { addStains, updateCharacterStains } from "../utils/StainUtils";
+import { LuneStainsModal } from "./LuneStainsModal";
 import { getStatusLabel, shouldShowStatusAmmount } from "../utils/BattleUtils";
 import { getEnrichedCharacterSpecialAttacks } from "../utils/SpecialAttackUtils";
 import AnimatedStatBar from "./AnimatedStatBar";
@@ -52,8 +52,6 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
     // Rank
     const [editRank, setEditRank] = useState("D");
     const [editRankProgress, setEditRankProgress] = useState("");
-    // Stains
-    const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
     // Stain change animation
     const [flashSlots, setFlashSlots] = useState<boolean[]>([false, false, false, false]);
     const [armorClassModalOpen, setArmorClassModalOpen] = useState(false);
@@ -134,16 +132,6 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
         closeEdit();
     }
 
-    async function confirmStains() {
-        await APIBattle.updateStains(ch!.battleID, {
-            stainSlot1: editStains[0] || null,
-            stainSlot2: editStains[1] || null,
-            stainSlot3: editStains[2] || null,
-            stainSlot4: editStains[3] || null,
-        });
-        closeEdit();
-    }
-
     // Helpers to open edits
     function openHp() { setEditValue(ch!.healthPoints); setEditing("hp"); }
     function openMp() { setEditValue(ch!.magicPoints ?? 0); setEditing("mp"); }
@@ -171,16 +159,8 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
         setEditing("rank");
     }
     function openStainsEdit() {
-        setEditStains([
-            ch!.stainSlot1 ?? "",
-            ch!.stainSlot2 ?? "",
-            ch!.stainSlot3 ?? "",
-            ch!.stainSlot4 ?? "",
-        ]);
         setEditing("stains");
     }
-
-    const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice", "Light"];
 
     return (
         <div className={`fixed bottom-14 left-4 transition-all duration-300 ${highlighted ? "z-50 scale-105" : "z-40"}`}>
@@ -649,103 +629,13 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
             />
 
             {/* Stains modal (player) */}
-            {editing === "stains" && (
-                <dialog className="modal modal-open">
-                    <div className="modal-box max-w-xs space-y-4">
-                        <h3 className="font-bold text-lg">{t("combat.stains")}</h3>
-
-                        {/* Current stains display — click to remove */}
-                        <div className="flex items-center justify-center gap-3 py-2">
-                            {[ch.stainSlot1, ch.stainSlot2, ch.stainSlot3, ch.stainSlot4].map((stain, idx) => (
-                                stain ? (
-                                    <button
-                                        key={idx}
-                                        className="relative cursor-pointer group"
-                                        title={t(`combatAdmin.labels.stain${stain}`)}
-                                        onClick={async () => {
-                                            const stains: [StainType | null, StainType | null, StainType | null, StainType | null] = [
-                                                ch!.stainSlot1 ?? null, ch!.stainSlot2 ?? null, ch!.stainSlot3 ?? null, ch!.stainSlot4 ?? null
-                                            ];
-                                            stains[idx] = null;
-                                            await updateCharacterStains(ch!.battleID, stains);
-                                            requestPlayerRefresh();
-                                        }}
-                                    >
-                                        <img
-                                            src={`/stains/${stain.toLowerCase()}-stain.png`}
-                                            alt={stain}
-                                            className="w-8 h-8 object-contain group-hover:opacity-50 transition-opacity"
-                                        />
-                                        <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-error text-error-content flex items-center justify-center text-[10px] font-bold leading-none opacity-70 group-hover:opacity-100 transition-opacity">✕</span>
-                                    </button>
-                                ) : (
-                                    <div
-                                        key={idx}
-                                        className="w-8 h-8 rounded-full border-2 border-gray-500/60 bg-gray-400/15"
-                                        title={t("combat.emptySlot")}
-                                    />
-                                )
-                            ))}
-                        </div>
-
-                        {/* Choose element */}
-                        <div>
-                            <label className="label label-text text-xs opacity-70">{t("combat.stainChooseElement")}</label>
-                            <div className="flex items-center justify-center gap-2">
-                                {stainOptions.map(s => (
-                                    <button
-                                        key={s}
-                                        className="btn btn-sm btn-circle btn-ghost"
-                                        onClick={async () => {
-                                            const current: [StainType | null, StainType | null, StainType | null, StainType | null] = [
-                                                ch!.stainSlot1 ?? null, ch!.stainSlot2 ?? null, ch!.stainSlot3 ?? null, ch!.stainSlot4 ?? null
-                                            ];
-                                            const { stains: newStains, changedSlots } = addStains(current, [s]);
-                                            await updateCharacterStains(ch!.battleID, newStains);
-                                            requestPlayerRefresh();
-                                            triggerFlash(changedSlots);
-                                            closeEdit();
-                                        }}
-                                        title={t(`combatAdmin.labels.stain${s}`)}
-                                    >
-                                        <img src={`/stains/${s.toLowerCase()}-stain.png`} alt={s} className="w-7 h-7" />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Random element */}
-                        <div>
-                            <label className="label label-text text-xs opacity-70">{t("combat.stainRandom")}</label>
-                            <div className="flex justify-center">
-                                <button
-                                    className="btn btn-sm btn-outline gap-2"
-                                    onClick={async () => {
-                                        const elementalOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
-                                        const randomStain = elementalOptions[Math.floor(Math.random() * elementalOptions.length)];
-                                        const current: [StainType | null, StainType | null, StainType | null, StainType | null] = [
-                                            ch!.stainSlot1 ?? null, ch!.stainSlot2 ?? null, ch!.stainSlot3 ?? null, ch!.stainSlot4 ?? null
-                                        ];
-                                        const { stains: newStains, changedSlots } = addStains(current, [randomStain]);
-                                        await updateCharacterStains(ch!.battleID, newStains);
-                                        requestPlayerRefresh();
-                                        triggerFlash(changedSlots);
-                                        closeEdit();
-                                    }}
-                                >
-                                    <FaDice size={16} />
-                                    {t("combat.stainRandomButton")}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="modal-action">
-                            <button className="btn btn-ghost btn-sm" onClick={closeEdit}>{t("common.close")}</button>
-                        </div>
-                    </div>
-                    <div className="modal-backdrop" onClick={closeEdit} />
-                </dialog>
-            )}
+            <LuneStainsModal
+                open={editing === "stains"}
+                ch={ch}
+                onClose={closeEdit}
+                onRefresh={requestPlayerRefresh}
+                onStainAdded={triggerFlash}
+            />
 
             {/* Break edit */}
             {breakEditOpen && (() => {

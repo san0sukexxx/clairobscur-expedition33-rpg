@@ -8,7 +8,8 @@ import { FaSkull, FaEdit, FaShieldAlt } from "react-icons/fa";
 import { type GetPlayerResponse } from "../api/APIPlayer";
 import { handleNpcImgError } from "../utils/NpcUtils";
 import { APIBattle } from "../api/APIBattle";
-import { type BattleCharacterInfo, type Stance, type StainType } from "../api/ResponseModel";
+import { type BattleCharacterInfo, type Stance } from "../api/ResponseModel";
+import { LuneStainsModal } from "./LuneStainsModal";
 import AnimatedStatBar from "./AnimatedStatBar";
 import { BestialWheel } from "./BestialWheel";
 import BestialWheelModal from "./BestialWheelModal";
@@ -68,7 +69,7 @@ export default function BattleGroupStatus({
     const [editRank, setEditRank] = useState("D");
     const [imageModalNpc, setImageModalNpc] = useState<{ id: string; name: string } | null>(null);
     const [editRankProgress, setEditRankProgress] = useState("");
-    const [editStains, setEditStains] = useState<(StainType | "")[]>(["", "", "", ""]);
+    const [stainsEditCh, setStainsEditCh] = useState<BattleCharacterInfo | null>(null);
     const [conditionsOpen, setConditionsOpen] = useState(false);
     const [breakEditOpen, setBreakEditOpen] = useState(false);
     const [editBreakValue, setEditBreakValue] = useState(0);
@@ -147,17 +148,6 @@ export default function BattleGroupStatus({
         closeEdit();
     }
 
-    async function confirmStains() {
-        if (!playerCh) return;
-        await APIBattle.updateStains(playerCh.battleID, {
-            stainSlot1: editStains[0] || null,
-            stainSlot2: editStains[1] || null,
-            stainSlot3: editStains[2] || null,
-            stainSlot4: editStains[3] || null,
-        });
-        closeEdit();
-    }
-
     function openHp(ch: BattleCharacterInfo) { setEditValue(ch.healthPoints); setEditing("hp"); }
     function openMp(ch: BattleCharacterInfo) { setEditValue(ch.magicPoints ?? 0); setEditing("mp"); }
     function openCharge(ch: BattleCharacterInfo) { setEditValue(ch.chargePoints ?? 0); setEditing("charge"); }
@@ -176,12 +166,7 @@ export default function BattleGroupStatus({
         setEditing("rank");
     }
     function openStainsEdit(ch: BattleCharacterInfo) {
-        setEditStains([
-            ch.stainSlot1 ?? "",
-            ch.stainSlot2 ?? "",
-            ch.stainSlot3 ?? "",
-            ch.stainSlot4 ?? "",
-        ]);
+        setStainsEditCh(ch);
         setEditing("stains");
     }
     function openBestialWheel(ch: BattleCharacterInfo) {
@@ -194,8 +179,6 @@ export default function BattleGroupStatus({
         await APIBattle.updateBestialWheelReversed(playerCh.battleID, newVal);
         requestPlayerRefresh();
     }
-
-    const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
 
     const cardGrid = (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
@@ -859,50 +842,12 @@ export default function BattleGroupStatus({
                     )}
 
                     {/* Stains modal */}
-                    {editing === "stains" && (
-                        <dialog className="modal modal-open">
-                            <div className="modal-box max-w-xs space-y-4">
-                                <h3 className="font-bold text-lg">{t("combat.stains")}</h3>
-                                {editStains.map((stain, idx) => (
-                                    <div key={idx}>
-                                        <label className="label label-text text-xs opacity-70">Slot {idx + 1}</label>
-                                        <div className="flex items-center gap-2">
-                                            <button
-                                                className={`btn btn-sm btn-circle ${!stain ? "btn-active ring-2 ring-primary" : "btn-ghost"}`}
-                                                onClick={() => {
-                                                    const copy = [...editStains];
-                                                    copy[idx] = "";
-                                                    setEditStains(copy);
-                                                }}
-                                                title={t("combatAdmin.labels.stainEmpty")}
-                                            >
-                                                <span className="text-base-content/40 text-lg">✕</span>
-                                            </button>
-                                            {stainOptions.map(s => (
-                                                <button
-                                                    key={s}
-                                                    className={`btn btn-sm btn-circle ${stain === s ? "btn-active ring-2 ring-primary" : "btn-ghost"}`}
-                                                    onClick={() => {
-                                                        const copy = [...editStains];
-                                                        copy[idx] = s;
-                                                        setEditStains(copy);
-                                                    }}
-                                                    title={t(`combatAdmin.labels.stain${s}`)}
-                                                >
-                                                    <img src={`/stains/${s.toLowerCase()}-stain.png`} alt={s} className="w-6 h-6" />
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                                <div className="modal-action">
-                                    <button className="btn btn-ghost btn-sm" onClick={closeEdit}>{t("combatAdmin.labels.cancel")}</button>
-                                    <button className="btn btn-primary btn-sm" onClick={confirmStains}>{t("combatAdmin.labels.confirm")}</button>
-                                </div>
-                            </div>
-                            <div className="modal-backdrop" onClick={closeEdit} />
-                        </dialog>
-                    )}
+                    <LuneStainsModal
+                        open={editing === "stains"}
+                        ch={stainsEditCh}
+                        onClose={closeEdit}
+                        onRefresh={requestPlayerRefresh}
+                    />
                     {/* Break edit */}
                     {breakEditOpen && playerCh && (() => {
                         const currentRemaining = 2 - (playerCh.breakCount ?? 0);
