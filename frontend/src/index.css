@@ -293,6 +293,15 @@
   animation: combat-menu-blink 1.2s ease-in-out infinite;
 }
 
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.animate-pulse-scale {
+  animation: pulse-scale 1.5s ease-in-out infinite;
+}
+
 @keyframes stain-flash {
   0% { transform: scale(1); filter: brightness(1); }
   25% { transform: scale(1.5); filter: brightness(1.8); }

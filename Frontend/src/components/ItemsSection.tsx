@@ -70,8 +70,8 @@ function ElixirsCard({
     const [editQtyModal, setEditQtyModal] = useState<{ elixirId: string; field: "quantity" | "max"; currentValue: number } | null>(null);
     const [editQtyValue, setEditQtyValue] = useState("");
     const [diceModal, setDiceModal] = useState<{ elixirId: string; label: string } | null>(null);
-    const [diceCount, setDiceCount] = useState(1);
-    const [diceSize, setDiceSize] = useState(6);
+    const [diceCount, setDiceCount] = useState("1");
+    const [diceSize, setDiceSize] = useState("6");
     const [showElixirInfo, setShowElixirInfo] = useState(false);
 
     const ELIXIRS = [
@@ -205,8 +205,8 @@ function ElixirsCard({
 
     function openDiceModal(elixirId: string, label: string) {
         const item = player?.items?.find(i => i.itemId === elixirId);
-        setDiceCount(item?.diceCount ?? 1);
-        setDiceSize(item?.diceSize ?? 6);
+        setDiceCount(String(item?.diceCount ?? 1));
+        setDiceSize(String(item?.diceSize ?? 6));
         setDiceModal({ elixirId, label });
     }
 
@@ -221,18 +221,20 @@ function ElixirsCard({
             if (!item) return;
 
             // Salvar config de dados e decrementar quantidade
+            const parsedDiceCount = Math.max(1, parseInt(diceCount, 10) || 1);
+            const parsedDiceSize = Math.max(2, parseInt(diceSize, 10) || 2);
             const newQty = Math.max(0, item.quantity - 1);
-            await APIItem.updatePlayerItem(item.id, { quantity: newQty, diceCount, diceSize });
+            await APIItem.updatePlayerItem(item.id, { quantity: newQty, diceCount: parsedDiceCount, diceSize: parsedDiceSize });
             setPlayer(prev => {
                 if (!prev) return prev;
                 const items = (prev.items ?? []).map(i =>
-                    i.id === item.id ? { ...i, quantity: newQty, diceCount, diceSize } : i
+                    i.id === item.id ? { ...i, quantity: newQty, diceCount: parsedDiceCount, diceSize: parsedDiceSize } : i
                 );
                 return { ...prev, items };
             });
 
             // Rolar dados
-            const command = `${diceCount}d${diceSize}`;
+            const command = `${parsedDiceCount}d${parsedDiceSize}`;
             rollWithTimeout(diceBoardRef, timeoutDiceBoardRef, command, (result) => {
                 const values: number[] = result?.[0]?.rolls?.map((r: any) => r.value) ?? [];
                 const total = values.reduce((a: number, b: number) => a + b, 0);
@@ -314,7 +316,7 @@ function ElixirsCard({
                                 min={1}
                                 className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                                 value={diceCount}
-                                onChange={(e) => setDiceCount(Math.max(1, Number(e.target.value) || 1))}
+                                onChange={(e) => setDiceCount(e.target.value)}
                             />
                         </div>
                         <div className="flex-1">
@@ -324,7 +326,7 @@ function ElixirsCard({
                                 min={2}
                                 className="w-full rounded-md bg-base-200 border border-base-300 px-3 py-2 outline-none focus:border-base-content/30"
                                 value={diceSize}
-                                onChange={(e) => setDiceSize(Math.max(2, Number(e.target.value) || 2))}
+                                onChange={(e) => setDiceSize(e.target.value)}
                             />
                         </div>
                     </div>

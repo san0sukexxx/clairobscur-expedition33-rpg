@@ -37,7 +37,7 @@ function ArmorClassCard({ value }: { value: number }) {
 }
 
 /* ── Initiative (hexágono) ── */
-function InitiativeCard({ modifier, onRoll }: { modifier: number; onRoll: () => void }) {
+function InitiativeCard({ modifier, onRoll, isBattleInitiative }: { modifier: number; onRoll: () => void; isBattleInitiative?: boolean }) {
     const modStr = modifier >= 0 ? `+${modifier}` : String(modifier);
 
     return (
@@ -47,13 +47,18 @@ function InitiativeCard({ modifier, onRoll }: { modifier: number; onRoll: () => 
                 className="relative flex items-center justify-center bg-base-200 w-20 h-20 text-base-content hover:brightness-110 active:scale-95 transition cursor-pointer"
                 style={{ clipPath: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" }}
             >
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
-                    <path d="M25.5 1.5 L74.5 1.5 L98.5 50 L74.5 98.5 L25.5 98.5 L1.5 50 Z"
-                        stroke="currentColor" strokeOpacity="0.45" strokeWidth="2" />
-                    <path d="M27 5 L73 5 L95 50 L73 95 L27 95 L5 50 Z"
-                        stroke="currentColor" strokeOpacity="0.2" strokeWidth="0.75" />
-                </svg>
-                <span className="relative z-10 text-2xl font-black">{modStr}</span>
+                {!isBattleInitiative && (
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+                        <path d="M25.5 1.5 L74.5 1.5 L98.5 50 L74.5 98.5 L25.5 98.5 L1.5 50 Z"
+                            stroke="currentColor" strokeOpacity="0.45" strokeWidth="2" />
+                        <path d="M27 5 L73 5 L95 50 L73 95 L27 95 L5 50 Z"
+                            stroke="currentColor" strokeOpacity="0.2" strokeWidth="0.75" />
+                    </svg>
+                )}
+                {isBattleInitiative
+                    ? <span className="relative z-10 text-[11px] font-black text-center leading-tight px-1">Participar</span>
+                    : <span className="relative z-10 text-2xl font-black">{modStr}</span>
+                }
             </button>
             <span className="text-[9px] font-extrabold tracking-widest opacity-70 uppercase">{t("characterSheet.initiative")}</span>
         </div>
@@ -195,6 +200,7 @@ export function CombatStatsSection({ player, setPlayer, weaponInfo, diceBoardRef
                 <InitiativeCard
                     modifier={initiativeMod}
                     onRoll={onBattleInitiative && player?.fightInfo?.canRollInitiative ? onBattleInitiative : rollInitiative}
+                    isBattleInitiative={!!(onBattleInitiative && player?.fightInfo?.canRollInitiative)}
                 />
             </div>
 

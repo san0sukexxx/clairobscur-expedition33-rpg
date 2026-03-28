@@ -200,7 +200,7 @@ export function PlayerContent({
                   weaponInfo={weaponInfo}
                   diceBoardRef={diceBoardRef}
                   timeoutDiceBoardRef={timeoutDiceBoardRef}
-                  onBattleInitiative={() => onMenuAction(COMBAT_MENU_ACTIONS.Initiative)}
+                  onBattleInitiative={() => onMenuAction(player?.fightInfo?.battleStatus === "started" ? COMBAT_MENU_ACTIONS.JoinBattle : COMBAT_MENU_ACTIONS.Initiative)}
                 />
               )}
 

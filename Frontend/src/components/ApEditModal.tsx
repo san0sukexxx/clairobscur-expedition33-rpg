@@ -13,6 +13,7 @@ export interface ApEditModalProps {
 export function ApEditModal({ open, name, currentAp, maxAp, onConfirm, onClose }: ApEditModalProps) {
     const [apMode, setApMode] = useState<"recover" | "spend">("spend");
     const [apValue, setApValue] = useState("");
+    const [isDragging, setIsDragging] = useState(false);
 
 
     if (!open) return null;
@@ -23,6 +24,16 @@ export function ApEditModal({ open, name, currentAp, maxAp, onConfirm, onClose }
     const hasChange = delta > 0;
     const apPct = maxAp > 0 ? Math.min(100, Math.max(0, (currentAp / maxAp) * 100)) : 0;
     const previewPct = maxAp > 0 ? Math.min(100, Math.max(0, (previewAp / maxAp) * 100)) : 0;
+
+    function applyDrag(e: { currentTarget: HTMLElement; clientX: number }) {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+        const targetAp = Math.round((x / rect.width) * maxAp);
+        const diff = targetAp - currentAp;
+        if (diff > 0) { setApMode("recover"); setApValue(String(diff)); }
+        else if (diff < 0) { setApMode("spend"); setApValue(String(-diff)); }
+        else { setApValue(""); }
+    }
 
     function handleConfirm() {
         const finalAp = hasChange ? previewAp : currentAp;
@@ -40,23 +51,28 @@ export function ApEditModal({ open, name, currentAp, maxAp, onConfirm, onClose }
                         <span>{t("combatAdmin.labels.currentMp")}</span>
                         <span className="font-mono">{currentAp} / {maxAp}</span>
                     </div>
-                    <div className="relative w-full h-5 bg-base-300 rounded-full overflow-hidden">
+                    <div
+                        className="relative w-full h-5 bg-base-300 rounded-full overflow-hidden cursor-ew-resize select-none touch-none"
+                        onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setIsDragging(true); applyDrag(e); }}
+                        onPointerMove={(e) => { if (isDragging) applyDrag(e); }}
+                        onPointerUp={() => setIsDragging(false)}
+                    >
                         {/* Ghost bar for recover preview */}
                         {delta > 0 && apMode === "recover" && (
                             <div
-                                className="absolute inset-y-0 left-0 bg-success/30 rounded-full transition-all"
+                                className={`absolute inset-y-0 left-0 bg-success/30 rounded-full ${isDragging ? "" : "transition-all"}`}
                                 style={{ width: `${previewPct}%` }}
                             />
                         )}
                         {/* Current AP bar */}
                         <div
-                            className={`absolute inset-y-0 left-0 rounded-full transition-all ${apPct > 50 ? "bg-info" : apPct > 25 ? "bg-warning" : "bg-error"}`}
+                            className={`absolute inset-y-0 left-0 rounded-full ${isDragging ? "" : "transition-all"} ${apPct > 50 ? "bg-info" : apPct > 25 ? "bg-warning" : "bg-error"}`}
                             style={{ width: `${delta > 0 && apMode === "spend" ? previewPct : apPct}%` }}
                         />
                         {/* Ghost bar for spend */}
                         {delta > 0 && apMode === "spend" && (
                             <div
-                                className="absolute inset-y-0 left-0 bg-error/30 rounded-full transition-all"
+                                className={`absolute inset-y-0 left-0 bg-error/30 rounded-full ${isDragging ? "" : "transition-all"}`}
                                 style={{ width: `${apPct}%` }}
                             />
                         )}
