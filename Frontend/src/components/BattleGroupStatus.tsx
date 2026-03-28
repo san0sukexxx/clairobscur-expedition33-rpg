@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 
 function requestPlayerRefresh() {
@@ -75,6 +75,18 @@ export default function BattleGroupStatus({
     const [expandedStatusBadge, setExpandedStatusBadge] = useState<string | null>(null);
     const [armorClassModalOpen, setArmorClassModalOpen] = useState(false);
     const { weaponInfo } = useWeaponInfo(player);
+    const hpPending = useRef<number | null>(null);
+    const mpPending = useRef<number | null>(null);
+    const chargePending = useRef<number | null>(null);
+    const [hpOptimistic, setHpOptimistic] = useState<number | null>(null);
+    const [mpOptimistic, setMpOptimistic] = useState<number | null>(null);
+    const [chargeOptimistic, setChargeOptimistic] = useState<number | null>(null);
+
+    const _playerBattleID = player?.fightInfo?.playerBattleID;
+    const _playerCh = player?.fightInfo?.characters?.find(c => c.battleID === _playerBattleID);
+    useEffect(() => { if (hpOptimistic !== null && _playerCh?.healthPoints === hpOptimistic) { setHpOptimistic(null); hpPending.current = null; } }, [_playerCh?.healthPoints]);
+    useEffect(() => { if (mpOptimistic !== null && _playerCh?.magicPoints === mpOptimistic) { setMpOptimistic(null); mpPending.current = null; } }, [_playerCh?.magicPoints]);
+    useEffect(() => { if (chargeOptimistic !== null && _playerCh?.chargePoints === chargeOptimistic) { setChargeOptimistic(null); chargePending.current = null; } }, [_playerCh?.chargePoints]);
 
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -205,7 +217,9 @@ export default function BattleGroupStatus({
                                         if (isSelectable && onSelectTarget) onSelectTarget(ch);
                                     }}
                                     className={`
-                rounded-xl bg-base-200/60 px-3 pt-3 pb-2 shadow-sm transition-all duration-200
+                rounded-xl shadow-sm transition-all duration-200
+                ${selfOnly ? "px-3 py-3" : "px-3 pt-3 pb-2"}
+                ${selfOnly ? "bg-accent/5" : "bg-base-200/60"}
                 ${isDead && !isReviveMode ? "pointer-events-none opacity-60" : ""}
                 ${isSelectable
                                             ? "cursor-pointer hover:shadow-lg target-glow"
@@ -358,36 +372,54 @@ export default function BattleGroupStatus({
                                         </p>
                                     )}
 
-                                    {(canEdit || isAdmin) && <div className="mt-3 space-y-2">
+                                    {(canEdit || isAdmin) && <div className="mt-3 space-y-0">
 
                                         {/* HP block: apenas para self/admin (outros já têm HP no header) */}
                                         {(canEdit || isAdmin) && <div
                                             className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
                                             onClick={canEdit ? () => openHp(ch) : undefined}
                                         >
-                                            <div className="flex items-center justify-between text-xs uppercase">
+                                            <div className="flex items-center justify-between text-xs uppercase leading-none">
                                                 <span className="opacity-70 flex items-center gap-1">HP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
-                                                <span className="font-mono">{ch.healthPoints}/{ch.maxHealthPoints}</span>
+                                                <span className="flex items-center gap-1">
+                                                    <span className="font-mono">{hpOptimistic ?? ch.healthPoints}/{ch.maxHealthPoints}</span>
+                                                    {canEdit && (
+                                                        <button
+                                                            className="btn btn-xs btn-ghost text-warning p-0"
+                                                            onClick={(e) => { e.stopPropagation(); setEditBreakValue(2 - (ch.breakCount ?? 0)); setBreakEditOpen(true); }}
+                                                            title={t("combatAdmin.labels.breakEditTitle")}
+                                                        >💥</button>
+                                                    )}
+                                                </span>
                                             </div>
-                                            <div className="flex items-center gap-1">
-                                                <AnimatedStatBar
-                                                    value={pct(ch.healthPoints, ch.maxHealthPoints)}
-                                                    label="HP"
-                                                    fillClass="bg-error"
-                                                    ghostClass="bg-error/30"
-                                                    breakMarkers={[
-                                                        { position: 66, triggered: (ch.breakCount ?? 0) >= 1 },
-                                                        { position: 33, triggered: (ch.breakCount ?? 0) >= 2 },
-                                                    ]}
-                                                />
-                                                {canEdit && (
-                                                    <button
-                                                        className="btn btn-xs btn-ghost text-warning p-0 shrink-0"
-                                                        onClick={(e) => { e.stopPropagation(); setEditBreakValue(2 - (ch.breakCount ?? 0)); setBreakEditOpen(true); }}
-                                                        title={t("combatAdmin.labels.breakEditTitle")}
-                                                    >💥</button>
-                                                )}
-                                            </div>
+                                            <AnimatedStatBar
+                                                value={pct(hpOptimistic ?? ch.healthPoints, ch.maxHealthPoints)}
+                                                label="HP"
+                                                fillClass="bg-error"
+                                                ghostClass="bg-error/30"
+                                                breakMarkers={[
+                                                    { position: 66, triggered: (ch.breakCount ?? 0) >= 1 },
+                                                    { position: 33, triggered: (ch.breakCount ?? 0) >= 2 },
+                                                ]}
+                                            />
+                                            {canEdit && (
+                                                <div className="flex gap-0.5 mt-1 mb-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
+                                                    {[-10, -5, -1, 1, 5, 10].map(delta => (
+                                                        <button
+                                                            key={delta}
+                                                            className={`btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20" : "text-success bg-success/10 hover:bg-success/20"}`}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                const base = hpPending.current ?? ch.healthPoints;
+                                                                const newVal = Math.max(0, Math.min(ch.maxHealthPoints, base + delta));
+                                                                hpPending.current = newVal;
+                                                                setHpOptimistic(newVal);
+                                                                APIBattle.updateCharacterHp(ch.battleID, newVal);
+                                                            }}
+                                                        >{delta > 0 ? `+${delta}` : delta}</button>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>}
 
                                         {(canEdit || isAdmin) && ch.magicPoints !== undefined &&
@@ -398,18 +430,36 @@ export default function BattleGroupStatus({
                                                     className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
                                                     onClick={canEdit ? () => openMp(ch) : undefined}
                                                 >
-                                                    <div className="flex items-center justify-between text-xs uppercase">
+                                                    <div className="flex items-center justify-between text-xs uppercase leading-none mb-1">
                                                         <span className="opacity-70 flex items-center gap-1">AP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                         <span className="font-mono">
-                                                            {ch.magicPoints}/{ch.maxMagicPoints}
+                                                            {mpOptimistic ?? ch.magicPoints}/{ch.maxMagicPoints}
                                                         </span>
                                                     </div>
                                                     <AnimatedStatBar
-                                                        value={pct(ch.magicPoints!, ch.maxMagicPoints!)}
+                                                        value={pct(mpOptimistic ?? ch.magicPoints!, ch.maxMagicPoints!)}
                                                         label="AP"
                                                         fillClass="bg-info"
                                                         ghostClass="bg-info/30"
                                                     />
+                                                    {canEdit && (
+                                                        <div className="flex gap-0.5 mt-1 mb-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
+                                                            {[-10, -5, -1, 1, 5, 10].map(delta => (
+                                                                <button
+                                                                    key={delta}
+                                                                    className={`btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20" : "text-success bg-success/10 hover:bg-success/20"}`}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const base = mpPending.current ?? ch.magicPoints!;
+                                                                        const newVal = Math.max(0, Math.min(ch.maxMagicPoints!, base + delta));
+                                                                        mpPending.current = newVal;
+                                                                        setMpOptimistic(newVal);
+                                                                        APIBattle.updateCharacterMp(ch.battleID, newVal);
+                                                                    }}
+                                                                >{delta > 0 ? `+${delta}` : delta}</button>
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
 
@@ -553,18 +603,36 @@ export default function BattleGroupStatus({
                                                     className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
                                                     onClick={canEdit ? () => openCharge(ch) : undefined}
                                                 >
-                                                    <div className="flex items-center justify-between text-xs uppercase">
+                                                    <div className="flex items-center justify-between text-xs uppercase leading-none mb-1">
                                                         <span className="opacity-70 flex items-center gap-1">{t("combat.charge")} {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                         <span className="font-mono">
-                                                            {ch.chargePoints ?? 0}/{maxCharge}
+                                                            {chargeOptimistic ?? ch.chargePoints ?? 0}/{maxCharge}
                                                         </span>
                                                     </div>
                                                     <AnimatedStatBar
-                                                        value={pct(ch.chargePoints ?? 0, maxCharge)}
+                                                        value={pct(chargeOptimistic ?? ch.chargePoints ?? 0, maxCharge)}
                                                         label={t("combat.charge")}
                                                         fillClass="bg-warning"
                                                         ghostClass="bg-warning/30"
                                                     />
+                                                    {canEdit && (
+                                                        <div className="flex gap-0.5 mt-1 mb-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
+                                                            {[-10, -5, -1, 1, 5, 10].map(delta => (
+                                                                <button
+                                                                    key={delta}
+                                                                    className={`btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20" : "text-success bg-success/10 hover:bg-success/20"}`}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const base = chargePending.current ?? (ch.chargePoints ?? 0);
+                                                                        const newVal = Math.max(0, Math.min(maxCharge, base + delta));
+                                                                        chargePending.current = newVal;
+                                                                        setChargeOptimistic(newVal);
+                                                                        APIBattle.updateCharacterChargePoints(ch.battleID, newVal);
+                                                                    }}
+                                                                >{delta > 0 ? `+${delta}` : delta}</button>
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             );
                                         })()}
