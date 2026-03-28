@@ -245,15 +245,17 @@ export default function PlayerPage() {
         diceBoardRef={diceBoardRef}
         timeoutDiceBoardRef={timeoutDiceBoardRef}
         playerId={player?.id}
-        className={
-          tab === "combate"
-            ? (!player?.fightInfo || player?.fightInfo?.battleStatus === "finished")
-              ? "bottom-16 right-4"
-              : combatBottomSheetOpen ? "bottom-8 right-4" : "bottom-28 right-4"
-            : tab === "habilidades" ? "bottom-24 right-4"
-            : tab === "inventario" && player?.fightInfo?.battleStatus !== "finished" && player?.fightInfo ? "bottom-24 right-4"
-            : "bottom-4 right-4"
-        }
+        className={(() => {
+          const isPlayerTurn = player?.fightInfo?.turns?.[0]?.battleCharacterId === player?.fightInfo?.playerBattleID;
+          if (tab === "combate") {
+            if (!player?.fightInfo || player?.fightInfo?.battleStatus === "finished") return "bottom-16 right-4";
+            if (combatBottomSheetOpen) return "bottom-8 right-4";
+            return isPlayerTurn ? "bottom-28 right-4" : "bottom-14 right-4";
+          }
+          if (tab === "habilidades") return "bottom-24 right-4";
+          if (tab === "inventario" && player?.fightInfo?.battleStatus !== "finished" && player?.fightInfo) return "bottom-24 right-4";
+          return "bottom-4 right-4";
+        })()}
       />
 
       {!isAdmin && player?.isMasterEditing && (

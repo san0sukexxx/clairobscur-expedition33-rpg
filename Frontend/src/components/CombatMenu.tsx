@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { FaBars, FaExchangeAlt, FaTimes, FaFlask, FaStar, FaCheckCircle, FaCrosshairs } from "react-icons/fa";
-import { GiSwordWound, GiRunningNinja, GiJoin } from "react-icons/gi";
+import { FaBars, FaTimes, FaFlask, FaStar, FaCheckCircle, FaCrosshairs } from "react-icons/fa";
+import { GiSwordWound, GiRunningNinja } from "react-icons/gi";
 import { COMBAT_MENU_ACTIONS, type CombatMenuAction } from "../utils/CombatMenuActions";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { getActiveTurnCharacter } from "../utils/CharacterUtils";
@@ -109,15 +109,7 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
 
   const shouldBlink = isYourTurn && !hasOpenedThisTurn && !isFlipOnly && !isExecutingSkill;
 
-  function handleFlipTab() {
-    if (tab == opositeTeamTab) {
-      handleAction(COMBAT_MENU_ACTIONS.Team);
-    } else {
-      handleAction(COMBAT_MENU_ACTIONS.Enemies);
-    }
-  }
-
-  if (!hasBattle || hidden) {
+  if (!hasBattle || hidden || isFlipOnly) {
     return null;
   }
 
@@ -192,10 +184,10 @@ export default function CombatMenu({ player, onAction, tab, currentTeamTab, opos
       {/* Botão principal */}
       <button
         className={`btn btn-primary btn-circle w-11 h-11 min-h-0 shadow-lg ${isExecutingSkill ? "opacity-50 cursor-not-allowed" : ""} ${shouldBlink ? "animate-combat-menu-blink" : ""}`}
-        onClick={isFlipOnly ? handleFlipTab : () => { setHasOpenedThisTurn(true); setOpen((prev) => !prev); }}
+        onClick={() => { setHasOpenedThisTurn(true); setOpen((prev) => !prev); }}
         disabled={isExecutingSkill}
       >
-        {isFlipOnly ? <FaExchangeAlt size={18} /> : <FaBars size={20} />}
+        <FaBars size={20} />
       </button>
     </div>
   );
