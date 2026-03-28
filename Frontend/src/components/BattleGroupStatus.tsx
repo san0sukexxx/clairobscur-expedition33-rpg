@@ -218,6 +218,7 @@ export default function BattleGroupStatus({
                 ${isHit ? "animate-pulse !bg-error/30 !shadow-lg !shadow-error/50" : ""}
             `}
                                 >
+                                    {/* Avatar row */}
                                     <div className="flex items-center gap-3">
                                         <div className="avatar">
                                             <div
@@ -245,54 +246,112 @@ export default function BattleGroupStatus({
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2 justify-between w-full">
-                                            <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
-                                                {!isAdmin && ch.nameHidden ? "???" : ch.name}
-                                            </p>
+                                        {canEdit || isAdmin ? (
+                                            /* Self / admin: name + status badges lado a lado */
+                                            <div className="flex items-center gap-2 justify-between w-full">
+                                                <p className={`font-semibold ${isDead ? "text-neutral-500 line-through" : ""}`}>
+                                                    {!isAdmin && ch.nameHidden ? "???" : ch.name}
+                                                </p>
 
-                                            <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80 justify-end">
-                                                {ch.status
-                                                    ?.filter(s => {
-                                                        if (s.effectName === "free-shot") return false;
-                                                        if (s.effectName === "invisible-barrier" && !isAdmin) return false;
-                                                        return true;
-                                                    })
-                                                    .map((st, idx) => {
-                                                        const showAmmount = shouldShowStatusAmmount(st.effectName);
-                                                        const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
+                                                <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80 justify-end">
+                                                    {ch.status
+                                                        ?.filter(s => {
+                                                            if (s.effectName === "free-shot") return false;
+                                                            if (s.effectName === "invisible-barrier" && !isAdmin) return false;
+                                                            return true;
+                                                        })
+                                                        .map((st, idx) => {
+                                                            const showAmmount = shouldShowStatusAmmount(st.effectName);
+                                                            const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
+                                                            return (
+                                                                <span
+                                                                    key={idx}
+                                                                    className="px-1 py-0.5 rounded bg-base-300 cursor-pointer hover:opacity-100 transition-opacity pointer-events-auto"
+                                                                    onClick={(e) => { e.stopPropagation(); setExpandedStatusBadge(prev => prev === `${ch.battleID}-${st.effectName}` ? null : `${ch.battleID}-${st.effectName}`); }}
+                                                                >
+                                                                    {getStatusLabel(st.effectName)}{" "}
+                                                                    {showAmmount && st.ammount != null ? st.ammount : ""}{" "}
+                                                                    {showTurns ? `(${st.remainingTurns})` : ""}
+                                                                </span>
+                                                            );
+                                                        })}
 
-                                                        return (
-                                                            <span
-                                                                key={idx}
-                                                                className="px-1 py-0.5 rounded bg-base-300 cursor-pointer hover:opacity-100 transition-opacity pointer-events-auto"
-                                                                onClick={(e) => { e.stopPropagation(); setExpandedStatusBadge(prev => prev === `${ch.battleID}-${st.effectName}` ? null : `${ch.battleID}-${st.effectName}`); }}
-                                                            >
-                                                                {getStatusLabel(st.effectName)}{" "}
-                                                                {showAmmount && st.ammount != null ? st.ammount : ""}{" "}
-                                                                {showTurns ? `(${st.remainingTurns})` : ""}
-                                                            </span>
-                                                        );
-                                                    })}
+                                                    {npcIsFlying(ch) && (
+                                                        <span key="flying" className="px-1 py-0.5 rounded bg-base-300">
+                                                            {t("combat.flying")}
+                                                        </span>
+                                                    )}
 
-                                                {npcIsFlying(ch) && (
-                                                    <span key="flying" className="px-1 py-0.5 rounded bg-base-300">
-                                                        {t("combat.flying")}
-                                                    </span>
-                                                )}
+                                                    {canEdit && (
+                                                        <button
+                                                            className="px-1 py-0.5 rounded bg-base-300 hover:bg-base-content/20 transition-colors cursor-pointer flex items-center gap-1 pointer-events-auto"
+                                                            onClick={(e) => { e.stopPropagation(); setConditionsOpen(true); }}
+                                                        >
+                                                            <FaEdit size={8} /> Condições
+                                                        </button>
+                                                    )}
+                                                </div>
 
-                                                {canEdit && (
-                                                    <button
-                                                        className="px-1 py-0.5 rounded bg-base-300 hover:bg-base-content/20 transition-colors cursor-pointer flex items-center gap-1 pointer-events-auto"
-                                                        onClick={(e) => { e.stopPropagation(); setConditionsOpen(true); }}
-                                                    >
-                                                        <FaEdit size={8} /> Condições
-                                                    </button>
-                                                )}
+                                                {isDead && <FaSkull className="text-error" title={t("combat.dead")} />}
                                             </div>
-
-                                            {isDead && <FaSkull className="text-error" title={t("combat.dead")} />}
-                                        </div>
+                                        ) : (
+                                            /* Outros jogadores: nome + HP bar na mesma linha */
+                                            <div className="flex flex-col w-full gap-1">
+                                                <div className="flex items-center justify-between">
+                                                    <p className={`font-semibold text-sm ${isDead ? "text-neutral-500 line-through" : ""}`}>
+                                                        {!isAdmin && ch.nameHidden ? "???" : ch.name}
+                                                    </p>
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="font-mono text-xs">{ch.healthPoints}/{ch.maxHealthPoints}</span>
+                                                        {isDead && <FaSkull className="text-error text-xs" title={t("combat.dead")} />}
+                                                    </div>
+                                                </div>
+                                                <AnimatedStatBar
+                                                    value={pct(ch.healthPoints, ch.maxHealthPoints)}
+                                                    label="HP"
+                                                    fillClass="bg-error"
+                                                    ghostClass="bg-error/30"
+                                                    breakMarkers={[
+                                                        { position: 66, triggered: (ch.breakCount ?? 0) >= 1 },
+                                                        { position: 33, triggered: (ch.breakCount ?? 0) >= 2 },
+                                                    ]}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
+
+                                    {/* Status badges para outros jogadores: abaixo, à esquerda */}
+                                    {!canEdit && !isAdmin && (
+                                        <div className="flex flex-row flex-wrap gap-1 text-[10px] opacity-80 justify-start mt-2">
+                                            {ch.status
+                                                ?.filter(s => {
+                                                    if (s.effectName === "free-shot") return false;
+                                                    if (s.effectName === "invisible-barrier") return false;
+                                                    return true;
+                                                })
+                                                .map((st, idx) => {
+                                                    const showAmmount = shouldShowStatusAmmount(st.effectName);
+                                                    const showTurns = st.effectName !== "IntenseFlames" && st.remainingTurns;
+                                                    return (
+                                                        <span
+                                                            key={idx}
+                                                            className="px-1 py-0.5 rounded bg-base-300 cursor-pointer hover:opacity-100 transition-opacity pointer-events-auto"
+                                                            onClick={(e) => { e.stopPropagation(); setExpandedStatusBadge(prev => prev === `${ch.battleID}-${st.effectName}` ? null : `${ch.battleID}-${st.effectName}`); }}
+                                                        >
+                                                            {getStatusLabel(st.effectName)}{" "}
+                                                            {showAmmount && st.ammount != null ? st.ammount : ""}{" "}
+                                                            {showTurns ? `(${st.remainingTurns})` : ""}
+                                                        </span>
+                                                    );
+                                                })}
+
+                                            {npcIsFlying(ch) && (
+                                                <span key="flying" className="px-1 py-0.5 rounded bg-base-300">
+                                                    {t("combat.flying")}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
 
                                     {expandedStatusBadge?.startsWith(`${ch.battleID}-`) && (
                                         <p className="text-[10px] opacity-70 leading-relaxed mt-1 px-1">
@@ -302,7 +361,8 @@ export default function BattleGroupStatus({
 
                                     <div className="mt-3 space-y-2">
 
-                                        <div
+                                        {/* HP block: apenas para self/admin (outros já têm HP no header) */}
+                                        {(canEdit || isAdmin) && <div
                                             className={canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}
                                             onClick={canEdit ? () => openHp(ch) : undefined}
                                         >
@@ -327,7 +387,7 @@ export default function BattleGroupStatus({
                                                     title={t("combatAdmin.labels.breakEditTitle")}
                                                 >💥</button>
                                             )}
-                                        </div>
+                                        </div>}
 
                                         {(canEdit || isAdmin) && ch.magicPoints !== undefined &&
                                             ch.magicPoints !== null &&
