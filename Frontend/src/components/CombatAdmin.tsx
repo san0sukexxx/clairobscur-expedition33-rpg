@@ -1757,7 +1757,7 @@ export default function CombatAdmin({
                                 key={delta}
                                 className={`btn btn-xs flex-1 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20 border-0" : "text-success bg-success/10 hover:bg-success/20 border-0"}`}
                                 onClick={async () => {
-                                    const newPos = Math.max(0, Math.min(8, char.bestialWheelPosition! + delta));
+                                    const newPos = ((char.bestialWheelPosition! + delta) % 9 + 9) % 9;
                                     await APIBattle.updateBestialWheelPosition(char.battleID, newPos);
                                     await refreshMonoco();
                                 }}
