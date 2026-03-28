@@ -366,7 +366,7 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
                             case "A": return "text-purple-400 border-purple-400";
                             case "B": return "text-blue-400 border-blue-400";
                             case "C": return "text-amber-200 border-amber-200";
-                            case "D": return "text-gray-400 border-gray-400";
+                            case "D": return "text-gray-300 border-gray-300";
                             default: return "text-gray-400 border-gray-400";
                         }
                     };
@@ -377,7 +377,7 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
                             case "A": return "bg-purple-500";
                             case "B": return "bg-blue-500";
                             case "C": return "bg-amber-200";
-                            case "D": return "bg-gray-500";
+                            case "D": return "bg-gray-300";
                             default: return "bg-gray-500";
                         }
                     };
@@ -388,36 +388,46 @@ export default function PlayerStatusFloating({ player, highlighted, weaponInfo }
                             case "A": return "bg-purple-500/30";
                             case "B": return "bg-blue-500/30";
                             case "C": return "bg-amber-200/30";
-                            case "D": return "bg-gray-500/30";
+                            case "D": return "bg-gray-300/30";
                             default: return "bg-gray-500/30";
                         }
                     };
 
                     return (
-                        <div className="mt-2 cursor-pointer rounded p-0.5 hover:bg-base-200/80 transition-colors" onClick={openRank}>
+                        <div className="mt-2">
                             <div className="flex items-center justify-between mb-1">
-                                <span className="text-[10px] opacity-70 uppercase flex items-center gap-1">
-                                    {t("combat.perfection")} <FaEdit size={10} className="opacity-40" />
+                                <span className="text-[10px] opacity-70 uppercase">
+                                    {t("combat.perfection")}
                                 </span>
-                                <div className={`
-                                    px-2 py-0.5 rounded border-2 font-bold text-sm
-                                    ${getRankColor(currentRank)}
-                                `}>
-                                    {t("combat.rank")} {currentRank}
+                                <div className="flex items-center gap-1">
+                                    {["D","C","B","A","S"].map(rank => (
+                                        <button
+                                            key={rank}
+                                            className={`px-3 py-0.5 rounded border-2 font-bold text-xs transition-opacity cursor-pointer
+                                                ${currentRank === rank
+                                                    ? `${getRankFillClass(rank)} text-base-100 border-transparent opacity-100`
+                                                    : `${getRankColor(rank)} opacity-30 hover:opacity-60`}
+                                            `}
+                                            onClick={() => APIBattle.updateCharacterRank(ch.battleID, rank, rankProgress).then(requestPlayerRefresh)}
+                                        >
+                                            {rank}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between text-[10px] mb-0.5">
-                                <span className="opacity-50">{t("combat.progress")}</span>
-                                <span className="font-mono text-xs">
+                            <div className="flex items-center gap-2">
+                                <div className="flex-1">
+                                    <AnimatedStatBar
+                                        value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
+                                        label="Rank Progress"
+                                        fillClass={getRankFillClass(currentRank)}
+                                        ghostClass={getRankGhostClass(currentRank)}
+                                    />
+                                </div>
+                                <span className="font-mono text-[10px] shrink-0">
                                     {currentRank === "S" ? t("playerPage.specialAttacks.perfectionMax") : `${rankProgress}/${rankMax}`}
                                 </span>
                             </div>
-                            <AnimatedStatBar
-                                value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
-                                label="Rank Progress"
-                                fillClass={getRankFillClass(currentRank)}
-                                ghostClass={getRankGhostClass(currentRank)}
-                            />
                         </div>
                     );
                 })()}

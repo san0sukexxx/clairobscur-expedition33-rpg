@@ -1926,6 +1926,8 @@
       "noOneHere": "Ninguém por aqui ainda",
       "dead": "Morto",
       "flying": "Voando",
+      "hp": "PV",
+      "mp": "PA",
       "dragToReorder": "Arraste para reordenar",
       "initiativeUpdated": "Ordem de iniciativa atualizada",
       "turnsUpdated": "Ordem dos turnos atualizada",

@@ -79,15 +79,18 @@ export default function BattleGroupStatus({
     const hpPending = useRef<number | null>(null);
     const mpPending = useRef<number | null>(null);
     const chargePending = useRef<number | null>(null);
+    const rankProgressPending = useRef<number | null>(null);
     const [hpOptimistic, setHpOptimistic] = useState<number | null>(null);
     const [mpOptimistic, setMpOptimistic] = useState<number | null>(null);
     const [chargeOptimistic, setChargeOptimistic] = useState<number | null>(null);
+    const [rankProgressOptimistic, setRankProgressOptimistic] = useState<number | null>(null);
 
     const _playerBattleID = player?.fightInfo?.playerBattleID;
     const _playerCh = player?.fightInfo?.characters?.find(c => c.battleID === _playerBattleID);
     useEffect(() => { if (hpOptimistic !== null && _playerCh?.healthPoints === hpOptimistic) { setHpOptimistic(null); hpPending.current = null; } }, [_playerCh?.healthPoints]);
     useEffect(() => { if (mpOptimistic !== null && _playerCh?.magicPoints === mpOptimistic) { setMpOptimistic(null); mpPending.current = null; } }, [_playerCh?.magicPoints]);
     useEffect(() => { if (chargeOptimistic !== null && _playerCh?.chargePoints === chargeOptimistic) { setChargeOptimistic(null); chargePending.current = null; } }, [_playerCh?.chargePoints]);
+    useEffect(() => { if (rankProgressOptimistic !== null && _playerCh?.rankProgress === rankProgressOptimistic) { setRankProgressOptimistic(null); rankProgressPending.current = null; } }, [_playerCh?.rankProgress]);
 
     if (player?.fightInfo?.characters == undefined) return null;
 
@@ -363,7 +366,7 @@ export default function BattleGroupStatus({
                                             onClick={canEdit ? () => openHp(ch) : undefined}
                                         >
                                             <div className="flex items-center justify-between text-xs uppercase leading-none">
-                                                <span className="opacity-70 flex items-center gap-1">HP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
+                                                <span className="opacity-70 flex items-center gap-1">{t("combat.hp")} {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                 <span className="flex items-center gap-1">
                                                     <span className="font-mono">{hpOptimistic ?? ch.healthPoints}/{ch.maxHealthPoints}</span>
                                                     {canEdit && (
@@ -414,7 +417,7 @@ export default function BattleGroupStatus({
                                                     onClick={canEdit ? () => openMp(ch) : undefined}
                                                 >
                                                     <div className="flex items-center justify-between text-xs uppercase leading-none mb-1">
-                                                        <span className="opacity-70 flex items-center gap-1">AP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
+                                                        <span className="opacity-70 flex items-center gap-1">{t("combat.mp")} {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                         <span className="font-mono">
                                                             {mpOptimistic ?? ch.magicPoints}/{ch.maxMagicPoints}
                                                         </span>
@@ -509,7 +512,7 @@ export default function BattleGroupStatus({
                                         {/* Verso's Perfection Rank System */}
                                         {(canEdit || isAdmin) && ch.id.toLowerCase().includes("verso") && (() => {
                                             const currentRank = ch.perfectionRank ?? "D";
-                                            const rankProgress = ch.rankProgress ?? 0;
+                                            const rankProgress = rankProgressOptimistic ?? ch.rankProgress ?? 0;
                                             const rankMax = 10;
 
                                             const getRankColor = (rank: string) => {
@@ -518,7 +521,7 @@ export default function BattleGroupStatus({
                                                     case "A": return "text-purple-400 border-purple-400";
                                                     case "B": return "text-blue-400 border-blue-400";
                                                     case "C": return "text-amber-200 border-amber-200";
-                                                    case "D": return "text-gray-400 border-gray-400";
+                                                    case "D": return "text-gray-300 border-gray-300";
                                                     default: return "text-gray-400 border-gray-400";
                                                 }
                                             };
@@ -529,7 +532,7 @@ export default function BattleGroupStatus({
                                                     case "A": return "bg-purple-500";
                                                     case "B": return "bg-blue-500";
                                                     case "C": return "bg-amber-200";
-                                                    case "D": return "bg-gray-500";
+                                                    case "D": return "bg-gray-300";
                                                     default: return "bg-gray-500";
                                                 }
                                             };
@@ -540,39 +543,77 @@ export default function BattleGroupStatus({
                                                     case "A": return "bg-purple-500/30";
                                                     case "B": return "bg-blue-500/30";
                                                     case "C": return "bg-amber-200/30";
-                                                    case "D": return "bg-gray-500/30";
+                                                    case "D": return "bg-gray-300/30";
                                                     default: return "bg-gray-500/30";
                                                 }
                                             };
 
                                             return (
-                                                <div
-                                                    className={`mt-2 ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
-                                                    onClick={canEdit ? () => openRank(ch) : undefined}
-                                                >
+                                                <div className="mt-2">
                                                     <div className="flex items-center justify-between mb-1">
-                                                        <span className="text-xs opacity-70 uppercase flex items-center gap-1">
-                                                            {t("combat.perfection")} {canEdit && <FaEdit size={10} className="opacity-40" />}
+                                                        <span className="text-xs opacity-70 uppercase">
+                                                            {t("combat.perfection")}
                                                         </span>
-                                                        <div className={`
-                                                            px-2 py-0.5 rounded border-2 font-bold text-sm
-                                                            ${getRankColor(currentRank)}
-                                                        `}>
-                                                            {t("combat.rank")} {currentRank}
+                                                        <div className="flex items-center gap-1 pointer-events-auto">
+                                                            {["D","C","B","A","S"].map(rank => (
+                                                                <button
+                                                                    key={rank}
+                                                                    className={`px-3 py-0.5 rounded border-2 font-bold text-xs transition-opacity
+                                                                        ${currentRank === rank
+                                                                            ? `${getRankFillClass(rank)} text-base-100 border-transparent opacity-100`
+                                                                            : `${getRankColor(rank)} opacity-30 hover:opacity-60`}
+                                                                        ${canEdit ? "cursor-pointer" : "cursor-default"}
+                                                                    `}
+                                                                    onClick={canEdit ? () => APIBattle.updateCharacterRank(ch.battleID, rank, rankProgress).then(requestPlayerRefresh) : undefined}
+                                                                >
+                                                                    {rank}
+                                                                </button>
+                                                            ))}
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center justify-between text-xs mb-0.5">
-                                                        <span className="opacity-50">{t("combat.progress")}</span>
-                                                        <span className="font-mono">
-                                                            {currentRank === "S" ? t("playerPage.skills.perfectionMax") : `${rankProgress}/${rankMax}`}
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="flex-1">
+                                                            <AnimatedStatBar
+                                                                value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
+                                                                label={t("combat.progress")}
+                                                                fillClass={getRankFillClass(currentRank)}
+                                                                ghostClass={getRankGhostClass(currentRank)}
+                                                            />
+                                                        </div>
+                                                        <span className="font-mono text-xs shrink-0">
+                                                            {currentRank === "S" ? t("playerPage.specialAttacks.perfectionMax") : `${rankProgress}/${rankMax}`}
                                                         </span>
                                                     </div>
-                                                    <AnimatedStatBar
-                                                        value={currentRank === "S" ? 100 : pct(rankProgress, rankMax)}
-                                                        label={t("combat.progress")}
-                                                        fillClass={getRankFillClass(currentRank)}
-                                                        ghostClass={getRankGhostClass(currentRank)}
-                                                    />
+                                                    {canEdit && (
+                                                        <div className="flex gap-0.5 mt-1 mb-2 pointer-events-auto" onClick={e => e.stopPropagation()}>
+                                                            {[-5, -1, +1, +5].map(delta => (
+                                                                <button
+                                                                    key={delta}
+                                                                    className={`btn btn-xs flex-1 px-0 text-[10px] min-h-0 h-5 border-0 ${delta < 0 ? "text-error bg-error/10 hover:bg-error/20" : "text-success bg-success/10 hover:bg-success/20"}`}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const ranks = ["D","C","B","A","S"];
+                                                                        let rIdx = ranks.indexOf(currentRank);
+                                                                        const base = rankProgressPending.current ?? (ch.rankProgress ?? 0);
+                                                                        let newProgress = base + delta;
+                                                                        while (newProgress > rankMax && rIdx < ranks.length - 1) { rIdx++; newProgress -= rankMax; }
+                                                                        while (newProgress < 0 && rIdx > 0) { rIdx--; newProgress += rankMax; }
+                                                                        newProgress = Math.max(0, Math.min(rankMax, newProgress));
+                                                                        const newRank = ranks[rIdx];
+                                                                        const finalProgress = newRank === "S" ? 0 : newProgress;
+                                                                        if (newRank === currentRank) {
+                                                                            rankProgressPending.current = finalProgress;
+                                                                            setRankProgressOptimistic(finalProgress);
+                                                                        } else {
+                                                                            rankProgressPending.current = null;
+                                                                            setRankProgressOptimistic(null);
+                                                                        }
+                                                                        APIBattle.updateCharacterRank(ch.battleID, newRank, finalProgress).then(requestPlayerRefresh);
+                                                                    }}
+                                                                >{delta > 0 ? `+${delta}` : delta}</button>
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             );
                                         })()}

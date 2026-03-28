@@ -1926,6 +1926,8 @@
       "noOneHere": "No one here yet",
       "dead": "Dead",
       "flying": "Flying",
+      "hp": "HP",
+      "mp": "AP",
       "dragToReorder": "Drag to reorder",
       "initiativeUpdated": "Initiative order updated",
       "turnsUpdated": "Turn order updated",
