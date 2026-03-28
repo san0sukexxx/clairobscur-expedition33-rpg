@@ -217,7 +217,7 @@ export default function LuminasSection({
         try {
             newId = await APILumina.createPlayerLumina({
                 playerId: player.id,
-                pictoId: info.name,
+                pictoId: info.id,
             })
         } catch (e) {
             console.error(e)
@@ -235,7 +235,7 @@ export default function LuminasSection({
             const added: LuminaResponse = {
                 id: newId ?? 0,
                 playerId: player.id,
-                pictoId: info.name,
+                pictoId: info.id,
                 isEquiped: false,
             }
 
@@ -438,7 +438,7 @@ export default function LuminasSection({
                                     <div className="flex flex-col gap-2">
                                         <div className="flex items-start justify-between">
                                             <div className="text-xl font-semibold leading-tight mr-2">
-                                                {name}
+                                                {pictoInfo?.name ?? name}
                                             </div>
                                             <button
                                                 className="px-3 py-1 text-sm rounded-md bg-base-300 hover:bg-base-300/70 border border-base-300"

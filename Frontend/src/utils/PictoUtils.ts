@@ -2,6 +2,7 @@ import { PictosList } from "../data/PictosList";
 import type { PictoColor, PictoInfo, PictoResponse, LuminaResponse } from "../api/ResponseModel";
 import type { GetPlayerResponse } from "../api/APIPlayer";
 import { calculateMaxLuminas } from "./PlayerCalculator";
+import { getPictoName } from "../i18n";
 
 export function calculatePictoSpeed(value: number, level: number): number {
     return Math.floor((value / 200) * level);
@@ -69,9 +70,16 @@ export function getPictoByName(name: string): PictoInfo | undefined {
     if (byName) return byName;
 
     // Fallback: try to find by imageId (English name)
-    return PictosList.find(
+    const byImageId = PictosList.find(
         (picto) => picto.imageId?.toLowerCase() === nameLower
     );
+    if (byImageId) return byImageId;
+
+    // Fallback: try pt-BR name (for backward compat with data stored with Portuguese names)
+    const byPtBR = PictosList.find(
+        (picto) => picto.id && getPictoName(picto.id, "pt-BR").toLowerCase() === nameLower
+    );
+    return byPtBR;
 }
 
 export function getAllPictosSorted(): PictoInfo[] {

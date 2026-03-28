@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { FullscreenButton } from "../components/FullscreenButton";
 import { setLocale, type Locale } from "../i18n";
 
@@ -8,11 +7,9 @@ const LANGUAGES: { locale: Locale; flag: string; label: string }[] = [
 ];
 
 export default function LanguageSelectPage() {
-  const navigate = useNavigate();
-
   function handleSelect(locale: Locale) {
     setLocale(locale);
-    navigate("/");
+    window.location.replace("/");
   }
 
   return (

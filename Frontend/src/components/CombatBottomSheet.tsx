@@ -17,6 +17,7 @@ import { APIGameLog } from "../api/APIGameLog";
 import { APIBattle } from "../api/APIBattle";
 import { getPlayerCharacter } from "../utils/CharacterUtils";
 import { getWeaponPassive, toKebabCase, hasWeapon, t, getPictoName, getPictoDescription } from "../i18n";
+import AnimatedStatBar from "./AnimatedStatBar";
 import { isGustave } from "../constants/player/characterIds";
 import { getPictoByName, getDisabledPictoIds } from "../utils/PictoUtils";
 import { ELEMENT_EMOTE, getElementName } from "../utils/ElementUtils";
@@ -143,14 +144,29 @@ export default function CombatBottomSheet({ player, open, onOpen, onClose, diceB
                                         style={{ rotate: `${details.rotation}deg` }}
                                     />
                                 </div>
-                                <div>
+                                <div className="flex-1 min-w-0">
                                     <div>
                                         <span className="font-bold text-base">{weapon.id}</span>
-                                        <span className="ml-2 text-sm opacity-60">Lv.{weapon.level}</span>
+                                        <span className="ml-2 text-sm opacity-60">{getElementName(details.attributes.element)} {ELEMENT_EMOTE[details.attributes.element] ?? "❓"}</span>
                                     </div>
-                                    <div className="text-sm opacity-70">
-                                        {getElementName(details.attributes.element)} {ELEMENT_EMOTE[details.attributes.element] ?? "❓"}
-                                    </div>
+                                    {(() => {
+                                        const maxMp = battleChar?.maxMagicPoints ?? 0;
+                                        const pct = maxMp > 0 ? (currentMp / maxMp) * 100 : 0;
+                                        return (
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <span className="text-xs font-semibold opacity-50 shrink-0">AP</span>
+                                                <div className="flex-1">
+                                                    <AnimatedStatBar
+                                                        value={pct}
+                                                        label="AP"
+                                                        fillClass="bg-info"
+                                                        ghostClass="bg-info/30"
+                                                    />
+                                                </div>
+                                                <span className="text-xs opacity-60 shrink-0">{currentMp}/{maxMp}</span>
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             </div>
 
