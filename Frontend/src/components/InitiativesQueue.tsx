@@ -50,7 +50,6 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
             const turnIds = newQueue.map(item => (item as BattleTurnResponse).id)
             try {
                 await APIBattle.reorderTurns(turnIds)
-                showToast("Ordem dos turnos atualizada")
                 await new Promise(resolve => setTimeout(resolve, 300))
                 if (onReorder) onReorder()
             } catch (error) {
