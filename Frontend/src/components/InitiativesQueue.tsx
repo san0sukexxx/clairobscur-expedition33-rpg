@@ -1,10 +1,9 @@
-import { useMemo, useState, useRef, useCallback } from "react"
-import { FaSkull } from "react-icons/fa"
+import { useMemo } from "react"
+import { FaSkull, FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import { type BattleCharacterInfo, type InitiativeResponse, type BattleTurnResponse } from "../api/ResponseModel"
 import { handleNpcImgError } from "../utils/NpcUtils"
 import { APIBattle } from "../api/APIBattle"
 import { useToast } from "./Toast"
-import { t } from "../i18n"
 
 interface InitiativesQueueProps {
     characters?: BattleCharacterInfo[] | undefined
@@ -21,8 +20,6 @@ type AnyItem = InitiativeResponse | BattleTurnResponse
 
 export default function InitiativesQueue({ characters, initiatives, turns, isStarted, showBattleId, isAdmin, onReorder, displayIndex }: InitiativesQueueProps) {
     const { showToast } = useToast()
-    const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
-    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
     const sortedQueue = useMemo<AnyItem[]>(() => {
         if (isStarted) {
@@ -42,98 +39,12 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
         return characters.find(ch => ch.battleID === id)
     }
 
-    const handleDragStart = (e: React.DragEvent, index: number) => {
-        if (!isAdmin) return
-        setDraggedIndex(index)
-        e.dataTransfer.effectAllowed = 'move'
-    }
+    const handleMove = async (fromIndex: number, toIndex: number) => {
+        if (toIndex < 0 || toIndex >= sortedQueue.length) return
 
-    const handleDragOver = (e: React.DragEvent, index: number) => {
-        if (!isAdmin) return
-        e.preventDefault()
-        e.dataTransfer.dropEffect = 'move'
-        setDragOverIndex(index)
-    }
-
-    const handleDragLeave = () => {
-        setDragOverIndex(null)
-    }
-
-    const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
-        if (!isAdmin || draggedIndex === null) return
-        e.preventDefault()
-
-        const fromIndex = draggedIndex
-        setDraggedIndex(null)
-        setDragOverIndex(null)
-
-        if (fromIndex !== dropIndex) {
-            await handleDropDirect(fromIndex, dropIndex)
-        }
-    }
-
-    const handleDragEnd = () => {
-        setDraggedIndex(null)
-        setDragOverIndex(null)
-    }
-
-    /* ── Touch support (mobile) ── */
-    const itemRefs = useRef<(HTMLDivElement | null)[]>([])
-    const touchDragIndex = useRef<number | null>(null)
-    const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-    const getDropIndex = useCallback((touchX: number, touchY: number): number | null => {
-        for (let i = 0; i < itemRefs.current.length; i++) {
-            const el = itemRefs.current[i]
-            if (!el) continue
-            const rect = el.getBoundingClientRect()
-            if (touchX >= rect.left && touchX <= rect.right && touchY >= rect.top && touchY <= rect.bottom) {
-                return i
-            }
-        }
-        return null
-    }, [])
-
-    const handleTouchStart = (index: number) => {
-        if (!isAdmin) return
-        longPressTimer.current = setTimeout(() => {
-            touchDragIndex.current = index
-            setDraggedIndex(index)
-        }, 200)
-    }
-
-    const handleTouchMove = (e: React.TouchEvent) => {
-        if (touchDragIndex.current === null) {
-            // Cancel long press if finger moves before activation
-            if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null }
-            return
-        }
-        e.preventDefault()
-        const touch = e.touches[0]
-        const overIndex = getDropIndex(touch.clientX, touch.clientY)
-        setDragOverIndex(overIndex)
-    }
-
-    const handleTouchEnd = () => {
-        if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null }
-        if (touchDragIndex.current === null) return
-
-        const fromIndex = touchDragIndex.current
-        const toIndex = dragOverIndex
-
-        touchDragIndex.current = null
-        setDraggedIndex(null)
-        setDragOverIndex(null)
-
-        if (toIndex !== null && fromIndex !== toIndex) {
-            handleDropDirect(fromIndex, toIndex)
-        }
-    }
-
-    const handleDropDirect = async (fromIndex: number, toIndex: number) => {
         const newQueue = [...sortedQueue]
-        const [draggedItem] = newQueue.splice(fromIndex, 1)
-        newQueue.splice(toIndex, 0, draggedItem)
+        const [item] = newQueue.splice(fromIndex, 1)
+        newQueue.splice(toIndex, 0, item)
 
         if (isStarted) {
             const turnIds = newQueue.map(item => (item as BattleTurnResponse).id)
@@ -165,11 +76,6 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
 
     return (
         <div className="w-full max-w-none self-stretch min-w-0 rounded-xl border border-base-300 bg-base-100 shadow-md p-4">
-            {isAdmin && (
-                <div className="text-xs text-base-content/50 mb-2 text-center">
-                    {t("combat.dragToReorder")}
-                </div>
-            )}
             <div className="w-full min-w-0 flex items-end gap-2 overflow-x-auto">
                 {sortedQueue.map((item: any, index) => {
                     const isActive = isStarted && index === 0
@@ -185,27 +91,11 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                         ? `turn-${item.id ?? item.battleCharacterId}-${index}`
                         : `init-${item.battleID}-${index}`
 
-                    const isDragging = draggedIndex === index
-                    const isDragOver = dragOverIndex === index
-
                     if (!ch) return null
                     return (
-                        <div
-                            key={key}
-                            ref={(el) => { itemRefs.current[index] = el }}
-                            className="flex flex-col items-center"
-                            draggable={isAdmin}
-                            onDragStart={(e) => handleDragStart(e, index)}
-                            onDragOver={(e) => handleDragOver(e, index)}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, index)}
-                            onDragEnd={handleDragEnd}
-                            onTouchStart={() => handleTouchStart(index)}
-                            onTouchMove={handleTouchMove}
-                            onTouchEnd={handleTouchEnd}
-                        >
+                        <div key={key} className="flex flex-col items-center gap-1 flex-shrink-0">
                             <div
-                                className={`relative flex-shrink-0 overflow-hidden rounded-md border-2 transition-all bg-base-300 ${
+                                className={`relative overflow-hidden rounded-md border-2 transition-all bg-base-300 ${
                                     isActive
                                         ? showBattleId
                                             ? "w-20 h-20 border-warning shadow-lg"
@@ -213,12 +103,6 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                                         : showBattleId
                                             ? "w-16 h-16 border-base-300"
                                             : "w-12 h-12 border-base-300"
-                                } ${
-                                    isAdmin ? 'cursor-move hover:border-primary' : ''
-                                } ${
-                                    isDragging ? 'opacity-50 scale-95' : ''
-                                } ${
-                                    isDragOver ? 'border-primary scale-105' : ''
                                 }`}
                                 title={!isAdmin && ch.nameHidden ? "???" : ch.name}
                             >
@@ -240,9 +124,28 @@ export default function InitiativesQueue({ characters, initiatives, turns, isSta
                             </div>
 
                             {showBattleId && (
-                                <span className="text-xs text-base-content/50 mt-1">
+                                <span className="text-xs text-base-content/50">
                                     #{displayIndex?.get(battleId) ?? battleId}
                                 </span>
+                            )}
+
+                            {isAdmin && (
+                                <div className="flex gap-0.5">
+                                    <button
+                                        className="btn btn-xs btn-ghost px-1 min-h-0 h-5 disabled:opacity-20"
+                                        disabled={index === 0}
+                                        onClick={() => handleMove(index, index - 1)}
+                                    >
+                                        <FaChevronLeft size={10} />
+                                    </button>
+                                    <button
+                                        className="btn btn-xs btn-ghost px-1 min-h-0 h-5 disabled:opacity-20"
+                                        disabled={index === sortedQueue.length - 1}
+                                        onClick={() => handleMove(index, index + 1)}
+                                    >
+                                        <FaChevronRight size={10} />
+                                    </button>
+                                </div>
                             )}
                         </div>
                     )
