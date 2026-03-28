@@ -125,7 +125,7 @@ export function RollHistoryToast() {
             setVisible(true);
             setDimmed(false);
             if (hideTimer.current) clearTimeout(hideTimer.current);
-            const delay = 7000 + Math.min((pendingCountRef.current - 1) * 1000, 9000);
+            const delay = 7000 + Math.min((pendingCountRef.current - 1) * 3000, 27000);
             hideTimer.current = setTimeout(() => { setVisible(false); setHistory([]); }, delay);
         }
         window.addEventListener("roll-result", handleRoll);
