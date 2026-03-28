@@ -179,6 +179,20 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                 </div>
             )}
 
+            {/* Card do próprio jogador — sempre visível */}
+            {currentCharacter && !currentCharacter.isEnemy && (
+                <BattleGroupStatus
+                    player={player}
+                    isEnemies={false}
+                    currentCharacter={currentCharacter}
+                    isAttacking={false}
+                    isExecutingSkill={isExecutingSkill}
+                    isAdmin={isAdmin}
+                    hitCharacters={hitCharacters}
+                    selfOnly={true}
+                />
+            )}
+
             <div className="relative w-full" style={{ perspective: 1200 }}>
                 <motion.div
                     className="relative w-full"
@@ -214,7 +228,7 @@ export default function CombatSection({ onMenuAction, player, onSelectTarget, is
                             opacity: prefersReduced && tab !== "team" ? 0 : 1,
                         }}
                     >
-                        <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} />
+                        <BattleGroupStatus player={player} isEnemies={false} currentCharacter={currentCharacter} isAttacking={isAttacking || isSelectingSkillTarget} onSelectTarget={handleSelectAttackTarget} isReviveMode={isReviveMode} isExecutingSkill={isExecutingSkill} isAdmin={isAdmin} excludeSelf={excludeSelfFromTargeting} hitCharacters={hitCharacters} hideSelf={true} />
                     </div>
                 </motion.div>
             </div>

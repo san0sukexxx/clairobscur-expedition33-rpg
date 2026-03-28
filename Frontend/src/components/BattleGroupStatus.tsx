@@ -35,6 +35,8 @@ interface BattleGroupStatusProps {
     isAdmin?: boolean;
     excludeSelf?: boolean;
     hitCharacters?: Set<number>;
+    hideSelf?: boolean;
+    selfOnly?: boolean;
 }
 
 function pct(cur: number, max: number) {
@@ -53,7 +55,9 @@ export default function BattleGroupStatus({
     isExecutingSkill = false,
     isAdmin = false,
     excludeSelf = false,
-    hitCharacters
+    hitCharacters,
+    hideSelf = false,
+    selfOnly = false,
 }: BattleGroupStatusProps) {
     // Edit state
     const [editing, setEditing] = useState<EditField>(null);
@@ -74,11 +78,17 @@ export default function BattleGroupStatus({
 
     if (player?.fightInfo?.characters == undefined) return null;
 
-    const characters = player.fightInfo.characters.filter(ch => ch.isEnemy == isEnemies);
     const playerBattleID = player.fightInfo.playerBattleID;
 
+    const allTeamCharacters = player.fightInfo.characters.filter(ch => ch.isEnemy == isEnemies);
+    const characters = selfOnly
+        ? allTeamCharacters.filter(ch => ch.battleID === playerBattleID)
+        : hideSelf
+        ? allTeamCharacters.filter(ch => ch.battleID !== playerBattleID)
+        : allTeamCharacters;
+
     // Find the player character for modal rendering
-    const playerCh = characters.find(c => c.battleID === playerBattleID);
+    const playerCh = allTeamCharacters.find(c => c.battleID === playerBattleID);
 
     const closeEdit = () => setEditing(null);
 
@@ -176,14 +186,14 @@ export default function BattleGroupStatus({
     const stainOptions: StainType[] = ["Lightning", "Earth", "Fire", "Ice"];
 
     return (<>
-        <div className="mt-5">
-            <div className="card bg-base-100 shadow">
-                <div className="card-body p-3">
-                    <h2 className="card-title justify-center">
+        <div className={selfOnly ? "" : "mt-5"}>
+            <div className={selfOnly ? "" : "card bg-base-100 shadow"}>
+                <div className={selfOnly ? "" : "card-body p-3"}>
+                    {!selfOnly && <h2 className="card-title justify-center">
                         {currentCharacter?.isEnemy != isEnemies ? t("combat.enemies") : t("combat.team")}
-                    </h2>
+                    </h2>}
 
-                    {characters.length == 0 && (
+                    {!selfOnly && characters.length == 0 && (
                         <div className="text-sm text-neutral-500 italic text-center">
                             {t("combat.noOneHere")}
                         </div>
