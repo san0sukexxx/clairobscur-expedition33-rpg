@@ -372,23 +372,25 @@ export default function BattleGroupStatus({
                                                 <span className="opacity-70 flex items-center gap-1">HP {canEdit && <FaEdit size={10} className="opacity-40" />}</span>
                                                 <span className="font-mono">{ch.healthPoints}/{ch.maxHealthPoints}</span>
                                             </div>
-                                            <AnimatedStatBar
-                                                value={pct(ch.healthPoints, ch.maxHealthPoints)}
-                                                label="HP"
-                                                fillClass="bg-error"
-                                                ghostClass="bg-error/30"
-                                                breakMarkers={[
-                                                    { position: 66, triggered: (ch.breakCount ?? 0) >= 1 },
-                                                    { position: 33, triggered: (ch.breakCount ?? 0) >= 2 },
-                                                ]}
-                                            />
-                                            {canEdit && (
-                                                <button
-                                                    className="btn btn-xs btn-ghost text-warning p-0 mt-0.5"
-                                                    onClick={(e) => { e.stopPropagation(); setEditBreakValue(2 - (ch.breakCount ?? 0)); setBreakEditOpen(true); }}
-                                                    title={t("combatAdmin.labels.breakEditTitle")}
-                                                >💥</button>
-                                            )}
+                                            <div className="flex items-center gap-1">
+                                                <AnimatedStatBar
+                                                    value={pct(ch.healthPoints, ch.maxHealthPoints)}
+                                                    label="HP"
+                                                    fillClass="bg-error"
+                                                    ghostClass="bg-error/30"
+                                                    breakMarkers={[
+                                                        { position: 66, triggered: (ch.breakCount ?? 0) >= 1 },
+                                                        { position: 33, triggered: (ch.breakCount ?? 0) >= 2 },
+                                                    ]}
+                                                />
+                                                {canEdit && (
+                                                    <button
+                                                        className="btn btn-xs btn-ghost text-warning p-0 shrink-0"
+                                                        onClick={(e) => { e.stopPropagation(); setEditBreakValue(2 - (ch.breakCount ?? 0)); setBreakEditOpen(true); }}
+                                                        title={t("combatAdmin.labels.breakEditTitle")}
+                                                    >💥</button>
+                                                )}
+                                            </div>
                                         </div>}
 
                                         {(canEdit || isAdmin) && ch.magicPoints !== undefined &&
