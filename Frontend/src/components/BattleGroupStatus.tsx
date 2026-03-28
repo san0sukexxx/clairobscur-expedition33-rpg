@@ -329,7 +329,7 @@ export default function BattleGroupStatus({
                                             )}
                                         </div>
 
-                                        {ch.magicPoints !== undefined &&
+                                        {(canEdit || isAdmin) && ch.magicPoints !== undefined &&
                                             ch.magicPoints !== null &&
                                             ch.maxMagicPoints !== undefined &&
                                             ch.maxMagicPoints !== null && (
@@ -353,7 +353,7 @@ export default function BattleGroupStatus({
                                             )}
 
                                         {/* Monoco's Bestial Wheel */}
-                                        {ch.id.toLowerCase().includes("monoco") &&
+                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("monoco") &&
                                             ch.bestialWheelPosition !== undefined &&
                                             ch.bestialWheelPosition !== null && (
                                                 <div
@@ -370,7 +370,7 @@ export default function BattleGroupStatus({
                                             )}
 
                                         {/* Lune's Stain System */}
-                                        {ch.id.toLowerCase().includes("lune") && (() => {
+                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("lune") && (() => {
                                             const stains = [ch.stainSlot1, ch.stainSlot2, ch.stainSlot3, ch.stainSlot4];
                                             const hasAnyStain = stains.some(s => s !== null && s !== undefined);
 
@@ -413,7 +413,7 @@ export default function BattleGroupStatus({
                                         })()}
 
                                         {/* Verso's Perfection Rank System */}
-                                        {ch.id.toLowerCase().includes("verso") && (() => {
+                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("verso") && (() => {
                                             const currentRank = ch.perfectionRank ?? "D";
                                             const rankProgress = ch.rankProgress ?? 0;
                                             const rankMax = 10;
@@ -483,7 +483,7 @@ export default function BattleGroupStatus({
                                             );
                                         })()}
 
-                                        {(() => {
+                                        {(canEdit || isAdmin) && (() => {
                                             const isGustave = ch.id.toLowerCase().includes("gustave");
                                             const maxCharge = ch.maxChargePoints ?? (isGustave ? 10 : 0);
                                             if (maxCharge <= 0) return null;
@@ -509,7 +509,7 @@ export default function BattleGroupStatus({
                                         })()}
 
                                         {/* Sun/Moon charges for Sciel */}
-                                        {ch.id.toLowerCase().includes("sciel") && (
+                                        {(canEdit || isAdmin) && ch.id.toLowerCase().includes("sciel") && (
                                             <div
                                                 className={`mt-2 flex items-center gap-3 text-sm ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
                                                 onClick={canEdit ? () => openSunMoon(ch) : undefined}
@@ -531,7 +531,7 @@ export default function BattleGroupStatus({
                                         )}
 
                                         {/* Stance indicator for Maelle only */}
-                                        {ch.stance !== undefined &&
+                                        {(canEdit || isAdmin) && ch.stance !== undefined &&
                                          ch.id.toLowerCase().includes("maelle") && (
                                             <div
                                                 className={`mt-2 ${canEdit ? "cursor-pointer rounded p-0.5 hover:bg-base-300/60 transition-colors pointer-events-auto" : ""}`}
