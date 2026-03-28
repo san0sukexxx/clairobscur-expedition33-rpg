@@ -361,7 +361,7 @@ export default function BattleGroupStatus({
                                         </p>
                                     )}
 
-                                    <div className="mt-3 space-y-2">
+                                    {(canEdit || isAdmin) && <div className="mt-3 space-y-2">
 
                                         {/* HP block: apenas para self/admin (outros já têm HP no header) */}
                                         {(canEdit || isAdmin) && <div
@@ -626,7 +626,7 @@ export default function BattleGroupStatus({
                                                 {t("combatAdmin.npcDetails.armorClass")} {calculateArmorClass(player, weaponInfo)}
                                             </button>
                                         )}
-                                    </div>
+                                    </div>}
                                 </div>
                             );
                         })}
